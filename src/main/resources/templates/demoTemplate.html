@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+    <head>
+        <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
+        <title>Form Demo</title>
+    </head>
+    <body>
+        <h4>Welcome to SENG302</h4>
+        <p th:text="'hello, ' + ${name} + '!'"></p>
+        <a th:href="@{form}">View an interactive form example</a>
+        <br/>
+        <a th:href="@{fragments/main}">View a fragment example</a>
+    </body>
+</html>
