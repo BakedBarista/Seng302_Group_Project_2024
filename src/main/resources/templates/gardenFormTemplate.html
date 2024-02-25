@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
+    <title>Create New Garden</title>
+</head>
+<body>
+<div>
+    <div>
+        <form th:action="@{gardenform}" method="post">
+            <label for="gardenName"> Garden Name: </label>
+            <input type="text" class="form-control" id="gardenName" placeholder="Garden Name"
+                   th:name="gardenName" th:value="*{gardenName}" data-cy="gardenName" required autofocus>
+            <br/>
+            <label for="gardenLocation"> Garden Location: </label>
+            <input type="text" class="form-control" id="gardenLocation" placeholder="Location"
+                   th:name="gardenLocation" th:value="*{gardenLocation}" data-cy="gardenLocation" required
+                   autofocus>
+            <br/>
+            <label for="gardenSize"> Garden Location: </label>
+            <input type="text" class="form-control" id="gardenSize" placeholder="Size of Garden"
+                   th:name="gardenSize" th:value="*{gardenSize}" data-cy="gardenSize" required
+                   autofocus>
+            <br/>
+            <button type="submit">Submit!</button>
+        </form>
+    </div>
+
+    <div>
+        <a th:href="@{gardenform/gardens}">View Gardens</a>
+        <a th:href="@{home}">Back to home</a>
+    </div>
+</div>
+</body>
+</html>
