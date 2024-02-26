@@ -1,6 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.repository;
 
-import nz.ac.canterbury.seng302.gardenersgrove.entity.User;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,7 +12,7 @@ import java.util.Optional;
  * These (basic) methods are provided for us without the need to write our own implementations
  */
 @Repository
-public interface UserRepository extends CrudRepository<User, Long> {
-    Optional<User> findById(long id);
-    List<User> findAll();
+public interface GardenUserRepository extends CrudRepository<GardenUser, Long> {
+    Optional<GardenUser> findById(long id);
+    List<GardenUser> findAll();
 }

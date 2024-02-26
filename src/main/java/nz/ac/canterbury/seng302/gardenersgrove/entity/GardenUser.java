@@ -3,7 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.entity;
 import jakarta.persistence.*;
 
 @Entity
-public class User {
+public class GardenUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -14,23 +14,23 @@ public class User {
     @Column(nullable = true)
     private String lname;
 
-    @Column(nullable = false)
-    private String email;
+    // @Column(nullable = false)
+    // private String email;
 
-    @Column(nullable = false)
-    private String address;
+    // @Column(nullable = false)
+    // private String address;
 
-    @Column(nullable = false)
-    private String password;
+    // @Column(nullable = false)
+    // private String password;
 
-    @Column(nullable = true)
-    private String DOB;
+    // @Column(nullable = true)
+    // private String DOB;
 
 
     /**
      * JPA required no-args constructor
      */
-    protected User() {}
+    protected GardenUser() {}
 
     /**
      * Creates a new FormResult object
@@ -40,14 +40,15 @@ public class User {
      * @param address address of user 
      * @param password password of user 
      * @param DOB date of birth of use 
+     * , String email, String address, String password, String DOB
      */
-    public User(String fname, String lname, String email, String address, String password, String DOB) {
+    public GardenUser(String fname, String lname) {
         this.fname = fname;
         this.lname = lname;
-        this.email = email;
-        this.address = address;
-        this.password = password;
-        this.DOB = DOB;
+        // this.email = email;
+        // this.address = address;
+        // this.password = password;
+        // this.DOB = DOB;
     }
 
     public Long getId() {
@@ -62,19 +63,19 @@ public class User {
         return lname;
     }
 
-    public String getEmail() {
-        return email;
-    }
+    // public String getEmail() {
+    //     return email;
+    // }
 
-    public String getAddress() {
-        return address;
-    }
+    // public String getAddress() {
+    //     return address;
+    // }
 
-    public String getPassword() {
-        return password;
-    }
+    // public String getPassword() {
+    //     return password;
+    // }
 
-    public String getDOB() {
-        return DOB;
-    }
+    // public String getDOB() {
+    //     return DOB;
+    // }
 }

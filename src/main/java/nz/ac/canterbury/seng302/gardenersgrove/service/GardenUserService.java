@@ -1,7 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
-import nz.ac.canterbury.seng302.gardenersgrove.entity.User;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.UserRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,19 +11,19 @@ import java.util.List;
  * This class links automatically with @link{UserRepository}, see the @link{Autowired} annotation below
  */
 @Service
-public class UserService {
-    private UserRepository userRepository;
+public class GardenUserService {
+    private GardenUserRepository gardenUserRepository;
 
 //    @Autowired
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public GardenUserService(GardenUserRepository gardenUserRepository) {
+        this.gardenUserRepository = gardenUserRepository;
     }
     /**
      * Gets all FormResults from persistence
      * @return all FormResults currently saved in persistence
      */
-    public List<User> getUser() {
-        return userRepository.findAll();
+    public List<GardenUser> getUser() {
+        return gardenUserRepository.findAll();
     }
 
     /**
@@ -31,7 +31,7 @@ public class UserService {
      * @param user object to persist
      * @return the saved formResult object
      */
-    public User addUser(User user) {
-        return userRepository.save(user);
+    public GardenUser addUser(GardenUser gardenUser) {
+        return gardenUserRepository.save(gardenUser);
     }
 }
