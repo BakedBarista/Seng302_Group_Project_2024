@@ -73,14 +73,11 @@ public class GardenFormController {
         }
 
         // Garden size validation
-        if (gardenSize == null || gardenSize.trim().isEmpty()) {
-            model.addAttribute("sizeError", "Garden size must be a positive number");
-            hasErrors = true;
-        } else {
+        if (!gardenSize.trim().isEmpty()) {
             gardenSize = gardenSize.replace(',', '.'); // Replace comma with dot for number parsing
             try {
                 double size = Double.parseDouble(gardenSize);
-                if (size <= 0) {
+                if (size < 0) {
                     throw new NumberFormatException("Size must be positive");
                 }
             } catch (NumberFormatException e) {
