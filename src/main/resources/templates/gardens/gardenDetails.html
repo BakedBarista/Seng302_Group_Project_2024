@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
+    <title>Garden Details</title>
+</head>
+<body>
+<div>
+    <div>
+        <h4>Gardens:</h4>
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Location</th>
+                <th>Size</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><span th:text="${garden.id}">Garden Id</span></td>
+                <td><span th:text="${garden.name}"> Name </span></td>
+                <td><span th:text="${garden.location}"> Location </span></td>
+                <td><span th:text="${garden.size}"> Size </span></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div>
+        <button><a th:href="@{/gardens/edit}">Edit</a></button>
+        <button><a th:href="@{/}">Return home</a></button>
+    </div>
+</div>
+</body>
+</html>

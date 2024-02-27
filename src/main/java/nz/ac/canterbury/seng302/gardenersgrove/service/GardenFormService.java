@@ -4,6 +4,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenFormRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Service class for GardenFormResults
@@ -27,4 +28,10 @@ public class GardenFormService {
      */
     public Garden addGardenFormResult(Garden gardenFormResult) { return formRepository.save(gardenFormResult);}
 
+    /**
+     * Get garden details by id
+     * @param id garden id used to retrieve data
+     * @return the object of given id
+     */
+    public Optional<GardenFormResult> getGarden(long id) {return formRepository.findById(id);}
 }

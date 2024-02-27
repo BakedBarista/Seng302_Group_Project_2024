@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -44,7 +45,7 @@ public class GardenController {
         model.addAttribute("displayName", displayName);
         model.addAttribute("displayGardenLocation", displayLocation);
         model.addAttribute("displayGardenSize", displaySize);
-        return "/gardens/createGarden";
+        return "gardens/createGarden";
     }
 
     @PostMapping("/gardens/create")
@@ -92,13 +93,13 @@ public class GardenController {
             model.addAttribute("gardenSize", gardenSize);
 
             // Return to the form with errors
-            return "/gardens/createGarden";
+            return "redirect:/gardens/create";
         }
-        formService.addGardenFormResult(new Garden(gardenName,gardenLocation,gardenSize));
+        GardenFormResult savedGarden = formService.addGardenFormResult(new GardenFormResult(gardenName,gardenLocation,gardenSize));
         model.addAttribute("displayName", gardenName);
         model.addAttribute("displayGardenLocation", gardenLocation);
         model.addAttribute("displayGardenSize", gardenSize);
-        return "redirect:/gardens";
+        return "redirect:/gardens/" + savedGarden.getId();
     }
 
     /**
@@ -111,5 +112,13 @@ public class GardenController {
         logger.info("Get /gardens - display all gardens");
         model.addAttribute("gardens", formService.getFormResults());
         return "gardens/viewGardens";
+    }
+
+    @GetMapping("/gardens/{id}")
+    public String gardenDetail(@PathVariable(name = "id") Long id,
+                               Model model) {
+        logger.info("Get /gardens/id - display garden detail");
+        model.addAttribute("garden", formService.getGarden(id).get());
+        return "gardens/gardenDetails";
     }
 }
