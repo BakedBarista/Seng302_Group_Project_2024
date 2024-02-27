@@ -1,6 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.repository;
 
-import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenFormResult;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,7 +12,7 @@ import java.util.Optional;
  */
 
 @Repository
-public interface GardenFormRepository extends CrudRepository<GardenFormResult, Long> {
-    Optional<GardenFormResult> findById(long id);
-    List<GardenFormResult> findAll();
+public interface GardenFormRepository extends CrudRepository<Garden, Long> {
+    Optional<Garden> findById(long id);
+    List<Garden> findAll();
 }

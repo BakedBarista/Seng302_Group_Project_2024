@@ -1,6 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
-import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenFormResult;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenFormRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -19,14 +19,14 @@ public class GardenFormService {
      * Gets all GardenFormResults from persistence
      * @return all GardenFormResults currently saved in persistence
      */
-    public List<GardenFormResult> getFormResults() { return formRepository.findAll();}
+    public List<Garden> getFormResults() { return formRepository.findAll();}
 
     /**
      * Adds a gardenFormResult to persistence
      * @param gardenFormResult object to persist
      * @return the saved gardenFormResult object
      */
-    public GardenFormResult addGardenFormResult(GardenFormResult gardenFormResult) { return formRepository.save(gardenFormResult);}
+    public Garden addGardenFormResult(Garden gardenFormResult) { return formRepository.save(gardenFormResult);}
 
     /**
      * Get garden details by id

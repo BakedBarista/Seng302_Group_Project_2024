@@ -1,7 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 
-import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenFormResult;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenFormService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,14 +41,14 @@ public class GardenController {
                        @RequestParam(name="displaySize", required = false, defaultValue = "") String displaySize,
                        Model model) {
         logger.info("GET /gardens/create - display the new garden form");
-        formService.addGardenFormResult(new GardenFormResult(displayName, displayLocation, displaySize));
+        formService.addGardenFormResult(new Garden(displayName, displayLocation, displaySize));
         model.addAttribute("displayName", displayName);
         model.addAttribute("displayGardenLocation", displayLocation);
         model.addAttribute("displayGardenSize", displaySize);
         return "gardens/createGarden";
     }
 
-    @PostMapping("/gardens")
+    @PostMapping("/gardens/create")
     public String submitForm( @RequestParam(name="name") String gardenName,
                               @RequestParam(name = "location") String gardenLocation,
                               @RequestParam(name = "size") String gardenSize,
