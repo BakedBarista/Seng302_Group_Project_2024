@@ -11,10 +11,10 @@ import java.util.Optional;
  * Service class for GardenFormResults
  */
 @Service
-public class GardenFormService {
+public class GardenService {
     private GardenFormRepository formRepository;
 
-    public GardenFormService(GardenFormRepository formRepository) {this.formRepository = formRepository;}
+    public GardenService(GardenFormRepository formRepository) {this.formRepository = formRepository;}
 
     /**
      * Gets all GardenFormResults from persistence

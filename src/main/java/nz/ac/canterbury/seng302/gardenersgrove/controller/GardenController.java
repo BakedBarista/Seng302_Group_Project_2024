@@ -2,7 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenFormService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +20,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class GardenController {
     Logger logger = LoggerFactory.getLogger(GardenController.class);
 
-    private final GardenFormService formService;
+    private final GardenService formService;
 
     @Autowired
-    public GardenController(GardenFormService formService) {
+    public GardenController(GardenService formService) {
         this.formService = formService;
     }
 
@@ -41,10 +41,10 @@ public class GardenController {
                        @RequestParam(name="displaySize", required = false, defaultValue = "") String displaySize,
                        Model model) {
         logger.info("GET /gardens/create - display the new garden form");
-        formService.addGardenFormResult(new Garden(displayName, displayLocation, displaySize));
-        model.addAttribute("displayName", displayName);
-        model.addAttribute("displayGardenLocation", displayLocation);
-        model.addAttribute("displayGardenSize", displaySize);
+//        formService.addGardenFormResult(new Garden(displayName, displayLocation, displaySize));
+//        model.addAttribute("displayName", displayName);
+//        model.addAttribute("displayGardenLocation", displayLocation);
+//        model.addAttribute("displayGardenSize", displaySize);
         return "gardens/createGarden";
     }
 
@@ -95,7 +95,7 @@ public class GardenController {
             // Return to the form with errors
             return "redirect:/gardens/create";
         }
-        GardenFormResult savedGarden = formService.addGardenFormResult(new GardenFormResult(gardenName,gardenLocation,gardenSize));
+        Garden savedGarden = formService.addGardenFormResult(new Garden(gardenName,gardenLocation,gardenSize));
         model.addAttribute("displayName", gardenName);
         model.addAttribute("displayGardenLocation", gardenLocation);
         model.addAttribute("displayGardenSize", gardenSize);
@@ -118,7 +118,7 @@ public class GardenController {
     public String gardenDetail(@PathVariable(name = "id") Long id,
                                Model model) {
         logger.info("Get /gardens/id - display garden detail");
-        model.addAttribute("garden", formService.getGarden(id).get());
+        model.addAttribute("garden", formService.getGarden(id).get()); // TODO: Need to check that the ID actually exists
         return "gardens/gardenDetails";
     }
 }
