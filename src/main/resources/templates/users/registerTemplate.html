@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
+    <title>Register | Gardener's Grove</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <main class="main-container">
+        <h1>Register</h1>
+        <form>
+            <label class="form-group">
+                First Name
+                <input type="text" name="fname" required>
+            </label>
+            <label class="form-group">
+                Last Name
+                <input type="text" id="lname" name="lname" required>
+            </label>
+            <label class="form-checkbox">
+                <input type="checkbox" id="noLname" name="noLname"> I have no surname
+            </label>
+            <label class="form-group">
+                Email
+                <input type="email" name="email" required>
+            </label>
+            <label class="form-group">
+                Address
+                <input type="text" name="address" required>
+            </label>
+            <label class="form-group">
+                Password
+                <input type="password" name="password" required>
+            </label>
+            <label class="form-group">
+                Confirm Password
+                <input type="password" name="confirmPassword" required>
+            </label>
+            <label class="form-group">
+                Date of Birth (optional)
+                <input type="date" name="DOB">
+            </label>
+            <button class="btn">Submit</button>
+            <a href="/" class="btn">Cancel</button>
+        </form>
+    </main>
+    <script>
+        const noLname = document.getElementById('noLname');
+        const lname = document.getElementById('lname');
+
+        noLname.addEventListener('input', (ev) => {
+            lname.disabled = ev.target.checked;
+        });
+    </script>
+</body>
+</html>
