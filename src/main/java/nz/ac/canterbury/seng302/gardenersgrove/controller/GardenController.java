@@ -40,14 +40,14 @@ public class GardenController {
                        @RequestParam(name="displaySize", required = false, defaultValue = "") String displaySize,
                        Model model) {
         logger.info("GET /gardens/create - display the new garden form");
-        formService.addGardenFormResult(new GardenFormResult(displayName, displayLocation, displaySize));
+        formService.addGardenFormResult(new Garden(displayName, displayLocation, displaySize));
         model.addAttribute("displayName", displayName);
         model.addAttribute("displayGardenLocation", displayLocation);
         model.addAttribute("displayGardenSize", displaySize);
         return "/gardens/createGarden";
     }
 
-    @PostMapping("/gardens")
+    @PostMapping("/gardens/create")
     public String submitForm( @RequestParam(name="name") String gardenName,
                               @RequestParam(name = "location") String gardenLocation,
                               @RequestParam(name = "size") String gardenSize,
@@ -98,7 +98,7 @@ public class GardenController {
         model.addAttribute("displayName", gardenName);
         model.addAttribute("displayGardenLocation", gardenLocation);
         model.addAttribute("displayGardenSize", gardenSize);
-        return "redirect:./gardens";
+        return "redirect:/gardens";
     }
 
     /**
