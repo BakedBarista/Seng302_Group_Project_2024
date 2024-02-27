@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -118,10 +119,10 @@ public class GardenController {
      * @param model representation of results
      * @return ???
      */
-    @GetMapping("/garden/${garden.id}/edit")
-    public String getGarden(Model model) {
-        logger.info("Get /garden/${garden.id}/edit");
-        model.addAttribute("gardens", formService.getFormResults());
-        return "viewGardenTemplate";
+    @GetMapping("/garden/{id}")
+    public String getGarden(@PathVariable() long id, Model model) {
+        logger.info("Get /garden/${garden.id}");
+        model.addAttribute("garden", formService.getOne(id));
+        return "";
     }
 }
