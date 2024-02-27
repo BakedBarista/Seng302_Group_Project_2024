@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenFormRepository;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -33,5 +34,5 @@ public class GardenFormService {
      * @param id garden id used to retrieve data
      * @return the object of given id
      */
-    public Optional<GardenFormResult> getGarden(long id) {return formRepository.findById(id);}
+    public Optional<Garden> getGarden(long id) {return formRepository.findById(id);}
 }
