@@ -7,7 +7,7 @@
 <body>
 <div>
     <div>
-        <form th:action="@{/gardens/{id}(id=${garden.id})}" method="post">
+        <form th:action="@{/gardens/{id}/edit(id=${garden.id})}" method="post">
             <!-- Garden Name Field -->
             <label for="name"> Garden Name: </label>
             <input type="text" class="form-control" id="name" placeholder="${garden.name}"
@@ -23,10 +23,10 @@
             <!-- Garden Size Field -->
             <label for="size"> Garden Size (m^2): </label>
             <input type="text" class="form-control" id="size" placeholder="${garden.size}"
-                   th:name="size" th:value="${garden.name}" data-cy="size" autofocus>
+                   th:name="size" th:value="${garden.size}" data-cy="size" autofocus>
             <div th:if="${sizeError}" th:text="${sizeError}" style="color: red;"></div>
             <br/>
-            <button type="submit">Submit!</button><button type="button" onclick="history.back()">Cancel</button>
+            <button type="submit">Submit!</button><button type="button">Cancel</button>
         </form>
     </div>
 
