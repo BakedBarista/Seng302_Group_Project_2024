@@ -112,4 +112,16 @@ public class GardenFormController {
         model.addAttribute("gardens", formService.getFormResults());
         return "viewGardenTemplate";
     }
+
+    /**
+     * Get single garden details
+     * @param model representation of results
+     * @return ???
+     */
+    @GetMapping("/garden/${garden.id}/edit")
+    public String getGarden(Model model) {
+        logger.info("Get /garden/${garden.id}/edit");
+        model.addAttribute("gardens", formService.getFormResults());
+        return "viewGardenTemplate";
+    }
 }

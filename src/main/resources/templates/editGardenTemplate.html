@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Garden</title>
+</head>
+<body>
+<div>
+    <div>
+        <form th:action="@{/gardens/{$garden.id}/edit}" method="post">
+            <!-- Garden Name Field -->
+            <label for="name"> Garden Name: </label>
+            <input type="text" class="form-control" id="name" placeholder="${garden.name}"
+                   th:name="name" th:value="${name}" data-cy="name" autofocus>
+            <div th:if="${nameError}" th:text="${nameError}" style="color: red;"></div>
+            <br/>
+            <!-- Garden Location Field -->
+            <label for="location"> Garden Location: </label>
+            <input type="text" class="form-control" id="location" placeholder="${garden.location}"
+                   th:name="location" th:value="${location}" data-cy="location" autofocus>
+            <div th:if="${locationError}" th:text="${locationError}" style="color: red;"></div>
+            <br/>
+            <!-- Garden Size Field -->
+            <label for="size"> Garden Size (m^2): </label>
+            <input type="text" class="form-control" id="size" placeholder="${garden.size}"
+                   th:name="size" th:value="${size}" data-cy="size" autofocus>
+            <div th:if="${sizeError}" th:text="${sizeError}" style="color: red;"></div>
+            <br/>
+            <button type="submit">Submit!</button><button type="button" onclick="history.back()">Cancel</button>
+        </form>
+    </div>
+
+    <div>
+        <a th:href="@{/gardenform/gardens}">View Gardens</a>
+        <a th:href="@{/home}">Back to home</a>
+    </div>
+</div>
+</body>
+</html>
