@@ -16,16 +16,6 @@ public class DemoController {
     Logger logger = LoggerFactory.getLogger(DemoController.class);
 
     /**
-     * Redirects GET default url '/' to '/demo'
-     * @return redirect to /demo
-     */
-    @GetMapping("/")
-    public String home() {
-        logger.info("GET /");
-        return "redirect:./demo";
-    }
-
-    /**
      * Gets the thymeleaf page representing the /demo page (a basic welcome screen with some links)
      * @param name url query parameter of user's name
      * @param model (map-like) representation of data to be used in thymeleaf display
