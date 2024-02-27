@@ -22,7 +22,7 @@ public class DemoController {
     @GetMapping("/")
     public String home() {
         logger.info("GET /");
-        return "redirect:./demo";
+        return "redirect:./home";
     }
 
     /**
@@ -31,11 +31,10 @@ public class DemoController {
      * @param model (map-like) representation of data to be used in thymeleaf display
      * @return thymeleaf demoTemplate
      */
-    @GetMapping("/demo")
+    @GetMapping("/home")
     public String getTemplate(@RequestParam(name = "name", required = false, defaultValue = "World") String name, Model model) {
-        logger.info("GET /demo");
-        model.addAttribute("name", name);
-        return "demoTemplate";
+        logger.info("GET /home");
+        return "homePage";
     }
 
 }
