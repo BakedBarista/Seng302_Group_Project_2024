@@ -1,7 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 
-import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenFormResult;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenFormService;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -40,7 +40,7 @@ public class GardenFormController {
                        @RequestParam(name="displaySize", required = false, defaultValue = "") String displaySize,
                        Model model) {
         logger.info("Get /gardenform");
-        formService.addGardenFormResult(new GardenFormResult(displayName, displayLocation, displaySize));
+        formService.addGardenFormResult(new Garden(displayName, displayLocation, displaySize));
         model.addAttribute("displayName", displayName);
         model.addAttribute("displayGardenLocation", displayLocation);
         model.addAttribute("displayGardenSize", displaySize);
@@ -94,7 +94,7 @@ public class GardenFormController {
             // Return to the form with errors
             return "gardenFormTemplate";
         }
-        formService.addGardenFormResult(new GardenFormResult(gardenName,gardenLocation,gardenSize));
+        formService.addGardenFormResult(new Garden(gardenName,gardenLocation,gardenSize));
         model.addAttribute("displayName", gardenName);
         model.addAttribute("displayGardenLocation", gardenLocation);
         model.addAttribute("displayGardenSize", gardenSize);
