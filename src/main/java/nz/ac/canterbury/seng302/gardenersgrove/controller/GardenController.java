@@ -3,11 +3,11 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenFormResult;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenFormService;
-import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
-import org.springframework.ui.Model;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,13 +16,13 @@ import org.springframework.web.bind.annotation.RequestParam;
  * Controller for garden forms
  */
 @Controller
-public class GardenFormController {
-    Logger logger = LoggerFactory.getLogger(GardenFormController.class);
+public class GardenController {
+    Logger logger = LoggerFactory.getLogger(GardenController.class);
 
     private final GardenFormService formService;
 
     @Autowired
-    public GardenFormController(GardenFormService formService) {
+    public GardenController(GardenFormService formService) {
         this.formService = formService;
     }
 
@@ -34,25 +34,25 @@ public class GardenFormController {
      * @param model representation of name, location and size
      * @return gardenFormTemplate
      */
-    @GetMapping("/gardenform")
+    @GetMapping("/gardens/create")
     public String form(@RequestParam(name="displayName", required = false, defaultValue = "") String displayName,
                        @RequestParam(name="displayLocation", required = false, defaultValue = "") String displayLocation,
                        @RequestParam(name="displaySize", required = false, defaultValue = "") String displaySize,
                        Model model) {
-        logger.info("Get /gardenform");
+        logger.info("GET /gardens/create - display the new garden form");
         formService.addGardenFormResult(new GardenFormResult(displayName, displayLocation, displaySize));
         model.addAttribute("displayName", displayName);
         model.addAttribute("displayGardenLocation", displayLocation);
         model.addAttribute("displayGardenSize", displaySize);
-        return "gardenFormTemplate";
+        return "/gardens/createGarden";
     }
 
-    @PostMapping("/gardenform")
+    @PostMapping("/gardens")
     public String submitForm( @RequestParam(name="name") String gardenName,
                               @RequestParam(name = "location") String gardenLocation,
                               @RequestParam(name = "size") String gardenSize,
                               Model model) {
-        logger.info("POST /gardenform");
+        logger.info("POST /gardens - submit the new garden form");
         boolean hasErrors = false;
         // Garden name validation
         if (gardenName == null || gardenName.trim().isEmpty()) {
@@ -92,13 +92,13 @@ public class GardenFormController {
             model.addAttribute("gardenSize", gardenSize);
 
             // Return to the form with errors
-            return "gardenFormTemplate";
+            return "/gardens/createGarden";
         }
         formService.addGardenFormResult(new GardenFormResult(gardenName,gardenLocation,gardenSize));
         model.addAttribute("displayName", gardenName);
         model.addAttribute("displayGardenLocation", gardenLocation);
         model.addAttribute("displayGardenSize", gardenSize);
-        return "redirect:./gardenform/gardens";
+        return "redirect:./gardens";
     }
 
     /**
@@ -106,10 +106,10 @@ public class GardenFormController {
      * @param model representation of results
      * @return viewGardenTemplate
      */
-    @GetMapping("/gardenform/gardens")
+    @GetMapping("/gardens")
     public String responses(Model model) {
-        logger.info("Get /gardenform/gardens");
+        logger.info("Get /gardens - display all gardens");
         model.addAttribute("gardens", formService.getFormResults());
-        return "viewGardenTemplate";
+        return "gardens/viewGardens";
     }
 }
