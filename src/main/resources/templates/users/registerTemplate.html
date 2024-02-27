@@ -14,37 +14,37 @@
     <header th:insert="fragments/general.html :: header"></header>
     <main class="main-container">
         <h1>Register</h1>
-        <form>
+        <form th:action="register" method="post">
             <label class="form-group">
                 First Name
-                <input type="text" name="fname" required>
+                <input type="text" th:name="fname" th:value="*{fname}" required>
             </label>
             <label class="form-group">
                 Last Name
-                <input type="text" id="lname" name="lname" required>
+                <input type="text" th:name="lname" th:value="*{lname}" id="lname" required>
             </label>
             <label class="form-checkbox">
-                <input type="checkbox" id="noLname" name="noLname"> I have no surname
+                <input type="checkbox" th:name="noLname" th:value="*{noLname}" th:checked="*{noLname}" id="noLname"> I have no surname
             </label>
             <label class="form-group">
                 Email
-                <input type="email" name="email" required>
+                <input type="email" th:name="email" th:value="*{email}" required>
             </label>
             <label class="form-group">
                 Address
-                <input type="text" name="address" required>
+                <input type="text" th:name="address" th:value="*{address}" required>
             </label>
             <label class="form-group">
                 Password
-                <input type="password" name="password" required>
+                <input type="password" th:name="password" required>
             </label>
             <label class="form-group">
                 Confirm Password
-                <input type="password" name="confirmPassword" required>
+                <input type="password" th:name="confirmPassword" required>
             </label>
             <label class="form-group">
                 Date of Birth (optional)
-                <input type="date" name="DOB">
+                <input type="date" th:name="dob" th:value="*{dob}">
             </label>
             <button class="btn">Submit</button>
             <a href="/" class="btn">Cancel</button>
@@ -55,7 +55,9 @@
         const lname = document.getElementById('lname');
 
         noLname.addEventListener('input', (ev) => {
-            lname.disabled = ev.target.checked;
+            noLname.value = noLname.checked;
+            lname.disabled = noLname.checked;
+            lname.requred = !noLname.checked;
         });
     </script>
 </body>
