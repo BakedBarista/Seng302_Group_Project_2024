@@ -2,6 +2,10 @@ package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
 import jakarta.persistence.*;
 
+/**
+ * Entity class reflecting an entry of fname, lname, email, address, password and date of birth(DOB)
+ * Note the @link{Entity} annotation required for declaring this as a persistence entity
+ */
 @Entity
 public class GardenUser {
     @Id
@@ -14,17 +18,17 @@ public class GardenUser {
     @Column(nullable = true)
     private String lname;
 
-    // @Column(nullable = false)
-    // private String email;
+    @Column(nullable = false)
+    private String email;
 
-    // @Column(nullable = false)
-    // private String address;
+    @Column(nullable = false)
+    private String address;
 
-    // @Column(nullable = false)
-    // private String password;
+    @Column(nullable = false)
+    private String password;
 
-    // @Column(nullable = true)
-    // private String DOB;
+    @Column(nullable = true)
+    private String DOB;
 
 
     /**
@@ -33,22 +37,21 @@ public class GardenUser {
     protected GardenUser() {}
 
     /**
-     * Creates a new FormResult object
+     * Creates a new GardenUser object
      * @param fname first name of user
      * @param lname last name of user 
      * @param email email of user 
      * @param address address of user 
      * @param password password of user 
      * @param DOB date of birth of use 
-     * , String email, String address, String password, String DOB
      */
-    public GardenUser(String fname, String lname) {
+    public GardenUser(String fname, String lname, String email, String address, String password, String DOB) {
         this.fname = fname;
         this.lname = lname;
-        // this.email = email;
-        // this.address = address;
-        // this.password = password;
-        // this.DOB = DOB;
+        this.email = email;
+        this.address = address;
+        this.password = password;
+        this.DOB = DOB;
     }
 
     public Long getId() {
@@ -63,19 +66,19 @@ public class GardenUser {
         return lname;
     }
 
-    // public String getEmail() {
-    //     return email;
-    // }
+    public String getEmail() {
+        return email;
+    }
 
-    // public String getAddress() {
-    //     return address;
-    // }
+    public String getAddress() {
+        return address;
+    }
 
-    // public String getPassword() {
-    //     return password;
-    // }
+    public String getPassword() {
+        return password;
+    }
 
-    // public String getDOB() {
-    //     return DOB;
-    // }
+    public String getDOB() {
+        return DOB;
+    }
 }

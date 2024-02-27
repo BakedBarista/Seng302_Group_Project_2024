@@ -21,10 +21,16 @@ public class UserServiceTest {
 
     @Autowired
     private GardenUserRepository gardenUserRepository;
-
+    // simple test to chcek if inserting information into the database works
     @Test
-    public void simpleTest() {
+    public void insertingUser() {
         GardenUserService gardenUserService = new GardenUserService(gardenUserRepository);
-        GardenUser gardenUser = gardenUserService.addUser(new GardenUser("gre", "gret"));
+        GardenUser gardenUser = gardenUserService.addUser(new GardenUser("fname", "lname", "email", "address", "password", "dob"));
+        Assertions.assertEquals(gardenUser.getFname(), "fname");
+        Assertions.assertEquals(gardenUser.getLname(), "lname");
+        Assertions.assertEquals(gardenUser.getEmail(), "email");
+        Assertions.assertEquals(gardenUser.getDOB(), "dob");
+        Assertions.assertEquals(gardenUser.getPassword(), "password");
+        Assertions.assertEquals(gardenUser.getAddress(), "address");
     }
 }

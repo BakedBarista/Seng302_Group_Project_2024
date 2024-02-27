@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * Service class for User, defined by the @link{Service} annotation.
+ * Service class for GardenUser, defined by the @link{Service} annotation.
  * This class links automatically with @link{UserRepository}, see the @link{Autowired} annotation below
  */
 @Service
@@ -19,17 +19,17 @@ public class GardenUserService {
         this.gardenUserRepository = gardenUserRepository;
     }
     /**
-     * Gets all FormResults from persistence
-     * @return all FormResults currently saved in persistence
+     * Gets all GardenUser from persistence
+     * @return all GardenUser currently saved in persistence
      */
     public List<GardenUser> getUser() {
         return gardenUserRepository.findAll();
     }
 
     /**
-     * Adds a formResult to persistence
-     * @param user object to persist
-     * @return the saved formResult object
+     * Adds a gardenUser to persistence
+     * @param GardenUser object to persist
+     * @return the saved gardenUser object
      */
     public GardenUser addUser(GardenUser gardenUser) {
         return gardenUserRepository.save(gardenUser);
