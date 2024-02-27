@@ -21,7 +21,12 @@ public class GardenFormService {
      */
     public List<GardenFormResult> getFormResults() { return formRepository.findAll();}
 
-    public Optional<GardenFormResult> getOne(int id) {
+    /**
+     * Get GardenFormResult from persistence of object id
+     * @param id
+     * @return GardenFormResult of object with corresponding id
+     */
+    public Optional<GardenFormResult> getOne(long id) {
         return formRepository.findById(id);
     }
 

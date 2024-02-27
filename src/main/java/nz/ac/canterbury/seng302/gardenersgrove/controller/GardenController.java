@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Optional;
+
 /**
  * Controller for garden forms
  */
@@ -119,10 +121,11 @@ public class GardenController {
      * @param model representation of results
      * @return ???
      */
-    @GetMapping("/garden/{id}")
+    @GetMapping("/gardens/{id}")
     public String getGarden(@PathVariable() long id, Model model) {
-        logger.info("Get /garden/${garden.id}");
-        model.addAttribute("garden", formService.getOne(id));
-        return "";
+        logger.info("Get /garden/{}", id);
+        Optional<GardenFormResult> garden = formService.getOne(id);
+        model.addAttribute("garden", garden.orElse(null));
+        return "/gardens/editGarden";
     }
 }
