@@ -7,7 +7,7 @@
 <body>
 <div>
     <div>
-        <form th:action="@{/gardenform}" method="post">
+        <form th:action="@{/gardens}" method="post">
             <!-- Garden Name Field -->
             <label for="name"> Garden Name: </label>
             <input type="text" class="form-control" id="name" placeholder="Garden Name"
@@ -26,13 +26,13 @@
                    th:name="size" th:value="${size}" data-cy="size" autofocus>
             <div th:if="${sizeError}" th:text="${sizeError}" style="color: red;"></div>
             <br/>
-            <button type="submit">Submit!</button><button type="button" onclick="history.back()">Cancel</button>
+            <button type="submit">Submit!</button><button type="button" onclick="window.location.href = '/gardens'">Cancel</button>
         </form>
     </div>
 
     <div>
-        <a th:href="@{/gardenform/gardens}">View Gardens</a>
-        <a th:href="@{/home}">Back to home</a>
+        <button><a th:href="@{/gardens/}">Back to Gardens</a></button>
+        <button><a th:href="@{/}">Return home</a></button>
     </div>
 </div>
 </body>
