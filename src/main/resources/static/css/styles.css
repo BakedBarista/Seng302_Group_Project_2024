@@ -34,3 +34,10 @@ body {
     display: block;
     margin: 16px 0;
 }
+
+@media (max-width: 752px) {
+    .main-container {
+        margin: 0;
+        max-width: none;
+    }
+}
