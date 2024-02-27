@@ -1,0 +1,22 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="headerfiles">
+    <meta charset="UTF-8"/>
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+</head>
+<body>
+<div th:fragment="header" class="nav-container">
+    <nav class="nav">
+        <h3 class="nav-logo">Gardener's Grove</h3>
+        <ul class="nav-links">
+            <li>
+                <a href="/">Home</a>
+            </li>
+            <li>
+                <a href="/users/register">Register</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+</body>
+</html>

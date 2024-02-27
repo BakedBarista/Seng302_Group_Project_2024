@@ -5,14 +5,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import nz.ac.canterbury.seng302.gardenersgrove.controller.DemoController;
-
 /**
  * Controller for registering new users
  */
 @Controller
 public class RegisterController {
-    Logger logger = LoggerFactory.getLogger(DemoController.class);
+    Logger logger = LoggerFactory.getLogger(RegisterController.class);
 
     /**
      * Shows the user the form
