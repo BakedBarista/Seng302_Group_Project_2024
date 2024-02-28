@@ -22,12 +22,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class RegisterController {
     Logger logger = LoggerFactory.getLogger(RegisterController.class);
 
-    private final GardenUser gardenUser;
-
     @Autowired
-    public RegisterController(GardenUser gardenUser) {
-        this.gardenUser = gardenUser;
-    }
+    private GardenUserService gardenUserService;
 
     /**
      * Shows the user the form
@@ -55,7 +51,6 @@ public class RegisterController {
         Model model
     ) {
         logger.info("POST /users/register");
-        gardenUser.addUser(new GardenUser(fname, lname, email, address, password, dob));
         // TODO: validation here
         boolean valid = password.equals(confirmPassword);
         if (!valid) {
@@ -68,7 +63,7 @@ public class RegisterController {
             return "users/registerTemplate";
         }
 
-
+        gardenUserService.addUser(new GardenUser(fname, lname, email, address, password, dob));
 
         return "redirect:/users/login";
     }
