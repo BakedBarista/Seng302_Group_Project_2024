@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -54,31 +55,33 @@ public class SecurityConfiguration {
         // Allow h2 console through security. Note: Spring 6 broke the nicer way to do
         // this (i.e. how the authorisation is handled below)
         // See https://github.com/spring-projects/spring-security/issues/12546
-        http.authorizeHttpRequests(auth -> auth.requestMatchers(AntPathRequestMatcher.antMatcher("/h2/**")).permitAll())
-                .headers(headers -> headers.frameOptions().disable())
-                .csrf(csrf -> csrf.ignoringRequestMatchers(AntPathRequestMatcher.antMatcher("/h2/**")))
+        http.authorizeHttpRequests(
+                auth -> auth.requestMatchers(AntPathRequestMatcher.antMatcher("/h2/**")).permitAll());
+        http.headers(headers -> headers.frameOptions(Customizer.withDefaults()).disable());
+        http.csrf(csrf -> csrf.ignoringRequestMatchers(AntPathRequestMatcher.antMatcher("/h2/**")));
 
-                .authorizeHttpRequests()
-                // Allow "/", "/register", and "/login" to anyone (permitAll)
-                .requestMatchers("/", "/users/register", "/users/login")
-                .permitAll()
-                // Only allow admins to reach the "/admin" page
-                .requestMatchers("/users/admin")
-                // note we do not need the "ROLE_" prefix as we are calling "hasRole()"
-                .hasRole("ADMIN")
-                // Any other request requires authentication
-                .anyRequest()
-                .authenticated()
-                .and()
-                // Define logging in, a POST "/login" endpoint now exists under the hood, after
-                // login redirect to user page
-                .formLogin().loginPage("/users/login").loginProcessingUrl("/users/login")
-                .defaultSuccessUrl("/users/user")
-                .and()
-                // Define logging out, a POST "/logout" endpoint now exists under the hood,
-                // redirect to "/login", invalidate session and remove cookie
-                .logout().logoutUrl("/users/logout").logoutSuccessUrl("/users/login").invalidateHttpSession(true)
-                .deleteCookies("JSESSIONID");
+        http.authorizeHttpRequests(auth -> {
+            // Allow "/", "/register", and "/login" to anyone (permitAll)
+            auth.requestMatchers("/", "/users/register", "/users/login")
+                    .permitAll();
+            // Only allow admins to reach the "/admin" page
+            auth.requestMatchers("/users/admin")
+                    // note we do not need the "ROLE_" prefix as we are calling "hasRole()"
+                    .hasRole("ADMIN");
+            // Any other request requires authentication
+            auth.anyRequest()
+                    .authenticated();
+        });
+
+        // Define logging in, a POST "/login" endpoint now exists under the hood, after
+        // login redirect to user page
+        http.formLogin(login -> login.loginPage("/users/login").loginProcessingUrl("/users/login")
+                .defaultSuccessUrl("/users/user"));
+        // Define logging out, a POST "/logout" endpoint now exists under the hood,
+        // redirect to "/login", invalidate session and remove cookie
+        http.logout(
+                logout -> logout.logoutUrl("/users/logout").logoutSuccessUrl("/users/login")
+                        .invalidateHttpSession(true).deleteCookies("JSESSIONID"));
         return http.build();
 
     }
