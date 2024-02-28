@@ -18,7 +18,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
  */
 @Configuration
 @EnableWebSecurity
-@ComponentScan("com.baeldung.security")
+@ComponentScan("nz.ac.canterbury.seng302.gardenersgrove.security")
 public class SecurityConfiguration {
 
     /**
