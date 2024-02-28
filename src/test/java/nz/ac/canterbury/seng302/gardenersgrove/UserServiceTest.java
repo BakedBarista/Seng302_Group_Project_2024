@@ -39,4 +39,19 @@ public class UserServiceTest {
         Assertions.assertTrue(gardenUser.checkPassword("password"));
         Assertions.assertFalse(gardenUser.checkPassword("incorrect password"));
     }
+
+    /**
+     * Check that we can retrieve a user using and email and password
+     */
+    @Test
+    public void getUserByEmailAndPassword() {
+        String email = "jdo123@uclive.ac.nz";
+        String password = "P@ssw0rd!";
+        GardenUser user = new GardenUser("John", "Doe", email, "address", password, null);
+        userService.addUser(user);
+
+        Assertions.assertNotNull(userService.getUserByEmailAndPassword(email, password));
+        Assertions.assertNull(userService.getUserByEmailAndPassword(email, "invalid password"));
+        Assertions.assertNull(userService.getUserByEmailAndPassword("invalid email", password));
+    }
 }
