@@ -54,7 +54,7 @@ public class GardenUserService {
         var users = gardenUserRepository.findAll();
 
         for (GardenUser user : users) {
-            if (user.getEmail().equals(email) && user.getPassword().equals(password)) {
+            if (user.getEmail().equals(email) && user.checkPassword(password)) {
                 return user;
             }
         }

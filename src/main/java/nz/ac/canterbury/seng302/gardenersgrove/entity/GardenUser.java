@@ -3,6 +3,9 @@ package nz.ac.canterbury.seng302.gardenersgrove.entity;
 import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import jakarta.persistence.*;
 
@@ -54,8 +57,9 @@ public class GardenUser {
         this.lname = lname;
         this.email = email;
         this.address = address;
-        this.password = password;
         this.DOB = DOB;
+
+        this.setPassword(password);
     }
 
     public List<GrantedAuthority> getAuthorities() {
@@ -82,11 +86,17 @@ public class GardenUser {
         return address;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
     public String getDOB() {
         return DOB;
+    }
+
+    public void setPassword(String password) {
+        PasswordEncoder encoder = new BCryptPasswordEncoder();
+        this.password = encoder.encode(password);
+    }
+
+    public boolean checkPassword(String password) {
+        PasswordEncoder encoder = new BCryptPasswordEncoder();
+        return encoder.matches(password, this.password);
     }
 }
