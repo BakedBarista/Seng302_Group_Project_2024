@@ -126,7 +126,7 @@ public class GardenController {
             model.addAttribute("gardenName", newName);
             model.addAttribute("gardenLocation", newLocation);
             model.addAttribute("gardenSize", newSize);
-            return "redirect:../../gardens/"+id;
+            return "redirect:../../gardens/"+id+"/edit";
         }
 
         Optional<Garden> garden = formService.getGarden(id);
@@ -136,7 +136,7 @@ public class GardenController {
         updatedGarden.setSize(newSize);
 
         formService.addGardenFormResult(updatedGarden);
-        return "redirect:../../gardens";
+        return "redirect:../../gardens/"+id;
     }
 
     /**
