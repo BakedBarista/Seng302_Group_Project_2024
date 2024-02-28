@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Optional;
+
 /**
  * Controller for garden forms
  */
@@ -95,6 +97,7 @@ public class GardenController {
             // Return to the form with errors
             return "/gardens/createGarden";
         }
+
         formService.addGardenFormResult(new GardenFormResult(gardenName,gardenLocation,gardenSize));
         model.addAttribute("displayName", gardenName);
         model.addAttribute("displayGardenLocation", gardenLocation);
@@ -117,12 +120,36 @@ public class GardenController {
     /**
      * Get single garden details
      * @param model representation of results
-     * @return ???
+     * @return editGarden page
      */
-    @GetMapping("/garden/{id}")
+    @GetMapping("/gardens/{id}")
     public String getGarden(@PathVariable() long id, Model model) {
-        logger.info("Get /garden/${garden.id}");
-        model.addAttribute("garden", formService.getOne(id));
-        return "";
+        logger.info("Get /garden/{}", id);
+        Optional<GardenFormResult> garden = formService.getOne(id);
+        model.addAttribute("garden", garden.orElse(null));
+        return "/gardens/editGarden";
+    }
+
+    /**
+     * Get single garden details
+     * @param model representation of results
+     * @return redirect to gardens page
+     */
+    @PostMapping("/gardens/{id}/edit")
+    public String updateGarden(@PathVariable() long id,
+                               @RequestParam(name="displayName", required = false, defaultValue = "") String displayName,
+                               @RequestParam(name="displayLocation", required = false, defaultValue = "") String displayLocation,
+                               @RequestParam(name="displaySize", required = false, defaultValue = "") String displaySize,
+                               Model model) {
+
+        // VALIDATION
+        Optional<GardenFormResult> garden = formService.getOne(id);
+        GardenFormResult updatedGarden = garden.orElse(null);
+        updatedGarden.setName(displayName);
+        updatedGarden.setName(displayLocation);
+        updatedGarden.setName(displaySize);
+
+        formService.addGardenFormResult(updatedGarden);
+        return "gardens/viewGardens";
     }
 }
