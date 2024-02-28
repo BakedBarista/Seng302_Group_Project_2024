@@ -137,19 +137,20 @@ public class GardenController {
      */
     @PostMapping("/gardens/{id}/edit")
     public String updateGarden(@PathVariable() long id,
-                               @RequestParam(name="displayName", required = false, defaultValue = "") String displayName,
-                               @RequestParam(name="displayLocation", required = false, defaultValue = "") String displayLocation,
-                               @RequestParam(name="displaySize", required = false, defaultValue = "") String displaySize,
+                               @RequestParam(name="name") String newName,
+                               @RequestParam(name="location") String newLocation,
+                               @RequestParam(name="size") String newSize,
                                Model model) {
 
         // VALIDATION
+
         Optional<GardenFormResult> garden = formService.getOne(id);
         GardenFormResult updatedGarden = garden.orElse(null);
-        updatedGarden.setName(displayName);
-        updatedGarden.setName(displayLocation);
-        updatedGarden.setName(displaySize);
+        updatedGarden.setName(newName);
+        updatedGarden.setLocation(newLocation);
+        updatedGarden.setSize(newSize);
 
         formService.addGardenFormResult(updatedGarden);
-        return "gardens/viewGardens";
+        return "redirect:../../gardens";
     }
 }
