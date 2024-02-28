@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import nz.ac.canterbury.seng302.gardenersgrove.validation.userValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,6 +52,7 @@ public class RegisterController {
         Model model
     ) {
         logger.info("POST /users/register");
+
         // TODO: validation here
         boolean valid = password.equals(confirmPassword);
         if (!valid) {
@@ -62,6 +64,11 @@ public class RegisterController {
             model.addAttribute("dob", dob);
             return "users/registerTemplate";
         }
+        //need to serch databse and find if email exsists
+
+        UserValidation userValidation = new UserValidation();
+
+        userValidation.userEmailValidation(email);
 
         gardenUserService.addUser(new GardenUser(fname, lname, email, address, password, dob));
 
