@@ -90,7 +90,7 @@ public class GardenController {
     public String gardenDetail(@PathVariable(name = "id") Long id,
                                Model model) {
         logger.info("Get /gardens/id - display garden detail");
-        model.addAttribute("garden", formService.getGarden(id).get());
+        model.addAttribute("garden", gardenService.getGardenById(id).get());
         return "gardens/gardenDetails";
     }
 
