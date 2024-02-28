@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Optional;
+
 /**
  * Controller for garden forms
  */
@@ -114,11 +116,40 @@ public class GardenController {
         return "gardens/viewGardens";
     }
 
+    /**
+     * Get single garden details
+     * @param model representation of results
+     * @return editGarden page
+     */
     @GetMapping("/gardens/{id}")
-    public String gardenDetail(@PathVariable(name = "id") Long id,
+    public String getGarden(@PathVariable() long id, Model model) {
+        logger.info("Get /garden/{}", id);
+        Optional<GardenFormResult> garden = formService.getOne(id);
+        model.addAttribute("garden", garden.orElse(null));
+        return "/gardens/editGarden";
+    }
+
+    /**
+     * Get single garden details
+     * @param model representation of results
+     * @return redirect to gardens page
+     */
+    @PostMapping("/gardens/{id}/edit")
+    public String updateGarden(@PathVariable() long id,
+                               @RequestParam(name="name") String newName,
+                               @RequestParam(name="location") String newLocation,
+                               @RequestParam(name="size") String newSize,
                                Model model) {
-        logger.info("Get /gardens/id - display garden detail");
-        model.addAttribute("garden", formService.getGarden(id).get()); // TODO: Need to check that the ID actually exists
-        return "gardens/gardenDetails";
+
+        // VALIDATION
+
+        Optional<GardenFormResult> garden = formService.getOne(id);
+        GardenFormResult updatedGarden = garden.orElse(null);
+        updatedGarden.setName(newName);
+        updatedGarden.setLocation(newLocation);
+        updatedGarden.setSize(newSize);
+
+        formService.addGardenFormResult(updatedGarden);
+        return "redirect:../../gardens";
     }
 }
