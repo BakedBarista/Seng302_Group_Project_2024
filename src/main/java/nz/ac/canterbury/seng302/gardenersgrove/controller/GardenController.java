@@ -22,11 +22,11 @@ import java.util.Optional;
 public class GardenController {
     Logger logger = LoggerFactory.getLogger(GardenController.class);
 
-    private final GardenService formService;
+    private final GardenService gardenService;
 
     @Autowired
-    public GardenController(GardenService formService) {
-        this.formService = formService;
+    public GardenController(GardenService gardenService) {
+        this.gardenService = gardenService;
     }
 
     /**
@@ -97,7 +97,7 @@ public class GardenController {
             // Return to the form with errors
             return "redirect:/gardens/create";
         }
-        Garden savedGarden = formService.addGardenFormResult(new Garden(gardenName,gardenLocation,gardenSize));
+        Garden savedGarden = gardenService.addGarden(new Garden(gardenName,gardenLocation,gardenSize));
         model.addAttribute("displayName", gardenName);
         model.addAttribute("displayGardenLocation", gardenLocation);
         model.addAttribute("displayGardenSize", gardenSize);
@@ -112,7 +112,7 @@ public class GardenController {
     @GetMapping("/gardens")
     public String responses(Model model) {
         logger.info("Get /gardens - display all gardens");
-        model.addAttribute("gardens", formService.getFormResults());
+        model.addAttribute("gardens", gardenService.getAllGardens());
         return "gardens/viewGardens";
     }
 
@@ -124,7 +124,7 @@ public class GardenController {
     @GetMapping("/gardens/{id}")
     public String getGarden(@PathVariable() long id, Model model) {
         logger.info("Get /garden/{}", id);
-        Optional<GardenFormResult> garden = formService.getOne(id);
+        Optional<Garden> garden = gardenService.getGardenById(id);
         model.addAttribute("garden", garden.orElse(null));
         return "/gardens/editGarden";
     }
@@ -143,13 +143,13 @@ public class GardenController {
 
         // VALIDATION
 
-        Optional<GardenFormResult> garden = formService.getOne(id);
-        GardenFormResult updatedGarden = garden.orElse(null);
+        Optional<Garden> garden = gardenService.getGardenById(id);
+        Garden updatedGarden = garden.orElse(null);
         updatedGarden.setName(newName);
         updatedGarden.setLocation(newLocation);
         updatedGarden.setSize(newSize);
 
-        formService.addGardenFormResult(updatedGarden);
+        gardenService.addGarden(updatedGarden);
         return "redirect:../../gardens";
     }
 }
