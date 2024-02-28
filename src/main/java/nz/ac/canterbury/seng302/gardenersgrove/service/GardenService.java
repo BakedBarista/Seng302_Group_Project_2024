@@ -1,7 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenFormRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,27 +12,27 @@ import java.util.Optional;
  */
 @Service
 public class GardenService {
-    private GardenFormRepository formRepository;
+    private final GardenRepository gardenRepository;
 
-    public GardenService(GardenFormRepository formRepository) {this.formRepository = formRepository;}
-
-    /**
-     * Gets all GardenFormResults from persistence
-     * @return all GardenFormResults currently saved in persistence
-     */
-    public List<Garden> getFormResults() { return formRepository.findAll();}
+    public GardenService(GardenRepository gardenRepository) {this.gardenRepository = gardenRepository;}
 
     /**
-     * Adds a gardenFormResult to persistence
-     * @param gardenFormResult object to persist
-     * @return the saved gardenFormResult object
+     * Gets all the gardens currently in the database.
+     * @return a List of the existing gardens.
      */
-    public Garden addGardenFormResult(Garden gardenFormResult) { return formRepository.save(gardenFormResult);}
+    public List<Garden> getAllGardens() { return gardenRepository.findAll();}
+
+    /**
+     * Adds a garden to the database.
+     * @param garden object to save.
+     * @return the saved garden object.
+     */
+    public Garden addGarden(Garden garden) { return gardenRepository.save(garden);}
 
     /**
      * Get garden details by id
      * @param id garden id used to retrieve data
      * @return the object of given id
      */
-    public Optional<Garden> getGarden(long id) {return formRepository.findById(id);}
+    public Optional<Garden> getGardenById(long id) {return gardenRepository.findById(id);}
 }
