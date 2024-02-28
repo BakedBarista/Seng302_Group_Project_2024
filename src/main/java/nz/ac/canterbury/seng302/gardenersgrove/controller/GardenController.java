@@ -135,7 +135,7 @@ public class GardenController {
         updatedGarden.setLocation(newLocation);
         updatedGarden.setSize(newSize);
 
-        formService.addGardenFormResult(updatedGarden);
+        formService.addGarden(updatedGarden);
         return "redirect:../../gardens/"+id;
     }
 
