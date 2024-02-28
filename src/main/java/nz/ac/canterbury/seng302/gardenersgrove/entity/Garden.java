@@ -7,7 +7,7 @@ import jakarta.persistence.*;
  * Entity class for garden with name, location and size
  */
 @Entity
-public class GardenFormResult {
+public class Garden {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,7 +21,7 @@ public class GardenFormResult {
     @Column(nullable = false)
     private String size;
 
-    protected GardenFormResult() {}
+    protected Garden() {}
 
     /**
      * Creates a new FormResult object
@@ -29,7 +29,7 @@ public class GardenFormResult {
      * @param gardenLocation location of garden
      * @param gardenSize size of garden
      */
-    public GardenFormResult(String gardenName, String gardenLocation, String gardenSize) {
+    public Garden(String gardenName, String gardenLocation, String gardenSize) {
         this.name = gardenName;
         this.location = gardenLocation;
         this.size = gardenSize;

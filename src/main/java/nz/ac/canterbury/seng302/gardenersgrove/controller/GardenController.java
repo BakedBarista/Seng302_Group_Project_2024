@@ -1,8 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 
-import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenFormResult;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenFormService;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +22,10 @@ import java.util.Optional;
 public class GardenController {
     Logger logger = LoggerFactory.getLogger(GardenController.class);
 
-    private final GardenFormService formService;
+    private final GardenService formService;
 
     @Autowired
-    public GardenController(GardenFormService formService) {
+    public GardenController(GardenService formService) {
         this.formService = formService;
     }
 
@@ -43,14 +43,14 @@ public class GardenController {
                        @RequestParam(name="displaySize", required = false, defaultValue = "") String displaySize,
                        Model model) {
         logger.info("GET /gardens/create - display the new garden form");
-        formService.addGardenFormResult(new GardenFormResult(displayName, displayLocation, displaySize));
-        model.addAttribute("displayName", displayName);
-        model.addAttribute("displayGardenLocation", displayLocation);
-        model.addAttribute("displayGardenSize", displaySize);
-        return "/gardens/createGarden";
+//        formService.addGardenFormResult(new Garden(displayName, displayLocation, displaySize));
+//        model.addAttribute("displayName", displayName);
+//        model.addAttribute("displayGardenLocation", displayLocation);
+//        model.addAttribute("displayGardenSize", displaySize);
+        return "gardens/createGarden";
     }
 
-    @PostMapping("/gardens")
+    @PostMapping("/gardens/create")
     public String submitForm( @RequestParam(name="name") String gardenName,
                               @RequestParam(name = "location") String gardenLocation,
                               @RequestParam(name = "size") String gardenSize,
@@ -95,14 +95,13 @@ public class GardenController {
             model.addAttribute("gardenSize", gardenSize);
 
             // Return to the form with errors
-            return "/gardens/createGarden";
+            return "redirect:/gardens/create";
         }
-
-        formService.addGardenFormResult(new GardenFormResult(gardenName,gardenLocation,gardenSize));
+        Garden savedGarden = formService.addGardenFormResult(new Garden(gardenName,gardenLocation,gardenSize));
         model.addAttribute("displayName", gardenName);
         model.addAttribute("displayGardenLocation", gardenLocation);
         model.addAttribute("displayGardenSize", gardenSize);
-        return "redirect:./gardens";
+        return "redirect:/gardens/" + savedGarden.getId();
     }
 
     /**
