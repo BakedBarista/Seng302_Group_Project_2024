@@ -1,8 +1,13 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,9 +16,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 /**
  * Controller for registering new users
  */
+
+
 @Controller
 public class RegisterController {
     Logger logger = LoggerFactory.getLogger(RegisterController.class);
+
+    private final GardenUser gardenUser;
+
+    @Autowired
+    public RegisterController(GardenUser gardenUser) {
+        this.gardenUser = gardenUser;
+    }
 
     /**
      * Shows the user the form
@@ -41,7 +55,7 @@ public class RegisterController {
         Model model
     ) {
         logger.info("POST /users/register");
-
+        gardenUser.addUser(new GardenUser(fname, lname, email, address, password, dob));
         // TODO: validation here
         boolean valid = password.equals(confirmPassword);
         if (!valid) {
@@ -54,7 +68,7 @@ public class RegisterController {
             return "users/registerTemplate";
         }
 
-        // TODO: save to database
+
 
         return "redirect:/users/login";
     }
