@@ -1,5 +1,9 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
+import java.util.List;
+
+import org.springframework.security.core.GrantedAuthority;
+
 import jakarta.persistence.*;
 
 /**
@@ -52,6 +56,10 @@ public class GardenUser {
         this.address = address;
         this.password = password;
         this.DOB = DOB;
+    }
+
+    public List<GrantedAuthority> getAuthorities() {
+        return List.of();
     }
 
     public Long getId() {
