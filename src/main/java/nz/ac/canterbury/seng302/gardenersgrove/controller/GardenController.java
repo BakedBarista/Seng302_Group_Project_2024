@@ -87,6 +87,14 @@ public class GardenController {
         return "gardens/viewGardens";
     }
 
+    @GetMapping("/gardens/{id}")
+    public String gardenDetail(@PathVariable(name = "id") Long id,
+                               Model model) {
+        logger.info("Get /gardens/id - display garden detail");
+        model.addAttribute("garden", formService.getGarden(id).get());
+        return "gardens/gardenDetails";
+    }
+
     /**
      * Get single garden details
      * @param model representation of results
