@@ -92,7 +92,7 @@ public class GardenController {
      * @param model representation of results
      * @return editGarden page
      */
-    @GetMapping("/gardens/{id}")
+    @GetMapping("/gardens/{id}/edit")
     public String getGarden(@PathVariable() long id, Model model) {
         logger.info("Get /garden/{}", id);
         Optional<Garden> garden = formService.getGarden(id);

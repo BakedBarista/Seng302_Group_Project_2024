@@ -15,6 +15,7 @@
                 <th>Name</th>
                 <th>Location</th>
                 <th>Size</th>
+                <th>Edit</th>
             </tr>
             </thead>
             <tbody>
@@ -23,6 +24,7 @@
                 <td><span th:text="${garden.name}"> Name </span></td>
                 <td><span th:text="${garden.location}"> Location </span></td>
                 <td><span th:text="${garden.size}"> Size </span></td>
+                <td><span><a th:href="@{/gardens/{id}/edit(id=${garden.id})}">Edit</a></span></td>
             </tr>
             </tbody>
         </table>
