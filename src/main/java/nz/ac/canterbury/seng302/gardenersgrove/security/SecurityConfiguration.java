@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng302.security;
+package nz.ac.canterbury.seng302.gardenersgrove.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
