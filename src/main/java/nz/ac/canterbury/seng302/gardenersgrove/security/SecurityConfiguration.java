@@ -64,10 +64,6 @@ public class SecurityConfiguration {
             // Allow "/", "/register", and "/login" to anyone (permitAll)
             auth.requestMatchers("/", "/users/register", "/users/login")
                     .permitAll();
-            // Only allow admins to reach the "/admin" page
-            auth.requestMatchers("/users/admin")
-                    // note we do not need the "ROLE_" prefix as we are calling "hasRole()"
-                    .hasRole("ADMIN");
             // Any other request requires authentication
             auth.anyRequest()
                     .authenticated();
