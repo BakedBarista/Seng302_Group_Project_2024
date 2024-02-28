@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign In | Gardener's Grove</title>
+</head>
+<body>
+<header th:insert="fragments/general.html :: header"></header>
+<main class="main-container">
+    <h1>Register</h1>
+    <form th:action="login" method="post">
+        <label class="form-group">
+            Email
+            <input type="email" th:name="email" th:value="*{email}" required>
+        </label>
+        <label class="form-group">
+            Password
+            <input type="password" th:name="password" required>
+        </label>
+        <button class="btn">Sign In</button>
+        <a href="/" class="btn">Cancel</a>
+        <a href="/users/register">Not registered? Create an account</a>
+
+    </form>
+</main>
+</body>
+</html>
