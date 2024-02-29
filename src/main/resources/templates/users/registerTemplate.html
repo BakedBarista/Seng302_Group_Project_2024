@@ -22,6 +22,7 @@
             <label class="form-group">
                 Last Name
                 <input type="text" th:name="lname" th:value="*{lname}" id="lname" required>
+                <span class = "error" th:text="*{incorrectName}"></span>
             </label>
             <label class="form-checkbox">
                 <input type="checkbox" th:name="noLname" th:value="*{noLname}" th:checked="*{noLname}" id="noLname"> I have no surname
@@ -29,6 +30,7 @@
             <label class="form-group">
                 Email
                 <input type="email" th:name="email" th:value="*{email}" required>
+                <span class = "error" th:text="*{incorrectEmail}"></span>
             </label>
             <label class="form-group">
                 Address
@@ -37,6 +39,8 @@
             <label class="form-group">
                 Password
                 <input type="password" th:name="password" required>
+                <span class = "error" th:text="*{matchPassword}"></span>
+                <span class = "error" th:text="*{weakPassword}"></span>
             </label>
             <label class="form-group">
                 Confirm Password
@@ -45,6 +49,8 @@
             <label class="form-group">
                 Date of Birth (optional)
                 <input type="date" th:name="dob" th:value="*{dob}">
+                <span class = "error" th:text="*{youngDob}"></span>
+                <span class = "error" th:text="*{oldDob}"></span>
             </label>
             <button class="btn">Submit</button>
             <a href="/" class="btn">Cancel</button>
