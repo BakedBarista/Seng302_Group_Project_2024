@@ -32,12 +32,12 @@ public class PlantService {
      * @param plant the plant data to save in the database.
      * @return the saved plant object.
      */
-    public Plant addPlantFormResult(Plant plant) { return plantRepository.save(plant);}
+    public Plant addPlant(Plant plant) { return plantRepository.save(plant);}
 
     /**
      * Get's one plant by it's unique ID.
      * @param id the unique ID of the plant in the database.
      * @return the plant object
      */
-    public Optional<Plant> getPlant(long id) {return plantRepository.findById(id);}
+    public Optional<Plant> getPlantById(long id) {return plantRepository.findById(id);}
 }

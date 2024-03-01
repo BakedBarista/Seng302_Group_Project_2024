@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Plant</title>
+</head>
+<body>
+<div>
+    <div>
+        <form th:action="@{/gardens/{garden_id}/plants/{plant_id}/edit(garden_id=${garden.id},plant_id=${plant.id})}" method="post">
+            <label for="name"> Plant Name: </label>
+            <input type="text" class="form-control" id="name" placeholder="${plant.name}"
+                   th:name="name" th:value="${garden.name}" data-cy="name" autofocus>
+            <div th:if="${nameError}" th:text="${nameError}" style="color: red;"></div>
+            <br/>
+            <label for="count"> Garden Count: </label>
+            <input type="text" class="form-control" id="count" th:placeholder="${plant.count}"
+                   th:name="count" th:value="${garden.location}" data-cy="location" autofocus>
+            <div th:if="${locationError}" th:text="${locationError}" style="color: red;"></div>
+            <br/>
+            <label for="description"> Plant Description: </label>
+            <input type="text" class="form-control" id="description" placeholder="${plant.description}"
+                   th:name="description" th:value="${garden.description}" data-cy="size" autofocus>
+            <div th:if="${sizeError}" th:text="${sizeError}" style="color: red;"></div>
+            <br/>
+            <label for="date"> Date Planted: </label>
+            <input type="text" class="form-control" id="date" placeholder="${plant.date}"
+                   th:name="date" th:value="${garden.date}" data-cy="size" autofocus>
+            <div th:if="${sizeError}" th:text="${sizeError}" style="color: red;"></div>
+            <br/>
+            <button type="submit">Submit!</button><button type="button">Cancel</button>
+        </form>
+    </div>
+
+    <div>
+        <a th:href="@{/gardens}">View Gardens</a>
+        <a th:href="@{/}">Back to home</a>
+    </div>
+</div>
+</body>
+</html>
