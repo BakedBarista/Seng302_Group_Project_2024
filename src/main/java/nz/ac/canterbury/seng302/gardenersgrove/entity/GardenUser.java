@@ -24,7 +24,7 @@ public class GardenUser {
     @Column(nullable = true)
     private String lname;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
