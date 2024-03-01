@@ -50,13 +50,13 @@ public class GardenUserService {
      *         exists
      */
     public GardenUser getUserByEmailAndPassword(String email, String password) {
-        // TODO: get single user from database
-        var users = gardenUserRepository.findAll();
+        var user = gardenUserRepository.findByEmail(email);
+        if (user.isEmpty()) {
+            return null;
+        }
 
-        for (GardenUser user : users) {
-            if (user.getEmail().equals(email) && user.checkPassword(password)) {
-                return user;
-            }
+        if (user.get().checkPassword(password)) {
+            return user.get();
         }
         return null;
     }
