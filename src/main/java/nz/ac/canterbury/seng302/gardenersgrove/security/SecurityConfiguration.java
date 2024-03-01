@@ -76,8 +76,11 @@ public class SecurityConfiguration {
         // Define logging out, a POST "/logout" endpoint now exists under the hood,
         // redirect to "/login", invalidate session and remove cookie
         http.logout(
-                logout -> logout.logoutUrl("/users/logout").logoutSuccessUrl("/users/login")
-                        .invalidateHttpSession(true).deleteCookies("JSESSIONID"));
+                logout -> logout
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/users/logout"))
+                        .logoutSuccessUrl("/users/login")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID"));
         return http.build();
 
     }
