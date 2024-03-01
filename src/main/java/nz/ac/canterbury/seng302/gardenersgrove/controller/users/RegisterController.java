@@ -25,6 +25,7 @@ public class RegisterController {
 
     /**
      * Shows the user the form
+     * 
      * @return redirect to /demo
      */
     @GetMapping("/users/register")
@@ -38,16 +39,15 @@ public class RegisterController {
      */
     @PostMapping("/users/register")
     public String submitRegister(
-        @RequestParam(name="fname") String fname,
-        @RequestParam(name="lname") String lname,
-        @RequestParam(name="noLname", defaultValue = "false") boolean noLname,
-        @RequestParam(name="email") String email,
-        @RequestParam(name="address") String address,
-        @RequestParam(name="password") String password,
-        @RequestParam(name="confirmPassword") String confirmPassword,
-        @RequestParam(name="dob") String dob,
-        Model model
-    ) {
+            @RequestParam(name = "fname") String fname,
+            @RequestParam(name = "lname") String lname,
+            @RequestParam(name = "noLname", defaultValue = "false") boolean noLname,
+            @RequestParam(name = "email") String email,
+            @RequestParam(name = "address") String address,
+            @RequestParam(name = "password") String password,
+            @RequestParam(name = "confirmPassword") String confirmPassword,
+            @RequestParam(name = "dob") String dob,
+            Model model) {
         logger.info("POST /users/register");
 
         // TODO: validation here
@@ -69,6 +69,20 @@ public class RegisterController {
         userService.addUser(user);
 
         return "redirect:/users/login";
+    }
+
+    /**
+     * Submits the form
+     */
+    @GetMapping("/users/dummy")
+    public String createDummy() {
+        logger.info("POST /users/register");
+
+        GardenUser user = new GardenUser("John", "Doe", "john.doe@gmail.com", "Jack Erskine 133", "password",
+                "1970-01-01");
+        userService.addUser(user);
+
+        return "redirect:/";
     }
 
 }
