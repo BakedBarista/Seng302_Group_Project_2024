@@ -77,6 +77,7 @@ public class SecurityConfiguration {
         // redirect to "/login", invalidate session and remove cookie
         http.logout(
                 logout -> logout
+                        // Used a RequestMatcher to accept GET requests
                         .logoutRequestMatcher(new AntPathRequestMatcher("/users/logout"))
                         .logoutSuccessUrl("/users/login")
                         .invalidateHttpSession(true)
