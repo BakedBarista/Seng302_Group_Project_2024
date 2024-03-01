@@ -44,8 +44,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         String email = String.valueOf(authentication.getName());
         String password = String.valueOf(authentication.getCredentials());
 
-        // TODO: don't show password
-        logger.info("Authenticating user: " + email + " with password: " + password);
+        logger.info("Authenticating user: " + email);
 
         if (email == null || email.isEmpty() || password == null || password.isEmpty()) {
             throw new BadCredentialsException("Bad Credentials");
@@ -53,6 +52,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
         GardenUser u = userService.getUserByEmailAndPassword(email, password);
         if (u == null) {
+            logger.warn("Invalid username or password");
             throw new BadCredentialsException("Invalid username or password");
         }
         return new UsernamePasswordAuthenticationToken(u.getEmail(), null, u.getAuthorities());
