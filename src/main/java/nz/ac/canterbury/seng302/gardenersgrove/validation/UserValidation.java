@@ -61,7 +61,7 @@ public class UserValidation {
     //validation for checking if the password is a strong password
     public static boolean userPasswordStrengthValidation(String password){
         if(password.length() >= 8){ // checking is it contains number special charcters ect
-            if (password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=])(?=\\S+$).+$")){ 
+            if (password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$")){ 
                 return true;
             }
         }
@@ -69,6 +69,6 @@ public class UserValidation {
     }
 
 
-
+young2024-03-01T13:00:27.419+13:00
 
 }

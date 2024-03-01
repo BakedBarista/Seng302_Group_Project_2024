@@ -57,27 +57,21 @@ public class RegisterController {
 
         if (!userValidation.userEmailValidation(email)){
             model.addAttribute("incorrectEmail", "Email address must bein the form ‘jane@doe.nz’");
-            System.out.print("wronngngngngng email");
             return "users/registerTemplate";
         } else if (!userValidation.userNameValidation(fname, lname)){
             model.addAttribute("incorrectName", "{First/Last} name cannot be empty and must only include letters, spaces,hyphens or apostrophes");
-            System.out.print("wronngngngngng name");
             return "users/registerTemplate";
         } else if (!userValidation.userPasswordMatchValidation(password, confirmPassword)){
             model.addAttribute("matchPassword", "Passwords do not match");
-            System.out.print("wronngngngngng match");
             return "users/registerTemplate";
         } else if (!userValidation.userPasswordStrengthValidation(password)){
             model.addAttribute("weakPassword", "our password must beat least 8 characters long and include at least one uppercase letter, one lowercase letter, one number,and one special character");
-            System.out.print("wronngngngngng strengh");
             return "users/registerTemplate";
         } else if (!userValidation.userYoungDateValidation(dob)){
             model.addAttribute("youndDob", "You must be 13 years orolder to create an account");
-            System.out.print("wronngngngngng young");
             return "users/registerTemplate";
         } else if (!userValidation.userOldDateValidation(dob)){
             model.addAttribute("oldDob", "The maximum age allowed is 120 years");
-            System.out.print("wronngngngngng age");
             return "users/registerTemplate";
         } else {
             System.out.print("added");
