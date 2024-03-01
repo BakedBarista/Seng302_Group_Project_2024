@@ -1,6 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 
 /**
@@ -12,16 +14,19 @@ public class Garden {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Please enter a name for your garden.")
     @Column(nullable = false)
     private String name;
 
+    @NotBlank(message = "Please enter a location for your garden.")
     @Column(nullable = false)
     private String location;
 
+    @NotBlank(message = "Please enter a size for your garden.")
     @Column(nullable = false)
     private String size;
 
-    protected Garden() {}
+    public Garden() {}
 
     /**
      * Creates a new FormResult object
