@@ -2,7 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 
 /**
@@ -15,6 +15,7 @@ public class Garden {
     private Long id;
 
     @NotBlank(message = "Please enter a name for your garden.")
+    @Size(min = 3, max = 10, message = "Name must be between 3 and 50 characters.")
     @Column(nullable = false)
     private String name;
 
