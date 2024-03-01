@@ -12,11 +12,13 @@
         <h3>First Name</h3>
         <p>[[${fname}]]</p>
         <h3>Last Name</h3>
-        <p>[[${lname}]]</p>
+        <p th:if="${lname != null}">[[${lname}]]</p>
+        <p th:if="${lname == null}">&mdash;</p>
         <h3>Email</h3>
         <p>[[${email}]]</p>
         <h3>Date of Birth</h3>
-        <p>[[${dob}]]</p>
+        <p th:if="${dob != null}">[[${dob}]]</p>
+        <p th:if="${dob == null}">&mdash;</p>
     </main>
 </body>
 </html>
