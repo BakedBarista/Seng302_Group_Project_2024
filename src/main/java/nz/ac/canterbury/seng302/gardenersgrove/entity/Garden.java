@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 
@@ -14,12 +15,14 @@ public class Garden {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Please enter a name for your garden.")
-    @Size(min = 3, max = 10, message = "Name must be between 3 and 50 characters.")
+    @NotBlank(message = "Garden name cannot be empty")
+    @Pattern(regexp = "^[A-Za-z0-9 .,'-]+$", message = "Garden name must only include letters, numbers, spaces, dots, hyphens, or apostrophes")
+    @Size(min = 3, max = 50, message = "Name must be between 3 and 50 characters.")
     @Column(nullable = false)
     private String name;
 
-    @NotBlank(message = "Please enter a location for your garden.")
+    @NotBlank(message = "Location cannot be empty")
+    @Pattern(regexp = "^[A-Za-z0-9 .,'-]+$", message = "Location name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes")
     @Column(nullable = false)
     private String location;
 

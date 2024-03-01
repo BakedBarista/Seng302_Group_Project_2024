@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+
 import java.util.Optional;
 
 /**
@@ -50,9 +51,13 @@ public class GardenController {
         return "gardens/createGarden";
     }
 
-    //In this case Model Attribute is used to bind the form data to an instance of the garden class. Automatically populates the garden object with the form data
-    //BindingResult is used to check for errors in the form. After spring binds the form data to the garden object, it checks for errors and if there are any,
-    // it adds them to the BindingResult object which we can use to check if there have been any errors.
+    /**
+     * Submits form to be displayed
+     * @param garden
+     * @param bindingResult
+     * @param model
+     * @return gardenForm
+     */
     @PostMapping("/gardens/create")
     public String submitForm(@Valid @ModelAttribute("garden") Garden garden,
                              BindingResult bindingResult, Model model) {
