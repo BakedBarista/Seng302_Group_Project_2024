@@ -25,7 +25,7 @@ public class PlantController {
         this.plantService = plantService;
     }
 
-    @GetMapping("/gardens/${id}/add-plant")
+    @GetMapping("/gardens/{id}/add-plant")
     public String form(@RequestParam(name="name", required = false, defaultValue = "") String name,
                        @RequestParam(name="count", required = false, defaultValue = "") String count,
                        @RequestParam(name="description", required = false, defaultValue = "") String description,
