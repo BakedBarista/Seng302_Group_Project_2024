@@ -2,7 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
-import nz.ac.canterbury.seng302.gardenersgrove.validation.UserValidation;
+import nz.ac.canterbury.seng302.gardenersgrove.validation.UserRegoValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,24 +53,24 @@ public class RegisterController {
     ) {
         logger.info("POST /users/register");
 
-        UserValidation userValidation = new UserValidation();
+        UserRegoValidation userRegoValidation = new UserRegoValidation();
 
-        if (!userValidation.userEmailValidation(email)){
-            model.addAttribute("incorrectEmail", "Email address must bein the form ‘jane@doe.nz’");
+        if (!userRegoValidation.userEmailValidation(email)){
+            model.addAttribute("incorrectEmail", "Email address must be in the form ‘jane@doe.nz’");
             return "users/registerTemplate";
-        } else if (!userValidation.userNameValidation(fname, lname)){
+        } else if (!userRegoValidation.userNameValidation(fname, lname, noLname)){
             model.addAttribute("incorrectName", "{First/Last} name cannot be empty and must only include letters, spaces,hyphens or apostrophes");
             return "users/registerTemplate";
-        } else if (!userValidation.userPasswordMatchValidation(password, confirmPassword)){
+        } else if (!userRegoValidation.userPasswordMatchValidation(password, confirmPassword)){
             model.addAttribute("matchPassword", "Passwords do not match");
             return "users/registerTemplate";
-        } else if (!userValidation.userPasswordStrengthValidation(password)){
+        } else if (!userRegoValidation.userPasswordStrengthValidation(password)){
             model.addAttribute("weakPassword", "our password must beat least 8 characters long and include at least one uppercase letter, one lowercase letter, one number,and one special character");
             return "users/registerTemplate";
-        } else if (!userValidation.userYoungDateValidation(dob)){
+        } else if (!userRegoValidation.userYoungDateValidation(dob)){
             model.addAttribute("youndDob", "You must be 13 years orolder to create an account");
             return "users/registerTemplate";
-        } else if (!userValidation.userOldDateValidation(dob)){
+        } else if (!userRegoValidation.userOldDateValidation(dob)){
             model.addAttribute("oldDob", "The maximum age allowed is 120 years");
             return "users/registerTemplate";
         } else {
