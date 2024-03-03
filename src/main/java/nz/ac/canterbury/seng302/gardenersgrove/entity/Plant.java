@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 /**
  * Entity class for Plants
  */
+
 @Entity
 public class Plant {
     @Id
