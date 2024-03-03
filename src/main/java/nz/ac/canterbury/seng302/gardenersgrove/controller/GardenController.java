@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 
+import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import org.slf4j.Logger;
@@ -8,10 +9,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
 
 import java.util.Optional;
 
@@ -43,34 +47,27 @@ public class GardenController {
                        @RequestParam(name="displaySize", required = false, defaultValue = "") String displaySize,
                        Model model) {
         logger.info("GET /gardens/create - display the new garden form");
-//        formService.addGardenFormResult(new Garden(displayName, displayLocation, displaySize));
-//        model.addAttribute("displayName", displayName);
-//        model.addAttribute("displayGardenLocation", displayLocation);
-//        model.addAttribute("displayGardenSize", displaySize);
+        model.addAttribute("garden", new Garden()); // Create a new garden object to be used in the form
         return "gardens/createGarden";
     }
 
+    /**
+     * Submits form to be displayed
+     * @param garden
+     * @param bindingResult
+     * @param model
+     * @return gardenForm
+     */
     @PostMapping("/gardens/create")
-    public String submitForm( @RequestParam(name="name") String gardenName,
-                              @RequestParam(name = "location") String gardenLocation,
-                              @RequestParam(name = "size") String gardenSize,
-                              Model model) {
+    public String submitForm(@Valid @ModelAttribute("garden") Garden garden,
+                             BindingResult bindingResult, Model model) {
         logger.info("POST /gardens - submit the new garden form");
 
-        if (validateGardenName(gardenName, model) ||
-                validateGardenLocation(gardenLocation, model) ||
-                validateGardenSize(gardenSize, model)) {
-            model.addAttribute("gardenName", gardenName);
-            model.addAttribute("gardenLocation", gardenLocation);
-            model.addAttribute("gardenSize", gardenSize);
-
-            // Return to the form with errors
-            return "redirect:/gardens/create";
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("garden", garden);
+            return "gardens/createGarden";
         }
-        Garden savedGarden = gardenService.addGarden(new Garden(gardenName,gardenLocation,gardenSize));
-        model.addAttribute("displayName", gardenName);
-        model.addAttribute("displayGardenLocation", gardenLocation);
-        model.addAttribute("displayGardenSize", gardenSize);
+        Garden savedGarden = gardenService.addGarden(garden);
         return "redirect:/gardens/" + savedGarden.getId();
     }
 
@@ -119,14 +116,10 @@ public class GardenController {
                                @RequestParam(name="size") String newSize,
                                Model model) {
 
-        if (validateGardenName(newName, model) ||
-                validateGardenLocation(newLocation, model) ||
-                validateGardenSize(newSize, model)) {
-            model.addAttribute("gardenName", newName);
-            model.addAttribute("gardenLocation", newLocation);
-            model.addAttribute("gardenSize", newSize);
-            return "redirect:../../gardens/"+id+"/edit";
-        }
+        model.addAttribute("gardenName", newName);
+        model.addAttribute("gardenLocation", newLocation);
+        model.addAttribute("gardenSize", newSize);
+
 
         Optional<Garden> garden = gardenService.getGardenById(id);
         Garden updatedGarden = garden.orElse(null);
@@ -138,60 +131,9 @@ public class GardenController {
         return "redirect:../../gardens";
     }
 
-    /**
-     * validate gardenName
-     * @param gardenName
-     * @param model
-     * @return true if invalid
-     */
-    public boolean validateGardenName(String gardenName, Model model) {
-        // Garden name validation
-        if (gardenName == null || gardenName.trim().isEmpty()) {
-            model.addAttribute("nameError", "Garden name cannot be empty");
-            return true;
-        } else if (!gardenName.matches("^[A-Za-z0-9 .,'-]+$")) {
-            model.addAttribute("nameError", "Garden name must only include letters, numbers, spaces, dots, hyphens or apostrophes");
-            return true;
-        }
-        return false;
-    }
 
-    /**
-     * validate garden location
-     * @param gardenLocation
-     * @param model
-     * @return true if invalid
-     */
-    public boolean validateGardenLocation(String gardenLocation, Model model) {
-        if (gardenLocation == null || gardenLocation.trim().isEmpty()) {
-            model.addAttribute("locationError", "Location cannot be empty");
-            return true;
-        } else if (!gardenLocation.matches("^[A-Za-z0-9 ,.'-]+$")) {
-            model.addAttribute("locationError", "Location name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes");
-            return true;
-        }
-        return false;
-    }
 
-    /**
-     * validate garden size
-     * @param gardenSize
-     * @param model
-     * @return true if invalid
-     */
-    public boolean validateGardenSize(String gardenSize, Model model) {
-        if (!gardenSize.trim().isEmpty()) {
-            gardenSize = gardenSize.replace(',', '.'); // Replace comma with dot for number parsing
-            try {
-                double size = Double.parseDouble(gardenSize);
-                if (size < 0) {
-                    throw new NumberFormatException("Size must be positive");
-                }
-            } catch (NumberFormatException e) {
-                model.addAttribute("sizeError", "Garden size must be a positive number");
-                return true;
-            }
-        }
-        return false;
-    }
+
+
+
 }
