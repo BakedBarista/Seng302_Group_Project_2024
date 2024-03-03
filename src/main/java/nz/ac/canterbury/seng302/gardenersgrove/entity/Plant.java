@@ -24,6 +24,10 @@ public class Plant {
     @Column(nullable = false)
     private String plantedDate;
 
+    @ManyToOne
+    @JoinColumn
+    private Garden garden;
+
     protected Plant() {}
 
     public Plant(String name, int count, String description, String plantedDate) {
@@ -69,6 +73,15 @@ public class Plant {
         this.plantedDate = plantedDate;
     }
 
+    public void setGarden(Garden garden) {
+        this.garden = garden;
+    }
+
+    public Garden getGarden() {
+        return garden;
+    }
+
+
     @Override
     public String toString() {
         return "GardenFormResult{" +
@@ -79,4 +92,5 @@ public class Plant {
                 ", plantedDate ='" + this.plantedDate + '\'' +
                 '}';
     }
+
 }

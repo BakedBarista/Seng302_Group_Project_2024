@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
+    <title>Add a New Plant</title>
+</head>
+<body>
+<div>
+    <div>
+        <form th:action="@{/gardens/{id}/addplant(id=${gardenId})}" method="post">
+
+
+        <!-- Plant Name Field -->
+            <label for="plantName">Plant Name:</label>
+            <input type="text" id="plantName" name="plantName" placeholder="Enter Plant Name" th:value="${plantName}" required>
+            <div th:if="${plantNameError}" th:text="${plantNameError}" style="color: red;"></div>
+            <br/>
+            <!-- Plant Description Field -->
+            <label for="description">Description:</label>
+            <textarea id="description" name="description" placeholder="Enter description" th:text="${description}" maxlength="512"></textarea>
+            <div th:if="${descriptionError}" th:text="${descriptionError}" style="color: red;"></div>
+            <br/>
+            <!-- Plant Count Field -->
+            <label for="count">Count:</label>
+            <input type="text" id="count" name="count" placeholder="Enter Count" th:value="${count}" required>
+            <div th:if="${countError}" th:text="${countError}" style="color: red;"></div>
+            <br/>
+            <!-- Planting Date Field -->
+            <label for="plantingDate">Planting Date (DD/MM/YYYY):</label>
+            <input type="date" id="plantingDate" name="plantingDate" placeholder="DD/MM/YYYY" th:value="${plantingDate}" required>
+            <div th:if="${dateError}" th:text="${dateError}" style="color: red;"></div>
+            <br/>
+            <button type="submit">Submit!</button>
+            <button type="button" onclick="window.location.href = '/gardens'">Cancel</button>
+
+
+        </form>
+    </div>
+    <div>
+        <br />
+        <button><a th:href="@{/gardens}">Back to Gardens</a></button>
+        <button><a th:href="@{/}">Return home</a></button>
+    </div>
+</div>
+</body>
+</html>

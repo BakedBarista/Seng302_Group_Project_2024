@@ -1,13 +1,15 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
-
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -21,20 +23,43 @@ public class PlantController {
     Logger logger = LoggerFactory.getLogger(PlantController.class);
 
     private final PlantService plantService;
+    private PlantRepository plantRepository;
+
+    private final GardenService gardenService;
 
     @Autowired
-    public PlantController(PlantService plantService) {
+    public PlantController(PlantService plantService, GardenService gardenService) {
         this.plantService = plantService;
+        this.gardenService = gardenService;
     }
 
-    @GetMapping("/gardens/{id}/add-plant")
+    @GetMapping("/gardens/{id}/addplant")
     public String form(@RequestParam(name="name", required = false, defaultValue = "") String name,
                        @RequestParam(name="count", required = false, defaultValue = "") String count,
                        @RequestParam(name="description", required = false, defaultValue = "") String description,
                        @RequestParam(name="plantedDate", required = false, defaultValue = "") String plantedDate,
-                       Model model) {
-        logger.info("GET /gardens/${id}/add-plant - display the new plant form");
-        return "gardens/createGarden"; // TODO: Add the plant form
+                       Model model,
+                       @PathVariable("id") Long id){
+
+        logger.info("GET /gardens/${id}/addplant - display the new plant form");
+        logger.info("Garden ID: {}", id);
+        model.addAttribute("gardenId", id);
+        return "plants/addPlant"; // TODO: Add the plant form
+    }
+
+    @PostMapping("/gardens/{id}/addplant")
+    public String submitForm(@PathVariable("id") Long id,
+                             @ModelAttribute("plant") Plant plant,
+                             BindingResult bindingResult, Model model) {
+
+
+        logger.info("POST /gardens/${id}/addplant - submit the new plant form");
+        if(bindingResult.hasErrors()) {
+            return "plants/addPlant";
+        }
+
+        Plant savedPlant = plantService.addPlant(plant, id);
+        return "redirect:/gardens/" + id;
     }
 
     /**
@@ -79,7 +104,7 @@ public class PlantController {
         updatedPlant.setDescription(newDescription);
         updatedPlant.setPlantedDate(newDate);
 
-        plantService.addPlant(updatedPlant);
+        //plantService.addPlant(updatedPlant);
         return "redirect:../../../" + garden_id;
     }
 

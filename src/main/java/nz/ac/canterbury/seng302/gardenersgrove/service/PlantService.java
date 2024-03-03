@@ -1,6 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +15,8 @@ import java.util.Optional;
 @Service
 public class PlantService {
     private final PlantRepository plantRepository;
+    private GardenRepository gardenRepository;
+
 
     /**
      * Constructor of PlantService, takes an instance of plantRepository
@@ -32,7 +36,13 @@ public class PlantService {
      * @param plant the plant data to save in the database.
      * @return the saved plant object.
      */
-    public Plant addPlant(Plant plant) { return plantRepository.save(plant);}
+    public Plant addPlant(Plant plant, Long gardenId) {
+        Garden garden = gardenRepository.findById(gardenId).orElseThrow(() -> new RuntimeException("Garden not found"));
+        plant.setGarden(garden);
+        return plantRepository.save(plant);
+    }
+
+
 
     /**
      * Get's one plant by it's unique ID.
