@@ -8,10 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -46,7 +43,7 @@ public class PlantController {
      * @return redirect to gardens page
      */
     @GetMapping("/gardens/{garden_id}/plants/{plant_id}/edit")
-    public String getGarden(@PathVariable("garden_id") long garden_id,
+    public String editPlant(@PathVariable("garden_id") long garden_id,
                             @PathVariable("plant_id") long plant_id,
                             Model model) {
         logger.info("/garden/{}/plant/{}/edit", garden_id, plant_id);
@@ -60,7 +57,7 @@ public class PlantController {
      * @param model representation of results
      * @return redirect to gardens page
      */
-    @PutMapping("/gardens/{garden_id}/plants/{plant_id}")
+    @PostMapping("/gardens/{garden_id}/plants/{plant_id}/edit")
     public String updatePlant(@PathVariable("garden_id") long garden_id,
                                @PathVariable("plant_id") long plant_id,
                                @RequestParam(name="name", required = false, defaultValue = "") String newName,
@@ -83,7 +80,7 @@ public class PlantController {
         updatedPlant.setPlantedDate(newDate);
 
         plantService.addPlant(updatedPlant);
-        return "redirect:../../gardens";
+        return "redirect:../../../" + garden_id;
     }
 
 
