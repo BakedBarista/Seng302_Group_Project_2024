@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
+    <title>My Profile | Gardener's Grove</title>
+    <!--/*/ <th:block th:include="fragments/general.html :: headerfiles"> /*/-->
+</head>
+<body>
+    <header th:insert="fragments/general.html :: header"></header>
+    <main class="main-container">
+        <h1>My Profile</h1>
+        <h3>First Name</h3>
+        <p>[[${fname}]]</p>
+        <h3>Last Name</h3>
+        <p th:if="${lname != null}">[[${lname}]]</p>
+        <p th:if="${lname == null}">&mdash;</p>
+        <h3>Email</h3>
+        <p>[[${email}]]</p>
+        <h3>Date of Birth</h3>
+        <p th:if="${dob != null}">[[${dob}]]</p>
+        <p th:if="${dob == null}">&mdash;</p>
+    </main>
+</body>
+</html>

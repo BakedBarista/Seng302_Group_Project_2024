@@ -5,7 +5,6 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.validation.UserRegoValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -14,6 +13,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+
 /**
  * Controller for registering new users
  */
@@ -21,13 +23,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class RegisterController {
-    Logger logger = LoggerFactory.getLogger(RegisterController.class);
+
+    private Logger logger = LoggerFactory.getLogger(RegisterController.class);
+
+    @Autowired
+    private GardenUserService userService;
 
     @Autowired
     private GardenUserService gardenUserService;
 
     /**
      * Shows the user the form
+     * 
      * @return redirect to /demo
      */
     @GetMapping("/users/register")
@@ -41,16 +48,15 @@ public class RegisterController {
      */
     @PostMapping("/users/register")
     public String submitRegister(
-        @RequestParam(name="fname") String fname,
-        @RequestParam(name="lname") String lname,
-        @RequestParam(name="noLname", defaultValue = "false") boolean noLname,
-        @RequestParam(name="email") String email,
-        @RequestParam(name="address") String address,
-        @RequestParam(name="password") String password,
-        @RequestParam(name="confirmPassword") String confirmPassword,
-        @RequestParam(name="dob") String dob,
-        Model model
-    ) {
+            @RequestParam(name = "fname") String fname,
+            @RequestParam(name = "lname") String lname,
+            @RequestParam(name = "noLname", defaultValue = "false") boolean noLname,
+            @RequestParam(name = "email") String email,
+            @RequestParam(name = "address") String address,
+            @RequestParam(name = "password") String password,
+            @RequestParam(name = "confirmPassword") String confirmPassword,
+            @RequestParam(name = "dob") String dob,
+            Model model) {
         logger.info("POST /users/register");
 
         UserRegoValidation userRegoValidation = new UserRegoValidation();
@@ -82,5 +88,27 @@ public class RegisterController {
             return "redirect:/users/login";
         }
 
-       }   
+        if (noLname) {
+            lname = null;
+        }
+        GardenUser user = new GardenUser(fname, lname, email, address, password, dob);
+        userService.addUser(user);
+
+        return "redirect:/users/login";
+    }
+
+    /**
+     * Submits the form
+     */
+    @GetMapping("/users/dummy")
+    public String createDummy() {
+        logger.info("POST /users/register");
+
+        GardenUser user = new GardenUser("John", "Doe", "john.doe@gmail.com", "Jack Erskine 133", "password",
+                "1970-01-01");
+        userService.addUser(user);
+
+        return "redirect:/";
+    }
+
 }
