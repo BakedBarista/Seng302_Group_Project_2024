@@ -73,6 +73,9 @@ public class RegisterController {
         } else if (!userRegoValidation.userOldDateValidation(dob)){
             model.addAttribute("oldDob", "The maximum age allowed is 120 years");
             return "users/registerTemplate";
+        } else if (!userRegoValidation.userInvalidDateValidation(dob)){
+            model.addAttribute("invalidDob", "You have entered an invalid date. It must be in the format: DD/MM/YYYY");
+            return "users/registerTemplate";
         } else {
             System.out.print("added");
             gardenUserService.addUser(new GardenUser(fname, lname, email, address, password, dob));

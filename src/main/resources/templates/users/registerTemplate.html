@@ -51,6 +51,7 @@
                 <input type="date" th:name="dob" th:value="*{dob}">
                 <span class = "error" th:if="${youngDob != null}" th:text="*{youngDob}"></span>
                 <span class = "error" th:if="${oldDob != null}" th:text="*{oldDob}"></span>
+                <span class = "error" th:if="${invalidDob != null}" th:text="*{invalidDob}"></span>
             </label>
             <button class="btn">Submit</button>
             <a href="/" class="btn">Cancel</button>

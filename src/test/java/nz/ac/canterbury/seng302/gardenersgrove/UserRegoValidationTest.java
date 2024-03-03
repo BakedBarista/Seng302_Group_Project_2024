@@ -151,7 +151,8 @@ public class UserRegoValidationTest {
     @Test
     public void testInvalidDate() {
         String date = "200/200/200";
-        assertFalse(true);
+        boolean invalidDateResult = userRego.userInvalidDateValidation(date);
+        assertFalse(invalidDateResult);
     }
 
     @Test
