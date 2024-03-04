@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 import java.util.Optional;
 
@@ -42,22 +43,23 @@ public class PlantController {
                        @PathVariable("id") Long id){
 
         logger.info("GET /gardens/${id}/addplant - display the new plant form");
-        logger.info("Garden ID: {}", id);
         model.addAttribute("gardenId", id);
-        return "plants/addPlant"; // TODO: Add the plant form
+        model.addAttribute("plant", new Plant());
+        return "plants/addPlant";
     }
 
     @PostMapping("/gardens/{id}/addplant")
     public String submitForm(@PathVariable("id") Long id,
-                             @ModelAttribute("plant") Plant plant,
+                             @Valid @ModelAttribute("plant") Plant plant,
                              BindingResult bindingResult, Model model) {
 
 
         logger.info("POST /gardens/${id}/addplant - submit the new plant form");
         if(bindingResult.hasErrors()) {
+            model.addAttribute("plant", plant);
+            logger.info("Error In Form");
             return "plants/addPlant";
         }
-
         Plant savedPlant = plantService.addPlant(plant, id);
         return "redirect:/gardens/" + id;
     }

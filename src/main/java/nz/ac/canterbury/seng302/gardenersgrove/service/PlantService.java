@@ -22,7 +22,9 @@ public class PlantService {
      * Constructor of PlantService, takes an instance of plantRepository
      * @param plantRepository an instance of PlantRepository
      */
-    public PlantService(PlantRepository plantRepository) {this.plantRepository = plantRepository;}
+    public PlantService(PlantRepository plantRepository, GardenRepository gardenRepository) {
+        this.gardenRepository= gardenRepository;
+        this.plantRepository = plantRepository;}
 
     /**
      * Gets all of the plants from the database.
@@ -38,6 +40,7 @@ public class PlantService {
      */
     public Plant addPlant(Plant plant, Long gardenId) {
         Garden garden = gardenRepository.findById(gardenId).orElseThrow(() -> new RuntimeException("Garden not found"));
+        System.out.println("Plant name before save: " + plant.getName());
         plant.setGarden(garden);
         return plantRepository.save(plant);
     }
