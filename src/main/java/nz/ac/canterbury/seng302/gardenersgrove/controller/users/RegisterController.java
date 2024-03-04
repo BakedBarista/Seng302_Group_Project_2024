@@ -29,9 +29,6 @@ public class RegisterController {
     @Autowired
     private GardenUserService userService;
 
-    @Autowired
-    private GardenUserService gardenUserService;
-
     /**
      * Shows the user the form
      * 
@@ -84,7 +81,7 @@ public class RegisterController {
             return "users/registerTemplate";
         } else {
             System.out.print("added");
-            gardenUserService.addUser(new GardenUser(fname, lname, email, address, password, dob));
+            userService.addUser(new GardenUser(fname, lname, email, address, password, dob));
             return "redirect:/users/login";
         }
 
