@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
+    <title>Register | Gardener's Grove</title>
+    <!--/*/ <th:block th:include="fragments/general.html :: headerfiles">
+        </th:block> /*/-->
+    <!-- The above comment (differentiated by the enclosing "slash star slash") is a thymeleaf prototype-only block
+        making use of synthetic th:block tags. This code will import the header files then the block will disappear.
+        We can see it working since it applies the style import from general.html.
+        See: https://www.thymeleaf.org/doc/tutorials/2.1/usingthymeleaf.html#comments-and-blocks -->
+</head>
+<body>
+    <header th:insert="fragments/general.html :: header"></header>
+    <main class="main-container">
+        <h1>Edit</h1>
+        <form th:action="register" method="post">
+            <label class="form-group">
+                First Name
+                <input type="text" th:name="fname" th:value="*{fname}" required>
+            </label>
+            <label class="form-group">
+                Last Name
+                <input type="text" th:name="lname" th:value="*{lname}" id="lname" required>
+            </label>
+            <label class="form-checkbox">
+                <input type="checkbox" th:name="noLname" th:value="*{noLname}" th:checked="*{noLname}" id="noLname"> I have no surname
+            </label>
+            <label class="form-group">
+                Email
+                <input type="email" th:name="email" th:value="*{email}" required>
+            </label>
+            <label class="form-group">
+                Address
+                <input type="text" th:name="address" th:value="*{address}" required>
+            </label>
+            <label class="form-group">
+                Password
+                <input type="password" th:name="password" required>
+            </label>
+            <label class="form-group">
+                Confirm Password
+                <input type="password" th:name="confirmPassword" required>
+            </label>
+            <label class="form-group">
+                Date of Birth (optional)
+                <input type="date" th:name="dob" th:value="*{dob}">
+            </label>
+            <button class="btn">Submit</button>
+            <a href="/" class="btn">Cancel</a>
+        </form>
+    </main>
+    <script>
+        const noLname = document.getElementById('noLname');
+        const lname = document.getElementById('lname');
+
+        noLname.addEventListener('input', (ev) => {
+            noLname.value = noLname.checked;
+            lname.disabled = noLname.checked;
+            lname.requred = !noLname.checked;
+        });
+    </script>
+</body>
+</html>
