@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.slf4j.Logger;
@@ -32,6 +33,14 @@ public class LoginController {
             Model model) {
         logger.info("POST /users/login");
 
+        model.addAttribute("email", email);
+        model.addAttribute("password", password);
 
+        GardenUser user = gardenUserService.getUserByEmailAndPassword(email, password);
+        if (user == null) {
+            model.addAttribute("invalidCredentials", "Invalid username or password.");
+            return "users/login";
+        }
+        return "redirect:/users/userProfile";
     }
 }
