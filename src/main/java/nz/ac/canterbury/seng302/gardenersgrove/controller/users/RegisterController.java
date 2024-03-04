@@ -88,13 +88,6 @@ public class RegisterController {
             return "redirect:/users/login";
         }
 
-        if (noLname) {
-            lname = null;
-        }
-        GardenUser user = new GardenUser(fname, lname, email, address, password, dob);
-        userService.addUser(user);
-
-        return "redirect:/users/login";
     }
 
     /**
