@@ -80,3 +80,7 @@ body {
         max-width: none;
     }
 }
+
+.edit_link {
+    color: pink;
+}
