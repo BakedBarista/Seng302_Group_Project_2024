@@ -25,10 +25,7 @@ public class EditUserController {
 
     /**
      * Shows the user the form
-     * 
-     * @return redirect to /demo
      */
-
     @GetMapping("/users/edit")
     public String edit() {
         logger.info("GET /users/edit");
@@ -70,6 +67,15 @@ public class EditUserController {
         userService.addUser(user);
 
         return "redirect:/users/login";
+    }
+
+    /**
+     * Shows the user the edit password form
+     */
+    @GetMapping("/users/edit/password")
+    public String editPassword() {
+        logger.info("GET /users/edit/password");
+        return "users/editPassword";
     }
 
 }
