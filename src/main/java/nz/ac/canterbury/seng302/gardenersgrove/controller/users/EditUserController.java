@@ -58,7 +58,7 @@ public class EditUserController {
      * @param email user's current email
      * @param address user's current address
      * @param dob user's current date of birth
-     * @param model thymleaf model
+     * @param model thymeleaf model
      * @return
      */
     @PostMapping("/users/edit")
@@ -74,30 +74,32 @@ public class EditUserController {
 
         // TODO: validation here
         boolean valid = true;
-        if (!valid) {
-            model.addAttribute("fname", fname);
-            model.addAttribute("lname", lname);
-            model.addAttribute("noLname", noLname);
-            model.addAttribute("email", email);
-            model.addAttribute("address", address);
-//            model.addAttribute("password", password);
-//            model.addAttribute("confirmPassword", confirmPassword);
-            model.addAttribute("dob", dob);
+        if (valid) {
+            GardenUser user = userService.getUserByEmail(email);
 
-//            GardenUser user = userService.getUserByEmail(email);
-//            user.setFname(fname);
-//            return "users/registerTemplate";
+            user.setFname(fname);
+            user.setLname(lname);
+            user.setEmail(email);
+            user.setAddress(address);
+            user.setDOB(dob);
+
+            userService.addUser(user);
+            return "users/user";
 
         }
+        model.addAttribute("fname", fname);
+        model.addAttribute("lname", lname);
+        model.addAttribute("noLname", noLname);
+        model.addAttribute("email", email);
+        model.addAttribute("address", address);
+        model.addAttribute("dob", dob);
 
         if (noLname) {
             lname = null;
         }
-
 //        GardenUser user = new GardenUser(fname, lname, email, address, password, dob);
-        GardenUser user = userService.getUserByEmail(email);
 
-        return "redirect:/users/login";
+        return "redirect:/users/user";
     }
 
 }
