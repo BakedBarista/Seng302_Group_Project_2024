@@ -7,24 +7,24 @@
 <body>
 <div>
     <div>
-        <form th:action="@{/gardens/{id}/edit(id=${garden.id})}" method="post">
+        <form th:action="@{/gardens/{id}/edit(id=${id})}" th:object="${garden}" method="post">
             <!-- Garden Name Field -->
             <label for="name"> Garden Name: </label>
-            <input type="text" class="form-control" id="name" placeholder="${garden.name}"
+            <input type="text" class="form-control" id="name" placeholder="Name"
                    th:name="name" th:value="${garden.name}" data-cy="name" autofocus>
-            <div th:if="${nameError}" th:text="${nameError}" style="color: red;"></div>
+            <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" style="color: red;"></div>
             <br/>
             <!-- Garden Location Field -->
             <label for="location"> Garden Location: </label>
-            <input type="text" class="form-control" id="location" th:placeholder="${garden.location}"
+            <input type="text" class="form-control" id="location" th:placeholder="Location"
                    th:name="location" th:value="${garden.location}" data-cy="location" autofocus>
-            <div th:if="${locationError}" th:text="${locationError}" style="color: red;"></div>
+            <div th:if="${#fields.hasErrors('location')}" th:errors="*{location}" style="color: red;"></div>
             <br/>
             <!-- Garden Size Field -->
             <label for="size"> Garden Size (m^2): </label>
-            <input type="text" class="form-control" id="size" placeholder="${garden.size}"
+            <input type="text" class="form-control" id="size" placeholder="Size of Garden"
                    th:name="size" th:value="${garden.size}" data-cy="size" autofocus>
-            <div th:if="${sizeError}" th:text="${sizeError}" style="color: red;"></div>
+            <div th:if="${#fields.hasErrors('size')}" th:errors="*{size}" style="color: red;"></div>
             <br/>
             <button type="submit">Submit!</button><button type="button" th:onclick="'window.location.href = \'' + @{/gardens/{id}(id=${garden.id})} + '\''">Cancel</button>
         </form>
