@@ -15,4 +15,5 @@ import java.util.Optional;
 public interface PlantRepository extends CrudRepository<Plant, Long> {
     Optional<Plant> findById(long id);
     List<Plant> findAll();
+
 }

@@ -24,6 +24,9 @@ public class Plant {
     @Column(nullable = false)
     private String plantedDate;
 
+    @Column(nullable = true)
+    private String plantImagePath;
+
     protected Plant() {}
 
     public Plant(String name, int count, String description, String plantedDate) {
@@ -68,6 +71,10 @@ public class Plant {
     public void setPlantedDate(String plantedDate) {
         this.plantedDate = plantedDate;
     }
+
+    public String getPlantImagePath() {return plantImagePath;}
+
+    public void setPlantImagePath(String plantImagePath) { this.plantImagePath = plantImagePath;}
 
     @Override
     public String toString() {

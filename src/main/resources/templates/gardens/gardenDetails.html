@@ -7,7 +7,7 @@
 <body>
 <div>
     <div>
-        <h4>Gardens:</h4>
+        <h4>Gardens:<a th:text="${garden.id}"></a></h4>
         <table>
             <thead>
             <tr>
@@ -28,6 +28,7 @@
         </table>
     </div>
     <div>
+        <button>Add Plant</button>
         <button><a th:href="@{/gardens/{id}/edit(id=${garden.id})}">Edit</a></button>
         <button><a th:href="@{/}">Return home</a></button>
     </div>

@@ -40,4 +40,21 @@ public class PlantService {
      * @return the plant object
      */
     public Optional<Plant> getPlant(long id) {return plantRepository.findById(id);}
+
+    /**
+     * Gets plant image path from database
+     * @param id the plant's id
+     * @return plantImagePath of the plant object
+     */
+
+    public String getPlantImage(long id) {return plantRepository.findById(id).get().getPlantImagePath();}
+
+
+    /**
+     * Sets plant image path to the plant object
+     * @param id the id of the plant object to save the image path to
+     * @param imagePath the path string to be saved
+     */
+
+    public void setPlantImage(long id, String imagePath) {plantRepository.findById(id).get().setPlantImagePath(imagePath);}
 }
