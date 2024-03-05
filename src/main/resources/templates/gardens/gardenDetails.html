@@ -35,7 +35,7 @@
                     <td><span th:text="${plant.count}">Count</span></td>
                     <td><span th:text="${plant.description}">Description</span></td>
                     <td><span th:text="${plant.plantedDate}">Planted Date</span></td>
-                    <td><button>Edit</button></td>
+                    <td><button><a th:href="@{/gardens/{garden_id}/plants/{plant_id}/edit(garden_id=${garden.id}, plant_id=${plant.id})}">Edit</a></button></td>
                 </tr>
             </tbody>
         </table>
