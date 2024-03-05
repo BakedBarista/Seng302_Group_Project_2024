@@ -19,9 +19,9 @@
         <h3>Date of Birth</h3>
         <p th:if="${dob != null}">[[${dob}]]</p>
         <p th:if="${dob == null}">&mdash;</p>
-        <div class="edit">
-            <a class="edit_link" href = "/users/edit"> edit</a>
-        </div>
+        <p>
+            <a href="/users/edit">Edit</a>
+        </p>
     </main>
 </body>
 </html>
