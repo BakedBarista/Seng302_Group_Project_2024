@@ -26,13 +26,8 @@
                    th:name="size" th:value="${garden.size}" data-cy="size" autofocus>
             <div th:if="${sizeError}" th:text="${sizeError}" style="color: red;"></div>
             <br/>
-            <button type="submit">Submit!</button><button type="button">Cancel</button>
+            <button type="submit">Submit!</button><button type="button" th:onclick="'window.location.href = \'' + @{/gardens/{id}(id=${garden.id})} + '\''">Cancel</button>
         </form>
-    </div>
-
-    <div>
-        <a th:href="@{/gardens}">View Gardens</a>
-        <a th:href="@{/}">Back to home</a>
     </div>
 </div>
 </body>

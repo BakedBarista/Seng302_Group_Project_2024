@@ -9,3 +9,5 @@ INSERT INTO garden (name, location, size) VALUES ('Garden8', 'Location8', 800);
 INSERT INTO garden (name, location, size) VALUES ('Garden9', 'Location9', 900);
 INSERT INTO garden (name, location, size) VALUES ('Garden10', 'Location10', 1000);
 
+
+//INSERT INTO plant (name, count, description, planted_date) VALUES ('Rose', 10, 'Red', '09/09/2022');
