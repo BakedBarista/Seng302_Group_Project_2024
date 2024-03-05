@@ -55,7 +55,11 @@ public class PlantService {
         return plantRepository.save(plant);
     }
 
-
+    /**
+     * Set plant image file path
+     * @param file path of the image
+     */
+    public void setPlantImage(Plant plant) {plantRepository.save(plant);}
     /**
      * Get's one plant by it's unique ID.
      * @param id the unique ID of the plant in the database.

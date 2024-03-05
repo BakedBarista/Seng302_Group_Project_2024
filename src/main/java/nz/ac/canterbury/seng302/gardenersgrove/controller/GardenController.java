@@ -106,7 +106,7 @@ public class GardenController {
         logger.info("Get /garden/{}", id);
         Optional<Garden> garden = gardenService.getGardenById(id);
         model.addAttribute("garden", garden.orElse(null));
-        return "/gardens/editGarden";
+        return "gardens/editGarden";
     }
 
     /**

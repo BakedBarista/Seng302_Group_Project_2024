@@ -35,6 +35,9 @@ public class Plant {
     @Column(nullable = false)
     private String plantedDate;
 
+    @Column
+    private String imageFilePath;
+
     @ManyToOne
     @JoinColumn
     private Garden garden;
@@ -91,6 +94,8 @@ public class Plant {
     public Garden getGarden() {
         return garden;
     }
+
+    public void setImageFilePath(String filePath) {this.imageFilePath = filePath;}
 
 
     @Override

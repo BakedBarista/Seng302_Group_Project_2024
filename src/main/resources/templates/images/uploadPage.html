@@ -4,16 +4,21 @@
         <div class="row">
             <div class="col-md-8 mx-auto">
                 <h2>Upload Image</h2>
-                <p th:text="${message}" th:if="${message != null}" class="alert alert-primary"></p>
-                <form method="post" th:action="@{/upload}" enctype="multipart/form-data">
+                <form method="post" enctype="multipart/form-data" th:action="@{/uploadImage}">
+                    <input type="hidden" name="plantId" th:value="${plantId}"/>
+                    <input type="hidden" name="gardenId" th:value="${gardenId}">
                     <div class="form-group">
                         <input type="file" name="image" accept=".png, .jpg, .jpeg, .svg" class="form-control-file">
                     </div>
-                    <div th:if="${fileTypeError}" th:text="${fileTypeError}" style="color: red;"></div>
-                    <div th:if="${fileSizeError}" th:text="${fileSizeError}" style="color: red"></div>
+                    <div class="alert alert-danger" th:if="${error}">
+                        <div th:text="${error}" style="color: red"></div>
+                    </div>
+
+                    <div class="alert alert-danger" th:if="${fileSizeError}">
+                        <div th:text="${fileSizeError}" style="color: red"></div>
+                    </div>
                     <button type="submit" class="btn btn-primary">Upload image</button>
                 </form>
-                <span th:if="${msg != null}" th:text="${msg}"></span>
             </div>
         </div>
     </div>

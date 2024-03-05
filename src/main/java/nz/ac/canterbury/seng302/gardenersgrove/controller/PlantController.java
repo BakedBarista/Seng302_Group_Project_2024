@@ -34,6 +34,8 @@ public class PlantController {
         this.gardenService = gardenService;
     }
 
+    @Autowired UploadController uploadController;
+
     @GetMapping("/gardens/{id}/addplant")
     public String form(@RequestParam(name="name", required = false, defaultValue = "") String name,
                        @RequestParam(name="count", required = false, defaultValue = "") String count,
@@ -78,6 +80,7 @@ public class PlantController {
         Optional<Plant> plant = plantService.getPlantById(plant_id);
         model.addAttribute("garden_id", garden_id);
         model.addAttribute("plant", plant.orElse(null));
+        model.addAttribute("plant_id", plant_id);
         return "plants/editPlant";
     }
 
@@ -107,6 +110,4 @@ public class PlantController {
         //plantService.addPlant(updatedPlant);
         return "redirect:../../../" + garden_id;
     }
-
-
 }
