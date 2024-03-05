@@ -13,7 +13,7 @@
                    th:name="name" th:value="${plant.name}" data-cy="name" autofocus>
             <div th:if="${nameError}" th:text="${nameError}" style="color: red;"></div>
             <br/>
-            <label for="count"> Garden Count: </label>
+            <label for="count"> Count: </label>
             <input type="text" class="form-control" id="count" th:placeholder="${plant.count}"
                    th:name="count" th:value="${plant.count}" data-cy="location" autofocus>
             <div th:if="${locationError}" th:text="${locationError}" style="color: red;"></div>
