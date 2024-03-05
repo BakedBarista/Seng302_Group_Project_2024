@@ -27,6 +27,9 @@ public class EditUserController {
     private GardenUserService userService;
     private GardenUser user;
 
+    private Boolean isNoLname;
+
+
     /**
      * Shows the user the form
      * @param model thymeleaf model
@@ -65,12 +68,14 @@ public class EditUserController {
     public String submitUser(
             @RequestParam(name = "fname") String fname,
             @RequestParam(name = "lname") String lname,
-            @RequestParam(name = "noLname", defaultValue = "true") boolean noLname,
+            @RequestParam(name = "noLname", defaultValue = "false") boolean noLname,
             @RequestParam(name = "email") String email,
             @RequestParam(name = "address") String address,
             @RequestParam(name = "dob") String dob,
             Model model) {
         logger.info("POST /users/edit");
+
+        isNoLname = noLname;
 
         // TODO: validation here
         boolean valid = true;
@@ -84,7 +89,7 @@ public class EditUserController {
             user.setDOB(dob);
 
             userService.addUser(user);
-            return "users/user";
+            return "redirect:/users/user";
 
         }
         model.addAttribute("fname", fname);
@@ -95,9 +100,8 @@ public class EditUserController {
         model.addAttribute("dob", dob);
 
         if (noLname) {
-            lname = null;
+            lname = "true";
         }
-//        GardenUser user = new GardenUser(fname, lname, email, address, password, dob);
 
         return "redirect:/users/user";
     }
