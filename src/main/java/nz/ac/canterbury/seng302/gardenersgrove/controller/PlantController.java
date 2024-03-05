@@ -76,6 +76,7 @@ public class PlantController {
                             Model model) {
         logger.info("/garden/{}/plant/{}/edit", garden_id, plant_id);
         Optional<Plant> plant = plantService.getPlantById(plant_id);
+        model.addAttribute("garden_id", garden_id);
         model.addAttribute("plant", plant.orElse(null));
         return "plants/editPlant";
     }
@@ -95,17 +96,13 @@ public class PlantController {
                                Model model) {
         logger.info("/garden/{}/plant/{}", garden_id, plant_id);
 
-        newName = "";
-        newCount = 0;
-        newDescription = "";
-        newDate = "";
-
-        Optional<Plant> garden = plantService.getPlantById(plant_id);
-        Plant updatedPlant = garden.orElse(null);
+        Optional<Plant> plant = plantService.getPlantById(plant_id);
+        Plant updatedPlant = plant.orElse(null);
         updatedPlant.setName(newName);
         updatedPlant.setCount(newCount);
         updatedPlant.setDescription(newDescription);
         updatedPlant.setPlantedDate(newDate);
+        plantService.addPlant(updatedPlant, garden_id);
 
         //plantService.addPlant(updatedPlant);
         return "redirect:../../../" + garden_id;
