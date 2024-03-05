@@ -14,32 +14,33 @@
         <p><strong>Size: </strong><span th:text="${garden.size}"></span> m&sup2;</p>
 
         <h4>Plants:</h4>
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Count</th>
-                    <th>Description</th>
-                    <th>Planted Date</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:if="${plants.empty}">
-                    <td colspan="3"> Please add a garden first</td>
-                </tr>
-                <tr th:each="plant : ${plants}">
-                    <td><span th:text="${plant.id}">ID</span></td>
-                    <td><span th:text="${plant.name}">Name</span></td>
-                    <td><span th:text="${plant.count}">Count</span></td>
-                    <td><span th:text="${plant.description}">Description</span></td>
-                    <td><span th:text="${plant.plantedDate}">Planted Date</span></td>
-                    <td><button>Edit</button></td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+        <div class="scrolling-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Count</th>
+                        <th>Description</th>
+                        <th>Planted Date</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${plants.empty}">
+                        <td colspan="3"> Please add a garden first</td>
+                    </tr>
+                    <tr th:each="plant : ${plants}">
+                        <td><span th:text="${plant.id}">ID</span></td>
+                        <td><span th:text="${plant.name}">Name</span></td>
+                        <td><span th:text="${plant.count}">Count</span></td>
+                        <td><span th:text="${plant.description}">Description</span></td>
+                        <td><span th:text="${plant.plantedDate}">Planted Date</span></td>
+                        <td><button>Edit</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     <div>
         <button><a th:href="@{/gardens/{id}/addplant(id=${garden.id})}">Add Plant</a></button>
         <button><a th:href="@{/gardens/{id}/edit(id=${garden.id})}">Edit Garden</a></button>

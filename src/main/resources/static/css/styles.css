@@ -4,6 +4,11 @@ h2 {
     text-transform: uppercase;
 }
 
+.scrolling-table {
+    max-height: 510px;
+    overflow-y: auto;
+}
+
 table {
     border-collapse: collapse;
     width: 650px;
