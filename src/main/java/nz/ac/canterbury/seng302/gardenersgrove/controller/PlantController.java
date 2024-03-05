@@ -57,6 +57,7 @@ public class PlantController {
         logger.info("POST /gardens/${id}/addplant - submit the new plant form");
         if(bindingResult.hasErrors()) {
             model.addAttribute("plant", plant);
+            model.addAttribute("gardenId", id);
             logger.info("Error In Form");
             return "plants/addPlant";
         }

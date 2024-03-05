@@ -29,7 +29,7 @@
             <br/>
             <br/>
             <!-- Planting Date Field -->
-            <label for="plantedDate">Planting Date (DD/MM/YYYY):</label>
+            <label for="plantedDate">Planting Date:</label>
             <input type="date" id="plantedDate" name="plantedDate" placeholder="DD/MM/YYYY" th:value="${plant.plantedDate}" required>
             <div th:if="${#fields.hasErrors('plantedDate')}" th:errors="*{plantedDate}" style="color: red;"></div>
             <br/>
