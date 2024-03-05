@@ -8,7 +8,7 @@ INSERT INTO garden (name, location, size) VALUES ('Garden7', 'Location7', 700);
 INSERT INTO garden (name, location, size) VALUES ('Garden8', 'Location8', 800);
 INSERT INTO garden (name, location, size) VALUES ('Garden9', 'Location9', 900);
 INSERT INTO garden (name, location, size) VALUES ('Garden10', 'Location10', 1000);
-INSERT INTO plant (name, count, description, planted_date, id) VALUES
+INSERT INTO plant (name, count, description, planted_date, garden_id) VALUES
                                                                    ('Rose', 15, 'Red', '2024-03-01', 1),
                                                                    ('Sunflower', 8, 'Yellow', '2024-04-10', 2),
                                                                    ('Lavender', 5, 'Purple', '2024-05-22', 3),
