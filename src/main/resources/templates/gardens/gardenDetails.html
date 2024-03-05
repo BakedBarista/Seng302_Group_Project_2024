@@ -7,23 +7,32 @@
 <body>
 <div>
     <div>
-        <h4>Gardens:</h4>
+        <h2 th:text="${garden.name}">Garden Name</h2>
+        <p>ID: <span th:text="${garden.id}"></span></p>
+        <p>Location: <span th:text="${garden.location}"></span></p>
+        <p>Size: <span th:text="${garden.size}"></span> m&sup2;</p>
+
+        <h4>Plants:</h4>
         <table>
             <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Location</th>
-                <th>Size</th>
-            </tr>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Count</th>
+                    <th>Description</th>
+                    <th>Planted Date</th>
+                </tr>
             </thead>
             <tbody>
-            <tr>
-                <td><span th:text="${garden.id}">Garden Id</span></td>
-                <td><span th:text="${garden.name}"> Name </span></td>
-                <td><span th:text="${garden.location}"> Location </span></td>
-                <td><span th:text="${garden.size}"> Size </span></td>
-            </tr>
+                <tr th:if="${plants.empty}">
+                    <td colspan="3"> Please add a garden first</td>
+                </tr>
+                <tr th:each="plant : ${plants}">
+                    <td><span th:text="${plant.id}">ID</span></td>
+                    <td><span th:text="${plant.name}">Name</span></td>
+                    <td><span th:text="${plant.description}">Description</span></td>
+                    <td><span th:text="${plant.plantedDate}">Planted Date</span></td>
+                </tr>
             </tbody>
         </table>
     </div>
