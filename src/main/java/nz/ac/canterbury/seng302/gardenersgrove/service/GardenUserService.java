@@ -68,7 +68,17 @@ public class GardenUserService {
      * @return The user with the given email, or null if no such user exists
      */
     public GardenUser getUserByEmail(String email) {
-        var user = gardenUserRepository.findByEmail(email);
+        return null;
+    }
+
+    /**
+     * Gets a single GardenUser by their email
+     * 
+     * @param email The user's email
+     * @return The user with the given email, or null if no such user exists
+     */
+    public GardenUser getUserById(long id) {
+        var user = gardenUserRepository.findById(id);
         if (user.isEmpty()) {
             return null;
         }
