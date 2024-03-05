@@ -78,4 +78,17 @@ public class EditUserController {
         return "users/editPassword";
     }
 
+    @PostMapping("/users/edit/password")
+    public String submitPassoword(
+            @RequestParam(name = "oldPassword") String oldPassword,
+            @RequestParam(name = "newPassword") String newPassword,
+            @RequestParam(name = "confirmPassword") String confirmPassword,
+            Model model) {
+        logger.info("Post /users/edit/password");
+        long id = 1;
+
+        userService.updatePasswordById(newPassword, id);
+        return "users/edit";
+    }
+
 }
