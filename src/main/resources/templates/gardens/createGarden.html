@@ -26,7 +26,7 @@
                    th:name="size" th:value="${size}" data-cy="size" autofocus>
             <div th:if="${sizeError}" th:text="${sizeError}" style="color: red;"></div>
             <br/>
-            <button type="submit">Submit!</button><button type="button" onclick="window.location.href = '/gardens'">Cancel</button>
+            <button type="submit">Submit!</button><button type="button" onclick="history.back()">Cancel</button>
         </form>
     </div>
 
