@@ -14,7 +14,7 @@
     <header th:insert="fragments/general.html :: header"></header>
     <main class="main-container">
         <h1>Edit</h1>
-        <form th:action="register" method="post">
+        <form th:action="edit" method="post">
             <label class="form-group">
                 First Name
                 <input type="text" th:name="fname" th:value="*{fname}" required>
@@ -34,14 +34,14 @@
                 Address
                 <input type="text" th:name="address" th:value="*{address}" required>
             </label>
-            <label class="form-group">
-                Password
-                <input type="password" th:name="password" required>
-            </label>
-            <label class="form-group">
-                Confirm Password
-                <input type="password" th:name="confirmPassword" required>
-            </label>
+<!--            <label class="form-group">-->
+<!--                Password-->
+<!--                <input type="password" th:name="password" required>-->
+<!--            </label>-->
+<!--            <label class="form-group">-->
+<!--                Confirm Password-->
+<!--                <input type="password" th:name="confirmPassword" required>-->
+<!--            </label>-->
             <label class="form-group">
                 Date of Birth (optional)
                 <input type="date" th:name="dob" th:value="*{dob}">
