@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
-import java.security.Principal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
