@@ -1,16 +1,15 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
-import org.junit.Before;
-import org.junit.Test;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-
 
 import java.util.Collections;
 import java.util.Optional;
@@ -25,7 +24,7 @@ public class GardenControllerTest {
     @InjectMocks
     private GardenController gardenController;
 
-    @Before
+    @BeforeAll
     public void setUp() {
         MockitoAnnotations.openMocks(this);
     }
