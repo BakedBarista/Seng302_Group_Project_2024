@@ -21,6 +21,6 @@ public interface GardenUserRepository extends CrudRepository<GardenUser, Long> {
     @Query("SELECT u FROM GardenUser u WHERE u.email = ?1")
     Optional<GardenUser> findByEmail(String email);
 
-    @Query("UPDATE GardenUser set password = ? where id = ?")
+    @Query("UPDATE GardenUser set password = ?1 where id = ?2")
     Optional<GardenUser>updatePasswordById(String newPassword, long id);
 }
