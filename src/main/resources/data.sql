@@ -10,12 +10,12 @@ INSERT INTO garden (name, location, size) VALUES ('Garden9', 'Location9', 900);
 INSERT INTO garden (name, location, size) VALUES ('Garden10', 'Location10', 1000);
 INSERT INTO plant (name, count, description, planted_date, garden_id) VALUES
                                                                    ('Rose', 15, 'Red', '2024-03-01', 1),
-                                                                   ('Sunflower', 8, 'Yellow', '2024-04-10', 2),
-                                                                   ('Lavender', 5, 'Purple', '2024-05-22', 3),
+                                                                   ('Sunflower', 8, 'Yellow', '2024-04-10', 3),
+                                                                   ('Lavender', 5, 'Purple', '2024-05-22', 2),
                                                                    ('Tulip', 12, 'Pink', '2024-06-15', 4),
                                                                    ('Daisy', 18, 'White', '2024-07-05', 5),
                                                                    ('Lily', 7, 'Orange', '2024-08-18', 6),
                                                                    ('Hydrangea', 20, 'Blue', '2024-09-09', 7),
                                                                    ('Cactus', 3, 'Green', '2024-10-30', 8),
-                                                                   ('Orchid', 10, 'Purple', '2024-11-12', 9),
+                                                                   ('Orchid', 10, 'Purple', '2024-11-12', 3),
                                                                    ('Maple', 14, 'Red', '2024-12-05', 10);

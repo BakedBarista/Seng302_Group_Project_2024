@@ -34,6 +34,16 @@ public class PlantService {
 
 
     /**
+     * Get a list of plants for given gardenId
+     * @param gardenId
+     * @return list of plants for given gardenId
+     */
+    public List<Plant> getPlantsByGardenId(long gardenId) {
+        return plantRepository.findByGardenId(gardenId);
+    }
+
+
+    /**
      * Add's a plant to the database.
      * @param plant the plant data to save in the database.
      * @return the saved plant object.
@@ -44,7 +54,6 @@ public class PlantService {
         plant.setGarden(garden);
         return plantRepository.save(plant);
     }
-
 
 
     /**

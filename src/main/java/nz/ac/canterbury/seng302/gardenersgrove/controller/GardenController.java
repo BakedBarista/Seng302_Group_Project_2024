@@ -95,7 +95,7 @@ public class GardenController {
 
         logger.info("Get /gardens/id - display garden detail");
         model.addAttribute("garden", gardenService.getGardenById(id).get());
-        model.addAttribute("plants", plantService.getAllPlants());
+        model.addAttribute("plants", plantService.getPlantsByGardenId(id));
         return "gardens/gardenDetails";
     }
 
