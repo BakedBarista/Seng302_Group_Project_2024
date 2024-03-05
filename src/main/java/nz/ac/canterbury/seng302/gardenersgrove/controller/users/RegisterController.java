@@ -57,6 +57,8 @@ public class RegisterController {
         logger.info("POST /users/register");
 
         UserRegoValidation userRegoValidation = new UserRegoValidation();
+        
+        System.out.print("\n noLname \n" + noLname);
 
         if (!userRegoValidation.userEmailValidation(email)){
             model.addAttribute("incorrectEmail", "Email address must be in the form ‘jane@doe.nz’");
@@ -71,7 +73,7 @@ public class RegisterController {
             model.addAttribute("weakPassword", "our password must beat least 8 characters long and include at least one uppercase letter, one lowercase letter, one number,and one special character");
             return "users/registerTemplate";
         } else if (!userRegoValidation.userYoungDateValidation(dob)){
-            model.addAttribute("youndDob", "You must be 13 years orolder to create an account");
+            model.addAttribute("youngDob", "You must be 13 years or older to create an account");
             return "users/registerTemplate";
         } else if (!userRegoValidation.userOldDateValidation(dob)){
             model.addAttribute("oldDob", "The maximum age allowed is 120 years");
@@ -79,11 +81,18 @@ public class RegisterController {
         } else if (!userRegoValidation.userInvalidDateValidation(dob)){
             model.addAttribute("invalidDob", "You have entered an invalid date. It must be in the format: DD/MM/YYYY");
             return "users/registerTemplate";
+        }
+
+        if (noLname = true){
+            System.out.print("\n why \n");
+            userService.addUser(new GardenUser(fname, null, email, address, password, dob));
+            return "redirect:/users/login";
         } else {
-            System.out.print("added");
+            System.out.print("\n test \n");
             userService.addUser(new GardenUser(fname, lname, email, address, password, dob));
             return "redirect:/users/login";
         }
+        
 
     }
 
