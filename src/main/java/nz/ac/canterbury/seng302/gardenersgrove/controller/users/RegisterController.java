@@ -46,13 +46,13 @@ public class RegisterController {
     @PostMapping("/users/register")
     public String submitRegister(
             @RequestParam(name = "fname") String fname,
-            @RequestParam(name = "lname") String lname,
+            @RequestParam(name = "lname", required = false) String lname,
             @RequestParam(name = "noLname", defaultValue = "false") boolean noLname,
             @RequestParam(name = "email") String email,
             @RequestParam(name = "address") String address,
             @RequestParam(name = "password") String password,
             @RequestParam(name = "confirmPassword") String confirmPassword,
-            @RequestParam(name = "dob") String dob,
+            @RequestParam(name = "dob", required = false) String dob,
             Model model) {
         logger.info("POST /users/register");
 
@@ -83,7 +83,7 @@ public class RegisterController {
             return "users/registerTemplate";
         }
 
-        if (noLname = true){
+        if (noLname == true){
             System.out.print("\n why \n");
             userService.addUser(new GardenUser(fname, null, email, address, password, dob));
             return "redirect:/users/login";
@@ -101,7 +101,7 @@ public class RegisterController {
      */
     @GetMapping("/users/dummy")
     public String createDummy() {
-        logger.info("POST /users/register");
+        logger.info("POST /users/dummy");
 
         GardenUser user = new GardenUser("John", "Doe", "john.doe@gmail.com", "Jack Erskine 133", "password",
                 "1970-01-01");
