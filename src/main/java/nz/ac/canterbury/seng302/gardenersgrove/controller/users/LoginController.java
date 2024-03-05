@@ -7,8 +7,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class LoginController {
@@ -22,25 +24,14 @@ public class LoginController {
      * Shows the user the login form
      */
     @GetMapping("users/login")
-    public String login() {
+    public String login(@RequestParam(required = false) String error,
+                        Model model) {
         logger.info("GET /users/login");
-        return "users/login";
-    }
 
-    public String submitLogin(
-            @RequestParam(name="email") String email,
-            @RequestParam(name="password") String password,
-            Model model) {
-        logger.info("POST /users/login");
-
-        model.addAttribute("email", email);
-        model.addAttribute("password", password);
-
-        GardenUser user = gardenUserService.getUserByEmailAndPassword(email, password);
-        if (user == null) {
-            model.addAttribute("invalidCredentials", "Invalid username or password.");
+        if (error != null) {
+            model.addAttribute("invalidCredentials", "The email address is unknown, or the password is invalid");
             return "users/login";
         }
-        return "redirect:/users/userProfile";
+        return "users/login";
     }
 }
