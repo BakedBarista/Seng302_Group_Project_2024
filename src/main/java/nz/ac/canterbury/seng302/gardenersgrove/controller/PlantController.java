@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
+import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import jakarta.validation.Valid;
 
 import java.util.Optional;
 
@@ -57,6 +57,7 @@ public class PlantController {
         logger.info("POST /gardens/${id}/addplant - submit the new plant form");
         if(bindingResult.hasErrors()) {
             model.addAttribute("plant", plant);
+            model.addAttribute("gardenId", id);
             logger.info("Error In Form");
             return "plants/addPlant";
         }
