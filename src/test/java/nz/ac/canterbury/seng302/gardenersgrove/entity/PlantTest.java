@@ -1,12 +1,13 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
-import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PlantTest {
@@ -16,8 +17,7 @@ public class PlantTest {
 
     @BeforeAll
     static void setUp() {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        validator = factory.getValidator();
+        validator = Validation.buildDefaultValidatorFactory().getValidator();
     }
 
     @BeforeEach
@@ -77,24 +77,39 @@ public class PlantTest {
     @Test
     public void SetName_NameHasExclamationMark_ReturnPatternConstraintViolation() {
         plant.setName("plant!");
+        String expectedMessage = "Name must only contain letters and numbers";
+        Integer expectedConstraintSetSize = 1;
 
-        // FIX
-        assertTrue(validator.validate(plant).isEmpty());
+
+        ConstraintViolation<Plant> violation = validator.validate(plant).iterator().next();
+
+        assertEquals(expectedConstraintSetSize, validator.validate(plant).size());
+        assertEquals(expectedMessage, violation.getMessage());
     }
 
     @Test
     public void SetName_NameHasHash_ReturnPatternConstraintViolation() {
         plant.setName("plant #2");
+        String expectedMessage = "Name must only contain letters and numbers";
+        Integer expectedConstraintSetSize = 1;
 
-        System.out.println(validator.validate(plant));
-        assertTrue(validator.validate(plant).isEmpty());
+
+        ConstraintViolation<Plant> violation = validator.validate(plant).iterator().next();
+
+        assertEquals(expectedConstraintSetSize, validator.validate(plant).size());
+        assertEquals(expectedMessage, violation.getMessage());
     }
     @Test
     public void SetName_Null_ReturnNotBlankViolation() {
         plant.setName(null);
+        String expectedMessage = "Please enter a name";
+        Integer expectedConstraintSetSize = 1;
 
-        // FIX
-        assertTrue(validator.validate(plant).isEmpty());
+
+        ConstraintViolation<Plant> violation = validator.validate(plant).iterator().next();
+
+        assertEquals(expectedConstraintSetSize, validator.validate(plant).size());
+        assertEquals(expectedMessage, violation.getMessage());
     }
 
     @Test
@@ -203,9 +218,14 @@ public class PlantTest {
     @Test
     public void SetDescription_FiveHundredAndTwelveChars_ReturnSizeViolation() {
         plant.setDescription("a".repeat(512));
+        String expectedMessage = "Description must be less than 512 characters";
+        Integer expectedConstraintSetSize = 1;
 
-        // FIX
-        assertTrue(validator.validate(plant).isEmpty());
+
+        ConstraintViolation<Plant> violation = validator.validate(plant).iterator().next();
+
+        assertEquals(expectedConstraintSetSize, validator.validate(plant).size());
+        assertEquals(expectedMessage, violation.getMessage());
     }
 
     @Test
@@ -225,17 +245,27 @@ public class PlantTest {
     @Test
     public void SetPlantedDate_MMDDYYYY_ReturnPatternViolation() {
         plant.setPlantedDate("02/18/2023");
+        String expectedMessage = "Date must be in DD/MM/YYYY format";
+        Integer expectedConstraintSetSize = 1;
 
-        // FIX
-        assertTrue(validator.validate(plant).isEmpty());
+
+        ConstraintViolation<Plant> violation = validator.validate(plant).iterator().next();
+
+        assertEquals(expectedConstraintSetSize, validator.validate(plant).size());
+        assertEquals(expectedMessage, violation.getMessage());
     }
 
     @Test
     public void SetPlantedDate_YYYYDDMM_ReturnPatternViolation() {
         plant.setPlantedDate("2023/18/02");
+        String expectedMessage = "Date must be in DD/MM/YYYY format";
+        Integer expectedConstraintSetSize = 1;
 
-        // FIX
-        assertTrue(validator.validate(plant).isEmpty());
+
+        ConstraintViolation<Plant> violation = validator.validate(plant).iterator().next();
+
+        assertEquals(expectedConstraintSetSize, validator.validate(plant).size());
+        assertEquals(expectedMessage, violation.getMessage());
     }
 
 }

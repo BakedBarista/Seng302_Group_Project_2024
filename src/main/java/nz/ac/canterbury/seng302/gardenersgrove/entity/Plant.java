@@ -1,8 +1,10 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.ValidationGroups;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 
 /**
@@ -16,25 +18,24 @@ public class Plant {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Please enter a name", groups = {ValidationGroups.FirstOrder.class})
-    @Pattern(regexp = "^[a-zA-Z0-9 ]+$", message = "Name must only contain letters and numbers", groups = {ValidationGroups.SecondOrder.class})
+    @NotBlank(message = "Please enter a name")
+    @Pattern(regexp = "^[a-zA-Z0-9 ]+$", message = "Name must only contain letters and numbers")
     @Column(nullable = false)
     private String name;
 
-    @NotNull(message = "Count cannot be null")
+//    @NotNull(message = "Count cannot be null")
     @Min(value = 1, message = "Count must be greater than 0")
     @Column(nullable = false)
-    private int count;
+    private Integer count;
 
-    @NotBlank(message = "Please enter a description")
-    @Size(min = 1, max = 512, message = "Description must be less than 512 characters")
+//    @NotBlank(message = "Please enter a description")
+    @Size(min = 1, max = 511, message = "Description must be less than 512 characters")
     @Column(nullable = false)
     private String description;
 
-    @NotBlank(message = "Please enter a date")
+//    @NotBlank(message = "Please enter a date")
     @Column(nullable = false)
     private String plantedDate;
-
 
     @ManyToOne
     @JoinColumn
@@ -102,7 +103,7 @@ public class Plant {
 
     @Override
     public String toString() {
-        return "GardenFormResult{" +
+        return "PlantFormResult{" +
                 "id=" + id +
                 ", name='" + this.name + '\'' +
                 ", count='" + this.count + '\'' +
