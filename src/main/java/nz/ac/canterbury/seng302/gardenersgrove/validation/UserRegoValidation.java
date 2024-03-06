@@ -15,10 +15,10 @@ public class UserRegoValidation {
      * @return bool
      */
     public static boolean userNameValidation(String fname, String lname, boolean noLname){
-        if (fname.matches("^[a-zA-Z\\s'-]*$") && lname.matches("^[a-zA-Z\\s'-]*$")) { // makeing sure it matches to only alphebet
+        if (fname.matches("^[a-zA-Z\\s'-]*$") && (lname == null || lname.matches("^[a-zA-Z\\s'-]*$"))) {
             if(fname.length() <  65 && lname.length() <  65){ 
                 if (noLname && fname.length() > 0) {
-                    return lname.length() == 0;
+                    return lname.length() == 0 || lname == null;
                 }
                 else {
                     return fname.length() > 0 && lname.length() > 0;
