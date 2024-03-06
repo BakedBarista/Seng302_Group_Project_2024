@@ -85,16 +85,9 @@ public class EditUserController {
             @RequestParam(name = "newPassword") String newPassword,
             @RequestParam(name = "confirmPassword") String confirmPassword,
             Model model) {
-        logger.info("\n Post /users/edit/password \n");
-        // to do validation here 
-        logger.info(oldPassword);
-        logger.info(newPassword);
-        logger.info(confirmPassword);
         long id = (long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        System.out.print("\n" + id + "\n");
 
         GardenUser user = userService.getUserById(id);
-        System.out.print("\n" + user + "\n");
         user.setPassword(newPassword);
         userService.addUser(user);
         return "users/editTemplate";
