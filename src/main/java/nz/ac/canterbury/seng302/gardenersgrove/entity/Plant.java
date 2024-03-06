@@ -13,6 +13,7 @@ import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class Plant {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -35,11 +36,15 @@ public class Plant {
     @Column(nullable = false)
     private String plantedDate;
 
+
     @ManyToOne
     @JoinColumn
     private Garden garden;
 
-    public Plant() {}
+    
+
+    @Column(nullable = true)
+    private String plantImagePath;
 
     public Plant(String name, int count, String description, String plantedDate) {
         this.name = name;
@@ -92,6 +97,9 @@ public class Plant {
         return garden;
     }
 
+    public String getPlantImagePath() {return plantImagePath;}
+
+    public void setPlantImagePath(String plantImagePath) { this.plantImagePath = plantImagePath;}
 
     @Override
     public String toString() {
