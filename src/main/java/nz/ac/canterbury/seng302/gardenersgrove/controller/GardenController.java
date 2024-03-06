@@ -4,6 +4,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.ValidationSequence;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,10 +29,12 @@ public class GardenController {
     Logger logger = LoggerFactory.getLogger(GardenController.class);
 
     private final GardenService gardenService;
+    private final PlantService plantService;
 
     @Autowired
-    public GardenController(GardenService gardenService) {
+    public GardenController(GardenService gardenService, PlantService plantService) {
         this.gardenService = gardenService;
+        this.plantService = plantService;
     }
 
     /**
@@ -93,8 +96,10 @@ public class GardenController {
     @GetMapping("/gardens/{id}")
     public String gardenDetail(@PathVariable(name = "id") Long id,
                                Model model) {
+
         logger.info("Get /gardens/id - display garden detail");
         model.addAttribute("garden", gardenService.getGardenById(id).get());
+        model.addAttribute("plants", plantService.getPlantsByGardenId(id));
         return "gardens/gardenDetails";
     }
 
