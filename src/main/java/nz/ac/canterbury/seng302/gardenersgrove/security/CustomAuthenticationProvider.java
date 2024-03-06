@@ -55,7 +55,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             logger.warn("Invalid username or password");
             throw new BadCredentialsException("Invalid username or password");
         }
-        return new UsernamePasswordAuthenticationToken(u.getEmail(), null, u.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(u.getId(), null, u.getAuthorities());
     }
 
     @Override

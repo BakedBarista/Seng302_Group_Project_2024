@@ -65,6 +65,9 @@ public class GardenUser {
         return List.of();
     }
 
+    public void setID(Long id) {
+        this.id = id;
+    }
     public Long getId() {
         return id;
     }
