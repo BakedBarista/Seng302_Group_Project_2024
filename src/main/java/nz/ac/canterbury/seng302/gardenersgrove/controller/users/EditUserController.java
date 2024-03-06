@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import org.springframework.security.core.Authentication;
+
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
@@ -37,11 +39,11 @@ public class EditUserController {
      */
 
     @GetMapping("/users/edit")
-    public String edit(Model model) {
+    public String edit(Authentication authentication, Model model) {
         logger.info("GET /users/edit");
 
-        String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        GardenUser user = userService.getUserByEmail(email);
+        Long userId = (Long) authentication.getPrincipal();
+        GardenUser user = userService.getUserById(userId);
 
         model.addAttribute("fname", user.getFname());
         model.addAttribute("lname", user.getLname());
@@ -72,15 +74,17 @@ public class EditUserController {
             @RequestParam(name = "email") String email,
             @RequestParam(name = "address") String address,
             @RequestParam(name = "dob") String dob,
-            Model model) {
+            Authentication authentication, Model model) {
         logger.info("POST /users/edit");
 
         isNoLname = noLname;
 
+        Long userId = (Long) authentication.getPrincipal();
+
         // TODO: validation here
         boolean valid = true;
         if (valid) {
-            GardenUser user = userService.getUserByEmail(email);
+            GardenUser user = userService.getUserById(userId);
 
             user.setFname(fname);
             user.setLname(lname);
