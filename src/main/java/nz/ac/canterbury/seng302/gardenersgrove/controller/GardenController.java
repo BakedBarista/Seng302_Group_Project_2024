@@ -61,7 +61,7 @@ public class GardenController {
     public String submitForm(@Validated(ValidationSequence.class) @ModelAttribute("garden") Garden garden,
                              BindingResult bindingResult, Model model) {
         logger.info("POST /gardens - submit the new garden form");
-
+        garden.setSize(garden.getSize());
         if (bindingResult.hasErrors()) {
             model.addAttribute("garden", garden);
 

@@ -1,10 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
+import nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidEuropeanDecimal;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.ValidationGroups;
 
 
@@ -28,9 +26,8 @@ public class Garden {
     @Column(nullable = false)
     private String location;
 
-    @NotBlank(message = "Please enter a size for your garden.", groups = {ValidationGroups.FirstOrder.class})
-    @Min(message = "Size must be a positive number", value = 1, groups = {ValidationGroups.SecondOrder.class})
-    @Column(nullable = false)
+    @ValidEuropeanDecimal(message = "Size must be a positive number")
+    @Column(nullable = true)
     private String size;
 
     public Garden() {}
@@ -72,7 +69,7 @@ public class Garden {
     }
 
     public void setSize(String size) {
-        this.size = size;
+        this.size = size.replace(',', '.');
     }
 
     @Override

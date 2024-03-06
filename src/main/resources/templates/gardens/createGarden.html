@@ -24,10 +24,10 @@
                 <div th:if="${#fields.hasErrors('location')}" th:errors="*{location}" style="color: red;"></div>
             </div>
             <!-- Garden Size Field -->
-            <label for="size"> Garden Size (m^2): </label>
+            <label for="size"> Garden Size (m^2) (Optional): </label>
             <input type="text" class="form-control" id="size" placeholder="Size of Garden"
-                   th:name="size" th:value="${size}" data-cy="size" autofocus>
-            <div th:if="${sizeError}" th:text="${sizeError}" style="color: red;"></div>
+                   th:name="size" th:value="${garden.size}" data-cy="size" autofocus>
+            <div th:if="${#fields.hasErrors('size')}" th:errors="*{size}" style="color: red;"></div>
             <br/>
             <button type="submit">Submit!</button><button type="button" onclick="history.back()">Cancel</button>
         </form>
