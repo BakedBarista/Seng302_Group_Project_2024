@@ -47,7 +47,10 @@ public class EditUserController {
 
         model.addAttribute("fname", user.getFname());
         model.addAttribute("lname", user.getLname());
-        model.addAttribute("noLname", user.getLname());
+
+        if (user.getLname() == null) {
+            model.addAttribute("noLname", true);
+        }
         model.addAttribute("email", user.getEmail());
         model.addAttribute("address", user.getAddress());
         model.addAttribute("dob", user.getDOB());
@@ -69,7 +72,7 @@ public class EditUserController {
     @PostMapping("/users/edit")
     public String submitUser(
             @RequestParam(name = "fname") String fname,
-            @RequestParam(name = "lname") String lname,
+            @RequestParam(name = "lname", required = false) String lname,
             @RequestParam(name = "noLname", defaultValue = "false") boolean noLname,
             @RequestParam(name = "email") String email,
             @RequestParam(name = "address") String address,
@@ -102,10 +105,6 @@ public class EditUserController {
         model.addAttribute("email", email);
         model.addAttribute("address", address);
         model.addAttribute("dob", dob);
-
-        if (noLname) {
-            lname = "true";
-        }
 
         return "redirect:/users/user";
     }
