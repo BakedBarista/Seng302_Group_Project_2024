@@ -27,3 +27,34 @@ th {
 tr:hover {
     background-color: #f5f5f5;
 }
+
+.semi-transparent-button {
+    position: absolute;
+    top:50px;
+    left:350px;
+    display: block;
+    box-sizing: border-box;
+    margin: 0 auto;
+    padding: 8px;
+    width: 80%;
+    max-width: 50px;
+    background: #888888; /* fallback color for old browsers */
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 8px;
+    color: #888888;
+    text-align: center;
+    text-decoration: none;
+    letter-spacing: 1px;
+    transition: all 0.3s ease-out;
+}
+.semi-transparent-button:hover,
+.semi-transparent-button:focus,
+.semi-transparent-button:active {
+    background: #888888;
+    color: #000;
+    transition: all 0.5s ease-in;
+}
+.semi-transparent:focus {
+    outline: none;
+}
+

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Edit Plant</title>
+    <link th:href="@{/css/styles.css}" rel="stylesheet" />
 </head>
 <body>
 <div>
@@ -28,7 +29,10 @@
                    th:name="plantedDate" th:value="${plant.plantedDate}" data-cy="size" autofocus>
             <div th:if="${sizeError}" th:text="${sizeError}" style="color: red;"></div>
             <br/>
-            <a th:href="@{/uploadImage(gardenId=${garden_id}, plantId=${plant_id})}">Upload Image</a>
+
+            <section class="container">
+                <a class="semi-transparent-button" th:href="@{/uploadImage(gardenId=${garden_id}, plantId=${plant_id})}">+</a>
+            </section>
             <button type="submit">Submit!</button><button type="button"><a th:href="@{/gardens/{garden_id}(garden_id=${garden_id})}">Cancel</a></button>
         </form>
     </div>
