@@ -35,16 +35,11 @@ public class PlantController {
     }
 
     @GetMapping("/gardens/{id}/addplant")
-    public String form(@RequestParam(name="name", required = false, defaultValue = "") String name,
-                       @RequestParam(name="count", required = false, defaultValue = "") int count,
-                       @RequestParam(name="description", required = false, defaultValue = "") String description,
-                       @RequestParam(name="plantedDate", required = false, defaultValue = "") String plantedDate,
-                       Model model,
-                       @PathVariable("id") Long id){
+    public String form(Model model, @PathVariable("id") Long id){
 
         logger.info("GET /gardens/${id}/addplant - display the new plant form");
         model.addAttribute("gardenId", id);
-        model.addAttribute("plant", new Plant(name, count, description, plantedDate));
+        model.addAttribute("plant", new Plant());
         return "plants/addPlant";
     }
 

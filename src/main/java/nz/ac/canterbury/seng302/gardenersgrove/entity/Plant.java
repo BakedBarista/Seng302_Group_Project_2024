@@ -51,6 +51,8 @@ public class Plant {
         this.plantedDate = plantedDate;
     }
 
+    public Plant() {}
+
     public Long getId() {
         return id;
     }
