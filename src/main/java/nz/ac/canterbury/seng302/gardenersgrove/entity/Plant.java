@@ -1,10 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.ValidationGroups;
 
 
 /**
@@ -18,7 +16,8 @@ public class Plant {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Please enter a name")
+    @NotBlank(message = "Please enter a name", groups = {ValidationGroups.FirstOrder.class})
+    @Pattern(regexp = "^[a-zA-Z0-9 ]+$", message = "Name must only contain letters and numbers", groups = {ValidationGroups.SecondOrder.class})
     @Column(nullable = false)
     private String name;
 
