@@ -61,7 +61,9 @@ public class PlantController {
             logger.info("Error In Form");
             return "plants/addPlant";
         }
-        Plant savedPlant = plantService.addPlant(plant, id);
+        plantService.addPlant(plant, id);
+
+
         return "redirect:/gardens/" + id;
     }
 
