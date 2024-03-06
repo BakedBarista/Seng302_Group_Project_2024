@@ -49,6 +49,7 @@ public class Plant {
         this.count = count;
         this.description = description;
         this.plantedDate = plantedDate;
+        this.imageFilePath = "/plantImages/default.png";
     }
 
     public Long getId() {
@@ -96,6 +97,8 @@ public class Plant {
     }
 
     public void setImageFilePath(String filePath) {this.imageFilePath = filePath;}
+
+    public String getImageFilePath() {return imageFilePath;}
 
 
     @Override

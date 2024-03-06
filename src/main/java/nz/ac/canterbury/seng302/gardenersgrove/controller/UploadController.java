@@ -49,7 +49,7 @@ public class UploadController {
                               @RequestParam("image")MultipartFile file,
                               @RequestParam(name = "gardenId")Long gardenId,
                               @RequestParam(name = "plantId")Long plantId) throws IOException, MultipartException {
-        Optional<Plant> plant = plantService.getPlantById(plantId);
+        Plant plant = plantService.getPlantById(plantId);
         String filename = file.getOriginalFilename();
         String extension = filename.substring(filename.lastIndexOf(".") + 1);
         //Check types
@@ -71,7 +71,7 @@ public class UploadController {
         String fileName = "plantImages/" + "plant" + plantId + "image" + "-" + filename;
         Path filePath = Paths.get(directory + fileName);
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-        plant.get().setImageFilePath(fileName);
+        plant.setImageFilePath(fileName);
         redirectAttributes.addAttribute("plantId", plantId);
         redirectAttributes.addAttribute("gardenId", gardenId);
         return "redirect:/gardens/" + gardenId + "/plants/" + plantId+ "/edit";

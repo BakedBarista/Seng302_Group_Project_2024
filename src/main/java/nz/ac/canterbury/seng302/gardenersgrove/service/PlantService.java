@@ -7,7 +7,6 @@ import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * PlantService implementation of the plant repository
@@ -62,8 +61,9 @@ public class PlantService {
     public void setPlantImage(Plant plant) {plantRepository.save(plant);}
     /**
      * Get's one plant by it's unique ID.
+     *
      * @param id the unique ID of the plant in the database.
      * @return the plant object
      */
-    public Optional<Plant> getPlantById(long id) {return plantRepository.findById(id);}
+    public Plant getPlantById(long id) {return plantRepository.findById(id);}
 }

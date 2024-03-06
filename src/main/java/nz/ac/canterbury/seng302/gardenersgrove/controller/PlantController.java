@@ -77,9 +77,10 @@ public class PlantController {
                             @PathVariable("plant_id") long plant_id,
                             Model model) {
         logger.info("/garden/{}/plant/{}/edit", garden_id, plant_id);
-        Optional<Plant> plant = plantService.getPlantById(plant_id);
+        //Plant plant = plantService.getPlantById(plant_id);
         model.addAttribute("garden_id", garden_id);
-        model.addAttribute("plant", plant.orElse(null));
+        model.addAttribute("plant", plantService.getPlantById(plant_id));
+        model.addAttribute("plantImage","/plantImages/default.png");
         model.addAttribute("plant_id", plant_id);
         return "plants/editPlant";
     }
@@ -99,8 +100,8 @@ public class PlantController {
                                Model model) {
         logger.info("/garden/{}/plant/{}", garden_id, plant_id);
 
-        Optional<Plant> plant = plantService.getPlantById(plant_id);
-        Plant updatedPlant = plant.orElse(null);
+        Plant plant = plantService.getPlantById(plant_id);
+        Plant updatedPlant = plant;
         updatedPlant.setName(newName);
         updatedPlant.setCount(newCount);
         updatedPlant.setDescription(newDescription);
