@@ -3,7 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -24,7 +24,7 @@ public class GardenControllerTest {
     @InjectMocks
     private GardenController gardenController;
 
-    @BeforeAll
+    @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
     }
@@ -93,11 +93,13 @@ public class GardenControllerTest {
         Model model = mock(Model.class);
         Garden garden = new Garden("Test Garden", "Test Location", "Test Size");
         when(gardenService.getGardenById(1)).thenReturn(Optional.of(garden));
+        BindingResult bindingResult = mock(BindingResult.class);
+        when(bindingResult.hasErrors()).thenReturn(false);
 
-        String result = gardenController.updateGarden(1, "Updated Garden", "Updated Location", "Updated Size", model);
-        assertEquals("redirect:../../gardens", result);
-        assertEquals("Updated Garden", garden.getName());
-        assertEquals("Updated Location", garden.getLocation());
-        assertEquals("Updated Size", garden.getSize());
+        String result = gardenController.updateGarden(1, garden, bindingResult, model);
+        assertEquals("redirect:/gardens", result);
+        assertEquals("Test Garden", garden.getName());
+        assertEquals("Test Location", garden.getLocation());
+        assertEquals("Test Size", garden.getSize());
     }
 }
