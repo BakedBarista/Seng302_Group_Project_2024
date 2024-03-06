@@ -1,8 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 
-import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.ValidationSequence;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -59,12 +60,13 @@ public class GardenController {
      * @return gardenForm
      */
     @PostMapping("/gardens/create")
-    public String submitForm(@Valid @ModelAttribute("garden") Garden garden,
+    public String submitForm(@Validated(ValidationSequence.class) @ModelAttribute("garden") Garden garden,
                              BindingResult bindingResult, Model model) {
         logger.info("POST /gardens - submit the new garden form");
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("garden", garden);
+
             return "gardens/createGarden";
         }
         Garden savedGarden = gardenService.addGarden(garden);
@@ -83,6 +85,11 @@ public class GardenController {
         return "gardens/viewGardens";
     }
 
+    /**
+     * Gets the id of garden
+     * @param model representation of results
+     * @return gardenDetails page
+     */
     @GetMapping("/gardens/{id}")
     public String gardenDetail(@PathVariable(name = "id") Long id,
                                Model model) {
@@ -92,44 +99,50 @@ public class GardenController {
     }
 
     /**
-     * Get single garden details
-     * @param model representation of results
-     * @return editGarden page
+     * Updates the Garden
+     * @param id
+     * @return redirect to gardens
      */
     @GetMapping("/gardens/{id}/edit")
     public String getGarden(@PathVariable() long id, Model model) {
         logger.info("Get /garden/{}", id);
         Optional<Garden> garden = gardenService.getGardenById(id);
+        logger.info(String.valueOf(garden));
         model.addAttribute("garden", garden.orElse(null));
-        return "/gardens/editGarden";
+        return "gardens/editGarden";
     }
 
     /**
-     * Get single garden details
-     * @param model representation of results
-     * @return redirect to gardens page
+     * Update garden details
+     * @param id
+     * @param garden
+     * @param result
+     * @param model
+     * @return redirect to gardens
      */
     @PostMapping("/gardens/{id}/edit")
-    public String updateGarden(@PathVariable() long id,
-                               @RequestParam(name="name") String newName,
-                               @RequestParam(name="location") String newLocation,
-                               @RequestParam(name="size") String newSize,
+    public String updateGarden(@PathVariable long id,
+                               @Validated(ValidationSequence.class) @ModelAttribute("garden") Garden garden,
+                               BindingResult result,
                                Model model) {
+        if (result.hasErrors()) {
+            model.addAttribute("garden", garden);
+            model.addAttribute("id", id);
+            return "gardens/editGarden";
+        }
 
-        model.addAttribute("gardenName", newName);
-        model.addAttribute("gardenLocation", newLocation);
-        model.addAttribute("gardenSize", newSize);
+        Optional<Garden> existingGarden = gardenService.getGardenById(id);
+        if (existingGarden.isPresent()) {
+            existingGarden.get().setName(garden.getName());
+            existingGarden.get().setLocation(garden.getLocation());
+            existingGarden.get().setSize(garden.getSize());
+            gardenService.addGarden(existingGarden.get());
 
 
-        Optional<Garden> garden = gardenService.getGardenById(id);
-        Garden updatedGarden = garden.orElse(null);
-        updatedGarden.setName(newName);
-        updatedGarden.setLocation(newLocation);
-        updatedGarden.setSize(newSize);
-
-        gardenService.addGarden(updatedGarden);
-        return "redirect:../../gardens";
+        }
+        return "redirect:/gardens";
     }
+
 
 
 
