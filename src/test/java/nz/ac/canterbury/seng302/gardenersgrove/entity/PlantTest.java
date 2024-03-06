@@ -35,6 +35,7 @@ public class PlantTest {
     @Test
     public void SetName_NameHasSpace_ReturnsEmptyConstraintViolationList() {
         plant.setName("my plant");
+        System.out.println(validator.validate(plant));
         
         assertTrue(validator.validate(plant).isEmpty());
     }

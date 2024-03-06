@@ -19,7 +19,7 @@ public class Plant {
     private Long id;
 
     @NotBlank(message = "Please enter a name")
-    @Pattern(regexp = "^[a-zA-Z0-9 ]+$", message = "Name must only contain letters and numbers")
+    @Pattern(regexp = "^[a-zA-Z0-9 \\-.,']*$", message = "Name must only contain letters and numbers")
     @Column(nullable = false)
     private String name;
 
@@ -34,6 +34,7 @@ public class Plant {
     private String description;
 
 //    @NotBlank(message = "Please enter a date")
+    @Pattern(regexp = "^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])/\\d{4}$", message = "Date must be in DD/MM/YYYY format")
     @Column(nullable = false)
     private String plantedDate;
 
