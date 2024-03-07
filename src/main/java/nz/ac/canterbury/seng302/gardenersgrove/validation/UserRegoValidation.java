@@ -48,7 +48,7 @@ public class UserRegoValidation {
      * @return bool
      */
     public static boolean userYoungDateValidation(String date){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("DD/MM/YYYY");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         LocalDate dob = LocalDate.parse(date, formatter);
         LocalDate currentDate = LocalDate.now();
         Period period = Period.between(dob, currentDate);
@@ -66,7 +66,7 @@ public class UserRegoValidation {
      * @return bool
      */
     public static boolean userOldDateValidation(String date){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("DD/MM/YYYY");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         LocalDate dob = LocalDate.parse(date, formatter);
         LocalDate currentDate = LocalDate.now();
         Period period = Period.between(dob, currentDate);
@@ -83,13 +83,16 @@ public class UserRegoValidation {
      * @return bool
      */
     public static boolean userInvalidDateValidation(String date) {
-        try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("DD/MM/YYYY");
-            LocalDate.parse(date, formatter);
-            return true;
-        } catch (Exception e){
-            return false;
+        if (date != null) {
+            try {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                LocalDate.parse(date, formatter);
+                return true;
+            } catch (Exception e){
+                return false;
+            }
         }
+        return true;
     }
 
     /**

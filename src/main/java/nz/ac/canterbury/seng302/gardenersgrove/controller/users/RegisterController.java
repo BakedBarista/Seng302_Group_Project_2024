@@ -63,59 +63,44 @@ public class RegisterController {
         }
 
         if (!userRegoValidation.userEmailValidation(email)){
-            System.out.println("\n Here \n");
             model.addAttribute("incorrectEmail", "Email address must be in the form ‘jane@doe.nz’");
             return "users/registerTemplate";
         } else if (!userRegoValidation.userNameValidation(fname, lname, noLname)){
-            System.out.println("\n Here \n");
             model.addAttribute("incorrectName", "{First/Last} name cannot be empty and must only include letters, spaces,hyphens or apostrophes");
             return "users/registerTemplate";
         } else if (!userRegoValidation.userPasswordMatchValidation(password, confirmPassword)){
-            System.out.println("\n Here \n");
             model.addAttribute("matchPassword", "Passwords do not match");
             return "users/registerTemplate";
         } else if (!userRegoValidation.userPasswordStrengthValidation(password)){
-            System.out.println("\n Here \n");
             model.addAttribute("weakPassword", "Your password must beat least 8 characters long and include at least one uppercase letter, one lowercase letter, one number,and one special character");
+            return "users/registerTemplate";
+        } else if (!userRegoValidation.userYoungDateValidation(dob)){
+            model.addAttribute("youngDob", "You must be 13 years or older to create an account");
+            return "users/registerTemplate";
+        } else if (!userRegoValidation.userOldDateValidation(dob)){
+            model.addAttribute("oldDob", "The maximum age allowed is 120 years");
+            return "users/registerTemplate";
+        } else if (!userRegoValidation.userInvalidDateValidation(dob)){
+            model.addAttribute("invalidDob", "Date in not in valid format, (DD/MM/YYYY)");
             return "users/registerTemplate";
         }
 
-        if(dob != null) {
-            if (!userRegoValidation.userYoungDateValidation(dob)){
-                model.addAttribute("youngDob", "You must be 13 years or older to create an account");
-                return "users/registerTemplate";
-            } else if (!userRegoValidation.userOldDateValidation(dob)){
-                model.addAttribute("oldDob", "The maximum age allowed is 120 years");
-                return "users/registerTemplate";
-            } else if (!userRegoValidation.userInvalidDateValidation(dob)){
-                model.addAttribute("invalidDob", "Date in not in valid format, (DD/MM/YYYY)");
-                return "users/registerTemplate";
-            }
-        }
-
-        if (noLname == true){
-            userService.addUser(new GardenUser(fname, null, email, address, password, dob));
-            return "redirect:/users/login";
-        } else {
-            userService.addUser(new GardenUser(fname, lname, email, address, password, dob));
-            return "redirect:/users/login";
-        }
-        
-
+        userService.addUser(new GardenUser(fname, lname, email, address, password, dob));
+        return "redirect:/users/login";
     }
 
     /**
      * Submits the form
      */
-    @GetMapping("/users/dummy")
-    public String createDummy() {
-        logger.info("POST /users/dummy");
+    // @GetMapping("/users/dummy")
+    // public String createDummy() {
+    //     logger.info("POST /users/dummy");
 
-        GardenUser user = new GardenUser("John", "Doe", "john.doe@gmail.com", "Jack Erskine 133", "password",
-                "1970-01-01");
-        userService.addUser(user);
+    //     GardenUser user = new GardenUser("John", "Doe", "john.doe@gmail.com", "Jack Erskine 133", "password",
+    //             "1970-01-01");
+    //     userService.addUser(user);
 
-        return "redirect:/";
-    }
+    //     return "redirect:/";
+    // }
 
 }

@@ -17,11 +17,11 @@
         <form th:action="register" method="post">
             <label class="form-group">
                 First Name
-                <input type="text" th:name="fname" th:value="*{fname}" required>
+                <input type="text" th:name="fname" th:value="*{fname}">
             </label>
             <label class="form-group">
                 Last Name
-                <input type="text" th:name="lname" th:value="*{lname}" id="lname" required>
+                <input type="text" th:name="lname" th:value="*{lname}" id="lname">
                 <span class = "error" th:if="${incorrectName != null}" th:text="*{incorrectName}"></span>
             </label>
             <label class="form-checkbox">
@@ -29,22 +29,22 @@
             </label>
             <label class="form-group">
                 Email
-                <input type="text" th:name="email" th:value="*{email}" required>
+                <input type="text" th:name="email" th:value="*{email}">
                 <span class = "error" th:if="${incorrectEmail != null}" th:text="*{incorrectEmail}"></span>
             </label>
             <label class="form-group">
                 Address
-                <input type="text" th:name="address" th:value="*{address}" required>
+                <input type="text" th:name="address" th:value="*{address}">
             </label>
             <label class="form-group">
                 Password
-                <input type="password" th:name="password" required>
+                <input type="password" th:name="password">
                 <span class = "error" th:if="${matchPassword != null}" th:text="*{matchPassword}"></span>
                 <span class = "error" th:if="${weakPassword != null}" th:text="*{weakPassword}"></span>
             </label>
             <label class="form-group">
                 Confirm Password
-                <input type="password" th:name="confirmPassword" required>
+                <input type="password" th:name="confirmPassword">
             </label>
             <label class="form-group">
                 Date of Birth (optional)

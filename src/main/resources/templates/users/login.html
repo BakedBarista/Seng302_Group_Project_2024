@@ -13,11 +13,11 @@
         <form th:action="login" method="post">
             <label class="form-group">
                 Email
-                <input type="text" th:name="username" th:value="*{email}" required>
+                <input type="text" th:name="username" th:value="*{email}">
             </label>
             <label class="form-group">
                 Password
-                <input type="password" th:name="password" required>
+                <input type="password" th:name="password">
                 <span class = "error" th:if="${invalidCredentials != null}" th:text="*{invalidCredentials}"></span>
             </label>
             <button class="btn form-group">Sign In</button>

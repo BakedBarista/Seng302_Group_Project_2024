@@ -32,7 +32,7 @@ public class UserRegoValidationTest {
         boolean noLname = false;
         String email = "test@uclive.ac.nz";
         String password = "Pa$$w0rd";
-        String dob = "2004-12-10";
+        String dob = "10/12/2004";
 
         boolean nameResult = userRego.userNameValidation(fname, lname, noLname);
         boolean emailResult = userRego.userEmailValidation(email);
@@ -189,7 +189,7 @@ public class UserRegoValidationTest {
      */
     @Test
     public void testTooYoungAge() {
-        String dob = "2023-12-10";
+        String dob = "10/12/2023";
         boolean youngDateResult = userRego.userYoungDateValidation(dob);
         assertFalse(youngDateResult);
     }
@@ -200,7 +200,7 @@ public class UserRegoValidationTest {
      */
     @Test
     public void testTooOldAge() {
-        String dob = "1902-12-10";
+        String dob = "10/12/1902";
         boolean oldDateResult = userRego.userOldDateValidation(dob);
         assertFalse(oldDateResult);
     }
@@ -214,6 +214,17 @@ public class UserRegoValidationTest {
         String date = "200/200/200";
         boolean invalidDateResult = userRego.userInvalidDateValidation(date);
         assertFalse(invalidDateResult);
+    }
+
+    /**
+     * Test passing an empty date to userInvalidDateValidation since birth date is optional
+     * Should return true
+     */
+    @Test
+    public void testEmptyDate() {
+        String date = "";
+        boolean emptyDateResult = userRego.userInvalidDateValidation(date);
+        assertTrue(emptyDateResult);
     }
 
     /**
