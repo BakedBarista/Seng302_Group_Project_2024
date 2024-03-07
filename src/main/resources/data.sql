@@ -12,7 +12,7 @@ INSERT INTO garden (name, location, size) VALUES ('Moonlit Meadow', 'Silver Shor
 
 -- Garden 1
 INSERT INTO plant (name, count, description, planted_date, garden_id) VALUES
-                                                                          ('Rose', 15, 'Red', '2024-03-01', 1),
+                                                                          ('Rose', 15, 'Red', '24/12/2024', 1),
                                                                           ('Sunflower', 8, 'Yellow', '2024-04-10', 1),
                                                                           ('Lavender', 5, 'Purple', '2024-05-22', 1),
                                                                           ('Tulip', 12, 'Pink', '2024-06-15', 1),

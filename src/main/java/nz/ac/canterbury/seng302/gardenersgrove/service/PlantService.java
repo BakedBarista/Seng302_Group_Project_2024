@@ -79,5 +79,7 @@ public class PlantService {
      * @param imagePath the path string to be saved
      */
 
-    //public void setPlantImage(long id, String imagePath) {plantRepository.findById(id).get().setPlantImagePath(imagePath);}
+    public void setPlantImage(Plant plant) {
+        plantRepository.save(plant);
+    }
 }
