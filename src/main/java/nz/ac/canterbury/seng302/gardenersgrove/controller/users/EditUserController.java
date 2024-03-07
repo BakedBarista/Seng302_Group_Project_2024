@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import nz.ac.canterbury.seng302.gardenersgrove.validation.UserRegoValidation;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 
@@ -85,9 +86,24 @@ public class EditUserController {
             @RequestParam(name = "newPassword") String newPassword,
             @RequestParam(name = "confirmPassword") String confirmPassword,
             Model model) {
+
         long id = (long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
+        UserRegoValidation userRegoValidation = new UserRegoValidation();
+
         GardenUser user = userService.getUserById(id);
+
+        if(!user.checkPassword(oldPassword)){
+            model.addAttribute("incorrectOld", "old password must match your old one u spud");
+            return "users/editPassword";
+        } else if(!userRegoValidation.userPasswordMatchValidation(newPassword, confirmPassword)){
+            model.addAttribute("incorrectMatch", "please eneter same password twice");
+            return "users/editPassword";
+        }else if(!userRegoValidation.userPasswordStrengthValidation(newPassword)){
+            model.addAttribute("incorrectStrength", "our password must beat least 8 characters long and include at least one uppercase letter, one lowercase letter, one number,and one special character");
+            return "users/editPassword";
+        }
+
         user.setPassword(newPassword);
         userService.addUser(user);
         return "users/editTemplate";
