@@ -75,6 +75,7 @@ public class PlantController {
                             Model model) {
         logger.info("/garden/{}/plant/{}/edit", garden_id, plant_id);
         Optional<Plant> plant = plantService.getPlantById(plant_id);
+        plantService.getPlantById(plant_id).get().setPlantImagePath("public/default.png");
         model.addAttribute("garden_id", garden_id);
         model.addAttribute("plant", plant.orElse(null));
         return "plants/editPlant";

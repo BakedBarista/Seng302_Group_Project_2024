@@ -5,9 +5,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -31,6 +29,8 @@ public class UploadController {
 
     private static final List<String> allowedExtension = Arrays.asList("jpg", "png", "svg");
 
+    private final Path root = Paths.get("./plantImages");
+
     public UploadController(PlantService plantService) {this.plantService = plantService;}
     /**
      * Displays the file upload page
@@ -49,7 +49,7 @@ public class UploadController {
                               @RequestParam("image")MultipartFile file,
                               @RequestParam(name = "gardenId")Long gardenId,
                               @RequestParam(name = "plantId")Long plantId) throws IOException, MultipartException {
-        Plant plant = plantService.getPlantById(plantId);
+        Optional<Plant> plant = plantService.getPlantById(plantId);
         String filename = file.getOriginalFilename();
         String extension = filename.substring(filename.lastIndexOf(".") + 1);
         //Check types
@@ -71,9 +71,10 @@ public class UploadController {
         String fileName = "plantImages/" + "plant" + plantId + "image" + "-" + filename;
         Path filePath = Paths.get(directory + fileName);
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-        plant.setImageFilePath(fileName);
+        plant.get().setPlantImagePath(fileName);
         redirectAttributes.addAttribute("plantId", plantId);
         redirectAttributes.addAttribute("gardenId", gardenId);
         return "redirect:/gardens/" + gardenId + "/plants/" + plantId+ "/edit";
     }
+
 }

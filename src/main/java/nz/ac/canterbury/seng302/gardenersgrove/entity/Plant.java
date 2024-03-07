@@ -50,6 +50,7 @@ public class Plant {
         this.count = count;
         this.description = description;
         this.plantedDate = plantedDate;
+        this.plantImagePath = "/public/plantImages/default.png";
     }
 
     public Plant() {}

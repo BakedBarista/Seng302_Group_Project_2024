@@ -70,7 +70,7 @@ public class PlantService {
      * @return plantImagePath of the plant object
      */
 
-    public String getPlantImage(long id) {return plantRepository.findById(id).get().getPlantImagePath();}
+    //public String getPlantImage(long id) {return plantRepository.findById(id).get().getPlantImagePath();}
 
 
     /**
@@ -79,5 +79,5 @@ public class PlantService {
      * @param imagePath the path string to be saved
      */
 
-    public void setPlantImage(long id, String imagePath) {plantRepository.findById(id).get().setPlantImagePath(imagePath);}
+    //public void setPlantImage(long id, String imagePath) {plantRepository.findById(id).get().setPlantImagePath(imagePath);}
 }

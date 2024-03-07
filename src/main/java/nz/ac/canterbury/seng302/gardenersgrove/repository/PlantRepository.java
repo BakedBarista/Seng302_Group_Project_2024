@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @Repository
 public interface PlantRepository extends CrudRepository<Plant, Long> {
-    Plant findById(long id);
+    Optional<Plant> findById(long id);
 
     List<Plant> findAll();
 
