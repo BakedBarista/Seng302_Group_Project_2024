@@ -30,7 +30,7 @@
             <div th:if="${#fields.hasErrors('plantedDate')}" th:errors="*{plantedDate}" style="color: red;"></div>
             <br/>
             <div>
-                <img th:src="default.png" alt="Plant Image" />
+                <img th:src="@{${imagePath}}" alt="Plant Image" />
 
                 <section class="container">
                     <a class="semi-transparent-button" th:href="@{/uploadImage(gardenId=${garden_id}, plantId=${plant_id})}">+</a>

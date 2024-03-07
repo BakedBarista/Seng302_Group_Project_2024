@@ -71,13 +71,13 @@ public class UploadController {
             //Files.delete(filePath);
             return "redirect:/uploadImage";
         }
-        //String directory = "./public/";
+        String directory = "./images/";
         String fileName = "plant" + plantId + "image" + "-" + filename;
-        Path filePath = Paths.get(fileName);
+        Path filePath = Paths.get(directory + fileName);
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
         if(optionalPlant.isPresent()){
             Plant plant = optionalPlant.get();
-            plant.setPlantImagePath(fileName);
+            plant.setPlantImagePath("/" + fileName);
             plantService.setPlantImage(plant);
         }else{
             throw new RuntimeException("Not Found");
