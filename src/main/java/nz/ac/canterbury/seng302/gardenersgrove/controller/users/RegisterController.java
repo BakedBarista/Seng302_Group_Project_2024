@@ -63,15 +63,19 @@ public class RegisterController {
         }
 
         if (!userRegoValidation.userEmailValidation(email)){
+            System.out.println("\n Here \n");
             model.addAttribute("incorrectEmail", "Email address must be in the form ‘jane@doe.nz’");
             return "users/registerTemplate";
         } else if (!userRegoValidation.userNameValidation(fname, lname, noLname)){
+            System.out.println("\n Here \n");
             model.addAttribute("incorrectName", "{First/Last} name cannot be empty and must only include letters, spaces,hyphens or apostrophes");
             return "users/registerTemplate";
         } else if (!userRegoValidation.userPasswordMatchValidation(password, confirmPassword)){
+            System.out.println("\n Here \n");
             model.addAttribute("matchPassword", "Passwords do not match");
             return "users/registerTemplate";
         } else if (!userRegoValidation.userPasswordStrengthValidation(password)){
+            System.out.println("\n Here \n");
             model.addAttribute("weakPassword", "Your password must beat least 8 characters long and include at least one uppercase letter, one lowercase letter, one number,and one special character");
             return "users/registerTemplate";
         }

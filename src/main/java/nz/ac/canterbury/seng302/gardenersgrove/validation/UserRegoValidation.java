@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.validation;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.time.format.DateTimeFormatter;
 
 /**
  * simple validation checks for user registration data
@@ -47,7 +48,8 @@ public class UserRegoValidation {
      * @return bool
      */
     public static boolean userYoungDateValidation(String date){
-        LocalDate dob = LocalDate.parse(date);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("DD/MM/YYYY");
+        LocalDate dob = LocalDate.parse(date, formatter);
         LocalDate currentDate = LocalDate.now();
         Period period = Period.between(dob, currentDate);
         int age = period.getYears();
@@ -64,7 +66,8 @@ public class UserRegoValidation {
      * @return bool
      */
     public static boolean userOldDateValidation(String date){
-        LocalDate dob = LocalDate.parse(date);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("DD/MM/YYYY");
+        LocalDate dob = LocalDate.parse(date, formatter);
         LocalDate currentDate = LocalDate.now();
         Period period = Period.between(dob, currentDate);
         int age = period.getYears();
@@ -81,7 +84,8 @@ public class UserRegoValidation {
      */
     public static boolean userInvalidDateValidation(String date) {
         try {
-            LocalDate dob = LocalDate.parse(date);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("DD/MM/YYYY");
+            LocalDate.parse(date, formatter);
             return true;
         } catch (Exception e){
             return false;
