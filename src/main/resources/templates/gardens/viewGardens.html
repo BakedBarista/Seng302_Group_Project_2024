@@ -12,7 +12,6 @@
                 <table>
                     <thead>
                     <tr>
-                        <th>Id</th>
                         <th>Name</th>
                         <th>Location</th>
                         <th>Size</th>
@@ -23,8 +22,7 @@
                         <td colspan="3"> Please add a garden first</td>
                     </tr>
                     <tr th:each="garden : ${gardens}">
-                        <td><a th:href="@{'/gardens/' + ${garden.id}}"><span th:text="${garden.id}">Id</span></a></td>
-                        <td><span th:text="${garden.name}"> Name </span></td>
+                        <td><a th:href="@{'/gardens/' + ${garden.id}}"><span th:text="${garden.name}"> Name </span></td>
                         <td><span th:text="${garden.location}"> Location </span></td>
                         <td><span th:text="${garden.size}"> Size </span></td>
                     </tr>
