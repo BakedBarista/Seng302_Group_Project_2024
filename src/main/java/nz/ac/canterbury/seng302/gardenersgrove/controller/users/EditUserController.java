@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -76,6 +77,20 @@ public class EditUserController {
     public String editPassword() {
         logger.info("GET /users/edit/password");
         return "users/editPassword";
+    }
+
+    @PostMapping("/users/edit/password")
+    public String submitPassoword(
+            @RequestParam(name = "oldPassword") String oldPassword,
+            @RequestParam(name = "newPassword") String newPassword,
+            @RequestParam(name = "confirmPassword") String confirmPassword,
+            Model model) {
+        long id = (long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        GardenUser user = userService.getUserById(id);
+        user.setPassword(newPassword);
+        userService.addUser(user);
+        return "users/editTemplate";
     }
 
 }
