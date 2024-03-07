@@ -8,26 +8,26 @@
 <body>
 <div>
     <div>
-        <form th:action="@{/gardens/{garden_id}/plants/{plant_id}/edit(garden_id=${garden_id}, plant_id=${plant.id})}" method="post">
+        <form th:action="@{/gardens/{garden_id}/plants/{id}/edit(garden_id=${garden_id}, id=${plant_id})}" th:object="${plant}" method="post">
             <label for="name"> Plant Name: </label>
-            <input type="text" class="form-control" id="name" placeholder="${plant.name}"
+            <input type="text" class="form-control" id="name" placeholder="Name"
                    th:name="name" th:value="${plant.name}" data-cy="name" autofocus>
-            <div th:if="${nameError}" th:text="${nameError}" style="color: red;"></div>
+            <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" style="color: red;"></div>
             <br/>
-            <label for="count"> Garden Count: </label>
-            <input type="text" class="form-control" id="count" th:placeholder="${plant.count}"
+            <label for="count"> Count: </label>
+            <input type="text" class="form-control" id="count" th:placeholder="Count"
                    th:name="count" th:value="${plant.count}" data-cy="location" autofocus>
-            <div th:if="${locationError}" th:text="${locationError}" style="color: red;"></div>
+            <div th:if="${#fields.hasErrors('count')}" th:errors="*{count}" style="color: red;"></div>
             <br/>
             <label for="description"> Plant Description: </label>
-            <input type="text" class="form-control" id="description" placeholder="${plant.description}"
+            <input type="text" class="form-control" id="description" placeholder="Description"
                    th:name="description" th:value="${plant.description}" data-cy="size" autofocus>
-            <div th:if="${sizeError}" th:text="${sizeError}" style="color: red;"></div>
+            <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}" style="color: red;"></div>
             <br/>
             <label for="date"> Date Planted: </label>
-            <input type="text" class="form-control" id="date" placeholder="${plant.plantedDate}"
+            <input type="text" class="form-control" id="date" placeholder="DD/MM/YYYY"
                    th:name="plantedDate" th:value="${plant.plantedDate}" data-cy="size" autofocus>
-            <div th:if="${sizeError}" th:text="${sizeError}" style="color: red;"></div>
+            <div th:if="${#fields.hasErrors('plantedDate')}" th:errors="*{plantedDate}" style="color: red;"></div>
             <br/>
             <div>
                 <img th:src="${plant.imageFilePath}" alt="Plant Image" />

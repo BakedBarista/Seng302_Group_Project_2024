@@ -3,8 +3,8 @@ package nz.ac.canterbury.seng302.gardenersgrove.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import jakarta.validation.constraints.NotNull;
 
 
 /**
@@ -13,44 +13,46 @@ import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class Plant {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank(message = "Please enter a name")
+    @Pattern(regexp = "^[a-zA-Z0-9 \\-.,']*$", message = "Name must only contain letters and numbers")
     @Column(nullable = false)
     private String name;
 
-    @NotNull(message = "Count cannot be null")
+//    @NotNull(message = "Count cannot be null")
     @Min(value = 1, message = "Count must be greater than 0")
     @Column(nullable = false)
-    private int count;
+    private Integer count;
 
-    @NotBlank(message = "Please enter a description")
-    @Size(min = 1, max = 512, message = "Description must be less than 512 characters")
+//    @NotBlank(message = "Please enter a description")
+    @Size(min = 1, max = 511, message = "Description must be less than 512 characters")
     @Column(nullable = false)
     private String description;
 
-    @NotBlank(message = "Please enter a date")
+//    @NotBlank(message = "Please enter a date")
+    @Pattern(regexp = "^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])/\\d{4}$", message = "Date must be in DD/MM/YYYY format")
     @Column(nullable = false)
     private String plantedDate;
-
-    @Column
-    private String imageFilePath;
 
     @ManyToOne
     @JoinColumn
     private Garden garden;
 
-    public Plant() {}
+    @Column(nullable = true)
+    private String plantImagePath;
 
     public Plant(String name, int count, String description, String plantedDate) {
         this.name = name;
         this.count = count;
         this.description = description;
         this.plantedDate = plantedDate;
-        this.imageFilePath = "/plantImages/default.png";
     }
+
+    public Plant() {}
 
     public Long getId() {
         return id;
@@ -96,14 +98,13 @@ public class Plant {
         return garden;
     }
 
-    public void setImageFilePath(String filePath) {this.imageFilePath = filePath;}
+    public String getPlantImagePath() {return plantImagePath;}
 
-    public String getImageFilePath() {return imageFilePath;}
-
+    public void setPlantImagePath(String plantImagePath) { this.plantImagePath = plantImagePath;}
 
     @Override
     public String toString() {
-        return "GardenFormResult{" +
+        return "PlantFormResult{" +
                 "id=" + id +
                 ", name='" + this.name + '\'' +
                 ", count='" + this.count + '\'' +

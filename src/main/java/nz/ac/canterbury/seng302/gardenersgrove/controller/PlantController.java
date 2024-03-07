@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.ValidationSequence;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -34,15 +36,8 @@ public class PlantController {
         this.gardenService = gardenService;
     }
 
-    @Autowired UploadController uploadController;
-
     @GetMapping("/gardens/{id}/addplant")
-    public String form(@RequestParam(name="name", required = false, defaultValue = "") String name,
-                       @RequestParam(name="count", required = false, defaultValue = "") String count,
-                       @RequestParam(name="description", required = false, defaultValue = "") String description,
-                       @RequestParam(name="plantedDate", required = false, defaultValue = "") String plantedDate,
-                       Model model,
-                       @PathVariable("id") Long id){
+    public String form(Model model, @PathVariable("id") Long id){
 
         logger.info("GET /gardens/${id}/addplant - display the new plant form");
         model.addAttribute("gardenId", id);
@@ -63,7 +58,9 @@ public class PlantController {
             logger.info("Error In Form");
             return "plants/addPlant";
         }
-        Plant savedPlant = plantService.addPlant(plant, id);
+        plantService.addPlant(plant, id);
+
+
         return "redirect:/gardens/" + id;
     }
 
@@ -77,11 +74,9 @@ public class PlantController {
                             @PathVariable("plant_id") long plant_id,
                             Model model) {
         logger.info("/garden/{}/plant/{}/edit", garden_id, plant_id);
-        //Plant plant = plantService.getPlantById(plant_id);
+        Optional<Plant> plant = plantService.getPlantById(plant_id);
         model.addAttribute("garden_id", garden_id);
-        model.addAttribute("plant", plantService.getPlantById(plant_id));
-        model.addAttribute("plantImage","/plantImages/default.png");
-        model.addAttribute("plant_id", plant_id);
+        model.addAttribute("plant", plant.orElse(null));
         return "plants/editPlant";
     }
 
@@ -93,22 +88,29 @@ public class PlantController {
     @PostMapping("/gardens/{garden_id}/plants/{plant_id}/edit")
     public String updatePlant(@PathVariable("garden_id") long garden_id,
                                @PathVariable("plant_id") long plant_id,
-                               @RequestParam(name="name", required = false, defaultValue = "") String newName,
-                               @RequestParam(name="count", required = false, defaultValue = "") int newCount,
-                               @RequestParam(name="description", required = false, defaultValue = "") String newDescription,
-                               @RequestParam(name="plantedDate", required = false, defaultValue = "") String newDate,
-                               Model model) {
+                              @Validated(ValidationSequence.class) @ModelAttribute("plant") Plant plant,
+                               BindingResult bindingResult, Model model) {
         logger.info("/garden/{}/plant/{}", garden_id, plant_id);
 
-        Plant plant = plantService.getPlantById(plant_id);
-        Plant updatedPlant = plant;
-        updatedPlant.setName(newName);
-        updatedPlant.setCount(newCount);
-        updatedPlant.setDescription(newDescription);
-        updatedPlant.setPlantedDate(newDate);
-        plantService.addPlant(updatedPlant, garden_id);
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("plant", plant);
+            model.addAttribute("garden_id", garden_id);
+            model.addAttribute("plant_id", plant_id);
+            return "plants/editPlant";
+        }
+
+        Optional<Plant> existingPlant = plantService.getPlantById(plant_id);
+        if (existingPlant.isPresent()){
+            existingPlant.get().setName(plant.getName());
+            existingPlant.get().setCount(plant.getCount());
+            existingPlant.get().setDescription(plant.getDescription());
+            existingPlant.get().setPlantedDate(plant.getPlantedDate());
+            plantService.addPlant(existingPlant.get(), garden_id);
+        }
 
         //plantService.addPlant(updatedPlant);
         return "redirect:../../../" + garden_id;
     }
+
+
 }

@@ -1,9 +1,9 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
+import nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidEuropeanDecimal;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.ValidationGroups;
 
 
 /**
@@ -15,19 +15,19 @@ public class Garden {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Garden name cannot be empty")
-    @Pattern(regexp = "^[A-Za-z0-9 .,'-]+$", message = "Garden name must only include letters, numbers, spaces, dots, hyphens, or apostrophes")
-    @Size(min = 3, max = 50, message = "Name must be between 3 and 50 characters.")
+    @NotBlank(message = "Garden name cannot be empty", groups = {ValidationGroups.FirstOrder.class})
+    @Pattern(regexp = "^[A-Za-z0-9 .,'-]+$", message = "Garden name must only include letters, numbers, spaces, dots, hyphens, or apostrophes", groups = {ValidationGroups.SecondOrder.class})
+    @Size(min = 3, max = 50, message = "Name must be between 3 and 50 characters.", groups = {ValidationGroups.SecondOrder.class})
     @Column(nullable = false)
     private String name;
 
-    @NotBlank(message = "Location cannot be empty")
-    @Pattern(regexp = "^[A-Za-z0-9 .,'-]+$", message = "Location name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes")
+    @NotBlank(message = "Location cannot be empty", groups = {ValidationGroups.FirstOrder.class})
+    @Pattern(regexp = "^[A-Za-z0-9 .,'-]+$", message = "Location name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes", groups = {ValidationGroups.SecondOrder.class})
     @Column(nullable = false)
     private String location;
 
-    @NotBlank(message = "Please enter a size for your garden.")
-    @Column(nullable = false)
+    @ValidEuropeanDecimal(message = "Size must be a positive number")
+    @Column(nullable = true)
     private String size;
 
     public Garden() {}
@@ -69,7 +69,7 @@ public class Garden {
     }
 
     public void setSize(String size) {
-        this.size = size;
+        this.size = size.replace(',', '.');
     }
 
     @Override
