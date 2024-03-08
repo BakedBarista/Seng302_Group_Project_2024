@@ -12,17 +12,17 @@
             <li>
                 <a href="/">Home</a>
             </li>
-            <li>
+            <li th:if="${!isAuthenticated}">
                 <a href="/users/register">Register</a>
             </li>
-            <li>
+            <li th:if="${!isAuthenticated}">
                 <a href="/users/login">Sign In</a>
             </li>
-            <li>
-                <a href="/users/logout">Log Out</a>
-            </li>
-            <li>
+            <li th:if="${isAuthenticated}">
                 <a href="/users/user">My Profile</a>
+            </li>
+            <li th:if="${isAuthenticated}">
+                <a href="/users/logout">Sign Out</a>
             </li>
         </ul>
     </nav>
