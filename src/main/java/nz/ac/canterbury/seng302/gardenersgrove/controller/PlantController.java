@@ -13,7 +13,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
@@ -52,8 +56,10 @@ public class PlantController {
                              BindingResult bindingResult, Model model) {
         logger.info(plant.getPlantedDate());
 
+        if(!plant.getPlantedDate().isEmpty()) {
+            plant.setPlantedDate(refactorPlantedDate(plant.getPlantedDate()));
+        }
 
-        plant.setPlantedDate(refactorPlantedDate(plant.getPlantedDate()));
 
         logger.info(plant.getPlantedDate());
         logger.info("POST /gardens/${id}/addplant - submit the new plant form");
@@ -102,7 +108,9 @@ public class PlantController {
                                BindingResult bindingResult, Model model) {
         logger.info("/garden/{}/plant/{}", garden_id, plant_id);
 
-        plant.setPlantedDate(refactorPlantedDate(plant.getPlantedDate()));
+        if(!plant.getPlantedDate().isEmpty()) {
+            plant.setPlantedDate(refactorPlantedDate(plant.getPlantedDate()));
+        }
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("plant", plant);

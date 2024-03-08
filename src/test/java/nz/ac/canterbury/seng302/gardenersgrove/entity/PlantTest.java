@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.entity;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.ValidationGroups;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -80,10 +81,9 @@ public class PlantTest {
         String expectedMessage = "Name must only contain letters and numbers";
         Integer expectedConstraintSetSize = 1;
 
+        ConstraintViolation<Plant> violation = validator.validate(plant, ValidationGroups.SecondOrder.class).iterator().next();
 
-        ConstraintViolation<Plant> violation = validator.validate(plant).iterator().next();
-
-        assertEquals(expectedConstraintSetSize, validator.validate(plant).size());
+        assertEquals(expectedConstraintSetSize, validator.validate(plant, ValidationGroups.SecondOrder.class).size());
         assertEquals(expectedMessage, violation.getMessage());
     }
 
@@ -94,9 +94,9 @@ public class PlantTest {
         Integer expectedConstraintSetSize = 1;
 
 
-        ConstraintViolation<Plant> violation = validator.validate(plant).iterator().next();
+        ConstraintViolation<Plant> violation = validator.validate(plant, ValidationGroups.SecondOrder.class).iterator().next();
 
-        assertEquals(expectedConstraintSetSize, validator.validate(plant).size());
+        assertEquals(expectedConstraintSetSize, validator.validate(plant, ValidationGroups.SecondOrder.class).size());
         assertEquals(expectedMessage, violation.getMessage());
     }
     @Test
@@ -106,9 +106,9 @@ public class PlantTest {
         Integer expectedConstraintSetSize = 1;
 
 
-        ConstraintViolation<Plant> violation = validator.validate(plant).iterator().next();
+        ConstraintViolation<Plant> violation = validator.validate(plant, ValidationGroups.FirstOrder.class).iterator().next();
 
-        assertEquals(expectedConstraintSetSize, validator.validate(plant).size());
+        assertEquals(expectedConstraintSetSize, validator.validate(plant, ValidationGroups.FirstOrder.class).size());
         assertEquals(expectedMessage, violation.getMessage());
     }
 
@@ -222,9 +222,9 @@ public class PlantTest {
         Integer expectedConstraintSetSize = 1;
 
 
-        ConstraintViolation<Plant> violation = validator.validate(plant).iterator().next();
+        ConstraintViolation<Plant> violation = validator.validate(plant, ValidationGroups.SecondOrder.class).iterator().next();
 
-        assertEquals(expectedConstraintSetSize, validator.validate(plant).size());
+        assertEquals(expectedConstraintSetSize, validator.validate(plant, ValidationGroups.SecondOrder.class).size());
         assertEquals(expectedMessage, violation.getMessage());
     }
 
@@ -249,9 +249,9 @@ public class PlantTest {
         Integer expectedConstraintSetSize = 1;
 
 
-        ConstraintViolation<Plant> violation = validator.validate(plant).iterator().next();
+        ConstraintViolation<Plant> violation = validator.validate(plant, ValidationGroups.SecondOrder.class).iterator().next();
 
-        assertEquals(expectedConstraintSetSize, validator.validate(plant).size());
+        assertEquals(expectedConstraintSetSize, validator.validate(plant, ValidationGroups.SecondOrder.class).size());
         assertEquals(expectedMessage, violation.getMessage());
     }
 
@@ -262,9 +262,9 @@ public class PlantTest {
         Integer expectedConstraintSetSize = 1;
 
 
-        ConstraintViolation<Plant> violation = validator.validate(plant).iterator().next();
+        ConstraintViolation<Plant> violation = validator.validate(plant, ValidationGroups.SecondOrder.class).iterator().next();
 
-        assertEquals(expectedConstraintSetSize, validator.validate(plant).size());
+        assertEquals(expectedConstraintSetSize, validator.validate(plant, ValidationGroups.SecondOrder.class).size());
         assertEquals(expectedMessage, violation.getMessage());
     }
 
