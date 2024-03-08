@@ -1,5 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.validation.UserValidation;
@@ -56,7 +58,7 @@ public class RegisterController {
             @RequestParam(name = "confirmPassword") String confirmPassword,
             @RequestParam(name = "dob", required = false) String dob,
             Model model,
-            AuthenticationManager authManager) {
+            HttpServletRequest request) {
         logger.info("POST /users/register");
 
         if (noLname) {
@@ -94,15 +96,13 @@ public class RegisterController {
 
         userService.addUser(new GardenUser(fname, lname, email, address, password, dob));
 
-        UsernamePasswordAuthenticationToken authReq
-                = new UsernamePasswordAuthenticationToken(email, password);
-        Authentication auth = authManager.authenticate(authReq);
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        securityContext.setAuthentication(auth);
-
-        if (securityContext.getAuthentication().isAuthenticated()) {
+        try {
+            request.login(email, password);
             return "redirect:/users/user";
+        } catch (ServletException e) {
+            logger.error("Error while login ", e);
         }
+
         return "users/registerTemplate";
     }
 
