@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
+import nz.ac.canterbury.seng302.gardenersgrove.validation.UserRegoValidation;
 import org.apache.catalina.UserDatabase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,7 @@ import org.springframework.security.core.Authentication;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import nz.ac.canterbury.seng302.gardenersgrove.validation.UserRegoValidation;
 
 /**
  * Controller for editing a exsiting user
@@ -85,8 +87,27 @@ public class EditUserController {
             lname = null;
         }
 
-        // TODO: validation here
+        UserRegoValidation userRegoValidation = new UserRegoValidation();
         boolean valid = true;
+
+        if (!userRegoValidation.userEmailValidation(email)){
+            model.addAttribute("incorrectEmail", "Email address must be in the form ‘jane@doe.nz’");
+            valid = false;
+        } else if (!userRegoValidation.userNameValidation(fname, lname, noLname)){
+            model.addAttribute("incorrectName", "{First/Last} name cannot be empty and must only include letters, spaces,hyphens or apostrophes");
+            valid = false;
+        } else if (!userRegoValidation.userYoungDateValidation(dob)){
+            model.addAttribute("youngDob", "You must be 13 years or older to create an account");
+            valid = false;
+        } else if (!userRegoValidation.userOldDateValidation(dob)){
+            model.addAttribute("oldDob", "The maximum age allowed is 120 years");
+            valid = false;
+        } else if (!userRegoValidation.userInvalidDateValidation(dob)){
+            model.addAttribute("invalidDob", "You have entered an invalid date. It must be in the format: DD/MM/YYYY");
+            valid = false;
+        }
+
+        // TODO: validation here
         if (valid) {
             GardenUser user = userService.getUserById(userId);
 
@@ -100,6 +121,7 @@ public class EditUserController {
             return "redirect:/users/user";
 
         }
+
         model.addAttribute("fname", fname);
         model.addAttribute("lname", lname);
         model.addAttribute("noLname", noLname);

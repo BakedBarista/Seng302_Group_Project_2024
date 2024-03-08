@@ -86,11 +86,11 @@ public class RegisterController {
         if (noLname == true){
             System.out.print("\n why \n");
             userService.addUser(new GardenUser(fname, null, email, address, password, dob));
-            return "redirect:/users/login";
+            return "redirect:/users/user";
         } else {
             System.out.print("\n test \n");
             userService.addUser(new GardenUser(fname, lname, email, address, password, dob));
-            return "redirect:/users/login";
+            return "redirect:/users/user";
         }
         
 
