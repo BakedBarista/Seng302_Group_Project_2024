@@ -16,7 +16,7 @@ public class EuropeanDecimalValidator implements ConstraintValidator<ValidEurope
         try {
             String standardizedValue = value.replace(',', '.');
             double numericValue = Double.parseDouble(standardizedValue);
-            return numericValue >= 1; // Replace 1 with any minimum value you require
+            return numericValue >= 1;
         } catch (NumberFormatException e) {
             return false;
         }

@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.ValidationGroups;
 
 
 /**
@@ -18,23 +19,22 @@ public class Plant {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Please enter a name")
-    @Pattern(regexp = "^[a-zA-Z0-9 \\-.,']*$", message = "Name must only contain letters and numbers")
+    @NotBlank(message = "Please enter a name", groups = {ValidationGroups.FirstOrder.class})
+    @Pattern(regexp = "^[a-zA-Z0-9 \\-.,']*$", message = "Name must only contain letters and numbers", groups = {ValidationGroups.SecondOrder.class})
     @Column(nullable = false)
     private String name;
 
 //    @NotNull(message = "Count cannot be null")
-    @Min(value = 1, message = "Count must be greater than 0")
+    @Min(value = 1, message = "Count must be greater than 0", groups = {ValidationGroups.FirstOrder.class})
     @Column(nullable = false)
     private Integer count = 0;
 
 //    @NotBlank(message = "Please enter a description")
-    @Size(min = 1, max = 511, message = "Description must be less than 512 characters")
+    @Size(min = 1, max = 511, message = "Description must be less than 512 characters", groups = {ValidationGroups.FirstOrder.class})
     @Column(nullable = false)
     private String description;
 
-    @NotBlank(message = "Please enter a date")
-    //@Pattern(regexp = "^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])/\\d{4}$", message = "Date must be in DD/MM/YYYY format")
+//    @NotBlank(message = "Please enter a date")
     @Column(nullable = false)
     private String plantedDate;
 
