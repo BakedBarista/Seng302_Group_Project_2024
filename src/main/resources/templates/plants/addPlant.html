@@ -12,7 +12,7 @@
 
         <!-- Plant Name Field -->
             <label for="name">Plant Name:</label>
-            <input type="text" id="name" name="name" placeholder="Enter Plant Name" th:value="${plant.name}" required>
+            <input type="text" id="name" name="name" placeholder="Enter Plant Name" th:value="${plant.name}" >
             <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" style="color: red;"></div>
             <br/>
             <br/>
@@ -24,13 +24,13 @@
             <br/>
             <!-- Plant Count Field -->
             <label for="count">Count:</label>
-            <input type="text" id="count" name="count" placeholder="Enter Count" th:value="${plant.count}" required>
+            <input type="text" id="count" name="count" placeholder="Enter Count" th:value="${plant.count}" >
             <div th:if="${#fields.hasErrors('count')}" th:errors="*{count}" style="color: red;"></div>
             <br/>
             <br/>
             <!-- Planting Date Field -->
             <label for="plantedDate">Planting Date:</label>
-            <input type="date" id="plantedDate" name="plantedDate" placeholder="DD/MM/YYYY" th:value="${plant.plantedDate}" required>
+            <input type="date" id="plantedDate" name="plantedDate" placeholder="DD/MM/YYYY" th:value="${plant.plantedDate}" >
             <div th:if="${#fields.hasErrors('plantedDate')}" th:errors="*{plantedDate}" style="color: red;"></div>
             <br/>
             <br/>

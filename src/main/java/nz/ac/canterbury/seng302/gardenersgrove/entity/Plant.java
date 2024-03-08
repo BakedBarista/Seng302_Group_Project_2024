@@ -26,7 +26,7 @@ public class Plant {
 //    @NotNull(message = "Count cannot be null")
     @Min(value = 1, message = "Count must be greater than 0")
     @Column(nullable = false)
-    private Integer count;
+    private String count;
 
 //    @NotBlank(message = "Please enter a description")
     @Size(min = 1, max = 511, message = "Description must be less than 512 characters")
@@ -45,7 +45,7 @@ public class Plant {
     @Column(nullable = true)
     private String plantImagePath;
 
-    public Plant(String name, int count, String description, String plantedDate) {
+    public Plant(String name, String count, String description, String plantedDate) {
         this.name = name;
         this.count = count;
         this.description = description;
@@ -66,11 +66,11 @@ public class Plant {
         this.name = name;
     }
 
-    public int getCount() {
+    public String getCount() {
         return count;
     }
 
-    public void setCount(int count) {
+    public void setCount(String count) {
         this.count = count;
     }
 
