@@ -3,7 +3,9 @@ package nz.ac.canterbury.seng302.gardenersgrove.entity;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.PlantController;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.ValidationGroups;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -114,74 +116,28 @@ public class PlantTest {
 
     @Test
     public void SetCount_Null_ReturnsEmptyConstraintViolationList() {
-//        plant.setCount(null);
+        plant.setCount(null);
 
         assertTrue(validator.validate(plant).isEmpty());
     }
 
     @Test
     public void SetCount_Zero_ReturnsEmptyConstraintViolationList() {
-//        plant.setCount("0");
+        plant.setCount(0);
 
         assertTrue(validator.validate(plant).isEmpty());
     }
 
     @Test
     public void SetCount_One_ReturnsEmptyConstraintViolationList() {
-//        plant.setCount("1");
+        plant.setCount(1);
 
         assertTrue(validator.validate(plant).isEmpty());
     }
 
     @Test
     public void SetCount_NegativeOne_ReturnsEmptyConstraintViolationList() {
-//        plant.setCount("-1");
-
-        //FIX
-        assertTrue(validator.validate(plant).isEmpty());
-    }
-
-    @Test
-    public void SetCount_DotAsDecimalPlace_ReturnsEmptyConstraintViolationList() {
-//        plant.setCount("1.5");
-
-        assertTrue(validator.validate(plant).isEmpty());
-    }
-
-    @Test
-    public void SetCount_CommaAsDecimalPlace_ReturnsEmptyConstraintViolationList() {
-//        plant.setCount("1,5");
-
-        assertTrue(validator.validate(plant).isEmpty());
-    }
-
-    @Test
-    public void SetCount_IntegerWithNonNumericChar_ReturnPatternViolation() {
-//        plant.setCount("1a");
-
-        //FIX
-        assertTrue(validator.validate(plant).isEmpty());
-    }
-
-    @Test
-    public void SetCount_NonNumericChar_ReturnPatternViolation() {
-//        plant.setCount("a");
-
-        //FIX
-        assertTrue(validator.validate(plant).isEmpty());
-    }
-
-    @Test
-    public void SetCount_DoubleDotAsDecimalPlace_ReturnPatternViolation() {
-//        plant.setCount("1..5");
-
-        //FIX
-        assertTrue(validator.validate(plant).isEmpty());
-    }
-
-    @Test
-    public void SetCount_DoubleCommaAsDecimalPlace_ReturnPatternViolation() {
-//        plant.setCount("1,,5");
+        plant.setCount(-1);
 
         //FIX
         assertTrue(validator.validate(plant).isEmpty());
@@ -243,29 +199,13 @@ public class PlantTest {
     }
 
     @Test
-    public void SetPlantedDate_MMDDYYYY_ReturnPatternViolation() {
-        plant.setPlantedDate("02/18/2023");
-        String expectedMessage = "Date must be in DD/MM/YYYY format";
-        Integer expectedConstraintSetSize = 1;
-
-
-        ConstraintViolation<Plant> violation = validator.validate(plant, ValidationGroups.SecondOrder.class).iterator().next();
-
-        assertEquals(expectedConstraintSetSize, validator.validate(plant, ValidationGroups.SecondOrder.class).size());
-        assertEquals(expectedMessage, violation.getMessage());
-    }
-
-    @Test
     public void SetPlantedDate_YYYYDDMM_ReturnPatternViolation() {
-        plant.setPlantedDate("2023/18/02");
-        String expectedMessage = "Date must be in DD/MM/YYYY format";
-        Integer expectedConstraintSetSize = 1;
+        plant.setPlantedDate("2023-02-18");
+        String expectedFormat = "18/02/2023";
 
+        String correctFormat = PlantController.refactorPlantedDate(plant.getPlantedDate());
 
-        ConstraintViolation<Plant> violation = validator.validate(plant, ValidationGroups.SecondOrder.class).iterator().next();
-
-        assertEquals(expectedConstraintSetSize, validator.validate(plant, ValidationGroups.SecondOrder.class).size());
-        assertEquals(expectedMessage, violation.getMessage());
+        Assertions.assertEquals(correctFormat, expectedFormat);
     }
 
 }

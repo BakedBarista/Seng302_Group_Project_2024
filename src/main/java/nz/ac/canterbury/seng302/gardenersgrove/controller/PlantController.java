@@ -75,7 +75,7 @@ public class PlantController {
         return "redirect:/gardens/" + id;
     }
 
-    public String refactorPlantedDate(String date) {
+    public static String refactorPlantedDate(String date) {
         LocalDate localDate = LocalDate.parse(date);
         return localDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
