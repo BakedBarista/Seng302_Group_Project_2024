@@ -36,6 +36,12 @@ public class GardenUser {
     @Column(nullable = true)
     private String DOB;
 
+    @Column(nullable = true)
+    private String profilePictureContentType;
+
+    @Column(nullable = true)
+    @Lob
+    private byte[] profilePicture;
 
     /**
      * JPA required no-args constructor
@@ -97,5 +103,18 @@ public class GardenUser {
     public boolean checkPassword(String password) {
         PasswordEncoder encoder = new BCryptPasswordEncoder();
         return encoder.matches(password, this.password);
+    }
+
+    public String getProfilePictureContentType() {
+        return profilePictureContentType;
+    }
+
+    public byte[] getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(String contentType, byte[] profilePicture) {
+        this.profilePictureContentType = contentType;
+        this.profilePicture = profilePicture;
     }
 }

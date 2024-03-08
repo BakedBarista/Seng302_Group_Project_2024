@@ -1,9 +1,12 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
+import java.io.IOException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -83,16 +86,18 @@ public class EditUserController {
 
     /**
      * Shows the user the edit password form
+     * @throws IOException 
      */
     @PostMapping("/users/profile-picture")
     public String editProfilePicture(
+            Authentication authentication,
             @RequestParam("file") MultipartFile file,
-            @RequestHeader(HttpHeaders.REFERER) String referer) {
-        logger.info("PUT /users/profile-picture");
+            @RequestHeader(HttpHeaders.REFERER) String referer) throws IOException {
+        logger.info("POST /users/profile-picture");
 
-        logger.info("File: " + file.getOriginalFilename());
-        logger.info("Size: " + file.getSize());
-        logger.info("Content-Type: " + file.getContentType());
+        Long userId = (Long) authentication.getPrincipal();
+
+        userService.setProfilePicture(userId, file.getContentType(), file.getBytes());
 
         return "redirect:" + referer;
     }
