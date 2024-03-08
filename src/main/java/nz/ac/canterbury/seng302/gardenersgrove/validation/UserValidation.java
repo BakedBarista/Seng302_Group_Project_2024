@@ -7,7 +7,7 @@ import java.time.format.DateTimeFormatter;
 /**
  * simple validation checks for user registration data
  */
-public class UserRegoValidation {
+public class UserValidation {
     /**
      * simple validation checks for name registration data
      * @param fname
@@ -16,9 +16,6 @@ public class UserRegoValidation {
      * @return bool
      */
     public static boolean userNameValidation(String fname, String lname, boolean noLname) {
-        if (noLname) {
-            lname = null;
-        }
         String acceptedNameRegex = "^[a-zA-Z\\s'-]*$";
         int maxNameLength = 64;
         boolean validFirstName = fname.matches(acceptedNameRegex) && fname.length() <= maxNameLength && !fname.isEmpty();
@@ -49,16 +46,22 @@ public class UserRegoValidation {
      * @return bool
      */
     public static boolean userYoungDateValidation(String date){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        LocalDate dob = LocalDate.parse(date, formatter);
-        LocalDate currentDate = LocalDate.now();
-        Period period = Period.between(dob, currentDate);
-        int age = period.getYears();
-
-        if ( age >= 13){
-            return true;
+        if (!date.isEmpty()) {
+            try {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                LocalDate dob = LocalDate.parse(date, formatter);
+                LocalDate currentDate = LocalDate.now();
+                Period period = Period.between(dob, currentDate);
+                int age = period.getYears();
+                if (age >= 13) {
+                    return true;
+                }
+                return false;
+            } catch (Exception e) {
+                return false;
+            }
         }
-        return false;
+        return true;
     }
 
     /**
@@ -67,15 +70,22 @@ public class UserRegoValidation {
      * @return bool
      */
     public static boolean userOldDateValidation(String date){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        LocalDate dob = LocalDate.parse(date, formatter);
-        LocalDate currentDate = LocalDate.now();
-        Period period = Period.between(dob, currentDate);
-        int age = period.getYears();
-        if ( age < 121){
-            return true;
+        if (!date.isEmpty()) {
+            try {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                LocalDate dob = LocalDate.parse(date, formatter);
+                LocalDate currentDate = LocalDate.now();
+                Period period = Period.between(dob, currentDate);
+                int age = period.getYears();
+                if (age < 121) {
+                    return true;
+                }
+                return false;
+            } catch (Exception e) {
+                return false;
+            }
         }
-        return false;
+        return true;
     }
 
     /**

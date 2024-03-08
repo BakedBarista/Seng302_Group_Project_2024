@@ -1,24 +1,17 @@
-package nz.ac.canterbury.seng302.gardenersgrove.validation;
-
-import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
-import nz.ac.canterbury.seng302.gardenersgrove.validation.UserRegoValidation;
+package nz.ac.canterbury.seng302.gardenersgrove.unittests.validation;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
-import org.junit.jupiter.api.BeforeAll;
+import nz.ac.canterbury.seng302.gardenersgrove.validation.UserValidation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
-public class UserRegoValidationTest {
-    private UserRegoValidation userRego;
+public class UserValidationTest {
+    private UserValidation userRego;
 
     @BeforeEach
     public void setUp() {
-        userRego = new UserRegoValidation();
+        userRego = new UserValidation();
     }
 
     /**
