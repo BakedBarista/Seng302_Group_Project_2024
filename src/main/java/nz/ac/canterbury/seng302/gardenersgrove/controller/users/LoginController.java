@@ -1,5 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.security.CustomAuthenticationProvider;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,21 +47,17 @@ public class LoginController {
 
     @PostMapping("/users/login")
     public String authenticateLogin(@RequestParam(name = "email") String email,
-                                          @RequestParam(name = "password") String password,
-                                          AuthenticationConfiguration authConfiguration) throws Exception {
+                                    @RequestParam(name = "password") String password,
+                                    HttpServletRequest request) {
         logger.info("POST /users/login");
 
-        AuthenticationManager authManager = authConfiguration.getAuthenticationManager();
-
-        UsernamePasswordAuthenticationToken authReq
-                = new UsernamePasswordAuthenticationToken(email, password);
-        Authentication auth = authManager.authenticate(authReq);
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        securityContext.setAuthentication(auth);
-
-        if (securityContext.getAuthentication().isAuthenticated()) {
+        try {
+            request.login(email, password);
             return "redirect:/users/user";
+        } catch (ServletException e) {
+            logger.error("Error while login ", e);
         }
+
         return "users/login";
     }
 }
