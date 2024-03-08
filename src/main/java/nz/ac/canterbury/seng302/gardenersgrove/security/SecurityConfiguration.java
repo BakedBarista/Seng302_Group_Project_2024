@@ -71,12 +71,6 @@ public class SecurityConfiguration {
                     .authenticated();
         });
 
-        // Define logging in, a POST "/login" endpoint now exists under the hood,
-        // login redirect to user page
-//        http.formLogin(login -> login
-//                .loginPage("/users/login")
-//                .loginProcessingUrl("/users/login")
-//                .defaultSuccessUrl("/users/user"));
         // Define logging out, a POST "/logout" endpoint now exists under the hood,
         // redirect to "/login", invalidate session and remove cookie
         http.logout(
