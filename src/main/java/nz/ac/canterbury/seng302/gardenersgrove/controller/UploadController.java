@@ -58,15 +58,15 @@ public class UploadController {
         String extension = filename.substring(filename.lastIndexOf(".") + 1);
         //Check types
         if(!allowedExtension.contains(extension.toLowerCase())) {
-            redirectAttributes.addAttribute("plantId", plantId);
-            redirectAttributes.addAttribute("gardenId", gardenId);
+            redirectAttributes.addAttribute("plant_Id", plantId);
+            redirectAttributes.addAttribute("garden_Id", gardenId);
             redirectAttributes.addFlashAttribute("error", "Only JPG, PNG and SVG are allowed");
             return "redirect:/uploadImage";
         }
         //Check size
         if (file.getSize() > 10 * 1024 * 1024) { // 10MB limit
-            redirectAttributes.addAttribute("plantId", plantId);
-            redirectAttributes.addAttribute("gardenId", gardenId);
+            redirectAttributes.addAttribute("plant_Id", plantId);
+            redirectAttributes.addAttribute("garden_Id", gardenId);
             redirectAttributes.addFlashAttribute("fileSizeError", "Exceeded max file size of 10MB");
             //Files.delete(filePath);
             return "redirect:/uploadImage";
@@ -82,8 +82,8 @@ public class UploadController {
         }else{
             throw new RuntimeException("Not Found");
         }
-        redirectAttributes.addAttribute("plantId", plantId);
-        redirectAttributes.addAttribute("gardenId", gardenId);
+        redirectAttributes.addAttribute("plant_Id", plantId);
+        redirectAttributes.addAttribute("garden_Id", gardenId);
         return "redirect:/gardens/" + gardenId + "/plants/" + plantId+ "/edit";
     }
 
