@@ -87,7 +87,7 @@ public class RegisterController {
         }
 
         userService.addUser(new GardenUser(fname, lname, email, address, password, dob));
-        return "redirect:/users/login";
+        return "redirect:/users/user";
     }
 
     /**

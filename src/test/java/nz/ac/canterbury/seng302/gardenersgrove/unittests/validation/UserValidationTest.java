@@ -210,12 +210,12 @@ public class UserValidationTest {
     }
 
     /**
-     * Test passing an empty date to userInvalidDateValidation since birth date is optional
+     * Test passing a null date to userInvalidDateValidation since birth date is optional
      * Should return true
      */
     @Test
     public void testEmptyDate() {
-        String date = "";
+        String date = null;
         boolean emptyDateResult = userRego.userInvalidDateValidation(date);
         assertTrue(emptyDateResult);
     }

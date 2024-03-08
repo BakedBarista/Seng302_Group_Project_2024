@@ -46,7 +46,7 @@ public class UserValidation {
      * @return bool
      */
     public static boolean userYoungDateValidation(String date){
-        if (!date.isEmpty()) {
+        if (date != null) {
             try {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                 LocalDate dob = LocalDate.parse(date, formatter);
@@ -70,7 +70,7 @@ public class UserValidation {
      * @return bool
      */
     public static boolean userOldDateValidation(String date){
-        if (!date.isEmpty()) {
+        if (date != null) {
             try {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                 LocalDate dob = LocalDate.parse(date, formatter);
@@ -94,7 +94,7 @@ public class UserValidation {
      * @return bool
      */
     public static boolean userInvalidDateValidation(String date) {
-        if (!date.isEmpty()) {
+        if (date != null) {
             try {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                 LocalDate.parse(date, formatter);
