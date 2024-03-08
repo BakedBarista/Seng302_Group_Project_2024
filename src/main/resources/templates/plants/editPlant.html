@@ -24,7 +24,7 @@
             <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}" style="color: red;"></div>
             <br/>
             <label for="date"> Date Planted: </label>
-            <input type="text" class="form-control" id="date" placeholder="DD/MM/YYYY"
+            <input type="date" class="form-control" id="date" placeholder="DD/MM/YYYY"
                    th:name="plantedDate" th:value="${plant.plantedDate}" data-cy="size" autofocus>
             <div th:if="${#fields.hasErrors('plantedDate')}" th:errors="*{plantedDate}" style="color: red;"></div>
             <br/>
