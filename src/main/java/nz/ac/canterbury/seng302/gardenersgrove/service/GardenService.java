@@ -34,5 +34,5 @@ public class GardenService {
      * @param id garden id used to retrieve data
      * @return the object of given id
      */
-    public Optional<Garden> getGardenById(long id) {return gardenRepository.findById(id);}
+   public Optional<Garden> getGardenById(long id) {return gardenRepository.findById(id);}
 }
