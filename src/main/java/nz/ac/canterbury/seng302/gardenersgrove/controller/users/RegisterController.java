@@ -6,6 +6,11 @@ import nz.ac.canterbury.seng302.gardenersgrove.validation.UserValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
@@ -50,7 +55,8 @@ public class RegisterController {
             @RequestParam(name = "password") String password,
             @RequestParam(name = "confirmPassword") String confirmPassword,
             @RequestParam(name = "dob", required = false) String dob,
-            Model model) {
+            Model model,
+            AuthenticationManager authManager) {
         logger.info("POST /users/register");
 
         if (noLname) {
@@ -87,7 +93,17 @@ public class RegisterController {
         }
 
         userService.addUser(new GardenUser(fname, lname, email, address, password, dob));
-        return "redirect:/users/user";
+
+        UsernamePasswordAuthenticationToken authReq
+                = new UsernamePasswordAuthenticationToken(email, password);
+        Authentication auth = authManager.authenticate(authReq);
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        securityContext.setAuthentication(auth);
+
+        if (securityContext.getAuthentication().isAuthenticated()) {
+            return "redirect:/users/user";
+        }
+        return "users/registerTemplate";
     }
 
     /**

@@ -29,7 +29,7 @@
             </label>
             <label class="form-group">
                 Email
-                <input type="text" th:name="email" th:value="*{email}">
+                <input type="text" th:name="email" th:value="*{email}" inputmode="email">
                 <span class = "error" th:if="${incorrectEmail != null}" th:text="*{incorrectEmail}"></span>
             </label>
             <label class="form-group">

@@ -13,7 +13,7 @@
         <form th:action="login" method="post">
             <label class="form-group">
                 Email
-                <input type="text" th:name="username" th:value="*{email}">
+                <input type="text" th:name="email" th:value="*{email}" inputmode="email">
             </label>
             <label class="form-group">
                 Password
