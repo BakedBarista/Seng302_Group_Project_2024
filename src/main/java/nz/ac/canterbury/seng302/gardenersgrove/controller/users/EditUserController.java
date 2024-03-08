@@ -53,6 +53,7 @@ public class EditUserController {
         Long userId = (Long) authentication.getPrincipal();
         GardenUser user = userService.getUserById(userId);
 
+        model.addAttribute("userId", userId);
         model.addAttribute("fname", user.getFname());
         model.addAttribute("lname", user.getLname());
         model.addAttribute("noLname", user.getLname() == null);
@@ -108,6 +109,7 @@ public class EditUserController {
             return "redirect:/users/user";
 
         }
+        model.addAttribute("userId", userId);
         model.addAttribute("fname", fname);
         model.addAttribute("lname", lname);
         model.addAttribute("noLname", noLname);
