@@ -63,18 +63,18 @@ public class UploadController {
             redirectAttributes.addFlashAttribute("error", "Only JPG, PNG and SVG are allowed");
             return "redirect:/uploadImage";
         }
+        String directory = "./images/";
+        String fileName = "plant" + plantId + "image" + "-" + filename;
+        Path filePath = Paths.get(directory + fileName);
+        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
         //Check size
         if (file.getSize() > 10 * 1024 * 1024) { // 10MB limit
             redirectAttributes.addAttribute("plant_Id", plantId);
             redirectAttributes.addAttribute("garden_Id", gardenId);
             redirectAttributes.addFlashAttribute("fileSizeError", "Exceeded max file size of 10MB");
-            //Files.delete(filePath);
+            Files.delete(filePath);
             return "redirect:/uploadImage";
         }
-        String directory = "./images/";
-        String fileName = "plant" + plantId + "image" + "-" + filename;
-        Path filePath = Paths.get(directory + fileName);
-        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
         if(optionalPlant.isPresent()){
             Plant plant = optionalPlant.get();
             plant.setPlantImagePath("/" + fileName);

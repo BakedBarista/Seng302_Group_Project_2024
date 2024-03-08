@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
-    <link rel="stylesheet" type="text/css" href="../../css/styles.css" th:href="@{/css/styles.css}" />
+    <link th:href="@{/styles.css}" rel="stylesheet" />
     <title>Garden Details</title>
 </head>
 <body>
@@ -36,6 +36,10 @@
                     <td><span th:text="${plant.count}">Count</span></td>
                     <td><span th:text="${plant.description}">Description</span></td>
                     <td><span th:text="${plant.plantedDate}">Planted Date</span></td>
+                    <td>
+                        <div class="square">
+                            <img th:src="@{${plant.plantImagePath}}" alt="Plant Image" />
+                        </div></td>
                     <td><button><a th:href="@{/gardens/{garden_id}/plants/{plant_id}/edit(garden_id=${garden.id}, plant_id=${plant.id})}">Edit</a></button></td>
                 </tr>
             </tbody>
