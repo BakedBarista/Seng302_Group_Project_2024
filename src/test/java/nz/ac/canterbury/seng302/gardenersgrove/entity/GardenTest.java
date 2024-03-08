@@ -200,14 +200,14 @@ public class GardenTest {
     }
 
     @Test
-    public void gardenCount_CountIsOne_ReturnsEmptyConstraintViolationList() {
+    public void gardenSize_CountIsOne_ReturnsEmptyConstraintViolationList() {
         garden.setSize("1");
 
         assertTrue(validator.validate(garden).isEmpty());
     }
 
     @Test
-    public void gardenCount_CountIsNegativeOne_ReturnsEmptyConstraintViolationList() {
+    public void gardenSize_CountIsNegativeOne_ReturnsEmptyConstraintViolationList() {
         garden.setSize("-1");
         String expectedMessage = "Garden size must be a positive number";
         Integer expectedConstraintSetSize = 1;
@@ -220,21 +220,21 @@ public class GardenTest {
     }
 
     @Test
-    public void gardenCount_DotAsDecimalPlace_ReturnsEmptyConstraintViolationList() {
+    public void gardenSize_DotAsDecimalPlace_ReturnsEmptyConstraintViolationList() {
         garden.setSize("1.5");
 
         assertTrue(validator.validate(garden).isEmpty());
     }
 
     @Test
-    public void gardenCount_CommaAsDecimalPlace_ReturnsEmptyConstraintViolationList() {
+    public void gardenSize_CommaAsDecimalPlace_ReturnsEmptyConstraintViolationList() {
         garden.setSize("1,5");
 
         assertTrue(validator.validate(garden).isEmpty());
     }
 
     @Test
-    public void gardenCount_IntegerWithNonNumericChar_ReturnPatternViolation() {
+    public void gardenSize_IntegerWithNonNumericChar_ReturnPatternViolation() {
         garden.setSize("1a");
         String expectedMessage = "Garden size must be a positive number";
         Integer expectedConstraintSetSize = 1;
@@ -247,7 +247,7 @@ public class GardenTest {
     }
 
     @Test
-    public void gardenCount_NonNumericChar_ReturnPatternViolation() {
+    public void gardenSize_NonNumericChar_ReturnPatternViolation() {
         garden.setSize("a");
         String expectedMessage = "Garden size must be a positive number";
         Integer expectedConstraintSetSize = 1;
@@ -260,7 +260,7 @@ public class GardenTest {
     }
 
     @Test
-    public void gardenCount_DoubleDotAsDecimalPlace_ReturnPatternViolation() {
+    public void gardenSize_DoubleDotAsDecimalPlace_ReturnPatternViolation() {
         garden.setSize("1..5");
         String expectedMessage = "Garden size must be a positive number";
         Integer expectedConstraintSetSize = 1;
@@ -273,7 +273,7 @@ public class GardenTest {
     }
 
     @Test
-    public void gardenCount_DoubleCommaAsDecimalPlace_ReturnPatternViolation() {
+    public void gardenSize_DoubleCommaAsDecimalPlace_ReturnPatternViolation() {
         garden.setSize("1,,5");
         String expectedMessage = "Garden size must be a positive number";
         Integer expectedConstraintSetSize = 1;
