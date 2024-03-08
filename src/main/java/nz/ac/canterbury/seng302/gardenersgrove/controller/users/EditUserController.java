@@ -3,11 +3,14 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
@@ -76,6 +79,22 @@ public class EditUserController {
     public String editPassword() {
         logger.info("GET /users/edit/password");
         return "users/editPassword";
+    }
+
+    /**
+     * Shows the user the edit password form
+     */
+    @PostMapping("/users/profile-picture")
+    public String editProfilePicture(
+            @RequestParam("file") MultipartFile file,
+            @RequestHeader(HttpHeaders.REFERER) String referer) {
+        logger.info("PUT /users/profile-picture");
+
+        logger.info("File: " + file.getOriginalFilename());
+        logger.info("Size: " + file.getSize());
+        logger.info("Content-Type: " + file.getContentType());
+
+        return "redirect:" + referer;
     }
 
 }

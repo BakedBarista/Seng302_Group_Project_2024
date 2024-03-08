@@ -6,20 +6,40 @@
     alt="profile picture"
 />
 
-<label class="form-group link-text">
-    Edit Profile Picture
-    <input type="file" id="profilePictureInput" />
-</label>
+<form
+    th:action="'/users/profile-picture'"
+    method="post"
+    enctype="multipart/form-data"
+    id="profilePictureForm"
+>
+    <label class="form-group link-text">
+        Edit Profile Picture
+        <input type="file" name="file" id="profilePictureInput" />
+    </label>
+</form>
 
 <script>
     (function () {
-        /**
-         * @type {HTMLInputElement}
-         */
-        const profilePictureInput = document.getElementById('profilePictureInput');
+        /** @type {HTMLFormElement} */
+        const profilePictureForm =
+            document.getElementById("profilePictureForm");
+        /** @type {HTMLInputElement} */
+        const profilePictureInput = document.getElementById(
+            "profilePictureInput"
+        );
 
-        profilePictureInput.addEventListener('change', (ev) => {
-            console.log(profilePictureInput.files[0]);
+        profilePictureInput.addEventListener("change", (ev) => {
+            if (profilePictureInput.files.length === 0) {
+                return;
+            }
+
+            if (profilePictureInput.files[0].size > 10 * 1024 * 1024) {
+                // TODO: Show error message in HTML
+                alert("File size must be less than 10MB");
+                return;
+            }
+
+            profilePictureForm.submit();
         });
     })();
 </script>
