@@ -39,8 +39,8 @@ public class UploadController {
      * Displays the file upload page
      */
     @GetMapping("/uploadImage")
-    public String displayUploadForm(@RequestParam(name = "gardenId") Long gardenId,
-                                    @RequestParam(name = "plantId") Long plantId,
+    public String displayUploadForm(@RequestParam(name = "garden_Id") Long gardenId,
+                                    @RequestParam(name = "plant_Id") Long plantId,
                                     Model model) {
         model.addAttribute("plantId", plantId);
         model.addAttribute("gardenId", gardenId);
@@ -50,8 +50,8 @@ public class UploadController {
     @PostMapping("/uploadImage")
     public String uploadImage(RedirectAttributes redirectAttributes,
                               @RequestParam("image")MultipartFile file,
-                              @RequestParam(name = "gardenId")Long gardenId,
-                              @RequestParam(name = "plantId")Long plantId) throws IOException, MultipartException {
+                              @RequestParam(name = "garden_Id")Long gardenId,
+                              @RequestParam(name = "plant_Id")Long plantId) throws IOException, MultipartException {
         logger.info("/uploadImage", file, gardenId,plantId);
         Optional<Plant> optionalPlant = plantService.getPlantById(plantId);
         String filename = file.getOriginalFilename();

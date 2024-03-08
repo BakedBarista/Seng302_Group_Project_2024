@@ -5,8 +5,8 @@
             <div class="col-md-8 mx-auto">
                 <h2>Upload Image</h2>
                 <form method="post" enctype="multipart/form-data" th:action="@{/uploadImage}">
-                    <input type="hidden" name="plantId" th:value="${plantId}"/>
-                    <input type="hidden" name="gardenId" th:value="${gardenId}">
+                    <input type="hidden" name="plant_Id" th:value="${plantId}"/>
+                    <input type="hidden" name="garden_Id" th:value="${gardenId}">
                     <div class="form-group">
                         <input type="file" name="image" accept=".png, .jpg, .jpeg, .svg" class="form-control-file">
                     </div>

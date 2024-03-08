@@ -3,6 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
     <title>Add a New Plant</title>
+    <link th:href="@{/styles.css}" rel="stylesheet" />
 </head>
 <body>
 <div>
@@ -34,6 +35,13 @@
             <div th:if="${#fields.hasErrors('plantedDate')}" th:errors="*{plantedDate}" style="color: red;"></div>
             <br/>
             <br/>
+            <div>
+                <img th:src="@{${plant.plantImagePath}}" alt="Plant Image" />
+
+                <section class="container">
+                    <a class="semi-transparent-button" th:href="@{/uploadImage(garden_Id=${gardenId}, plant_Id=${plant.id})}">+</a>
+                </section>
+            </div>
             <button type="submit">Submit!</button>
             <button type="button" onclick="window.location.href = '/gardens'">Cancel</button>
 

@@ -33,7 +33,7 @@
                 <img th:src="@{${imagePath}}" alt="Plant Image" />
 
                 <section class="container">
-                    <a class="semi-transparent-button" th:href="@{/uploadImage(gardenId=${garden_id}, plantId=${plant_id})}">+</a>
+                    <a class="semi-transparent-button" th:href="@{/uploadImage(garden_Id=${garden_id}, plant_Id=${plant.id})}">+</a>
                 </section>
             </div>
             <button type="submit">Submit!</button><button type="button"><a th:href="@{/gardens/{garden_id}(garden_id=${garden_id})}">Cancel</a></button>
