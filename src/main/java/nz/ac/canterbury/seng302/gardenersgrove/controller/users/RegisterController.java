@@ -58,10 +58,6 @@ public class RegisterController {
 
         UserRegoValidation userRegoValidation = new UserRegoValidation();
 
-        if (noLname) {
-            lname = null;
-        }
-
         if (!userRegoValidation.userEmailValidation(email)){
             model.addAttribute("incorrectEmail", "Email address must be in the form ‘jane@doe.nz’");
             return "users/registerTemplate";
@@ -92,15 +88,15 @@ public class RegisterController {
     /**
      * Submits the form
      */
-    // @GetMapping("/users/dummy")
-    // public String createDummy() {
-    //     logger.info("POST /users/dummy");
+     @GetMapping("/users/dummy")
+     public String createDummy() {
+         logger.info("POST /users/dummy");
 
-    //     GardenUser user = new GardenUser("John", "Doe", "john.doe@gmail.com", "Jack Erskine 133", "password",
-    //             "1970-01-01");
-    //     userService.addUser(user);
+         GardenUser user = new GardenUser("John", "Doe", "john.doe@gmail.com", "Jack Erskine 133", "password",
+                 "1970-01-01");
+         userService.addUser(user);
 
-    //     return "redirect:/";
-    // }
+         return "redirect:/";
+     }
 
 }

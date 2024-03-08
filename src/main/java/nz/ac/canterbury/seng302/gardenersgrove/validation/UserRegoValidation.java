@@ -15,16 +15,17 @@ public class UserRegoValidation {
      * @param noLname
      * @return bool
      */
-    public static boolean userNameValidation(String fname, String lname, boolean noLname){
-        if (fname.matches("^[a-zA-Z\\s'-]*$") && (lname == null || lname.matches("^[a-zA-Z\\s'-]*$"))) {
-            if(fname.length() <  65 && lname.length() <  65){ 
-                if (noLname && fname.length() > 0) {
-                    return lname.length() == 0 || lname == null;
-                }
-                else {
-                    return fname.length() > 0 && lname.length() > 0;
-                }
-            }
+    public static boolean userNameValidation(String fname, String lname, boolean noLname) {
+        if (noLname) {
+            lname = null;
+        }
+        String acceptedNameRegex = "^[a-zA-Z\\s'-]*$";
+        int maxNameLength = 64;
+        boolean validFirstName = fname.matches(acceptedNameRegex) && fname.length() <= maxNameLength && !fname.isEmpty();
+        boolean validLastName = ( noLname || (lname.matches(acceptedNameRegex) && lname.length() <= maxNameLength && !lname.isEmpty()) );
+
+        if (validFirstName && validLastName) {
+            return true;
         }
         return false;
     }
@@ -83,7 +84,7 @@ public class UserRegoValidation {
      * @return bool
      */
     public static boolean userInvalidDateValidation(String date) {
-        if (date != null) {
+        if (!date.isEmpty()) {
             try {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                 LocalDate.parse(date, formatter);
