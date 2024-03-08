@@ -47,10 +47,7 @@ public class EditUserController {
 
         model.addAttribute("fname", user.getFname());
         model.addAttribute("lname", user.getLname());
-
-        if (user.getLname() == null) {
-            model.addAttribute("noLname", true);
-        }
+        model.addAttribute("noLname", user.getLname() == null);
         model.addAttribute("email", user.getEmail());
         model.addAttribute("address", user.getAddress());
         model.addAttribute("dob", user.getDOB());
@@ -83,6 +80,10 @@ public class EditUserController {
         isNoLname = noLname;
 
         Long userId = (Long) authentication.getPrincipal();
+
+        if (noLname) {
+            lname = null;
+        }
 
         // TODO: validation here
         boolean valid = true;

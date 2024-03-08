@@ -21,7 +21,7 @@
             </label>
             <label class="form-group">
                 Last Name
-                <input type="text" th:name="lname" th:value="*{lname}" id="lname" required>
+                <input type="text" th:name="lname" th:value="*{lname}" id="lname" th:required="*{!noLname}" th:disabled="*{noLname}">
             </label>
             <label class="form-checkbox">
                 <input type="checkbox" th:name="noLname" th:value="*{noLname}" th:checked="*{noLname}" id="noLname"> I have no surname
