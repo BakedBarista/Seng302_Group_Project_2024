@@ -110,4 +110,18 @@ public class EditUserController {
         return "redirect:/users/user";
     }
 
+    @PostMapping("/users/edit/password")
+    public String submitPassoword(
+            @RequestParam(name = "oldPassword") String oldPassword,
+            @RequestParam(name = "newPassword") String newPassword,
+            @RequestParam(name = "confirmPassword") String confirmPassword,
+            Model model) {
+        long id = (long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        GardenUser user = userService.getUserById(id);
+        user.setPassword(newPassword);
+        userService.addUser(user);
+        return "users/editTemplate";
+    }
+
 }

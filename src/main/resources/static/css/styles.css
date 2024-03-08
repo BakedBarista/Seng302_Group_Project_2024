@@ -69,6 +69,15 @@ body {
     margin: 8px 0;
 }
 
+.form-group input[type="file"] {
+    display: none;
+}
+
+.form-group.link-text {
+    color: blue;
+    text-decoration: underline;
+}
+
 .form-checkbox {
     display: block;
     margin: 16px 0;
@@ -81,6 +90,11 @@ body {
     color: red;
     z-index: 11;
     position: relative;
+}
+
+.profile-picture-large {
+    border-radius: 999px;
+    box-shadow: #333 0 0 8px -3px;
 }
 
 @media (max-width: 752px) {

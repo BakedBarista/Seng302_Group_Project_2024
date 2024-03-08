@@ -76,4 +76,16 @@ public class GardenUserService {
         return user.get();
     }
 
+    /**
+     * updates a users password by id
+     * 
+     * @param password The hashed user password
+     * @param id The users id
+     */
+
+    public void updatePasswordById(String password, long id) {
+        gardenUserRepository.updatePasswordById(password, id);
+        return;
+    }
+
 }
