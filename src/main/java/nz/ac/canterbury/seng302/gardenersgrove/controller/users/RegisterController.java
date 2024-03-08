@@ -115,7 +115,7 @@ public class RegisterController {
          logger.info("POST /users/dummy");
 
          GardenUser user = new GardenUser("John", "Doe", "john.doe@gmail.com", "Jack Erskine 133", "password",
-                 "1970-01-01");
+                 "01/01/1970");
          userService.addUser(user);
 
          return "redirect:/";
