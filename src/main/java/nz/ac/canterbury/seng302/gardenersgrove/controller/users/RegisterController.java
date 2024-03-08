@@ -92,6 +92,12 @@ public class RegisterController {
         userService.addUser(new GardenUser(fname, lname, email, address, password, dob));
 
         try {
+            request.logout();
+        } catch (ServletException e) {
+            logger.warn("User was not logged in");
+        }
+
+        try {
             request.login(email, password);
             return "redirect:/users/user";
         } catch (ServletException e) {
