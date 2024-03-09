@@ -1,26 +1,23 @@
-package nz.ac.canterbury.seng302.gardenersgrove.validation;
-
-import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
-import nz.ac.canterbury.seng302.gardenersgrove.validation.UserRegoValidation;
+package nz.ac.canterbury.seng302.gardenersgrove.unittests.validation;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
-import org.junit.jupiter.api.BeforeAll;
+import nz.ac.canterbury.seng302.gardenersgrove.validation.UserValidation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
-public class UserRegoValidationTest {
-    private UserRegoValidation userRego;
+public class UserValidationTest {
+    private UserValidation userRego;
 
     @BeforeEach
     public void setUp() {
-        userRego = new UserRegoValidation();
+        userRego = new UserValidation();
     }
 
+    /**
+     * Unit test validating all validation methods
+     * All return true
+     */
     @Test
     public void testRegoValidation() {
         String fname = "Iiam";
@@ -28,7 +25,7 @@ public class UserRegoValidationTest {
         boolean noLname = false;
         String email = "test@uclive.ac.nz";
         String password = "Pa$$w0rd";
-        String dob = "2004-12-10";
+        String dob = "10/12/2004";
 
         boolean nameResult = userRego.userNameValidation(fname, lname, noLname);
         boolean emailResult = userRego.userEmailValidation(email);
@@ -43,6 +40,10 @@ public class UserRegoValidationTest {
         assertTrue(passwordResult);
     }
 
+    /**
+     * Test passing an invalid first name to the userNameValidation function
+     * Should return false
+     */
     @Test
     public void testWrongFirstName() {
         String fname = "1Iiam";
@@ -52,6 +53,10 @@ public class UserRegoValidationTest {
         assertFalse(nameResult);
     }
 
+    /**
+     * Test passing an invalid last name to the userNameValidation function
+     * Should return false
+     */
     @Test
     public void testWrongLastName() {
         String fname = "Iiam";
@@ -61,6 +66,10 @@ public class UserRegoValidationTest {
         assertFalse(nameResult);
     }
 
+    /**
+     * Test passing an empty first name to the userNameValidation function
+     * Should return false
+     */
     @Test
     public void testEmptyFirstName() {
         String fname = "";
@@ -70,6 +79,10 @@ public class UserRegoValidationTest {
         assertFalse(nameResult);
     }
 
+    /**
+     * Test passing a too long first name to the userNameValidation function
+     * Should return false
+     */
     @Test
     public void testTooLongFirstName() {
         String fname = "bfhadfhehfgehdfghdjafhdegrhjfhewhfgehsfgwehfgwhegdwgfdhewgfhdshdha";
@@ -79,6 +92,10 @@ public class UserRegoValidationTest {
         assertFalse(nameResult);
     }
 
+    /**
+     * Test passing a too long last name to the userNameValidation function
+     * Should return false
+     */
     @Test
     public void testTooLongLastName() {
         String fname = "Iiam";
@@ -88,6 +105,10 @@ public class UserRegoValidationTest {
         assertFalse(nameResult);
     }
 
+    /**
+     * Test passing an empty last name to the userNameValidation function
+     * Should return false
+     */
     @Test
     public void testEmptyLastName() {
         String fname = "Iiam";
@@ -97,6 +118,11 @@ public class UserRegoValidationTest {
         assertFalse(nameResult);
     }
 
+    /**
+     * Test passing an empty last name to the userNameValidation
+     * function but the "no last name" box has been ticked
+     * Should return true
+     */
     @Test
     public void testEmptyLastNameNoLname() {
         String fname = "Iiam";
@@ -106,6 +132,10 @@ public class UserRegoValidationTest {
         assertTrue(nameResult);
     }
 
+    /**
+     * Test passing an email with no text before the '@' symbol to userEmailValidation
+     * Should return false
+     */
     @Test
     public void testWrongStartEmail() {
         String email = "@uclive.ac.nz";
@@ -113,6 +143,10 @@ public class UserRegoValidationTest {
         assertFalse(emailResult);
     }
 
+    /**
+     * Test passing an invalid email format to userEmailValidation
+     * Should return false
+     */
     @Test
     public void testWrongEndEmail() {
         String email = "test@uclive";
@@ -120,6 +154,10 @@ public class UserRegoValidationTest {
         assertFalse(emailResult);
     }
 
+    /**
+     * Test passing an email with no '@' symbol to userEmailValidation
+     * Should return false
+     */
     @Test
     public void testNoSymbolEmail() {
         String email = "testuclive.ac.nz";
@@ -127,6 +165,10 @@ public class UserRegoValidationTest {
         assertFalse(emailResult);
     }
 
+    /**
+     * Test passing an empty email to userEmailValidation
+     * Should return false
+     */
     @Test
     public void testEmptyEmail() {
         String email = "";
@@ -134,20 +176,32 @@ public class UserRegoValidationTest {
         assertFalse(emailResult);
     }
 
+    /**
+     * Test passing a birth date younger than 13 years to userYoungDateValidation
+     * Should return false
+     */
     @Test
     public void testTooYoungAge() {
-        String dob = "2023-12-10";
+        String dob = "10/12/2023";
         boolean youngDateResult = userRego.userYoungDateValidation(dob);
         assertFalse(youngDateResult);
     }
 
+    /**
+     * Test passing a birth date older than 120 years to userOldDateValidation
+     * Should return false
+     */
     @Test
     public void testTooOldAge() {
-        String dob = "1902-12-10";
+        String dob = "10/12/1902";
         boolean oldDateResult = userRego.userOldDateValidation(dob);
         assertFalse(oldDateResult);
     }
 
+    /**
+     * Test passing an invalid date to userInvalidDateValidation
+     * Should return false
+     */
     @Test
     public void testInvalidDate() {
         String date = "200/200/200";
@@ -155,6 +209,21 @@ public class UserRegoValidationTest {
         assertFalse(invalidDateResult);
     }
 
+    /**
+     * Test passing a null date to userInvalidDateValidation since birth date is optional
+     * Should return true
+     */
+    @Test
+    public void testEmptyDate() {
+        String date = null;
+        boolean emptyDateResult = userRego.userInvalidDateValidation(date);
+        assertTrue(emptyDateResult);
+    }
+
+    /**
+     * Test passing a password that is too short to userPasswordStrengthValidation
+     * Should return false
+     */
     @Test
     public void testTooShortPassword() {
         String password = "1@Pp";
@@ -162,6 +231,10 @@ public class UserRegoValidationTest {
         assertFalse(passwordResult);
     }
 
+    /**
+     * Test passing a password that has no number to userPasswordStrengthValidation
+     * Should return false
+     */
     @Test
     public void testNoNumberPassword() {
         String password = "TestP@ssword";
@@ -169,6 +242,10 @@ public class UserRegoValidationTest {
         assertFalse(passwordResult);
     }
 
+    /**
+     * Test passing a password that has no symbol to userPasswordStrengthValidation
+     * Should return false
+     */
     @Test
     public void testNoSymbolPassword() {
         String password = "TestPassw0rd";
@@ -176,6 +253,10 @@ public class UserRegoValidationTest {
         assertFalse(passwordResult);
     }
 
+    /**
+     * Test passing a password that has no capital letter to userPasswordStrengthValidation
+     * Should return false
+     */
     @Test
     public void testNoCapitalPassword() {
         String password = "testp@ssw0rd";
@@ -183,6 +264,10 @@ public class UserRegoValidationTest {
         assertFalse(passwordResult);
     }
 
+    /**
+     * Test passing passwords that do not match to userPasswordMatchValidation
+     * Should return false
+     */
     @Test
     public void testNoMatchPasswords() {
         String password1 = "TestP@ssword";
@@ -191,6 +276,10 @@ public class UserRegoValidationTest {
         assertFalse(passwordResult);
     }
 
+    /**
+     * Test passing an empty first password to userPasswordMatchValidation
+     * Should return false
+     */
     @Test
     public void testEmptyPassword1() {
         String password1 = "";
@@ -199,6 +288,10 @@ public class UserRegoValidationTest {
         assertFalse(passwordResult);
     }
 
+    /**
+     * Test passing an empty second password to userPasswordMatchValidation
+     * Should return false
+     */
     @Test
     public void testEmptyPassword2() {
         String password1 = "TestP@ssword";

@@ -18,11 +18,12 @@
             <label class="form-group">
                 First Name
                 <input type="text" th:name="fname" th:value="*{fname}">
+                <span class = "error" th:if="${incorrectFirstName != null}" th:text="*{incorrectFirstName}"></span>
             </label>
             <label class="form-group">
                 Last Name
                 <input type="text" th:name="lname" th:value="*{lname}" id="lname">
-                <span class = "error" th:if="${incorrectName != null}" th:text="*{incorrectName}"></span>
+                <span class = "error" th:if="${incorrectLastName != null}" th:text="*{incorrectLastName}"></span>
             </label>
             <label class="form-checkbox">
                 <input type="checkbox" th:name="noLname" th:value="*{noLname}" th:checked="*{noLname}" id="noLname"> I have no surname
@@ -38,7 +39,7 @@
             </label>
             <label class="form-group">
                 Password
-                <input type="password" th:name="password" required>
+                <input type="password" th:name="password">
                 <span class = "error" th:if="${matchPassword != null}" th:text="*{matchPassword}"></span>
                 <span class = "error" th:if="${weakPassword != null}" th:text="*{weakPassword}"></span>
             </label>
@@ -48,7 +49,7 @@
             </label>
             <label class="form-group">
                 Date of Birth (optional)
-                <input type="date" th:name="dob" th:value="*{dob}">
+                <input type="text" th:name="dob" th:value="*{dob}">
                 <span class = "error" th:if="${youngDob != null}" th:text="*{youngDob}"></span>
                 <span class = "error" th:if="${oldDob != null}" th:text="*{oldDob}"></span>
                 <span class = "error" th:if="${invalidDob != null}" th:text="*{invalidDob}"></span>

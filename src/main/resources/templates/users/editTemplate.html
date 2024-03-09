@@ -18,6 +18,7 @@
             <label class="form-group">
                 First Name
                 <input type="text" th:name="fname" th:value="*{fname}">
+                <span class = "error" th:if="${incorrectFirstName != null}" th:text="*{incorrectFirstName}"></span>
             </label>
             <label class="form-group">
                 Last Name
