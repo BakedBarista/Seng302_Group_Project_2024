@@ -54,4 +54,21 @@ public class UserServiceTest {
         Assertions.assertNull(userService.getUserByEmailAndPassword(email, "invalid password"));
         Assertions.assertNull(userService.getUserByEmailAndPassword("invalid email", password));
     }
+
+    /**
+     * Set user profile picture
+     */
+    @Test
+    public void setUserProfilePicture() {
+        byte[] bytes = "test".getBytes();
+        String contentType = "image/png";
+        GardenUser gardenUser = new GardenUser("fname", "lname", "email", "address", "password", "dob");
+        userService.addUser(gardenUser);
+
+        userService.setProfilePicture(gardenUser.getId(), contentType, bytes);
+
+        GardenUser gardenUser2 = userService.getUserById(gardenUser.getId());
+        Assertions.assertEquals(gardenUser2.getProfilePictureContentType(), contentType);
+        Assertions.assertEquals(gardenUser2.getProfilePicture(), bytes);
+    }
 }

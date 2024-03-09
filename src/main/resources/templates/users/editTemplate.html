@@ -14,6 +14,7 @@
     <header th:insert="~{fragments/general.html :: header}"></header>
     <main class="main-container">
         <h1>Edit</h1>
+        <div th:insert="fragments/edit-profile-picture.html"></div>
         <form th:action="edit" method="post">
             <label class="form-group">
                 First Name
