@@ -35,13 +35,15 @@ public class EditUserController {
 
     private Boolean isNoLname;
 
+    public void setUserService(GardenUserService userService) {
+        this.userService = userService;
+    }
 
     /**
      * Shows the user the form
      * @param model thymeleaf model
      * @return redirect to /demo
      */
-
     @GetMapping("/users/edit")
     public String edit(Authentication authentication, Model model) {
         logger.info("GET /users/edit");
