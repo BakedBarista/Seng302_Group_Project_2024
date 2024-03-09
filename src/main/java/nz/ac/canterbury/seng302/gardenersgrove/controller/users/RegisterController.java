@@ -110,15 +110,15 @@ public class RegisterController {
     /**
      * Submits the form
      */
-     @GetMapping("/users/dummy")
-     public String createDummy() {
-         logger.info("POST /users/dummy");
+    @GetMapping("/users/dummy")
+    public String createDummy() {
+        logger.info("POST /users/dummy");
 
-         GardenUser user = new GardenUser("John", "Doe", "john.doe@gmail.com", "Jack Erskine 133", "password",
-                 "01/01/1970");
-         userService.addUser(user);
+        GardenUser user = new GardenUser("John", "Doe", "john.doe@gmail.com", "Jack Erskine 133", "password",
+                "01/01/1970");
+        userService.addUser(user);
 
-         return "redirect:/";
-     }
+        return "redirect:/";
+    }
 
 }
