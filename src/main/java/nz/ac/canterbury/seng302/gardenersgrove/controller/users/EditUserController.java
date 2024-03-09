@@ -3,9 +3,6 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 import nz.ac.canterbury.seng302.gardenersgrove.validation.UserValidation;
 import java.io.IOException;
 
-import java.io.IOException;
-
-import org.apache.catalina.UserDatabase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,15 +16,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import org.springframework.security.core.Authentication;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 
 /**
- * Controller for editing a exsiting user
+ * Controller for editing an existing user
  */
 @Controller
 public class EditUserController {
@@ -148,7 +143,7 @@ public class EditUserController {
     }
 
     @PostMapping("/users/edit/password")
-    public String submitPassoword(
+    public String submitPassword(
             @RequestParam(name = "oldPassword") String oldPassword,
             @RequestParam(name = "newPassword") String newPassword,
             @RequestParam(name = "confirmPassword") String confirmPassword,
