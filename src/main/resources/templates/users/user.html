@@ -3,13 +3,13 @@
 <head>
     <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
     <title>My Profile | Gardener's Grove</title>
-    <!--/*/ <th:block th:include="fragments/general.html :: headerfiles"> /*/-->
+    <!--/*/ <th:block th:insert="~{fragments/general.html :: headerfiles}"> /*/-->
 </head>
 <body>
-    <header th:insert="fragments/general.html :: header"></header>
+    <header th:insert="~{fragments/general.html :: header}"></header>
     <main class="main-container">
         <h1>My Profile</h1>
-        <div th:insert="fragments/edit-profile-picture.html"></div>
+        <div th:insert="~{fragments/edit-profile-picture.html}"></div>
         <h3>First Name</h3>
         <p>[[${fname}]]</p>
         <h3>Last Name</h3>
