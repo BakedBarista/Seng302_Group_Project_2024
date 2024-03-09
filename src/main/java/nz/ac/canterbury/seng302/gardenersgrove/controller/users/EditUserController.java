@@ -95,19 +95,23 @@ public class EditUserController {
             lname = null;
         }
 
+        if (dob.isEmpty()) {
+            dob = null;
+        }
+
         // Validation
         UserValidation userValidation = new UserValidation();
         boolean valid = true;
 
         if (!userValidation.userFirstNameValidation(fname)){
             model.addAttribute("incorrectFirstName", "First name cannot be empty and must only include letters, spaces,hyphens or apostrophes");
-            return "users/registerTemplate";
+            valid = false;
         } else if (!userValidation.userLastNameValidation(lname, noLname)){
             model.addAttribute("incorrectLastName", "Last name cannot be empty and must only include letters, spaces,hyphens or apostrophes");
-            return "users/registerTemplate";
+            valid = false;
         } else if (!userValidation.userEmailValidation(email)){
             model.addAttribute("incorrectEmail", "Email address must be in the form ‘jane@doe.nz’");
-            return "users/registerTemplate";
+            valid = false;
         } else if (!userValidation.userYoungDateValidation(dob)){
             model.addAttribute("youngDob", "You must be 13 years or older to create an account");
             valid = false;
