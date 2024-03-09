@@ -87,6 +87,7 @@ public class EditUserController {
             lname = null;
         }
 
+        // Validation
         UserRegoValidation userRegoValidation = new UserRegoValidation();
         boolean valid = true;
 
@@ -107,17 +108,15 @@ public class EditUserController {
             valid = false;
         }
 
-        // TODO: validation here
         if (valid) {
             GardenUser user = userService.getUserById(userId);
-
             user.setFname(fname);
             user.setLname(lname);
             user.setEmail(email);
             user.setAddress(address);
             user.setDOB(dob);
-
             userService.addUser(user);
+
             return "redirect:/users/user";
 
         }
@@ -129,7 +128,7 @@ public class EditUserController {
         model.addAttribute("address", address);
         model.addAttribute("dob", dob);
 
-        return "redirect:/users/user";
+        return "users/editTemplate";
     }
 
     @PostMapping("/users/edit/password")

@@ -17,7 +17,7 @@
         <form th:action="edit" method="post">
             <label class="form-group">
                 First Name
-                <input type="text" th:name="fname" th:value="*{fname}" required>
+                <input type="text" th:name="fname" th:value="*{fname}">
             </label>
             <label class="form-group">
                 Last Name
@@ -29,12 +29,12 @@
             </label>
             <label class="form-group">
                 Email
-                <input type="email" th:name="email" th:value="*{email}" required>
+                <input type="text" th:name="email" th:value="*{email}" inputmode="email">
                 <span class = "error" th:if="${incorrectEmail != null}" th:text="*{incorrectEmail}"></span>
             </label>
             <label class="form-group">
                 Address
-                <input type="text" th:name="address" th:value="*{address}" required>
+                <input type="text" th:name="address" th:value="*{address}">
             </label>
             <label class="form-group">
                 Date of Birth (optional)
