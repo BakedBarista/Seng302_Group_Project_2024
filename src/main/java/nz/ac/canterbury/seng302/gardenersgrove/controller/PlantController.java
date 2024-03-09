@@ -41,7 +41,7 @@ public class PlantController {
 
         logger.info("GET /gardens/${id}/addplant - display the new plant form");
         model.addAttribute("gardenId", id);
-        model.addAttribute("plant", plantService.addPlant(new Plant("Temp","1","Temp","01/01/2000","/images/default.png"), id));
+        model.addAttribute("plant", plantService.addPlant(new Plant("Temp","1","Temp","01/01/2000"), id));
         return "plants/addPlant";
     }
 

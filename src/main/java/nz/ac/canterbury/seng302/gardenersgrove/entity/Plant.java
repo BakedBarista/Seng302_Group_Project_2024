@@ -45,12 +45,12 @@ public class Plant {
     @Column(nullable = true)
     private String plantImagePath;
 
-    public Plant(String name, String count, String description, String plantedDate, String plantImagePath) {
+    public Plant(String name, String count, String description, String plantedDate) {
         this.name = name;
         this.count = count;
         this.description = description;
         this.plantedDate = plantedDate;
-        this.plantImagePath = plantImagePath;
+        this.plantImagePath = "/default.png";
     }
 
     public Plant() {}

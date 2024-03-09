@@ -3,14 +3,38 @@ h2 {
     font-size: 1.5em;
     text-transform: uppercase;
 }
-img {
-    width: 100%;
-    height: 100%;
+.image-container {
+    position: relative;
+    display: inline-block;
+    max-width: 200px;
 }
-.square {
-    height: 75px;
-    width: 75px;
+
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
 }
+
+.add-image-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: rgba(255, 255, 255, 0.5);
+    color: black;
+    padding: 5px;
+    font-size: 20px;
+    text-decoration: none;
+    z-index: 1;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    border: 2px solid black;
+    border-radius: 50%;
+}
+
+.add-image-button:hover {
+    background-color: rgba(128, 128, 128, 0.7);
+    border-color: black;
+}
+
 .scrolling-table {
     max-height: 510px;
     overflow-y: auto;
@@ -35,33 +59,5 @@ tr:hover {
     background-color: #f5f5f5;
 }
 
-.semi-transparent-button {
-    position: absolute;
-    top:50px;
-    left:350px;
-    display: block;
-    box-sizing: border-box;
-    margin: 0 auto;
-    padding: 8px;
-    width: 80%;
-    max-width: 50px;
-    background: #888888; /* fallback color for old browsers */
-    background: rgba(255, 255, 255, 0.5);
-    border-radius: 8px;
-    color: #888888;
-    text-align: center;
-    text-decoration: none;
-    letter-spacing: 1px;
-    transition: all 0.3s ease-out;
-}
-.semi-transparent-button:hover,
-.semi-transparent-button:focus,
-.semi-transparent-button:active {
-    background: #888888;
-    color: #000;
-    transition: all 0.5s ease-in;
-}
-.semi-transparent:focus {
-    outline: none;
-}
+
 

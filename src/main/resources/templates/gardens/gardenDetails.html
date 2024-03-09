@@ -37,9 +37,13 @@
                     <td><span th:text="${plant.description}">Description</span></td>
                     <td><span th:text="${plant.plantedDate}">Planted Date</span></td>
                     <td>
-                        <div class="square">
-                            <img th:src="@{${plant.plantImagePath}}" alt="Plant Image" />
-                        </div></td>
+                        <div class="image-container">
+
+                            <img th:src="@{${plant.plantImagePath}}"/>
+                            <img th:unless="${plant.plantImagePath}" src="/default.png" alt="Default Plant Image" />
+                            <a class="add-image-button" th:href="@{/uploadImage(garden_Id=${garden.id}, plant_Id=${plant.id})}">+</a>
+
+                        </div>
                     <td><button><a th:href="@{/gardens/{garden_id}/plants/{plant_id}/edit(garden_id=${garden.id}, plant_id=${plant.id})}">Edit</a></button></td>
                 </tr>
             </tbody>
