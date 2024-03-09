@@ -3,8 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <title>Edit Plant</title>
+    <link th:href="@{/css/navbar.css}" rel="stylesheet" />
+    <link th:href="@{/css/styles.css}" rel="stylesheet" />
 </head>
 <body>
+<div class="navigationBar">
+    <a class="home" th:href="@{/}">Gardeners Grove</a>
+    <div class="buttonContainer">
+        <button><a th:href="@{/gardens}">My Gardens</a></button>
+        <button><a th:href="@{/gardens/create}">Create New Garden</a></button>
+    </div>
+</div>
 <div>
     <div>
         <form th:action="@{/gardens/{garden_id}/plants/{id}/edit(garden_id=${garden_id}, id=${plant_id})}" th:object="${plant}" method="post">
@@ -30,11 +39,6 @@
             <br/>
             <button type="submit">Submit!</button><button type="button"><a th:href="@{/gardens/{garden_id}(garden_id=${garden_id})}">Cancel</a></button>
         </form>
-    </div>
-
-    <div>
-        <a th:href="@{/gardens}">My Gardens</a>
-        <a th:href="@{/}">Back to home</a>
     </div>
 </div>
 </body>

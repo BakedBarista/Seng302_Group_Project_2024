@@ -3,8 +3,17 @@
 <head>
     <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
     <title>Create New Garden</title>
+    <link th:href="@{/css/navbar.css}" rel="stylesheet" />
+    <link th:href="@{/css/styles.css}" rel="stylesheet" />
 </head>
 <body>
+<div class="navigationBar">
+    <a class="home" th:href="@{/}">Gardeners Grove</a>
+    <div class="buttonContainer">
+        <button><a th:href="@{/gardens}">My Gardens</a></button>
+        <button><a class = "onPage" th:href="@{/gardens/create}">Create New Garden</a></button>
+    </div>
+</div>
 <div>
     <div>
         <form action="#" th:action="@{/gardens/create}" th:object="${garden}" method="post">
@@ -31,12 +40,6 @@
             <br/>
             <button type="submit">Submit!</button><button type="button" onclick="history.back()">Cancel</button>
         </form>
-    </div>
-
-    <div>
-        <br />
-        <button><a th:href="@{/gardens}">Back to Gardens</a></button>
-        <button><a th:href="@{/}">Return home</a></button>
     </div>
 </div>
 </body>

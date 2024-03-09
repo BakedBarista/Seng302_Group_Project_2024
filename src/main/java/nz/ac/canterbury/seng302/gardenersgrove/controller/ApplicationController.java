@@ -20,6 +20,6 @@ public class ApplicationController {
     @GetMapping("/")
     public String home() {
         logger.info("GET /home");
-        return "index";
+        return "home";
     }
 }
