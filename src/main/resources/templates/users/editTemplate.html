@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
     <title>Register | Gardener's Grove</title>
-    <!--/*/ <th:block th:include="fragments/general.html :: headerfiles">
+    <!--/*/ <th:block th:insert="~{fragments/general.html :: headerfiles}">
         </th:block> /*/-->
     <!-- The above comment (differentiated by the enclosing "slash star slash") is a thymeleaf prototype-only block
         making use of synthetic th:block tags. This code will import the header files then the block will disappear.
@@ -11,7 +11,7 @@
         See: https://www.thymeleaf.org/doc/tutorials/2.1/usingthymeleaf.html#comments-and-blocks -->
 </head>
 <body>
-    <header th:insert="fragments/general.html :: header"></header>
+    <header th:insert="~{fragments/general.html :: header}"></header>
     <main class="main-container">
         <h1>Edit</h1>
         <form th:action="edit" method="post">
