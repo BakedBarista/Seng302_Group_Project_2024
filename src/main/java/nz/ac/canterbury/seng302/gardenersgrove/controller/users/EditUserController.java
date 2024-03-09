@@ -1,10 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
+import nz.ac.canterbury.seng302.gardenersgrove.validation.UserValidation;
 import java.io.IOException;
 
-import java.io.IOException;
-
-import org.apache.catalina.UserDatabase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,15 +16,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import org.springframework.security.core.Authentication;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 
 /**
- * Controller for editing a exsiting user
+ * Controller for editing an existing user
  */
 @Controller
 public class EditUserController {
@@ -94,21 +90,47 @@ public class EditUserController {
             lname = null;
         }
 
-        // TODO: validation here
+        if (dob.isEmpty()) {
+            dob = null;
+        }
+
+        // Validation
+        UserValidation userValidation = new UserValidation();
         boolean valid = true;
+
+        if (!userValidation.userFirstNameValidation(fname)){
+            model.addAttribute("incorrectFirstName", "First name cannot be empty and must only include letters, spaces,hyphens or apostrophes");
+            valid = false;
+        } else if (!userValidation.userLastNameValidation(lname, noLname)){
+            model.addAttribute("incorrectLastName", "Last name cannot be empty and must only include letters, spaces,hyphens or apostrophes");
+            valid = false;
+        } else if (!userValidation.userEmailValidation(email)){
+            model.addAttribute("incorrectEmail", "Email address must be in the form ‘jane@doe.nz’");
+            valid = false;
+        } else if (!userValidation.userYoungDateValidation(dob)){
+            model.addAttribute("youngDob", "You must be 13 years or older to create an account");
+            valid = false;
+        } else if (!userValidation.userOldDateValidation(dob)){
+            model.addAttribute("oldDob", "The maximum age allowed is 120 years");
+            valid = false;
+        } else if (!userValidation.userInvalidDateValidation(dob)){
+            model.addAttribute("invalidDob", "You have entered an invalid date. It must be in the format: DD/MM/YYYY");
+            valid = false;
+        }
+
         if (valid) {
             GardenUser user = userService.getUserById(userId);
-
             user.setFname(fname);
             user.setLname(lname);
             user.setEmail(email);
             user.setAddress(address);
             user.setDOB(dob);
-
             userService.addUser(user);
+
             return "redirect:/users/user";
 
         }
+
         model.addAttribute("userId", userId);
         model.addAttribute("fname", fname);
         model.addAttribute("lname", lname);
@@ -117,11 +139,11 @@ public class EditUserController {
         model.addAttribute("address", address);
         model.addAttribute("dob", dob);
 
-        return "redirect:/users/user";
+        return "users/editTemplate";
     }
 
     @PostMapping("/users/edit/password")
-    public String submitPassoword(
+    public String submitPassword(
             @RequestParam(name = "oldPassword") String oldPassword,
             @RequestParam(name = "newPassword") String newPassword,
             @RequestParam(name = "confirmPassword") String confirmPassword,

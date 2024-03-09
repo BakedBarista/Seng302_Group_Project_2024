@@ -40,8 +40,9 @@ public class UserController {
         model.addAttribute("lname", user.getLname());
         model.addAttribute("email", user.getEmail());
 
-        if (user.getLname() != null) {
-            LocalDate dob = LocalDate.parse(user.getDOB());
+        if (user.getDOB() != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/M/yyyy");
+            LocalDate dob = LocalDate.parse(user.getDOB(), formatter);
             String dobString = dob.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
             model.addAttribute("dob", dobString);
         }

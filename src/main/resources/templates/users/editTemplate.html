@@ -18,34 +18,32 @@
         <form th:action="edit" method="post">
             <label class="form-group">
                 First Name
-                <input type="text" th:name="fname" th:value="*{fname}" required>
+                <input type="text" th:name="fname" th:value="*{fname}">
+                <span class = "error" th:if="${incorrectFirstName != null}" th:text="*{incorrectFirstName}"></span>
             </label>
             <label class="form-group">
                 Last Name
-                <input type="text" th:name="lname" th:value="*{lname}" id="lname" th:required="*{!noLname}" th:disabled="*{noLname}">
+                <input type="text" th:name="lname" th:value="*{lname}" id="lname">
+                <span class = "error" th:if="${incorrectLastName != null}" th:text="*{incorrectLastName}"></span>
             </label>
             <label class="form-checkbox">
                 <input type="checkbox" th:name="noLname" th:value="*{noLname}" th:checked="*{noLname}" id="noLname"> I have no surname
             </label>
             <label class="form-group">
                 Email
-                <input type="email" th:name="email" th:value="*{email}" required>
+                <input type="text" th:name="email" th:value="*{email}" inputmode="email">
+                <span class = "error" th:if="${incorrectEmail != null}" th:text="*{incorrectEmail}"></span>
             </label>
             <label class="form-group">
                 Address
-                <input type="text" th:name="address" th:value="*{address}" required>
+                <input type="text" th:name="address" th:value="*{address}">
             </label>
-<!--            <label class="form-group">-->
-<!--                Password-->
-<!--                <input type="password" th:name="password" required>-->
-<!--            </label>-->
-<!--            <label class="form-group">-->
-<!--                Confirm Password-->
-<!--                <input type="password" th:name="confirmPassword" required>-->
-<!--            </label>-->
             <label class="form-group">
                 Date of Birth (optional)
-                <input type="date" th:name="dob" th:value="*{dob}">
+                <input type="text" th:name="dob" th:value="*{dob}">
+                <span class = "error" th:if="${youngDob != null}" th:text="*{youngDob}"></span>
+                <span class = "error" th:if="${oldDob != null}" th:text="*{oldDob}"></span>
+                <span class = "error" th:if="${invalidDob != null}" th:text="*{invalidDob}"></span>
             </label>
             <button class="btn">Submit</button>
             <a href="/" class="btn">Cancel</a>
