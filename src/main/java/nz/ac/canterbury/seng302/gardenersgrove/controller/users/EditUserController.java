@@ -1,19 +1,27 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
 import nz.ac.canterbury.seng302.gardenersgrove.validation.UserValidation;
+import java.io.IOException;
+
+import java.io.IOException;
+
 import org.apache.catalina.UserDatabase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.http.HttpHeaders;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import org.springframework.security.core.Authentication;
 
+import org.springframework.web.multipart.MultipartFile;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
@@ -46,6 +54,7 @@ public class EditUserController {
         Long userId = (Long) authentication.getPrincipal();
         GardenUser user = userService.getUserById(userId);
 
+        model.addAttribute("userId", userId);
         model.addAttribute("fname", user.getFname());
         model.addAttribute("lname", user.getLname());
         model.addAttribute("noLname", user.getLname() == null);
@@ -123,6 +132,7 @@ public class EditUserController {
 
         }
 
+        model.addAttribute("userId", userId);
         model.addAttribute("fname", fname);
         model.addAttribute("lname", lname);
         model.addAttribute("noLname", noLname);
@@ -145,6 +155,24 @@ public class EditUserController {
         user.setPassword(newPassword);
         userService.addUser(user);
         return "users/editTemplate";
+    }
+
+    /**
+     * Shows the user the edit password form
+     * @throws IOException 
+     */
+    @PostMapping("/users/profile-picture")
+    public String editProfilePicture(
+            Authentication authentication,
+            @RequestParam("file") MultipartFile file,
+            @RequestHeader(HttpHeaders.REFERER) String referer) throws IOException {
+        logger.info("POST /users/profile-picture");
+
+        Long userId = (Long) authentication.getPrincipal();
+
+        userService.setProfilePicture(userId, file.getContentType(), file.getBytes());
+
+        return "redirect:" + referer;
     }
 
 }

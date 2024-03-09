@@ -88,4 +88,17 @@ public class GardenUserService {
         return;
     }
 
+    /**
+     * Updates a GardenUser's profile picture
+     */
+    public void setProfilePicture(long id, String contentType, byte[] profilePicture) {
+        var user = gardenUserRepository.findById(id);
+        if (user.isEmpty()) {
+            return;
+        }
+
+        user.get().setProfilePicture(contentType, profilePicture);
+        gardenUserRepository.save(user.get());
+    }
+
 }
