@@ -23,7 +23,7 @@
             </label>
             <label class="form-group">
                 Last Name
-                <input type="text" th:name="lname" th:value="*{lname}" id="lname" th:required="*{!noLname}" th:disabled="*{noLname}">
+                <input type="text" th:name="lname" th:value="*{lname}" id="lname">
                 <span class = "error" th:if="${incorrectLastName != null}" th:text="*{incorrectLastName}"></span>
             </label>
             <label class="form-checkbox">
