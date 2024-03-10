@@ -53,7 +53,7 @@ public class PlantService {
         System.out.println("Plant name before save: " + plant.getName());
         plant.setGarden(garden);
         return plantRepository.save(plant);
-    }
+        }
 
 
     /**

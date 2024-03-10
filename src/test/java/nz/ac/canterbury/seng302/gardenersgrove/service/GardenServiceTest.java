@@ -58,6 +58,7 @@ public class GardenServiceTest {
     @Test
     public void getGardenById_ReturnsGarden() {
         Garden garden = new Garden("Garden 1", "Location 1", "100");
+
         Mockito.when(gardenRepository.findById(1L)).thenReturn(java.util.Optional.of(garden));
 
         Garden returnedGarden = gardenService.getGardenById(1L).get();
