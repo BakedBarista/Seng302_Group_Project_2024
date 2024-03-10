@@ -27,18 +27,16 @@ class PlantServiceTest {
 
     @Test
     void AddPlant_ValidPlantWithGardenId_ReturnsPlantWithCorrectGardenId() {
-        Long gardenId = 1L;
-
         Plant testPlant = new Plant("Rose", 5, "Flower", "01/01/2024");
         Garden testGarden = new Garden("Test Garden", "Test Location", "5");
+        Long gardenId = 1L;
+        testGarden.setId(gardenId);
+
         Mockito.when(gardenRepository.findById(Mockito.any())).thenReturn(Optional.of(testGarden));
 
-//        Mockito.when(plantRepository.save(Mockito.any())).thenReturn(new Plant(name, count, description, plantedDate));
+        Mockito.when(plantRepository.save(Mockito.any(Plant.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Plant plant = plantService.addPlant(testPlant, gardenId);
-
-        System.out.println(plant.getGarden());
-        System.out.println(gardenId);
-        Assertions.assertEquals(plant.getGarden(), gardenId);
+        Plant result = plantService.addPlant(testPlant, gardenId);
+        Assertions.assertEquals(result.getGarden().getId(), gardenId);
     }
 }
