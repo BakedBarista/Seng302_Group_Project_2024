@@ -3,12 +3,13 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
-import org.h2.table.Plan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -60,7 +61,7 @@ public class UploadController {
         if(!allowedExtension.contains(extension.toLowerCase())) {
             redirectAttributes.addAttribute("plant_Id", plantId);
             redirectAttributes.addAttribute("garden_Id", gardenId);
-            redirectAttributes.addFlashAttribute("error", "Only JPG, PNG and SVG are allowed");
+            redirectAttributes.addFlashAttribute("error", "Image must be of type png, jpg or svg");
             return "redirect:/uploadImage";
         }
         String directory = "./images/";
@@ -71,7 +72,7 @@ public class UploadController {
         if (file.getSize() > 10 * 1024 * 1024) { // 10MB limit
             redirectAttributes.addAttribute("plant_Id", plantId);
             redirectAttributes.addAttribute("garden_Id", gardenId);
-            redirectAttributes.addFlashAttribute("fileSizeError", "Exceeded max file size of 10MB");
+            redirectAttributes.addFlashAttribute("fileSizeError", "Image must be less than 10MB");
             Files.delete(filePath);
             return "redirect:/uploadImage";
         }
