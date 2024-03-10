@@ -15,7 +15,7 @@ import java.util.Optional;
 @Service
 public class PlantService {
     private final PlantRepository plantRepository;
-    private GardenRepository gardenRepository;
+    private final GardenRepository gardenRepository;
 
 
     /**
@@ -35,7 +35,7 @@ public class PlantService {
 
     /**
      * Get a list of plants for given gardenId
-     * @param gardenId
+     * @param gardenId the id of the garden
      * @return list of plants for given gardenId
      */
     public List<Plant> getPlantsByGardenId(long gardenId) {
@@ -50,7 +50,6 @@ public class PlantService {
      */
     public Plant addPlant(Plant plant, Long gardenId) {
         Garden garden = gardenRepository.findById(gardenId).orElseThrow(() -> new RuntimeException("Garden not found"));
-        System.out.println("Plant name before save: " + plant.getName());
         plant.setGarden(garden);
         return plantRepository.save(plant);
     }
