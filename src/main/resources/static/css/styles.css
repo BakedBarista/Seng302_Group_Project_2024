@@ -31,3 +31,35 @@ tr:hover {
 a {
     text-decoration: none;
 }
+
+.image-container {
+    position: relative;
+    display: inline-block;
+    max-width: 200px;
+}
+
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+.add-image-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: rgba(255, 255, 255, 0.5);
+    color: black;
+    padding: 5px;
+    font-size: 20px;
+    text-decoration: none;
+    z-index: 1;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    border: 2px solid black;
+    border-radius: 50%;
+}
+
+.add-image-button:hover {
+    background-color: rgba(128, 128, 128, 0.7);
+    border-color: black;
+}
