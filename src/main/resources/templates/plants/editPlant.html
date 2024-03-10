@@ -3,9 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <title>Edit Plant</title>
-    <link th:href="@{/styles.css}" rel="stylesheet" />
+    <link th:href="@{/css/navbar.css}" rel="stylesheet" />
+    <link th:href="@{/css/styles.css}" rel="stylesheet" />
 </head>
 <body>
+<div class="navigationBar">
+    <a class="home" th:href="@{/}">Gardeners Grove</a>
+    <div class="buttonContainer">
+        <button><a th:href="@{/gardens}">My Gardens</a></button>
+        <button><a th:href="@{/gardens/create}">Create New Garden</a></button>
+    </div>
+</div>
 <div>
     <div>
         <form th:action="@{/gardens/{garden_id}/plants/{id}/edit(garden_id=${garden_id}, id=${plant_id})}" th:object="${plant}" method="post">
@@ -25,7 +33,7 @@
             <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}" style="color: red;"></div>
             <br/>
             <label for="date"> Date Planted: </label>
-            <input type="text" class="form-control" id="date" placeholder="DD/MM/YYYY"
+            <input type="date" class="form-control" id="date" placeholder="DD/MM/YYYY"
                    th:name="plantedDate" th:value="${plant.plantedDate}" data-cy="size" autofocus>
             <div th:if="${#fields.hasErrors('plantedDate')}" th:errors="*{plantedDate}" style="color: red;"></div>
             <br/>

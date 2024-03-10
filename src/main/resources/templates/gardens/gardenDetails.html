@@ -2,18 +2,25 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
-    <link th:href="@{/styles.css}" rel="stylesheet" />
     <title>Garden Details</title>
+    <link th:href="@{/css/navbar.css}" rel="stylesheet" />
+    <link th:href="@{/css/styles.css}" rel="stylesheet" />
 </head>
 <body>
+<div class="navigationBar">
+    <a class="home" th:href="@{/}">Gardeners Grove</a>
+    <div class="buttonContainer">
+        <button><a th:href="@{/gardens}">My Gardens</a></button>
+        <button><a th:href="@{/gardens/create}">Create New Garden</a></button>
+    </div>
+</div>
 <div>
-    <div>
-        <h2 th:text="${garden.name}">Garden Name</h2>
-        <p><strong>ID: </strong><span th:text="${garden.id}"></span></p>
-        <p><strong>Location: </strong><span th:text="${garden.location}"></span></p>
-        <p><strong>Size: </strong><span th:text="${garden.size}"></span> m&sup2;</p>
+    <h2 th:text="${garden.name}">Garden Name</h2>
+    <p><strong>ID: </strong><span th:text="${garden.id}"></span></p>
+    <p><strong>Location: </strong><span th:text="${garden.location}"></span></p>
+    <p><strong>Size: </strong><span th:text="${garden.size}"></span> m&sup2;</p>
 
-        <h4>Plants:</h4>
+    <h4>Plants:</h4>
     <div class="scrolling-table">
         <table>
             <thead>

@@ -138,7 +138,7 @@ public class GardenController {
             existingGarden.get().setSize(garden.getSize());
             gardenService.addGarden(existingGarden.get());
         }
-        return "redirect:/gardens";
+        return "redirect:/gardens/" + id;
     }
 
 

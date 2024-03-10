@@ -1,0 +1,42 @@
+.navigationBar {
+    background-color: #c9c9c9;
+    overflow: hidden;
+    height: 100px;
+    display: flex;
+    align-items: center;
+}
+
+.buttonContainer {
+    margin-left: auto;
+}
+
+.navigationBar button {
+    display: inline-block;
+    background-color: #c9c9c9;
+    border: none;
+    margin: 0 20px 0 0;
+}
+
+.navigationBar a {
+    color: #000000;
+    font-family: arial, sans-serif;
+    font-size: 22px;
+    text-align: center;
+    padding: 20px;
+    margin-left: 20px;
+    text-decoration: none;
+}
+
+.navigationBar a:hover {
+    background-color: #b7b7b7;
+    color: black;
+}
+
+.navigationBar a.home {
+    font-weight: bold;
+
+}
+
+.navigationBar a.onPage {
+    background-color: #b0b0b0;
+}

@@ -3,9 +3,17 @@
 <head>
     <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
     <title>Add a New Plant</title>
-    <link th:href="@{/styles.css}" rel="stylesheet" />
+    <link th:href="@{/css/navbar.css}" rel="stylesheet" />
+    <link th:href="@{/css/styles.css}" rel="stylesheet" />
 </head>
 <body>
+<div class="navigationBar">
+    <a class="home" th:href="@{/}">Gardeners Grove</a>
+    <div class="buttonContainer">
+        <button><a th:href="@{/gardens}">My Gardens</a></button>
+        <button><a th:href="@{/gardens/create}">Create New Garden</a></button>
+    </div>
+</div>
 <div>
     <div>
         <form th:action="@{/gardens/{id}/addplant(id=${gardenId})}" th:object="${plant}"  method="post">
@@ -13,7 +21,7 @@
 
         <!-- Plant Name Field -->
             <label for="name">Plant Name:</label>
-            <input type="text" id="name" name="name" placeholder="Enter Plant Name" th:value="${plant.name}" required>
+            <input type="text" id="name" name="name" placeholder="Enter Plant Name" th:value="${plant.name}" >
             <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" style="color: red;"></div>
             <br/>
             <br/>
@@ -25,13 +33,13 @@
             <br/>
             <!-- Plant Count Field -->
             <label for="count">Count:</label>
-            <input type="text" id="count" name="count" placeholder="Enter Count" th:value="${plant.count}" required>
+            <input type="text" id="count" name="count" placeholder="Enter Count" th:value="${plant.count}" >
             <div th:if="${#fields.hasErrors('count')}" th:errors="*{count}" style="color: red;"></div>
             <br/>
             <br/>
             <!-- Planting Date Field -->
             <label for="plantedDate">Planting Date:</label>
-            <input type="date" id="plantedDate" name="plantedDate" placeholder="DD/MM/YYYY" th:value="${plant.plantedDate}" required>
+            <input type="date" id="plantedDate" name="plantedDate" placeholder="DD/MM/YYYY" th:value="${plant.plantedDate}" >
             <div th:if="${#fields.hasErrors('plantedDate')}" th:errors="*{plantedDate}" style="color: red;"></div>
             <br/>
             <br/>
@@ -43,7 +51,7 @@
 
             </div>
             <button type="submit">Submit!</button>
-            <button type="button" onclick="window.location.href = '/gardens'">Cancel</button>
+            <button type="button"><a th:href="@{/gardens/{id}(id=${gardenId})}">Cancel</a></button>
 
 
         </form>

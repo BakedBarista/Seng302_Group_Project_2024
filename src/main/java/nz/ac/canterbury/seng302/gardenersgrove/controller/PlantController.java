@@ -13,8 +13,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 // TODO: THIS WHOLE FILE NEEDS TO BE UPDATED
@@ -49,8 +54,14 @@ public class PlantController {
     public String submitForm(@PathVariable("id") Long id,
                              @Valid @ModelAttribute("plant") Plant plant,
                              BindingResult bindingResult, Model model) {
+        logger.info(plant.getPlantedDate());
+
+        if(!plant.getPlantedDate().isEmpty()) {
+            plant.setPlantedDate(refactorPlantedDate(plant.getPlantedDate()));
+        }
 
 
+        logger.info(plant.getPlantedDate());
         logger.info("POST /gardens/${id}/addplant - submit the new plant form");
         if(bindingResult.hasErrors()) {
             model.addAttribute("plant", plant);
@@ -62,6 +73,11 @@ public class PlantController {
 
 
         return "redirect:/gardens/" + id;
+    }
+
+    public static String refactorPlantedDate(String date) {
+        LocalDate localDate = LocalDate.parse(date);
+        return localDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 
     /**
@@ -93,6 +109,10 @@ public class PlantController {
                               @Validated(ValidationSequence.class) @ModelAttribute("plant") Plant plant,
                                BindingResult bindingResult, Model model) {
         logger.info("/garden/{}/plant/{}", garden_id, plant_id);
+
+        if(!plant.getPlantedDate().isEmpty()) {
+            plant.setPlantedDate(refactorPlantedDate(plant.getPlantedDate()));
+        }
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("plant", plant);
