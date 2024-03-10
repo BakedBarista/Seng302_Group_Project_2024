@@ -108,7 +108,7 @@ public class Plant {
 
     @Override
     public String toString() {
-        return "PlantFormResult{" +
+        return "Plant{" +
                 "id=" + id +
                 ", name='" + this.name + '\'' +
                 ", count='" + this.count + '\'' +

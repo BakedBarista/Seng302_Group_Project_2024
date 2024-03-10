@@ -82,7 +82,7 @@ public class Garden {
 
     @Override
     public String toString() {
-        return "GardenFormResult{" +
+        return "Garden{" +
                 "id=" + id +
                 ", gardenName='" + name + '\'' +
                 ", gardenLocation='" + location + '\'' +
