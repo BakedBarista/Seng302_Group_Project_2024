@@ -18,11 +18,12 @@
             <label class="form-group">
                 First Name
                 <input type="text" th:name="fname" th:value="*{fname}">
+                <span class = "error" th:if="${incorrectFirstName != null}" th:text="*{incorrectFirstName}"></span>
             </label>
             <label class="form-group">
                 Last Name
                 <input type="text" th:name="lname" th:value="*{lname}" id="lname">
-                <span class = "error" th:if="${incorrectName != null}" th:text="*{incorrectName}"></span>
+                <span class = "error" th:if="${incorrectLastName != null}" th:text="*{incorrectLastName}"></span>
             </label>
             <label class="form-checkbox">
                 <input type="checkbox" th:name="noLname" th:value="*{noLname}" th:checked="*{noLname}" id="noLname"> I have no surname
@@ -53,7 +54,7 @@
                 <span class = "error" th:if="${oldDob != null}" th:text="*{oldDob}"></span>
                 <span class = "error" th:if="${invalidDob != null}" th:text="*{invalidDob}"></span>
             </label>
-            <button class="btn">Submit</button>
+            <button class="btn">Sign Up</button>
             <a href="/" class="btn">Cancel</a>
         </form>
     </main>

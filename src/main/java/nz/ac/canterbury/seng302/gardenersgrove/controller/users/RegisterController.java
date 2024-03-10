@@ -66,12 +66,15 @@ public class RegisterController {
 
         UserValidation userValidation = new UserValidation();
 
-        if (!userValidation.userEmailValidation(email)){
-            model.addAttribute("incorrectEmail", "Email address must be in the form ‘jane@doe.nz’");
+         if (!userValidation.userFirstNameValidation(fname)){
+            model.addAttribute("incorrectFirstName", "First name cannot be empty and must only include letters, spaces,hyphens or apostrophes");
             return "users/registerTemplate";
-        } else if (!userValidation.userNameValidation(fname, lname, noLname)){
-            model.addAttribute("incorrectName", "{First/Last} name cannot be empty and must only include letters, spaces,hyphens or apostrophes");
+        } else if (!userValidation.userLastNameValidation(lname, noLname)){
+            model.addAttribute("incorrectLastName", "Last name cannot be empty and must only include letters, spaces,hyphens or apostrophes");
             return "users/registerTemplate";
+        } else if (!userValidation.userEmailValidation(email)){
+             model.addAttribute("incorrectEmail", "Email address must be in the form ‘jane@doe.nz’");
+             return "users/registerTemplate";
         } else if (!userValidation.userPasswordMatchValidation(password, confirmPassword)){
             model.addAttribute("matchPassword", "Passwords do not match");
             return "users/registerTemplate";

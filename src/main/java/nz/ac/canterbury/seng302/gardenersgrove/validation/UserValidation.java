@@ -8,24 +8,23 @@ import java.time.format.DateTimeFormatter;
  * simple validation checks for user registration data
  */
 public class UserValidation {
-    /**
-     * simple validation checks for name registration data
-     * @param fname
-     * @param lname
-     * @param noLname
-     * @return bool
-     */
-    public static boolean userNameValidation(String fname, String lname, boolean noLname) {
+
+    public static boolean userFirstNameValidation(String fname) {
         String acceptedNameRegex = "^[a-zA-Z\\s'-]*$";
         int maxNameLength = 64;
         boolean validFirstName = fname.matches(acceptedNameRegex) && fname.length() <= maxNameLength && !fname.isEmpty();
+
+        return validFirstName;
+    }
+
+    public static boolean userLastNameValidation(String lname, boolean noLname) {
+        String acceptedNameRegex = "^[a-zA-Z\\s'-]*$";
+        int maxNameLength = 64;
         boolean validLastName = ( noLname || (lname.matches(acceptedNameRegex) && lname.length() <= maxNameLength && !lname.isEmpty()) );
 
-        if (validFirstName && validLastName) {
-            return true;
-        }
-        return false;
+        return validLastName;
     }
+
 
     /**
      * validation for user email
