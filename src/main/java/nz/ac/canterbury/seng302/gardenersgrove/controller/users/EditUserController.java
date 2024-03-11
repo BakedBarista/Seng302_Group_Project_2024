@@ -85,32 +85,36 @@ public class EditUserController {
         logger.info("POST /users/edit");
 
         isNoLname = noLname;
-
         Long userId = (Long) authentication.getPrincipal();
 
         if (noLname) {
             lname = null;
         }
-
         if (dob.isEmpty()) {
             dob = null;
         }
 
+        user = userService.getUserById(userId);
         // Validation
+        String currentEmail = user.getEmail();
         UserValidation userValidation = new UserValidation();
         boolean valid = true;
+
+        if (!email.equalsIgnoreCase(currentEmail)) {
+            if (userService.getUserByEmail(email) != null) {
+                model.addAttribute("emailInuse", "This email address is already in use");
+                valid = false;
+            } else if (!userValidation.userEmailValidation(email)) {
+                model.addAttribute("incorrectEmail", "Email address must be in the form ‘jane@doe.nz’");
+                valid = false;
+            }
+        }
 
         if (!userValidation.userFirstNameValidation(fname)){
             model.addAttribute("incorrectFirstName", "First name cannot be empty and must only include letters, spaces,hyphens or apostrophes");
             valid = false;
         } else if (!userValidation.userLastNameValidation(lname, noLname)) {
             model.addAttribute("incorrectLastName", "Last name cannot be empty and must only include letters, spaces,hyphens or apostrophes");
-            valid = false;
-        } else if (userService.getUserByEmail(email) != null) {
-            model.addAttribute("emailInuse", "This email address is already in use");
-            valid = false;
-        } else if (!userValidation.userEmailValidation(email)){
-            model.addAttribute("incorrectEmail", "Email address must be in the form ‘jane@doe.nz’");
             valid = false;
         } else if (!userValidation.userInvalidDateValidation(dob)){
             model.addAttribute("invalidDob", "Date is not in valid format, (DD/MM/YYYY)");
