@@ -7,7 +7,7 @@
 <body>
 <div>
     <div>
-        <form th:action="@{/gardens/{garden_id}/plants/{id}/edit(garden_id=${garden_id}, id=${plant_id})}" th:object="${plant}" method="post">
+        <form th:action="@{/gardens/{gardenId}/plants/{plantId}/edit(gardenId=${gardenId}, plantId=${plantId})}" th:object="${plant}" method="post">
             <label for="name"> Plant Name: </label>
             <input type="text" class="form-control" id="name" placeholder="Name"
                    th:name="name" th:value="${plant.name}" data-cy="name" autofocus>
@@ -25,7 +25,7 @@
             <br/>
             <label for="date"> Date Planted: </label>
             <input type="date" class="form-control" id="date" placeholder="DD/MM/YYYY"
-                   th:name="plantedDate" th:value="${plant.plantedDate}" data-cy="size" autofocus>
+                   th:name="plantedDate" th:value="${#dates.format(plant.plantedDate, 'yyyy-MM-dd')}" data-cy="size" autofocus>
             <div th:if="${#fields.hasErrors('plantedDate')}" th:errors="*{plantedDate}" style="color: red;"></div>
             <br/>
             <button type="submit">Submit!</button><button type="button"><a th:href="@{/gardens/{garden_id}(garden_id=${garden_id})}">Cancel</a></button>

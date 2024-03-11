@@ -7,7 +7,7 @@
 <body>
 <div>
     <div>
-        <form th:action="@{/gardens/{id}/addplant(id=${gardenId})}" th:object="${plant}"  method="post">
+        <form th:action="@{/gardens/{gardenId}/addplant(gardenId=${gardenId})}" th:object="${plant}"  method="post">
 
 
         <!-- Plant Name Field -->
