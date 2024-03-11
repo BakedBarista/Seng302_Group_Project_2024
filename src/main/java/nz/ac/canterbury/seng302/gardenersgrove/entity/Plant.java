@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.NotNull;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.ValidationGroups;
 
 
@@ -20,15 +21,16 @@ public class Plant {
     private Long id;
 
     @NotBlank(message = "Please enter a name", groups = {ValidationGroups.FirstOrder.class})
-    @Pattern(regexp = "^[a-zA-Z0-9 \\-.,']*$", message = "Name must only contain letters and numbers", groups = {ValidationGroups.SecondOrder.class})
+    @Pattern(regexp = "^[a-zA-Z0-9 \\-.,']*$", message = "Plant name cannot by empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes", groups = {ValidationGroups.SecondOrder.class})
     @Column(nullable = false)
     private String name;
 
-    @Min(value = 0, message = "Count must be greater than 0")
-    @Column(nullable = false)
-    private Integer count = 0;
 
-    @Size(min = 1, max = 511, message = "Description must be less than 512 characters", groups = {ValidationGroups.SecondOrder.class})
+    @Min(value = 0, message = "Plant count must be a positive number")
+    @Column(nullable = false)
+    private Integer count = 1;
+
+    @Size(min = 0, max = 511, message = "Plant description must be less than 512 characters", groups = {ValidationGroups.SecondOrder.class})
     @Column(nullable = false)
     private String description;
 
@@ -64,7 +66,7 @@ public class Plant {
         this.name = name;
     }
 
-    public int getCount() {
+    public Integer getCount() {
         return count;
     }
 

@@ -85,7 +85,6 @@ public class PlantController {
             model.addAttribute("plant", plant);
             model.addAttribute("gardenId", gardenId);
             logger.info("Error In Form");
-            logger.info(String.valueOf(gardenId));
             return "plants/addPlant";
         }
         plantService.addPlant(plant, gardenId);
@@ -121,6 +120,8 @@ public class PlantController {
                                @PathVariable("plantId") long plantId,
                                @Validated(ValidationSequence.class) @ModelAttribute("plant") Plant plant,
                                BindingResult bindingResult, Model model) {
+        logger.info("/garden/{}/plant/{}", gardenId, plant);
+
         if(!plant.getPlantedDate().isEmpty()) {
             plant.setPlantedDate(refactorPlantedDate(plant.getPlantedDate()));
         }
@@ -135,7 +136,11 @@ public class PlantController {
         Optional<Plant> existingPlant = plantService.getPlantById(plantId);
         if (existingPlant.isPresent()){
             existingPlant.get().setName(plant.getName());
-            existingPlant.get().setCount(plant.getCount());
+            if(plant.getCount() != null && plant.getCount() > 0) {
+                existingPlant.get().setCount(plant.getCount());
+            } else {
+                existingPlant.get().setCount(1);
+            }
             existingPlant.get().setDescription(plant.getDescription());
             existingPlant.get().setPlantedDate(plant.getPlantedDate());
             plantService.addPlant(existingPlant.get(), gardenId);
