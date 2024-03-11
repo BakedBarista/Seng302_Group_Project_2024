@@ -68,8 +68,8 @@ public class PlantController {
      * @param model
      * @return
      */
-    @PostMapping("/gardens/{id}/addplant")
-    public String submitAddPlantForm(@PathVariable("id") Long gardenId,
+    @PostMapping("/gardens/{gardenId}/addplant")
+    public String submitAddPlantForm(@PathVariable("gardenId") Long gardenId,
                              @Valid @ModelAttribute("plant") Plant plant,
                              BindingResult bindingResult, Model model) {
         logger.info(plant.getPlantedDate());
@@ -85,6 +85,7 @@ public class PlantController {
             model.addAttribute("plant", plant);
             model.addAttribute("gardenId", gardenId);
             logger.info("Error In Form");
+            logger.info(String.valueOf(gardenId));
             return "plants/addPlant";
         }
         plantService.addPlant(plant, gardenId);
