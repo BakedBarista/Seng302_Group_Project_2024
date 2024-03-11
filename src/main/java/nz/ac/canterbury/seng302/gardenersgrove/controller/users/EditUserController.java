@@ -35,6 +35,8 @@ public class EditUserController {
 
     private Boolean isNoLname;
 
+    private int maxNameLength = 64;
+
     public void setUserService(GardenUserService userService) {
         this.userService = userService;
     }
@@ -110,13 +112,23 @@ public class EditUserController {
             }
         }
 
-        if (!userValidation.userFirstNameValidation(fname)){
+        if ((!userValidation.userFirstNameValidation(fname))){
             model.addAttribute("incorrectFirstName", "First name cannot be empty and must only include letters, spaces,hyphens or apostrophes");
             valid = false;
-        } else if (!userValidation.userLastNameValidation(lname, noLname)) {
+        } else if ((fname.length() > maxNameLength)) {
+            model.addAttribute("firstNameTooLong", "First name must be 64 characters long or less");
+            valid = false;
+        }
+
+        if ((!userValidation.userLastNameValidation(lname, noLname))){
             model.addAttribute("incorrectLastName", "Last name cannot be empty and must only include letters, spaces,hyphens or apostrophes");
             valid = false;
-        } else if (!userValidation.userInvalidDateValidation(dob)){
+        } else if (noLname==false && lname.length() > maxNameLength){
+            model.addAttribute("lastNameTooLong", "Last name must be 64 characters long or less");
+            valid = false;
+        }
+
+        if (!userValidation.userInvalidDateValidation(dob)){
             model.addAttribute("invalidDob", "Date is not in valid format, (DD/MM/YYYY)");
             valid = false;
         } else if (!userValidation.userYoungDateValidation(dob)){
