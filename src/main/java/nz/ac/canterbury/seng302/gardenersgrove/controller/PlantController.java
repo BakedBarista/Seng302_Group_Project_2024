@@ -49,10 +49,10 @@ public class PlantController {
      * @param gardenId
      * @return
      */
-    @GetMapping("/gardens/{id}/addplant")
+    @GetMapping("/gardens/{id}/add-plant")
     public String addPlantForm(@PathVariable("id") Long gardenId, Model model){
 
-        logger.info("GET /gardens/${id}/addplant - display the new plant form");
+        logger.info("GET /gardens/${id}/add-plant - display the new plant form");
         model.addAttribute("gardenId", gardenId);
         model.addAttribute("plant", new Plant());
         return "plants/addPlant";
@@ -68,7 +68,7 @@ public class PlantController {
      * @param model
      * @return
      */
-    @PostMapping("/gardens/{gardenId}/addplant")
+    @PostMapping("/gardens/{gardenId}/add-plant")
     public String submitAddPlantForm(@PathVariable("gardenId") Long gardenId,
                              @Valid @ModelAttribute("plant") Plant plant,
                              BindingResult bindingResult, Model model) {
@@ -80,7 +80,7 @@ public class PlantController {
 
 
         logger.info(plant.getPlantedDate());
-        logger.info("POST /gardens/${gardenId}/addplant - submit the new plant form");
+        logger.info("POST /gardens/${gardenId}/add-plant - submit the new plant form");
         if(bindingResult.hasErrors()) {
             model.addAttribute("plant", plant);
             model.addAttribute("gardenId", gardenId);
