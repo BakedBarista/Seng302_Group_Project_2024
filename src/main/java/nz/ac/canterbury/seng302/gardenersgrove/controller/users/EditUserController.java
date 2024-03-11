@@ -35,13 +35,15 @@ public class EditUserController {
 
     private Boolean isNoLname;
 
+    public void setUserService(GardenUserService userService) {
+        this.userService = userService;
+    }
 
     /**
      * Shows the user the form
      * @param model thymeleaf model
      * @return redirect to /demo
      */
-
     @GetMapping("/users/edit")
     public String edit(Authentication authentication, Model model) {
         logger.info("GET /users/edit");
@@ -107,14 +109,14 @@ public class EditUserController {
         } else if (!userValidation.userEmailValidation(email)){
             model.addAttribute("incorrectEmail", "Email address must be in the form ‘jane@doe.nz’");
             valid = false;
+        } else if (!userValidation.userInvalidDateValidation(dob)){
+            model.addAttribute("invalidDob", "Date is not in valid format, (DD/MM/YYYY)");
+            valid = false;
         } else if (!userValidation.userYoungDateValidation(dob)){
             model.addAttribute("youngDob", "You must be 13 years or older to create an account");
             valid = false;
         } else if (!userValidation.userOldDateValidation(dob)){
             model.addAttribute("oldDob", "The maximum age allowed is 120 years");
-            valid = false;
-        } else if (!userValidation.userInvalidDateValidation(dob)){
-            model.addAttribute("invalidDob", "You have entered an invalid date. It must be in the format: DD/MM/YYYY");
             valid = false;
         }
 

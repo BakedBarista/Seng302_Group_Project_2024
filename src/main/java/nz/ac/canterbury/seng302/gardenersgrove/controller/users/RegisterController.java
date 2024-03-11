@@ -81,16 +81,16 @@ public class RegisterController {
         } else if (!userValidation.userPasswordStrengthValidation(password)){
             model.addAttribute("weakPassword", "Your password must beat least 8 characters long and include at least one uppercase letter, one lowercase letter, one number,and one special character");
             return "users/registerTemplate";
-        } else if (!userValidation.userYoungDateValidation(dob)){
-            model.addAttribute("youngDob", "You must be 13 years or older to create an account");
-            return "users/registerTemplate";
-        } else if (!userValidation.userOldDateValidation(dob)){
-            model.addAttribute("oldDob", "The maximum age allowed is 120 years");
-            return "users/registerTemplate";
-        } else if (!userValidation.userInvalidDateValidation(dob)){
-            model.addAttribute("invalidDob", "Date in not in valid format, (DD/MM/YYYY)");
-            return "users/registerTemplate";
-        }
+         } else if (!userValidation.userInvalidDateValidation(dob)){
+             model.addAttribute("invalidDob", "Date is not in valid format, (DD/MM/YYYY)");
+             return "users/registerTemplate";
+         } else if (!userValidation.userYoungDateValidation(dob)){
+             model.addAttribute("youngDob", "You must be 13 years or older to create an account");
+             return "users/registerTemplate";
+         } else if (!userValidation.userOldDateValidation(dob)){
+             model.addAttribute("oldDob", "The maximum age allowed is 120 years");
+             return "users/registerTemplate";
+         }
 
         userService.addUser(new GardenUser(fname, lname, email, address, password, dob));
 

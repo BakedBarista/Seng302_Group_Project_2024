@@ -27,13 +27,16 @@ public class UserValidationTest {
         String password = "Pa$$w0rd";
         String dob = "10/12/2004";
 
-        boolean nameResult = userRego.userNameValidation(fname, lname, noLname);
+        boolean firstNameResult = userRego.userFirstNameValidation(fname);
+        boolean lastNameResult = userRego.userLastNameValidation(lname, noLname);
+
         boolean emailResult = userRego.userEmailValidation(email);
         boolean oldDateResult = userRego.userOldDateValidation(dob);
         boolean youngDateResult = userRego.userYoungDateValidation(dob);
         boolean passwordResult = userRego.userPasswordStrengthValidation(password);
 
-        assertTrue(nameResult);
+        assertTrue(firstNameResult);
+        assertTrue(lastNameResult);
         assertTrue(emailResult);
         assertTrue(oldDateResult);
         assertTrue(youngDateResult);
@@ -47,9 +50,7 @@ public class UserValidationTest {
     @Test
     public void testWrongFirstName() {
         String fname = "1Iiam";
-        String lname = "Innogen";
-        boolean noLname = false;
-        boolean nameResult = userRego.userNameValidation(fname, lname, noLname);
+        boolean nameResult = userRego.userFirstNameValidation(fname);
         assertFalse(nameResult);
     }
 
@@ -59,10 +60,9 @@ public class UserValidationTest {
      */
     @Test
     public void testWrongLastName() {
-        String fname = "Iiam";
         String lname = "1Innogen";
         boolean noLname = false;
-        boolean nameResult = userRego.userNameValidation(fname, lname, noLname);
+        boolean nameResult = userRego.userLastNameValidation(lname, noLname);
         assertFalse(nameResult);
     }
 
@@ -73,9 +73,7 @@ public class UserValidationTest {
     @Test
     public void testEmptyFirstName() {
         String fname = "";
-        String lname = "Innogen";
-        boolean noLname = false;
-        boolean nameResult = userRego.userNameValidation(fname, lname, noLname);
+        boolean nameResult = userRego.userFirstNameValidation(fname);
         assertFalse(nameResult);
     }
 
@@ -86,9 +84,7 @@ public class UserValidationTest {
     @Test
     public void testTooLongFirstName() {
         String fname = "bfhadfhehfgehdfghdjafhdegrhjfhewhfgehsfgwehfgwhegdwgfdhewgfhdshdha";
-        String lname = "Innogen";
-        boolean noLname = false;
-        boolean nameResult = userRego.userNameValidation(fname, lname, noLname);
+        boolean nameResult = userRego.userFirstNameValidation(fname);
         assertFalse(nameResult);
     }
 
@@ -98,10 +94,9 @@ public class UserValidationTest {
      */
     @Test
     public void testTooLongLastName() {
-        String fname = "Iiam";
         String lname = "bfhadfhehfgehdfghdjafhdegrhjfhewhfgehsfgwehfgwhegdwgfdhewgfhdshdha";
         boolean noLname = false;
-        boolean nameResult = userRego.userNameValidation(fname, lname, noLname);
+        boolean nameResult = userRego.userLastNameValidation(lname, noLname);
         assertFalse(nameResult);
     }
 
@@ -111,10 +106,9 @@ public class UserValidationTest {
      */
     @Test
     public void testEmptyLastName() {
-        String fname = "Iiam";
         String lname = "";
         boolean noLname = false;
-        boolean nameResult = userRego.userNameValidation(fname, lname, noLname);
+        boolean nameResult = userRego.userLastNameValidation(lname, noLname);
         assertFalse(nameResult);
     }
 
@@ -125,10 +119,9 @@ public class UserValidationTest {
      */
     @Test
     public void testEmptyLastNameNoLname() {
-        String fname = "Iiam";
         String lname = "";
         boolean noLname = true;
-        boolean nameResult = userRego.userNameValidation(fname, lname, noLname);
+        boolean nameResult = userRego.userLastNameValidation(lname, noLname);
         assertTrue(nameResult);
     }
 
