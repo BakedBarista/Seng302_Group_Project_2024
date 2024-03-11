@@ -24,7 +24,7 @@
             <br/>
             <!-- Plant Count Field -->
             <label for="count">Count:</label>
-            <input type="text" id="count" name="count" placeholder="Enter Count" th:value="${plant.count}" >
+            <input type="number" id="count" name="count" placeholder="Enter Count" th:value="${plant.count}" >
             <div th:if="${#fields.hasErrors('count')}" th:errors="*{count}" style="color: red;"></div>
             <br/>
             <br/>
