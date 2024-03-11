@@ -35,6 +35,8 @@ public class EditUserController {
 
     private Boolean isNoLname;
 
+    private int maxNameLength = 64;
+
     public void setUserService(GardenUserService userService) {
         this.userService = userService;
     }
@@ -85,31 +87,48 @@ public class EditUserController {
         logger.info("POST /users/edit");
 
         isNoLname = noLname;
-
         Long userId = (Long) authentication.getPrincipal();
 
         if (noLname) {
             lname = null;
         }
-
         if (dob.isEmpty()) {
             dob = null;
         }
 
+        user = userService.getUserById(userId);
         // Validation
+        String currentEmail = user.getEmail();
         UserValidation userValidation = new UserValidation();
         boolean valid = true;
 
-        if (!userValidation.userFirstNameValidation(fname)){
+        if (!email.equalsIgnoreCase(currentEmail)) {
+            if (userService.getUserByEmail(email) != null) {
+                model.addAttribute("emailInuse", "This email address is already in use");
+                valid = false;
+            } else if (!userValidation.userEmailValidation(email)) {
+                model.addAttribute("incorrectEmail", "Email address must be in the form ‘jane@doe.nz’");
+                valid = false;
+            }
+        }
+
+        if ((!userValidation.userFirstNameValidation(fname))){
             model.addAttribute("incorrectFirstName", "First name cannot be empty and must only include letters, spaces,hyphens or apostrophes");
             valid = false;
-        } else if (!userValidation.userLastNameValidation(lname, noLname)){
+        } else if ((fname.length() > maxNameLength)) {
+            model.addAttribute("firstNameTooLong", "First name must be 64 characters long or less");
+            valid = false;
+        }
+
+        if ((!userValidation.userLastNameValidation(lname, noLname))){
             model.addAttribute("incorrectLastName", "Last name cannot be empty and must only include letters, spaces,hyphens or apostrophes");
             valid = false;
-        } else if (!userValidation.userEmailValidation(email)){
-            model.addAttribute("incorrectEmail", "Email address must be in the form ‘jane@doe.nz’");
+        } else if (noLname==false && lname.length() > maxNameLength){
+            model.addAttribute("lastNameTooLong", "Last name must be 64 characters long or less");
             valid = false;
-        } else if (!userValidation.userInvalidDateValidation(dob)){
+        }
+
+        if (!userValidation.userInvalidDateValidation(dob)){
             model.addAttribute("invalidDob", "Date is not in valid format, (DD/MM/YYYY)");
             valid = false;
         } else if (!userValidation.userYoungDateValidation(dob)){

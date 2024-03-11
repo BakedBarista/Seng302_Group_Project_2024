@@ -74,4 +74,21 @@ class EditUserControllerTest {
         assertEquals("1 Ilam Road", user.getAddress());
         assertEquals("01/01/1998", user.getDOB());
     }
+
+    @Test
+    void whenNameTooLong_doNotSaveToDB() {
+        GardenUser user = new GardenUser("John", "Doe", "john@email.com",
+                "90 Ilam Road", "P#ssw0rd", "10/10/2000");
+        when(userService.getUserById(userId)).thenReturn(user);
+        when(authentication.getPrincipal()).thenReturn(userId);
+
+        String result = controller.submitUser("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", false, "jane@email.com",
+                "1 Ilam Road", "01/01/1998", authentication, model);
+
+        assertEquals("users/editTemplate", result);
+        assertEquals("John", user.getFname()); //Checks if first name didn't change because it is not valid
+        assertEquals("Doe", user.getLname()); //Checks if last name didn't change because it is not valid
+
+    }
 }

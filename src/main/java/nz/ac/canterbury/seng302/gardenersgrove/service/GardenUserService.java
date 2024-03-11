@@ -34,11 +34,24 @@ public class GardenUserService {
     /**
      * Adds a gardenUser to persistence
      * 
-     * @param GardenUser object to persist
+     * @param gardenUser object to persist
      * @return the saved gardenUser object
      */
     public GardenUser addUser(GardenUser gardenUser) {
         return gardenUserRepository.save(gardenUser);
+    }
+
+    /**
+     *
+     * @param email The user's email
+     * @return The user with the given email, or null if no such user exists
+     */
+    public GardenUser getUserByEmail(String email) {
+        var user = gardenUserRepository.findByEmail(email);
+        if (user.isEmpty()) {
+            return null;
+        }
+        return user.get();
     }
 
     /**
@@ -64,8 +77,8 @@ public class GardenUserService {
     /**
      * Gets a single GardenUser by their email
      * 
-     * @param email The user's email
-     * @return The user with the given email, or null if no such user exists
+     * @param id The user's email
+     * @return The user with the given id, or null if no such user exists
      */
     public GardenUser getUserById(long id) {
         var user = gardenUserRepository.findById(id);

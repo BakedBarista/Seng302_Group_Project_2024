@@ -11,16 +11,14 @@ public class UserValidation {
 
     public static boolean userFirstNameValidation(String fname) {
         String acceptedNameRegex = "^[a-zA-Z\\s'-]*$";
-        int maxNameLength = 64;
-        boolean validFirstName = fname.matches(acceptedNameRegex) && fname.length() <= maxNameLength && !fname.isEmpty();
+        boolean validFirstName = fname.matches(acceptedNameRegex) && !fname.isEmpty();
 
         return validFirstName;
     }
 
     public static boolean userLastNameValidation(String lname, boolean noLname) {
         String acceptedNameRegex = "^[a-zA-Z\\s'-]*$";
-        int maxNameLength = 64;
-        boolean validLastName = ( noLname || (lname.matches(acceptedNameRegex) && lname.length() <= maxNameLength && !lname.isEmpty()) );
+        boolean validLastName = ( noLname || (lname.matches(acceptedNameRegex) && !lname.isEmpty()) );
 
         return validLastName;
     }

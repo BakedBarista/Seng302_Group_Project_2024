@@ -69,10 +69,13 @@ public class RegisterController {
          if (!userValidation.userFirstNameValidation(fname)){
             model.addAttribute("incorrectFirstName", "First name cannot be empty and must only include letters, spaces,hyphens or apostrophes");
             return "users/registerTemplate";
-        } else if (!userValidation.userLastNameValidation(lname, noLname)){
-            model.addAttribute("incorrectLastName", "Last name cannot be empty and must only include letters, spaces,hyphens or apostrophes");
-            return "users/registerTemplate";
-        } else if (!userValidation.userEmailValidation(email)){
+        } else if (!userValidation.userLastNameValidation(lname, noLname)) {
+             model.addAttribute("incorrectLastName", "Last name cannot be empty and must only include letters, spaces,hyphens or apostrophes");
+             return "users/registerTemplate";
+        } else if (userService.getUserByEmail(email) != null) {
+             model.addAttribute("emailInuse", "This email address is already in use");
+             return "users/registerTemplate";
+         }else if (!userValidation.userEmailValidation(email)){
              model.addAttribute("incorrectEmail", "Email address must be in the form ‘jane@doe.nz’");
              return "users/registerTemplate";
         } else if (!userValidation.userPasswordMatchValidation(password, confirmPassword)){
