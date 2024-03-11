@@ -2,7 +2,9 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import nz.ac.canterbury.seng302.gardenersgrove.validation.UserValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.slf4j.Logger;
@@ -28,19 +30,30 @@ public class LoginController {
     public String login(@RequestParam(required = false) String error,
                         Model model) {
         logger.info("GET /users/login");
-
-        if (error != null) {
-            model.addAttribute("invalidCredentials", "The email address is unknown, or the password is invalid");
-            return "users/login";
-        }
         return "users/login";
     }
 
     @PostMapping("/users/login")
     public String authenticateLogin(@RequestParam(name = "email") String email,
                                     @RequestParam(name = "password") String password,
+                                    @RequestParam(required = false) String error,
+                                    Model model,
                                     HttpServletRequest request) {
         logger.info("POST /users/login");
+
+        UserValidation userValidation = new UserValidation();
+
+        if (!userValidation.userEmailValidation(email)) {
+            model.addAttribute("incorrectEmail", "Email address must be in the form ‘jane@doe.nz’");
+            return "users/login";
+        }
+
+        GardenUser user = userService.getUserByEmailAndPassword(email, password);
+
+        if (user == null) {
+            model.addAttribute("invalidCredentials", "The email address is unknown, or the password is invalid");
+            return "users/login";
+        }
 
         try {
             request.logout();
