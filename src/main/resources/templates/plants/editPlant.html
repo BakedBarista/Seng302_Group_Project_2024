@@ -24,7 +24,7 @@
             <br/>
             <label for="count"> Count: </label>
             <input type="text" class="form-control" id="count" th:placeholder="Count"
-                   th:name="count" th:value="${plant.count}" data-cy="location" autofocus>
+                   th:name="count" th:value="${plant.count}" data-cy="count" autofocus>
             <div th:if="${#fields.hasErrors('count')}" th:errors="*{count}" style="color: red;"></div>
             <br/>
             <label for="description"> Plant Description: </label>

@@ -52,14 +52,13 @@ public class PlantController {
 
     @PostMapping("/gardens/{id}/addplant")
     public String submitForm(@PathVariable("id") Long id,
-                             @Valid @ModelAttribute("plant") Plant plant,
+                             @Validated(ValidationSequence.class) @ModelAttribute("plant") Plant plant,
                              BindingResult bindingResult, Model model) {
         logger.info(plant.getPlantedDate());
 
         if(!plant.getPlantedDate().isEmpty()) {
             plant.setPlantedDate(refactorPlantedDate(plant.getPlantedDate()));
         }
-
 
         logger.info(plant.getPlantedDate());
         logger.info("POST /gardens/${id}/addplant - submit the new plant form");
@@ -80,6 +79,13 @@ public class PlantController {
         return localDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 
+    public static String convertDateToISOFormat(String date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        LocalDate localDate = LocalDate.parse(date, formatter);
+        return localDate.format(DateTimeFormatter.ISO_LOCAL_DATE); // Formats as YYYY-MM-DD
+    }
+
+
     /**
      * Get single plant details
      * @param model representation of results
@@ -91,7 +97,14 @@ public class PlantController {
                             Model model) {
         logger.info("/garden/{}/plant/{}/edit", garden_id, plant_id);
         Optional<Plant> plant = plantService.getPlantById(plant_id);
-        //plantService.getPlantById(plant_id).get().setPlantImagePath("/images/default.png");
+
+        if (plant.isPresent()) {
+            Plant plantOpt = plant.get();
+            if (plantOpt.getPlantedDate() != null && !plantOpt.getPlantedDate().isEmpty()) {
+                String convertedDate = convertDateToISOFormat(plantOpt.getPlantedDate());
+                plantOpt.setPlantedDate(convertedDate);
+            }
+        }
         model.addAttribute("garden_id", garden_id);
         model.addAttribute("plant", plant.orElse(null));
         model.addAttribute("imagePath",plantService.getPlantById(plant_id).get().getPlantImagePath());
@@ -113,7 +126,6 @@ public class PlantController {
         if(!plant.getPlantedDate().isEmpty()) {
             plant.setPlantedDate(refactorPlantedDate(plant.getPlantedDate()));
         }
-
         if (bindingResult.hasErrors()) {
             model.addAttribute("plant", plant);
             model.addAttribute("garden_id", garden_id);
@@ -124,7 +136,11 @@ public class PlantController {
         Optional<Plant> existingPlant = plantService.getPlantById(plant_id);
         if (existingPlant.isPresent()){
             existingPlant.get().setName(plant.getName());
-            existingPlant.get().setCount(plant.getCount());
+            if(plant.getCount() != null && plant.getCount() > 0) {
+                existingPlant.get().setCount(plant.getCount());
+            } else {
+                existingPlant.get().setCount(1);
+            }
             existingPlant.get().setDescription(plant.getDescription());
             existingPlant.get().setPlantedDate(plant.getPlantedDate());
             plantService.addPlant(existingPlant.get(), garden_id);
