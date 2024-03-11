@@ -82,7 +82,7 @@ public class RegisterController {
             model.addAttribute("weakPassword", "Your password must beat least 8 characters long and include at least one uppercase letter, one lowercase letter, one number,and one special character");
             return "users/registerTemplate";
          } else if (!userValidation.userInvalidDateValidation(dob)){
-             model.addAttribute("invalidDob", "You have entered an invalid date. It must be in the format: DD/MM/YYYY");
+             model.addAttribute("invalidDob", "Date is not in valid format, (DD/MM/YYYY)");
              return "users/registerTemplate";
          } else if (!userValidation.userYoungDateValidation(dob)){
              model.addAttribute("youngDob", "You must be 13 years or older to create an account");

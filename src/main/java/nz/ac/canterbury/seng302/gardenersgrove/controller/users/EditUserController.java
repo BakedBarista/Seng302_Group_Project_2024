@@ -110,7 +110,7 @@ public class EditUserController {
             model.addAttribute("incorrectEmail", "Email address must be in the form ‘jane@doe.nz’");
             valid = false;
         } else if (!userValidation.userInvalidDateValidation(dob)){
-            model.addAttribute("invalidDob", "You have entered an invalid date. It must be in the format: DD/MM/YYYY");
+            model.addAttribute("invalidDob", "Date is not in valid format, (DD/MM/YYYY)");
             valid = false;
         } else if (!userValidation.userYoungDateValidation(dob)){
             model.addAttribute("youngDob", "You must be 13 years or older to create an account");
