@@ -103,8 +103,11 @@ public class EditUserController {
         if (!userValidation.userFirstNameValidation(fname)){
             model.addAttribute("incorrectFirstName", "First name cannot be empty and must only include letters, spaces,hyphens or apostrophes");
             valid = false;
-        } else if (!userValidation.userLastNameValidation(lname, noLname)){
+        } else if (!userValidation.userLastNameValidation(lname, noLname)) {
             model.addAttribute("incorrectLastName", "Last name cannot be empty and must only include letters, spaces,hyphens or apostrophes");
+            valid = false;
+        } else if (userService.getUserByEmail(email) != null) {
+            model.addAttribute("emailInuse", "This email address is already in use");
             valid = false;
         } else if (!userValidation.userEmailValidation(email)){
             model.addAttribute("incorrectEmail", "Email address must be in the form ‘jane@doe.nz’");
