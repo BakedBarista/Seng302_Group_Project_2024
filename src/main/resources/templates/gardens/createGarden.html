@@ -7,7 +7,7 @@
     <link th:href="@{/css/styles.css}" rel="stylesheet" />
 </head>
 <body>
-<div th:replace="navbar :: navbarOnCreateGarden"></div>
+<div th:replace="~{navbar :: navbarOnCreateGarden}"></div>
 <div>
     <div>
         <form action="#" th:action="@{/gardens/create}" th:object="${garden}" method="post">
