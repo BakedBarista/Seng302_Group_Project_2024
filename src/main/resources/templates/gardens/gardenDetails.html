@@ -40,7 +40,7 @@
                     <td>
                         <div class="image-container">
                             <img th:src="@{${plant.plantImagePath}}" />
-                            <img th:unless="${plant.plantImagePath}" src="/default.png" alt="Default Plant Image" height="50" width="50" />
+                            <img th:unless="${plant.plantImagePath}" src="/default.png" alt="Default Plant Image" />
                             <a class="add-image-button" th:href="@{/uploadImage(garden_Id=${garden.id}, plant_Id=${plant.id})}">+</a>
                         </div>
                     </td>

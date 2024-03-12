@@ -38,7 +38,7 @@
             <br/>
             <br/>
             <div class="form-group">
-                <input type="file" name="image" accept=".png, .jpg, .jpeg, .svg" class="form-control-file">
+                <input id="img-preview" onchange="showImage(this)" type="file" name="image" accept=".png, .jpg, .jpeg, .svg" class="form-control-file">
             </div>
             <div class="alert alert-danger" th:if="${fileTypeError}">
                 <div th:text="${fileTypeError}" style="color: red"></div>
@@ -47,23 +47,16 @@
             <div class="alert alert-danger" th:if="${fileSizeError}">
                 <div th:text="${fileSizeError}" style="color: red"></div>
             </div>
-            <div class="image-container">
-
-                <img th:src="@{${plant.plantImagePath}}"/>
-                <img th:unless="${plant.plantImagePath}" src="/default.png" alt="Default Plant Image" />
-
-
+            <div>
+                <h3>Plant Image:</h3>
+                <div class="image-container">
+                    <img th:src="@{${plant.plantImagePath}}" />
+                    <img th:unless="${plant.plantImagePath}" src="/default.png" alt="Default Plant Image" />
+                </div>
             </div>
             <button type="submit">Submit!</button>
-            <button type="button"><a th:href="@{/gardens/{id}(id=${gardenId})}">Cancel</a></button>
-
-
+            <a class="button-link" th:href="@{/gardens/{id}(id=${gardenId})}"><button type="button">Cancel</button></a>
         </form>
-    </div>
-    <div>
-        <br />
-        <button><a th:href="@{/gardens}">Back to Gardens</a></button>
-        <button><a th:href="@{/}">Return home</a></button>
     </div>
 </div>
 </body>
