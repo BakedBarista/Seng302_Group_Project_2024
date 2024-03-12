@@ -73,8 +73,9 @@ public class PlantController {
     @PostMapping("/gardens/{gardenId}/add-plant")
     public String submitAddPlantForm(@PathVariable("gardenId") Long gardenId,
                                      @Validated(ValidationSequence.class) @ModelAttribute("plant") Plant plant,
+                                     BindingResult bindingResult,
                                      @RequestParam("image") MultipartFile file,
-                                     BindingResult bindingResult, Model model) throws Exception {
+                                      Model model) throws Exception {
         logger.info(plant.getPlantedDate());
 
         if(!plant.getPlantedDate().isEmpty()) {
