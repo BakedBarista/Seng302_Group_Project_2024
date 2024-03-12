@@ -21,12 +21,11 @@ public class UserServiceTest {
     @Test
     public void insertingUser() {
         GardenUser gardenUser = userService
-                .addUser(new GardenUser("fname", "lname", "email", "address", "password", "dob"));
+                .addUser(new GardenUser("fname", "lname", "email", "password", "dob"));
         Assertions.assertEquals(gardenUser.getFname(), "fname");
         Assertions.assertEquals(gardenUser.getLname(), "lname");
         Assertions.assertEquals(gardenUser.getEmail(), "email");
         Assertions.assertEquals(gardenUser.getDOB(), "dob");
-        Assertions.assertEquals(gardenUser.getAddress(), "address");
     }
 
     /**
@@ -35,7 +34,7 @@ public class UserServiceTest {
     @Test
     public void checkPassword() {
         GardenUser gardenUser = userService
-                .addUser(new GardenUser("fname", "lname", "email", "address", "password", "dob"));
+                .addUser(new GardenUser("fname", "lname", "email", "password", "dob"));
         Assertions.assertTrue(gardenUser.checkPassword("password"));
         Assertions.assertFalse(gardenUser.checkPassword("incorrect password"));
     }
@@ -47,7 +46,7 @@ public class UserServiceTest {
     public void getUserByEmailAndPassword() {
         String email = "jdo123@uclive.ac.nz";
         String password = "P@ssw0rd!";
-        GardenUser user = new GardenUser("John", "Doe", email, "address", password, null);
+        GardenUser user = new GardenUser("John", "Doe", email, password, null);
         userService.addUser(user);
 
         Assertions.assertNotNull(userService.getUserByEmailAndPassword(email, password));
@@ -62,7 +61,7 @@ public class UserServiceTest {
     public void setUserProfilePicture() {
         byte[] bytes = "test".getBytes();
         String contentType = "image/png";
-        GardenUser gardenUser = new GardenUser("fname", "lname", "email", "address", "password", "dob");
+        GardenUser gardenUser = new GardenUser("fname", "lname", "email", "password", "dob");
         userService.addUser(gardenUser);
 
         userService.setProfilePicture(gardenUser.getId(), contentType, bytes);
