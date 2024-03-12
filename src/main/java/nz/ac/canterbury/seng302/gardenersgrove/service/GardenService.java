@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,5 +35,5 @@ public class GardenService {
      * @param id garden id used to retrieve data
      * @return the object of given id
      */
-   public Optional<Garden> getGardenById(long id) {return gardenRepository.findById(id);}
+    public Optional<Garden> getGardenById(long id) {return gardenRepository.findById(id);}
 }
