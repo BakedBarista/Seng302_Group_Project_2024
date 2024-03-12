@@ -16,11 +16,44 @@ public class UserValidation {
         return validFirstName;
     }
 
+    /**
+     * Validation method aimed at Edit User Profile. Will display when the text box is empty
+     * @param fname
+     */
+    public static boolean userFirstNameEmptyValidation(String fname) {
+        return !fname.isEmpty();
+    }
+
+    /**
+     * Validation method aimed at Edit User Profile. Will display when the first name has the wrong characters
+     * @param fname
+     */
+    public static boolean userFirstNameWrongCharactersValidation(String fname) {
+        String acceptedNameRegex = "^[a-zA-Z\\s'-]*$";
+        return fname.matches(acceptedNameRegex);
+    }
+
     public static boolean userLastNameValidation(String lname, boolean noLname) {
         String acceptedNameRegex = "^[a-zA-Z\\s'-]*$";
         boolean validLastName = ( noLname || (lname.matches(acceptedNameRegex) && !lname.isEmpty()) );
-
         return validLastName;
+    }
+
+    /**
+     * Validation method aimed at Edit User Profile. Will display when the text box is empty
+     * @param fname
+     */
+    public static boolean userLastNameEmptyValidation(String lname, boolean noLname) {
+        return ( noLname || !lname.isEmpty() );
+    }
+
+    /**
+     * Validation method aimed at Edit User Profile. Will display when the first name has the wrong characters
+     * @param fname
+     */
+    public static boolean userLastNameWrongCharactersValidation(String lname, boolean noLname) {
+        String acceptedNameRegex = "^[a-zA-Z\\s'-]*$";
+        return ( noLname || lname.matches(acceptedNameRegex) );
     }
 
 
