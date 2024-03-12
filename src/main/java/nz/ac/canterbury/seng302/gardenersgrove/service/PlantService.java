@@ -16,7 +16,7 @@ import java.util.Optional;
 @Service
 public class PlantService {
     private final PlantRepository plantRepository;
-    private GardenRepository gardenRepository;
+    private final GardenRepository gardenRepository;
 
 
     /**
@@ -36,7 +36,7 @@ public class PlantService {
 
     /**
      * Get a list of plants for given gardenId
-     * @param gardenId
+     * @param gardenId the id of the garden
      * @return list of plants for given gardenId
      */
     public List<Plant> getPlantsByGardenId(long gardenId) {

@@ -44,7 +44,7 @@ class UploadControllerTest {
         MockMvc mockMvc = MockMvcBuilders.standaloneSetup(uploadController).build();
         MockMultipartFile multipartFile = new MockMultipartFile("image", "test.png", "image/png", "test data".getBytes());
 
-        when(plantService.getPlantById(1)).thenReturn(Optional.of(new Plant("",1,"","")));
+        when(plantService.getPlantById(1)).thenReturn(Optional.of(new Plant("","1","","")));
 
         mockMvc.perform(multipart("/uploadImage")
                         .file(multipartFile)

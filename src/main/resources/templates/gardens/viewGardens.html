@@ -7,21 +7,7 @@
         <link th:href="@{/css/styles.css}" rel="stylesheet" />
     </head>
     <body>
-        <nav>
-            <div id="logo">
-                <a class="home" th:href="@{/}">Gardeners Grove</a>
-            </div>
-            <div>
-                <div class="dropdown">
-                    <button class="dropbtn"><a class="onPage">My Gardens</a></button>
-                    <div class="dropdown-content">
-                        <a th:each="garden : ${gardens}" th:text="${garden.name}" th:href="@{/gardens/} + ${garden.id}"></a>
-                    </div>
-                </div>
-                <button><a th:href="@{/gardens/create}">Create New Garden</a></button>
-            </div>
-        </nav>
-
+    <div th:replace="~{navbar :: navbarOnMyGarden}"></div>
         <div>
 
             <div>
