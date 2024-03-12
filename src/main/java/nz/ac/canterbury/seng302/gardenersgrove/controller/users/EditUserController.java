@@ -100,7 +100,7 @@ public class EditUserController {
             model.addAttribute("incorrectMatch", "The new passwords do not match");
             return "users/editPassword";
         }else if(!userRegoValidation.userPasswordStrengthValidation(newPassword)){
-            model.addAttribute("incorrectStrength", "Your password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number,and one special character");
+            model.addAttribute("incorrectStrength", "Your password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character");
             return "users/editPassword";
         }
 
