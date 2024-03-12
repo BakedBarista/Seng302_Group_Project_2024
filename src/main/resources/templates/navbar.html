@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title></title>
+</head>
+<body>
+<div th:fragment="navbar">
+  <div class="navigationBar">
+    <a class="home" th:href="@{/}">Gardeners Grove</a>
+    <div class="buttonContainer">
+      <button><a th:href="@{/gardens}">My Gardens</a></button>
+      <button><a th:href="@{/gardens/create}">Create New Garden</a></button>
+    </div>
+  </div>
+</div>
+
+<div th:fragment="navbarOnCreateGarden">
+  <div class="navigationBar">
+    <a class="home" th:href="@{/}">Gardeners Grove</a>
+    <div class="buttonContainer">
+      <button><a th:href="@{/gardens}">My Gardens</a></button>
+      <button><a class = "onPage" th:href="@{/gardens/create}">Create New Garden</a></button>
+    </div>
+  </div>
+</div>
+
+<div th:fragment="navbarOnMyGarden">
+  <div class="navigationBar">
+    <a class="home" th:href="@{/}">Gardeners Grove</a>
+    <div class="buttonContainer">
+      <button><a class = "onPage" th:href="@{/gardens}">My Gardens</a></button>
+      <button><a th:href="@{/gardens/create}">Create New Garden</a></button>
+    </div>
+  </div>
+</div>
+</body>
+</html>

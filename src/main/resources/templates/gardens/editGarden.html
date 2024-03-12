@@ -24,13 +24,7 @@
     </script>
 </head>
 <body>
-<div class="navigationBar">
-    <a class="home" th:href="@{/}">Gardeners Grove</a>
-    <div class="buttonContainer">
-        <button><a th:href="@{/gardens}">My Gardens</a></button>
-        <button><a th:href="@{/gardens/create}">Create New Garden</a></button>
-    </div>
-</div>
+<div th:replace="navbar :: navbar"></div>
 <div>
     <div>
         <form th:action="@{/gardens/{gardenId}/edit(gardenId=${id})}" th:object="${garden}" method="post">
