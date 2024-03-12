@@ -91,13 +91,6 @@ public class PlantController {
         return "redirect:/gardens/" + gardenId;
     }
 
-    public static String convertDateToISOFormat(String date) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        LocalDate localDate = LocalDate.parse(date, formatter);
-        return localDate.format(DateTimeFormatter.ISO_LOCAL_DATE); // Formats as YYYY-MM-DD
-    }
-
-
     /**
      * take user to edit plant form
      * @param model representation of results
@@ -113,7 +106,7 @@ public class PlantController {
         if (plant.isPresent()) {
             Plant plantOpt = plant.get();
             if (plantOpt.getPlantedDate() != null && !plantOpt.getPlantedDate().isEmpty()) {
-                String convertedDate = convertDateToISOFormat(plantOpt.getPlantedDate());
+                String convertedDate = plantOpt.getPlantedDate();
                 plantOpt.setPlantedDate(convertedDate);
             }
         }
