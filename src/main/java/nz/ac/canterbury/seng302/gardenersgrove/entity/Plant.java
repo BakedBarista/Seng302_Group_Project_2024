@@ -56,6 +56,10 @@ public class Plant {
         return id;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
     }
@@ -102,7 +106,7 @@ public class Plant {
 
     @Override
     public String toString() {
-        return "PlantFormResult{" +
+        return "Plant{" +
                 "id=" + id +
                 ", name='" + this.name + '\'' +
                 ", count='" + this.count + '\'' +

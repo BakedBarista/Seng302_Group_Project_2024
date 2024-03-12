@@ -5,6 +5,7 @@
     <title>Create New Garden</title>
 </head>
 <body>
+<div th:replace="navbar :: navbar"></div>
 <div>
     <div>
         <form th:action="@{/gardens/create}" method="post" th:object="${gardenForm}">
