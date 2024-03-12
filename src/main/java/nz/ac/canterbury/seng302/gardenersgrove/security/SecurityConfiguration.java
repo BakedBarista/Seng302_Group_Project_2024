@@ -64,7 +64,7 @@ public class SecurityConfiguration {
             // Allow "/", "/register", and "/login" to anyone (permitAll)
             auth.requestMatchers("/", "/users/dummy",
                                 "/users/register", "/users/login",
-                                "/css/**")
+                                "/css/**", "/js/**")
                     .permitAll();
             // Any other request requires authentication
             auth.anyRequest()
