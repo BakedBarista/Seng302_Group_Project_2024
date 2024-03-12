@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
