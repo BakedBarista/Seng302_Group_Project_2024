@@ -62,11 +62,21 @@
             <div th:if="${#fields.hasErrors('plantedDate')}" th:errors="*{plantedDate}" style="color: red;"></div>
             <br/>
             <br/>
+            <div class="form-group">
+                <input type="file" name="image" accept=".png, .jpg, .jpeg, .svg" class="form-control-file">
+            </div>
+            <div class="alert alert-danger" th:if="${error}">
+                <div th:text="${error}" style="color: red"></div>
+            </div>
+
+            <div class="alert alert-danger" th:if="${fileSizeError}">
+                <div th:text="${fileSizeError}" style="color: red"></div>
+            </div>
             <div class="image-container">
 
                 <img th:src="@{${plant.plantImagePath}}"/>
                 <img th:unless="${plant.plantImagePath}" src="/default.png" alt="Default Plant Image" />
-                <a class="add-image-button" th:href="@{/uploadImage(garden_Id=${gardenId}, plant_Id=${plant.id})}">+</a>
+
 
             </div>
             <button type="submit">Submit!</button>
