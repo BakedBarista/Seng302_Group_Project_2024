@@ -28,7 +28,7 @@
             <label class="form-checkbox">
                 <input type="checkbox" th:name="noLname" th:value="*{noLname}" th:checked="*{noLname}" id="noLname"> I have no surname
             </label>
-            <label th:class="'form-group ' + ${incorrectEmail != null ? 'form-group-error' : ''}">
+            <label th:class="'form-group ' + ${emailInuse != null || incorrectEmail != null ? 'form-group-error' : ''}">
                 Email
                 <input type="text" th:name="email" th:value="*{email}" inputmode="email">
                 <span class = "error" th:if="${emailInuse != null}" th:text="*{emailInuse}"></span>
