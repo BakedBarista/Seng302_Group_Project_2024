@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.entity;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.ValidationGroups;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -77,38 +78,38 @@ public class GardenTest {
     @Test
     public void gardenName_NameHasExclamationMark_ReturnPatternConstraintViolation() {
         garden.setName("garden!");
-        String expectedMessage = "Garden name must only include letters, numbers, spaces, dots, hyphens or apostrophes";
+        String expectedMessage = "Garden name must only include letters, numbers, spaces, dots, hyphens, or apostrophes";
         Integer expectedConstraintSetSize = 1;
 
 
-        ConstraintViolation<Garden> violation = validator.validate(garden).iterator().next();
+        ConstraintViolation<Garden> violation = validator.validate(garden, ValidationGroups.SecondOrder.class).iterator().next();
 
-        assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
+        assertEquals(expectedConstraintSetSize, validator.validate(garden, ValidationGroups.SecondOrder.class).size());
         assertEquals(expectedMessage, violation.getMessage());
     }
 
     @Test
     public void gardenName_NameHasHash_ReturnPatternConstraintViolation() {
         garden.setName("garden #2");
-        String expectedMessage = "Garden name must only include letters, numbers, spaces, dots, hyphens or apostrophes";
+        String expectedMessage = "Garden name must only include letters, numbers, spaces, dots, hyphens, or apostrophes";
         Integer expectedConstraintSetSize = 1;
 
 
-        ConstraintViolation<Garden> violation = validator.validate(garden).iterator().next();
+        ConstraintViolation<Garden> violation = validator.validate(garden, ValidationGroups.SecondOrder.class).iterator().next();
 
-        assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
+        assertEquals(expectedConstraintSetSize, validator.validate(garden, ValidationGroups.SecondOrder.class).size());
         assertEquals(expectedMessage, violation.getMessage());
     }
     @Test
     public void gardenName_Null_ReturnNotBlankViolation() {
         garden.setName(null);
-        String expectedMessage = "Garden name cannot by empty";
+        String expectedMessage = "Garden name cannot be empty";
         Integer expectedConstraintSetSize = 1;
 
 
-        ConstraintViolation<Garden> violation = validator.validate(garden).iterator().next();
+        ConstraintViolation<Garden> violation = validator.validate(garden, ValidationGroups.FirstOrder.class).iterator().next();
 
-        assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
+        assertEquals(expectedConstraintSetSize, validator.validate(garden, ValidationGroups.FirstOrder.class).size());
         assertEquals(expectedMessage, violation.getMessage());
     }
 
@@ -164,26 +165,26 @@ public class GardenTest {
     @Test
     public void gardenLocation_LocationHasExclamationMark_ReturnPatternConstraintViolation() {
         garden.setLocation("Christchurch!");
-        String expectedMessage = "Location name must only include letters, numbers, spaces, dots, hyphens or apostrophes";
+        String expectedMessage = "Location name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes";
         Integer expectedConstraintSetSize = 1;
 
 
-        ConstraintViolation<Garden> violation = validator.validate(garden).iterator().next();
+        ConstraintViolation<Garden> violation = validator.validate(garden, ValidationGroups.SecondOrder.class).iterator().next();
 
-        assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
+        assertEquals(expectedConstraintSetSize, validator.validate(garden, ValidationGroups.SecondOrder.class).size());
         assertEquals(expectedMessage, violation.getMessage());
     }
 
     @Test
     public void gardenLocation_LocationHasHash_ReturnPatternConstraintViolation() {
         garden.setLocation("garden #2");
-        String expectedMessage = "Location name must only include letters, numbers, spaces, dots, hyphens or apostrophes";
+        String expectedMessage = "Location name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes";
         Integer expectedConstraintSetSize = 1;
 
 
-        ConstraintViolation<Garden> violation = validator.validate(garden).iterator().next();
+        ConstraintViolation<Garden> violation = validator.validate(garden, ValidationGroups.SecondOrder.class).iterator().next();
 
-        assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
+        assertEquals(expectedConstraintSetSize, validator.validate(garden, ValidationGroups.SecondOrder.class).size());
         assertEquals(expectedMessage, violation.getMessage());
     }
     @Test
@@ -193,9 +194,9 @@ public class GardenTest {
         Integer expectedConstraintSetSize = 1;
 
 
-        ConstraintViolation<Garden> violation = validator.validate(garden).iterator().next();
+        ConstraintViolation<Garden> violation = validator.validate(garden, ValidationGroups.FirstOrder.class).iterator().next();
 
-        assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
+        assertEquals(expectedConstraintSetSize, validator.validate(garden, ValidationGroups.FirstOrder.class).size());
         assertEquals(expectedMessage, violation.getMessage());
     }
 
@@ -213,9 +214,9 @@ public class GardenTest {
         Integer expectedConstraintSetSize = 1;
 
 
-        ConstraintViolation<Garden> violation = validator.validate(garden).iterator().next();
+        ConstraintViolation<Garden> violation = validator.validate(garden, ValidationGroups.FirstOrder.class).iterator().next();
 
-        assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
+        assertEquals(expectedConstraintSetSize, validator.validate(garden, ValidationGroups.FirstOrder.class).size());
         assertEquals(expectedMessage, violation.getMessage());
     }
 
@@ -239,10 +240,9 @@ public class GardenTest {
         String expectedMessage = "Garden size must be a positive number";
         Integer expectedConstraintSetSize = 1;
 
+        ConstraintViolation<Garden> violation = validator.validate(garden, ValidationGroups.FirstOrder.class).iterator().next();
 
-        ConstraintViolation<Garden> violation = validator.validate(garden).iterator().next();
-
-        assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
+        assertEquals(expectedConstraintSetSize, validator.validate(garden, ValidationGroups.FirstOrder.class).size());
         assertEquals(expectedMessage, violation.getMessage());
     }
 
@@ -253,9 +253,9 @@ public class GardenTest {
         Integer expectedConstraintSetSize = 1;
 
 
-        ConstraintViolation<Garden> violation = validator.validate(garden).iterator().next();
+        ConstraintViolation<Garden> violation = validator.validate(garden, ValidationGroups.FirstOrder.class).iterator().next();
 
-        assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
+        assertEquals(expectedConstraintSetSize, validator.validate(garden, ValidationGroups.FirstOrder.class).size());
         assertEquals(expectedMessage, violation.getMessage());
     }
 
@@ -266,9 +266,9 @@ public class GardenTest {
         Integer expectedConstraintSetSize = 1;
 
 
-        ConstraintViolation<Garden> violation = validator.validate(garden).iterator().next();
+        ConstraintViolation<Garden> violation = validator.validate(garden, ValidationGroups.FirstOrder.class).iterator().next();
 
-        assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
+        assertEquals(expectedConstraintSetSize, validator.validate(garden, ValidationGroups.FirstOrder.class).size());
         assertEquals(expectedMessage, violation.getMessage());
     }
 
@@ -279,9 +279,9 @@ public class GardenTest {
         Integer expectedConstraintSetSize = 1;
 
 
-        ConstraintViolation<Garden> violation = validator.validate(garden).iterator().next();
+        ConstraintViolation<Garden> violation = validator.validate(garden, ValidationGroups.FirstOrder.class).iterator().next();
 
-        assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
+        assertEquals(expectedConstraintSetSize, validator.validate(garden, ValidationGroups.FirstOrder.class).size());
         assertEquals(expectedMessage, violation.getMessage());
     }
 }

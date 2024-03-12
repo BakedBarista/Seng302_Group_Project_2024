@@ -2,18 +2,25 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
-    <link rel="stylesheet" type="text/css" href="../../css/styles.css" th:href="@{/css/styles.css}" />
     <title>Garden Details</title>
+    <link th:href="@{/css/navbar.css}" rel="stylesheet" />
+    <link th:href="@{/css/styles.css}" rel="stylesheet" />
 </head>
 <body>
+<div class="navigationBar">
+    <a class="home" th:href="@{/}">Gardeners Grove</a>
+    <div class="buttonContainer">
+        <button><a th:href="@{/gardens}">My Gardens</a></button>
+        <button><a th:href="@{/gardens/create}">Create New Garden</a></button>
+    </div>
+</div>
 <div>
-    <div>
-        <h2 th:text="${garden.name}">Garden Name</h2>
-        <p><strong>ID: </strong><span th:text="${garden.id}"></span></p>
-        <p><strong>Location: </strong><span th:text="${garden.location}"></span></p>
-        <p><strong>Size: </strong><span th:text="${garden.size}"></span> m&sup2;</p>
+    <h2 th:text="${garden.name}">Garden Name</h2>
+    <p><strong>ID: </strong><span th:text="${garden.id}"></span></p>
+    <p><strong>Location: </strong><span th:text="${garden.location}"></span></p>
+    <p><strong>Size: </strong><span th:text="${garden.size}"></span> m&sup2;</p>
 
-        <h4>Plants:</h4>
+    <h4>Plants:</h4>
     <div class="scrolling-table">
         <table>
             <thead>
@@ -28,7 +35,7 @@
             </thead>
             <tbody>
                 <tr th:if="${plants.empty}">
-                    <td colspan="3"> Please add a garden first</td>
+                    <td colspan="3"> Please add a plant first</td>
                 </tr>
                 <tr th:each="plant : ${plants}">
                     <td><span th:text="${plant.id}">ID</span></td>
@@ -36,13 +43,21 @@
                     <td><span th:text="${plant.count}">Count</span></td>
                     <td><span th:text="${plant.description}">Description</span></td>
                     <td><span th:text="${plant.plantedDate}">Planted Date</span></td>
-                    <td><button><a th:href="@{/gardens/{garden_id}/plants/{plant_id}/edit(garden_id=${garden.id}, plant_id=${plant.id})}">Edit</a></button></td>
+                    <td>
+                        <div class="image-container">
+
+                            <img th:src="@{${plant.plantImagePath}}"/>
+                            <img th:unless="${plant.plantImagePath}" src="/default.png" alt="Default Plant Image" />
+                            <a class="add-image-button" th:href="@{/uploadImage(garden_Id=${garden.id}, plant_Id=${plant.id})}">+</a>
+
+                        </div>
+                    <td><button><a th:href="@{/gardens/{gardenId}/plants/{plantId}/edit(gardenId=${garden.id}, plantId=${plant.id})}">Edit</a></button></td>
                 </tr>
             </tbody>
         </table>
     </div>
     <div>
-        <button><a th:href="@{/gardens/{id}/addplant(id=${garden.id})}">Add Plant</a></button>
+        <button><a th:href="@{/gardens/{id}/add-plant(id=${garden.id})}">Add Plant</a></button>
         <button><a th:href="@{/gardens/{id}/edit(id=${garden.id})}">Edit Garden</a></button>
         <button><a th:href="@{/gardens}">Return to Gardens</a></button>
     </div>

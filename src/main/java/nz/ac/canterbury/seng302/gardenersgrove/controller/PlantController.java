@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
-import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.ValidationSequence;
@@ -20,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Optional;
 
 // TODO: THIS WHOLE FILE NEEDS TO BE UPDATED
@@ -41,56 +41,79 @@ public class PlantController {
         this.gardenService = gardenService;
     }
 
-    @GetMapping("/gardens/{id}/addplant")
-    public String form(Model model, @PathVariable("id") Long id){
+    /**
+     * send user to add plant form - add plant and garden id to model for
+     * use in html file through thymeleaf
+     * @param model
+     * @param gardenId
+     * @return
+     */
+    @GetMapping("/gardens/{id}/add-plant")
+    public String addPlantForm(@PathVariable("id") Long gardenId, Model model){
 
-        logger.info("GET /gardens/${id}/addplant - display the new plant form");
-        model.addAttribute("gardenId", id);
-        model.addAttribute("plant", new Plant());
+        logger.info("GET /gardens/${id}/add-plant - display the new plant form");
+        model.addAttribute("gardenId", gardenId);
+        model.addAttribute("plant", plantService.addPlant(new Plant("","","",""), gardenId));
         return "plants/addPlant";
     }
 
-    @PostMapping("/gardens/{id}/addplant")
-    public String submitForm(@PathVariable("id") Long id,
-                             @Valid @ModelAttribute("plant") Plant plant,
+                             
+    /**
+     * check for validity of data and return user to
+     * garden details page if data is valid with newly submitted plant entity
+     * - else keep them on the add plant form with data persistent and error messages displayed
+     * @param gardenId
+     * @param plant
+     * @param bindingResult
+     * @param model
+     * @return
+     */
+    @PostMapping("/gardens/{gardenId}/add-plant")
+    public String submitAddPlantForm(@PathVariable("gardenId") Long gardenId,
+                             @Validated(ValidationSequence.class) @ModelAttribute("plant") Plant plant,
                              BindingResult bindingResult, Model model) {
         logger.info(plant.getPlantedDate());
 
-
-        plant.setPlantedDate(refactorPlantedDate(plant.getPlantedDate()));
+        if(!plant.getPlantedDate().isEmpty()) {
+            plant.setPlantedDate(refactorPlantedDate(plant.getPlantedDate()));
+        }
 
         logger.info(plant.getPlantedDate());
-        logger.info("POST /gardens/${id}/addplant - submit the new plant form");
+        logger.info("POST /gardens/${gardenId}/add-plant - submit the new plant form");
         if(bindingResult.hasErrors()) {
             model.addAttribute("plant", plant);
-            model.addAttribute("gardenId", id);
+            model.addAttribute("gardenId", gardenId);
             logger.info("Error In Form");
             return "plants/addPlant";
         }
-        plantService.addPlant(plant, id);
+        plantService.addPlant(plant, gardenId);
 
-
-        return "redirect:/gardens/" + id;
-    }
-
-    public String refactorPlantedDate(String date) {
-        LocalDate localDate = LocalDate.parse(date);
-        return localDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        return "redirect:/gardens/" + gardenId;
     }
 
     /**
-     * Get single plant details
+     * take user to edit plant form
      * @param model representation of results
      * @return redirect to gardens page
      */
-    @GetMapping("/gardens/{garden_id}/plants/{plant_id}/edit")
-    public String editPlant(@PathVariable("garden_id") long garden_id,
-                            @PathVariable("plant_id") long plant_id,
+    @GetMapping("/gardens/{gardenId}/plants/{plantId}/edit")
+    public String editPlantForm(@PathVariable("gardenId") long gardenId,
+                            @PathVariable("plantId") long plantId,
                             Model model) {
-        logger.info("/garden/{}/plant/{}/edit", garden_id, plant_id);
-        Optional<Plant> plant = plantService.getPlantById(plant_id);
-        model.addAttribute("garden_id", garden_id);
+        logger.info("/garden/{}/plant/{}/edit", gardenId, plantId);
+        Optional<Plant> plant = plantService.getPlantById(plantId);
+
+        if (plant.isPresent()) {
+            Plant plantOpt = plant.get();
+            if (plantOpt.getPlantedDate() != null && !plantOpt.getPlantedDate().isEmpty()) {
+                String convertedDate = plantOpt.getPlantedDate();
+                plantOpt.setPlantedDate(convertedDate);
+            }
+        }
+        model.addAttribute("gardenId", gardenId);
+        model.addAttribute("plantId", plantId);
         model.addAttribute("plant", plant.orElse(null));
+        model.addAttribute("imagePath",plantService.getPlantById(plantId).get().getPlantImagePath());
         return "plants/editPlant";
     }
 
@@ -99,34 +122,50 @@ public class PlantController {
      * @param model representation of results
      * @return redirect to gardens page
      */
-    @PostMapping("/gardens/{garden_id}/plants/{plant_id}/edit")
-    public String updatePlant(@PathVariable("garden_id") long garden_id,
-                               @PathVariable("plant_id") long plant_id,
-                              @Validated(ValidationSequence.class) @ModelAttribute("plant") Plant plant,
+    @PostMapping("/gardens/{gardenId}/plants/{plantId}/edit")
+    public String submitEditPlantForm(@PathVariable("gardenId") long gardenId,
+                               @PathVariable("plantId") long plantId,
+                               @Validated(ValidationSequence.class) @ModelAttribute("plant") Plant plant,
                                BindingResult bindingResult, Model model) {
-        logger.info("/garden/{}/plant/{}", garden_id, plant_id);
+        logger.info("/garden/{}/plant/{}", gardenId, plant);
 
-        plant.setPlantedDate(refactorPlantedDate(plant.getPlantedDate()));
-
+        if(!plant.getPlantedDate().isEmpty()) {
+            plant.setPlantedDate(refactorPlantedDate(plant.getPlantedDate()));
+        }
         if (bindingResult.hasErrors()) {
             model.addAttribute("plant", plant);
-            model.addAttribute("garden_id", garden_id);
-            model.addAttribute("plant_id", plant_id);
+            model.addAttribute("gardenId", gardenId);
+            model.addAttribute("plantId", plantId);
             return "plants/editPlant";
         }
 
-        Optional<Plant> existingPlant = plantService.getPlantById(plant_id);
+        Optional<Plant> existingPlant = plantService.getPlantById(plantId);
         if (existingPlant.isPresent()){
             existingPlant.get().setName(plant.getName());
             existingPlant.get().setCount(plant.getCount());
             existingPlant.get().setDescription(plant.getDescription());
             existingPlant.get().setPlantedDate(plant.getPlantedDate());
-            plantService.addPlant(existingPlant.get(), garden_id);
+            plantService.addPlant(existingPlant.get(), gardenId);
         }
 
         //plantService.addPlant(updatedPlant);
-        return "redirect:../../../" + garden_id;
+        return "redirect:/gardens/"+gardenId;
     }
 
-
+    /**
+     * take in date given via form and convert to dd/mm/yyyy (fix for thymeleaf form issue)
+     *
+     * note : catches DateTimeParseException when date is already in dd/mm/yyyy for test purposes
+     *
+     * @param date the date string that needs to be formatted
+     * @return parsed date in correct format
+     */
+    public static String refactorPlantedDate(String date) {
+        try {
+            LocalDate localDate = LocalDate.parse(date);
+            return localDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        } catch (DateTimeParseException alreadyCorrectFormatForTest) {
+            return date;
+        }
+    }
 }

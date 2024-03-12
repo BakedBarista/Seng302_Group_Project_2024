@@ -1,7 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -20,21 +19,19 @@ public class Plant {
     private Long id;
 
     @NotBlank(message = "Please enter a name", groups = {ValidationGroups.FirstOrder.class})
-    @Pattern(regexp = "^[a-zA-Z0-9 \\-.,']*$", message = "Name must only contain letters and numbers", groups = {ValidationGroups.SecondOrder.class})
+    @Pattern(regexp = "^[a-zA-Z0-9 \\-.,']*$", message = "Plant name cannot by empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes", groups = {ValidationGroups.SecondOrder.class})
     @Column(nullable = false)
     private String name;
 
-//    @NotNull(message = "Count cannot be null")
-    @Min(value = 1, message = "Count must be greater than 0", groups = {ValidationGroups.FirstOrder.class})
+    @Pattern(regexp = "^[0-9]*$", message = "Plant count must be a positive number", groups = {ValidationGroups.FirstOrder.class})
     @Column(nullable = false)
-    private Integer count = 0;
+    private String count;
 
-//    @NotBlank(message = "Please enter a description")
-    @Size(min = 1, max = 511, message = "Description must be less than 512 characters", groups = {ValidationGroups.FirstOrder.class})
+    @Size(min = 0, max = 511, message = "Plant description must be less than 512 characters", groups = {ValidationGroups.SecondOrder.class})
     @Column(nullable = false)
     private String description;
 
-//    @NotBlank(message = "Please enter a date")
+
     @Column(nullable = false)
     private String plantedDate;
 
@@ -45,11 +42,12 @@ public class Plant {
     @Column(nullable = true)
     private String plantImagePath;
 
-    public Plant(String name, int count, String description, String plantedDate) {
+    public Plant(String name, String count, String description, String plantedDate) {
         this.name = name;
         this.count = count;
         this.description = description;
         this.plantedDate = plantedDate;
+        this.plantImagePath = "/default.png";
     }
 
     public Plant() {}
@@ -70,11 +68,11 @@ public class Plant {
         this.name = name;
     }
 
-    public int getCount() {
+    public String getCount() {
         return count;
     }
 
-    public void setCount(int count) {
+    public void setCount(String count) {
         this.count = count;
     }
 

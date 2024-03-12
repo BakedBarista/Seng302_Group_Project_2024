@@ -4,6 +4,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -69,7 +70,7 @@ public class PlantService {
      * @return plantImagePath of the plant object
      */
 
-    public String getPlantImage(long id) {return plantRepository.findById(id).get().getPlantImagePath();}
+    //public String getPlantImage(long id) {return plantRepository.findById(id).get().getPlantImagePath();}
 
 
     /**
@@ -78,5 +79,7 @@ public class PlantService {
      * @param imagePath the path string to be saved
      */
 
-    public void setPlantImage(long id, String imagePath) {plantRepository.findById(id).get().setPlantImagePath(imagePath);}
+    public void setPlantImage(Plant plant) {
+        plantRepository.save(plant);
+    }
 }

@@ -2,10 +2,18 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
     <head>
         <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
-        <link rel="stylesheet" type="text/css" href="../../css/styles.css" th:href="@{/css/styles.css}" />
         <title>My Gardens</title>
+        <link th:href="@{/css/navbar.css}" rel="stylesheet" />
+        <link th:href="@{/css/styles.css}" rel="stylesheet" />
     </head>
     <body>
+        <div class="navigationBar">
+            <a class="home" th:href="@{/}">Gardeners Grove</a>
+            <div class="buttonContainer">
+                <button><a class = "onPage" th:href="@{/gardens}">My Gardens</a></button>
+                <button><a th:href="@{/gardens/create}">Create New Garden</a></button>
+            </div>
+        </div>
         <div>
             <div>
                 <h4>Gardens:</h4>
@@ -22,17 +30,12 @@
                         <td colspan="3"> Please add a garden first</td>
                     </tr>
                     <tr th:each="garden : ${gardens}">
-                        <td><a th:href="@{'/gardens/' + ${garden.id}}"><span th:text="${garden.name}"> Name </span></td>
+                        <td><a th:href="@{'/gardens/' + ${garden.id}}"><span th:text="${garden.name}"> Name </span></a></td>
                         <td><span th:text="${garden.location}"> Location </span></td>
                         <td><span th:text="${garden.size}"> Size </span></td>
                     </tr>
                     </tbody>
                 </table>
-            </div>
-            <div>
-                <button><a th:href="@{/gardens/create}">Create New Garden</a></button>
-                <button><a th:href="@{/}">Return home</a></button>
-
             </div>
         </div>
     </body>

@@ -1,19 +1,40 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
+    <title>Upload image</title>
+    <link th:href="@{/css/navbar.css}" rel="stylesheet" />
+    <link th:href="@{/css/styles.css}" rel="stylesheet" />
+</head>
 <body>
+<div class="navigationBar">
+    <a class="home" th:href="@{/}">Gardeners Grove</a>
+    <div class="buttonContainer">
+        <button><a th:href="@{/gardens}">My Gardens</a></button>
+        <button><a th:href="@{/gardens/create}">Create New Garden</a></button>
+    </div>
+</div>
 <section class="my-5">
     <div class="container">
         <div class="row">
             <div class="col-md-8 mx-auto">
                 <h2>Upload Image</h2>
-                <p th:text="${message}" th:if="${message != null}" class="alert alert-primary"></p>
-                <form method="post" th:action="@{/upload}" enctype="multipart/form-data">
+                <form method="post" enctype="multipart/form-data" th:action="@{/uploadImage}">
+                    <input type="hidden" name="plant_Id" th:value="${plantId}"/>
+                    <input type="hidden" name="garden_Id" th:value="${gardenId}">
                     <div class="form-group">
                         <input type="file" name="image" accept=".png, .jpg, .jpeg, .svg" class="form-control-file">
                     </div>
-                    <div th:if="${fileTypeError}" th:text="${fileTypeError}" style="color: red;"></div>
-                    <div th:if="${fileSizeError}" th:text="${fileSizeError}" style="color: red"></div>
+                    <div class="alert alert-danger" th:if="${error}">
+                        <div th:text="${error}" style="color: red"></div>
+                    </div>
+
+                    <div class="alert alert-danger" th:if="${fileSizeError}">
+                        <div th:text="${fileSizeError}" style="color: red"></div>
+                    </div>
                     <button type="submit" class="btn btn-primary">Upload image</button>
+                    <button type="button" onclick="history.back()">Cancel</button>
                 </form>
-                <span th:if="${msg != null}" th:text="${msg}"></span>
             </div>
         </div>
     </div>
