@@ -41,7 +41,7 @@ public class PlantControllerTest {
 
     @Test
     public void testSubmitAddPlantForm_DataIsValid_ReturnToGardenDetailPage() {
-        Plant validPlant = new Plant("Plant", 10, "Yellow", "11/03/2024");
+        Plant validPlant = new Plant("Plant", "10", "Yellow", "11/03/2024");
         long gardenId = 0;
         String expectedReturnPage = "redirect:/gardens/" + gardenId;
 
@@ -53,7 +53,7 @@ public class PlantControllerTest {
 
     @Test
     public void testSubmitAddPlantForm_DataIsInvalid_ReturnToAddPlantForm() {
-        Plant invalidPlant = new Plant("#invalid", 10, "Yellow", "11/03/2024");
+        Plant invalidPlant = new Plant("#invalid", "10", "Yellow", "11/03/2024");
         long gardenId = 0;
         String expectedReturnPage = "plants/addPlant";
 
@@ -65,9 +65,12 @@ public class PlantControllerTest {
 
     @Test
     public void testEditPlantForm_ReturnsToEditPlant() {
+        Plant plant = new Plant("#invalid", "10", "Yellow", "11/03/2024");
         long gardenId = 0;
         long plantId = 0;
         String expectedReturnPage = "plants/editPlant";
+
+        when(plantService.getPlantById(plantId)).thenReturn(Optional.of(plant));
 
         String returnPage = plantController.editPlantForm(gardenId, plantId, model);
         assertEquals(expectedReturnPage, returnPage);
@@ -75,7 +78,7 @@ public class PlantControllerTest {
 
     @Test
     public void testSubmitEditPlantForm_DataIsValid_ReturnToGardenDetailPage_PlantAddedToRepository() {
-        Plant validPlant = new Plant("Plant", 10, "Yellow", "11/03/2024");
+        Plant validPlant = new Plant("Plant", "10", "Yellow", "11/03/2024");
         long gardenId = 0;
         long plantId = 0;
         String expectedReturnPage = "redirect:/gardens/" + gardenId;
@@ -92,7 +95,7 @@ public class PlantControllerTest {
 
     @Test
     public void testSubmitEditPlantForm_DataIsInvalid_ReturnToEditPlantForm() {
-        Plant invalidPlant = new Plant("#invalid", 10, "Yellow", "11/03/2024");
+        Plant invalidPlant = new Plant("#invalid", "10", "Yellow", "11/03/2024");
         long gardenId = 0;
         long plantId = 0;
         String expectedReturnPage = "plants/editPlant";

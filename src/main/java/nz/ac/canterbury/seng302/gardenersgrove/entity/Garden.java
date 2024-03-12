@@ -52,6 +52,10 @@ public class Garden {
         return id;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
     }
@@ -78,7 +82,7 @@ public class Garden {
 
     @Override
     public String toString() {
-        return "GardenFormResult{" +
+        return "Garden{" +
                 "id=" + id +
                 ", gardenName='" + name + '\'' +
                 ", gardenLocation='" + location + '\'' +
