@@ -36,6 +36,12 @@ public class GardenUser {
     @Column(nullable = true)
     private String DOB;
 
+    @Column(nullable = true)
+    private String profilePictureContentType;
+
+    @Column(nullable = true)
+    @Lob
+    private byte[] profilePicture;
 
     /**
      * JPA required no-args constructor
@@ -65,26 +71,66 @@ public class GardenUser {
         return List.of();
     }
 
+    public void setID(Long id) {
+        this.id = id;
+    }
     public Long getId() {
         return id;
     }
 
+    /**
+     * Setter for the user's first name
+     * @param fname the user's first name
+     */
+    public void setFname(String fname) {
+        this.fname = fname;
+    }
     public String getFname() {
         return fname;
+    }
+
+    /**
+     * Setter for the user's last name
+     * @param lname the user's last name
+     */
+    public void setLname(String lname) {
+        this.lname = lname;
     }
 
     public String getLname() {
         return lname;
     }
 
+
+    /**
+     * Setter for the user's email
+     * @param email the user's email
+     */
+    public void setEmail(String email) {
+        this.email = email;
+    }
     public String getEmail() {
         return email;
     }
 
+    /**
+     * Setter for the user's address
+     * @param address the user's address
+     */
+    public void setAddress(String address) {
+        this.address = address;
+    }
     public String getAddress() {
         return address;
     }
 
+    /**
+     * Setter for the user's date of birth
+     * @param DOB the user's date of birth
+     */
+    public void setDOB(String DOB) {
+        this.DOB = DOB;
+    }
     public String getDOB() {
         return DOB;
     }
@@ -97,5 +143,18 @@ public class GardenUser {
     public boolean checkPassword(String password) {
         PasswordEncoder encoder = new BCryptPasswordEncoder();
         return encoder.matches(password, this.password);
+    }
+
+    public String getProfilePictureContentType() {
+        return profilePictureContentType;
+    }
+
+    public byte[] getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(String contentType, byte[] profilePicture) {
+        this.profilePictureContentType = contentType;
+        this.profilePicture = profilePicture;
     }
 }

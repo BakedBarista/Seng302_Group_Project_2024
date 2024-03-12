@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
     <title>Register | Gardener's Grove</title>
-    <!--/*/ <th:block th:include="fragments/general.html :: headerfiles">
+    <!--/*/ <th:block th:insert="~{fragments/general.html :: headerfiles}">
         </th:block> /*/-->
     <!-- The above comment (differentiated by the enclosing "slash star slash") is a thymeleaf prototype-only block
         making use of synthetic th:block tags. This code will import the header files then the block will disappear.
@@ -11,37 +11,45 @@
         See: https://www.thymeleaf.org/doc/tutorials/2.1/usingthymeleaf.html#comments-and-blocks -->
 </head>
 <body>
-    <header th:insert="fragments/general.html :: header"></header>
+    <header th:insert="~{fragments/general.html :: header}"></header>
     <main class="main-container">
         <h1>Edit</h1>
         <div th:insert="fragments/edit-profile-picture.html"></div>
-        <form th:action="register" method="post">
-            <label class="form-group">
+        <form th:action="edit" method="post">
+            <label th:class="'form-group ' + ${firstNameTooLong != null || incorrectFirstName != null ? 'form-group-error' : ''}">
                 First Name
-                <input type="text" th:name="fname" th:value="*{fname}" required>
+                <input type="text" th:name="fname" th:value="*{fname}">
+                <span class = "error" th:if="${firstNameTooLong != null}" th:text="*{firstNameTooLong}"></span>
+                <span class = "error" th:if="${incorrectFirstName != null}" th:text="*{incorrectFirstName}"></span>
             </label>
-            <label class="form-group">
+            <label th:class="'form-group ' + ${lastNameTooLong != null || incorrectLastName != null ? 'form-group-error' : ''}">
                 Last Name
-                <input type="text" th:name="lname" th:value="*{lname}" id="lname" required>
+                <input type="text" th:name="lname" th:value="*{lname}" id="lname">
+                <span class = "error" th:if="${lastNameTooLong != null}" th:text="*{lastNameTooLong}"></span>
+                <span class = "error" th:if="${incorrectLastName != null}" th:text="*{incorrectLastName}"></span>
             </label>
             <label class="form-checkbox">
                 <input type="checkbox" th:name="noLname" th:value="*{noLname}" th:checked="*{noLname}" id="noLname"> I have no surname
             </label>
-            <label class="form-group">
+            <label th:class="'form-group ' + ${emailInuse != null || incorrectEmail != null ? 'form-group-error' : ''}">
                 Email
-                <input type="email" th:name="email" th:value="*{email}" required>
+                <input type="text" th:name="email" th:value="*{email}" inputmode="email">
+                <span class = "error" th:if="${emailInuse != null}" th:text="*{emailInuse}"></span>
+                <span class = "error" th:if="${incorrectEmail != null}" th:text="*{incorrectEmail}"></span>
             </label>
             <label class="form-group">
                 Address
-                <input type="text" th:name="address" th:value="*{address}" required>
+                <input type="text" th:name="address" th:value="*{address}">
             </label>
-            <label class="form-group">
+            <label th:class="'form-group ' + ${youngDob != null || oldDob != null || invalidDob != null ? 'form-group-error' : ''}">
                 Date of Birth (optional)
-                <input type="date" th:name="dob" th:value="*{dob}">
+                <input type="text" th:name="dob" th:value="*{dob}">
+                <span class = "error" th:if="${youngDob != null}" th:text="*{youngDob}"></span>
+                <span class = "error" th:if="${oldDob != null}" th:text="*{oldDob}"></span>
+                <span class = "error" th:if="${invalidDob != null}" th:text="*{invalidDob}"></span>
             </label>
             <button class="btn">Submit</button>
             <a href="/users/user" class="btn">Cancel</a>
-            <a href="/users/edit/password">Change Password</a>
         </form>
     </main>
     <script>
