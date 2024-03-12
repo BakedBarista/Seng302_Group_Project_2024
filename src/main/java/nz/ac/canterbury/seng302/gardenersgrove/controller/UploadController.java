@@ -1,10 +1,14 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,10 +36,19 @@ public class UploadController {
     Logger logger = LoggerFactory.getLogger(UploadController.class);
     private final PlantService plantService;
 
-    private static final List<String> allowedExtension = Arrays.asList("jpg", "png","jpeg", "svg");
+
+    private GardenService gardenService;
+
+    @Autowired
+    private GardenRepository gardenRepository;
+
+    private static final List<String> allowedExtension = Arrays.asList("jpg", "png", "svg");
 
 
-    public UploadController(PlantService plantService) {this.plantService = plantService;}
+    public UploadController(PlantService plantService) {
+        this.plantService = plantService;
+
+    }
     /**
      * Displays the file upload page
      */
@@ -45,6 +58,9 @@ public class UploadController {
                                     Model model) {
         model.addAttribute("plantId", plantId);
         model.addAttribute("gardenId", gardenId);
+        this.gardenService = new GardenService(gardenRepository);
+        List<Garden> gardens = gardenService.getAllGardens();
+        model.addAttribute("gardens", gardens);
         return "images/uploadPage";
     }
 

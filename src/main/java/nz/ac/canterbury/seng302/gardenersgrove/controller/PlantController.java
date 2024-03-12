@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.ValidationSequence;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
@@ -21,7 +22,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-// TODO: THIS WHOLE FILE NEEDS TO BE UPDATED
 /**
  * Controller for Plant related activities
  */
@@ -56,6 +56,9 @@ public class PlantController {
         logger.info("GET /gardens/${id}/add-plant - display the new plant form");
         model.addAttribute("gardenId", gardenId);
         model.addAttribute("plant", new Plant("","","",""));
+
+        List<Garden> gardens = gardenService.getAllGardens();
+        model.addAttribute("gardens", gardens);
         return "plants/addPlant";
     }
 
@@ -133,6 +136,8 @@ public class PlantController {
                             Model model) {
         logger.info("/garden/{}/plant/{}/edit", gardenId, plantId);
         Optional<Plant> plant = plantService.getPlantById(plantId);
+        List<Garden> gardens = gardenService.getAllGardens();
+        model.addAttribute("gardens", gardens);
 
         if (plant.isPresent()) {
             Plant plantOpt = plant.get();

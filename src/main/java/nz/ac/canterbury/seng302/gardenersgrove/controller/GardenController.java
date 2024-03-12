@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 import java.util.Optional;
 
@@ -46,7 +47,9 @@ public class GardenController {
                        @RequestParam(name="displaySize", required = false, defaultValue = "") String displaySize,
                        Model model) {
         logger.info("GET /gardens/create - display the new garden form");
-        model.addAttribute("garden", new Garden()); // Create a new garden object to be used in the form
+        model.addAttribute("garden", new Garden());
+        List<Garden> gardens = gardenService.getAllGardens();
+        model.addAttribute("gardens", gardens);
         return "gardens/createGarden";
     }
 
@@ -80,6 +83,8 @@ public class GardenController {
     public String responses(Model model) {
         logger.info("Get /gardens - display all gardens");
         model.addAttribute("gardens", gardenService.getAllGardens());
+        List<Garden> gardens = gardenService.getAllGardens();
+        model.addAttribute("gardens", gardens);
         return "gardens/viewGardens";
     }
 
@@ -95,6 +100,8 @@ public class GardenController {
         logger.info("Get /gardens/id - display garden detail");
         model.addAttribute("garden", gardenService.getGardenById(id).get());
         model.addAttribute("plants", plantService.getPlantsByGardenId(id));
+        List<Garden> gardens = gardenService.getAllGardens();
+        model.addAttribute("gardens", gardens);
         return "gardens/gardenDetails";
     }
 
@@ -109,6 +116,8 @@ public class GardenController {
         Optional<Garden> garden = gardenService.getGardenById(id);
         logger.info(String.valueOf(garden));
         model.addAttribute("garden", garden.orElse(null));
+        List<Garden> gardens = gardenService.getAllGardens();
+        model.addAttribute("gardens", gardens);
         return "gardens/editGarden";
     }
 
