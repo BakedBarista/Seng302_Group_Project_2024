@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -31,6 +32,7 @@ public class PlantController {
     Logger logger = LoggerFactory.getLogger(PlantController.class);
 
     private final PlantService plantService;
+    private UploadController uploadController;
     private PlantRepository plantRepository;
 
     private final GardenService gardenService;
@@ -53,7 +55,7 @@ public class PlantController {
 
         logger.info("GET /gardens/${id}/add-plant - display the new plant form");
         model.addAttribute("gardenId", gardenId);
-        model.addAttribute("plant", plantService.addPlant(new Plant("","","",""), gardenId));
+        model.addAttribute("plant", new Plant("","","",""));
         return "plants/addPlant";
     }
 
@@ -71,7 +73,8 @@ public class PlantController {
     @PostMapping("/gardens/{gardenId}/add-plant")
     public String submitAddPlantForm(@PathVariable("gardenId") Long gardenId,
                              @Validated(ValidationSequence.class) @ModelAttribute("plant") Plant plant,
-                             BindingResult bindingResult, Model model) {
+                             MultipartFile file,
+                             BindingResult bindingResult, Model model) throws Exception {
         logger.info(plant.getPlantedDate());
 
         if(!plant.getPlantedDate().isEmpty()) {
@@ -86,7 +89,10 @@ public class PlantController {
             logger.info("Error In Form");
             return "plants/addPlant";
         }
-        plantService.addPlant(plant, gardenId);
+        Plant plantToAdd = plantService.addPlant(plant, gardenId);
+        if(file != null) {
+            model.addAttribute("message",uploadController.upload(file,plantToAdd.getId()));
+        }
 
         return "redirect:/gardens/" + gardenId;
     }

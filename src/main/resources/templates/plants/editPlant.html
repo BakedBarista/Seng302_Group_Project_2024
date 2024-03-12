@@ -35,7 +35,7 @@
 
                 <img th:src="@{${plant.plantImagePath}}"/>
                 <img th:unless="${plant.plantImagePath}" src="/default.png" alt="Default Plant Image" />
-                <a class="add-image-button" th:href="@{/uploadImage(garden_Id=${garden_id}, plant_Id=${plant.id})}">+</a>
+                <a class="add-image-button" th:href="@{/uploadImage(garden_Id=${gardenId}, plant_Id=${plantId})}">+</a>
 
             </div>
             <button type="submit">Submit!</button><button type="button"><a th:href="@{/gardens/{garden_id}(garden_id=${gardenId})}">Cancel</a></button>
