@@ -28,6 +28,12 @@ public class RegisterController {
     @Autowired
     private GardenUserService userService;
 
+    private GardenUser user;
+
+    private int maxNameLength = 64;
+
+
+
     /**
      * Shows the user the form
      * 
@@ -65,50 +71,73 @@ public class RegisterController {
         }
 
         UserValidation userValidation = new UserValidation();
+        boolean valid = true;
 
-         if (!userValidation.userFirstNameValidation(fname)){
+
+        if ((!userValidation.userFirstNameValidation(fname))){
             model.addAttribute("incorrectFirstName", "First name cannot be empty and must only include letters, spaces,hyphens or apostrophes");
-            return "users/registerTemplate";
-        } else if (!userValidation.userLastNameValidation(lname, noLname)) {
-             model.addAttribute("incorrectLastName", "Last name cannot be empty and must only include letters, spaces,hyphens or apostrophes");
-             return "users/registerTemplate";
-        } else if (userService.getUserByEmail(email) != null) {
+            valid = false;
+        } else if ((fname.length() > maxNameLength)) {
+            model.addAttribute("firstNameTooLong", "First name must be 64 characters long or less");
+            valid = false;
+        }
+
+        if ((!userValidation.userLastNameValidation(lname, noLname))){
+            model.addAttribute("incorrectLastName", "Last name cannot be empty and must only include letters, spaces,hyphens or apostrophes");
+            valid = false;
+        } else if (noLname==false && lname.length() > maxNameLength){
+            model.addAttribute("lastNameTooLong", "Last name must be 64 characters long or less");
+            valid = false;
+        }
+
+        if (userService.getUserByEmail(email) != null) {
              model.addAttribute("emailInuse", "This email address is already in use");
-             return "users/registerTemplate";
-         }else if (!userValidation.userEmailValidation(email)){
+            valid = false;
+        }else if (!userValidation.userEmailValidation(email)){
              model.addAttribute("incorrectEmail", "Email address must be in the form ‘jane@doe.nz’");
-             return "users/registerTemplate";
+            valid = false;
         } else if (!userValidation.userPasswordMatchValidation(password, confirmPassword)){
             model.addAttribute("matchPassword", "Passwords do not match");
-            return "users/registerTemplate";
+            valid = false;
         } else if (!userValidation.userPasswordStrengthValidation(password)){
             model.addAttribute("weakPassword", "Your password must beat least 8 characters long and include at least one uppercase letter, one lowercase letter, one number,and one special character");
-            return "users/registerTemplate";
+            valid = false;
          } else if (!userValidation.userInvalidDateValidation(dob)){
              model.addAttribute("invalidDob", "Date is not in valid format, (DD/MM/YYYY)");
-             return "users/registerTemplate";
+            valid = false;
          } else if (!userValidation.userYoungDateValidation(dob)){
              model.addAttribute("youngDob", "You must be 13 years or older to create an account");
-             return "users/registerTemplate";
+            valid = false;
          } else if (!userValidation.userOldDateValidation(dob)){
              model.addAttribute("oldDob", "The maximum age allowed is 120 years");
-             return "users/registerTemplate";
+            valid = false;
          }
 
-        userService.addUser(new GardenUser(fname, lname, email, address, password, dob));
+        if (valid) {
+            userService.addUser(new GardenUser(fname, lname, email, address, password, dob));
 
-        try {
-            request.logout();
-        } catch (ServletException e) {
-            logger.warn("User was not logged in");
+            try {
+                request.logout();
+            } catch (ServletException e) {
+                logger.warn("User was not logged in");
+            }
+
+            try {
+                request.login(email, password);
+                return "redirect:/users/user";
+            } catch (ServletException e) {
+                logger.error("Error while login ", e);
+            }
         }
 
-        try {
-            request.login(email, password);
-            return "redirect:/users/user";
-        } catch (ServletException e) {
-            logger.error("Error while login ", e);
-        }
+        model.addAttribute("fname", fname);
+        model.addAttribute("lname", lname);
+        model.addAttribute("noLname", noLname);
+        model.addAttribute("email", email);
+        model.addAttribute("address", address);
+        model.addAttribute("password", password);
+        model.addAttribute("confirmPassword", confirmPassword);
+        model.addAttribute("dob", dob);
 
         return "users/registerTemplate";
     }
