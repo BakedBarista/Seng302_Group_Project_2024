@@ -25,7 +25,7 @@ public class Plant {
     private String name;
 
 
-    @Min(value = 0, message = "Plant count must be a positive number")
+    @Min(value = 0, message = "Plant count must be a positive number", groups = {ValidationGroups.SecondOrder.class})
     @Column(nullable = false)
     private Integer count = 1;
 
