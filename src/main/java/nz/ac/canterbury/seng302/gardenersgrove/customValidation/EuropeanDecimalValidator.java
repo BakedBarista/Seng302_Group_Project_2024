@@ -11,12 +11,12 @@ public class EuropeanDecimalValidator implements ConstraintValidator<ValidEurope
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
         if (value == null || value.isEmpty()) {
-            return true; // valid if optional
+            return true;
         }
         try {
             String standardizedValue = value.replace(',', '.');
             double numericValue = Double.parseDouble(standardizedValue);
-            return numericValue >= 1;
+            return numericValue >= 0;
         } catch (NumberFormatException e) {
             return false;
         }

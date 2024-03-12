@@ -15,7 +15,7 @@
             <div>
                 <label for="name"> Garden Name: </label>
                 <input type="text" class="form-control" id="name" placeholder="Garden Name"
-                       th:name="name" th:value="${garden.name}" data-cy="name" autofocus>
+                       th:name="name" th:value="${garden.name}" th:unless="${#fields.hasErrors('name')}" style="border: 1px solid red;" data-cy="name">
                 <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" style="color: red;"></div>
 
             </div>

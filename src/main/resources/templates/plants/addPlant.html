@@ -10,7 +10,7 @@
 <div th:replace="~{navbar :: navbar}"></div>
 <div>
     <div>
-        <form id="addPlantForm" th:action="@{/gardens/{gardenId}/add-plant(gardenId=${gardenId})}" th:object="${plant}"  method="post" >
+        <form id="addPlantForm" th:action="@{/gardens/{gardenId}/add-plant(gardenId=${gardenId})}" th:object="${plant}"  method="post" enctype="multipart/form-data">
 
 
         <!-- Plant Name Field -->
@@ -40,8 +40,8 @@
             <div class="form-group">
                 <input type="file" name="image" accept=".png, .jpg, .jpeg, .svg" class="form-control-file">
             </div>
-            <div class="alert alert-danger" th:if="${error}">
-                <div th:text="${error}" style="color: red"></div>
+            <div class="alert alert-danger" th:if="${fileTypeError}">
+                <div th:text="${fileTypeError}" style="color: red"></div>
             </div>
 
             <div class="alert alert-danger" th:if="${fileSizeError}">

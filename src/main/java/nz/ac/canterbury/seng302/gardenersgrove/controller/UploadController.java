@@ -77,7 +77,7 @@ public class UploadController {
         if(!allowedExtension.contains(extension.toLowerCase())) {
             redirectAttributes.addAttribute("plant_Id", plantId);
             redirectAttributes.addAttribute("garden_Id", gardenId);
-            redirectAttributes.addFlashAttribute("error", "Image must be of type png, jpg or svg");
+            redirectAttributes.addFlashAttribute("fileTypeError", "Image must be of type png, jpg or svg");
             return "redirect:/uploadImage";
         }
         String directory = "./images/";
@@ -107,20 +107,10 @@ public class UploadController {
     public String upload(MultipartFile file, Long plantId) throws Exception {
         Optional<Plant> optionalPlant = plantService.getPlantById(plantId);
         String filename = file.getOriginalFilename();
-        String extension = filename.substring(filename.lastIndexOf(".") + 1);
-        //Check types
-        if(!allowedExtension.contains(extension.toLowerCase())) {
-            return "Image must be of type png, jpg or svg";
-        }
         String directory = "./images/";
         String fileName = "plant" + plantId + "image" + "-" + filename;
         Path filePath = Paths.get(directory + fileName);
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-        //Check size
-        if (file.getSize() > 10 * 1024 * 1024) { // 10MB limit
-            Files.delete(filePath);
-            return "Image must be less than 10MB";
-        }
         if(optionalPlant.isPresent()){
             Plant plant = optionalPlant.get();
             plant.setPlantImagePath("/" + fileName);
