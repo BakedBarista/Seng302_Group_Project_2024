@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
@@ -18,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 /**
  * Controller for registering new users
  */
-
 
 @Controller
 public class RegisterController {
@@ -66,34 +66,37 @@ public class RegisterController {
 
         UserValidation userValidation = new UserValidation();
 
-         if (!userValidation.userFirstNameValidation(fname)){
-            model.addAttribute("incorrectFirstName", "First name cannot be empty and must only include letters, spaces,hyphens or apostrophes");
+        if (!userValidation.userFirstNameValidation(fname)) {
+            model.addAttribute("incorrectFirstName",
+                    "First name cannot be empty and must only include letters, spaces,hyphens or apostrophes");
             return "users/registerTemplate";
         } else if (!userValidation.userLastNameValidation(lname, noLname)) {
-             model.addAttribute("incorrectLastName", "Last name cannot be empty and must only include letters, spaces,hyphens or apostrophes");
-             return "users/registerTemplate";
+            model.addAttribute("incorrectLastName",
+                    "Last name cannot be empty and must only include letters, spaces,hyphens or apostrophes");
+            return "users/registerTemplate";
         } else if (userService.getUserByEmail(email) != null) {
-             model.addAttribute("emailInuse", "This email address is already in use");
-             return "users/registerTemplate";
-         }else if (!userValidation.userEmailValidation(email)){
-             model.addAttribute("incorrectEmail", "Email address must be in the form ‘jane@doe.nz’");
-             return "users/registerTemplate";
-        } else if (!userValidation.userPasswordMatchValidation(password, confirmPassword)){
+            model.addAttribute("emailInuse", "This email address is already in use");
+            return "users/registerTemplate";
+        } else if (!userValidation.userEmailValidation(email)) {
+            model.addAttribute("incorrectEmail", "Email address must be in the form ‘jane@doe.nz’");
+            return "users/registerTemplate";
+        } else if (!userValidation.userPasswordMatchValidation(password, confirmPassword)) {
             model.addAttribute("matchPassword", "Passwords do not match");
             return "users/registerTemplate";
-        } else if (!userValidation.userPasswordStrengthValidation(password)){
-            model.addAttribute("weakPassword", "Your password must beat least 8 characters long and include at least one uppercase letter, one lowercase letter, one number,and one special character");
+        } else if (!userValidation.userPasswordStrengthValidation(password)) {
+            model.addAttribute("weakPassword",
+                    "Your password must beat least 8 characters long and include at least one uppercase letter, one lowercase letter, one number,and one special character");
             return "users/registerTemplate";
-         } else if (!userValidation.userInvalidDateValidation(dob)){
-             model.addAttribute("invalidDob", "Date is not in valid format, (DD/MM/YYYY)");
-             return "users/registerTemplate";
-         } else if (!userValidation.userYoungDateValidation(dob)){
-             model.addAttribute("youngDob", "You must be 13 years or older to create an account");
-             return "users/registerTemplate";
-         } else if (!userValidation.userOldDateValidation(dob)){
-             model.addAttribute("oldDob", "The maximum age allowed is 120 years");
-             return "users/registerTemplate";
-         }
+        } else if (!userValidation.userInvalidDateValidation(dob)) {
+            model.addAttribute("invalidDob", "Date is not in valid format, (DD/MM/YYYY)");
+            return "users/registerTemplate";
+        } else if (!userValidation.userYoungDateValidation(dob)) {
+            model.addAttribute("youngDob", "You must be 13 years or older to create an account");
+            return "users/registerTemplate";
+        } else if (!userValidation.userOldDateValidation(dob)) {
+            model.addAttribute("oldDob", "The maximum age allowed is 120 years");
+            return "users/registerTemplate";
+        }
 
         userService.addUser(new GardenUser(fname, lname, email, address, password, dob));
 
@@ -114,15 +117,19 @@ public class RegisterController {
     }
 
     /**
-     * Submits the form
+     * Creates a new user for testing purposes
      */
-    @GetMapping("/users/dummy")
+    @PostConstruct
     public String createDummy() {
-        logger.info("POST /users/dummy");
+        try {
+            GardenUser user = new GardenUser("John", "Doe", "john.doe@gmail.com", "Jack Erskine 133", "password",
+                    "01/01/1970");
+            userService.addUser(user);
 
-        GardenUser user = new GardenUser("John", "Doe", "john.doe@gmail.com", "Jack Erskine 133", "password",
-                "01/01/1970");
-        userService.addUser(user);
+            logger.info("Created dummy user for testing purposes");
+        } catch (Exception e) {
+            logger.error("Error while creating dummy user", e);
+        }
 
         return "redirect:/";
     }
