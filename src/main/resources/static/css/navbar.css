@@ -1,42 +1,89 @@
-.navigationBar {
+nav {
     background-color: #c9c9c9;
     overflow: hidden;
     height: 100px;
     display: flex;
     align-items: center;
+    justify-content: space-between;
 }
 
 .buttonContainer {
     margin-left: auto;
+;
 }
 
-.navigationBar button {
+nav button {
     display: inline-block;
     background-color: #c9c9c9;
     border: none;
-    margin: 0 20px 0 0;
 }
 
-.navigationBar a {
+nav a {
     color: #000000;
     font-family: arial, sans-serif;
     font-size: 22px;
     text-align: center;
     padding: 20px;
     margin-left: 20px;
+    margin-right: 20px;
     text-decoration: none;
 }
 
-.navigationBar a:hover {
+nav a:hover {
     background-color: #b7b7b7;
     color: black;
 }
 
-.navigationBar a.home {
+nav a.home {
     font-weight: bold;
 
 }
 
-.navigationBar a.onPage {
+nav a.onPage {
     background-color: #b0b0b0;
 }
+
+
+/* The button */
+.dropbtn {
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+}
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+
+/* Dropdown Content (Hidden by default) */
+.dropdown-content {
+    display: none;
+    position: fixed;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {background-color: #f1f1f1}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+
+
