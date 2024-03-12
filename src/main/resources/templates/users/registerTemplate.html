@@ -15,12 +15,12 @@
     <main class="main-container">
         <h1>Register</h1>
         <form th:action="register" method="post">
-            <label class="form-group">
+            <label th:class="'form-group ' + ${incorrectFirstName != null ? 'form-group-error' : ''}">
                 First Name
                 <input type="text" th:name="fname" th:value="*{fname}">
                 <span class = "error" th:if="${incorrectFirstName != null}" th:text="*{incorrectFirstName}"></span>
             </label>
-            <label class="form-group">
+            <label th:class="'form-group ' + ${incorrectLastName != null ? 'form-group-error' : ''}">
                 Last Name
                 <input type="text" th:name="lname" th:value="*{lname}" id="lname">
                 <span class = "error" th:if="${incorrectLastName != null}" th:text="*{incorrectLastName}"></span>
@@ -28,7 +28,7 @@
             <label class="form-checkbox">
                 <input type="checkbox" th:name="noLname" th:value="*{noLname}" th:checked="*{noLname}" id="noLname"> I have no surname
             </label>
-            <label class="form-group">
+            <label th:class="'form-group ' + ${incorrectEmail != null ? 'form-group-error' : ''}">
                 Email
                 <input type="text" th:name="email" th:value="*{email}" inputmode="email">
                 <span class = "error" th:if="${emailInuse != null}" th:text="*{emailInuse}"></span>
@@ -38,7 +38,7 @@
                 Address
                 <input type="text" th:name="address" th:value="*{address}">
             </label>
-            <label class="form-group">
+            <label th:class="'form-group ' + ${matchPassword != null || weakPassword != null ? 'form-group-error' : ''}">
                 Password
                 <input type="password" th:name="password">
                 <span class = "error" th:if="${matchPassword != null}" th:text="*{matchPassword}"></span>
@@ -48,7 +48,7 @@
                 Confirm Password
                 <input type="password" th:name="confirmPassword">
             </label>
-            <label class="form-group">
+            <label th:class="'form-group ' + ${youngDob != null || oldDob != null || invalidDob != null ? 'form-group-error' : ''}">
                 Date of Birth (optional)
                 <input type="text" th:name="dob" th:value="*{dob}">
                 <span class = "error" th:if="${youngDob != null}" th:text="*{youngDob}"></span>

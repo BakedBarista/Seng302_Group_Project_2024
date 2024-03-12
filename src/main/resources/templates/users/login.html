@@ -11,12 +11,12 @@
     <main class="main-container">
         <h1>Sign In</h1>
         <form th:action="login" method="post">
-            <label class="form-group">
+            <label th:class="'form-group ' + ${incorrectEmail != null ? 'form-group-error' : ''}">
                 Email
                 <input type="text" th:name="email" th:value="*{email}" inputmode="email">
                 <span class = "error" th:if="${incorrectEmail != null}" th:text="*{incorrectEmail}"></span>
             </label>
-            <label class="form-group">
+            <label th:class="'form-group ' + ${invalidCredentials != null ? 'form-group-error' : ''}">
                 Password
                 <input type="password" th:name="password">
                 <span class = "error" th:if="${invalidCredentials != null}" th:text="*{invalidCredentials}"></span>
