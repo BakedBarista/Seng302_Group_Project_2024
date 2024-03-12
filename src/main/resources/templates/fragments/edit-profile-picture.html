@@ -12,7 +12,7 @@
     enctype="multipart/form-data"
     id="profilePictureForm"
 >
-    <label class="form-group link-text">
+    <label class="form-group link-text" tabindex="0">
         Edit Profile Picture
         <input type="file" name="file" id="profilePictureInput" />
     </label>
@@ -34,6 +34,12 @@
         );
 
         const VALID_MIME_TYPES = ["image/png", "image/jpeg", "image/svg"];
+
+        profilePictureForm.addEventListener("keydown", (ev) => {
+            if (ev.key === "Enter") {
+                profilePictureInput.click();
+            }
+        });
 
         profilePictureInput.addEventListener("change", (ev) => {
             const file = profilePictureInput.files[0];
