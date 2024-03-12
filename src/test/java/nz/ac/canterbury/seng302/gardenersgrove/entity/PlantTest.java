@@ -25,7 +25,7 @@ public class PlantTest {
 
     @BeforeEach
     void makeGarden() {
-        plant = new Plant("Plant", 1, "Yellow", "09/09/2023");
+        plant = new Plant("Plant", "1", "Yellow", "09/09/2023");
     }
 
     @Test
@@ -123,24 +123,63 @@ public class PlantTest {
 
     @Test
     public void SetCount_Zero_ReturnsEmptyConstraintViolationList() {
-        plant.setCount(0);
+        plant.setCount("0");
 
         assertTrue(validator.validate(plant).isEmpty());
     }
 
     @Test
     public void SetCount_One_ReturnsEmptyConstraintViolationList() {
-        plant.setCount(1);
+        plant.setCount("1");
 
         assertTrue(validator.validate(plant).isEmpty());
     }
 
     @Test
-    public void SetCount_NegativeOne_ReturnsEmptyConstraintViolationList() {
-        plant.setCount(-1);
+    public void setCount_NegativeOne_ReturnsEmptyConstraintViolationList() {
+        plant.setCount("-1");
 
         //FIX
         assertTrue(validator.validate(plant).isEmpty());
+    }
+
+    @Test
+    public void setCount_NonIntegerChars_ReturnConstraintViolation() {
+        plant.setCount("char");
+        String expectedMessage = "Plant count must be a positive number";
+        Integer expectedConstraintSetSize = 1;
+
+
+        ConstraintViolation<Plant> violation = validator.validate(plant, ValidationGroups.FirstOrder.class).iterator().next();
+
+        assertEquals(expectedConstraintSetSize, validator.validate(plant, ValidationGroups.FirstOrder.class).size());
+        assertEquals(expectedMessage, violation.getMessage());
+    }
+
+    @Test
+    public void setCount_IntegerAndNonIntegerChars_ReturnConstraintViolation() {
+        plant.setCount("123char");
+        String expectedMessage = "Plant count must be a positive number";
+        Integer expectedConstraintSetSize = 1;
+
+
+        ConstraintViolation<Plant> violation = validator.validate(plant, ValidationGroups.FirstOrder.class).iterator().next();
+
+        assertEquals(expectedConstraintSetSize, validator.validate(plant, ValidationGroups.FirstOrder.class).size());
+        assertEquals(expectedMessage, violation.getMessage());
+    }
+
+    @Test
+    public void setCount_SpecialCharsWithInteger_ReturnConstraintViolation() {
+        plant.setCount("123!");
+        String expectedMessage = "Plant count must be a positive number";
+        Integer expectedConstraintSetSize = 1;
+
+
+        ConstraintViolation<Plant> violation = validator.validate(plant, ValidationGroups.FirstOrder.class).iterator().next();
+
+        assertEquals(expectedConstraintSetSize, validator.validate(plant, ValidationGroups.FirstOrder.class).size());
+        assertEquals(expectedMessage, violation.getMessage());
     }
 
     @Test
