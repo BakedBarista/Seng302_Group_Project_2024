@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://thymeleaf.org">
 <head>
-  <title></title>
+  <meta charset="UTF-8">
 </head>
 <body>
 <div th:fragment="navbar">
-  <div class="navigationBar">
-    <a class="home" th:href="@{/}">Gardeners Grove</a>
-    <div class="buttonContainer">
+  <div th:class="navigationBar">
+    <a th:class="home" th:href="@{/}">Gardeners Grove</a>
+    <div th:class="buttonContainer">
       <button><a th:href="@{/gardens}">My Gardens</a></button>
       <button><a th:href="@{/gardens/create}">Create New Garden</a></button>
     </div>
@@ -15,20 +15,20 @@
 </div>
 
 <div th:fragment="navbarOnCreateGarden">
-  <div class="navigationBar">
-    <a class="home" th:href="@{/}">Gardeners Grove</a>
-    <div class="buttonContainer">
+  <div th:class="navigationBar">
+    <a th:class="home" th:href="@{/}">Gardeners Grove</a>
+    <div th:class="buttonContainer">
       <button><a th:href="@{/gardens}">My Gardens</a></button>
-      <button><a class = "onPage" th:href="@{/gardens/create}">Create New Garden</a></button>
+      <button><a th:class = "onPage" th:href="@{/gardens/create}">Create New Garden</a></button>
     </div>
   </div>
 </div>
 
 <div th:fragment="navbarOnMyGarden">
-  <div class="navigationBar">
-    <a class="home" th:href="@{/}">Gardeners Grove</a>
-    <div class="buttonContainer">
-      <button><a class = "onPage" th:href="@{/gardens}">My Gardens</a></button>
+  <div th:class="navigationBar">
+    <a th:class="home" th:href="@{/}">Gardeners Grove</a>
+    <div th:class="buttonContainer">
+      <button><a th:class = "onPage" th:href="@{/gardens}">My Gardens</a></button>
       <button><a th:href="@{/gardens/create}">Create New Garden</a></button>
     </div>
   </div>
