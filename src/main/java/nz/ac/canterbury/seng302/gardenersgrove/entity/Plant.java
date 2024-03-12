@@ -5,7 +5,6 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import jakarta.validation.constraints.NotNull;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.ValidationGroups;
 
 
@@ -45,7 +44,7 @@ public class Plant {
     @Column(nullable = true)
     private String plantImagePath;
 
-    public Plant(String name, String count, String description, String plantedDate) {
+    public Plant(String name, Integer count, String description, String plantedDate) {
         this.name = name;
         this.count = count;
         this.description = description;
@@ -71,7 +70,7 @@ public class Plant {
         return count;
     }
 
-    public void setCount(String count) {
+    public void setCount(Integer count) {
         this.count = count;
     }
 

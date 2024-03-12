@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
-import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.ValidationSequence;
@@ -54,7 +53,7 @@ public class PlantController {
 
         logger.info("GET /gardens/${id}/add-plant - display the new plant form");
         model.addAttribute("gardenId", gardenId);
-        model.addAttribute("plant", plantService.addPlant(new Plant("","0","",""), gardenId));
+        model.addAttribute("plant", plantService.addPlant(new Plant("",0,"",""), gardenId));
         return "plants/addPlant";
     }
 
@@ -71,7 +70,7 @@ public class PlantController {
      */
     @PostMapping("/gardens/{gardenId}/add-plant")
     public String submitAddPlantForm(@PathVariable("gardenId") Long gardenId,
-                             @Validated(ValidationSequence.class) @ModelAttribute("plant") Plant plant,,
+                             @Validated(ValidationSequence.class) @ModelAttribute("plant") Plant plant,
                              BindingResult bindingResult, Model model) {
         logger.info(plant.getPlantedDate());
 
@@ -92,11 +91,6 @@ public class PlantController {
         return "redirect:/gardens/" + gardenId;
     }
 
-    public static String refactorPlantedDate(String date) {
-        LocalDate localDate = LocalDate.parse(date);
-        return localDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-    }
-
     public static String convertDateToISOFormat(String date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         LocalDate localDate = LocalDate.parse(date, formatter);
@@ -113,8 +107,8 @@ public class PlantController {
     public String editPlantForm(@PathVariable("gardenId") long gardenId,
                             @PathVariable("plantId") long plantId,
                             Model model) {
-        logger.info("/garden/{}/plant/{}/edit", garden_id, plant_id);
-        Optional<Plant> plant = plantService.getPlantById(plant_id);
+        logger.info("/garden/{}/plant/{}/edit", gardenId, plantId);
+        Optional<Plant> plant = plantService.getPlantById(plantId);
 
         if (plant.isPresent()) {
             Plant plantOpt = plant.get();
@@ -174,7 +168,7 @@ public class PlantController {
      *
      * note : catches DateTimeParseException when date is already in dd/mm/yyyy for test purposes
      *
-     * @param date
+     * @param date the date string that needs to be formatted
      * @return parsed date in correct format
      */
     public static String refactorPlantedDate(String date) {
