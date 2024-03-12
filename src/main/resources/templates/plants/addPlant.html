@@ -5,31 +5,12 @@
     <title>Add a New Plant</title>
     <link th:href="@{/css/navbar.css}" rel="stylesheet" />
     <link th:href="@{/css/styles.css}" rel="stylesheet" />
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-
-            document.querySelectorAll('input, textarea').forEach(function(input, index, array) {
-                input.addEventListener('keydown', function(event) {
-                    if (event.key === "Enter") {
-                        event.preventDefault();
-                        if (index === array.length - 1) {
-                            document.querySelector('form').submit();
-                        } else {
-                            array[index + 1].focus();
-                        }
-                    }
-                });
-            });
-        });
-    </script>
-
 </head>
 <body>
-<div th:replace="navbar :: navbar"></div>
+<div th:replace="~{navbar :: navbar}"></div>
 <div>
     <div>
-        <form id="addPlantForm" th:action="@{/gardens/{gardenId}/add-plant(gardenId=${gardenId})}" th:object="${plant}"  method="post" >
+        <form id="addPlantForm" th:action="@{/gardens/{gardenId}/add-plant(gardenId=${gardenId})}" th:object="${plant}"  method="post" enctype="multipart/form-data">
 
 
         <!-- Plant Name Field -->
@@ -59,8 +40,8 @@
             <div class="form-group">
                 <input type="file" name="image" accept=".png, .jpg, .jpeg, .svg" class="form-control-file">
             </div>
-            <div class="alert alert-danger" th:if="${error}">
-                <div th:text="${error}" style="color: red"></div>
+            <div class="alert alert-danger" th:if="${fileTypeError}">
+                <div th:text="${fileTypeError}" style="color: red"></div>
             </div>
 
             <div class="alert alert-danger" th:if="${fileSizeError}">
@@ -85,6 +66,6 @@
         <button><a th:href="@{/}">Return home</a></button>
     </div>
 </div>
-
 </body>
+<script th:src="@{/js/nextFormBox.js}"></script>
 </html>

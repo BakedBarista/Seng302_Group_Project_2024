@@ -1,37 +1,58 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://thymeleaf.org">
 <head>
-  <title></title>
+  <meta charset="UTF-8">
 </head>
 <body>
 <div th:fragment="navbar">
-  <div class="navigationBar">
-    <a class="home" th:href="@{/}">Gardeners Grove</a>
-    <div class="buttonContainer">
-      <button><a th:href="@{/gardens}">My Gardens</a></button>
+  <nav>
+    <div id="logo">
+      <a th:class="home" th:href="@{/}">Gardeners Grove</a>
+    </div>
+    <div>
+      <div class="dropdown">
+        <button class="dropbtn"><a th:href="@{/gardens}">My Gardens</a></button>
+        <div class="dropdown-content">
+          <a th:each="garden : ${gardens}" th:text="${garden.name}" th:href="@{/gardens/} + ${garden.id}"></a>
+        </div>
+      </div>
       <button><a th:href="@{/gardens/create}">Create New Garden</a></button>
     </div>
-  </div>
+    </nav>
 </div>
 
 <div th:fragment="navbarOnCreateGarden">
-  <div class="navigationBar">
-    <a class="home" th:href="@{/}">Gardeners Grove</a>
-    <div class="buttonContainer">
-      <button><a th:href="@{/gardens}">My Gardens</a></button>
-      <button><a class = "onPage" th:href="@{/gardens/create}">Create New Garden</a></button>
+  <nav>
+    <div id="logo">
+      <a th:class="home" th:href="@{/}">Gardeners Grove</a>
     </div>
-  </div>
+    <div>
+      <div class="dropdown">
+        <button class="dropbtn"><a th:href="@{/gardens}">My Gardens</a></button>
+        <div class="dropdown-content">
+          <a th:each="garden : ${gardens}" th:text="${garden.name}" th:href="@{/gardens/} + ${garden.id}"></a>
+        </div>
+      </div>
+      <button><a th:class = "onPage" th:href="@{/gardens/create}">Create New Garden</a></button>
+    </div>
+    </nav>
 </div>
 
 <div th:fragment="navbarOnMyGarden">
-  <div class="navigationBar">
-    <a class="home" th:href="@{/}">Gardeners Grove</a>
-    <div class="buttonContainer">
-      <button><a class = "onPage" th:href="@{/gardens}">My Gardens</a></button>
+  <nav>
+    <div id="logo">
+      <a th:class="home" th:href="@{/}">Gardeners Grove</a>
+    </div>
+    <div>
+      <div class="dropdown">
+        <button class="dropbtn"><a class="onPage" th:href="@{/gardens}">My Gardens</a></button>
+        <div class="dropdown-content">
+          <a th:each="garden : ${gardens}" th:text="${garden.name}" th:href="@{/gardens/} + ${garden.id}"></a>
+        </div>
+      </div>
       <button><a th:href="@{/gardens/create}">Create New Garden</a></button>
     </div>
-  </div>
+    </nav>
 </div>
 </body>
 </html>

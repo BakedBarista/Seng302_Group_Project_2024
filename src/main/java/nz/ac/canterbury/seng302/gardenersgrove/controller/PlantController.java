@@ -1,7 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.ValidationSequence;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
@@ -12,15 +11,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 // TODO: THIS WHOLE FILE NEEDS TO BE UPDATED
@@ -32,15 +30,17 @@ public class PlantController {
     Logger logger = LoggerFactory.getLogger(PlantController.class);
 
     private final PlantService plantService;
-    private UploadController uploadController;
-    private PlantRepository plantRepository;
+    private final UploadController uploadController;
+    private static final List<String> allowedExtension = Arrays.asList("jpg", "png","jpeg", "svg");
+    private static final Integer MAX_FILE_SIZE = 10*1024*1024;
 
     private final GardenService gardenService;
 
     @Autowired
-    public PlantController(PlantService plantService, GardenService gardenService) {
+    public PlantController(PlantService plantService, GardenService gardenService, UploadController uploadController) {
         this.plantService = plantService;
         this.gardenService = gardenService;
+        this.uploadController = uploadController;
     }
 
     /**
@@ -72,9 +72,10 @@ public class PlantController {
      */
     @PostMapping("/gardens/{gardenId}/add-plant")
     public String submitAddPlantForm(@PathVariable("gardenId") Long gardenId,
-                             @Validated(ValidationSequence.class) @ModelAttribute("plant") Plant plant,
-                             MultipartFile file,
-                             BindingResult bindingResult, Model model) throws Exception {
+                                     @Validated(ValidationSequence.class) @ModelAttribute("plant") Plant plant,
+                                     BindingResult bindingResult,
+                                     @RequestParam("image") MultipartFile file,
+                                      Model model) throws Exception {
         logger.info(plant.getPlantedDate());
 
         if(!plant.getPlantedDate().isEmpty()) {
@@ -89,11 +90,35 @@ public class PlantController {
             logger.info("Error In Form");
             return "plants/addPlant";
         }
-        Plant plantToAdd = plantService.addPlant(plant, gardenId);
-        if(file != null) {
-            model.addAttribute("message",uploadController.upload(file,plantToAdd.getId()));
-        }
+        if (file != null && !file.isEmpty()) {
+            // Check file size
+            if (file.getSize() > MAX_FILE_SIZE) {
+                model.addAttribute("plant", plant);
+                model.addAttribute("gardenId", gardenId);
+                model.addAttribute("fileSizeError", "Image must be less than 10MB");
+                logger.error("File size exceeds the limit");
+                return "plants/addPlant";
+            }
 
+            // Check file type
+            String fileName = file.getOriginalFilename();
+            String extension = fileName.substring(fileName.lastIndexOf(".") + 1);
+            if (!allowedExtension.contains(extension.toLowerCase())) {
+                model.addAttribute("plant", plant);
+                model.addAttribute("gardenId", gardenId);
+                model.addAttribute("fileTypeError", "Image must be of type png, jpg or svg");
+                logger.error("Invalid file format");
+                return "plants/addPlant";
+            }
+
+            // Proceed with uploading the file
+            Plant plantToAdd = plantService.addPlant(plant, gardenId);
+            model.addAttribute("image", uploadController.upload(file, plantToAdd.getId()));
+        } else {
+            // No file uploaded
+            logger.error("No file uploaded");
+            plantService.addPlant(plant, gardenId);
+        }
         return "redirect:/gardens/" + gardenId;
     }
 
