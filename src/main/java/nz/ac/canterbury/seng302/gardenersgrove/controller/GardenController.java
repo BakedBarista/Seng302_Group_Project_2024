@@ -100,6 +100,8 @@ public class GardenController {
         logger.info("Get /gardens/id - display garden detail");
         model.addAttribute("garden", gardenService.getGardenById(id).get());
         model.addAttribute("plants", plantService.getPlantsByGardenId(id));
+        List<Garden> gardens = gardenService.getAllGardens();
+        model.addAttribute("gardens", gardens);
         return "gardens/gardenDetails";
     }
 
@@ -114,6 +116,8 @@ public class GardenController {
         Optional<Garden> garden = gardenService.getGardenById(id);
         logger.info(String.valueOf(garden));
         model.addAttribute("garden", garden.orElse(null));
+        List<Garden> gardens = gardenService.getAllGardens();
+        model.addAttribute("gardens", gardens);
         return "gardens/editGarden";
     }
 
