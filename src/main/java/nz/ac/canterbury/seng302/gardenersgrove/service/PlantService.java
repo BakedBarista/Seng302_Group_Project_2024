@@ -50,7 +50,6 @@ public class PlantService {
      */
     public Plant addPlant(Plant plant, Long gardenId) {
         Garden garden = gardenRepository.findById(gardenId).orElseThrow(() -> new RuntimeException("Garden not found"));
-        System.out.println("Plant name before save: " + plant.getName());
         plant.setGarden(garden);
         return plantRepository.save(plant);
     }

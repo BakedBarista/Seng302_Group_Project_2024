@@ -5,7 +5,6 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import jakarta.validation.constraints.NotNull;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.ValidationGroups;
 
 
@@ -26,9 +25,9 @@ public class Plant {
     private String name;
 
 
-    @Min(value = 0, message = "Plant count must be a positive number")
-    @Column(nullable = false)
-    private Integer count = 1;
+    @Pattern(regexp = "^[0-9]*$", message = "Plant count must be a positive number", groups = {ValidationGroups.SecondOrder.class})
+    private String count;
+
 
     @Size(min = 0, max = 511, message = "Plant description must be less than 512 characters", groups = {ValidationGroups.SecondOrder.class})
     @Column(nullable = false)
@@ -45,7 +44,7 @@ public class Plant {
     @Column(nullable = true)
     private String plantImagePath;
 
-    public Plant(String name, int count, String description, String plantedDate) {
+    public Plant(String name, String count, String description, String plantedDate) {
         this.name = name;
         this.count = count;
         this.description = description;
@@ -67,11 +66,11 @@ public class Plant {
         this.name = name;
     }
 
-    public Integer getCount() {
+    public String getCount() {
         return count;
     }
 
-    public void setCount(Integer count) {
+    public void setCount(String count) {
         this.count = count;
     }
 

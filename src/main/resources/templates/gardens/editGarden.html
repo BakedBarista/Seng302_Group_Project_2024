@@ -5,6 +5,23 @@
     <title>Edit Garden</title>
     <link th:href="@{/css/navbar.css}" rel="stylesheet" />
     <link th:href="@{/css/styles.css}" rel="stylesheet" />
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+
+            document.querySelectorAll('input, textarea').forEach(function(input, index, array) {
+                input.addEventListener('keydown', function(event) {
+                    if (event.key === "Enter") {
+                        event.preventDefault();
+                        if (index === array.length - 1) {
+                            document.querySelector('form').submit();
+                        } else {
+                            array[index + 1].focus();
+                        }
+                    }
+                });
+            });
+        });
+    </script>
 </head>
 <body>
 <div class="navigationBar">
@@ -16,7 +33,7 @@
 </div>
 <div>
     <div>
-        <form th:action="@{/gardens/{id}/edit(id=${id})}" th:object="${garden}" method="post">
+        <form th:action="@{/gardens/{gardenId}/edit(gardenId=${id})}" th:object="${garden}" method="post">
             <!-- Garden Name Field -->
             <label for="name"> Garden Name: </label>
             <input type="text" class="form-control" id="name" placeholder="Name"
@@ -35,7 +52,7 @@
                    th:name="size" th:value="${garden.size}" data-cy="size" autofocus>
             <div th:if="${#fields.hasErrors('size')}" th:errors="*{size}" style="color: red;"></div>
             <br/>
-            <button type="submit">Submit!</button><button type="button" th:onclick="'window.location.href = \'' + @{/gardens/{id}(id=${garden.id})} + '\''">Cancel</button>
+            <button type="submit">Submit!</button><button type="button" th:onclick="'window.location.href = \'' + @{/gardens/{gardenId}(gardenId=${id})} + '\''">Cancel</button>
         </form>
     </div>
 </div>
