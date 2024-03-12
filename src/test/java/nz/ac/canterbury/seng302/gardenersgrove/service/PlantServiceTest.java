@@ -4,6 +4,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -28,7 +29,7 @@ class PlantServiceTest {
 
     @Test
     void AddPlant_ValidPlantWithGardenId_ReturnsPlantWithCorrectGardenId() {
-        Plant testPlant = new Plant("Rose", 5, "Flower", "01/01/2024");
+        Plant testPlant = new Plant("Rose", "5", "Flower", "01/01/2024");
         Garden testGarden = new Garden("Test Garden", "Test Location", "5");
         Long gardenId = 1L;
         testGarden.setId(gardenId);
@@ -43,7 +44,7 @@ class PlantServiceTest {
 
     @Test
     void AddPlant_InvalidGardenId_ThrowsException() {
-        Plant testPlant = new Plant("Rose", 5, "Flower", "01/01/2024");
+        Plant testPlant = new Plant("Rose", "5", "Flower", "01/01/2024");
         Long gardenId = 1L;
 
         Mockito.when(gardenRepository.findById(Mockito.any())).thenReturn(Optional.empty());
@@ -54,8 +55,8 @@ class PlantServiceTest {
 
     @Test
     void GetAllPlants_MoreThanOnePlantInDB_ReturnsListOfPlants() {
-        Plant testPlant1 = new Plant("Rose", 5, "Flower", "01/01/2024");
-        Plant testPlant2 = new Plant("Daisy", 3, "Flower", "01/01/2024");
+        Plant testPlant1 = new Plant("Rose", "5", "Flower", "01/01/2024");
+        Plant testPlant2 = new Plant("Daisy", "3", "Flower", "01/01/2024");
 
         Mockito.when(plantRepository.findAll()).thenReturn(List.of(testPlant1, testPlant2));
         Assertions.assertEquals(2, plantService.getAllPlants().size());
@@ -71,8 +72,8 @@ class PlantServiceTest {
 
     @Test
     void GetPlantsByGardenId_TwoPlantsOneGarden_ReturnBothPlants() {
-        Plant testPlant1 = new Plant("Rose", 5, "Flower", "01/01/2024");
-        Plant testPlant2 = new Plant("Daisy", 3, "Flower", "01/01/2024");
+        Plant testPlant1 = new Plant("Rose", "5", "Flower", "01/01/2024");
+        Plant testPlant2 = new Plant("Daisy", "3", "Flower", "01/01/2024");
         Long gardenId = 1L;
 
         Mockito.when(plantRepository.findByGardenId(gardenId)).thenReturn(List.of(testPlant1, testPlant2));
@@ -97,9 +98,9 @@ class PlantServiceTest {
 
     @Test
     void GetPlantsByGardenId_ThreePlantsTwoInGarden1OneInGardenTwo_ReturnOnlyGarden1Plants() {
-        Plant testPlant1 = new Plant("Rose", 5, "Flower", "01/01/2024");
-        Plant testPlant2 = new Plant("Daisy", 3, "Flower", "01/01/2024");
-        Plant testPlant3 = new Plant("Tulip", 2, "Flower", "01/01/2024");
+        Plant testPlant1 = new Plant("Rose", "5", "Flower", "01/01/2024");
+        Plant testPlant2 = new Plant("Daisy", "3", "Flower", "01/01/2024");
+        Plant testPlant3 = new Plant("Tulip", "2", "Flower", "01/01/2024");
         Garden testGarden1 = new Garden("Test Garden 1", "Test Location", "5");
         Garden testGarden2 = new Garden("Test Garden 2", "Test Location", "5");
         Long gardenId1 = 1L;
