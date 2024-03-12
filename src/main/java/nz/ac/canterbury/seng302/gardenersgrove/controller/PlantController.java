@@ -53,7 +53,7 @@ public class PlantController {
 
         logger.info("GET /gardens/${id}/add-plant - display the new plant form");
         model.addAttribute("gardenId", gardenId);
-        model.addAttribute("plant", plantService.addPlant(new Plant("",0,"",""), gardenId));
+        model.addAttribute("plant", plantService.addPlant(new Plant("","","",""), gardenId));
         return "plants/addPlant";
     }
 
@@ -142,11 +142,7 @@ public class PlantController {
         Optional<Plant> existingPlant = plantService.getPlantById(plantId);
         if (existingPlant.isPresent()){
             existingPlant.get().setName(plant.getName());
-            if(plant.getCount() != null && plant.getCount() > 0) {
-                existingPlant.get().setCount(plant.getCount());
-            } else {
-                existingPlant.get().setCount(1);
-            }
+            existingPlant.get().setCount(plant.getCount());
             existingPlant.get().setDescription(plant.getDescription());
             existingPlant.get().setPlantedDate(plant.getPlantedDate());
             plantService.addPlant(existingPlant.get(), gardenId);

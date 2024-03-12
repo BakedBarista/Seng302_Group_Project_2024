@@ -19,7 +19,7 @@ public class Garden {
     private Long id;
 
     @NotBlank(message = "Garden name cannot be empty", groups = {ValidationGroups.FirstOrder.class})
-    @Pattern(regexp = "^[A-Za-z0-9 .,'-]+$", message = "Garden name must only include letters, numbers, spaces, dots, hyphens, or apostrophes", groups = {ValidationGroups.SecondOrder.class})
+    @Pattern(regexp = "^[\\p{L}0-9 .,'-]+$", message = "Garden name must only include letters, numbers, spaces, dots, hyphens, or apostrophes", groups = {ValidationGroups.SecondOrder.class})
     @Size(min = 3, max = 50, message = "Name must be between 3 and 50 characters.", groups = {ValidationGroups.SecondOrder.class})
     @Column(nullable = false)
     private String name;

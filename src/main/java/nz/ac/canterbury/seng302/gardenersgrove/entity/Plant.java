@@ -25,9 +25,9 @@ public class Plant {
     private String name;
 
 
-    @Min(value = 0, message = "Plant count must be a positive number", groups = {ValidationGroups.SecondOrder.class})
+    @Pattern(regexp = "^[0-9]*$", message = "Plant count must be a positive number", groups = {ValidationGroups.FirstOrder.class})
     @Column(nullable = false)
-    private Integer count = 1;
+    private String count;
 
     @Size(min = 0, max = 511, message = "Plant description must be less than 512 characters", groups = {ValidationGroups.SecondOrder.class})
     @Column(nullable = false)
@@ -44,7 +44,7 @@ public class Plant {
     @Column(nullable = true)
     private String plantImagePath;
 
-    public Plant(String name, Integer count, String description, String plantedDate) {
+    public Plant(String name, String count, String description, String plantedDate) {
         this.name = name;
         this.count = count;
         this.description = description;
@@ -66,11 +66,11 @@ public class Plant {
         this.name = name;
     }
 
-    public Integer getCount() {
+    public String getCount() {
         return count;
     }
 
-    public void setCount(Integer count) {
+    public void setCount(String count) {
         this.count = count;
     }
 
