@@ -53,8 +53,8 @@ public class PlantController {
     public String addPlantForm(@PathVariable("id") Long gardenId, Model model){
 
         logger.info("GET /gardens/${id}/add-plant - display the new plant form");
-        model.addAttribute("gardenId", gardenId);
-        model.addAttribute("plant", new Plant());
+        model.addAttribute("gardenId", id);
+        model.addAttribute("plant", plantService.addPlant(new Plant("",0,"",""), id));
         return "plants/addPlant";
     }
 
@@ -107,6 +107,7 @@ public class PlantController {
         model.addAttribute("gardenId", gardenId);
         model.addAttribute("plantId", plantId);
         model.addAttribute("plant", plant.orElse(null));
+        model.addAttribute("imagePath",plantService.getPlantById(plant_id).get().getPlantImagePath());
         return "plants/editPlant";
     }
 

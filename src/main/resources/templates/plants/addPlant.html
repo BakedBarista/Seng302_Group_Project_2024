@@ -3,6 +3,8 @@
 <head>
     <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
     <title>Add a New Plant</title>
+    <link th:href="@{/css/navbar.css}" rel="stylesheet" />
+    <link th:href="@{/css/styles.css}" rel="stylesheet" />
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -24,6 +26,13 @@
 
 </head>
 <body>
+<div class="navigationBar">
+    <a class="home" th:href="@{/}">Gardeners Grove</a>
+    <div class="buttonContainer">
+        <button><a th:href="@{/gardens}">My Gardens</a></button>
+        <button><a th:href="@{/gardens/create}">Create New Garden</a></button>
+    </div>
+</div>
 <div>
     <div>
         <form id="addPlantForm" th:action="@{/gardens/{gardenId}/add-plant(gardenId=${gardenId})}" th:object="${plant}"  method="post" >
@@ -53,8 +62,15 @@
             <div th:if="${#fields.hasErrors('plantedDate')}" th:errors="*{plantedDate}" style="color: red;"></div>
             <br/>
             <br/>
+            <div class="image-container">
+
+                <img th:src="@{${plant.plantImagePath}}"/>
+                <img th:unless="${plant.plantImagePath}" src="/default.png" alt="Default Plant Image" />
+                <a class="add-image-button" th:href="@{/uploadImage(garden_Id=${gardenId}, plant_Id=${plant.id})}">+</a>
+
+            </div>
             <button type="submit">Submit!</button>
-            <button type="button" onclick="window.location.href = '/gardens'">Cancel</button>
+            <button type="button"><a th:href="@{/gardens/{id}(id=${gardenId})}">Cancel</a></button>
 
 
         </form>
