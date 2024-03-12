@@ -89,7 +89,7 @@ public class PlantController {
             logger.info("Error In Form");
             return "plants/addPlant";
         }
-        if (!file.isEmpty()) {
+        if (file != null && !file.isEmpty()) {
             // Check file size
             if (file.getSize() > MAX_FILE_SIZE) {
                 model.addAttribute("plant", plant);
@@ -116,9 +116,7 @@ public class PlantController {
         } else {
             // No file uploaded
             logger.error("No file uploaded");
-            model.addAttribute("plant", plant);
-            model.addAttribute("gardenId", gardenId);
-            return "plants/addPlant";
+            plantService.addPlant(plant, gardenId);
         }
         return "redirect:/gardens/" + gardenId;
     }
