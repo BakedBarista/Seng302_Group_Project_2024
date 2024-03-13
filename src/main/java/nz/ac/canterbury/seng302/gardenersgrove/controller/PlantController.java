@@ -78,7 +78,7 @@ public class PlantController {
                                      @Validated(ValidationSequence.class) @ModelAttribute("plant") Plant plant,
                                      BindingResult bindingResult,
                                      @RequestParam("image") MultipartFile file,
-                                      Model model) throws Exception {
+                                      Model model) {
         logger.info(plant.getPlantedDate());
 
         if(!plant.getPlantedDate().isEmpty()) {
@@ -93,34 +93,39 @@ public class PlantController {
             logger.info("Error In Form");
             return "plants/addPlant";
         }
-        if (file != null && !file.isEmpty()) {
-            // Check file size
-            if (file.getSize() > MAX_FILE_SIZE) {
-                model.addAttribute("plant", plant);
-                model.addAttribute("gardenId", gardenId);
-                model.addAttribute("fileSizeError", "Image must be less than 10MB");
-                logger.error("File size exceeds the limit");
-                return "plants/addPlant";
-            }
+        try {
+            if (file != null && !file.isEmpty()) {
+                // Check file size
+                if (file.getSize() > MAX_FILE_SIZE) {
+                    model.addAttribute("plant", plant);
+                    model.addAttribute("gardenId", gardenId);
+                    model.addAttribute("fileSizeError", "Image must be less than 10MB");
+                    logger.error("File size exceeds the limit");
+                    return "plants/addPlant";
+                }
 
-            // Check file type
-            String fileName = file.getOriginalFilename();
-            String extension = fileName.substring(fileName.lastIndexOf(".") + 1);
-            if (!allowedExtension.contains(extension.toLowerCase())) {
-                model.addAttribute("plant", plant);
-                model.addAttribute("gardenId", gardenId);
-                model.addAttribute("fileTypeError", "Image must be of type png, jpg or svg");
-                logger.error("Invalid file format");
-                return "plants/addPlant";
-            }
+                // Check file type
+                String fileName = file.getOriginalFilename();
+                String extension = fileName.substring(fileName.lastIndexOf(".") + 1);
+                if (!allowedExtension.contains(extension.toLowerCase())) {
+                    model.addAttribute("plant", plant);
+                    model.addAttribute("gardenId", gardenId);
+                    model.addAttribute("fileTypeError", "Image must be of type png, jpg or svg");
+                    logger.error("Invalid file format");
+                    return "plants/addPlant";
+                }
 
-            // Proceed with uploading the file
-            Plant plantToAdd = plantService.addPlant(plant, gardenId);
-            model.addAttribute("image", uploadController.upload(file, plantToAdd.getId()));
-        } else {
-            // No file uploaded
-            logger.error("No file uploaded");
-            plantService.addPlant(plant, gardenId);
+                // Proceed with uploading the file
+                Plant plantToAdd = plantService.addPlant(plant, gardenId);
+                model.addAttribute("image", uploadController.upload(file, plantToAdd.getId()));
+            } else {
+                // No file uploaded
+                logger.error("No file uploaded");
+                plantService.addPlant(plant, gardenId);
+            }
+        } catch (Exception error) {
+            // TODO - take to error page ?
+            logger.error(String.valueOf(error));
         }
         return "redirect:/gardens/" + gardenId;
     }
