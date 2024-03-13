@@ -10,7 +10,7 @@ import java.time.format.DateTimeFormatter;
 public class UserValidation {
 
     public static boolean userFirstNameValidation(String fname) {
-        String acceptedNameRegex = "^[a-zA-Z\\s'-]*$";
+        String acceptedNameRegex = "^[\\p{L}\\s'-]*$";
         boolean validFirstName = fname.matches(acceptedNameRegex) && !fname.isEmpty();
 
         return validFirstName;
@@ -29,12 +29,12 @@ public class UserValidation {
      * @param fname
      */
     public static boolean userFirstNameWrongCharactersValidation(String fname) {
-        String acceptedNameRegex = "^[a-zA-Z\\s'-]*$";
+        String acceptedNameRegex = "^[\\p{L}\\s'-]*$";
         return fname.matches(acceptedNameRegex);
     }
 
     public static boolean userLastNameValidation(String lname, boolean noLname) {
-        String acceptedNameRegex = "^[a-zA-Z\\s'-]*$";
+        String acceptedNameRegex = "^[\\p{L}\\s'-]*$";
         boolean validLastName = ( noLname || (lname.matches(acceptedNameRegex) && !lname.isEmpty()) );
         return validLastName;
     }
@@ -52,7 +52,7 @@ public class UserValidation {
      * @param fname
      */
     public static boolean userLastNameWrongCharactersValidation(String lname, boolean noLname) {
-        String acceptedNameRegex = "^[a-zA-Z\\s'-]*$";
+        String acceptedNameRegex = "^[\\p{L}\\s'-]*$";
         return ( noLname || lname.matches(acceptedNameRegex) );
     }
 
