@@ -24,7 +24,7 @@ public class UserRepositoryTest {
     @Test
     public void gardenUser_save_returnSaved(){
 
-        GardenUser gardenUser = new GardenUser("liam", "ceelen", "liam@gmai.com", "15", "password", null);
+        GardenUser gardenUser = new GardenUser("liam", "ceelen", "liam@gmai.com", "password", null);
 
         GardenUser user = gardenUserRepository.save(gardenUser);
 
@@ -36,8 +36,8 @@ public class UserRepositoryTest {
     @Test
     public void gardenUser_findAll_returnMoreThanOneUser(){
 
-        GardenUser liam = new GardenUser("liam", "ceelen", "liam@gmai.com", "15", "password", null);
-        GardenUser ben = new GardenUser("ben", "lastname", "ben@gmai.com", "?", "reallylong", null);
+        GardenUser liam = new GardenUser("liam", "ceelen", "liam@gmai.com", "password", null);
+        GardenUser ben = new GardenUser("ben", "lastname", "ben@gmai.com", "reallylong", null);
         gardenUserRepository.save(liam);
         gardenUserRepository.save(ben);
 
@@ -51,7 +51,7 @@ public class UserRepositoryTest {
     @Test
     public void gardenUser_findById_returnsUser(){
 
-        GardenUser liam = new GardenUser("liam", "ceelen", "liam@gmai.com", "15", "password", null);
+        GardenUser liam = new GardenUser("liam", "ceelen", "liam@gmai.com", "password", null);
         gardenUserRepository.save(liam);
 
         Optional<GardenUser> userList = gardenUserRepository.findById(liam.getId());
@@ -63,7 +63,7 @@ public class UserRepositoryTest {
     @Test
     public void gardenUser_findByEmail_returnsUserNotNull(){
 
-        GardenUser liam = new GardenUser("liam", "ceelen", "liam@gmai.com", "15", "password", null);
+        GardenUser liam = new GardenUser("liam", "ceelen", "liam@gmai.com", "password", null);
         gardenUserRepository.save(liam);
 
         GardenUser userList = gardenUserRepository.findByEmail(liam.getEmail()).get();
