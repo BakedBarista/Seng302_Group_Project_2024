@@ -18,7 +18,7 @@ public class Plant {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Please enter a name", groups = {ValidationGroups.FirstOrder.class})
+    @NotBlank(message = "Plant name cannot by empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes", groups = {ValidationGroups.FirstOrder.class})
     @Pattern(regexp = "^[a-zA-Z0-9 \\-.,']*$", message = "Plant name cannot by empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes", groups = {ValidationGroups.SecondOrder.class})
     @Column(nullable = false)
     private String name;
@@ -28,7 +28,7 @@ public class Plant {
     private String count;
 
     @Size(min = 0, max = 511, message = "Plant description must be less than 512 characters", groups = {ValidationGroups.SecondOrder.class})
-    @Column(nullable = false)
+    @Column(nullable = false, length = 512)
     private String description;
 
 
