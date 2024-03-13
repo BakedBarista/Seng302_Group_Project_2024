@@ -34,7 +34,7 @@ On Linux:
 On Windows:
 ```
 gradlew test
-
+```
 
 
 ## Todo (Sprint 1)
