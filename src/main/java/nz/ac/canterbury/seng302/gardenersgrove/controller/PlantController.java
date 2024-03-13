@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.ValidationSequence;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -124,8 +125,8 @@ public class PlantController {
                 plantService.addPlant(plant, gardenId);
             }
         } catch (Exception error) {
-            // TODO - take to error page ?
             logger.error(String.valueOf(error));
+            return "redirect:/500";
         }
         return "redirect:/gardens/" + gardenId;
     }
@@ -142,15 +143,16 @@ public class PlantController {
         logger.info("/garden/{}/plant/{}/edit", gardenId, plantId);
         Optional<Plant> plant = plantService.getPlantById(plantId);
         List<Garden> gardens = gardenService.getAllGardens();
-        model.addAttribute("gardens", gardens);
 
         if (plant.isPresent()) {
             Plant plantOpt = plant.get();
             if (plantOpt.getPlantedDate() != null && !plantOpt.getPlantedDate().isEmpty()) {
-                String convertedDate = plantOpt.getPlantedDate();
-                plantOpt.setPlantedDate(convertedDate);
+                DateTimeFormatter htmlDateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                LocalDate databaseDate = LocalDate.parse(plantOpt.getPlantedDate(), htmlDateFormat);
+                plantOpt.setPlantedDate(databaseDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
             }
         }
+        model.addAttribute("gardens", gardens);
         model.addAttribute("gardenId", gardenId);
         model.addAttribute("plantId", plantId);
         model.addAttribute("plant", plant.orElse(null));
