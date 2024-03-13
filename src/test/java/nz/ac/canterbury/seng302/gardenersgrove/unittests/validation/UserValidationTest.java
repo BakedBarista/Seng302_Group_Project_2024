@@ -77,6 +77,36 @@ public class UserValidationTest {
         assertFalse(nameResult);
     }
 
+    @Test
+    public void testFirstNonAsciiODiaeresis() {
+        String fname = "Weiß-Köhler";
+        boolean nameResult = userRego.userFirstNameValidation(fname);
+        assertTrue(nameResult);
+    }
+
+    /**
+     * Test passing an empty last name to the userNameValidation function
+     * Should return true
+     */
+    @Test
+    public void testFirstNonAsciiAMacron() {
+        String fname = "Tāne";
+        boolean nameResult = userRego.userFirstNameValidation(fname);
+        assertTrue(nameResult);
+    }
+
+    /**
+     * Test passing an empty last name to the userNameValidation function
+     * Should return true
+     */
+    @Test
+    public void testFirstNonAsciiChineseZi() {
+        String fname = "字";
+        boolean nameResult = userRego.userFirstNameValidation(fname);
+        assertTrue(nameResult);
+    }
+
+
     /**
      * Test passing a too long first name to the userNameValidation function
      * Should return true as the name length is validated separately the controlelr
@@ -110,6 +140,42 @@ public class UserValidationTest {
         boolean noLname = false;
         boolean nameResult = userRego.userLastNameValidation(lname, noLname);
         assertFalse(nameResult);
+    }
+
+    /**
+     * Test passing an empty last name to the userNameValidation function
+     * Should return true
+     */
+    @Test
+    public void testNonAsciiö() {
+        String lname = "Weiß-Köhler";
+        boolean noLname = false;
+        boolean nameResult = userRego.userLastNameValidation(lname, noLname);
+        assertTrue(nameResult);
+    }
+
+    /**
+     * Test passing an empty last name to the userNameValidation function
+     * Should return true
+     */
+    @Test
+    public void testNonAsciiā() {
+        String lname = "Tāne";
+        boolean noLname = false;
+        boolean nameResult = userRego.userLastNameValidation(lname, noLname);
+        assertTrue(nameResult);
+    }
+
+    /**
+     * Test passing an empty last name to the userNameValidation function
+     * Should return true
+     */
+    @Test
+    public void testNonAscii字() {
+        String lname = "字";
+        boolean noLname = false;
+        boolean nameResult = userRego.userLastNameValidation(lname, noLname);
+        assertTrue(nameResult);
     }
 
     /**
