@@ -90,18 +90,6 @@ public class GardenUserService {
     }
 
     /**
-     * updates a users password by id
-     * 
-     * @param password The hashed user password
-     * @param id The users id
-     */
-
-    public void updatePasswordById(String password, long id) {
-        gardenUserRepository.updatePasswordById(password, id);
-        return;
-    }
-
-    /**
      * Updates a GardenUser's profile picture
      */
     public void setProfilePicture(long id, String contentType, byte[] profilePicture) {
