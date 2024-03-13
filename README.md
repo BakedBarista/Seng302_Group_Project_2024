@@ -22,29 +22,24 @@ gradlew bootRun
 By default, the application will run on local port 8080 [http://localhost:8080](http://localhost:8080)
 
 ### 2 - Using the application
-> You may want to include information here about how to use the application, notably:
-> - default user credentials if required
-> - link to home/login page
-> - disclosing known issues (and workarounds if applicable)
-> - ...
-> 
+To access the application navigate to `http://localhost:8080/` in your browser of choice.
 
 ## How to run tests
-> Once you have some tests written make sure you detail how to run them, especially if there are special requirements.
+To run tests use `./gradlew test`
 
 ## Todo (Sprint 1)
 
--[x] Add team name into `build.gradle`
--[x] Update this README title
--[x] Update this README contributors
+- [x] Add team name into `build.gradle`
+- [x] Update this README title
+- [x] Update this README contributors
 
 ## Todo (Sprint 2)
 
--[ ] Update team name into `build.gradle`
--[ ] Update this README title
--[ ] Update this README contributors
--[ ] Set up Gitlab CI server (refer to the student guide on Scrumboard)
--[ ] Decide on a LICENSE
+- [ ] Update team name into `build.gradle`
+- [ ] Update this README title
+- [ ] Update this README contributors
+- [ ] Set up Gitlab CI server (refer to the student guide on Scrumboard)
+- [ ] Decide on a LICENSE
 
 ## Contributors
 
