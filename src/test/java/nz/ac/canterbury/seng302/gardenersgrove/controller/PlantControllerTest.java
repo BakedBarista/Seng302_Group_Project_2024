@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
@@ -18,6 +19,9 @@ import static org.mockito.Mockito.*;
 public class PlantControllerTest {
     @Mock
     private PlantService plantService;
+
+    @Mock
+    private MultipartFile file;
 
     private Model model;
 
@@ -47,7 +51,7 @@ public class PlantControllerTest {
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
-        String returnPage = plantController.submitAddPlantForm(gardenId, validPlant, bindingResult, model);
+        String returnPage = plantController.submitAddPlantForm(gardenId, validPlant, bindingResult, file, model);
         assertEquals(expectedReturnPage, returnPage);
     }
 
@@ -59,7 +63,7 @@ public class PlantControllerTest {
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
-        String returnPage = plantController.submitAddPlantForm(gardenId, invalidPlant, bindingResult, model);
+        String returnPage = plantController.submitAddPlantForm(gardenId, invalidPlant, bindingResult, file, model);
         assertEquals(expectedReturnPage, returnPage);
     }
 
