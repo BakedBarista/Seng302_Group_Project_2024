@@ -15,6 +15,7 @@
     <main class="main-container">
         <h1>Edit</h1>
         <div th:insert="fragments/edit-profile-picture.html"></div>
+        <p><a href="/users/edit/password">Change Password</a></p>
         <form th:action="edit" method="post">
             <label th:class="'form-group ' + ${firstNameTooLong != null || emptyFirstName != null || wrongCharFirstName != null ? 'form-group-error' : ''}">
                 First Name

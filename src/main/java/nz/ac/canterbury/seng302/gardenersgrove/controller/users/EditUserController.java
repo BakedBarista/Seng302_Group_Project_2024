@@ -166,6 +166,16 @@ public class EditUserController {
         return "users/editTemplate";
     }
 
+    /**
+     * Shows the user the form
+     */
+    @GetMapping("/users/edit/password")
+    public String editPassword() {
+        logger.info("GET /users/edit/password");
+
+        return "users/editPassword";
+    }
+
     @PostMapping("/users/edit/password")
     public String submitPassword(
             @RequestParam(name = "oldPassword") String oldPassword,
@@ -197,10 +207,10 @@ public class EditUserController {
         if (valid) {
             user.setPassword(newPassword);
             userService.addUser(user);
-            return "users/editTemplate";
+            return "users/editPassword";
         }
 
-        return "users/editTemplate";
+        return "users/editPassword";
     }
 
     /**
