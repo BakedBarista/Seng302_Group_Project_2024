@@ -178,19 +178,27 @@ public class EditUserController {
 
         GardenUser user = userService.getUserById(id);
 
+        boolean valid = true;
+
         if(!user.checkPassword(oldPassword)){
             model.addAttribute("incorrectOld", "Your old password is incorrect");
-            return "users/editPassword";
-        } else if(!userRegoValidation.userPasswordMatchValidation(newPassword, confirmPassword)){
-            model.addAttribute("incorrectMatch", "The new passwords do not match");
-            return "users/editPassword";
-        }else if(!userRegoValidation.userPasswordStrengthValidation(newPassword)){
-            model.addAttribute("incorrectStrength", "Your password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character");
-            return "users/editPassword";
+            valid = false;
         }
 
-        user.setPassword(newPassword);
-        userService.addUser(user);
+        if(!userRegoValidation.userPasswordMatchValidation(newPassword, confirmPassword)){
+            model.addAttribute("incorrectMatch", "The new passwords do not match");
+            valid = false;
+        }else if(!userRegoValidation.userPasswordStrengthValidation(newPassword)){
+            model.addAttribute("incorrectStrength", "Your password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character");
+            valid = false;
+        }
+
+        if (valid) {
+            user.setPassword(newPassword);
+            userService.addUser(user);
+            return "users/editTemplate";
+        }
+
         return "users/editTemplate";
     }
 
