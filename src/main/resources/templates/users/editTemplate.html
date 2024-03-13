@@ -16,22 +16,24 @@
         <h1>Edit</h1>
         <div th:insert="fragments/edit-profile-picture.html"></div>
         <form th:action="edit" method="post">
-            <label class="form-group">
+            <label th:class="'form-group ' + ${firstNameTooLong != null || emptyFirstName != null || wrongCharFirstName != null ? 'form-group-error' : ''}">
                 First Name
                 <input type="text" th:name="fname" th:value="*{fname}">
                 <span class = "error" th:if="${firstNameTooLong != null}" th:text="*{firstNameTooLong}"></span>
-                <span class = "error" th:if="${incorrectFirstName != null}" th:text="*{incorrectFirstName}"></span>
+                <span class = "error" th:if="${emptyFirstName != null}" th:text="*{emptyFirstName}"></span>
+                <span class = "error" th:if="${wrongCharFirstName != null}" th:text="*{wrongCharFirstName}"></span>
             </label>
-            <label class="form-group">
+            <label th:class="'form-group ' + ${lastNameTooLong != null || emptyLastName != null || wrongCharLastName != null ? 'form-group-error' : ''}">
                 Last Name
                 <input type="text" th:name="lname" th:value="*{lname}" id="lname">
                 <span class = "error" th:if="${lastNameTooLong != null}" th:text="*{lastNameTooLong}"></span>
-                <span class = "error" th:if="${incorrectLastName != null}" th:text="*{incorrectLastName}"></span>
+                <span class = "error" th:if="${emptyLastName != null}" th:text="*{emptyLastName}"></span>
+                <span class = "error" th:if="${wrongCharLastName != null}" th:text="*{wrongCharLastName}"></span>
             </label>
             <label class="form-checkbox">
                 <input type="checkbox" th:name="noLname" th:value="*{noLname}" th:checked="*{noLname}" id="noLname"> I have no surname
             </label>
-            <label class="form-group">
+            <label th:class="'form-group ' + ${emailInuse != null || incorrectEmail != null ? 'form-group-error' : ''}">
                 Email
                 <input type="text" th:name="email" th:value="*{email}" inputmode="email">
                 <span class = "error" th:if="${emailInuse != null}" th:text="*{emailInuse}"></span>
@@ -41,7 +43,7 @@
                 Address
                 <input type="text" th:name="address" th:value="*{address}">
             </label>
-            <label class="form-group">
+            <label th:class="'form-group ' + ${youngDob != null || oldDob != null || invalidDob != null ? 'form-group-error' : ''}">
                 Date of Birth (optional)
                 <input type="text" th:name="dob" th:value="*{dob}">
                 <span class = "error" th:if="${youngDob != null}" th:text="*{youngDob}"></span>
@@ -53,13 +55,23 @@
         </form>
     </main>
     <script>
-        const noLname = document.getElementById('noLname');
-        const lname = document.getElementById('lname');
-
-        noLname.addEventListener('input', (ev) => {
-            noLname.value = noLname.checked;
-            lname.disabled = noLname.checked;
-            lname.requred = !noLname.checked;
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const noLname = document.getElementById('noLname');
+            const lname = document.getElementById('lname');
+    
+            // Function to check the initial state of noLname
+            function checkNoLnameState() {
+                lname.disabled = noLname.checked;
+            }
+    
+            // Event listener for changes in noLname
+            noLname.addEventListener('input', (ev) => {
+                noLname.value = noLname.checked;
+                checkNoLnameState();
+            });
+    
+            // Check the initial state when the page loads
+            checkNoLnameState();
         });
     </script>
 </body>

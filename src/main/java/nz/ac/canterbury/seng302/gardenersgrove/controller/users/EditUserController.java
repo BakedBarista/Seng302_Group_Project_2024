@@ -112,16 +112,22 @@ public class EditUserController {
             }
         }
 
-        if ((!userValidation.userFirstNameValidation(fname))){
-            model.addAttribute("incorrectFirstName", "First name cannot be empty and must only include letters, spaces,hyphens or apostrophes");
+        if ((!userValidation.userFirstNameEmptyValidation(fname))){
+            model.addAttribute("emptyFirstName", "First name cannot be empty");
+            valid = false;
+        } else if (!userValidation.userFirstNameWrongCharactersValidation(fname)){
+            model.addAttribute("wrongCharFirstName", "First name must only include letters, spaces,hyphens or apostrophes");
             valid = false;
         } else if ((fname.length() > maxNameLength)) {
             model.addAttribute("firstNameTooLong", "First name must be 64 characters long or less");
             valid = false;
         }
 
-        if ((!userValidation.userLastNameValidation(lname, noLname))){
-            model.addAttribute("incorrectLastName", "Last name cannot be empty and must only include letters, spaces,hyphens or apostrophes");
+        if ((!userValidation.userLastNameEmptyValidation(lname, noLname))){
+            model.addAttribute("emptyLastName", "Last name cannot be empty");
+            valid = false;
+        } else if (!userValidation.userLastNameWrongCharactersValidation(lname, noLname)){
+            model.addAttribute("wrongCharLastName", "Last name must only include letters, spaces,hyphens or apostrophes");
             valid = false;
         } else if (noLname==false && lname.length() > maxNameLength){
             model.addAttribute("lastNameTooLong", "Last name must be 64 characters long or less");

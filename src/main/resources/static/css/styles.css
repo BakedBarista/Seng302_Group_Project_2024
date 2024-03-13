@@ -69,6 +69,11 @@ body {
     margin: 8px 0;
 }
 
+.form-group-error input {
+    background: pink;
+    outline: 1px solid red;
+}
+
 .form-group input[type="file"] {
     display: none;
 }
@@ -85,11 +90,7 @@ body {
 
 .error {
     display: block;
-    width: 100%;
-    height: 20px;
     color: red;
-    z-index: 11;
-    position: relative;
 }
 
 .profile-picture-large {

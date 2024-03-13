@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
@@ -18,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 /**
  * Controller for registering new users
  */
-
 
 @Controller
 public class RegisterController {
@@ -147,15 +147,19 @@ public class RegisterController {
     }
 
     /**
-     * Submits the form
+     * Creates a new user for testing purposes
      */
-    @GetMapping("/users/dummy")
+    @PostConstruct
     public String createDummy() {
-        logger.info("POST /users/dummy");
+        try {
+            GardenUser user = new GardenUser("John", "Doe", "john.doe@gmail.com", "Jack Erskine 133", "password",
+                    "01/01/1970");
+            userService.addUser(user);
 
-        GardenUser user = new GardenUser("John", "Doe", "john.doe@gmail.com", "Jack Erskine 133", "password",
-                "01/01/1970");
-        userService.addUser(user);
+            logger.info("Created dummy user for testing purposes");
+        } catch (Exception e) {
+            logger.error("Error while creating dummy user", e);
+        }
 
         return "redirect:/";
     }
