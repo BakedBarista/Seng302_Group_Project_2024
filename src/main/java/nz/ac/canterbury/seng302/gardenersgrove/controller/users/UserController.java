@@ -25,8 +25,13 @@ public class UserController {
     @Autowired
     private GardenUserService userService;
 
+    private static final String DEFAULT_PROFILE_PICTURE_URL = "https://www.gravatar.com/avatar/5197c9706fccb18e1c912c43172fcf0b?s=100&d=identicon";
+
     /**
-     * Shows the user the login form
+     * Shows the user's profile page
+     * @param authentication authentication object representing the current user
+     * @param model Thymeleaf model
+     * @return view name for the user profile page
      */
     @GetMapping("users/user")
     public String view(Authentication authentication, Model model) {
@@ -50,10 +55,11 @@ public class UserController {
         return "users/user";
     }
 
-    private static final String DEFAULT_PROFILE_PICTURE_URL = "https://www.gravatar.com/avatar/5197c9706fccb18e1c912c43172fcf0b?s=100&d=identicon";
 
     /**
-     * Shows a given user's profile picture
+     * Shows a given user's profile
+     * @param id the id of the user
+     * @return ResponseEntity with the profile picture bytes or a redirect to a default profile picture URL
      */
     @GetMapping("users/{id}/profile-picture")
     public ResponseEntity<byte[]> profilePicture(@PathVariable("id") Long id) {
