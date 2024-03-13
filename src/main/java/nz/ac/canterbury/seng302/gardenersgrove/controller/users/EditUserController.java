@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import nz.ac.canterbury.seng302.gardenersgrove.validation.UserValidation;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -173,6 +175,16 @@ public class EditUserController {
     }
 
     /**
+     * Shows the user the form
+     */
+    @GetMapping("/users/edit/password")
+    public String editPassword() {
+        logger.info("GET /users/edit/password");
+
+        return "users/editPassword";
+    }
+
+    /**
      * Handles submission of password edits
      * @param oldPassword user's current password
      * @param newPassword user's new password
@@ -186,12 +198,35 @@ public class EditUserController {
             @RequestParam(name = "newPassword") String newPassword,
             @RequestParam(name = "confirmPassword") String confirmPassword,
             Model model) {
+
         long id = (long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
+        UserValidation userRegoValidation = new UserValidation();
+
         GardenUser user = userService.getUserById(id);
-        user.setPassword(newPassword);
-        userService.addUser(user);
-        return "users/editTemplate";
+
+        boolean valid = true;
+
+        if(!user.checkPassword(oldPassword)){
+            model.addAttribute("incorrectOld", "Your old password is incorrect");
+            valid = false;
+        }
+
+        if(!userRegoValidation.userPasswordMatchValidation(newPassword, confirmPassword)){
+            model.addAttribute("incorrectMatch", "The new passwords do not match");
+            valid = false;
+        }else if(!userRegoValidation.userPasswordStrengthValidation(newPassword)){
+            model.addAttribute("incorrectStrength", "Your password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character");
+            valid = false;
+        }
+
+        if (valid) {
+            user.setPassword(newPassword);
+            userService.addUser(user);
+            return "users/editPassword";
+        }
+
+        return "users/editPassword";
     }
 
 
