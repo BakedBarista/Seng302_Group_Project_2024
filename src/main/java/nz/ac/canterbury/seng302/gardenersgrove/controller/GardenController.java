@@ -83,8 +83,6 @@ public class GardenController {
     public String responses(Model model) {
         logger.info("Get /gardens - display all gardens");
         model.addAttribute("gardens", gardenService.getAllGardens());
-        List<Garden> gardens = gardenService.getAllGardens();
-        model.addAttribute("gardens", gardens);
         return "gardens/viewGardens";
     }
 

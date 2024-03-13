@@ -36,11 +36,11 @@ public class UploadController {
     Logger logger = LoggerFactory.getLogger(UploadController.class);
     private final PlantService plantService;
 
-
+    @Autowired
     private GardenService gardenService;
 
-    @Autowired
-    private GardenRepository gardenRepository;
+//   @Autowired
+//    private GardenRepository gardenRepository;
 
     private static final List<String> allowedExtension = Arrays.asList("jpg", "png", "svg");
 
@@ -58,7 +58,7 @@ public class UploadController {
                                     Model model) {
         model.addAttribute("plantId", plantId);
         model.addAttribute("gardenId", gardenId);
-        this.gardenService = new GardenService(gardenRepository);
+        //this.gardenService = new GardenService(gardenRepository);
         List<Garden> gardens = gardenService.getAllGardens();
         model.addAttribute("gardens", gardens);
         return "images/uploadPage";
