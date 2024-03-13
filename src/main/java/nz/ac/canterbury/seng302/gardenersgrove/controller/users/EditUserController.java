@@ -41,6 +41,7 @@ public class EditUserController {
 
     /**
      * Setter method for userServer
+     *
      * @param userService The GardenUserService to be set
      */
     public void setUserService(GardenUserService userService) {
@@ -50,6 +51,7 @@ public class EditUserController {
 
     /**
      * Shows the edit user form
+     *
      * @param authentication authentication object representing the current user
      * @param model Thymeleaf model
      * @return The edit user template view
@@ -74,6 +76,7 @@ public class EditUserController {
 
     /**
      * Handles the submission of user edits
+     *
      * @param fname user's current first name
      * @param lname user's current last name
      * @param noLname True if the user has no last name
@@ -186,6 +189,7 @@ public class EditUserController {
 
     /**
      * Handles submission of password edits
+     *
      * @param oldPassword user's current password
      * @param newPassword user's new password
      * @param confirmPassword confirmation of the new password
@@ -232,6 +236,7 @@ public class EditUserController {
 
     /**
      * Handles the submission of profile picture edits
+     *
      * @param authentication authentication object representing the current user
      * @param file the MultipartFile containing the new profile picture
      * @param referer the referer header value

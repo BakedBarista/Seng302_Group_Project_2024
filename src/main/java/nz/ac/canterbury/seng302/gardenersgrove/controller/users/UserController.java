@@ -29,6 +29,7 @@ public class UserController {
 
     /**
      * Shows the user's profile page
+     *
      * @param authentication authentication object representing the current user
      * @param model Thymeleaf model
      * @return view name for the user profile page
@@ -58,6 +59,7 @@ public class UserController {
 
     /**
      * Shows a given user's profile
+     *
      * @param id the id of the user
      * @return ResponseEntity with the profile picture bytes or a redirect to a default profile picture URL
      */

@@ -24,6 +24,7 @@ public class LoginController {
 
     /**
      * Shows the login page
+     *
      * @param error error message, if there's any
      * @param model Thymeleaf model
      * @return login page view
@@ -37,6 +38,7 @@ public class LoginController {
 
     /**
      * Authenticates user login
+     *
      * @param email user's email address
      * @param password user's password
      * @param error error message

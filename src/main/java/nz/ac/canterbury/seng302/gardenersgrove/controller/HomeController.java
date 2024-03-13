@@ -14,6 +14,7 @@ public class HomeController {
 
     /**
      * Shows the user the form
+     *
      * @return redirect to /demo
      */
     @GetMapping("/")

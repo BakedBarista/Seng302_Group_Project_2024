@@ -35,6 +35,7 @@ public class RegisterController {
 
     /**
      * Shows the user the registration form
+     *
      * @return redirect to /demo
      */
     @GetMapping("/users/register")
@@ -46,6 +47,7 @@ public class RegisterController {
 
     /**
      * Handles the submission of user registration form
+     *
      * @param fname user's first name
      * @param lname user's last name
      * @param noLname Boolean, true if user has no last name

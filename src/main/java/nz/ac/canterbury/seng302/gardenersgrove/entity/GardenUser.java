@@ -47,6 +47,7 @@ public class GardenUser {
 
     /**
      * Creates a new GardenUser object
+     *
      * @param fname first name of user
      * @param lname last name of user 
      * @param email email of user 
@@ -62,81 +63,141 @@ public class GardenUser {
         this.setPassword(password);
     }
 
+    /**
+     * Gets the authorities granted to the user
+     *
+     * @return
+     */
     public List<GrantedAuthority> getAuthorities() {
         return List.of();
     }
 
-    public void setID(Long id) {
-        this.id = id;
-    }
+    /**
+     * Retrieves the id of user
+     *
+     * @return id of user
+     */
     public Long getId() {
         return id;
     }
 
     /**
      * Setter for the user's first name
+     *
      * @param fname the user's first name
      */
     public void setFname(String fname) {
         this.fname = fname;
     }
+
+    /**
+     * Retrieves the user's first name
+     *
+     * @return user's first name
+     */
     public String getFname() {
         return fname;
     }
 
     /**
      * Setter for the user's last name
+     *
      * @param lname the user's last name
      */
     public void setLname(String lname) {
         this.lname = lname;
     }
 
+    /**
+     * Retrieves user's last name
+     *
+     * @return user's last name
+     */
     public String getLname() {
         return lname;
     }
 
-
     /**
      * Setter for the user's email
+     *
      * @param email the user's email
      */
     public void setEmail(String email) {
         this.email = email;
     }
+
+    /**
+     * Retrieves user's email
+     *
+     * @return user's email
+     */
     public String getEmail() {
         return email;
     }
 
     /**
      * Setter for the user's date of birth
+     *
      * @param DOB the user's date of birth
      */
     public void setDOB(String DOB) {
         this.DOB = DOB;
     }
+
+    /**
+     * Retrieves user's date of birth
+     *
+     * @return user's date of birth
+     */
     public String getDOB() {
         return DOB;
     }
 
+    /**
+     * Sets the password of the user
+     *
+     * @param password
+     */
     public void setPassword(String password) {
         PasswordEncoder encoder = new BCryptPasswordEncoder();
         this.password = encoder.encode(password);
     }
 
+    /**
+     * Checks if the provided password matches the user's password
+     *
+     * @param password password to check
+     * @return True if the password matches, otherwise false
+     */
     public boolean checkPassword(String password) {
         PasswordEncoder encoder = new BCryptPasswordEncoder();
         return encoder.matches(password, this.password);
     }
 
+    /**
+     * Retrieves the content type of the user's profile picture
+     *
+     * @return The content type of the profile picture
+     */
     public String getProfilePictureContentType() {
         return profilePictureContentType;
     }
 
+    /**
+     * Retrieves the byte array representing the user's profile picture
+     *
+     * @return The byte array of the profile picture
+     */
     public byte[] getProfilePicture() {
         return profilePicture;
     }
 
+    /**
+     * Sets the profile picture of the user
+     *
+     * @param contentType contentType The content type of the profile picture
+     * @param profilePicture rofilePicture The byte array representing the profile picture
+     */
     public void setProfilePicture(String contentType, byte[] profilePicture) {
         this.profilePictureContentType = contentType;
         this.profilePicture = profilePicture;
