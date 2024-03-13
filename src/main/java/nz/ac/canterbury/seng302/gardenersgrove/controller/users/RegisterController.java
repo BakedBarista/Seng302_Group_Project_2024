@@ -54,7 +54,6 @@ public class RegisterController {
             @RequestParam(name = "lname", required = false) String lname,
             @RequestParam(name = "noLname", defaultValue = "false") boolean noLname,
             @RequestParam(name = "email") String email,
-            @RequestParam(name = "address") String address,
             @RequestParam(name = "password") String password,
             @RequestParam(name = "confirmPassword") String confirmPassword,
             @RequestParam(name = "dob", required = false) String dob,
@@ -134,6 +133,7 @@ public class RegisterController {
             }
         }
 
+
         model.addAttribute("fname", fname);
         model.addAttribute("lname", lname);
         model.addAttribute("noLname", noLname);
@@ -152,7 +152,7 @@ public class RegisterController {
     @PostConstruct
     public String createDummy() {
         try {
-            GardenUser user = new GardenUser("John", "Doe", "john.doe@gmail.com", "Jack Erskine 133", "password",
+            GardenUser user = new GardenUser("John", "Doe", "john.doe@gmail.com", "password",
                     "01/01/1970");
             userService.addUser(user);
 

@@ -58,7 +58,6 @@ public class EditUserController {
         model.addAttribute("lname", user.getLname());
         model.addAttribute("noLname", user.getLname() == null);
         model.addAttribute("email", user.getEmail());
-        model.addAttribute("address", user.getAddress());
         model.addAttribute("dob", user.getDOB());
 
         return "users/editTemplate";
@@ -70,7 +69,6 @@ public class EditUserController {
      * @param lname user's current last name
      * @param noLname true if user has no last name
      * @param email user's current email
-     * @param address user's current address
      * @param dob user's current date of birth
      * @param model thymeleaf model
      * @return
@@ -81,7 +79,6 @@ public class EditUserController {
             @RequestParam(name = "lname", required = false) String lname,
             @RequestParam(name = "noLname", defaultValue = "false") boolean noLname,
             @RequestParam(name = "email") String email,
-            @RequestParam(name = "address") String address,
             @RequestParam(name = "dob") String dob,
             Authentication authentication, Model model) {
         logger.info("POST /users/edit");
@@ -150,7 +147,6 @@ public class EditUserController {
             user.setFname(fname);
             user.setLname(lname);
             user.setEmail(email);
-            user.setAddress(address);
             user.setDOB(dob);
             userService.addUser(user);
 
@@ -163,7 +159,6 @@ public class EditUserController {
         model.addAttribute("lname", lname);
         model.addAttribute("noLname", noLname);
         model.addAttribute("email", email);
-        model.addAttribute("address", address);
         model.addAttribute("dob", dob);
 
         return "users/editTemplate";

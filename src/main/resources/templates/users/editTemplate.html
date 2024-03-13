@@ -39,10 +39,6 @@
                 <span class = "error" th:if="${emailInuse != null}" th:text="*{emailInuse}"></span>
                 <span class = "error" th:if="${incorrectEmail != null}" th:text="*{incorrectEmail}"></span>
             </label>
-            <label class="form-group">
-                Address
-                <input type="text" th:name="address" th:value="*{address}">
-            </label>
             <label th:class="'form-group ' + ${youngDob != null || oldDob != null || invalidDob != null ? 'form-group-error' : ''}">
                 Date of Birth (optional)
                 <input type="text" th:name="dob" th:value="*{dob}">

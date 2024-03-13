@@ -9,7 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import jakarta.persistence.*;
 
 /**
- * Entity class reflecting an entry of fname, lname, email, address, password and date of birth(DOB)
+ * Entity class reflecting an entry of fname, lname, email, password and date of birth(DOB)
  * Note the @link{Entity} annotation required for declaring this as a persistence entity
  */
 @Entity
@@ -26,9 +26,6 @@ public class GardenUser {
 
     @Column(nullable = false, unique = true)
     private String email;
-
-    @Column(nullable = false)
-    private String address;
 
     @Column(nullable = false)
     private String password;
@@ -53,15 +50,13 @@ public class GardenUser {
      * @param fname first name of user
      * @param lname last name of user 
      * @param email email of user 
-     * @param address address of user 
      * @param password password of user 
      * @param DOB date of birth of use 
      */
-    public GardenUser(String fname, String lname, String email, String address, String password, String DOB) {
+    public GardenUser(String fname, String lname, String email, String password, String DOB) {
         this.fname = fname;
         this.lname = lname;
         this.email = email;
-        this.address = address;
         this.DOB = DOB;
 
         this.setPassword(password);
@@ -111,17 +106,6 @@ public class GardenUser {
     }
     public String getEmail() {
         return email;
-    }
-
-    /**
-     * Setter for the user's address
-     * @param address the user's address
-     */
-    public void setAddress(String address) {
-        this.address = address;
-    }
-    public String getAddress() {
-        return address;
     }
 
     /**
