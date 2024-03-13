@@ -96,13 +96,17 @@ public class RegisterController {
         }else if (!userValidation.userEmailValidation(email)){
              model.addAttribute("incorrectEmail", "Email address must be in the form ‘jane@doe.nz’");
             valid = false;
-        } else if (!userValidation.userPasswordMatchValidation(password, confirmPassword)){
+        }
+
+        if (!userValidation.userPasswordMatchValidation(password, confirmPassword)){
             model.addAttribute("matchPassword", "Passwords do not match");
             valid = false;
         } else if (!userValidation.userPasswordStrengthValidation(password)){
             model.addAttribute("weakPassword", "Your password must beat least 8 characters long and include at least one uppercase letter, one lowercase letter, one number,and one special character");
             valid = false;
-         } else if (!userValidation.userInvalidDateValidation(dob)){
+         }
+
+         if (!userValidation.userInvalidDateValidation(dob)){
              model.addAttribute("invalidDob", "Date is not in valid format, (DD/MM/YYYY)");
             valid = false;
          } else if (!userValidation.userYoungDateValidation(dob)){
