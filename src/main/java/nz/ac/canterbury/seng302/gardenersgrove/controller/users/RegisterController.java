@@ -117,7 +117,7 @@ public class RegisterController {
          }
 
         if (valid) {
-            userService.addUser(new GardenUser(fname, lname, email, address, password, dob));
+            userService.addUser(new GardenUser(fname, lname, email, password, dob));
 
             try {
                 request.logout();
@@ -138,7 +138,6 @@ public class RegisterController {
         model.addAttribute("lname", lname);
         model.addAttribute("noLname", noLname);
         model.addAttribute("email", email);
-        model.addAttribute("address", address);
         model.addAttribute("password", password);
         model.addAttribute("confirmPassword", confirmPassword);
         model.addAttribute("dob", dob);
