@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng302.gardenersgrove;
+package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.repository;
 
 import java.util.List;
 import java.util.Optional;
