@@ -60,7 +60,6 @@ public class EditUserController {
         model.addAttribute("lname", user.getLname());
         model.addAttribute("noLname", user.getLname() == null);
         model.addAttribute("email", user.getEmail());
-        model.addAttribute("address", user.getAddress());
         model.addAttribute("dob", user.getDOB());
 
         return "users/editTemplate";
@@ -72,7 +71,6 @@ public class EditUserController {
      * @param lname user's current last name
      * @param noLname true if user has no last name
      * @param email user's current email
-     * @param address user's current address
      * @param dob user's current date of birth
      * @param model thymeleaf model
      * @return
@@ -83,7 +81,6 @@ public class EditUserController {
             @RequestParam(name = "lname", required = false) String lname,
             @RequestParam(name = "noLname", defaultValue = "false") boolean noLname,
             @RequestParam(name = "email") String email,
-            @RequestParam(name = "address") String address,
             @RequestParam(name = "dob") String dob,
             Authentication authentication, Model model) {
         logger.info("POST /users/edit");
@@ -114,16 +111,22 @@ public class EditUserController {
             }
         }
 
-        if ((!userValidation.userFirstNameValidation(fname))){
-            model.addAttribute("incorrectFirstName", "First name cannot be empty and must only include letters, spaces,hyphens or apostrophes");
+        if ((!userValidation.userFirstNameEmptyValidation(fname))){
+            model.addAttribute("emptyFirstName", "First name cannot be empty");
+            valid = false;
+        } else if (!userValidation.userFirstNameWrongCharactersValidation(fname)){
+            model.addAttribute("wrongCharFirstName", "First name must only include letters, spaces,hyphens or apostrophes");
             valid = false;
         } else if ((fname.length() > maxNameLength)) {
             model.addAttribute("firstNameTooLong", "First name must be 64 characters long or less");
             valid = false;
         }
 
-        if ((!userValidation.userLastNameValidation(lname, noLname))){
-            model.addAttribute("incorrectLastName", "Last name cannot be empty and must only include letters, spaces,hyphens or apostrophes");
+        if ((!userValidation.userLastNameEmptyValidation(lname, noLname))){
+            model.addAttribute("emptyLastName", "Last name cannot be empty");
+            valid = false;
+        } else if (!userValidation.userLastNameWrongCharactersValidation(lname, noLname)){
+            model.addAttribute("wrongCharLastName", "Last name must only include letters, spaces,hyphens or apostrophes");
             valid = false;
         } else if (noLname==false && lname.length() > maxNameLength){
             model.addAttribute("lastNameTooLong", "Last name must be 64 characters long or less");
@@ -146,7 +149,6 @@ public class EditUserController {
             user.setFname(fname);
             user.setLname(lname);
             user.setEmail(email);
-            user.setAddress(address);
             user.setDOB(dob);
             userService.addUser(user);
 
@@ -159,7 +161,6 @@ public class EditUserController {
         model.addAttribute("lname", lname);
         model.addAttribute("noLname", noLname);
         model.addAttribute("email", email);
-        model.addAttribute("address", address);
         model.addAttribute("dob", dob);
 
         return "users/editTemplate";
