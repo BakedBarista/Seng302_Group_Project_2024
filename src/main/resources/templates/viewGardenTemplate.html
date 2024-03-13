@@ -2,35 +2,40 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
-    <title>View Gardens</title>
+    <title>Create New Garden</title>
 </head>
 <body>
+<div th:replace="navbar :: navbar"></div>
 <div>
     <div>
-        <h4>Gardens:</h4>
-        <table>
-            <thead>
-            <tr>
-                <th>Name</th>
-                <th>Location</th>
-                <th>Size</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:if="${gardens.empty}">
-                <td colspan="3"> Please add a garden first</td>
-            </tr>
-            <tr th:each="garden : ${gardens}">
-                <td><a th:href="@{/gardens/${garden.id}}"><span th:text="${garden.name}">Name</span></a></td>
-                <td><span th:text="${garden.location}"> Location </span></td>
-                <td><span th:text="${garden.size}"> Size </span></td>
-            </tr>
-            </tbody>
-        </table>
+        <form th:action="@{/gardens/create}" method="post" th:object="${gardenForm}">
+            <!-- Garden Name Field -->
+            <label for="name"> Garden Name: </label>
+            <input type="text" class="form-control" id="name" placeholder="Garden Name"
+                   th:field="*{name}" autofocus>
+            <div class="error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name Error</div>
+            <br/>
+            <!-- Garden Location Field -->
+            <label for="location"> Garden Location: </label>
+            <input type="text" class="form-control" id="location" placeholder="Location"
+                   th:field="*{location}" autofocus>
+            <div class="error" th:if="${#fields.hasErrors('location')}" th:errors="*{location}">Location Error</div>
+            <br/>
+            <!-- Garden Size Field -->
+            <label for="size"> Garden Size (m^2): </label>
+            <input type="text" class="form-control" id="size" placeholder="Size of Garden"
+                   th:field="*{size}" autofocus>
+            <div class="error" th:if="${#fields.hasErrors('size')}" th:errors="*{size}">Size Error</div>
+            <br/>
+            <button type="submit">Submit!</button>
+            <button type="button" onclick="window.location.href = '/gardens'">Cancel</button>
+        </form>
     </div>
+
     <div>
-        <a th:href="@{/gardenform}">Back to form</a>
-        <a th:href="@{/home}">Back to home</a>
+        <br />
+        <button><a th:href="@{/gardens}">Back to Gardens</a></button>
+        <button><a th:href="@{/}">Return home</a></button>
     </div>
 </div>
 </body>

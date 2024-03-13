@@ -2,16 +2,18 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.ValidationSequence;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 import java.util.Optional;
 
@@ -22,11 +24,13 @@ import java.util.Optional;
 public class GardenController {
     Logger logger = LoggerFactory.getLogger(GardenController.class);
 
-    private final GardenService formService;
+    private final GardenService gardenService;
+    private final PlantService plantService;
 
     @Autowired
-    public GardenController(GardenService formService) {
-        this.formService = formService;
+    public GardenController(GardenService gardenService, PlantService plantService) {
+        this.gardenService = gardenService;
+        this.plantService = plantService;
     }
 
     /**
@@ -43,64 +47,30 @@ public class GardenController {
                        @RequestParam(name="displaySize", required = false, defaultValue = "") String displaySize,
                        Model model) {
         logger.info("GET /gardens/create - display the new garden form");
-//        formService.addGardenFormResult(new Garden(displayName, displayLocation, displaySize));
-//        model.addAttribute("displayName", displayName);
-//        model.addAttribute("displayGardenLocation", displayLocation);
-//        model.addAttribute("displayGardenSize", displaySize);
+        model.addAttribute("garden", new Garden());
+        List<Garden> gardens = gardenService.getAllGardens();
+        model.addAttribute("gardens", gardens);
         return "gardens/createGarden";
     }
 
+    /**
+     * Submits form to be displayed
+     * @param garden
+     * @param bindingResult
+     * @param model
+     * @return gardenForm
+     */
     @PostMapping("/gardens/create")
-    public String submitForm( @RequestParam(name="name") String gardenName,
-                              @RequestParam(name = "location") String gardenLocation,
-                              @RequestParam(name = "size") String gardenSize,
-                              Model model) {
+    public String submitForm(@Validated(ValidationSequence.class) @ModelAttribute("garden") Garden garden,
+                             BindingResult bindingResult, Model model) {
         logger.info("POST /gardens - submit the new garden form");
-        boolean hasErrors = false;
-        // Garden name validation
-        if (gardenName == null || gardenName.trim().isEmpty()) {
-            model.addAttribute("nameError", "Garden name cannot be empty");
-            hasErrors = true;
-        } else if (!gardenName.matches("^[A-Za-z0-9 .,'-]+$")) {
-            model.addAttribute("nameError", "Garden name must only include letters, numbers, spaces, dots, hyphens or apostrophes");
-            hasErrors = true;
-        }
+        garden.setSize(garden.getSize());
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("garden", garden);
 
-        // Location validation
-        if (gardenLocation == null || gardenLocation.trim().isEmpty()) {
-            model.addAttribute("locationError", "Location cannot be empty");
-            hasErrors = true;
-        } else if (!gardenLocation.matches("^[A-Za-z0-9 ,.'-]+$")) {
-            model.addAttribute("locationError", "Location name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes");
-            hasErrors = true;
+            return "gardens/createGarden";
         }
-
-        // Garden size validation
-        if (!gardenSize.trim().isEmpty()) {
-            gardenSize = gardenSize.replace(',', '.'); // Replace comma with dot for number parsing
-            try {
-                double size = Double.parseDouble(gardenSize);
-                if (size < 0) {
-                    throw new NumberFormatException("Size must be positive");
-                }
-            } catch (NumberFormatException e) {
-                model.addAttribute("sizeError", "Garden size must be a positive number");
-                hasErrors = true;
-            }
-        }
-
-        if (hasErrors) {
-            model.addAttribute("gardenName", gardenName);
-            model.addAttribute("gardenLocation", gardenLocation);
-            model.addAttribute("gardenSize", gardenSize);
-
-            // Return to the form with errors
-            return "redirect:/gardens/create";
-        }
-        Garden savedGarden = formService.addGardenFormResult(new Garden(gardenName,gardenLocation,gardenSize));
-        model.addAttribute("displayName", gardenName);
-        model.addAttribute("displayGardenLocation", gardenLocation);
-        model.addAttribute("displayGardenSize", gardenSize);
+        Garden savedGarden = gardenService.addGarden(garden);
         return "redirect:/gardens/" + savedGarden.getId();
     }
 
@@ -112,44 +82,76 @@ public class GardenController {
     @GetMapping("/gardens")
     public String responses(Model model) {
         logger.info("Get /gardens - display all gardens");
-        model.addAttribute("gardens", formService.getFormResults());
+        model.addAttribute("gardens", gardenService.getAllGardens());
         return "gardens/viewGardens";
     }
 
     /**
-     * Get single garden details
+     * Gets the id of garden
      * @param model representation of results
-     * @return editGarden page
+     * @return gardenDetails page
      */
     @GetMapping("/gardens/{id}")
-    public String getGarden(@PathVariable() long id, Model model) {
-        logger.info("Get /garden/{}", id);
-        Optional<GardenFormResult> garden = formService.getOne(id);
-        model.addAttribute("garden", garden.orElse(null));
-        return "/gardens/editGarden";
+    public String gardenDetail(@PathVariable(name = "id") Long id,
+                               Model model) {
+
+        logger.info("Get /gardens/id - display garden detail");
+        model.addAttribute("garden", gardenService.getGardenById(id).get());
+        model.addAttribute("plants", plantService.getPlantsByGardenId(id));
+        List<Garden> gardens = gardenService.getAllGardens();
+        model.addAttribute("gardens", gardens);
+        return "gardens/gardenDetails";
     }
 
     /**
-     * Get single garden details
-     * @param model representation of results
-     * @return redirect to gardens page
+     * Updates the Garden
+     * @param id
+     * @return redirect to gardens
+     */
+    @GetMapping("/gardens/{id}/edit")
+    public String getGarden(@PathVariable() long id, Model model) {
+        logger.info("Get /garden/{}", id);
+        Optional<Garden> garden = gardenService.getGardenById(id);
+        logger.info(String.valueOf(garden));
+        model.addAttribute("garden", garden.orElse(null));
+        List<Garden> gardens = gardenService.getAllGardens();
+        model.addAttribute("gardens", gardens);
+        return "gardens/editGarden";
+    }
+
+    /**
+     * Update garden details
+     * @param id
+     * @param garden
+     * @param result
+     * @param model
+     * @return redirect to gardens
      */
     @PostMapping("/gardens/{id}/edit")
-    public String updateGarden(@PathVariable() long id,
-                               @RequestParam(name="name") String newName,
-                               @RequestParam(name="location") String newLocation,
-                               @RequestParam(name="size") String newSize,
+    public String updateGarden(@PathVariable long id,
+                               @Validated(ValidationSequence.class) @ModelAttribute("garden") Garden garden,
+                               BindingResult result,
                                Model model) {
+        if (result.hasErrors()) {
+            model.addAttribute("garden", garden);
+            model.addAttribute("id", id);
+            return "gardens/editGarden";
+        }
 
-        // VALIDATION
-
-        Optional<GardenFormResult> garden = formService.getOne(id);
-        GardenFormResult updatedGarden = garden.orElse(null);
-        updatedGarden.setName(newName);
-        updatedGarden.setLocation(newLocation);
-        updatedGarden.setSize(newSize);
-
-        formService.addGardenFormResult(updatedGarden);
-        return "redirect:../../gardens";
+        Optional<Garden> existingGarden = gardenService.getGardenById(id);
+        if (existingGarden.isPresent()) {
+            existingGarden.get().setName(garden.getName());
+            existingGarden.get().setLocation(garden.getLocation());
+            existingGarden.get().setSize(garden.getSize());
+            gardenService.addGarden(existingGarden.get());
+        }
+        return "redirect:/gardens/" + id;
     }
+
+
+
+
+
+
+
 }

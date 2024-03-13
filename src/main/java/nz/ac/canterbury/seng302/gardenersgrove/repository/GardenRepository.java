@@ -12,7 +12,7 @@ import java.util.Optional;
  */
 
 @Repository
-public interface GardenFormRepository extends CrudRepository<Garden, Long> {
+public interface GardenRepository extends CrudRepository<Garden, Long> {
     Optional<Garden> findById(long id);
     List<Garden> findAll();
 }
