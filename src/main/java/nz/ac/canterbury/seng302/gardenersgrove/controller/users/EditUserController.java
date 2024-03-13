@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import nz.ac.canterbury.seng302.gardenersgrove.validation.UserRegoValidation;
+import nz.ac.canterbury.seng302.gardenersgrove.validation.UserValidation;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -175,7 +175,7 @@ public class EditUserController {
 
         long id = (long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        UserRegoValidation userRegoValidation = new UserRegoValidation();
+        UserValidation userRegoValidation = new UserValidation();
 
         GardenUser user = userService.getUserById(id);
 
