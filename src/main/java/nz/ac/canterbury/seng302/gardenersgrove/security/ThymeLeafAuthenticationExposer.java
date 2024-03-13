@@ -14,8 +14,12 @@ import jakarta.servlet.http.HttpServletRequest;
 @ControllerAdvice
 public class ThymeLeafAuthenticationExposer {
 
+
     /**
-     * Adds the isAuthenticated attribute to the model.
+     * Adds attributes to the model indicating whether the user is authenticated and the current user's ID.
+     *
+     * @param request The HttpServletRequest object representing the current request.
+     * @param model The model to which attributes will be added.
      */
     @ModelAttribute
     public void addAttributes(HttpServletRequest request, Model model) {

@@ -45,6 +45,7 @@ public class SecurityConfiguration {
     }
 
     /**
+     * Creates an AuthenticationManager bean with the custom authentication provider.
      *
      * @param http http security configuration object from Spring (beaned in)
      * @return Custom SecurityFilterChain

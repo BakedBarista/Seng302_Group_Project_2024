@@ -42,6 +42,7 @@ public class GardenUserService {
     }
 
     /**
+     * Gets a single GardenUser by their email
      *
      * @param email The user's email
      * @return The user with the given email, or null if no such user exists
@@ -101,8 +102,13 @@ public class GardenUserService {
         return;
     }
 
+
     /**
-     * Updates a GardenUser's profile picture
+     * Sets the profile picture of the user with the given ID.
+     *
+     * @param id ID of the user whose profile picture is to be set
+     * @param contentType contentType The content type of the profile picture
+     * @param profilePicture rofilePicture The byte array representing the profile picture
      */
     public void setProfilePicture(long id, String contentType, byte[] profilePicture) {
         var user = gardenUserRepository.findById(id);
