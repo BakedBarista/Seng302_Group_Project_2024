@@ -79,25 +79,25 @@ public class UserValidationTest {
 
     /**
      * Test passing a too long first name to the userNameValidation function
-     * Should return false
+     * Should return true as the name length is validated separately the controlelr
      */
     @Test
     public void testTooLongFirstName() {
         String fname = "bfhadfhehfgehdfghdjafhdegrhjfhewhfgehsfgwehfgwhegdwgfdhewgfhdshdha";
         boolean nameResult = userRego.userFirstNameValidation(fname);
-        assertFalse(nameResult);
+        assertTrue(nameResult);
     }
 
     /**
      * Test passing a too long last name to the userNameValidation function
-     * Should return false
+     * Should return true as the name length is validated separately the controlelr
      */
     @Test
     public void testTooLongLastName() {
         String lname = "bfhadfhehfgehdfghdjafhdegrhjfhewhfgehsfgwehfgwhegdwgfdhewgfhdshdha";
         boolean noLname = false;
         boolean nameResult = userRego.userLastNameValidation(lname, noLname);
-        assertFalse(nameResult);
+        assertTrue(nameResult);
     }
 
     /**
