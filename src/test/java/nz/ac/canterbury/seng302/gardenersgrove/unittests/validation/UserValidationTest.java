@@ -257,7 +257,7 @@ public class UserValidationTest {
         assertFalse(oldDateResult);
     }
 
-    /**ö
+    /**
      * Test passing an invalid date to userInvalidDateValidation
      * Should return false
      */
