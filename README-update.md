@@ -1,9 +1,5 @@
-# SENG302 Example Project
+# SENG302 Team D Gardener's Grove Project
 basic project using ```gradle```, ```Spring Boot```, ```Thymeleaf```, and ```GitLab CI```.
-
-> This should be your project's README (renamed to `README.md`) that your team will continually update as your team progresses throughout the year.
->
-> Update this document as necessary.
 
 ## How to run
 ### 1 - Running the project
@@ -22,15 +18,24 @@ gradlew bootRun
 By default, the application will run on local port 8080 [http://localhost:8080](http://localhost:8080)
 
 ### 2 - Using the application
-> You may want to include information here about how to use the application, notably:
-> - default user credentials if required
-> - link to home/login page
-> - disclosing known issues (and workarounds if applicable)
-> - ...
-> 
+> - Default user credentials: {First Name: "John", Last Name: "Doe", Email: "john.doe@gmail.com", Password: "password"}
+> - Link to home and login page: {Home: localhost:8080/users, Login: localhost:8080/users/login}
+> - Known Issues: None
 
 ## How to run tests
-> Once you have some tests written make sure you detail how to run them, especially if there are special requirements.
+To run the tests:
+From the root directory ...
+
+On Linux:
+```
+./gradlew test
+```
+
+On Windows:
+```
+gradlew test
+
+
 
 ## Todo (Sprint 1)
 
@@ -49,6 +54,7 @@ By default, the application will run on local port 8080 [http://localhost:8080](
 ## Contributors
 
 - SENG302 teaching team
+- Imogen Keeling (ike24)
 
 ## References
 
