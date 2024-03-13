@@ -33,10 +33,9 @@ public class RegisterController {
     private int maxNameLength = 64;
 
 
-
     /**
-     * Shows the user the form
-     * 
+     * Shows the user the registration form
+     *
      * @return redirect to /demo
      */
     @GetMapping("/users/register")
@@ -45,8 +44,20 @@ public class RegisterController {
         return "users/registerTemplate";
     }
 
+
     /**
-     * Submits the form
+     * Handles the submission of user registration form
+     *
+     * @param fname user's first name
+     * @param lname user's last name
+     * @param noLname Boolean, true if user has no last name
+     * @param email user's email address
+     * @param password user's password
+     * @param confirmPassword confirmation of the user's password
+     * @param dob user's date of birth
+     * @param model Thymeleaf model
+     * @param request HttpServletRequest object
+     * @return  view name for the user registration template or a redirect URL
      */
     @PostMapping("/users/register")
     public String submitRegister(
@@ -149,7 +160,7 @@ public class RegisterController {
      * Creates a new user for testing purposes
      */
     @PostConstruct
-    public String createDummy() {
+    public void createDummy() {
         try {
             GardenUser user = new GardenUser("John", "Doe", "john.doe@gmail.com", "password",
                     "01/01/1970");
@@ -159,8 +170,6 @@ public class RegisterController {
         } catch (Exception e) {
             logger.error("Error while creating dummy user", e);
         }
-
-        return "redirect:/";
     }
 
 }

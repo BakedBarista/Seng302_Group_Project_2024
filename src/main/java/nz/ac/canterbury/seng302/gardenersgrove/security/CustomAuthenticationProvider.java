@@ -27,6 +27,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     @Autowired
     private GardenUserService userService;
 
+    /**
+     * Default constructor
+     */
     public CustomAuthenticationProvider() {
         super();
     }
@@ -58,6 +61,12 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         return new UsernamePasswordAuthenticationToken(u.getId(), null, u.getAuthorities());
     }
 
+    /**
+     * Indicates whether this AuthenticationProvider supports the given authentication token class.
+     *
+     * @param authentication The class of the Authentication token to be checked
+     * @return True if the token is supported, false otherwise
+     */
     @Override
     public boolean supports(Class<?> authentication) {
         return authentication.equals(UsernamePasswordAuthenticationToken.class);

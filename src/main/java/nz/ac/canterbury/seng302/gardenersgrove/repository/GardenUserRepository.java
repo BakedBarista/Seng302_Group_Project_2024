@@ -15,9 +15,27 @@ import java.util.Optional;
  */
 @Repository
 public interface GardenUserRepository extends CrudRepository<GardenUser, Long> {
+    /**
+     * Retrieves a GardenUser by its ID.
+     *
+     * @param id The ID of the GardenUser to retrieve
+     * @return An Optional containing the GardenUser if found, or empty if not found
+     */
     Optional<GardenUser> findById(long id);
+
+    /**
+     * Retrieves all GardenUsers.
+     *
+     * @return A list of all GardenUsers
+     */
     List<GardenUser> findAll();
 
+    /**
+     * Retrieves a GardenUser by its email address.
+     *
+     * @param email The email address of the GardenUser to retrieve
+     * @return An Optional containing the GardenUser if found, or empty if not found
+     */
     @Query("SELECT u FROM GardenUser u WHERE u.email = ?1")
     Optional<GardenUser> findByEmail(String email);
 }

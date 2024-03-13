@@ -39,14 +39,22 @@ public class EditUserController {
 
     private int maxNameLength = 64;
 
+    /**
+     * Setter method for userServer
+     *
+     * @param userService The GardenUserService to be set
+     */
     public void setUserService(GardenUserService userService) {
         this.userService = userService;
     }
 
+
     /**
-     * Shows the user the form
-     * @param model thymeleaf model
-     * @return redirect to /demo
+     * Shows the edit user form
+     *
+     * @param authentication authentication object representing the current user
+     * @param model Thymeleaf model
+     * @return The edit user template view
      */
     @GetMapping("/users/edit")
     public String edit(Authentication authentication, Model model) {
@@ -65,15 +73,18 @@ public class EditUserController {
         return "users/editTemplate";
     }
 
+
     /**
+     * Handles the submission of user edits
      *
      * @param fname user's current first name
      * @param lname user's current last name
-     * @param noLname true if user has no last name
+     * @param noLname True if the user has no last name
      * @param email user's current email
      * @param dob user's current date of birth
-     * @param model thymeleaf model
-     * @return
+     * @param authentication authentication object representing the current user
+     * @param model the Thymeleaf model
+     * @return The view name for the edit user template or a redirect URL
      */
     @PostMapping("/users/edit")
     public String submitUser(
@@ -176,6 +187,15 @@ public class EditUserController {
         return "users/editPassword";
     }
 
+    /**
+     * Handles submission of password edits
+     *
+     * @param oldPassword user's current password
+     * @param newPassword user's new password
+     * @param confirmPassword confirmation of the new password
+     * @param model Thymeleaf model
+     * @return edit user template
+     */
     @PostMapping("/users/edit/password")
     public String submitPassword(
             @RequestParam(name = "oldPassword") String oldPassword,
@@ -213,9 +233,15 @@ public class EditUserController {
         return "users/editPassword";
     }
 
+
     /**
-     * Shows the user the edit password form
-     * @throws IOException 
+     * Handles the submission of profile picture edits
+     *
+     * @param authentication authentication object representing the current user
+     * @param file the MultipartFile containing the new profile picture
+     * @param referer the referer header value
+     * @return A redirect URL
+     * @throws IOException
      */
     @PostMapping("/users/profile-picture")
     public String editProfilePicture(
