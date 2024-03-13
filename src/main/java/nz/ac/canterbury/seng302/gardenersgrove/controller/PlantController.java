@@ -125,8 +125,8 @@ public class PlantController {
                 plantService.addPlant(plant, gardenId);
             }
         } catch (Exception error) {
+            //TODO: something with this error
             logger.error(String.valueOf(error));
-            return "redirect:/500";
         }
         return "redirect:/gardens/" + gardenId;
     }
