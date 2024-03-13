@@ -39,12 +39,9 @@ class UploadControllerTest {
     @InjectMocks
     private UploadController uploadController;
 
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
     @Test
     void displayUploadForm() throws Exception {
+        MockitoAnnotations.openMocks(this);
         MockMvc mockMvc = MockMvcBuilders.standaloneSetup(uploadController).build();
         mockMvc.perform(get("/uploadImage")
                         .param("garden_Id", "1")
