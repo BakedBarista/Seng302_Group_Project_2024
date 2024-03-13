@@ -18,8 +18,8 @@ public class Plant {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Plant name cannot by empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes", groups = {ValidationGroups.FirstOrder.class})
-    @Pattern(regexp = "^[a-zA-Z0-9 \\-.,']*$", message = "Plant name cannot by empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes", groups = {ValidationGroups.SecondOrder.class})
+    @NotBlank(message = "Plant name cannot by empty and must only include letters, numbers, spaces, dots, commas, hyphens or apostrophes", groups = {ValidationGroups.FirstOrder.class})
+    @Pattern(regexp = "^[a-zA-Z0-9 \\-.,']*$", message = "Plant name cannot by empty and must only include letters, numbers, spaces, dots, commas, hyphens or apostrophes", groups = {ValidationGroups.SecondOrder.class})
     @Column(nullable = false)
     private String name;
 

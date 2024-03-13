@@ -78,7 +78,7 @@ public class GardenTest {
     @Test
     public void gardenName_NameHasExclamationMark_ReturnPatternConstraintViolation() {
         garden.setName("garden!");
-        String expectedMessage = "Garden name must only include letters, numbers, spaces, dots, hyphens, or apostrophes";
+        String expectedMessage = "Garden name must only include letters, numbers, spaces, dots, commas, hyphens, or apostrophes";
         Integer expectedConstraintSetSize = 1;
 
 
@@ -91,7 +91,7 @@ public class GardenTest {
     @Test
     public void gardenName_NameHasHash_ReturnPatternConstraintViolation() {
         garden.setName("garden #2");
-        String expectedMessage = "Garden name must only include letters, numbers, spaces, dots, hyphens, or apostrophes";
+        String expectedMessage = "Garden name must only include letters, numbers, spaces, dots, commas, hyphens, or apostrophes";
         Integer expectedConstraintSetSize = 1;
 
 
@@ -165,7 +165,7 @@ public class GardenTest {
     @Test
     public void gardenLocation_LocationHasExclamationMark_ReturnPatternConstraintViolation() {
         garden.setLocation("Christchurch!");
-        String expectedMessage = "Location name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes";
+        String expectedMessage = "Location name must only include letters, numbers, spaces, dots, commas, hyphens or apostrophes";
         Integer expectedConstraintSetSize = 1;
 
 
@@ -178,7 +178,7 @@ public class GardenTest {
     @Test
     public void gardenLocation_LocationHasHash_ReturnPatternConstraintViolation() {
         garden.setLocation("garden #2");
-        String expectedMessage = "Location name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes";
+        String expectedMessage = "Location name must only include letters, numbers, spaces, dots, commas, hyphens or apostrophes";
         Integer expectedConstraintSetSize = 1;
 
 
