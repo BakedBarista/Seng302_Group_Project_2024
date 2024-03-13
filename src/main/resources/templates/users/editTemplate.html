@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
-    <title>Register | Gardener's Grove</title>
+    <title>Edit Profile | Gardener's Grove</title>
     <!--/*/ <th:block th:insert="~{fragments/general.html :: headerfiles}">
         </th:block> /*/-->
     <!-- The above comment (differentiated by the enclosing "slash star slash") is a thymeleaf prototype-only block
@@ -15,6 +15,7 @@
     <main class="main-container">
         <h1>Edit</h1>
         <div th:insert="fragments/edit-profile-picture.html"></div>
+        <p><a href="/users/edit/password">Change Password</a></p>
         <form th:action="edit" method="post">
             <label th:class="'form-group ' + ${firstNameTooLong != null || emptyFirstName != null || wrongCharFirstName != null ? 'form-group-error' : ''}">
                 First Name
