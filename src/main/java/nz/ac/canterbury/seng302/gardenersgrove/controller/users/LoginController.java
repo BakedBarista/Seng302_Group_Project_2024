@@ -22,9 +22,11 @@ public class LoginController {
     private GardenUserService userService;
 
 
-
     /**
-     * Shows the user the login form
+     * Shows the login page
+     * @param error error message, if there's any
+     * @param model Thymeleaf model
+     * @return login page view
      */
     @GetMapping("users/login")
     public String login(@RequestParam(required = false) String error,
@@ -33,6 +35,15 @@ public class LoginController {
         return "users/login";
     }
 
+    /**
+     * Authenticates user login
+     * @param email user's email address
+     * @param password user's password
+     * @param error error message
+     * @param model Thymeleaf model
+     * @param request HttpServletRequest object
+     * @return The view name for the login page or a redirect URL
+     */
     @PostMapping("/users/login")
     public String authenticateLogin(@RequestParam(name = "email") String email,
                                     @RequestParam(name = "password") String password,
