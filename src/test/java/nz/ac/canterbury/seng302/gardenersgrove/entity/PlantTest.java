@@ -80,7 +80,7 @@ public class PlantTest {
     @Test
     public void SetName_NameHasExclamationMark_ReturnPatternConstraintViolation() {
         plant.setName("plant!");
-        String expectedMessage = "Name must only contain letters and numbers";
+        String expectedMessage = "Plant name cannot by empty and must only include letters, numbers, spaces, dots, commas, hyphens or apostrophes";
         Integer expectedConstraintSetSize = 1;
 
         ConstraintViolation<Plant> violation = validator.validate(plant, ValidationGroups.SecondOrder.class).iterator().next();
@@ -92,7 +92,7 @@ public class PlantTest {
     @Test
     public void SetName_NameHasHash_ReturnPatternConstraintViolation() {
         plant.setName("plant #2");
-        String expectedMessage = "Name must only contain letters and numbers";
+        String expectedMessage = "Plant name cannot by empty and must only include letters, numbers, spaces, dots, commas, hyphens or apostrophes";
         Integer expectedConstraintSetSize = 1;
 
 
@@ -104,7 +104,7 @@ public class PlantTest {
     @Test
     public void SetName_Null_ReturnNotBlankViolation() {
         plant.setName(null);
-        String expectedMessage = "Please enter a name";
+        String expectedMessage = "Plant name cannot by empty and must only include letters, numbers, spaces, dots, commas, hyphens or apostrophes";
         Integer expectedConstraintSetSize = 1;
 
 
@@ -213,7 +213,7 @@ public class PlantTest {
     @Test
     public void SetDescription_FiveHundredAndTwelveChars_ReturnSizeViolation() {
         plant.setDescription("a".repeat(512));
-        String expectedMessage = "Description must be less than 512 characters";
+        String expectedMessage = "Plant description must be less than 512 characters";
         Integer expectedConstraintSetSize = 1;
 
 
