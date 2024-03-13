@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 @DataJpaTest
-@Import(FormService.class)
+@Import(PlantService.class)
 class PlantServiceTest {
 
     @Mock
