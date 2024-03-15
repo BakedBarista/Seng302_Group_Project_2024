@@ -29,7 +29,7 @@ public class ApplicationController {
      */
     @GetMapping("/")
     public String home( Model model) {
-        logger.info("GET /home");
+        logger.info("GET /");
         this.gardenService = new GardenService(gardenRepository);
         List<Garden> gardens = gardenService.getAllGardens();
         model.addAttribute("gardens", gardens);
