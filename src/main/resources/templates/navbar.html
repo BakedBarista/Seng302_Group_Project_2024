@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+</head>
+<body>
+<div th:fragment="navbar">
+  <nav>
+    <div id="logo">
+      <a th:class="home" th:href="@{/}">Gardeners Grove</a>
+    </div>
+    <div>
+      <div class="dropdown">
+        <button class="dropbtn"><a th:href="@{/gardens}">My Gardens</a></button>
+        <div class="dropdown-content">
+          <a th:each="garden : ${gardens}" th:text="${garden.name}" th:href="@{/gardens/} + ${garden.id}"></a>
+        </div>
+      </div>
+      <button><a th:href="@{/gardens/create}">Create New Garden</a></button>
+    </div>
+  </nav>
+</div>
+
+<div th:fragment="navbarOnCreateGarden">
+  <nav>
+    <div id="logo">
+      <a th:class="home" th:href="@{/}">Gardeners Grove</a>
+    </div>
+    <div>
+      <div class="dropdown">
+        <button class="dropbtn"><a th:href="@{/gardens}">My Gardens</a></button>
+        <div class="dropdown-content">
+          <a th:each="garden : ${gardens}" th:text="${garden.name}" th:href="@{/gardens/} + ${garden.id}"></a>
+        </div>
+      </div>
+      <button><a th:class = "onPage" th:href="@{/gardens/create}">Create New Garden</a></button>
+    </div>
+  </nav>
+</div>
+
+<div th:fragment="navbarOnMyGarden">
+  <nav>
+    <div id="logo">
+      <a th:class="home" th:href="@{/}">Gardeners Grove</a>
+    </div>
+    <div>
+      <div class="dropdown">
+        <button class="dropbtn"><a class="onPage" th:href="@{/gardens}">My Gardens</a></button>
+        <div class="dropdown-content">
+          <a th:each="garden : ${gardens}" th:text="${garden.name}" th:href="@{/gardens/} + ${garden.id}"></a>
+        </div>
+      </div>
+      <button><a th:href="@{/gardens/create}">Create New Garden</a></button>
+    </div>
+  </nav>
+</div>
+</body>
+</html>
