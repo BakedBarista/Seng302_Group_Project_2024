@@ -55,6 +55,7 @@ gradlew test
 
 - SENG302 teaching team
 - Imogen Keeling (ike24)
+- [Luke Stynes](https://www.github.com/lukestynes)
 
 ## References
 
