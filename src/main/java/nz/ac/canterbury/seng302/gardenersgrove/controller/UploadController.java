@@ -101,7 +101,7 @@ public class UploadController {
         }
         redirectAttributes.addAttribute("plant_Id", plantId);
         redirectAttributes.addAttribute("garden_Id", gardenId);
-        return "redirect:/gardens/" + gardenId + "/plants/" + plantId+ "/edit";
+        return "redirect:/gardens/" + gardenId;
     }
 
     public String upload(MultipartFile file, Long plantId) throws Exception {

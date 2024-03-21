@@ -10,7 +10,7 @@
 <div th:replace="~{navbar :: navbar}"></div>
 <div>
     <div>
-        <form th:action="@{/gardens/{gardenId}/plants/{plantId}/edit(gardenId=${gardenId}, plantId=${plantId})}" th:object="${plant}" method="post">
+        <form th:action="@{/gardens/{gardenId}/plants/{plantId}/edit(gardenId=${gardenId}, plantId=${plantId})}" th:object="${plant}" method="post" enctype="multipart/form-data">
             <label for="name"> Plant Name: </label>
             <input type="text" class="form-control" id="name" placeholder="Name"
                    th:name="name" th:value="${plant.name}" data-cy="name" autofocus>
@@ -33,9 +33,10 @@
             <div>
                 <h3>Plant Image:</h3>
                 <div class="image-container">
-                    <img th:src="@{${plant.plantImagePath}}"/>
+                    <img id="preview-image" th:src="@{${plant.plantImagePath}}"/>
                     <img th:unless="${plant.plantImagePath}" src="/default.png" alt="Default Plant Image" />
-                    <a class="add-image-button" th:href="@{/uploadImage(garden_Id=${gardenId}, plant_Id=${plantId})}">+</a>
+                    <label for="image" class="add-image-button">+</label>
+                    <input type="file" id="image" name="image" accept=".png,.jpg,.jpeg,.svg" class="form-control-file" style = "display: none;">
                 </div>
             </div>
             <div>
@@ -46,4 +47,31 @@
 </div>
 </body>
 <script th:src="@{/js/nextFormBox.js}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const imageContainer = document.querySelector(".image-container");
+        const previewImage = imageContainer.querySelector("#preview-image");
+        const imageInput = imageContainer.querySelector("#image");
+        const VALID_MIME_TYPES = ["image/png", "image/jpeg", "image/svg+xml"];
+
+        imageInput.addEventListener("change", function(ev) {
+            const file = imageInput.files[0];
+            if (!file) {
+                return;
+            }
+
+            if (!VALID_MIME_TYPES.includes(file.type)) {
+                alert("Image must be of type png, jpg, or svg");
+                return;
+            }
+
+            if (file.size > 10 * 1024 * 1024) {
+                alert("File size must be less than 10MB");
+                return;
+            }
+
+            previewImage.src = URL.createObjectURL(file);
+        });
+    });
+</script>
 </html>
