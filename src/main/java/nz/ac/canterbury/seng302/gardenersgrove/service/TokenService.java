@@ -1,6 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
 import java.util.Base64;
@@ -10,9 +12,10 @@ import java.util.Base64;
  *
  * uses some code from https://stackoverflow.com/a/56628391
  */
+@Service
 public class TokenService {
 
-    public Logger logger;
+    public Logger logger = LoggerFactory.getLogger(TokenService.class);
 
     private final SecureRandom secureRandom = new SecureRandom();
     private final Base64.Encoder base64Encoder = Base64.getUrlEncoder();

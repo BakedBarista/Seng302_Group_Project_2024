@@ -42,10 +42,10 @@ public class GardenUser {
     private byte[] profilePicture;
 
     @Column(nullable = true)
-    private String token;
+    private String emailValidationToken;
 
     @Column(nullable = true)
-    private Instant tokenTimeInstant;
+    private Instant emailValidationTokenExpiryInstant;
 
     /**
      * JPA required no-args constructor
@@ -211,34 +211,34 @@ public class GardenUser {
     }
 
     /**
-     * Set the token of this user
+     * Set the emailValidationToken of this user
      */
-    public void setToken(String token) {
-        this.token = token;
+    public void setEmailValidationToken(String emailValidationToken) {
+        this.emailValidationToken = emailValidationToken;
     }
 
     /**
-     * get this users token
+     * get this users emailValidationToken
      *  - may be null
-     * @return token
+     * @return emailValidationToken
      */
-    public String getToken() {
-        return token;
+    public String getEmailValidationToken() {
+        return emailValidationToken;
     }
 
     /**
-     * Set the tokenTimeInstant of this user
+     * Set the emailValidationTokenExpiryInstant of this user
      */
-    public void setTokenTimeInstant(Instant timeInstance) {
-        this.tokenTimeInstant = timeInstance;
+    public void setEmailValidationTokenExpiryInstant(Instant timeInstance) {
+        this.emailValidationTokenExpiryInstant = timeInstance;
     }
 
     /**
-     * Return the tokenTimeInstant of this user
+     * Return the emailValidationTokenExpiryInstant of this user
      *  - may be null
      * @return
      */
-    public Instant getTokenTimeInstant() {
-        return tokenTimeInstant;
+    public Instant getEmailValidationTokenExpiryInstant() {
+        return this.emailValidationTokenExpiryInstant;
     }
 }

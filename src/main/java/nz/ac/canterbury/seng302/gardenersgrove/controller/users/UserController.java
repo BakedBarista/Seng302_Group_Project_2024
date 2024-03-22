@@ -5,7 +5,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.Instant;
 
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
-import org.h2.engine.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +27,7 @@ public class UserController {
     @Autowired
     private GardenUserService userService;
 
+    @Autowired
     private TokenService tokenService;
 
     private static final String DEFAULT_PROFILE_PICTURE_URL = "https://www.gravatar.com/avatar/5197c9706fccb18e1c912c43172fcf0b?s=100&d=identicon";
@@ -86,17 +86,16 @@ public class UserController {
      * @param userId
      * @return
      */
-    @GetMapping("/users/testToken")
-    public String addTokenAndTimeToUser(Long userId) {
+    @GetMapping("/users/testToken/{id}")
+    public void addTokenAndTimeToUser(@PathVariable(name = "id") Long userId) {
+        logger.info("called addTokenAndTimeToUser");
         String token = tokenService.createToken();
 
         GardenUser user = userService.getUserById(userId);
         Instant time = Instant.now();
-        user.setToken(token);
-        user.setTokenTimeInstant(time);
+        user.setEmailValidationToken(token);
+        user.setEmailValidationTokenExpiryInstant(time);
 
         userService.addUser(user);
-
-        return "goto ??";
     }
 }
