@@ -74,11 +74,7 @@ public class RegisterController {
             Model model,
             HttpServletRequest request) {
         logger.info("POST /users/register");
-        
-        if(bindingResult.hasErrors()){
-            model.addAttribute("user", user);
-            return "users/registerTemplate";
-        }
+
 
         // if (noLname) {
         //     user.setLname(null);
@@ -116,26 +112,27 @@ public class RegisterController {
         //     valid = false;
         // }
 
-        if (!userValidation.userPasswordMatchValidation(password, confirmPassword)){
+        if (!userValidation.userPasswordMatchValidation(password, confirmPassword)) {
             model.addAttribute("matchPassword", "Passwords do not match");
             valid = false;
-        } //else if (!userValidation.userPasswordStrengthValidation(password)){
-        //     model.addAttribute("weakPassword", "Your password must beat least 8 characters long and include at least one uppercase letter, one lowercase letter, one number,and one special character");
-        //     valid = false;
-        //  }
+        } else if (!userValidation.userPasswordStrengthValidation(password)){
+             model.addAttribute("weakPassword", "Your password must beat least 8 characters long and include at least one uppercase letter, one lowercase letter, one number,and one special character");
+             valid = false;
+          }
 
-         if (!userValidation.userInvalidDateValidation(user.getDOB())){
-             model.addAttribute("invalidDob", "Date is not in valid format, (DD/MM/YYYY)");
+        if (!userValidation.userInvalidDateValidation(user.getDOB())) {
+            model.addAttribute("invalidDob", "Date is not in valid format, (DD/MM/YYYY)");
             valid = false;
-         } else if (!userValidation.userYoungDateValidation(user.getDOB())){
-             model.addAttribute("youngDob", "You must be 13 years or older to create an account");
+        } else if (!userValidation.userYoungDateValidation(user.getDOB())) {
+            model.addAttribute("youngDob", "You must be 13 years or older to create an account");
             valid = false;
-         } else if (!userValidation.userOldDateValidation(user.getDOB())){
-             model.addAttribute("oldDob", "The maximum age allowed is 120 years");
+        } else if (!userValidation.userOldDateValidation(user.getDOB())) {
+            model.addAttribute("oldDob", "The maximum age allowed is 120 years");
             valid = false;
-         }
+        }
 
-        if (valid) {
+
+        if (valid && !bindingResult.hasErrors()) {
             userService.addUser(new GardenUser(user.getFname(), user.getLname(), user.getEmail(), password, user.getDOB()));
 
             try {
@@ -150,18 +147,19 @@ public class RegisterController {
             } catch (ServletException e) {
                 logger.error("Error while login ", e);
             }
+        } else {
+            if (bindingResult.hasErrors()) {
+                model.addAttribute("user", user);
+            }
+
+            return "users/registerTemplate";
+
+            // model.addAttribute("dob", dob);
         }
 
-
-        // model.addAttribute("fname", fname);
-        // model.addAttribute("lname", lname);
-        // model.addAttribute("noLname", noLname);
-        // model.addAttribute("email", email);
-        // model.addAttribute("password", password);
-        // model.addAttribute("confirmPassword", confirmPassword);
-        // model.addAttribute("dob", dob);
-
         return "users/registerTemplate";
+
+
     }
 
     /**

@@ -39,9 +39,7 @@ public class GardenUser {
     @Email(message = "Email address must be in the form ‘jane@doe.nz’")
     @Column(nullable = false, unique = true)
     private String email;
-    
-    @Size(min = 8, message = "Your password must beat least 8 characters long and include at least one uppercase letter, one lowercase letter, one number,and one special character", groups = {ValidationGroups.SecondOrder.class})
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$", message = "Your password must beat least 8 characters long and include at least one uppercase letter, one lowercase letter, one number,and one special character", groups = {ValidationGroups.SecondOrder.class})
+
     @Column(nullable = false)
     private String password;
 
