@@ -27,7 +27,7 @@
                         <div th:text="${fileSizeError}" style="color: red"></div>
                     </div>
                     <button type="submit" class="btn btn-primary">Upload image</button>
-                    <button type="button" th:onclick="'window.location.href = \'' + @{/gardens/{gardenId}/plants/{plantId}/edit(gardenId=${gardenId}, plantId=${plantId})} + '\''">Cancel</button>
+                    <button type="button" th:onclick="'window.location.href = \'' + @{/gardens/{gardenId}(gardenId=${gardenId})} + '\''">Cancel</button>
                 </form>
             </div>
         </div>
