@@ -4,6 +4,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.ValidationSequence;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.validation.UserValidation;
 import org.slf4j.Logger;
@@ -12,7 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -39,8 +43,9 @@ public class RegisterController {
      * @return redirect to /demo
      */
     @GetMapping("/users/register")
-    public String register() {
+    public String register(Model model) {
         logger.info("GET /users/register");
+        model.addAttribute("user", new GardenUser());
         return "users/registerTemplate";
     }
 
@@ -61,74 +66,77 @@ public class RegisterController {
      */
     @PostMapping("/users/register")
     public String submitRegister(
-            @RequestParam(name = "fname") String fname,
-            @RequestParam(name = "lname", required = false) String lname,
+            @Validated(ValidationSequence.class) @ModelAttribute("user") GardenUser user,
+            BindingResult bindingResult,
             @RequestParam(name = "noLname", defaultValue = "false") boolean noLname,
-            @RequestParam(name = "email") String email,
             @RequestParam(name = "password") String password,
             @RequestParam(name = "confirmPassword") String confirmPassword,
-            @RequestParam(name = "dob", required = false) String dob,
             Model model,
             HttpServletRequest request) {
         logger.info("POST /users/register");
-
-        if (noLname) {
-            lname = null;
+        
+        if(bindingResult.hasErrors()){
+            model.addAttribute("user", user);
+            return "users/registerTemplate";
         }
 
-        if (dob.isEmpty()) {
-            dob = null;
+        // if (noLname) {
+        //     user.setLname(null);
+        // }
+
+        if (user.getDOB().isEmpty()) {
+            user.setDOB(null);
         }
 
         UserValidation userValidation = new UserValidation();
         boolean valid = true;
 
 
-        if ((!userValidation.userFirstNameValidation(fname))){
-            model.addAttribute("incorrectFirstName", "First name cannot be empty and must only include letters, spaces,hyphens or apostrophes");
-            valid = false;
-        } else if ((fname.length() > maxNameLength)) {
-            model.addAttribute("firstNameTooLong", "First name must be 64 characters long or less");
-            valid = false;
-        }
+        // if ((!userValidation.userFirstNameValidation(fname))){
+        //     model.addAttribute("incorrectFirstName", "First name cannot be empty and must only include letters, spaces,hyphens or apostrophes");
+        //     valid = false;
+        // } else if ((fname.length() > maxNameLength)) {
+        //     model.addAttribute("firstNameTooLong", "First name must be 64 characters long or less");
+        //     valid = false;
+        // }
 
-        if ((!userValidation.userLastNameValidation(lname, noLname))){
-            model.addAttribute("incorrectLastName", "Last name cannot be empty and must only include letters, spaces,hyphens or apostrophes");
-            valid = false;
-        } else if (noLname==false && lname.length() > maxNameLength){
-            model.addAttribute("lastNameTooLong", "Last name must be 64 characters long or less");
-            valid = false;
-        }
+        // if ((!userValidation.userLastNameValidation(lname, noLname))){
+        //     model.addAttribute("incorrectLastName", "Last name cannot be empty and must only include letters, spaces,hyphens or apostrophes");
+        //     valid = false;
+        // } else if (noLname==false && lname.length() > maxNameLength){
+        //     model.addAttribute("lastNameTooLong", "Last name must be 64 characters long or less");
+        //     valid = false;
+        // }
 
-        if (userService.getUserByEmail(email) != null) {
-             model.addAttribute("emailInuse", "This email address is already in use");
+        if (userService.getUserByEmail(user.getEmail()) != null) {
+            model.addAttribute("emailInuse", "This email address is already in use");
             valid = false;
-        }else if (!userValidation.userEmailValidation(email)){
-             model.addAttribute("incorrectEmail", "Email address must be in the form ‘jane@doe.nz’");
-            valid = false;
-        }
+        } // else if (!userValidation.userEmailValidation(email)){
+        //      model.addAttribute("incorrectEmail", "Email address must be in the form ‘jane@doe.nz’");
+        //     valid = false;
+        // }
 
         if (!userValidation.userPasswordMatchValidation(password, confirmPassword)){
             model.addAttribute("matchPassword", "Passwords do not match");
             valid = false;
-        } else if (!userValidation.userPasswordStrengthValidation(password)){
-            model.addAttribute("weakPassword", "Your password must beat least 8 characters long and include at least one uppercase letter, one lowercase letter, one number,and one special character");
-            valid = false;
-         }
+        } //else if (!userValidation.userPasswordStrengthValidation(password)){
+        //     model.addAttribute("weakPassword", "Your password must beat least 8 characters long and include at least one uppercase letter, one lowercase letter, one number,and one special character");
+        //     valid = false;
+        //  }
 
-         if (!userValidation.userInvalidDateValidation(dob)){
+         if (!userValidation.userInvalidDateValidation(user.getDOB())){
              model.addAttribute("invalidDob", "Date is not in valid format, (DD/MM/YYYY)");
             valid = false;
-         } else if (!userValidation.userYoungDateValidation(dob)){
+         } else if (!userValidation.userYoungDateValidation(user.getDOB())){
              model.addAttribute("youngDob", "You must be 13 years or older to create an account");
             valid = false;
-         } else if (!userValidation.userOldDateValidation(dob)){
+         } else if (!userValidation.userOldDateValidation(user.getDOB())){
              model.addAttribute("oldDob", "The maximum age allowed is 120 years");
             valid = false;
          }
 
         if (valid) {
-            userService.addUser(new GardenUser(fname, lname, email, password, dob));
+            userService.addUser(new GardenUser(user.getFname(), user.getLname(), user.getEmail(), password, user.getDOB()));
 
             try {
                 request.logout();
@@ -137,7 +145,7 @@ public class RegisterController {
             }
 
             try {
-                request.login(email, password);
+                request.login(user.getEmail(), password);
                 return "redirect:/users/user";
             } catch (ServletException e) {
                 logger.error("Error while login ", e);
@@ -145,13 +153,13 @@ public class RegisterController {
         }
 
 
-        model.addAttribute("fname", fname);
-        model.addAttribute("lname", lname);
-        model.addAttribute("noLname", noLname);
-        model.addAttribute("email", email);
-        model.addAttribute("password", password);
-        model.addAttribute("confirmPassword", confirmPassword);
-        model.addAttribute("dob", dob);
+        // model.addAttribute("fname", fname);
+        // model.addAttribute("lname", lname);
+        // model.addAttribute("noLname", noLname);
+        // model.addAttribute("email", email);
+        // model.addAttribute("password", password);
+        // model.addAttribute("confirmPassword", confirmPassword);
+        // model.addAttribute("dob", dob);
 
         return "users/registerTemplate";
     }

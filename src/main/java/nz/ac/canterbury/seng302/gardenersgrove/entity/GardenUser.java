@@ -2,11 +2,18 @@ package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
 import java.util.List;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Email;
+
+import nz.ac.canterbury.seng302.gardenersgrove.repository.ValidationGroups;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import jakarta.persistence.*;
 
 /**
  * Entity class reflecting an entry of fname, lname, email, password and date of birth(DOB)
@@ -18,17 +25,26 @@ public class GardenUser {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "First name cannot be empty", groups = {ValidationGroups.FirstOrder.class})
+    @Pattern(regexp = "^[\\p{L}\\s'-]*$", message = "First name must only include letters, spaces,hyphens or apostrophes", groups = {ValidationGroups.SecondOrder.class})
+    @Size(min = 0, max = 64, message = "First Name must be 64 characters long or less.", groups = {ValidationGroups.SecondOrder.class})
     @Column(nullable = false)
     private String fname;
 
+    @Pattern(regexp = "^[\\p{L}\\s'-]*$", message = "Last name must only include letters, spaces,hyphens or apostrophes", groups = {ValidationGroups.SecondOrder.class})
+    @Size(min = 0, max = 64, message = "Last Name must be 64 characters long or less.", groups = {ValidationGroups.SecondOrder.class})
     @Column(nullable = true)
     private String lname;
 
+    @Email(message = "Email address must be in the form ‘jane@doe.nz’")
     @Column(nullable = false, unique = true)
     private String email;
-
+    
+    @Size(min = 8, message = "Your password must beat least 8 characters long and include at least one uppercase letter, one lowercase letter, one number,and one special character", groups = {ValidationGroups.SecondOrder.class})
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$", message = "Your password must beat least 8 characters long and include at least one uppercase letter, one lowercase letter, one number,and one special character", groups = {ValidationGroups.SecondOrder.class})
     @Column(nullable = false)
     private String password;
+
 
     @Column(nullable = true)
     private String DOB;
@@ -43,7 +59,7 @@ public class GardenUser {
     /**
      * JPA required no-args constructor
      */
-    protected GardenUser() {}
+    public GardenUser() {}
 
     /**
      * Creates a new GardenUser object
