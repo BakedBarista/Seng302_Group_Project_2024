@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
+import java.time.Instant;
 import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -39,6 +40,12 @@ public class GardenUser {
     @Column(nullable = true)
     @Lob
     private byte[] profilePicture;
+
+    @Column(nullable = true)
+    private String token;
+
+    @Column(nullable = true)
+    private Instant tokenTimeInstant;
 
     /**
      * JPA required no-args constructor
@@ -201,5 +208,37 @@ public class GardenUser {
     public void setProfilePicture(String contentType, byte[] profilePicture) {
         this.profilePictureContentType = contentType;
         this.profilePicture = profilePicture;
+    }
+
+    /**
+     * Set the token of this user
+     */
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    /**
+     * get this users token
+     *  - may be null
+     * @return token
+     */
+    public String getToken() {
+        return token;
+    }
+
+    /**
+     * Set the tokenTimeInstant of this user
+     */
+    public void setTokenTimeInstant(Instant timeInstance) {
+        this.tokenTimeInstant = timeInstance;
+    }
+
+    /**
+     * Return the tokenTimeInstant of this user
+     *  - may be null
+     * @return
+     */
+    public Instant getTokenTimeInstant() {
+        return tokenTimeInstant;
     }
 }
