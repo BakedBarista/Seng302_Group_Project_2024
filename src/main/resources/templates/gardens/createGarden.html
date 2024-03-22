@@ -22,7 +22,7 @@
             <!-- Garden Location Field -->
             <div>
                 <label for="location"> Garden Location: </label>
-                <input type="text" class="form-control" id="location" placeholder="Location"
+                <input type="text" class="form-control" id="location" placeholder="Please Enter Garden Location"
                        th:name="location" th:value="${garden.location}" data-cy="location">
                 <div th:if="${#fields.hasErrors('location')}" th:errors="*{location}" style="color: red;"></div>
             </div>

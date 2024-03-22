@@ -30,6 +30,32 @@ public class Garden {
     @Column(nullable = false)
     private String location;
 
+    @Pattern(regexp = "^[A-Za-z0-9 /-]+$", message = "Please enter a valid street number", groups = {ValidationGroups.SecondOrder.class})
+    @Column
+    private String streetNumber;
+
+    @Pattern(regexp = "^[\\p{L}0-9 .'-]+$", message = "Please enter a valid street name", groups = {ValidationGroups.SecondOrder.class})
+    @Column
+    private String streetName;
+    @Pattern(regexp = "^[\\p{L}0-9 .'-]+$", message = "Please enter a valid Suburb", groups = {ValidationGroups.SecondOrder.class})
+    @Column
+    private String suburb;
+    @NotBlank(message = "City and Country are required", groups = {ValidationGroups.FirstOrder.class})
+    @Pattern(regexp = "^[\\p{L}0-9 .'-]+$", message = "Please enter a valid City name", groups = {ValidationGroups.SecondOrder.class})
+    @Column
+    private String City;
+    @NotBlank(message = "City and Country are required", groups = {ValidationGroups.FirstOrder.class})
+    @Pattern(regexp = "^[\\p{L}0-9 .'-]+$", message = "Please enter a valid country name", groups = {ValidationGroups.SecondOrder.class})
+    @Column
+    private String country;
+    @Pattern(regexp = "^[0-9]+$", message = "Please enter a valid post code", groups = {ValidationGroups.SecondOrder.class})
+    @Column
+    private String postCode;
+    @Column
+    private Double lon;
+    @Column
+    private Double lat;
+
     @ValidEuropeanDecimal(message = "Garden size must be a positive number", groups = {ValidationGroups.FirstOrder.class})
     @Column(nullable = true)
     private String size;
@@ -88,5 +114,70 @@ public class Garden {
                 ", gardenLocation='" + location + '\'' +
                 ", gardenSize='" + size + '\'' +
                 '}';
+    }
+
+    public String getStreetNumber() {
+        return streetNumber;
+    }
+
+    public void setStreetNumber(String streetNumber) {
+        this.streetNumber = streetNumber;
+    }
+
+    public String getStreetName() {
+        return streetName;
+    }
+
+    public void setStreetName(String streetName) {
+        this.streetName = streetName;
+    }
+
+    public String getSuburb() {
+        return suburb;
+    }
+
+    public void setSuburb(String suburb) {
+        this.suburb = suburb;
+    }
+
+    public String getCity() {
+        return City;
+    }
+
+    public void setCity(String city) {
+        City = city;
+    }
+
+
+    public String getPostCode() {
+        return postCode;
+    }
+
+    public void setPostCode(String postCode) {
+        this.postCode = postCode;
+    }
+
+    public Double getLon() {
+        return lon;
+    }
+
+    public void setLon(Double lon) {
+        this.lon = lon;
+    }
+
+    public Double getLat() {
+        return lat;
+    }
+
+    public void setLat(Double lat) {
+        this.lat = lat;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
     }
 }
