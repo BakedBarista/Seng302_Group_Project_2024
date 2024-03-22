@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.time.Instant;
 
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
@@ -92,7 +93,7 @@ public class UserController {
         String token = tokenService.createToken();
 
         GardenUser user = userService.getUserById(userId);
-        Instant time = Instant.now();
+        Instant time = Instant.now().plus(10, ChronoUnit.MINUTES);
         user.setEmailValidationToken(token);
         user.setEmailValidationTokenExpiryInstant(time);
 
