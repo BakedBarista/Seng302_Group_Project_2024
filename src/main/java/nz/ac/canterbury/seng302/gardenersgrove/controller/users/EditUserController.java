@@ -11,13 +11,17 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import nz.ac.canterbury.seng302.gardenersgrove.validation.UserValidation;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.ValidationSequence;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -62,7 +66,7 @@ public class EditUserController {
 
         Long userId = (Long) authentication.getPrincipal();
         GardenUser user = userService.getUserById(userId);
-
+        model.addAttribute("user", new GardenUser());
         model.addAttribute("userId", userId);
         model.addAttribute("fname", user.getFname());
         model.addAttribute("lname", user.getLname());
@@ -88,22 +92,20 @@ public class EditUserController {
      */
     @PostMapping("/users/edit")
     public String submitUser(
-            @RequestParam(name = "fname") String fname,
-            @RequestParam(name = "lname", required = false) String lname,
+            @Validated(ValidationSequence.class) @ModelAttribute("user") GardenUser userSubmit,
+            BindingResult bindingResult,
             @RequestParam(name = "noLname", defaultValue = "false") boolean noLname,
-            @RequestParam(name = "email") String email,
-            @RequestParam(name = "dob") String dob,
             Authentication authentication, Model model) {
         logger.info("POST /users/edit");
 
         isNoLname = noLname;
         Long userId = (Long) authentication.getPrincipal();
 
-        if (noLname) {
-            lname = null;
-        }
-        if (dob.isEmpty()) {
-            dob = null;
+        // if (noLname) {
+        //     lname = null;
+        // }
+        if (user.getDOB().isEmpty()) {
+            user.setDOB(null);
         }
 
         user = userService.getUserById(userId);
@@ -112,69 +114,41 @@ public class EditUserController {
         UserValidation userValidation = new UserValidation();
         boolean valid = true;
 
-        if (!email.equalsIgnoreCase(currentEmail)) {
-            if (userService.getUserByEmail(email) != null) {
+        if (!userSubmit.getEmail().equalsIgnoreCase(currentEmail)) {
+            if (userService.getUserByEmail(user.getEmail()) != null) {
                 model.addAttribute("emailInuse", "This email address is already in use");
                 valid = false;
-            } else if (!userValidation.userEmailValidation(email)) {
-                model.addAttribute("incorrectEmail", "Email address must be in the form ‘jane@doe.nz’");
-                valid = false;
-            }
+            } 
         }
 
-        if ((!userValidation.userFirstNameEmptyValidation(fname))){
-            model.addAttribute("emptyFirstName", "First name cannot be empty");
-            valid = false;
-        } else if (!userValidation.userFirstNameWrongCharactersValidation(fname)){
-            model.addAttribute("wrongCharFirstName", "First name must only include letters, spaces,hyphens or apostrophes");
-            valid = false;
-        } else if ((fname.length() > maxNameLength)) {
-            model.addAttribute("firstNameTooLong", "First name must be 64 characters long or less");
-            valid = false;
-        }
-
-        if ((!userValidation.userLastNameEmptyValidation(lname, noLname))){
-            model.addAttribute("emptyLastName", "Last name cannot be empty");
-            valid = false;
-        } else if (!userValidation.userLastNameWrongCharactersValidation(lname, noLname)){
-            model.addAttribute("wrongCharLastName", "Last name must only include letters, spaces,hyphens or apostrophes");
-            valid = false;
-        } else if (noLname==false && lname.length() > maxNameLength){
-            model.addAttribute("lastNameTooLong", "Last name must be 64 characters long or less");
-            valid = false;
-        }
-
-        if (!userValidation.userInvalidDateValidation(dob)){
+        if (!userValidation.userInvalidDateValidation(userSubmit.getDOB())){
             model.addAttribute("invalidDob", "Date is not in valid format, (DD/MM/YYYY)");
             valid = false;
-        } else if (!userValidation.userYoungDateValidation(dob)){
+        } else if (!userValidation.userYoungDateValidation(userSubmit.getDOB())){
             model.addAttribute("youngDob", "You must be 13 years or older to create an account");
             valid = false;
-        } else if (!userValidation.userOldDateValidation(dob)){
+        } else if (!userValidation.userOldDateValidation(userSubmit.getDOB())){
             model.addAttribute("oldDob", "The maximum age allowed is 120 years");
             valid = false;
         }
 
-        if (valid) {
-            GardenUser user = userService.getUserById(userId);
-            user.setFname(fname);
-            user.setLname(lname);
-            user.setEmail(email);
-            user.setDOB(dob);
+        if (valid && !bindingResult.hasErrors()) {
+            GardenUser userDetails = userService.getUserById(userId);
+            user.setFname(userSubmit.getFname());
+            user.setLname(userSubmit.getLname());
+            user.setEmail(userSubmit.getEmail());
+            user.setDOB(userSubmit.getDOB());
             userService.addUser(user);
 
             return "redirect:/users/user";
 
-        }
+        } else {
+            if (bindingResult.hasErrors()) {
+                model.addAttribute("user", user);
+            }
+            return "users/editTemplate";
+        }   
 
-        model.addAttribute("userId", userId);
-        model.addAttribute("fname", fname);
-        model.addAttribute("lname", lname);
-        model.addAttribute("noLname", noLname);
-        model.addAttribute("email", email);
-        model.addAttribute("dob", dob);
-
-        return "users/editTemplate";
     }
 
     /**

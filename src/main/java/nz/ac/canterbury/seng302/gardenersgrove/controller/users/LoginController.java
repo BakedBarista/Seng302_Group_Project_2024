@@ -3,14 +3,18 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.ValidationSequence;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.validation.UserValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -33,6 +37,7 @@ public class LoginController {
     public String login(@RequestParam(required = false) String error,
                         Model model) {
         logger.info("GET /users/login");
+        model.addAttribute("user", new GardenUser());
         return "users/login";
     }
 
@@ -47,40 +52,49 @@ public class LoginController {
      * @return The view name for the login page or a redirect URL
      */
     @PostMapping("/users/login")
-    public String authenticateLogin(@RequestParam(name = "email") String email,
+    public String authenticateLogin(
+                                    @Validated(ValidationSequence.class) @ModelAttribute("user") GardenUser user,
+                                    BindingResult bindingResult,
                                     @RequestParam(name = "password") String password,
                                     @RequestParam(required = false) String error,
                                     Model model,
                                     HttpServletRequest request) {
         logger.info("POST /users/login");
 
-        UserValidation userValidation = new UserValidation();
+        // UserValidation userValidation = new UserValidation()
 
-        if (!userValidation.userEmailValidation(email)) {
-            model.addAttribute("incorrectEmail", "Email address must be in the form ‘jane@doe.nz’");
-            return "users/login";
-        }
+        System.out.println(user.getEmail());
+        System.out.println(password);
+        GardenUser userDetails = userService.getUserByEmailAndPassword(user.getEmail(), password);
+        boolean valid = true; 
+        
+        System.out.println(userDetails);
 
-        GardenUser user = userService.getUserByEmailAndPassword(email, password);
-
-        if (user == null) {
+        if (userDetails == null) {
             model.addAttribute("invalidCredentials", "The email address is unknown, or the password is invalid");
+            valid = false;
+        }
+
+        if(valid && !bindingResult.hasErrors()){
+            try {
+                request.logout();
+            } catch (ServletException e) {
+                logger.warn("User was not logged in");
+            }
+
+            try {
+                request.login(user.getEmail(), password);
+                return "redirect:/users/user";
+            } catch (ServletException e) {
+                logger.error("Error while login ", e);
+            }
+
+            return "users/login";
+        }else{
+            if (bindingResult.hasErrors()) {
+                model.addAttribute("user", user);
+            }
             return "users/login";
         }
-
-        try {
-            request.logout();
-        } catch (ServletException e) {
-            logger.warn("User was not logged in");
-        }
-
-        try {
-            request.login(email, password);
-            return "redirect:/users/user";
-        } catch (ServletException e) {
-            logger.error("Error while login ", e);
-        }
-
-        return "users/login";
     }
 }

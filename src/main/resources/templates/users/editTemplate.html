@@ -16,20 +16,22 @@
         <h1>Edit</h1>
         <div th:insert="fragments/edit-profile-picture.html"></div>
         <p><a href="/users/edit/password">Change Password</a></p>
-        <form th:action="edit" method="post">
+        <form th:action="edit" method="post" th:object="${user}">
             <label th:class="'form-group ' + ${firstNameTooLong != null || emptyFirstName != null || wrongCharFirstName != null ? 'form-group-error' : ''}">
                 First Name
                 <input type="text" th:name="fname" th:value="*{fname}">
-                <span class = "error" th:if="${firstNameTooLong != null}" th:text="*{firstNameTooLong}"></span>
+                <!-- <span class = "error" th:if="${firstNameTooLong != null}" th:text="*{firstNameTooLong}"></span>
                 <span class = "error" th:if="${emptyFirstName != null}" th:text="*{emptyFirstName}"></span>
-                <span class = "error" th:if="${wrongCharFirstName != null}" th:text="*{wrongCharFirstName}"></span>
+                <span class = "error" th:if="${wrongCharFirstName != null}" th:text="*{wrongCharFirstName}"></span> -->
+                <div th:if="${#fields.hasErrors('fname')}" th:errors="*{fname}" style="color: red;"></div>
             </label>
             <label th:class="'form-group ' + ${lastNameTooLong != null || emptyLastName != null || wrongCharLastName != null ? 'form-group-error' : ''}">
                 Last Name
-                <input type="text" th:name="lname" th:value="*{lname}" id="lname">
+                <!-- <input type="text" th:name="lname" th:value="*{lname}" id="lname">
                 <span class = "error" th:if="${lastNameTooLong != null}" th:text="*{lastNameTooLong}"></span>
                 <span class = "error" th:if="${emptyLastName != null}" th:text="*{emptyLastName}"></span>
-                <span class = "error" th:if="${wrongCharLastName != null}" th:text="*{wrongCharLastName}"></span>
+                <span class = "error" th:if="${wrongCharLastName != null}" th:text="*{wrongCharLastName}"></span> -->
+                <div th:if="${#fields.hasErrors('lname')}" th:errors="*{lname}" style="color: red;"></div>
             </label>
             <label class="form-checkbox">
                 <input type="checkbox" th:name="noLname" th:value="*{noLname}" th:checked="*{noLname}" id="noLname"> I have no surname
@@ -38,7 +40,7 @@
                 Email
                 <input type="text" th:name="email" th:value="*{email}" inputmode="email">
                 <span class = "error" th:if="${emailInuse != null}" th:text="*{emailInuse}"></span>
-                <span class = "error" th:if="${incorrectEmail != null}" th:text="*{incorrectEmail}"></span>
+                <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: red;"></div>
             </label>
             <label th:class="'form-group ' + ${youngDob != null || oldDob != null || invalidDob != null ? 'form-group-error' : ''}">
                 Date of Birth (optional)
