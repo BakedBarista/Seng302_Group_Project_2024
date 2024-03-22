@@ -63,6 +63,6 @@ class UploadControllerTest {
                         .param("garden_Id", "1")
                         .param("plant_Id", "1"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/gardens/1/plants/1/edit?plant_Id=1&garden_Id=1"));
+                .andExpect(redirectedUrl("/gardens/1?plant_Id=1&garden_Id=1"));
     }
 }
