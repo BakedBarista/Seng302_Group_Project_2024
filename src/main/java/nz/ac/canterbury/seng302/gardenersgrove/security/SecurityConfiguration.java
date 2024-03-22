@@ -63,8 +63,8 @@ public class SecurityConfiguration {
 
         http.authorizeHttpRequests(auth -> {
             // Allow "/", "/register", and "/login" to anyone (permitAll)
-            auth.requestMatchers("/", "/users/dummy",
-                                "/users/register", "/users/login",
+            auth.requestMatchers("/",
+                                "/users/register", "/users/login", "/users/reset-password/**",
                                 "/css/**", "/js/**")
                     .permitAll();
             // Any other request requires authentication
