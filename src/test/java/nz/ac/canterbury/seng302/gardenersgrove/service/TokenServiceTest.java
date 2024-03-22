@@ -12,7 +12,6 @@ public class TokenServiceTest {
         int expectedLength = 6;
         String token = tokenService.createEmailToken();
 
-
         Assertions.assertEquals(expectedLength, token.length());
         Assertions.assertTrue(token.matches("\\d+"));
     }

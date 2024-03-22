@@ -11,7 +11,6 @@ import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 
 import java.security.SecureRandom;
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.Base64;
 
 /**
@@ -53,7 +52,7 @@ public class TokenService {
         StringBuilder token = new StringBuilder();
 
         for (int i = 0; i < 6; i++) {
-            token.append((int) (Math.random() * 6));
+            token.append(secureRandom.nextInt(10));
         }
 
         logger.info("made new email token {}", token);

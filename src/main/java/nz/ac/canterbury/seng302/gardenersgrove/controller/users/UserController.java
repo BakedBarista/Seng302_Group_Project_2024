@@ -87,7 +87,6 @@ public class UserController {
      * @param userId
      * @return
      */
-    @GetMapping("/users/testToken/{id}")
     public ResponseEntity<Void> addEmailTokenAndTimeToUser(@PathVariable(name = "id") Long userId) {
         logger.info("called addTokenAndTimeToUser");
         String token = tokenService.createEmailToken();
