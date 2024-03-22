@@ -11,6 +11,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 
 import java.security.SecureRandom;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Base64;
 
 /**
@@ -30,18 +31,34 @@ public class TokenService {
     private GardenUserRepository userRepository;
 
     /**
-     * create a random 32-character token and return it
+     * create a random 32-character authentication token and return it
      * 
      * @return token
      */
-    public String createToken() {
+    public String createAuthenticationToken() {
         byte[] randomBytes = new byte[24];
         secureRandom.nextBytes(randomBytes);
 
         String token = base64Encoder.encodeToString(randomBytes);
-        logger.info("made new token {}", token);
+        logger.info("made new authentication token {}", token);
 
         return token;
+    }
+
+    /**
+     * Create a random 6-digit token for email verification on signup
+     * @return token
+     */
+    public String createEmailToken() {
+        StringBuilder token = new StringBuilder();
+
+        for (int i = 0; i < 6; i++) {
+            token.append((int) (Math.random() * 6));
+        }
+
+        logger.info("made new email token {}", token);
+
+        return token.toString();
     }
 
     @Scheduled(fixedRate = 60_000)

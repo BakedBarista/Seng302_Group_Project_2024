@@ -88,9 +88,9 @@ public class UserController {
      * @return
      */
     @GetMapping("/users/testToken/{id}")
-    public ResponseEntity<Void> addTokenAndTimeToUser(@PathVariable(name = "id") Long userId) {
+    public ResponseEntity<Void> addEmailTokenAndTimeToUser(@PathVariable(name = "id") Long userId) {
         logger.info("called addTokenAndTimeToUser");
-        String token = tokenService.createToken();
+        String token = tokenService.createEmailToken();
 
         GardenUser user = userService.getUserById(userId);
         Instant time = Instant.now().plus(10, ChronoUnit.MINUTES);
