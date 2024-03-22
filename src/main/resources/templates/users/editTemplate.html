@@ -1,76 +1,140 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
-<head>
-    <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
-    <title>Edit Profile | Gardener's Grove</title>
-    <!-- The above comment (differentiated by the enclosing "slash star slash") is a thymeleaf prototype-only block
-        making use of synthetic th:block tags. This code will import the header files then the block will disappear.
-        We can see it working since it applies the style import from general.html.
-        See: https://www.thymeleaf.org/doc/tutorials/2.1/usingthymeleaf.html#comments-and-blocks -->
-    <link th:href="@{/css/styles.css}" rel="stylesheet" />
-    <link rel="stylesheet" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css">
-</head>
-<body>
-    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
-    <main class="main-container">
-        <h1>Edit</h1>
-        <div th:insert="fragments/edit-profile-picture.html"></div>
-        <p><a href="/users/edit/password">Change Password</a></p>
-        <form th:action="edit" method="post">
-            <label th:class="'form-group ' + ${firstNameTooLong != null || emptyFirstName != null || wrongCharFirstName != null ? 'form-group-error' : ''}">
-                First Name
-                <input type="text" th:name="fname" th:value="*{fname}">
-                <span class = "error" th:if="${firstNameTooLong != null}" th:text="*{firstNameTooLong}"></span>
-                <span class = "error" th:if="${emptyFirstName != null}" th:text="*{emptyFirstName}"></span>
-                <span class = "error" th:if="${wrongCharFirstName != null}" th:text="*{wrongCharFirstName}"></span>
-            </label>
-            <label th:class="'form-group ' + ${lastNameTooLong != null || emptyLastName != null || wrongCharLastName != null ? 'form-group-error' : ''}">
-                Last Name
-                <input type="text" th:name="lname" th:value="*{lname}" id="lname">
-                <span class = "error" th:if="${lastNameTooLong != null}" th:text="*{lastNameTooLong}"></span>
-                <span class = "error" th:if="${emptyLastName != null}" th:text="*{emptyLastName}"></span>
-                <span class = "error" th:if="${wrongCharLastName != null}" th:text="*{wrongCharLastName}"></span>
-            </label>
-            <label class="form-checkbox">
-                <input type="checkbox" th:name="noLname" th:value="*{noLname}" th:checked="*{noLname}" id="noLname"> I have no surname
-            </label>
-            <label th:class="'form-group ' + ${emailInuse != null || incorrectEmail != null ? 'form-group-error' : ''}">
-                Email
-                <input type="text" th:name="email" th:value="*{email}" inputmode="email">
-                <span class = "error" th:if="${emailInuse != null}" th:text="*{emailInuse}"></span>
-                <span class = "error" th:if="${incorrectEmail != null}" th:text="*{incorrectEmail}"></span>
-            </label>
-            <label th:class="'form-group ' + ${youngDob != null || oldDob != null || invalidDob != null ? 'form-group-error' : ''}">
-                Date of Birth (optional)
-                <input type="text" th:name="dob" th:value="*{dob}">
-                <span class = "error" th:if="${youngDob != null}" th:text="*{youngDob}"></span>
-                <span class = "error" th:if="${oldDob != null}" th:text="*{oldDob}"></span>
-                <span class = "error" th:if="${invalidDob != null}" th:text="*{invalidDob}"></span>
-            </label>
-            <button class="btn">Submit</button>
-            <a href="/users/user" class="btn">Cancel</a>
-        </form>
-    </main>
-    <script>
-        document.addEventListener('DOMContentLoaded', (event) => {
-            const noLname = document.getElementById('noLname');
-            const lname = document.getElementById('lname');
-    
-            // Function to check the initial state of noLname
-            function checkNoLnameState() {
-                lname.disabled = noLname.checked;
-            }
-    
-            // Event listener for changes in noLname
-            noLname.addEventListener('input', (ev) => {
-                noLname.value = noLname.checked;
-                checkNoLnameState();
-            });
-    
-            // Check the initial state when the page loads
-            checkNoLnameState();
-        });
-    </script>
-    <script src="/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
-</body>
+	<head>
+		<meta http-equiv="Content-Type" context="text/html; charset=UTF-8" />
+		<title>Edit Profile | Gardener's Grove</title>
+		<!--/*/ <th:block th:insert="~{fragments/general.html :: headerfiles}">
+        </th:block> /*/-->
+	</head>
+	<body>
+		<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+		<main class="main-container">
+			<h1>Edit</h1>
+			<div th:insert="fragments/edit-profile-picture.html"></div>
+			<p><a href="/users/edit/password">Change Password</a></p>
+			<form th:action="edit" method="post">
+				<label
+					th:class="'form-group ' + ${firstNameTooLong != null || emptyFirstName != null || wrongCharFirstName != null ? 'form-group-error' : ''}"
+				>
+					First Name
+					<input type="text" th:name="fname" th:value="*{fname}" />
+					<span
+						class="error"
+						th:if="${firstNameTooLong != null}"
+						th:text="*{firstNameTooLong}"
+					></span>
+					<span
+						class="error"
+						th:if="${emptyFirstName != null}"
+						th:text="*{emptyFirstName}"
+					></span>
+					<span
+						class="error"
+						th:if="${wrongCharFirstName != null}"
+						th:text="*{wrongCharFirstName}"
+					></span>
+				</label>
+				<label
+					th:class="'form-group ' + ${lastNameTooLong != null || emptyLastName != null || wrongCharLastName != null ? 'form-group-error' : ''}"
+				>
+					Last Name
+					<input
+						type="text"
+						th:name="lname"
+						th:value="*{lname}"
+						id="lname"
+					/>
+					<span
+						class="error"
+						th:if="${lastNameTooLong != null}"
+						th:text="*{lastNameTooLong}"
+					></span>
+					<span
+						class="error"
+						th:if="${emptyLastName != null}"
+						th:text="*{emptyLastName}"
+					></span>
+					<span
+						class="error"
+						th:if="${wrongCharLastName != null}"
+						th:text="*{wrongCharLastName}"
+					></span>
+				</label>
+				<label class="form-checkbox">
+					<input
+						type="checkbox"
+						th:name="noLname"
+						th:value="*{noLname}"
+						th:checked="*{noLname}"
+						id="noLname"
+					/>
+					I have no surname
+				</label>
+				<label
+					th:class="'form-group ' + ${emailInuse != null || incorrectEmail != null ? 'form-group-error' : ''}"
+				>
+					Email
+					<input
+						type="text"
+						th:name="email"
+						th:value="*{email}"
+						inputmode="email"
+					/>
+					<span
+						class="error"
+						th:if="${emailInuse != null}"
+						th:text="*{emailInuse}"
+					></span>
+					<span
+						class="error"
+						th:if="${incorrectEmail != null}"
+						th:text="*{incorrectEmail}"
+					></span>
+				</label>
+				<label
+					th:class="'form-group ' + ${youngDob != null || oldDob != null || invalidDob != null ? 'form-group-error' : ''}"
+				>
+					Date of Birth (optional)
+					<input type="text" th:name="dob" th:value="*{dob}" />
+					<span
+						class="error"
+						th:if="${youngDob != null}"
+						th:text="*{youngDob}"
+					></span>
+					<span
+						class="error"
+						th:if="${oldDob != null}"
+						th:text="*{oldDob}"
+					></span>
+					<span
+						class="error"
+						th:if="${invalidDob != null}"
+						th:text="*{invalidDob}"
+					></span>
+				</label>
+				<button class="btn">Submit</button>
+				<a href="/users/user" class="btn">Cancel</a>
+			</form>
+		</main>
+		<script>
+			document.addEventListener("DOMContentLoaded", (event) => {
+				const noLname = document.getElementById("noLname");
+				const lname = document.getElementById("lname");
+
+				// Function to check the initial state of noLname
+				function checkNoLnameState() {
+					lname.disabled = noLname.checked;
+				}
+
+				// Event listener for changes in noLname
+				noLname.addEventListener("input", (ev) => {
+					noLname.value = noLname.checked;
+					checkNoLnameState();
+				});
+
+				// Check the initial state when the page loads
+				checkNoLnameState();
+			});
+		</script>
+	</body>
 </html>
