@@ -72,9 +72,9 @@ public class SecurityConfiguration {
                     .authenticated();
         });
 
-        // Define login page. Instead of returning 403, redirect to "/users/login"
-        http.formLogin(
-                login -> login.loginPage("/users/login"));
+        // Instead of returning 403, redirect to "/users/login"
+        http.exceptionHandling(exceptionHandling -> exceptionHandling
+                .accessDeniedHandler((_req, res, _exception) -> res.sendRedirect("/users/login")));
 
         // Define logging out, a POST "/users/logout" endpoint now exists under the hood,
         // redirect to "/users/login", invalidate session and remove cookie
