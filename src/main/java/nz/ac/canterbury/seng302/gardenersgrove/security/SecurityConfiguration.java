@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 /**
@@ -62,14 +63,17 @@ public class SecurityConfiguration {
         http.csrf(csrf -> csrf.ignoringRequestMatchers(AntPathRequestMatcher.antMatcher("/h2/**")));
 
         http.authorizeHttpRequests(auth -> {
-            // Allow "/", "/register", and "/login" to anyone (permitAll)
-            auth.requestMatchers("/", "/users/dummy",
-                                "/users/register", "/users/login",
-                                "/css/**", "/js/**")
-                    .permitAll();
-            // Any other request requires authentication
-            auth.anyRequest()
-                    .authenticated();
+            // These paths are accessible to anyone, with or without auth.
+            auth.requestMatchers(
+                    "/",
+                    "/users/dummy",
+                    "/users/register",
+                    "/users/login",
+                    "/css/**",
+                    "/js/**",
+                    "/webjars/**"
+                ).permitAll();
+            auth.anyRequest().authenticated();
         });
 
         // Define logging out, a POST "/logout" endpoint now exists under the hood,
@@ -84,5 +88,4 @@ public class SecurityConfiguration {
         return http.build();
 
     }
-
 }
