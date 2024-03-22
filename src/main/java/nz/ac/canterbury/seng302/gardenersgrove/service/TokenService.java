@@ -2,10 +2,15 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import jakarta.transaction.Transactional;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
+
 import java.security.SecureRandom;
+import java.time.Instant;
 import java.util.Base64;
 
 /**
@@ -21,8 +26,12 @@ public class TokenService {
     private final SecureRandom secureRandom = new SecureRandom();
     private final Base64.Encoder base64Encoder = Base64.getUrlEncoder();
 
+    @Autowired
+    private GardenUserRepository userRepository;
+
     /**
      * create a random 32-character token and return it
+     * 
      * @return token
      */
     public String createToken() {
@@ -30,15 +39,19 @@ public class TokenService {
         secureRandom.nextBytes(randomBytes);
 
         String token = base64Encoder.encodeToString(randomBytes);
-        logger.info("made new token {token}");
+        logger.info("made new token {}", token);
 
         return token;
     }
 
     @Scheduled(fixedRate = 60_000)
+    @Transactional
     public void cleanUpTokens() {
-        logger.info("cleaning up tokens");
+        logger.debug("cleaning up tokens");
 
-        // TODO: clean up expired tokens
+        int deleted = userRepository.deleteUsersWithExpiredEmailTokens(Instant.now());
+        if (deleted != 0) {
+            logger.info("deleted {} users with expired tokens", deleted);
+        }
     }
 }
