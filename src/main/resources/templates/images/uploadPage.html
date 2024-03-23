@@ -16,7 +16,7 @@
                 <form method="post" enctype="multipart/form-data" th:action="@{/uploadImage}">
                     <input type="hidden" name="plant_Id" th:value="${plantId}"/>
                     <input type="hidden" name="garden_Id" th:value="${gardenId}">
-                    <div class="form-group">
+                    <div>
                         <input type="file" name="image" accept=".png, .jpg, .jpeg, .svg" class="form-control-file">
                     </div>
                     <div class="alert alert-danger" th:if="${fileTypeError}">
@@ -27,7 +27,7 @@
                         <div th:text="${fileSizeError}" style="color: red"></div>
                     </div>
                     <button type="submit" class="btn btn-primary">Upload image</button>
-                    <button type="button" th:onclick="'window.location.href = \'' + @{/gardens/{gardenId}/plants/{plantId}/edit(gardenId=${gardenId}, plantId=${plantId})} + '\''">Cancel</button>
+                    <button type="button" th:onclick="'window.location.href = \'' + @{/gardens/{gardenId}(gardenId=${gardenId})} + '\''">Cancel</button>
                 </form>
             </div>
         </div>
