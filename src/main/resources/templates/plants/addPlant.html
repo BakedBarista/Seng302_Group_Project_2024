@@ -37,13 +37,21 @@
             <div th:if="${#fields.hasErrors('plantedDate')}" th:errors="*{plantedDate}" style="color: red;"></div>
             <br/>
             <br/>
+            <div class="form-group">
+                <input id="img-preview" onchange="showImage(this)" type="file" name="image" accept=".png, .jpg, .jpeg, .svg" class="form-control-file">
+            </div>
+            <div class="alert alert-danger" th:if="${fileTypeError}">
+                <div th:text="${fileTypeError}" style="color: red"></div>
+            </div>
+
+            <div class="alert alert-danger" th:if="${fileSizeError}">
+                <div th:text="${fileSizeError}" style="color: red"></div>
+            </div>
             <div>
                 <h3>Plant Image:</h3>
                 <div class="image-container">
-                    <img id="preview-image" th:src="@{${plant.plantImagePath}}"/>
+                    <img th:src="@{${plant.plantImagePath}}" />
                     <img th:unless="${plant.plantImagePath}" src="/default.png" alt="Default Plant Image" />
-                    <label for="image" class="add-image-button">+</label>
-                    <input type="file" id="image" name="image" accept=".png,.jpg,.jpeg,.svg" class="form-control-file" style = "display: none;">
                 </div>
             </div>
             <button type="submit">Submit!</button>
@@ -53,5 +61,4 @@
 </div>
 </body>
 <script th:src="@{/js/nextFormBox.js}"></script>
-<script th:src="@{/js/imageHandler.js}"></script>
 </html>

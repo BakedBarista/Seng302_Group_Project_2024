@@ -42,8 +42,6 @@ public class Plant {
     @Column(nullable = true)
     private String plantImagePath;
 
-
-
     public Plant(String name, String count, String description, String plantedDate) {
         this.name = name;
         this.count = count;
