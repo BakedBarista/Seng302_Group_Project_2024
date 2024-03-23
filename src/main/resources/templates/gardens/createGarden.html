@@ -26,6 +26,29 @@
                        th:name="location" th:value="${garden.location}" data-cy="location">
                 <div th:if="${#fields.hasErrors('location')}" th:errors="*{location}" style="color: red;"></div>
             </div>
+            <div class="form-group">
+                <label for="streetNumber">Street Number</label>
+                <input type="text" class="form-control" id="streetNumber" placeholder="1">
+            </div>
+            <div class="form-group">
+                <label for="streetName">Street Name</label>
+                <input type="text" class="form-control" id="streetName" placeholder="Main St">
+            </div>
+            <div class="form-group">
+                <label for="suburb">Suburb</label>
+                <input type="text" class="form-control" id="suburb" placeholder="Suburb">
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="City">City</label>
+                    <input type="text" class="form-control" id="City"  placeholder="City">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="postCode">Zip</label>
+                    <input type="text" class="form-control" id="postCode"  placeholder="Post Code">
+                </div>
+            </div>
+
             <!-- Garden Size Field -->
             <label for="size"> Garden Size (m^2) (Optional): </label>
             <input type="text" class="form-control" id="size" placeholder="Size of Garden"
