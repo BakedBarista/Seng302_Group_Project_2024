@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
@@ -89,12 +90,13 @@ public class PlantControllerTest {
         Plant validPlant = new Plant("Plant", "10", "Yellow", "11/03/2024");
         long gardenId = 0;
         long plantId = 0;
+        MultipartFile file = new MockMultipartFile("file","image.jpg","image/jpeg","file content".getBytes());
         String expectedReturnPage = "redirect:/gardens/" + gardenId;
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
         when(plantService.getPlantById(plantId)).thenReturn(Optional.of(validPlant));
-        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, validPlant, bindingResult, model);
+        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, validPlant, bindingResult, model);
 
         assertEquals(expectedReturnPage, returnPage);
 
@@ -106,11 +108,12 @@ public class PlantControllerTest {
         Plant invalidPlant = new Plant("#invalid", "10", "Yellow", "11/03/2024");
         long gardenId = 0;
         long plantId = 0;
+        MultipartFile file = new MockMultipartFile("file","image.jpg","image/jpeg","file content".getBytes());
         String expectedReturnPage = "plants/editPlant";
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
-        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, invalidPlant, bindingResult, model);
+        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, invalidPlant, bindingResult, model);
 
         assertEquals(expectedReturnPage, returnPage);
     }

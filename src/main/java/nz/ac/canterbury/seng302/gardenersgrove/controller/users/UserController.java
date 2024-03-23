@@ -31,7 +31,7 @@ public class UserController {
     @Autowired
     private TokenService tokenService;
 
-    private static final String DEFAULT_PROFILE_PICTURE_URL = "https://www.gravatar.com/avatar/5197c9706fccb18e1c912c43172fcf0b?s=100&d=identicon";
+    private static final String DEFAULT_PROFILE_PICTURE_URL = "https://www.gravatar.com/avatar/00000000000000000000000000000000?s=100&d=identicon";
 
     /**
      * Shows the user's profile page
