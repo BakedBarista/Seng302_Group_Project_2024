@@ -10,7 +10,7 @@ import jakarta.transaction.Transactional;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 
 import java.security.SecureRandom;
-import java.time.Instant;
+import java.time.Clock;
 import java.util.Base64;
 
 /**
@@ -29,6 +29,9 @@ public class TokenService {
     @Autowired
     private GardenUserRepository userRepository;
 
+    @Autowired
+    private Clock clock;
+
     /**
      * create a random 32-character authentication token and return it
      * 
@@ -46,6 +49,7 @@ public class TokenService {
 
     /**
      * Create a random 6-digit token for email verification on signup
+     * 
      * @return token
      */
     public String createEmailToken() {
@@ -65,7 +69,7 @@ public class TokenService {
     public void cleanUpTokens() {
         logger.debug("cleaning up tokens");
 
-        int deleted = userRepository.deleteUsersWithExpiredEmailTokens(Instant.now());
+        int deleted = userRepository.deleteUsersWithExpiredEmailTokens(clock.instant());
         if (deleted != 0) {
             logger.info("deleted {} users with expired tokens", deleted);
         }
