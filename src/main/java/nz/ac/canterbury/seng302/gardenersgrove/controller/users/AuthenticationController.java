@@ -31,7 +31,8 @@ public class AuthenticationController {
     @GetMapping("/users/user/{userId}/authenticateEmail")
     public String authenticateEmail(@PathVariable("userId") Long userId, Model model) {
         // if the user has an authentication token
-        if (!(userService.getUserById(userId).getEmailValidationToken() == null)) {
+        GardenUser user = userService.getUserById(userId);
+        if (user != null  && user.getEmailValidationToken() != null) {
             model.addAttribute("userId", userId);
             return "/authentication/emailAuthentication";
         } else {
