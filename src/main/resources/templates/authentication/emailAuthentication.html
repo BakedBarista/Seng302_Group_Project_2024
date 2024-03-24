@@ -5,19 +5,6 @@
     <th:block th:insert="~{fragments/general.html :: headerfiles}">
     </th:block>
     <title>Authenticate Email | Gardener's Grove</title>
-
-    <script>
-        const authenticationBox = document.getElementById("authenticationCode");
-        const form = document.getElementById("authenticationForm");
-
-        authenticationBox.addEventListener("input", function () {
-            const value = authenticationBox.valueOf();
-
-            if (value.length === 6) {
-                form.submit();
-            }
-        })
-    </script>
 </head>
 <body>
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
@@ -25,11 +12,22 @@
     <h1>Authenticate Email</h1>
     <h6>We emailed you an authentication code!</h6>
     <br>
-    <form id = "authenticationForm" th:action="login" method="post">
-        <label for="authenticationCode"> Authentication Code: </label>
-        <input type="text" pattern="\d*" maxlength="6" class="form-control" id="authenticationCode" placeholder="type your six digit code here..."
-               th:name="authenticationCode" data-cy="size" autofocus>
+    <form id = "authenticationForm" th:action="@{/users/user/{userId}/authenticateEmail (userId=${userId})}" method="post">
+        <label for="authenticationToken"> Authentication Code: </label>
+        <input type="text" pattern="\d*" maxlength="6" class="form-control" id="authenticationToken" placeholder="type your six digit code here..."
+               th:name="authenticationToken" data-cy="size" autofocus>
     </form>
 </main>
+<script>
+    const authenticationBox = document.getElementById("authenticationToken");
+    const form = document.getElementById("authenticationForm");
+
+    authenticationBox.addEventListener("input", function () {
+        const value = authenticationBox.value;
+        if (value.length === 6) {
+            form.submit();
+        }
+    })
+</script>
 </body>
 </html>
