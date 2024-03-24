@@ -45,7 +45,6 @@ public class AuthenticationController {
      * otherwise, send the user back to the authentication page
      * @param userId
      * @param authenticationToken
-     * @param model
      * @return home page if authenticated, otherwise authentication page
      */
     @PostMapping("/users/user/{userId}/authenticateEmail")
