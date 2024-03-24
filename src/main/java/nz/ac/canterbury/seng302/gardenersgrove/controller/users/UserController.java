@@ -2,7 +2,10 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.time.Instant;
 
+import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +27,9 @@ public class UserController {
 
     @Autowired
     private GardenUserService userService;
+
+    @Autowired
+    private TokenService tokenService;
 
     private static final String DEFAULT_PROFILE_PICTURE_URL = "https://www.gravatar.com/avatar/00000000000000000000000000000000?s=100&d=identicon";
 
@@ -74,5 +80,24 @@ public class UserController {
 
         return ResponseEntity.ok().contentType(MediaType.parseMediaType(user.getProfilePictureContentType()))
                 .body(user.getProfilePicture());
+    }
+
+    /**
+     * adds a random token and this time instance to a given user in the DB
+     * @param userId
+     * @return
+     */
+    public ResponseEntity<Void> addEmailTokenAndTimeToUser(@PathVariable(name = "id") Long userId) {
+        logger.info("called addTokenAndTimeToUser");
+        String token = tokenService.createEmailToken();
+
+        GardenUser user = userService.getUserById(userId);
+        Instant time = Instant.now().plus(10, ChronoUnit.MINUTES);
+        user.setEmailValidationToken(token);
+        user.setEmailValidationTokenExpiryInstant(time);
+
+        userService.addUser(user);
+
+        return ResponseEntity.ok().build();
     }
 }
