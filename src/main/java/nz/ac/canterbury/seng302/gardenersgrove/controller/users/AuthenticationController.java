@@ -50,8 +50,7 @@ public class AuthenticationController {
      */
     @PostMapping("/users/user/{userId}/authenticateEmail")
     public String validateAuthenticationToken(@PathVariable("userId") Long userId,
-                                              @ModelAttribute("authenticationToken") String authenticationToken,
-                                              Model model) {
+                                              @ModelAttribute("authenticationToken") String authenticationToken) {
         logger.info("authenticating token {} for user {}", authenticationToken, userId);
 
         // check if token matches token in DB
