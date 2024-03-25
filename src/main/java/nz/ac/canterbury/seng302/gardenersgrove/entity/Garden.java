@@ -3,9 +3,8 @@ package nz.ac.canterbury.seng302.gardenersgrove.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+
 import nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidEuropeanDecimal;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.ValidationGroups;
 
 
 
@@ -30,7 +29,7 @@ public class Garden {
     private String location;
 
     @ValidEuropeanDecimal(message = "Garden size must be a positive number")
-    @Column(nullable = true)
+    @Column()
     private String size;
 
     public Garden() {}

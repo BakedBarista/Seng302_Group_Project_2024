@@ -1,8 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 
+import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.ValidationSequence;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.slf4j.Logger;
@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
+
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -55,13 +55,13 @@ public class GardenController {
 
     /**
      * Submits form to be displayed
-     * @param garden
-     * @param bindingResult
-     * @param model
+     * @param garden   garden details
+     * @param bindingResult binding result
+     * @param model representation of results
      * @return gardenForm
      */
     @PostMapping("/gardens/create")
-    public String submitForm(@Validated(ValidationSequence.class) @ModelAttribute("garden") Garden garden,
+    public String submitForm(@Valid @ModelAttribute("garden") Garden garden,
                              BindingResult bindingResult, Model model) {
         logger.info("POST /gardens - submit the new garden form");
         garden.setSize(garden.getSize());
@@ -105,7 +105,7 @@ public class GardenController {
 
     /**
      * Updates the Garden
-     * @param id
+     * @param id garden id
      * @return redirect to gardens
      */
     @GetMapping("/gardens/{id}/edit")
@@ -121,15 +121,15 @@ public class GardenController {
 
     /**
      * Update garden details
-     * @param id
-     * @param garden
-     * @param result
-     * @param model
+     * @param id garden id
+     * @param garden garden details
+     * @param result binding result
+     * @param model representation of results
      * @return redirect to gardens
      */
     @PostMapping("/gardens/{id}/edit")
     public String updateGarden(@PathVariable long id,
-                               @Validated(ValidationSequence.class) @ModelAttribute("garden") Garden garden,
+                               @Valid @ModelAttribute("garden") Garden garden,
                                BindingResult result,
                                Model model) {
         if (result.hasErrors()) {
