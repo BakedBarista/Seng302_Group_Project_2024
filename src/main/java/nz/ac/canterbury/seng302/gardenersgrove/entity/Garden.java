@@ -43,7 +43,7 @@ public class Garden {
     @NotBlank(message = "City and Country are required", groups = {ValidationGroups.FirstOrder.class})
     @Pattern(regexp = "^[\\p{L}0-9 .'-]+$", message = "Please enter a valid City name", groups = {ValidationGroups.SecondOrder.class})
     @Column
-    private String City;
+    private String city;
     @NotBlank(message = "City and Country are required", groups = {ValidationGroups.FirstOrder.class})
     @Pattern(regexp = "^[\\p{L}0-9 .'-]+$", message = "Please enter a valid country name", groups = {ValidationGroups.SecondOrder.class})
     @Column
@@ -65,12 +65,23 @@ public class Garden {
     /**
      * Creates a new FormResult object
      * @param gardenName name of garden
-     * @param gardenLocation location of garden
+     * @param streetNumber street number of garden
+     * @param streetName street name of garden
+     * @param suburb suburb
+     * @param city city
+     * @param country country
+     * @param postCode postcode
      * @param gardenSize size of garden
      */
-    public Garden(String gardenName, String gardenLocation, String gardenSize) {
+    public Garden(String gardenName, String location,String streetNumber, String streetName, String suburb, String city, String country, String postCode, String gardenSize) {
         this.name = gardenName;
-        this.location = gardenLocation;
+        this.location = location;
+        this.streetNumber = streetNumber;
+        this.streetName = streetName;
+        this.suburb = suburb;
+        this.city = city;
+        this.country = country;
+        this.postCode = postCode;
         this.size = gardenSize;
     }
 
@@ -141,11 +152,11 @@ public class Garden {
     }
 
     public String getCity() {
-        return City;
+        return city;
     }
 
     public void setCity(String city) {
-        City = city;
+        this.city = city;
     }
 
 
