@@ -62,8 +62,8 @@ public class SecurityConfiguration {
         http.csrf(csrf -> csrf.ignoringRequestMatchers(AntPathRequestMatcher.antMatcher("/h2/**")));
 
         http.authorizeHttpRequests(auth -> {
-            // Allow "/", "/register", and "/login" to anyone (permitAll)
-            auth.requestMatchers("/", "/users/dummy",
+            // Allow "/", "/users/register", and "/users/login" to anyone (permitAll)
+            auth.requestMatchers("/",
                                 "/users/register", "/users/login",
                                 "/css/**", "/js/**")
                     .permitAll();
@@ -72,8 +72,12 @@ public class SecurityConfiguration {
                     .authenticated();
         });
 
-        // Define logging out, a POST "/logout" endpoint now exists under the hood,
-        // redirect to "/login", invalidate session and remove cookie
+        // Instead of returning 403, redirect to "/users/login"
+        http.exceptionHandling(exceptionHandling -> exceptionHandling
+                .accessDeniedHandler((_req, res, _exception) -> res.sendRedirect("/users/login")));
+
+        // Define logging out, a POST "/users/logout" endpoint now exists under the hood,
+        // redirect to "/users/login", invalidate session and remove cookie
         http.logout(
                 logout -> logout
                         // Used a RequestMatcher to accept GET requests
