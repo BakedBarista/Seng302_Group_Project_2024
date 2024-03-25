@@ -75,7 +75,7 @@ public class AuthenticationControllerTest {
     @Test
     public void testWhenUserGivesCorrectToken_UserIsTakenToProfilePage() {
         long userId = 1;
-        String expectedPage = "redirect:/users/user";
+        String expectedPage = "redirect:/users/login";
         String token = "000000";
         Instant time = Instant.now();
 
