@@ -1,23 +1,17 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.AuthenticationController;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.sql.Time;
 import java.time.Instant;
-import java.util.Collections;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -34,6 +28,9 @@ public class AuthenticationControllerTest {
 
     @Mock
     private Model model;
+
+    @Mock
+    private RedirectAttributes redirectAttributes;
 
     @BeforeEach
     public void setUp() {
@@ -86,7 +83,7 @@ public class AuthenticationControllerTest {
         user.setEmailValidationTokenExpiryInstant(time);
 
         when(userService.getUserById(userId)).thenReturn(user);
-        String actualPage = authenticationController.validateAuthenticationToken(userId, token);
+        String actualPage = authenticationController.validateAuthenticationToken(userId, token, redirectAttributes);
 
         assertEquals(expectedPage, actualPage);
     }
@@ -103,7 +100,7 @@ public class AuthenticationControllerTest {
         user.setEmailValidationTokenExpiryInstant(time);
 
         when(userService.getUserById(userId)).thenReturn(user);
-        String actualPage = authenticationController.validateAuthenticationToken(userId, userInputtedToken);
+        String actualPage = authenticationController.validateAuthenticationToken(userId, userInputtedToken, redirectAttributes);
 
         assertEquals(expectedPage, actualPage);
     }
@@ -118,7 +115,7 @@ public class AuthenticationControllerTest {
         user.setEmailValidationTokenExpiryInstant(time);
 
         when(userService.getUserById(userId)).thenReturn(user);
-        authenticationController.validateAuthenticationToken(userId, token);
+        authenticationController.validateAuthenticationToken(userId, token, redirectAttributes);
 
         GardenUser user = userService.getUserById(userId);
         assertNull(user.getEmailValidationToken());
@@ -136,7 +133,7 @@ public class AuthenticationControllerTest {
         user.setEmailValidationTokenExpiryInstant(time);
 
         when(userService.getUserById(userId)).thenReturn(user);
-        authenticationController.validateAuthenticationToken(userId, userInputtedToken);
+        authenticationController.validateAuthenticationToken(userId, userInputtedToken, redirectAttributes);
 
         assertEquals(storedToken, user.getEmailValidationToken());
         assertEquals(time, user.getEmailValidationTokenExpiryInstant());

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class AuthenticationController {
@@ -50,7 +51,8 @@ public class AuthenticationController {
      */
     @PostMapping("/users/user/{userId}/authenticateEmail")
     public String validateAuthenticationToken(@PathVariable("userId") Long userId,
-                                              @ModelAttribute("authenticationToken") String authenticationToken) {
+                                              @ModelAttribute("authenticationToken") String authenticationToken,
+                                              RedirectAttributes redirectAttributes) {
         logger.info("authenticating token {} for user {}", authenticationToken, userId);
 
         // check if token matches token in DB
@@ -65,7 +67,8 @@ public class AuthenticationController {
             user.setEmailValidationTokenExpiryInstant(null);
             userService.addUser(user);
 
-            return "redirect:/users/user";
+            redirectAttributes.addFlashAttribute("justAuthenticated", true);
+            return "redirect:/users/login";
         }
         else {
             return "/authentication/emailAuthentication";

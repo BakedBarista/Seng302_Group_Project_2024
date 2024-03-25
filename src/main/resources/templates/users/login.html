@@ -14,6 +14,8 @@
 				<label
 					th:class="'form-group ' + ${incorrectEmail != null ? 'form-group-error' : ''}"
 				>
+					<text th:if="${justAuthenticated == true}">Your account has been activated, please log in<br><br></text>
+
 					Email
 					<input
 						type="text"
