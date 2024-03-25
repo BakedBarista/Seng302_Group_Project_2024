@@ -9,6 +9,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.validation.UserValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,12 +64,15 @@ public class LoginController {
 
         // UserValidation userValidation = new UserValidation()
 
-        System.out.println(user.getEmail());
-        System.out.println(password);
         GardenUser userDetails = userService.getUserByEmailAndPassword(user.getEmail(), password);
         boolean valid = true; 
-        
-        System.out.println(userDetails);
+
+        for (FieldError errors : bindingResult.getFieldErrors()) {
+            String fieldName = errors.getField();
+            String errorMessage = errors.getDefaultMessage();
+            System.out.println("Validation error in field '" + fieldName + "': " + errorMessage);
+        }
+
 
         if (userDetails == null) {
             model.addAttribute("invalidCredentials", "The email address is unknown, or the password is invalid");
@@ -78,12 +82,14 @@ public class LoginController {
         if(valid && !bindingResult.hasErrors()){
             try {
                 request.logout();
+                System.out.println("tester");
             } catch (ServletException e) {
                 logger.warn("User was not logged in");
             }
 
             try {
                 request.login(user.getEmail(), password);
+                System.out.println("testerss");
                 return "redirect:/users/user";
             } catch (ServletException e) {
                 logger.error("Error while login ", e);
@@ -91,6 +97,7 @@ public class LoginController {
 
             return "users/login";
         }else{
+            System.out.println("testesssssr");
             if (bindingResult.hasErrors()) {
                 model.addAttribute("user", user);
             }

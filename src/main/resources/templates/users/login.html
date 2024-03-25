@@ -14,7 +14,6 @@
             <label th:class="'form-group ' + ${incorrectEmail != null ? 'form-group-error' : ''}">
                 Email
                 <input type="text" th:name="email" th:value="*{email}" inputmode="email">
-                <span class = "error" th:if="${incorrectEmail != null}" th:text="*{incorrectEmail}"></span>
                 <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: red;"></div>
             </label>
             <label th:class="'form-group ' + ${invalidCredentials != null ? 'form-group-error' : ''}">

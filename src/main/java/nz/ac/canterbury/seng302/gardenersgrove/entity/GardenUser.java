@@ -36,10 +36,10 @@ public class GardenUser {
     @Column(nullable = true)
     private String lname;
 
-    @Email(message = "Email address must be in the form ‘jane@doe.nz’")
+    @Pattern(regexp = "^[a-zA-Z0-9_+&*-]+(?:\\\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\\\.)+[a-zA-Z]{2,7}$", message = "Email address must be in the form ‘jane@doe.nz’", groups = {ValidationGroups.SecondOrder.class})
     @Column(nullable = false, unique = true)
     private String email;
-
+    
     @Column(nullable = false)
     private String password;
 
