@@ -5,6 +5,13 @@
     <th:block th:insert="~{fragments/general.html :: headerfiles}">
     </th:block>
     <title>Authenticate Email | Gardener's Grove</title>
+
+    <style>
+        .groupElements {
+            display: flex;
+            align-items: center;
+        }
+    </style>
 </head>
 <body>
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
@@ -14,18 +21,32 @@
     <br>
     <form id = "authenticationForm" th:action="@{/users/user/{userId}/authenticateEmail (userId=${userId})}" method="post">
         <label for="authenticationToken"> Authentication Code: </label>
-        <input type="text" pattern="\d*" maxlength="6" class="form-control" id="authenticationToken" placeholder="type your six digit code here..."
-               th:name="authenticationToken" data-cy="size" autofocus>
+        <div class = "groupElements">
+            <input type="text" pattern="\d*" maxlength="6" class="form-control" id="authenticationToken" placeholder="type your six digit code here..."
+                   th:name="authenticationToken" data-cy="size" autofocus>
+            <button id = "pasteButton" type="button">Paste</button>
+        </div>
     </form>
 </main>
 <script>
     const authenticationBox = document.getElementById("authenticationToken");
     const form = document.getElementById("authenticationForm");
+    const paste = document.getElementById("pasteButton");
 
     authenticationBox.addEventListener("input", function () {
         const value = authenticationBox.value;
         if (value.length === 6) {
             form.submit();
+        }
+    })
+
+    paste.addEventListener("click", async function () {
+        // doesn't work in all browsers (like firefox)
+        try {
+            authenticationBox.value = await navigator.clipboard.readText();
+            console.log(navigator.clipboard.readText())
+        } catch (err) {
+            console.log(err)
         }
     })
 </script>
