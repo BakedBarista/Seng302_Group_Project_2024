@@ -6,6 +6,7 @@
         <link th:href="@{/css/navbar.css}" rel="stylesheet" />
         <link th:href="@{/css/styles.css}" rel="stylesheet" />
     </head>
+    <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
     <body>
     <div th:replace="~{navbar :: navbarOnMyGarden}"></div>
         <div>

@@ -34,6 +34,9 @@ public class Garden {
     @Column(nullable = true)
     private String size;
 
+    @Column(nullable = false)
+    public Boolean isPublic = false;
+
     public Garden() {}
 
     /**
