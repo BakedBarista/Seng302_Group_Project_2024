@@ -9,11 +9,14 @@ import org.springframework.context.event.EventListener;
 @SpringBootApplication
 public class JavaSmtpGmailSenderApplication {
 
-    @Autowired
-    private JavaSmtpGmailSenderService senderService;
+    private final JavaSmtpGmailSenderService senderService;
+
+    public JavaSmtpGmailSenderApplication() {
+        this.senderService = new JavaSmtpGmailSenderService(); // Manually instantiate the service
+    }
 
     @EventListener(ApplicationReadyEvent.class)
     public void sendMail(){
-        senderService.sendEmail("imogenkeeling@gmail.com","This is subject","This is email body");
+        senderService.sendEmail("lce26@uclive.ac.nz","SpringBoot Automated Email","Morgan English is a legend");
     }
 }
