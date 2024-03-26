@@ -32,7 +32,7 @@ public class Plant {
     private String description;
 
 
-    @Column(nullable = false)
+    @Column()
     private String plantedDate;
 
     @ManyToOne

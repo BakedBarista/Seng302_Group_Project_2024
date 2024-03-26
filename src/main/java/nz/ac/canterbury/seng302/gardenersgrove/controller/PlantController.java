@@ -81,7 +81,7 @@ public class PlantController {
                                       Model model) {
 
 
-        if (!plant.getPlantedDate().matches("\\d{4}-\\d{2}-\\d{2}")){
+        if (!plant.getPlantedDate().isEmpty() && !plant.getPlantedDate().matches("\\d{4}-\\d{2}-\\d{2}")){
             bindingResult.rejectValue("plantedDate", "plantedDate.formatError", "Date must be in the format DD-MM-YYYY");
 
         }
@@ -152,13 +152,12 @@ public class PlantController {
                                @PathVariable("plantId") long plantId, @RequestParam("image") MultipartFile file,
                                @Valid @ModelAttribute("plant") Plant plant,
                                BindingResult bindingResult, Model model) {
-        logger.info("/garden/{}/plant/{}", gardenId, plantId);
-        logger.info("{}", plant);
 
-        if (!plant.getPlantedDate().matches("\\d{4}-\\d{2}-\\d{2}")){
-            bindingResult.rejectValue("plantedDate", "plantedDate.formatError", "Date must be in the format DD-MM-YYYY");
-
+        logger.info(plant.getPlantedDate());
+        if (!plant.getPlantedDate().isEmpty() && !plant.getPlantedDate().matches("\\d{4}-\\d{2}-\\d{2}")) {
+            bindingResult.rejectValue("plantedDate", "plantedDate.formatError", "Date must be in the format YYYY-MM-DD");
         }
+
         if(plant != null) {
             plant.setPlantedDate(refactorPlantedDate(plant.getPlantedDate()));
         }
