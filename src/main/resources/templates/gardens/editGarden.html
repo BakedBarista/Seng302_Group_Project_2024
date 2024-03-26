@@ -18,11 +18,47 @@
             <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" style="color: red;"></div>
             <br/>
             <!-- Garden Location Field -->
-            <label for="location"> Garden Location: </label>
-            <input type="text" class="form-control" id="location" th:placeholder="Location"
-                   th:name="location" th:value="${garden.location}" data-cy="location" autofocus>
-            <div th:if="${#fields.hasErrors('location')}" th:errors="*{location}" style="color: red;"></div>
-            <br/>
+            <div>
+                <label for="location"> Garden Location: </label>
+                <input type="text" class="form-control" id="location" placeholder="Please Enter Garden Location"
+                       th:name="location" th:value="${garden.location}" data-cy="location">
+                <!--<div th:if="${#fields.hasErrors('location')}" th:errors="*{location}" style="color: red;"></div>-->
+            </div>
+            <div class="form-group">
+                <label for="streetNumber">Street Number</label>
+                <input type="text" class="form-control" id="streetNumber" placeholder="1"
+                       th:name="streetNumber" th:value="${garden.streetNumber}" data-cy="streetNumber">
+            </div>
+            <div class="form-group">
+                <label for="streetName">Street Name</label>
+                <input type="text" class="form-control" id="streetName" placeholder="Main St"
+                       th:name="streetName" th:value="${garden.streetName}" data-cy="streetNumber">
+            </div>
+            <div class="form-group">
+                <label for="suburb">Suburb</label>
+                <input type="text" class="form-control" id="suburb" placeholder="Suburb"
+                       th:name="suburb" th:value="${garden.suburb}" data-cy="suburb">
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="city">City</label>
+                    <input type="text" class="form-control" id="city"  placeholder="City"
+                           th:name="city" th:value="${garden.city}" data-cy="city">
+                    <div th:if="${#fields.hasErrors('city')}" th:errors="*{city}" style="color: red;"></div>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="country">Country</label>
+                    <input type="text" class="form-control" id="country" placeholder="Country"
+                           th:name="country" th:value="${garden.country}" data-cy="country">
+                    <div th:if="${#fields.hasErrors('country')}" th:errors="*{country}" style="color: red;"></div>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="postCode">Zip</label>
+                    <input type="text" class="form-control" id="postCode"  placeholder="Post Code"
+                           th:name="postCode" th:value="${garden.postCode}" data-cy="postCode">
+                </div>
+            </div>
+
             <!-- Garden Size Field -->
             <label for="size"> Garden Size (m&sup2;): </label>
             <input type="text" class="form-control" id="size" placeholder="Size of Garden"
