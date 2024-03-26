@@ -23,7 +23,7 @@ public class GardenTest {
 
     @BeforeEach
     void makeGarden() {
-        garden = new Garden("Garden", "Christchurch", "100");
+        garden = new Garden("Garden", "Christchurch", "100", "Big");
     }
 
     @Test
