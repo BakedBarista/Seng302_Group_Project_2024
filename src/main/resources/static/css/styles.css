@@ -5,8 +5,13 @@
 }
 
 /* Dropdown on hover */
-.nav-item:hover .dropdown-menu {
+.nav-item:hover #garden-dropdown {
     display: block;
+}
+
+.nav-item:hover #user-dropdown {
+    display: block;
+    right: 0;
 }
 
 
