@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.LoginDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.ValidationSequence;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.validation.UserValidation;
@@ -35,10 +36,9 @@ public class LoginController {
      * @return login page view
      */
     @GetMapping("users/login")
-    public String login(@RequestParam(required = false) String error,
-                        Model model) {
+    public String login(Model model) {
         logger.info("GET /users/login");
-        model.addAttribute("user", new GardenUser());
+        model.addAttribute("loginDTO", new LoginDTO());
         return "users/login";
     }
 
@@ -54,23 +54,21 @@ public class LoginController {
      */
     @PostMapping("/users/login")
     public String authenticateLogin(
-                                    @Validated(ValidationSequence.class) @ModelAttribute("user") GardenUser user,
+                                    @Validated(ValidationSequence.class) @ModelAttribute("loginDTO") LoginDTO loginDTO,
                                     BindingResult bindingResult,
-                                    @RequestParam(name = "password") String password,
-                                    @RequestParam(required = false) String error,
                                     Model model,
                                     HttpServletRequest request) {
         logger.info("POST /users/login");
 
-        // UserValidation userValidation = new UserValidation()
-
-        GardenUser userDetails = userService.getUserByEmailAndPassword(user.getEmail(), password);
+        String email = loginDTO.getEmail();
+        String password = loginDTO.getPassword();
+        GardenUser userDetails = userService.getUserByEmailAndPassword(email, password);
         boolean valid = true; 
 
         for (FieldError errors : bindingResult.getFieldErrors()) {
             String fieldName = errors.getField();
             String errorMessage = errors.getDefaultMessage();
-            System.out.println("Validation error in field '" + fieldName + "': " + errorMessage);
+            logger.info("Validation error in field '" + fieldName + "': " + errorMessage);
         }
 
 
@@ -82,14 +80,12 @@ public class LoginController {
         if(valid && !bindingResult.hasErrors()){
             try {
                 request.logout();
-                System.out.println("tester");
             } catch (ServletException e) {
                 logger.warn("User was not logged in");
             }
 
             try {
-                request.login(user.getEmail(), password);
-                System.out.println("testerss");
+                request.login(email, password);
                 return "redirect:/users/user";
             } catch (ServletException e) {
                 logger.error("Error while login ", e);
@@ -97,9 +93,9 @@ public class LoginController {
 
             return "users/login";
         }else{
-            System.out.println("testesssssr");
             if (bindingResult.hasErrors()) {
-                model.addAttribute("user", user);
+                loginDTO.setPassword(null);
+                model.addAttribute("loginDTO", loginDTO);
             }
             return "users/login";
         }

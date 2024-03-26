@@ -10,7 +10,7 @@
     <header th:insert="~{fragments/general.html :: header}"></header>
     <main class="main-container">
         <h1>Sign In</h1>
-        <form th:action="login" method="post" th:object="${user}">
+        <form th:action="login" method="post" th:object="${loginDTO}">
             <label th:class="'form-group ' + ${incorrectEmail != null ? 'form-group-error' : ''}">
                 Email
                 <input type="text" th:name="email" th:value="*{email}" inputmode="email">
