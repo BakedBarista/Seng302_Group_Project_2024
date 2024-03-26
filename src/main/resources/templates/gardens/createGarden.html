@@ -32,6 +32,12 @@
                    th:name="size" th:value="${garden.size}" data-cy="size">
             <div th:if="${#fields.hasErrors('size')}" th:errors="*{size}" style="color: red;"></div>
             <br/>
+            <!-- Garden Description -->
+            <label for="size"> Garden Description: </label>
+            <input type="text" class="form-control" id="description" placeholder="Description"
+                   th:name="size" th:value="${garden.description}" data-cy="size" autofocus>
+            <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}" style="color: red;"></div>
+            <br/>
             <button type="submit">Submit!</button><button type="button" onclick="history.back()">Cancel</button>
         </form>
     </div>

@@ -30,6 +30,8 @@ public class Garden {
     @Column(nullable = false)
     private String location;
 
+    private String description;
+
     @ValidEuropeanDecimal(message = "Garden size must be a positive number", groups = {ValidationGroups.FirstOrder.class})
     @Column(nullable = true)
     private String size;
@@ -42,10 +44,11 @@ public class Garden {
      * @param gardenLocation location of garden
      * @param gardenSize size of garden
      */
-    public Garden(String gardenName, String gardenLocation, String gardenSize) {
+    public Garden(String gardenName, String gardenLocation, String gardenSize, String description) {
         this.name = gardenName;
         this.location = gardenLocation;
         this.size = gardenSize;
+        this.description = description;
     }
 
     public Long getId() {
@@ -78,6 +81,14 @@ public class Garden {
 
     public void setSize(String size) {
         this.size = size.replace(',', '.');
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getDescription() {
+        return this.description;
     }
 
     @Override
