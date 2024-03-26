@@ -12,13 +12,13 @@
     <div>
         <form th:action="@{/gardens/{gardenId}/edit(gardenId=${id})}" th:object="${garden}" method="post">
             <!-- Garden Name Field -->
-            <label for="name"> Garden Name: </label>
+            <label for="name" class = "required-field"> Garden Name: </label>
             <input type="text" class="form-control" id="name" placeholder="Name"
                    th:name="name" th:value="${garden.name}" data-cy="name" autofocus>
             <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" style="color: red;"></div>
             <br/>
             <!-- Garden Location Field -->
-            <label for="location"> Garden Location: </label>
+            <label for="location" class = "required-field"> Garden Location: </label>
             <input type="text" class="form-control" id="location" th:placeholder="Location"
                    th:name="location" th:value="${garden.location}" data-cy="location" autofocus>
             <div th:if="${#fields.hasErrors('location')}" th:errors="*{location}" style="color: red;"></div>
@@ -32,7 +32,7 @@
             <!-- Garden Description -->
             <label for="size"> Garden Description: </label>
             <input type="text" class="form-control" id="description" placeholder="Description"
-                   th:name="size" th:value="${garden.description}" data-cy="size" autofocus>
+                   th:name="description" th:value="${garden.description}" data-cy="size" autofocus>
             <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}" style="color: red;"></div>
             <br/>
             <button type="submit">Submit!</button><button type="button" th:onclick="'window.location.href = \'' + @{/gardens/{gardenId}(gardenId=${id})} + '\''">Cancel</button>

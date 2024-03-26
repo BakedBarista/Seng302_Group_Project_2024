@@ -199,3 +199,9 @@ button {
     padding: 5px;
     margin: 5px;
 }
+
+.required-field::after {
+    content: "*";
+    color: red;
+    font-family: bold, serif;
+}
