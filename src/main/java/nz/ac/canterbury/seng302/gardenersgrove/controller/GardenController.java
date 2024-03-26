@@ -104,6 +104,26 @@ public class GardenController {
     }
 
     /**
+     * Updates the public status of the garden
+     * @param id
+     * @param isPublic
+     * @return redirect to gardens
+     */
+    @PostMapping("/gardens/{id}")
+    public String updatePublicStatus(@PathVariable(name = "id") Long id,
+                                     @RequestParam(name = "isPublic", defaultValue = "false") Boolean isPublic) {
+        logger.info("POST /gardens/id - update garden public status");
+        logger.info(String.valueOf(isPublic));
+        Optional<Garden> garden = gardenService.getGardenById(id);
+        if (garden.isPresent()) {
+            garden.get().setPublic(isPublic);
+            gardenService.addGarden(garden.get());
+        }
+        return "redirect:/gardens/" + id;
+    }
+
+
+    /**
      * Updates the Garden
      * @param id
      * @return redirect to gardens

@@ -110,4 +110,13 @@ public class GardenControllerTest {
         assertEquals("Test Location", garden.getLocation());
         assertEquals("Test Size", garden.getSize());
     }
+
+    @Test
+    public void setUpdateStatusTrueQueryDatabaseReturnTrue() {
+        when(gardenService.getGardenById(1L)).thenReturn(Optional.of(new Garden()));
+        when(gardenService.addGarden(any())).thenReturn(new Garden());
+        String result = gardenController.updatePublicStatus(1L, true);
+        assertEquals(gardenService.getGardenById(1L).get().getIsPublic(), true);
+        assertEquals("redirect:/gardens/1", result);
+    }
 }
