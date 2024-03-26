@@ -1,50 +1,40 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
-	<head>
-		<title>My Gardens</title>
+    <head>
+        <title>My Gardens</title>
 
-		<meta http-equiv="Content-Type" context="text/html; charset=UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<!--/*/ <th:block th:insert="~{fragments/general.html :: headerfiles}">
-        </th:block> /*/-->
-	</head>
-	<body>
-		<div th:replace="~{fragments/navbar :: navbar}"></div>
-		<div>
-			<div>
-				<h3>Your Gardens:</h3>
-				<table id="gardens-table">
-					<thead>
-						<tr>
-							<th>Name</th>
-							<th>Location</th>
-							<th>Size</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr th:if="${gardens.empty}">
-							<td colspan="3">Please add a garden first</td>
-						</tr>
-						<tr th:each="garden : ${gardens}">
-							<td>
-								<a th:href="@{'/gardens/' + ${garden.id}}"
-									><span th:text="${garden.name}">
-										Name
-									</span></a
-								>
-							</td>
-							<td>
-								<span th:text="${garden.location}">
-									Location
-								</span>
-							</td>
-							<td>
-								<span th:text="${garden.size}"> Size </span>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
-	</body>
+        <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- This needs to be here for Bootstrap and general CSS imports -->
+        <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
+    </head>
+    <body>
+        <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+        <div>
+            <div>
+                <h3>Your Gardens:</h3>
+                <table id="gardens-table">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Location</th>
+                        <th>Size</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${gardens.empty}">
+                        <td colspan="3"> Please add a garden first</td>
+                    </tr>
+                    <tr th:each="garden : ${gardens}">
+                        <td><a th:href="@{'/gardens/' + ${garden.id}}"><span th:text="${garden.name}"> Name </span></a></td>
+                        <td><span th:text="${garden.location}"> Location </span></td>
+                        <td><span th:text="${garden.size}"> Size </span></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
+    </body>
 </html>
