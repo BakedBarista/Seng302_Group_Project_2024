@@ -3,54 +3,62 @@
 <head>
     <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
     <title>Add a New Plant</title>
-    <link th:href="@{/css/navbar.css}" rel="stylesheet" />
-    <link th:href="@{/css/styles.css}" rel="stylesheet" />
+
+    <!-- This needs to be here for Bootstrap and general CSS imports -->
+    <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
 </head>
 <body>
-<div th:replace="~{navbar :: navbar}"></div>
-<div>
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
     <div>
-        <form id="addPlantForm" th:action="@{/gardens/{gardenId}/add-plant(gardenId=${gardenId})}" th:object="${plant}"  method="post" enctype="multipart/form-data">
-
-
-        <!-- Plant Name Field -->
-            <label for="name">Plant Name:</label>
-            <input type="text" id="name" name="name" placeholder="Enter Plant Name" th:value="${plant.name}" >
-            <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" style="color: red;"></div>
-            <br/>
-            <br/>
-            <!-- Plant Description Field -->
-            <label for="description">Description:</label>
-            <textarea id="description" name="description" placeholder="Enter description" th:text="${plant.description}"></textarea>
-            <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}" style="color: red;"></div>
-            <br/>
-            <br/>
-            <!-- Plant Count Field -->
-            <label for="count">Count:</label>
-            <input type="number" id="count" name="count" placeholder="Enter Count" th:value="${plant.count}" >
-            <div th:if="${#fields.hasErrors('count')}" th:errors="*{count}" style="color: red;"></div>
-            <br/>
-            <br/>
-            <!-- Planting Date Field -->
-            <label for="plantedDate">Planting Date:</label>
-            <input type="date" id="plantedDate" name="plantedDate" placeholder="DD/MM/YYYY" th:value="${plant.plantedDate}" >
-            <div th:if="${#fields.hasErrors('plantedDate')}" th:errors="*{plantedDate}" style="color: red;"></div>
-            <br/>
-            <br/>
-            <div>
-                <h3>Plant Image:</h3>
-                <div class="image-container">
-                    <img id="preview-image" th:src="@{${plant.plantImagePath}}"/>
-                    <img th:unless="${plant.plantImagePath}" src="/default.png" alt="Default Plant Image" />
-                    <label for="image" class="add-image-button">+</label>
-                    <input type="file" id="image" name="image" accept=".png,.jpg,.jpeg,.svg" class="form-control-file" style = "display: none;">
+        <div>
+            <form id="addPlantForm" th:action="@{/gardens/{gardenId}/add-plant(gardenId=${gardenId})}" th:object="${plant}"  method="post" enctype="multipart/form-data">
+                <!-- Plant Name Field -->
+                <label for="name">Plant Name:</label>
+                <input type="text" id="name" name="name" placeholder="Enter Plant Name" th:value="${plant.name}" >
+                <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" style="color: red;"></div>
+                <br/>
+                <br/>
+                <!-- Plant Description Field -->
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" placeholder="Enter description" th:text="${plant.description}"></textarea>
+                <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}" style="color: red;"></div>
+                <br/>
+                <br/>
+                <!-- Plant Count Field -->
+                <label for="count">Count:</label>
+                <input type="number" id="count" name="count" placeholder="Enter Count" th:value="${plant.count}" >
+                <div th:if="${#fields.hasErrors('count')}" th:errors="*{count}" style="color: red;"></div>
+                <br/>
+                <br/>
+                <!-- Planting Date Field -->
+                <label for="plantedDate">Planting Date:</label>
+                <input type="date" id="plantedDate" name="plantedDate" placeholder="DD/MM/YYYY" th:value="${plant.plantedDate}" >
+                <div th:if="${#fields.hasErrors('plantedDate')}" th:errors="*{plantedDate}" style="color: red;"></div>
+                <br/>
+                <br/>
+                <div class="form-group">
+                    <input id="img-preview" onchange="showImage(this)" type="file" name="image" accept=".png, .jpg, .jpeg, .svg" class="form-control-file">
                 </div>
-            </div>
-            <button type="submit">Submit!</button>
-            <a class="button-link" th:href="@{/gardens/{id}(id=${gardenId})}"><button type="button">Cancel</button></a>
-        </form>
+                <div class="alert alert-danger" th:if="${fileTypeError}">
+                    <div th:text="${fileTypeError}" style="color: red"></div>
+                </div>
+
+                <div class="alert alert-danger" th:if="${fileSizeError}">
+                    <div th:text="${fileSizeError}" style="color: red"></div>
+                </div>
+                <div>
+                    <h3>Plant Image:</h3>
+                    <div class="image-container">
+                        <img th:src="@{${plant.plantImagePath}}" />
+                        <img th:unless="${plant.plantImagePath}" src="/default.png" alt="Default Plant Image" />
+                    </div>
+                </div>
+                <button type="submit">Submit!</button>
+                <a class="button-link" th:href="@{/gardens/{id}(id=${gardenId})}"><button type="button">Cancel</button></a>
+            </form>
+        </div>
     </div>
-</div>
+<th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
 </body>
 <script th:src="@{/js/nextFormBox.js}"></script>
 <script th:src="@{/js/imageHandler.js}"></script>
