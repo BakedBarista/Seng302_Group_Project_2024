@@ -3,11 +3,6 @@ package nz.ac.canterbury.seng302.gardenersgrove.entity;
 import java.util.List;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
-
-import nz.ac.canterbury.seng302.gardenersgrove.repository.ValidationGroups;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -24,18 +19,12 @@ public class GardenUser {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "First name cannot be empty", groups = {ValidationGroups.FirstOrder.class})
-    @Pattern(regexp = "^[\\p{L}\\s'-]*$", message = "First name must only include letters, spaces,hyphens or apostrophes", groups = {ValidationGroups.SecondOrder.class})
-    @Size(min = 0, max = 64, message = "First Name must be 64 characters long or less.", groups = {ValidationGroups.SecondOrder.class})
     @Column(nullable = false)
     private String fname;
 
-    @Pattern(regexp = "^[\\p{L}\\s'-]*$", message = "Last name must only include letters, spaces,hyphens or apostrophes", groups = {ValidationGroups.SecondOrder.class})
-    @Size(min = 0, max = 64, message = "Last Name must be 64 characters long or less.", groups = {ValidationGroups.SecondOrder.class})
     @Column(nullable = true)
     private String lname;
 
-    @Pattern(regexp = "^[a-zA-Z0-9_+&*-]+(?:\\\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\\\.)+[a-zA-Z]{2,7}$", message = "Email address must be in the form ‘jane@doe.nz’", groups = {ValidationGroups.SecondOrder.class})
     @Column(nullable = false, unique = true)
     private String email;
     
