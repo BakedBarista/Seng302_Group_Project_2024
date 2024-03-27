@@ -15,12 +15,12 @@
     <main class="main-container">
         <h1>Register</h1>
         <form th:action="register" method="post" th:object="${registerDTO}">
-            <label th:class="'form-group ' + ${incorrectFirstName != null ? 'form-group-error' : ''}">
+            <label th:class="'form-group ' + ${#fields.hasErrors('fname') ? 'form-group-error' : ''}">
                 First Name
                 <input type="text" th:name="fname" th:value="*{fname}">
                 <div th:if="${#fields.hasErrors('fname')}" th:errors="*{fname}" style="color: red;"></div>
             </label>
-            <label th:class="'form-group ' + ${incorrectLastName != null ? 'form-group-error' : ''}">
+            <label th:class="'form-group ' + ${#fields.hasErrors('lname') ? 'form-group-error' : ''}">
                 Last Name
                 <input type="text" th:name="lname" th:value="*{lname}" id="lname">
                 <div th:if="${#fields.hasErrors('lname')}" th:errors="*{lname}" style="color: red;"></div>
@@ -28,22 +28,22 @@
             <label class="form-checkbox">
                 <input type="checkbox" th:name="noLname" th:value="*{noLname}" th:checked="*{noLname}" id="noLname"> I have no surname
             </label>
-            <label th:class="'form-group ' + ${emailInuse != null || incorrectEmail != null ? 'form-group-error' : ''}">
+            <label th:class="'form-group ' + ${#fields.hasErrors('email') ? 'form-group-error' : ''}">
                 Email
                 <input type="text" th:name="email" th:value="*{email}" inputmode="email">
                 <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: red;"></div>
             </label>
-            <label th:class="'form-group ' + ${matchPassword != null || weakPassword != null ? 'form-group-error' : ''}">
+            <label th:class="'form-group ' + ${#fields.hasErrors('password') ? 'form-group-error' : ''}">
                 Password
                 <input type="password" th:name="password">
                 <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" style="color: red;"></div>
             </label>
-            <label class="form-group">
+            <label th:class="'form-group ' + ${#fields.hasErrors('confirmPassword') ? 'form-group-error' : ''}">
                 Confirm Password
                 <input type="password" th:name="confirmPassword">
                 <div th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}" style="color: red;"></div>
             </label>
-            <label th:class="'form-group ' + ${youngDob != null || oldDob != null || invalidDob != null ? 'form-group-error' : ''}">
+            <label th:class="'form-group ' + ${#fields.hasErrors('DOB') ? 'form-group-error' : ''}">
                 Date of Birth (optional)
                 <input type="text" th:name="DOB" th:value="*{DOB}">
                 <div th:if="${#fields.hasErrors('DOB')}" th:errors="*{DOB}" style="color: red;"></div>
