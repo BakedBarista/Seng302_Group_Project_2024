@@ -53,13 +53,23 @@
         </form>
     </main>
     <script>
-        const noLname = document.getElementById('noLname');
-        const lname = document.getElementById('lname');
-
-        noLname.addEventListener('input', (ev) => {
-            noLname.value = noLname.checked;
-            lname.disabled = noLname.checked;
-            lname.requred = !noLname.checked;
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const noLname = document.getElementById('noLname');
+            const lname = document.getElementById('lname');
+    
+            // Function to check the initial state of noLname
+            function checkNoLnameState() {
+                lname.disabled = noLname.checked;
+            }
+    
+            // Event listener for changes in noLname
+            noLname.addEventListener('input', (ev) => {
+                noLname.value = noLname.checked;
+                checkNoLnameState();
+            });
+    
+            // Check the initial state when the page loads
+            checkNoLnameState();
         });
     </script>
 </body>

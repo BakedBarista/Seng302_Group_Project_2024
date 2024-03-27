@@ -51,6 +51,10 @@ public class RegisterDTO {
     }
 
     public void setLname(String lname) {
+        if (lname != null && lname.isEmpty()) {
+            lname = null;
+        }
+
         this.lname = lname;
         this.noLname = lname == null;
     }
@@ -60,9 +64,11 @@ public class RegisterDTO {
     }
 
     public void setNoLname(boolean noLname) {
-        this.noLname = noLname;
         if (noLname) {
+            this.noLname = true;
             this.lname = null;
+        } else {
+            this.noLname = lname == null;
         }
     }
 
