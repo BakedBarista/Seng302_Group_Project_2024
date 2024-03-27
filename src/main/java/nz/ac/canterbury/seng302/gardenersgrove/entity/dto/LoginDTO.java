@@ -1,13 +1,14 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity.dto;
 
+import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationConstants.*;
+
 import jakarta.validation.constraints.Pattern;
-import nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationConstants;
 
 /**
  * Data transfer object for the login form
  */
 public class LoginDTO {
-    @Pattern(regexp = ValidationConstants.EMAIL_REGEX, message = "Email address must be in the form ‘jane@doe.nz’")
+    @Pattern(regexp = EMAIL_REGEX, message = "Email address must be in the form ‘jane@doe.nz’")
     private String email;
 
     private String password;
