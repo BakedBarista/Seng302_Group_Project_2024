@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity.dto;
 
 import jakarta.validation.constraints.Pattern;
+import nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationConstants;
 
 /**
  * Data transfer object for the login form

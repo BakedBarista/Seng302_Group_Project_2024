@@ -15,11 +15,11 @@ import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * Controller for registering new users
@@ -61,60 +61,35 @@ public class RegisterController {
             HttpServletRequest request) {
         logger.info("POST /users/register");
 
-        UserValidation userValidation = new UserValidation();
-        boolean valid = true;
-
-
         if (userService.getUserByEmail(registerDTO.getEmail()) != null) {
-            model.addAttribute("emailInuse", "This email address is already in use");
-            valid = false;
+            bindingResult.rejectValue("email", null, "This email address is already in use");
         }
 
         if (!registerDTO.getPassword().equals(registerDTO.getConfirmPassword())) {
-            model.addAttribute("matchPassword", "Passwords do not match");
-            valid = false;
+            bindingResult.rejectValue("confirmPassword", null, "Passwords do not match");
         }
 
-        // TODO: validate using annotations in DTO
-        // if (!userValidation.userInvalidDateValidation(user.getDOB())) {
-        //     model.addAttribute("invalidDob", "Date is not in valid format, (DD/MM/YYYY)");
-        //     valid = false;
-        // } else if (!userValidation.userYoungDateValidation(user.getDOB())) {
-        //     model.addAttribute("youngDob", "You must be 13 years or older to create an account");
-        //     valid = false;
-        // } else if (!userValidation.userOldDateValidation(user.getDOB())) {
-        //     model.addAttribute("oldDob", "The maximum age allowed is 120 years");
-        //     valid = false;
-        // }
-
-
-        if (valid && !bindingResult.hasErrors()) {
-            userService.addUser(new GardenUser(registerDTO.getFname(), registerDTO.getLname(), registerDTO.getEmail(),
-                    registerDTO.getPassword(), registerDTO.getDOB()));
-
-            try {
-                request.logout();
-            } catch (ServletException e) {
-                logger.warn("User was not logged in");
-            }
-
-            try {
-                request.login(registerDTO.getEmail(), registerDTO.getPassword());
-                return "redirect:/users/user";
-            } catch (ServletException e) {
-                logger.error("Error while login ", e);
-            }
-        } else {
-            if (bindingResult.hasErrors()) {
-                model.addAttribute("registerDTO", registerDTO);
-            }
-
+        if (bindingResult.hasErrors()) {
             return "users/registerTemplate";
         }
 
-        return "users/registerTemplate";
+        userService.addUser(new GardenUser(registerDTO.getFname(), registerDTO.getLname(), registerDTO.getEmail(),
+                registerDTO.getPassword(), registerDTO.getDOB()));
 
+        try {
+            request.logout();
+        } catch (ServletException e) {
+            logger.warn("User was not logged in");
+        }
 
+        try {
+            request.login(registerDTO.getEmail(), registerDTO.getPassword());
+        } catch (ServletException e) {
+            logger.error("Error while login ", e);
+            return "users/registerTemplate";
+        }
+
+        return "redirect:/users/user";
     }
 
     /**

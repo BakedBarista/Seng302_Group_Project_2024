@@ -36,19 +36,17 @@
             <label th:class="'form-group ' + ${matchPassword != null || weakPassword != null ? 'form-group-error' : ''}">
                 Password
                 <input type="password" th:name="password">
-                <span class = "error" th:if="${matchPassword != null}" th:text="${matchPassword}"></span>
-                <span class = "error" th:if="${weakPassword != null}" th:text="${weakPassword}"></span>
+                <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" style="color: red;"></div>
             </label>
             <label class="form-group">
                 Confirm Password
                 <input type="password" th:name="confirmPassword">
+                <div th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}" style="color: red;"></div>
             </label>
             <label th:class="'form-group ' + ${youngDob != null || oldDob != null || invalidDob != null ? 'form-group-error' : ''}">
                 Date of Birth (optional)
                 <input type="text" th:name="DOB" th:value="*{DOB}">
-                <span class = "error" th:if="${youngDob != null}" th:text="${youngDob}"></span>
-                <span class = "error" th:if="${oldDob != null}" th:text="${oldDob}"></span>
-                <span class = "error" th:if="${invalidDob != null}" th:text="${invalidDob}"></span>
+                <div th:if="${#fields.hasErrors('DOB')}" th:errors="*{DOB}" style="color: red;"></div>
             </label>
             <button class="btn">Sign Up</button>
             <a href="/" class="btn">Cancel</a>
