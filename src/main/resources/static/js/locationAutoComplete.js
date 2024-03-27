@@ -1,4 +1,4 @@
-function addressAutocomplete(containerElement, callback, options) {
+function addressAutocomplete(containerElement, callback, options, apiKey) {
 
     const MIN_ADDRESS_LENGTH = 3;
     const DEBOUNCE_DELAY = 300;
@@ -76,9 +76,6 @@ function addressAutocomplete(containerElement, callback, options) {
             const promise = new Promise((resolve, reject) => {
                 currentPromiseReject = reject;
 
-                // The API Key provided is restricted to JSFiddle website
-                // Get your own API Key on https://myprojects.geoapify.com
-                const apiKey = "15db242b19b84cca858c8d6f43367c7b";
 
                 var url = `https://api.geoapify.com/v1/geocode/autocomplete?text=${encodeURIComponent(currentValue)}&format=json&limit=5&apiKey=${apiKey}`;
 
@@ -213,8 +210,34 @@ function addressAutocomplete(containerElement, callback, options) {
         }
     });
 }
+// Fetch API key from the server
+async function fetchApiKey() {
+    try {
+        const response = await fetch('/api/get_api_key');
+        if (!response.ok) {
+            throw new Error('Failed to fetch API key');
+        }
+        const apiKey = await response.text();
+        return apiKey.trim(); // Trim any leading/trailing spaces
+    } catch (error) {
+        console.error('Error fetching API key:', error);
+        return null;
+    }
+}
 
-addressAutocomplete(document.getElementById("autocomplete-container"), (data) => {
+async function initializeAddressAutocomplete(containerElement, callback, options) {
+    // Fetch API key
+    const apiKey = await fetchApiKey();
+    if (!apiKey) {
+        console.error('Failed to fetch API key');
+        return;
+    }
+
+    // Call the addressAutocomplete function with the fetched API key
+    addressAutocomplete(containerElement, callback, options, apiKey);
+}
+
+initializeAddressAutocomplete(document.getElementById("autocomplete-container"), (data) => {
     console.log("Selected option: ");
     console.log(data);
 }, {
