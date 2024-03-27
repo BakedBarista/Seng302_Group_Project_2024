@@ -88,6 +88,13 @@ public class ValidationConstantsTest {
     }
 
     @Test
+    public void testAmpersandInEmail() {
+        String email = "&&&@gmail.com";
+        boolean emailResult = email.matches(ValidationConstants.EMAIL_REGEX);
+        assertFalse(emailResult);
+    }
+
+    @Test
     public void testInvalidDate() {
         String date = "200/200/200";
         boolean invalidDateResult = date.matches(ValidationConstants.DATE_REGEX);
