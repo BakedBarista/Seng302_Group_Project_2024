@@ -1,9 +1,8 @@
-package nz.ac.canterbury.seng302.gardenersgrove.unittests.validation;
+package nz.ac.canterbury.seng302.gardenersgrove.unittests.customValidation;
 
-import static org.junit.jupiter.api.Assertions.*;
-import java.util.regex.Pattern;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationConstants;
@@ -87,20 +86,6 @@ public class ValidationConstantsTest {
         boolean emailResult = email.matches(ValidationConstants.EMAIL_REGEX);
         assertFalse(emailResult);
     }
-
-    // @Test
-    // public void testTooYoungAge() {
-    //     String dob = "10/12/2023";
-    //     boolean youngDateResult = userRego.userYoungDateValidation(dob);
-    //     assertFalse(youngDateResult);
-    // }
-
-    // @Test
-    // public void testTooOldAge() {
-    //     String dob = "10/12/1902";
-    //     boolean oldDateResult = userRego.userOldDateValidation(dob);
-    //     assertFalse(oldDateResult);
-    // }
 
     @Test
     public void testInvalidDate() {
