@@ -8,9 +8,9 @@ import nz.ac.canterbury.seng302.gardenersgrove.customValidation.AgeRange;
 import nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationConstants;
 
 /**
- * Data transfer object for the register form
+ * Data transfer object for the edit user form
  */
-public class RegisterDTO {
+public class EditUserDTO {
     @NotBlank(message = "First name cannot be empty")
     @Pattern(regexp = "^[\\p{L}\\s'-]*$", message = "First name must only include letters, spaces, hyphens or apostrophes")
     @Size(min = 0, max = 64, message = "First Name must be 64 characters long or less.")
@@ -26,11 +26,6 @@ public class RegisterDTO {
 
     @Pattern(regexp = ValidationConstants.EMAIL_REGEX, message = "Email address must be in the form ‘jane@doe.nz’")
     private String email;
-
-    @Pattern(regexp = ValidationConstants.PASSWORD_REGEX, message = "Your password must beat least 8 characters long and include at least one uppercase letter, one lowercase letter, one number and one special character")
-    private String password;
-
-    private String confirmPassword;
 
     @Pattern(regexp = ValidationConstants.DATE_REGEX, message = "Date is not in valid format, (DD/MM/YYYY)")
     @AgeRange(minAge = 13, message = "You must be 13 years or older to create an account")
@@ -71,22 +66,6 @@ public class RegisterDTO {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getConfirmPassword() {
-        return confirmPassword;
-    }
-
-    public void setConfirmPassword(String confirmPassword) {
-        this.confirmPassword = confirmPassword;
     }
 
     public String getDOB() {
