@@ -22,7 +22,8 @@
             <!-- Garden Location Field -->
             <div>
                 <label for="location"> Garden Location: </label>
-                <input type="text" class="form-control" id="location" placeholder="Please Enter Garden Location"
+                <div class="autocomplete-container" id="autocomplete-container"></div>
+                <input type="text" class="form-control" id="location" placeholder="Location"
                        th:name="location" th:value="${garden.location}" data-cy="location">
                 <!--<div th:if="${#fields.hasErrors('location')}" th:errors="*{location}" style="color: red;"></div>-->
             </div>
@@ -60,7 +61,6 @@
                     th:name="postCode" th:value="${garden.postCode}" data-cy="postCode">
                 </div>
             </div>
-
             <!-- Garden Size Field -->
             <label for="size"> Garden Size (m^2) (Optional): </label>
             <input type="text" class="form-control" id="size" placeholder="Size of Garden"
@@ -73,4 +73,5 @@
 </div>
 </body>
 <script th:src="@{/js/nextFormBox.js}"></script>
+<script th:src="@{/js/locationAutoComplete.js}"></script>
 </html>
