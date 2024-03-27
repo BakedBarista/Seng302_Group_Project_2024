@@ -57,7 +57,6 @@ public class LoginController {
         String email = loginDTO.getEmail();
         String password = loginDTO.getPassword();
         GardenUser userDetails = userService.getUserByEmailAndPassword(email, password);
-        boolean valid = true; 
 
         for (FieldError errors : bindingResult.getFieldErrors()) {
             String fieldName = errors.getField();
@@ -65,32 +64,28 @@ public class LoginController {
             logger.info("Validation error in field '" + fieldName + "': " + errorMessage);
         }
 
-
         if (userDetails == null) {
-            model.addAttribute("invalidCredentials", "The email address is unknown, or the password is invalid");
-            valid = false;
+            bindingResult.rejectValue("password", null, "The email address is unknown, or the password is invalid");
         }
 
-        if(valid && !bindingResult.hasErrors()){
-            try {
-                request.logout();
-            } catch (ServletException e) {
-                logger.warn("User was not logged in");
-            }
-
-            try {
-                request.login(email, password);
-                return "redirect:/users/user";
-            } catch (ServletException e) {
-                logger.error("Error while login ", e);
-            }
-
-            return "users/login";
-        }else{
-            if (bindingResult.hasErrors()) {
-                model.addAttribute("loginDTO", loginDTO);
-            }
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("loginDTO", loginDTO);
             return "users/login";
         }
+
+        try {
+            request.logout();
+        } catch (ServletException e) {
+            logger.warn("User was not logged in");
+        }
+
+        try {
+            request.login(email, password);
+            return "redirect:/users/user";
+        } catch (ServletException e) {
+            logger.error("Error while login ", e);
+        }
+
+        return "users/login";
     }
 }
