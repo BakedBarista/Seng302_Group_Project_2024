@@ -1,12 +1,11 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity.dto;
 
 import jakarta.persistence.Column;
-import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import nz.ac.canterbury.seng302.gardenersgrove.validation.AgeRange;
-import nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationConstants;
+import nz.ac.canterbury.seng302.gardenersgrove.customValidation.AgeRange;
+import nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationConstants;
 
 /**
  * Data transfer object for the register form
@@ -31,7 +30,6 @@ public class RegisterDTO {
     @Pattern(regexp = ValidationConstants.PASSWORD_REGEX, message = "Your password must beat least 8 characters long and include at least one uppercase letter, one lowercase letter, one number and one special character")
     private String password;
 
-    // TODO: Can we check for matching passwords?
     private String confirmPassword;
 
     @Pattern(regexp = ValidationConstants.DATE_REGEX, message = "Date is not in valid format, (DD/MM/YYYY)")

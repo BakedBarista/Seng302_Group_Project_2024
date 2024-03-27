@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng302.gardenersgrove.validation;
+package nz.ac.canterbury.seng302.gardenersgrove.customValidation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Repeatable;
