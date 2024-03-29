@@ -284,4 +284,12 @@ public class GardenTest {
         assertEquals(expectedConstraintSetSize, validator.validate(garden, ValidationGroups.FirstOrder.class).size());
         assertEquals(expectedMessage, violation.getMessage());
     }
+
+    @Test
+    public void gardenDescription_IsFiveHundredAndThirteenChars_ReturnPatternViolation() {
+
+    }
+
+    @Test
+    public void gardenDescription_Is
 }
