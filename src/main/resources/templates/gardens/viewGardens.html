@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
     <head>
-        <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
         <title>My Gardens</title>
-        <link th:href="@{/css/navbar.css}" rel="stylesheet" />
-        <link th:href="@{/css/styles.css}" rel="stylesheet" />
+
+        <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- This needs to be here for Bootstrap and general CSS imports -->
+        <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
     </head>
     <body>
-    <div th:replace="~{navbar :: navbarOnMyGarden}"></div>
+        <nav th:replace="~{fragments/navbar :: navbar}"></nav>
         <div>
-
             <div>
                 <h3>Your Gardens:</h3>
                 <table id="gardens-table">
@@ -35,5 +37,6 @@
                 </table>
             </div>
         </div>
+        <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
     </body>
 </html>
