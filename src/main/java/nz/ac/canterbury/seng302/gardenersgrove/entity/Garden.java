@@ -30,8 +30,8 @@ public class Garden {
     @Column(nullable = false)
     private String location;
 
-    @Size(max = 520)
-    @Pattern(regexp = "^[A-Za-z0-9 .,'-]+$", message = "Description must be 512 characters or less and contain some text")
+    @Size(max = 512, message = "Description must be 512 characters or less and contain some text")
+    @Pattern(regexp = "^(?:[a-zA-Z]+.*)?+$", message = "Description must be 512 characters or less and contain some text")
     private String description;
 
     @ValidEuropeanDecimal(message = "Garden size must be a positive number", groups = {ValidationGroups.FirstOrder.class})
