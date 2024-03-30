@@ -372,4 +372,11 @@ public class GardenTest {
         assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
         assertEquals(expectedMessage, violation.getMessage());
     }
+
+    @Test
+    public void gardenDescription_StartsWithNumber_ReturnsNoViolations() {
+        garden.setDescription("2nd largest garden in christchurch!");
+
+        assertTrue(validator.validate(garden).isEmpty());
+    }
 }
