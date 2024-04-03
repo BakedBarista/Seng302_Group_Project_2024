@@ -97,8 +97,8 @@ public class EditUserController {
         String currentEmail = user.getEmail();
 
         if (!editUserDTO.getEmail().equalsIgnoreCase(currentEmail)
-                && userService.getUserByEmail(user.getEmail()) != null) {
-            bindingResult.rejectValue("emailInuse", null, "This email address is already in use");
+                && userService.getUserByEmail(editUserDTO.getEmail()) != null) {
+            bindingResult.rejectValue("email", null, "This email address is already in use");
         }
 
         if (bindingResult.hasErrors()) {
