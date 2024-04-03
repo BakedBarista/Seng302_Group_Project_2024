@@ -77,7 +77,7 @@ function addressAutocomplete(containerElement, callback, options) {
                 currentPromiseReject = reject;
 
 
-                fetch('/api/get_location?currentValue=${currentValue}')
+                fetch(`/api/get_location?currentValue=${currentValue}`)
                     .then(response => {
                         currentPromiseReject = null;
 
@@ -91,8 +91,10 @@ function addressAutocomplete(containerElement, callback, options) {
             });
 
             promise.then((data) => {
+
                 // here we get address suggestions
                 currentItems = data.results;
+
 
                 /*create a DIV element that will contain the items (values):*/
                 const autocompleteItemsElement = document.createElement("div");
@@ -121,6 +123,8 @@ function addressAutocomplete(containerElement, callback, options) {
                     console.log(err);
                 }
             });
+
+
         }, DEBOUNCE_DELAY);
     });
 
@@ -209,9 +213,21 @@ function addressAutocomplete(containerElement, callback, options) {
     });
 }
 
-addressAutocomplete(document.getElementById("autocomplete-container"), (data) => {
+function populateAddressFields(selectedAddress) {
+    // Populate address fields with properties from the selectedAddress address
+    document.getElementById("streetNumber").value = selectedAddress.housenumber || "";
+    document.getElementById("streetName").value = selectedAddress.street || "";
+    document.getElementById("suburb").value = selectedAddress.suburb || "";
+    document.getElementById("city").value = selectedAddress.city || "";
+    document.getElementById("country").value = selectedAddress.country || "";
+    document.getElementById("postCode").value = selectedAddress.postcode || "";
+}
+
+addressAutocomplete(document.getElementById("autocomplete-container"),
+    populateAddressFields,
+    (data) => {
     console.log("Selected option: ");
     console.log(data);
 }, {
-    placeholder: "Enter an address here"
+    placeholder: "Enter an address here",
 });
