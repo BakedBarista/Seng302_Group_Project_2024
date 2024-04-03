@@ -1,15 +1,22 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
->
+<html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <title>Gardeners Grove - 404 Error</title>
-        <link th:href="@{/css/styles.css}" rel="stylesheet" />
-        <link rel="stylesheet" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css">
+
+        <!-- This needs to be here for Bootstrap and general CSS imports -->
+        <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
     </head>
     <body>
-        <div th:replace="~{fragments/navbar :: navbar}"></div>
-        <h1>404 Page Not Found 👀</h1>
-        <img src="/img/gorila.png" alt="Gorila" width="500" height="500" />
-        <script src="/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+        <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+        <main class="text-center align-items-center">
+            <img src="/img/gorila.png" alt="Gorila" width="300" height="300" />
+            <div class="d-flex justify-content-center mt-5 align-middle">
+                <h1 class="px-2">404</h1>
+                <div class="vr"></div>
+                <h1 class="px-2">Page Not Found</h1>
+            </div>
+        </main>
+        <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
     </body>
 </html>

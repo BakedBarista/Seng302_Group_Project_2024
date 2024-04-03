@@ -29,7 +29,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 @Controller
 public class EditUserController {
 
-    private Logger logger = LoggerFactory.getLogger(RegisterController.class);
+    private Logger logger = LoggerFactory.getLogger(EditUserController.class);
 
     @Autowired
     private GardenUserService userService;

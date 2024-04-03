@@ -5,8 +5,13 @@
 }
 
 /* Dropdown on hover */
-.nav-item:hover .dropdown-menu {
+.nav-item:hover #garden-dropdown {
     display: block;
+}
+
+.nav-item:hover #user-dropdown {
+    display: block;
+    right: 0;
 }
 
 
@@ -164,4 +169,10 @@ a {
 button {
     padding: 5px;
     margin: 5px;
+}
+
+.required-field::after {
+    content: "*";
+    color: red;
+    font-family: bold, serif;
 }

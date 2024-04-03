@@ -66,7 +66,6 @@ public class SecurityConfiguration {
             // These paths are accessible to anyone, with or without auth.
             auth.requestMatchers(
                     "/",
-                    "/users/dummy",
                     "/users/register",
                     "/users/login",
                     "/css/**",
@@ -76,8 +75,12 @@ public class SecurityConfiguration {
             auth.anyRequest().authenticated();
         });
 
-        // Define logging out, a POST "/logout" endpoint now exists under the hood,
-        // redirect to "/login", invalidate session and remove cookie
+        // Instead of returning 403, redirect to "/users/login"
+        http.exceptionHandling(exceptionHandling -> exceptionHandling
+                .accessDeniedHandler((_req, res, _exception) -> res.sendRedirect("/users/login")));
+
+        // Define logging out, a POST "/users/logout" endpoint now exists under the hood,
+        // redirect to "/users/login", invalidate session and remove cookie
         http.logout(
                 logout -> logout
                         // Used a RequestMatcher to accept GET requests
