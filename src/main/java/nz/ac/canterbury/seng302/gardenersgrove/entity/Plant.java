@@ -4,8 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.ValidationGroups;
 
+import nz.ac.canterbury.seng302.gardenersgrove.repository.ValidationGroups;
 
 /**
  * Entity class for Plants
