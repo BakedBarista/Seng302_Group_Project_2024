@@ -1,28 +1,19 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
     <head>
+        <!-- TODO: Update this title for your page -->
         <title>Gardener's Grove</title>
 
         <meta http-equiv="Content-Type" context="text/html; charset=UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        <!-- This needs to be here for Bootstrap and general CSS imports -->
         <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
     </head>
     <body>
         <nav th:replace="~{fragments/navbar :: navbar}"></nav>
-        <main class="text-center">
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <h1>Welcome to Gardeners Grove</h1>
-            <h3>The world's best garden tracker</h3>
-        </main>
+        <!-- Page goes here -->
+        <!-- ... -->
         <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
     </body>
 </html>

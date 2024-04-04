@@ -1,74 +1,72 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Edit Garden</title>
-    <link th:href="@{/css/navbar.css}" rel="stylesheet" />
-    <link th:href="@{/css/styles.css}" rel="stylesheet" />
-</head>
-<body>
-<div th:replace="~{navbar :: navbar}"></div>
-<div>
-    <div>
-        <form th:action="@{/gardens/{gardenId}/edit(gardenId=${id})}" th:object="${garden}" method="post">
-            <!-- Garden Name Field -->
-            <label for="name"> Garden Name: </label>
-            <input type="text" class="form-control" id="name" placeholder="Name"
-                   th:name="name" th:value="${garden.name}" data-cy="name" autofocus>
-            <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" style="color: red;"></div>
-            <br/>
-            <!-- Garden Location Field -->
+    <head>
+        <meta charset="UTF-8">
+        <title>Edit Garden</title>
+        <!-- This needs to be here for Bootstrap and general CSS imports -->
+        <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
+    </head>
+    <body>
+        <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+        <div>
             <div>
-                <label for="location"> Garden Location: </label>
-                <input type="text" class="form-control" id="location" placeholder="Please Enter Garden Location"
-                       th:name="location" th:value="${garden.location}" data-cy="location">
-                <!--<div th:if="${#fields.hasErrors('location')}" th:errors="*{location}" style="color: red;"></div>-->
-            </div>
-            <div class="form-group">
-                <label for="streetNumber">Street Number</label>
-                <input type="text" class="form-control" id="streetNumber" placeholder="1"
-                       th:name="streetNumber" th:value="${garden.streetNumber}" data-cy="streetNumber">
-            </div>
-            <div class="form-group">
-                <label for="streetName">Street Name</label>
-                <input type="text" class="form-control" id="streetName" placeholder="Main St"
-                       th:name="streetName" th:value="${garden.streetName}" data-cy="streetNumber">
-            </div>
-            <div class="form-group">
-                <label for="suburb">Suburb</label>
-                <input type="text" class="form-control" id="suburb" placeholder="Suburb"
-                       th:name="suburb" th:value="${garden.suburb}" data-cy="suburb">
-            </div>
-            <div class="form-row">
-                <div class="form-group col-md-6">
-                    <label for="city">City</label>
-                    <input type="text" class="form-control" id="city"  placeholder="City"
-                           th:name="city" th:value="${garden.city}" data-cy="city">
-                    <div th:if="${#fields.hasErrors('city')}" th:errors="*{city}" style="color: red;"></div>
-                </div>
-                <div class="form-group col-md-6">
-                    <label for="country">Country</label>
-                    <input type="text" class="form-control" id="country" placeholder="Country"
-                           th:name="country" th:value="${garden.country}" data-cy="country">
-                    <div th:if="${#fields.hasErrors('country')}" th:errors="*{country}" style="color: red;"></div>
-                </div>
-                <div class="form-group col-md-4">
-                    <label for="postCode">Postcode</label>
-                    <input type="text" class="form-control" id="postCode"  placeholder="Post Code"
-                           th:name="postCode" th:value="${garden.postCode}" data-cy="postCode">
-                </div>
-            </div>
+                <form th:action="@{/gardens/{gardenId}/edit(gardenId=${id})}" th:object="${garden}" method="post">
+                    <!-- Garden Name Field -->
+                    <label for="name"> Garden Name: </label>
+                    <input type="text" class="form-control" id="name" placeholder="Name"
+                           th:name="name" th:value="${garden.name}" data-cy="name" autofocus>
+                    <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" style="color: red;"></div>
+                    <br/>
+                    <!-- Garden Location Field -->
+                    <div class="form-group">
+                        <label for="streetNumber">Street Number</label>
+                        <input type="text" class="form-control" id="streetNumber" placeholder="1"
+                               th:name="streetNumber" th:value="${garden.streetNumber}" data-cy="streetNumber">
+                    </div>
+                    <div class="form-group">
+                        <label for="streetName">Street Name</label>
+                        <input type="text" class="form-control" id="streetName" placeholder="Main St"
+                               th:name="streetName" th:value="${garden.streetName}" data-cy="streetNumber">
+                    </div>
+                    <div class="form-group">
+                        <label for="suburb">Suburb</label>
+                        <input type="text" class="form-control" id="suburb" placeholder="Suburb"
+                               th:name="suburb" th:value="${garden.suburb}" data-cy="suburb">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="city">City</label>
+                            <input type="text" class="form-control" id="city"  placeholder="City"
+                                   th:name="city" th:value="${garden.city}" data-cy="city">
+                            <div th:if="${#fields.hasErrors('city')}" th:errors="*{city}" style="color: red;"></div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="country">Country</label>
+                            <input type="text" class="form-control" id="country" placeholder="Country"
+                                   th:name="country" th:value="${garden.country}" data-cy="country">
+                            <div th:if="${#fields.hasErrors('country')}" th:errors="*{country}" style="color: red;"></div>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="postCode">Postcode</label>
+                            <input type="text" class="form-control" id="postCode"  placeholder="Post Code"
+                                   th:name="postCode" th:value="${garden.postCode}" data-cy="postCode">
+                        </div>
 
-            <!-- Garden Size Field -->
-            <label for="size"> Garden Size (m&sup2;): </label>
-            <input type="text" class="form-control" id="size" placeholder="Size of Garden"
-                   th:name="size" th:value="${garden.size}" data-cy="size" autofocus>
-            <div th:if="${#fields.hasErrors('size')}" th:errors="*{size}" style="color: red;"></div>
-            <br/>
-            <button type="submit">Submit!</button><button type="button" th:onclick="'window.location.href = \'' + @{/gardens/{gardenId}(gardenId=${id})} + '\''">Cancel</button>
-        </form>
-    </div>
-</div>
-</body>
-<script th:src="@{/js/nextFormBox.js}"></script>
+                        <br/>
+                    <!-- Garden Size Field -->
+                    <label for="size"> Garden Size (m&sup2;): </label>
+                    <input type="text" class="form-control" id="size" placeholder="Size of Garden"
+                           th:name="size" th:value="${garden.size}" data-cy="size" autofocus>
+                    <div th:if="${#fields.hasErrors('size')}" th:errors="*{size}" style="color: red;"></div>
+                    <br/>
+                    <!-- Garden Description -->
+                    <nav th:replace="~{fragments/description-box :: description-box-with-char-count}"></nav>
+                    <br/>
+                    <button type="submit">Submit!</button><button type="button" th:onclick="'window.location.href = \'' + @{/gardens/{gardenId}(gardenId=${id})} + '\''">Cancel</button>
+                </form>
+            </div>
+        </div>
+        <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
+    </body>
+    <script th:src="@{/js/nextFormBox.js}"></script>
 </html>

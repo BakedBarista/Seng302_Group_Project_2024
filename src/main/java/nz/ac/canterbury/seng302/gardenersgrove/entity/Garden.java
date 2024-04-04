@@ -30,6 +30,10 @@ public class Garden {
     @Column(nullable = false)
     private String location;
 
+    @Size(max = 512, message = "Description must be 512 characters or less and contain some text")
+    @Pattern(regexp = "^.*[a-zA-Z].*|$", message = "Description must be 512 characters or less and contain some text")
+    private String description;
+
     @Pattern(regexp = "^[A-Za-z0-9 /-]+$", message = "Please enter a valid street number", groups = {ValidationGroups.SecondOrder.class})
     @Column
     private String streetNumber;
@@ -83,6 +87,7 @@ public class Garden {
         this.country = country;
         this.postCode = postCode;
         this.size = gardenSize;
+        this.description = description;
     }
 
     public Long getId() {
@@ -115,6 +120,14 @@ public class Garden {
 
     public void setSize(String size) {
         this.size = size.replace(',', '.');
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getDescription() {
+        return this.description;
     }
 
     @Override

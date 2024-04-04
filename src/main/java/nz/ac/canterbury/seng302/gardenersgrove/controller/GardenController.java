@@ -64,7 +64,6 @@ public class GardenController {
     public String submitForm(@Validated(ValidationSequence.class) @ModelAttribute("garden") Garden garden,
                              BindingResult bindingResult, Model model) {
         logger.info("POST /gardens - submit the new garden form");
-        garden.setSize(garden.getSize());
         if (bindingResult.hasErrors()) {
             model.addAttribute("garden", garden);
 
@@ -149,6 +148,7 @@ public class GardenController {
             existingGarden.get().setCountry(garden.getCountry());
             existingGarden.get().setPostCode(garden.getPostCode());
             existingGarden.get().setSize(garden.getSize());
+            existingGarden.get().setDescription(garden.getDescription());
             gardenService.addGarden(existingGarden.get());
         }
         return "redirect:/gardens/" + id;

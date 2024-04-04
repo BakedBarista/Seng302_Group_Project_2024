@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Edit Plant</title>
-    <link th:href="@{/css/navbar.css}" rel="stylesheet" />
-    <link th:href="@{/css/styles.css}" rel="stylesheet" />
+
+    <!-- This needs to be here for Bootstrap and general CSS imports -->
+    <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
 </head>
 <body>
 <div th:replace="~{navbar :: navbar}"></div>
@@ -45,6 +46,7 @@
         </form>
     </div>
 </div>
+<th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
 </body>
 <script th:src="@{/js/nextFormBox.js}"></script>
 <script th:src="@{/js/imageHandler.js}"></script>
