@@ -25,10 +25,10 @@ public class Garden {
     private String name;
 
 
-    @NotBlank(message = "Location cannot by empty", groups = {ValidationGroups.FirstOrder.class})
+    /*@NotBlank(message = "Location cannot by empty", groups = {ValidationGroups.FirstOrder.class})
     @Pattern(regexp = "^[A-Za-z0-9 .,'-]+$", message = "Location name must only include letters, numbers, spaces, dots, commas, hyphens or apostrophes", groups = {ValidationGroups.SecondOrder.class})
     @Column(nullable = false)
-    private String location;
+    private String location;*/
 
     @Size(max = 512, message = "Description must be 512 characters or less and contain some text")
     @Pattern(regexp = "^.*[a-zA-Z].*|$", message = "Description must be 512 characters or less and contain some text")
@@ -79,7 +79,7 @@ public class Garden {
      */
     public Garden(String gardenName, String location,String streetNumber, String streetName, String suburb, String city, String country, String postCode, String gardenSize) {
         this.name = gardenName;
-        this.location = location;
+        //this.location = location;
         this.streetNumber = streetNumber;
         this.streetName = streetName;
         this.suburb = suburb;
@@ -102,9 +102,9 @@ public class Garden {
         return name;
     }
 
-    public String getLocation() {
+    /*public String getLocation() {
         return location;
-    }
+    }*/
 
     public String getSize() {
         return size;
@@ -114,9 +114,9 @@ public class Garden {
         this.name = name;
     }
 
-    public void setLocation(String location) {
+    /*public void setLocation(String location) {
         this.location = location;
-    }
+    }*/
 
     public void setSize(String size) {
         this.size = size.replace(',', '.');
@@ -130,7 +130,7 @@ public class Garden {
         return this.description;
     }
 
-    @Override
+    /*@Override
     public String toString() {
         return "Garden{" +
                 "id=" + id +
@@ -138,7 +138,7 @@ public class Garden {
                 ", gardenLocation='" + location + '\'' +
                 ", gardenSize='" + size + '\'' +
                 '}';
-    }
+    }*/
 
     public String getStreetNumber() {
         return streetNumber;

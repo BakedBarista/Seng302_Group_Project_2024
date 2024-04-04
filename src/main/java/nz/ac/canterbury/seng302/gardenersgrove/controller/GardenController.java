@@ -35,17 +35,11 @@ public class GardenController {
 
     /**
      * Gets form to be displayed
-     * @param displayName  garden name to be displayed
-     * @param displayLocation garden location to be displayed
-     * @param displaySize garden size to be displayed
      * @param model representation of name, location and size
      * @return gardenFormTemplate
      */
     @GetMapping("/gardens/create")
-    public String form(@RequestParam(name="displayName", required = false, defaultValue = "") String displayName,
-                       @RequestParam(name="displayLocation", required = false, defaultValue = "") String displayLocation,
-                       @RequestParam(name="displaySize", required = false, defaultValue = "") String displaySize,
-                       Model model) {
+    public String form(Model model) {
         logger.info("GET /gardens/create - display the new garden form");
         model.addAttribute("garden", new Garden());
         List<Garden> gardens = gardenService.getAllGardens();
@@ -140,7 +134,7 @@ public class GardenController {
         Optional<Garden> existingGarden = gardenService.getGardenById(id);
         if (existingGarden.isPresent()) {
             existingGarden.get().setName(garden.getName());
-            existingGarden.get().setLocation(garden.getLocation());
+            //existingGarden.get().setLocation(garden.getLocation());
             existingGarden.get().setStreetNumber(garden.getStreetNumber());
             existingGarden.get().setStreetName(garden.getStreetName());
             existingGarden.get().setSuburb(garden.getSuburb());

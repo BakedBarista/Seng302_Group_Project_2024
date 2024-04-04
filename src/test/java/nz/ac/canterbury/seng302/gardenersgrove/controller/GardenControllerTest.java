@@ -36,7 +36,7 @@ public class GardenControllerTest {
     @Test
     public void testForm() {
         Model model = mock(Model.class);
-        String result = gardenController.form("","","", model);
+        String result = gardenController.form(model);
         assertEquals("gardens/createGarden", result);
     }
 
