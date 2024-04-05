@@ -1,7 +1,6 @@
 function addressAutocomplete(containerElement, callback, options) {
 
     const MIN_ADDRESS_LENGTH = 3;
-    const DEBOUNCE_DELAY = 300;
 
     // create container for input element
     const inputContainerElement = document.createElement("div");
@@ -68,9 +67,6 @@ function addressAutocomplete(containerElement, callback, options) {
             return false;
         }
 
-        /* Call the Address Autocomplete API with a delay */
-        currentTimeout = setTimeout(() => {
-            currentTimeout = null;
 
             /* Create a new promise and send geocoding request */
             const promise = new Promise((resolve, reject) => {
@@ -125,7 +121,7 @@ function addressAutocomplete(containerElement, callback, options) {
             });
 
 
-        }, DEBOUNCE_DELAY);
+
     });
 
     /* Add support for keyboard navigation */

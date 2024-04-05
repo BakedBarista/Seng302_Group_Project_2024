@@ -28,20 +28,16 @@ public class LocationAPIController {
     @Value("${geoapify.api.key}")
     private String apiKey;
 
-    /**
-     * Gets the API key for location API
-     *
-     * @return API key
-     */
-    @GetMapping("/get_api_key")
-    public String getApiKey() {
-        logger.info("GET /api/get_api_key");
-        return apiKey;
-    }
 
     @GetMapping("/get_location")
     public ResponseEntity<String> getLocationData(@RequestParam String currentValue) {
         logger.info("GET /api/get_location {}", currentValue );
+        try {
+            Thread.sleep(300);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
         String url = "https://api.geoapify.com/v1/geocode/autocomplete"
                 + "?text=" + URLEncoder.encode(currentValue, StandardCharsets.UTF_8)
                 + "&format=json"
