@@ -17,6 +17,7 @@ import java.util.Base64;
  * Class to make and deal with authentication tokens
  *
  * uses some code from https://stackoverflow.com/a/56628391
+ * for createAuthenticationToken method
  */
 @Component
 public class TokenService {
@@ -64,7 +65,7 @@ public class TokenService {
         return token.toString();
     }
 
-    @Scheduled(fixedRate = 60_000)
+    @Scheduled(fixedRate = 1_000)
     @Transactional
     public void cleanUpTokens() {
         logger.debug("cleaning up tokens");

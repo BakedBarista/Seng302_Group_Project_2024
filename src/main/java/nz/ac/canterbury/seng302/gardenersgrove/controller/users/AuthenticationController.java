@@ -52,11 +52,18 @@ public class AuthenticationController {
     @PostMapping("/users/user/{userId}/authenticateEmail")
     public String validateAuthenticationToken(@PathVariable("userId") Long userId,
                                               @ModelAttribute("authenticationToken") String authenticationToken,
-                                              RedirectAttributes redirectAttributes) {
+                                              RedirectAttributes redirectAttributes,
+                                              Model model) {
         logger.info("authenticating token {} for user {}", authenticationToken, userId);
 
         // check if token matches token in DB
         GardenUser user = userService.getUserById(userId);
+
+        // token has expired
+        if (user == null) {
+            model.addAttribute("tokenExpired", true);
+            return "/authentication/emailAuthentication";
+        }
         boolean authenticated = user.getEmailValidationToken().equals(authenticationToken);
 
         logger.info("authentication: {}", authenticated);
@@ -71,6 +78,7 @@ public class AuthenticationController {
             return "redirect:/users/login";
         }
         else {
+            model.addAttribute("tokenExpired", true);
             return "/authentication/emailAuthentication";
         }
     }

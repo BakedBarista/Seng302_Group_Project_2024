@@ -19,6 +19,11 @@
     <h1>Authenticate Email</h1>
     <h6>We emailed you an authentication code!</h6>
     <br>
+    <span th:if="${tokenExpired == true}">
+        Signup code invalid...
+        <br>
+        <br>
+    </span>
     <form id = "authenticationForm" th:action="@{/users/user/{userId}/authenticateEmail (userId=${userId})}" method="post">
         <label for="authenticationToken"> Authentication Code: </label>
         <div class = "groupElements">

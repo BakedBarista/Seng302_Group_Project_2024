@@ -192,7 +192,7 @@ public class RegisterController {
         String token = tokenService.createEmailToken();
 
         GardenUser user = userService.getUserById(userId);
-        Instant time = Instant.now().plus(10, ChronoUnit.MINUTES);
+        Instant time = Instant.now().plus(10, ChronoUnit.SECONDS);
         user.setEmailValidationToken(token);
         user.setEmailValidationTokenExpiryInstant(time);
 
