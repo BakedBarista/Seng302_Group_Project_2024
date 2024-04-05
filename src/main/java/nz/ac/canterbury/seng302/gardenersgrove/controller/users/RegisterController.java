@@ -145,15 +145,9 @@ public class RegisterController {
                 logger.warn("User was not logged in");
             }
 
-            try {
-                request.login(email, password);
-                addEmailTokenAndTimeToUser(user.getId());
-                return "redirect:/users/user/"+user.getId()+"/authenticateEmail";
-            } catch (ServletException e) {
-                logger.error("Error while login ", e);
-            }
+            addEmailTokenAndTimeToUser(user.getId());
+            return "redirect:/users/user/"+user.getId()+"/authenticateEmail";
         }
-
 
         model.addAttribute("fname", fname);
         model.addAttribute("lname", lname);
@@ -192,7 +186,7 @@ public class RegisterController {
         String token = tokenService.createEmailToken();
 
         GardenUser user = userService.getUserById(userId);
-        Instant time = Instant.now().plus(10, ChronoUnit.SECONDS);
+        Instant time = Instant.now().plus(10, ChronoUnit.MINUTES);
         user.setEmailValidationToken(token);
         user.setEmailValidationTokenExpiryInstant(time);
 

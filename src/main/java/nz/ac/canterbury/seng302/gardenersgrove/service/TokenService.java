@@ -65,7 +65,7 @@ public class TokenService {
         return token.toString();
     }
 
-    @Scheduled(fixedRate = 1_000)
+    @Scheduled(fixedRate = 60_000)
     @Transactional
     public void cleanUpTokens() {
         logger.debug("cleaning up tokens");
