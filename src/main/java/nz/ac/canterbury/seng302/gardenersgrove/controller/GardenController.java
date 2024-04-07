@@ -57,7 +57,7 @@ public class GardenController {
     @PostMapping("/gardens/create")
     public String submitForm(@Validated(ValidationSequence.class) @ModelAttribute("garden") Garden garden,
                              BindingResult bindingResult, Model model) {
-        logger.info("POST /gardens - submit the new garden form");
+        logger.info("POST /gardens - submit the new garden form {} {} {}", garden.getName(),garden.getStreetNumber(),garden.getStreetName());
         if (bindingResult.hasErrors()) {
             model.addAttribute("garden", garden);
 

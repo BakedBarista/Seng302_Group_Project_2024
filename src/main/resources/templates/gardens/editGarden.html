@@ -18,6 +18,10 @@
                     <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" style="color: red;"></div>
                     <br/>
                     <!-- Garden Location Field -->
+                    <div>
+                        <label for="autocomplete-container"> Garden Location: </label>
+                        <div class="autocomplete-container" id="autocomplete-container"></div>
+                    </div>
                     <div class="form-group">
                         <label for="streetNumber">Street Number</label>
                         <input type="text" class="form-control" id="streetNumber" placeholder="1"
@@ -69,4 +73,5 @@
         <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
     </body>
     <script th:src="@{/js/nextFormBox.js}"></script>
+    <script th:src="@{/js/locationAutoComplete.js}"></script>
 </html>

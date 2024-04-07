@@ -29,6 +29,11 @@ public class LocationAPIController {
     private String apiKey;
 
 
+    /**
+     * Return result from the location API request
+     * @param currentValue
+     * @return location information in json format
+     */
     @GetMapping("/get_location")
     public ResponseEntity<String> getLocationData(@RequestParam String currentValue) {
         logger.info("GET /api/get_location {}", currentValue );

@@ -1,6 +1,8 @@
 function addressAutocomplete(containerElement, callback, options) {
 
     const MIN_ADDRESS_LENGTH = 3;
+    const DEBOUNCE_DELAY = 300;
+    let debounceTimer;
 
     // create container for input element
     const inputContainerElement = document.createElement("div");
@@ -42,6 +44,8 @@ function addressAutocomplete(containerElement, callback, options) {
         /* Close any already open dropdown list */
         closeDropDownList();
 
+        clearTimeout(debounceTimer);
+
 
         // Cancel previous timeout
         if (currentTimeout) {
@@ -68,11 +72,11 @@ function addressAutocomplete(containerElement, callback, options) {
         }
 
 
-            /* Create a new promise and send geocoding request */
-            const promise = new Promise((resolve, reject) => {
-                currentPromiseReject = reject;
+        /* Create a new promise and send geocoding request */
+        const promise = new Promise((resolve, reject) => {
+            currentPromiseReject = reject;
 
-
+            debounceTimer = setTimeout(() => {
                 fetch(`/api/get_location?currentValue=${currentValue}`)
                     .then(response => {
                         currentPromiseReject = null;
@@ -84,7 +88,8 @@ function addressAutocomplete(containerElement, callback, options) {
                             response.json().then(data => reject(data));
                         }
                     });
-            });
+            }, DEBOUNCE_DELAY);
+        });
 
             promise.then((data) => {
 

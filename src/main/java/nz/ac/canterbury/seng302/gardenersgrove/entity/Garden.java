@@ -24,24 +24,18 @@ public class Garden {
     @Column(nullable = false)
     private String name;
 
-
-    /*@NotBlank(message = "Location cannot by empty", groups = {ValidationGroups.FirstOrder.class})
-    @Pattern(regexp = "^[A-Za-z0-9 .,'-]+$", message = "Location name must only include letters, numbers, spaces, dots, commas, hyphens or apostrophes", groups = {ValidationGroups.SecondOrder.class})
-    @Column(nullable = false)
-    private String location;*/
-
     @Size(max = 512, message = "Description must be 512 characters or less and contain some text")
     @Pattern(regexp = "^.*[a-zA-Z].*|$", message = "Description must be 512 characters or less and contain some text")
     private String description;
 
-    @Pattern(regexp = "^[A-Za-z0-9 /-]+$", message = "Please enter a valid street number", groups = {ValidationGroups.SecondOrder.class})
+
     @Column
     private String streetNumber;
 
-    @Pattern(regexp = "^[\\p{L}0-9 .'-]+$", message = "Please enter a valid street name", groups = {ValidationGroups.SecondOrder.class})
+
     @Column
     private String streetName;
-    @Pattern(regexp = "^[\\p{L}0-9 .'-]+$", message = "Please enter a valid Suburb", groups = {ValidationGroups.SecondOrder.class})
+
     @Column
     private String suburb;
     @NotBlank(message = "City and Country are required", groups = {ValidationGroups.FirstOrder.class})
@@ -52,7 +46,7 @@ public class Garden {
     @Pattern(regexp = "^[\\p{L}0-9 .'-]+$", message = "Please enter a valid country name", groups = {ValidationGroups.SecondOrder.class})
     @Column
     private String country;
-    @Pattern(regexp = "^[0-9]+$", message = "Please enter a valid post code", groups = {ValidationGroups.SecondOrder.class})
+
     @Column
     private String postCode;
     @Column
@@ -77,9 +71,8 @@ public class Garden {
      * @param postCode postcode
      * @param gardenSize size of garden
      */
-    public Garden(String gardenName, String location,String streetNumber, String streetName, String suburb, String city, String country, String postCode, String gardenSize) {
+    public Garden(String gardenName, String streetNumber, String streetName, String suburb, String city, String country, String postCode, String gardenSize, String description) {
         this.name = gardenName;
-        //this.location = location;
         this.streetNumber = streetNumber;
         this.streetName = streetName;
         this.suburb = suburb;
@@ -102,9 +95,6 @@ public class Garden {
         return name;
     }
 
-    /*public String getLocation() {
-        return location;
-    }*/
 
     public String getSize() {
         return size;
@@ -114,9 +104,6 @@ public class Garden {
         this.name = name;
     }
 
-    /*public void setLocation(String location) {
-        this.location = location;
-    }*/
 
     public void setSize(String size) {
         this.size = size.replace(',', '.');
@@ -130,15 +117,6 @@ public class Garden {
         return this.description;
     }
 
-    /*@Override
-    public String toString() {
-        return "Garden{" +
-                "id=" + id +
-                ", gardenName='" + name + '\'' +
-                ", gardenLocation='" + location + '\'' +
-                ", gardenSize='" + size + '\'' +
-                '}';
-    }*/
 
     public String getStreetNumber() {
         return streetNumber;

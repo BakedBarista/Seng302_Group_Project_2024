@@ -29,7 +29,7 @@
                     </tr>
                     <tr th:each="garden : ${gardens}">
                         <td><a th:href="@{'/gardens/' + ${garden.id}}"><span th:text="${garden.name}"> Name </span></a></td>
-                        <td><span th:text="${garden.location}"> Location </span></td>
+                        <td><span th:text="${garden.city}"> Location </span></td>
                         <td><span th:text="${garden.size}"> Size </span></td>
                         <td><span th:text="${garden.description}"> Description </span></td>
                     </tr>

@@ -23,7 +23,7 @@ public class GardenTest {
 
     @BeforeEach
     void makeGarden() {
-        garden = new Garden("Garden", "Christchurch", "100", "Big");
+        garden = new Garden("Garden", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041", "100", "Big");
     }
 
     @Test
@@ -115,57 +115,57 @@ public class GardenTest {
 
     @Test
     public void gardenLocation_NameIsValid_ReturnsEmptyConstraintViolationList() {
-        garden.setLocation("Christchurch");
+        garden.setCity("Christchurch");
 
         assertTrue(validator.validate(garden).isEmpty());
     }
 
     @Test
     public void gardenLocation_LocationHasSpace_ReturnsEmptyConstraintViolationList() {
-        garden.setLocation("New Zealand");
+        garden.setCountry("New Zealand");
 
         assertTrue(validator.validate(garden).isEmpty());
     }
 
     @Test
     public void gardenLocation_LocationHasSpaces_ReturnsEmptyConstraintViolationList() {
-        garden.setLocation("New      Zealand");
+        garden.setCountry("New      Zealand");
 
         assertTrue(validator.validate(garden).isEmpty());
     }
 
     @Test
     public void gardenLocation_LocationHasCommas_ReturnsEmptyConstraintViolationList() {
-        garden.setLocation("Ilam, Christchurch, New Zealand");
+        garden.setCountry("Ilam, Christchurch, New Zealand");
 
         assertTrue(validator.validate(garden).isEmpty());
     }
 
     @Test
     public void gardenLocation_LocationHasHyphens_ReturnsEmptyConstraintViolationList() {
-        garden.setLocation("Christchurch-New-Zealand");
+        garden.setCity("Christchurch-New-Zealand");
 
         assertTrue(validator.validate(garden).isEmpty());
     }
 
     @Test
     public void gardenLocation_LocationHasApostrophes_ReturnsEmptyConstraintViolationList() {
-        garden.setLocation("House's");
+        garden.setCity("House's");
 
         assertTrue(validator.validate(garden).isEmpty());
     }
 
     @Test
     public void gardenLocation_LocationHasNumbers_ReturnsEmptyConstraintViolationList() {
-        garden.setLocation("2street");
+        garden.setCity("2street");
 
         assertTrue(validator.validate(garden).isEmpty());
     }
 
     @Test
     public void gardenLocation_LocationHasExclamationMark_ReturnPatternConstraintViolation() {
-        garden.setLocation("Christchurch!");
-        String expectedMessage = "Location name must only include letters, numbers, spaces, dots, commas, hyphens or apostrophes";
+        garden.setCity("Christchurch!");
+        String expectedMessage = "Please enter a valid City name";
         Integer expectedConstraintSetSize = 1;
 
 
@@ -177,8 +177,8 @@ public class GardenTest {
 
     @Test
     public void gardenLocation_LocationHasHash_ReturnPatternConstraintViolation() {
-        garden.setLocation("garden #2");
-        String expectedMessage = "Location name must only include letters, numbers, spaces, dots, commas, hyphens or apostrophes";
+        garden.setCity("garden #2");
+        String expectedMessage = "Please enter a valid City name";
         Integer expectedConstraintSetSize = 1;
 
 
@@ -189,8 +189,8 @@ public class GardenTest {
     }
     @Test
     public void gardenLocation_Null_ReturnNotBlankViolation() {
-        garden.setLocation(null);
-        String expectedMessage = "Location cannot by empty";
+        garden.setCity(null);
+        String expectedMessage = "City and Country are required";
         Integer expectedConstraintSetSize = 1;
 
 
