@@ -14,13 +14,13 @@ public class ResetPasswordController {
 
     /**
      * Shows the reset password page
-     * 
+     *
      * This is linked to from the login page
      *
      * @return reset password page view
      */
     @GetMapping("/users/reset-password")
-    public String resetPassword(Model model) {
+    public String resetPassword() {
         logger.info("GET /users/reset-password");
         return "users/resetPassword";
     }
@@ -28,12 +28,12 @@ public class ResetPasswordController {
     /**
      * Sends a reset password email to the given email address
      *
+     * @param email the email address to send the reset password email to
      * @return reset password confirmation page view
      */
     @PostMapping("/users/reset-password")
     public String resetPasswordConfirmation(
-            @RequestParam(name = "email") String email,
-            Model model) {
+            @RequestParam(name = "email") String email) {
         logger.info("POST /users/reset-password");
 
         // TODO: send email with reset password link
@@ -43,9 +43,11 @@ public class ResetPasswordController {
 
     /**
      * Shows the reset password callback page
-     * 
+     *
      * This is the link that is included in the reset password email
      *
+     * @param token the token that was sent in the reset password email
+     * @param model used to embed the token in the form so that we still have it when the form is submitted
      * @return reset password callback page view
      */
     @GetMapping("/users/reset-password/callback")
@@ -59,15 +61,17 @@ public class ResetPasswordController {
 
     /**
      * Submits the reset password callback form
-     * 
+     *
+     * @param token the token that was sent in the reset password email
+     * @param newPassword the new password
+     * @param retypePassword the new password, retyped
      * @return redirects to the login page
      */
     @PostMapping("/users/reset-password/callback")
     public String resetPasswordCallbackPost(
             @RequestParam(name = "token") String token,
             @RequestParam(name = "newPassword") String newPassword,
-            @RequestParam(name = "retypePassword") String retypePassword,
-            Model model) {
+            @RequestParam(name = "retypePassword") String retypePassword) {
         logger.info("GET /users/reset-password/callback");
 
         // TODO: verify token and reset password
