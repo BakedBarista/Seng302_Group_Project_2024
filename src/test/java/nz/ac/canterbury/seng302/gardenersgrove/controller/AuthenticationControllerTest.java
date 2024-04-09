@@ -83,7 +83,7 @@ public class AuthenticationControllerTest {
         user.setEmailValidationTokenExpiryInstant(time);
 
         when(userService.getUserById(userId)).thenReturn(user);
-        String actualPage = authenticationController.validateAuthenticationToken(userId, token, redirectAttributes);
+        String actualPage = authenticationController.validateAuthenticationToken(userId, token, redirectAttributes, model);
 
         assertEquals(expectedPage, actualPage);
     }
@@ -100,7 +100,7 @@ public class AuthenticationControllerTest {
         user.setEmailValidationTokenExpiryInstant(time);
 
         when(userService.getUserById(userId)).thenReturn(user);
-        String actualPage = authenticationController.validateAuthenticationToken(userId, userInputtedToken, redirectAttributes);
+        String actualPage = authenticationController.validateAuthenticationToken(userId, userInputtedToken, redirectAttributes, model);
 
         assertEquals(expectedPage, actualPage);
     }
@@ -115,7 +115,7 @@ public class AuthenticationControllerTest {
         user.setEmailValidationTokenExpiryInstant(time);
 
         when(userService.getUserById(userId)).thenReturn(user);
-        authenticationController.validateAuthenticationToken(userId, token, redirectAttributes);
+        authenticationController.validateAuthenticationToken(userId, token, redirectAttributes, model);
 
         GardenUser user = userService.getUserById(userId);
         assertNull(user.getEmailValidationToken());
@@ -133,7 +133,7 @@ public class AuthenticationControllerTest {
         user.setEmailValidationTokenExpiryInstant(time);
 
         when(userService.getUserById(userId)).thenReturn(user);
-        authenticationController.validateAuthenticationToken(userId, userInputtedToken, redirectAttributes);
+        authenticationController.validateAuthenticationToken(userId, userInputtedToken, redirectAttributes, model);
 
         assertEquals(storedToken, user.getEmailValidationToken());
         assertEquals(time, user.getEmailValidationTokenExpiryInstant());
