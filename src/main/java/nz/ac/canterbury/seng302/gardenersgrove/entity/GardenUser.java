@@ -89,6 +89,15 @@ public class GardenUser {
     }
 
     /**
+     * Sets the id of this user
+     *
+     * @param id of user
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    /**
      * Setter for the user's first name
      *
      * @param fname the user's first name
