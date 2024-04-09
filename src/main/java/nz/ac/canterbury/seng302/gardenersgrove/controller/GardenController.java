@@ -57,7 +57,7 @@ public class GardenController {
     @PostMapping("/gardens/create")
     public String submitForm(@Validated(ValidationSequence.class) @ModelAttribute("garden") Garden garden,
                              BindingResult bindingResult, Model model) {
-        logger.info("POST /gardens - submit the new garden form {} {} {}", garden.getName(),garden.getStreetNumber(),garden.getStreetName());
+        logger.info("POST /gardens - submit the new garden form {} {} {} {} {}", garden.getName(),garden.getStreetNumber(),garden.getStreetName(), garden.getLon(), garden.getLat());
         if (bindingResult.hasErrors()) {
             model.addAttribute("garden", garden);
 
@@ -134,7 +134,6 @@ public class GardenController {
         Optional<Garden> existingGarden = gardenService.getGardenById(id);
         if (existingGarden.isPresent()) {
             existingGarden.get().setName(garden.getName());
-            //existingGarden.get().setLocation(garden.getLocation());
             existingGarden.get().setStreetNumber(garden.getStreetNumber());
             existingGarden.get().setStreetName(garden.getStreetName());
             existingGarden.get().setSuburb(garden.getSuburb());
@@ -143,8 +142,12 @@ public class GardenController {
             existingGarden.get().setPostCode(garden.getPostCode());
             existingGarden.get().setSize(garden.getSize());
             existingGarden.get().setDescription(garden.getDescription());
+            existingGarden.get().setLon(garden.getLon());
+            existingGarden.get().setLat(garden.getLat());
             gardenService.addGarden(existingGarden.get());
         }
+
+        logger.info("POST /gardens - submit the new garden form {} {} {} {} {}", garden.getName(),garden.getStreetNumber(),garden.getStreetName(), garden.getLon(), garden.getLat());
         return "redirect:/gardens/" + id;
     }
 

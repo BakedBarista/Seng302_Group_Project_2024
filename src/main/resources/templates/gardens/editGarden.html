@@ -55,8 +55,10 @@
                             <input type="text" class="form-control" id="postCode"  placeholder="Post Code"
                                    th:name="postCode" th:value="${garden.postCode}" data-cy="postCode">
                         </div>
-
-                        <br/>
+                    </div>
+                    <input type="hidden" id="lat" th:name="lat" th:value="${garden.lat}">
+                    <input type="hidden" id="lon" th:name="lon" th:value="${garden.lon}">
+                    <br/>
                     <!-- Garden Size Field -->
                     <label for="size"> Garden Size (m&sup2;): </label>
                     <input type="text" class="form-control" id="size" placeholder="Size of Garden"
@@ -68,7 +70,7 @@
                     <br/>
                     <button type="submit">Submit!</button><button type="button" th:onclick="'window.location.href = \'' + @{/gardens/{gardenId}(gardenId=${id})} + '\''">Cancel</button>
                 </form>
-            </div>
+        </div>
         </div>
         <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
     </body>
