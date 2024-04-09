@@ -216,12 +216,14 @@ function addressAutocomplete(containerElement, callback, options) {
 
 function populateAddressFields(selectedAddress) {
     // Populate address fields with properties from the selectedAddress address
-    document.getElementById("streetNumber").value = selectedAddress.housenumber || "";
-    document.getElementById("streetName").value = selectedAddress.street || "";
-    document.getElementById("suburb").value = selectedAddress.suburb || "";
-    document.getElementById("city").value = selectedAddress.city || "";
-    document.getElementById("country").value = selectedAddress.country || "";
-    document.getElementById("postCode").value = selectedAddress.postcode || "";
+    document.getElementById("streetNumber").value = selectedAddress.housenumber || null;
+    document.getElementById("streetName").value = selectedAddress.street || null;
+    document.getElementById("suburb").value = selectedAddress.suburb || null;
+    document.getElementById("city").value = selectedAddress.city || null;
+    document.getElementById("country").value = selectedAddress.country || null;
+    document.getElementById("postCode").value = selectedAddress.postcode || null;
+    document.getElementById("lat").value = selectedAddress.lat || null;
+    document.getElementById("lon").value = selectedAddress.lon || null;
 }
 
 addressAutocomplete(document.getElementById("autocomplete-container"),

@@ -71,7 +71,7 @@ public class Garden {
      * @param postCode postcode
      * @param gardenSize size of garden
      */
-    public Garden(String gardenName, String streetNumber, String streetName, String suburb, String city, String country, String postCode, String gardenSize, String description) {
+    public Garden(String gardenName, String streetNumber, String streetName, String suburb, String city, String country, String postCode, Double lat, Double lon, String gardenSize, String description) {
         this.name = gardenName;
         this.streetNumber = streetNumber;
         this.streetName = streetName;
@@ -79,6 +79,8 @@ public class Garden {
         this.city = city;
         this.country = country;
         this.postCode = postCode;
+        this.lat = lat;
+        this.lon = lon;
         this.size = gardenSize;
         this.description = description;
     }

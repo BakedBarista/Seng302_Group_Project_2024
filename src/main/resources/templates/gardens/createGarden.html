@@ -64,11 +64,16 @@
                     <div th:if="${#fields.hasErrors('postCode')}" th:errors="*{postCode}" style="color: red;"></div>
                 </div>
             </div>
+            <input type="hidden" id="lat" th:name="lat" th:value="${garden.lat}">
+            <input type="hidden" id="lon" th:name="lon" th:value="${garden.lon}">
             <!-- Garden Size Field -->
             <label for="size"> Garden Size (m^2) (Optional): </label>
             <input type="text" class="form-control" id="size" placeholder="Size of Garden"
                    th:name="size" th:value="${garden.size}" data-cy="size">
             <div th:if="${#fields.hasErrors('size')}" th:errors="*{size}" style="color: red;"></div>
+            <br/>
+            <!-- Garden Description -->
+            <nav th:replace="~{fragments/description-box :: description-box-with-char-count}"></nav>
             <br/>
             <button type="submit">Submit!</button><button type="button" onclick="history.back()">Cancel</button>
         </form>
