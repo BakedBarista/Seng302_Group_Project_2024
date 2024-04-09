@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 
+import com.modernmt.text.profanity.dictionary.Profanity;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.ValidationSequence;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import java.util.Optional;
+import com.modernmt.text.profanity.*;
 
 /**
  * Controller for garden forms
@@ -26,6 +28,8 @@ public class GardenController {
 
     private final GardenService gardenService;
     private final PlantService plantService;
+
+    ProfanityFilter filter = new ProfanityFilter();
 
     @Autowired
     public GardenController(GardenService gardenService, PlantService plantService) {
@@ -67,6 +71,13 @@ public class GardenController {
         if (bindingResult.hasErrors()) {
             model.addAttribute("garden", garden);
 
+            return "gardens/createGarden";
+        }
+        Profanity profanity = filter.find("en",garden.getDescription());
+        if (filter.test("en",garden.getDescription())){
+            model.addAttribute("garden", garden);
+            model.addAttribute("profanity",profanity);
+            logger.info("Profanity detected: {}", profanity.text());
             return "gardens/createGarden";
         }
         Garden savedGarden = gardenService.addGarden(garden);
