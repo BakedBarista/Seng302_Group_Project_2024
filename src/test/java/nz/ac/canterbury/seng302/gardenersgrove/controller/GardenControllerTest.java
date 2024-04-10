@@ -36,14 +36,14 @@ public class GardenControllerTest {
     @Test
     public void testForm() {
         Model model = mock(Model.class);
-        String result = gardenController.form("","","", model);
+        String result = gardenController.form(model);
         assertEquals("gardens/createGarden", result);
     }
 
     @Test
     public void testSubmitForm_ValidationFailure() {
         Model model = mock(Model.class);
-        Garden invalidGarden = new Garden("","","","");
+        Garden invalidGarden = new Garden("","","","","","","",0.0,0.0,"","");
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
         String result = gardenController.submitForm(invalidGarden, bindingResult, model);
@@ -53,7 +53,7 @@ public class GardenControllerTest {
     @Test
     public void testSubmitForm_ValidationSuccess() {
         Model model = mock(Model.class);
-        Garden validGarden = new Garden("Test Garden","Test Location","100","Test Description");
+        Garden validGarden = new Garden("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"100","test description");
         validGarden.setId((long) 1);
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
@@ -75,7 +75,7 @@ public class GardenControllerTest {
     @Test
     public void testGardenDetail() {
         Model model = mock(Model.class);
-        Garden garden = new Garden("Test Garden", "Test Location", "Test Size","Test Description");
+        Garden garden = new Garden("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"100","test description");
         when(gardenService.getGardenById(1L)).thenReturn(Optional.of(garden));
         when(plantService.getPlantsByGardenId(1L)).thenReturn(Collections.emptyList());
 
@@ -89,7 +89,7 @@ public class GardenControllerTest {
     @Test
     public void testGetGarden() {
         Model model = mock(Model.class);
-        Garden garden = new Garden("Test Garden", "Test Location", "Test Size","Test Description");
+        Garden garden = new Garden("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"100","test description");
         when(gardenService.getGardenById(1)).thenReturn(Optional.of(garden));
 
         String result = gardenController.getGarden(1, model);
@@ -100,15 +100,42 @@ public class GardenControllerTest {
     @Test
     public void testUpdateGarden() {
         Model model = mock(Model.class);
-        Garden garden = new Garden("Test Garden", "Test Location", "Test Size", "Test Description");
+        Garden garden = new Garden("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"100","test description");
         when(gardenService.getGardenById(1)).thenReturn(Optional.of(garden));
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
         String result = gardenController.updateGarden(1, garden, bindingResult, model);
         assertEquals("redirect:/gardens/1", result);
         assertEquals("Test Garden", garden.getName());
-        assertEquals("Test Location", garden.getLocation());
-        assertEquals("Test Size", garden.getSize());
-        assertEquals("Test Description", garden.getDescription());
+        assertEquals("1", garden.getStreetNumber());
+        assertEquals("test", garden.getStreetName());
+        assertEquals("test suburb", garden.getSuburb());
+        assertEquals("test city", garden.getCity());
+        assertEquals("test country", garden.getCountry());
+        assertEquals("1234",garden.getPostCode());
+        assertEquals("100", garden.getSize());
+        assertEquals("test description", garden.getDescription());
     }
+// Test updated edit form
+//    @Test
+//    public void testUpdateGarden() {
+//        Model model = mock(Model.class);
+//        Garden garden = new Garden("Test Garden", "Test Location", "testStreetNumber",
+//                "testStreetName","testSuburb", "testCity", "testCountry", "testPostCode","Test Size");
+//        when(gardenService.getGardenById(1)).thenReturn(Optional.of(garden));
+//        BindingResult bindingResult = mock(BindingResult.class);
+//        when(bindingResult.hasErrors()).thenReturn(false);
+//        String result = gardenController.updateGarden(1, garden, bindingResult, model);
+//        assertEquals("redirect:/gardens/1", result);
+//        assertEquals("Test Garden", garden.getName());
+//        assertEquals("Test Location", garden.getLocation());
+//        assertEquals("testStreetNumber", garden.getStreetNumber());
+//        assertEquals("testStreetName", garden.getStreetName());
+//        assertEquals("testSuburb", garden.getSuburb());
+//        assertEquals("testCity", garden.getCity());
+//        assertEquals("testCountry", garden.getCountry());
+//        assertEquals("testPostCode", garden.getPostCode());
+//
+//        assertEquals("Test Size", garden.getSize());
+//    }
 }

@@ -5,16 +5,22 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
 import nz.ac.canterbury.seng302.gardenersgrove.validation.UserValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 /**
  * Controller for registering new users
@@ -27,6 +33,9 @@ public class RegisterController {
 
     @Autowired
     private GardenUserService userService;
+
+    @Autowired
+    private TokenService tokenService;
 
     private GardenUser user;
 
@@ -128,7 +137,7 @@ public class RegisterController {
          }
 
         if (valid) {
-            userService.addUser(new GardenUser(fname, lname, email, password, dob));
+            GardenUser user = userService.addUser(new GardenUser(fname, lname, email, password, dob));
 
             try {
                 request.logout();
@@ -138,7 +147,8 @@ public class RegisterController {
 
             try {
                 request.login(email, password);
-                return "redirect:/users/user";
+                addEmailTokenAndTimeToUser(user.getId());
+                return "redirect:/users/user/"+user.getId()+"/authenticateEmail";
             } catch (ServletException e) {
                 logger.error("Error while login ", e);
             }
@@ -172,4 +182,20 @@ public class RegisterController {
         }
     }
 
+    /**
+     * adds a random token and this time instance to a given user in the DB
+     * @param userId
+     * @return
+     */
+    public void addEmailTokenAndTimeToUser(Long userId) {
+        logger.info("called addTokenAndTimeToUser");
+        String token = tokenService.createEmailToken();
+
+        GardenUser user = userService.getUserById(userId);
+        Instant time = Instant.now().plus(10, ChronoUnit.MINUTES);
+        user.setEmailValidationToken(token);
+        user.setEmailValidationTokenExpiryInstant(time);
+
+        userService.addUser(user);
+    }
 }
