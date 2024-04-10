@@ -65,6 +65,9 @@ public class TokenService {
         return token.toString();
     }
 
+    /**
+     *  Scheduled clean up of expired tokens every 60 seconds
+     */
     @Scheduled(fixedRate = 60_000)
     @Transactional
     public void cleanUpTokens() {
