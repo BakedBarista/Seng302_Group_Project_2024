@@ -6,6 +6,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.ValidationSequence;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.ProfanityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import java.util.Optional;
+import java.util.Set;
+
 import com.modernmt.text.profanity.*;
 
 /**
@@ -29,7 +32,7 @@ public class GardenController {
     private final GardenService gardenService;
     private final PlantService plantService;
 
-    ProfanityFilter filter = new ProfanityFilter();
+    ProfanityService filterProxy = new ProfanityService();;
 
     @Autowired
     public GardenController(GardenService gardenService, PlantService plantService) {
@@ -73,11 +76,13 @@ public class GardenController {
 
             return "gardens/createGarden";
         }
-        Profanity profanity = filter.find("en",garden.getDescription());
-        if (filter.test("en",garden.getDescription())){
+
+        Profanity aProfanity = filterProxy.findAllLanguages(garden.getDescription());
+
+        if (aProfanity != null){
             model.addAttribute("garden", garden);
-            model.addAttribute("profanity",profanity);
-            logger.info("Profanity detected: {}", profanity.text());
+            model.addAttribute("profanity", aProfanity.text());
+            logger.info("Profanities detected: {}", aProfanity.text());
             return "gardens/createGarden";
         }
         Garden savedGarden = gardenService.addGarden(garden);
