@@ -11,13 +11,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.internal.matchers.Any;
 import org.springframework.ui.Model;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-
-import static org.mockito.Mockito.mock;
 
 public class LoginControllerTest {
 
