@@ -23,9 +23,6 @@ public class LocationAPIController {
     @Value("${geoapify.api.key}")
     private String location_apiKey;
 
-    @Value("${MODERATION_KEY}")
-    private String moderation_key;
-
 
     /**
      * Return result from the location API request

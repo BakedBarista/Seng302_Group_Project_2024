@@ -36,9 +36,8 @@ public class GardenController {
     private final GardenService gardenService;
     private final PlantService plantService;
 
-
-
-
+    @Autowired
+    ModerationService moderationService;
 
     ProfanityService filterProxy = new ProfanityService();;
 
@@ -78,8 +77,6 @@ public class GardenController {
 
             return "gardens/createGarden";
         }
-        RestTemplate restTemplate = new RestTemplate();
-        ModerationService moderationService = new ModerationService(restTemplate);
         ResponseEntity<String> response = moderationService.moderateDescription(garden.getDescription());
         logger.info("Response {}",response);
         /*Profanity aProfanity = filterProxy.findAllLanguages(garden.getDescription());

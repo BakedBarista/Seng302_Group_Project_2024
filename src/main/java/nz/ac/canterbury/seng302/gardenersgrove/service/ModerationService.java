@@ -9,32 +9,30 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-
+@Service
 public class ModerationService {
-    //API key
     Logger logger = LoggerFactory.getLogger(ModerationService.class);
-    @Value("${MODERATION_KEY}")
-    private String moderation_apiKey;
+
+    @Value("${moderation.api.key}")
+    private String moderationApiKey;
 
     private static final String MODERATION_API_URL = "https://api.openai.com/v1/moderations";
 
-    private final RestTemplate restTemplate;
-
-    public ModerationService(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
-
     public ResponseEntity<String> moderateDescription(String description) {
+        logger.info("Moderating description {}", description);
+
         String requestBody = "{\"input\": \"" + description + "\"}";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", "Bearer " + moderation_apiKey);
+        headers.set("Authorization", "Bearer " + moderationApiKey);
 
-        HttpEntity<String> requestEntity = new HttpEntity<>(requestBody,headers);
+        HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
 
+        RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> responseEntity = restTemplate.postForEntity(MODERATION_API_URL, requestEntity, String.class);
 
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
+            logger.info("Description moderated");
             return responseEntity;
         } else {
             throw new RuntimeException("Can not moderate description");
