@@ -11,6 +11,8 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.ProfanityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -33,6 +35,8 @@ public class GardenController {
 
     private final GardenService gardenService;
     private final PlantService plantService;
+
+
 
 
 
@@ -76,7 +80,7 @@ public class GardenController {
         }
         RestTemplate restTemplate = new RestTemplate();
         ModerationService moderationService = new ModerationService(restTemplate);
-        String response = moderationService.moderateDescription(garden.getDescription());
+        ResponseEntity<String> response = moderationService.moderateDescription(garden.getDescription());
         logger.info("Response {}",response);
         /*Profanity aProfanity = filterProxy.findAllLanguages(garden.getDescription());
 
