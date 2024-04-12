@@ -78,7 +78,7 @@ public class AuthenticationController {
             return "redirect:/users/login";
         }
         else {
-            model.addAttribute("tokenExpired", true);
+            model.addAttribute("tokenIncorrect", true);
             return "/authentication/emailAuthentication";
         }
     }
