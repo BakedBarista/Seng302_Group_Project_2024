@@ -30,7 +30,9 @@ class PlantServiceTest {
     @Test
     void AddPlant_ValidPlantWithGardenId_ReturnsPlantWithCorrectGardenId() {
         Plant testPlant = new Plant("Rose", "5", "Flower", "01/01/2024");
-        Garden testGarden = new Garden("Garden", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041", "100", "Big");
+        double lat = 1;
+        double lon = 1;
+        Garden testGarden = new Garden("Garden", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041",lat, lon, "100", "Big");
         Long gardenId = 1L;
         testGarden.setId(gardenId);
 
@@ -98,11 +100,13 @@ class PlantServiceTest {
 
     @Test
     void GetPlantsByGardenId_ThreePlantsTwoInGarden1OneInGardenTwo_ReturnOnlyGarden1Plants() {
+        double lat = 1;
+        double lon = 1;
         Plant testPlant1 = new Plant("Rose", "5", "Flower", "01/01/2024");
         Plant testPlant2 = new Plant("Daisy", "3", "Flower", "01/01/2024");
         Plant testPlant3 = new Plant("Tulip", "2", "Flower", "01/01/2024");
-        Garden testGarden1 = new Garden("Garden1", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041", "100", "Big");
-        Garden testGarden2 = new Garden("Garden2", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041", "100", "Big");
+        Garden testGarden1 = new Garden("Garden1", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041", lat, lon,"100", "Big");
+        Garden testGarden2 = new Garden("Garden2", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041", lat, lon,"100", "Big");
         Long gardenId1 = 1L;
         Long gardenId2 = 2L;
 

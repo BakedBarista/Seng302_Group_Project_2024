@@ -23,7 +23,9 @@ public class GardenTest {
 
     @BeforeEach
     void makeGarden() {
-        garden = new Garden("Garden", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041", "100", "Big");
+        double lat = 10;
+        double lon = 10;
+        garden = new Garden("Garden", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041", lat, lon, "100", "Big");
     }
 
     @Test
