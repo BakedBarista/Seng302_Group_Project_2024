@@ -77,16 +77,16 @@ public class GardenController {
 
             return "gardens/createGarden";
         }
-        ResponseEntity<String> response = moderationService.moderateDescription(garden.getDescription());
-        logger.info("Response {}",response);
-        /*Profanity aProfanity = filterProxy.findAllLanguages(garden.getDescription());
 
+        // check to see if profanity is present for any language and inform the user if there is
+        Profanity aProfanity = filterProxy.findAllLanguages(garden.getDescription());
         if (aProfanity != null){
             model.addAttribute("garden", garden);
             model.addAttribute("profanity", aProfanity.text());
             logger.info("Profanities detected: {}", aProfanity.text());
             return "gardens/createGarden";
-        }*/
+        }
+
         Garden savedGarden = gardenService.addGarden(garden);
         return "redirect:/gardens/" + savedGarden.getId();
     }

@@ -17,7 +17,7 @@ public class ProfanityService {
     private static final List<String> SUPPORTED_LANGUAGES = Arrays.asList(
             "ar", "az", "bg", "bs", "ca", "cs", "da", "de", "el", "en", "es", "et", "fi", "fr", "ga", "he", "hi", "hr",
             "hu", "hy", "id", "is", "it", "ja", "ka", "ko", "lt", "lv", "mk", "ms", "mt", "no", "nl", "pl", "pt", "ro",
-            "ru", "sk", "sl", "sq", "sr", "sv", "sw", "th", "tl", "tr", "uk", "vi", "xh", "zh", "zu", "custom");
+            "ru", "sk", "sl", "sq", "sr", "sv", "sw", "th", "tl", "tr", "uk", "vi", "xh", "zh", "zu");
 
     ProfanityFilter filter = new ProfanityFilter();
 
@@ -45,7 +45,7 @@ public class ProfanityService {
      * @param text string to be checked for profanities
      * @return Profanity present
      */
-    private Profanity find(String language, String text) {
+    public Profanity find(String language, String text) {
         return filter.find(language, text);
     }
 
@@ -56,7 +56,7 @@ public class ProfanityService {
      * @param text string to be checked for profanities
      * @return true if string contains profanities
      */
-    private boolean test(String language, String text) {
+    public boolean test(String language, String text) {
         return filter.test(language, text);
     }
 }
