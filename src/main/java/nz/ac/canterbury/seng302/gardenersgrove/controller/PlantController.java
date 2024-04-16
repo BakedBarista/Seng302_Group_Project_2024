@@ -96,6 +96,27 @@ public class PlantController {
         }
         try {
             if (file != null && !file.isEmpty()) {
+                // Check file size
+                if (file.getSize() > MAX_FILE_SIZE) {
+                    model.addAttribute("plant", plant);
+                    model.addAttribute("gardenId", gardenId);
+                    model.addAttribute("fileSizeError", "Image must be less than 10MB");
+                    logger.error("File size exceeds the limit");
+                    return "plants/addPlant";
+                }
+
+                // Check file type
+                String fileName = file.getOriginalFilename();
+                String extension = fileName.substring(fileName.lastIndexOf(".") + 1);
+                if (!allowedExtension.contains(extension.toLowerCase())) {
+                    model.addAttribute("plant", plant);
+                    model.addAttribute("gardenId", gardenId);
+                    model.addAttribute("fileTypeError", "Image must be of type png, jpg or svg");
+                    logger.error("Invalid file format");
+                    return "plants/addPlant";
+                }
+
+                // Proceed with uploading the file
                 Plant plantToAdd = plantService.addPlant(plant, gardenId);
                 model.addAttribute("image", uploadController.upload(file, plantToAdd.getId()));
             } else {
@@ -146,13 +167,12 @@ public class PlantController {
      */
     @PostMapping("/gardens/{gardenId}/plants/{plantId}/edit")
     public String submitEditPlantForm(@PathVariable("gardenId") long gardenId,
-                               @PathVariable("plantId") long plantId, @RequestParam("image") MultipartFile file,
+                               @PathVariable("plantId") long plantId,
                                @Validated(ValidationSequence.class) @ModelAttribute("plant") Plant plant,
                                BindingResult bindingResult, Model model) {
-        logger.info("/garden/{}/plant/{}", gardenId, plantId);
-        logger.info("{}", plant);
+        logger.info("/garden/{}/plant/{}", gardenId, plant);
 
-        if(plant != null) {
+        if(!plant.getPlantedDate().isEmpty()) {
             plant.setPlantedDate(refactorPlantedDate(plant.getPlantedDate()));
         }
         if (bindingResult.hasErrors()) {
@@ -164,17 +184,6 @@ public class PlantController {
 
         Optional<Plant> existingPlant = plantService.getPlantById(plantId);
         if (existingPlant.isPresent()){
-            try {
-                if (file != null && !file.isEmpty()) {
-                    uploadController.upload(file, plantId);
-                } else {
-                    // No file uploaded
-                    logger.error("No file uploaded");
-                }
-            } catch (Exception error) {
-                //TODO: something with this error
-                logger.error(String.valueOf(error));
-            }
             existingPlant.get().setName(plant.getName());
             existingPlant.get().setCount(plant.getCount());
             existingPlant.get().setDescription(plant.getDescription());
@@ -202,6 +211,4 @@ public class PlantController {
             return date;
         }
     }
-
-
 }

@@ -30,10 +30,11 @@ public class GardenServiceTest {
         String gardenName = "Test Garden";
         String gardenLocation = "Test Location";
         String gardenSize = "100";
+        String gardenDescription = "Test Description";
 
-        Mockito.when(gardenRepository.save(Mockito.any(Garden.class))).thenReturn(new Garden(gardenName, gardenLocation, gardenSize));
+        Mockito.when(gardenRepository.save(Mockito.any(Garden.class))).thenReturn(new Garden(gardenName, gardenLocation, gardenSize, gardenDescription));
 
-        Garden garden = gardenService.addGarden(new Garden(gardenName, gardenLocation, gardenSize));
+        Garden garden = gardenService.addGarden(new Garden(gardenName, gardenLocation, gardenSize, gardenDescription));
 
         Assertions.assertEquals(gardenName, garden.getName());
         Assertions.assertEquals(gardenLocation, garden.getLocation());
@@ -44,8 +45,8 @@ public class GardenServiceTest {
     @Test
     public void getAllGardens_ReturnsAllGardens() {
         List<Garden> mockGardens = Arrays.asList(
-                new Garden("Garden 1", "Location 1", "100"),
-                new Garden("Garden 2", "Location 2", "200")
+                new Garden("Garden 1", "Location 1", "100", "Small"),
+                new Garden("Garden 2", "Location 2", "200", "Big")
         );
         Mockito.when(gardenRepository.findAll()).thenReturn(mockGardens);
 
@@ -57,7 +58,7 @@ public class GardenServiceTest {
 
     @Test
     public void getGardenById_ReturnsGarden() {
-        Garden garden = new Garden("Garden 1", "Location 1", "100");
+        Garden garden = new Garden("Garden 1", "Location 1", "100", "Small");
 
         Mockito.when(gardenRepository.findById(1L)).thenReturn(java.util.Optional.of(garden));
 
