@@ -26,16 +26,19 @@
                         <label for="streetNumber">Street Number</label>
                         <input type="text" class="form-control" id="streetNumber" placeholder="1"
                                th:name="streetNumber" th:value="${garden.streetNumber}" data-cy="streetNumber">
+                        <div th:if="${#fields.hasErrors('streetNumber')}" th:errors="*{streetNumber}" style="color: red;"></div>
                     </div>
                     <div class="form-group">
                         <label for="streetName">Street Name</label>
                         <input type="text" class="form-control" id="streetName" placeholder="Main St"
                                th:name="streetName" th:value="${garden.streetName}" data-cy="streetNumber">
+                        <div th:if="${#fields.hasErrors('streetName')}" th:errors="*{streetName}" style="color: red;"></div>
                     </div>
                     <div class="form-group">
                         <label for="suburb">Suburb</label>
                         <input type="text" class="form-control" id="suburb" placeholder="Suburb"
                                th:name="suburb" th:value="${garden.suburb}" data-cy="suburb">
+                        <div th:if="${#fields.hasErrors('suburb')}" th:errors="*{suburb}" style="color: red;"></div>
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-6">
@@ -54,6 +57,7 @@
                             <label for="postCode">Postcode</label>
                             <input type="text" class="form-control" id="postCode"  placeholder="Post Code"
                                    th:name="postCode" th:value="${garden.postCode}" data-cy="postCode">
+                            <div th:if="${#fields.hasErrors('postCode')}" th:errors="*{postCode}" style="color: red;"></div>
                         </div>
                     </div>
                     <input type="hidden" id="lat" th:name="lat" th:value="${garden.lat}">

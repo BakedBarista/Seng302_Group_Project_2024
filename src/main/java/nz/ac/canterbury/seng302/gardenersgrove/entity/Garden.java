@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -28,14 +29,15 @@ public class Garden {
     @Pattern(regexp = "^.*[a-zA-Z].*|$", message = "Description must be 512 characters or less and contain some text")
     private String description;
 
-
+    @Pattern(regexp = "^(|([0-9]+[a-zA-Z]?(\\s?\\-?\\s?[0-9]+[a-zA-Z]?)?))$", message = "Please enter a valid street number")
     @Column
     private String streetNumber;
 
-
+    @Pattern(regexp = "^(|([a-zA-Z0-9 ,.'-]+))$", message = "Please enter a valid street name")
     @Column
     private String streetName;
 
+    @Pattern(regexp = "^(|([a-zA-Z0-9 ,.'-]+))$", message = "Please enter a valid suburb")
     @Column
     private String suburb;
     @NotBlank(message = "City and Country are required", groups = {ValidationGroups.FirstOrder.class})
@@ -47,6 +49,7 @@ public class Garden {
     @Column
     private String country;
 
+    @Pattern(regexp = "^(|([0-9]+))$", message = "Please enter a valid post code")
     @Column
     private String postCode;
     @Column
