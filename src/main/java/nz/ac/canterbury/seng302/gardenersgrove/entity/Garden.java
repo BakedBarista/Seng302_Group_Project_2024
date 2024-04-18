@@ -5,8 +5,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidEuropeanDecimal;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.ValidationGroups;
-
 
 
 /**
@@ -18,15 +16,14 @@ public class Garden {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Garden name cannot be empty", groups = {ValidationGroups.FirstOrder.class})
-    @Pattern(regexp = "^[\\p{L}0-9 .,'-]+$", message = "Garden name must only include letters, numbers, spaces, dots, commas, hyphens, or apostrophes", groups = {ValidationGroups.SecondOrder.class})
-    @Size(min = 3, max = 50, message = "Name must be between 3 and 50 characters.", groups = {ValidationGroups.SecondOrder.class})
+    @NotBlank(message = "Garden name cannot be empty")
+    @Pattern(regexp = "^[\\p{L}0-9 .,'-]+$", message = "Garden name must only include letters, numbers, spaces, dots, commas, hyphens, or apostrophes")
     @Column(nullable = false)
     private String name;
 
 
-    @NotBlank(message = "Location cannot by empty", groups = {ValidationGroups.FirstOrder.class})
-    @Pattern(regexp = "^[A-Za-z0-9 .,'-]+$", message = "Location name must only include letters, numbers, spaces, dots, commas, hyphens or apostrophes", groups = {ValidationGroups.SecondOrder.class})
+    @NotBlank(message = "Location cannot by empty")
+    @Pattern(regexp = "^[A-Za-z0-9 .,'-]+$", message = "Location name must only include letters, numbers, spaces, dots, commas, hyphens or apostrophes")
     @Column(nullable = false)
     private String location;
 
@@ -34,7 +31,7 @@ public class Garden {
     @Pattern(regexp = "^.*[a-zA-Z].*|$", message = "Description must be 512 characters or less and contain some text")
     private String description;
 
-    @ValidEuropeanDecimal(message = "Garden size must be a positive number", groups = {ValidationGroups.FirstOrder.class})
+    @ValidEuropeanDecimal(message = "Garden size must be a positive number")
     @Column(nullable = true)
     private String size;
 
