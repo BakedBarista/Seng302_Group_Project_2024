@@ -40,11 +40,10 @@ public class Garden {
      * @param gardenLocation location of garden
      * @param gardenSize size of garden
      */
-    public Garden(String gardenName, String gardenLocation, String gardenSize, String description) {
+    public Garden(String gardenName, String gardenLocation, String gardenSize) {
         this.name = gardenName;
         this.location = gardenLocation;
         this.size = gardenSize;
-        this.description = description;
     }
 
     public Long getId() {
@@ -79,13 +78,7 @@ public class Garden {
         this.size = size.replace(',', '.');
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
 
-    public String getDescription() {
-        return this.description;
-    }
 
     @Override
     public String toString() {
