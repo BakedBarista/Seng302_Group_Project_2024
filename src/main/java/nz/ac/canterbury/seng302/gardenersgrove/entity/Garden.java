@@ -3,8 +3,10 @@ package nz.ac.canterbury.seng302.gardenersgrove.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+
 import jakarta.validation.constraints.Size;
 import nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidEuropeanDecimal;
+
 
 
 /**
@@ -17,13 +19,13 @@ public class Garden {
     private Long id;
 
     @NotBlank(message = "Garden name cannot be empty")
-    @Pattern(regexp = "^[\\p{L}0-9 .,'-]+$", message = "Garden name must only include letters, numbers, spaces, dots, commas, hyphens, or apostrophes")
+    @Pattern(regexp = "^$|^[\\p{L}0-9 .,'-]+$", message = "Garden name must only include letters, numbers, spaces, dots, commas, hyphens, or apostrophes")
     @Column(nullable = false)
     private String name;
 
 
     @NotBlank(message = "Location cannot by empty")
-    @Pattern(regexp = "^[A-Za-z0-9 .,'-]+$", message = "Location name must only include letters, numbers, spaces, dots, commas, hyphens or apostrophes")
+    @Pattern(regexp = "^$|^[A-Za-z0-9 .,'-]+$", message = "Location name must only include letters, numbers, spaces, dots, commas, hyphens or apostrophes")
     @Column(nullable = false)
     private String location;
 
@@ -32,7 +34,7 @@ public class Garden {
     private String description;
 
     @ValidEuropeanDecimal(message = "Garden size must be a positive number")
-    @Column(nullable = true)
+    @Column()
     private String size;
 
     public Garden() {}
