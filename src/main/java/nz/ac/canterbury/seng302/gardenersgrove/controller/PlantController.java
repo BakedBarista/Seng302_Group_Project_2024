@@ -1,8 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
+import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.ValidationSequence;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 
@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -76,12 +75,16 @@ public class PlantController {
      */
     @PostMapping("/gardens/{gardenId}/add-plant")
     public String submitAddPlantForm(@PathVariable("gardenId") Long gardenId,
-                                     @Validated(ValidationSequence.class) @ModelAttribute("plant") Plant plant,
+                                      @Valid @ModelAttribute("plant") Plant plant,
                                      BindingResult bindingResult,
                                      @RequestParam("image") MultipartFile file,
                                       Model model) {
-        logger.info(plant.getPlantedDate());
 
+
+        if (!plant.getPlantedDate().isEmpty() && !plant.getPlantedDate().matches("\\d{4}-\\d{2}-\\d{2}")){
+            bindingResult.rejectValue("plantedDate", "plantedDate.formatError", "Date must be in the format DD-MM-YYYY");
+
+        }
         if(!plant.getPlantedDate().isEmpty()) {
             plant.setPlantedDate(refactorPlantedDate(plant.getPlantedDate()));
         }
@@ -96,6 +99,27 @@ public class PlantController {
         }
         try {
             if (file != null && !file.isEmpty()) {
+                // Check file size
+                if (file.getSize() > MAX_FILE_SIZE) {
+                    model.addAttribute("plant", plant);
+                    model.addAttribute("gardenId", gardenId);
+                    model.addAttribute("fileSizeError", "Image must be less than 10MB");
+                    logger.error("File size exceeds the limit");
+                    return "plants/addPlant";
+                }
+
+                // Check file type
+                String fileName = file.getOriginalFilename();
+                String extension = fileName.substring(fileName.lastIndexOf(".") + 1);
+                if (!allowedExtension.contains(extension.toLowerCase())) {
+                    model.addAttribute("plant", plant);
+                    model.addAttribute("gardenId", gardenId);
+                    model.addAttribute("fileTypeError", "Image must be of type png, jpg or svg");
+                    logger.error("Invalid file format");
+                    return "plants/addPlant";
+                }
+
+                // Proceed with uploading the file
                 Plant plantToAdd = plantService.addPlant(plant, gardenId);
                 model.addAttribute("image", uploadController.upload(file, plantToAdd.getId()));
             } else {
@@ -147,12 +171,15 @@ public class PlantController {
     @PostMapping("/gardens/{gardenId}/plants/{plantId}/edit")
     public String submitEditPlantForm(@PathVariable("gardenId") long gardenId,
                                @PathVariable("plantId") long plantId, @RequestParam("image") MultipartFile file,
-                               @Validated(ValidationSequence.class) @ModelAttribute("plant") Plant plant,
+                               @Valid @ModelAttribute("plant") Plant plant,
                                BindingResult bindingResult, Model model) {
-        logger.info("/garden/{}/plant/{}", gardenId, plantId);
-        logger.info("{}", plant);
 
-        if(plant != null) {
+        logger.info(plant.getPlantedDate());
+        if (!plant.getPlantedDate().isEmpty() && !plant.getPlantedDate().matches("\\d{4}-\\d{2}-\\d{2}")) {
+            bindingResult.rejectValue("plantedDate", "plantedDate.formatError", "Date must be in the format YYYY-MM-DD");
+        }
+
+        if(!plant.getPlantedDate().isEmpty()) {
             plant.setPlantedDate(refactorPlantedDate(plant.getPlantedDate()));
         }
         if (bindingResult.hasErrors()) {
@@ -164,17 +191,6 @@ public class PlantController {
 
         Optional<Plant> existingPlant = plantService.getPlantById(plantId);
         if (existingPlant.isPresent()){
-            try {
-                if (file != null && !file.isEmpty()) {
-                    uploadController.upload(file, plantId);
-                } else {
-                    // No file uploaded
-                    logger.error("No file uploaded");
-                }
-            } catch (Exception error) {
-                //TODO: something with this error
-                logger.error(String.valueOf(error));
-            }
             existingPlant.get().setName(plant.getName());
             existingPlant.get().setCount(plant.getCount());
             existingPlant.get().setDescription(plant.getDescription());
@@ -202,6 +218,4 @@ public class PlantController {
             return date;
         }
     }
-
-
 }

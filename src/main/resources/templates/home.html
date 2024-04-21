@@ -1,14 +1,28 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
     <head>
-        <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
         <title>Gardener's Grove</title>
-        <link th:href="@{/css/styles.css}" rel="stylesheet" />
-        <link th:href="@{/css/navbar.css}" rel="stylesheet" />
+
+        <meta http-equiv="Content-Type" context="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
     </head>
     <body>
-        <div th:replace="~{navbar :: navbar}"></div>
-        <h1>The Gardeners Grove</h1>
-        <img src="/img/plant.png" alt="Gorila" width="500" height="500" />
+        <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+        <main class="text-center">
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <h1>Welcome to Gardeners Grove</h1>
+            <h3>The world's best garden tracker</h3>
+        </main>
+        <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
     </body>
 </html>

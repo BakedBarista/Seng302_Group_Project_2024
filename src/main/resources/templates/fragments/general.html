@@ -1,32 +1,15 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:fragment="headerfiles">
-    <meta charset="UTF-8"/>
-    <link th:href="@{/css/styles.css}" rel="stylesheet">
-    <script th:src="@{/js/main.js}"></script>
-</head>
-<body>
-<div th:fragment="header" class="nav-container">
-    <nav class="nav">
-        <h3 class="nav-logo">Gardener's Grove</h3>
-        <ul class="nav-links">
-            <li>
-                <a href="/">Home</a>
-            </li>
-            <li th:if="${!isAuthenticated}">
-                <a href="/users/register">Register</a>
-            </li>
-            <li th:if="${!isAuthenticated}">
-                <a href="/users/login">Sign In</a>
-            </li>
-            <li th:if="${isAuthenticated}">
-                <a href="/users/user">My Profile</a>
-            </li>
-            <li th:if="${isAuthenticated}">
-                <a href="/users/logout">Sign Out</a>
-            </li>
-        </ul>
-    </nav>
-</div>
-</body>
+    <head th:fragment="headerfiles">
+        <meta charset="UTF-8" />
+        <link th:href="@{/css/styles.css}" rel="stylesheet" />
+        <link th:href="@{/css/description-box.css}" rel="stylesheet" />
+        <script th:src="@{/js/main.js}"></script>
+        <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" />
+    </head>
+    <body>
+        <div th:fragment="bs-scripts">
+            <script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>
+        </div>"
+    </body>
 </html>

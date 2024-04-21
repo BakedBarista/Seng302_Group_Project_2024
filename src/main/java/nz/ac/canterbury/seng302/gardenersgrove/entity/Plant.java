@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 
+
 /**
  * Entity class for Plants
  */
@@ -31,7 +32,7 @@ public class Plant {
     private String description;
 
 
-    @Column(nullable = false)
+    @Column()
     private String plantedDate;
 
     @ManyToOne
@@ -40,8 +41,6 @@ public class Plant {
 
     @Column(nullable = true)
     private String plantImagePath;
-
-
 
     public Plant(String name, String count, String description, String plantedDate) {
         this.name = name;
