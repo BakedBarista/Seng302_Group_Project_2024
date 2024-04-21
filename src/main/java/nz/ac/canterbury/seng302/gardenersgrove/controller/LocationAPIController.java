@@ -36,7 +36,6 @@ public class LocationAPIController {
      */
     @GetMapping("/get_location")
     public ResponseEntity<String> getLocationData(@RequestParam String currentValue) {
-        logger.info("GET /api/get_location {}", currentValue );
         try {
             Thread.sleep(300);
         } catch (InterruptedException e) {
@@ -52,8 +51,6 @@ public class LocationAPIController {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
 
-        logger.info("URL {}", url);
-        logger.info("Response from API: {}", response);
 
         return response;
 
