@@ -1,8 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
+import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.ValidationSequence;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 
@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -76,12 +75,16 @@ public class PlantController {
      */
     @PostMapping("/gardens/{gardenId}/add-plant")
     public String submitAddPlantForm(@PathVariable("gardenId") Long gardenId,
-                                     @Validated(ValidationSequence.class) @ModelAttribute("plant") Plant plant,
+                                      @Valid @ModelAttribute("plant") Plant plant,
                                      BindingResult bindingResult,
                                      @RequestParam("image") MultipartFile file,
                                       Model model) {
-        logger.info(plant.getPlantedDate());
 
+
+        if (!plant.getPlantedDate().isEmpty() && !plant.getPlantedDate().matches("\\d{4}-\\d{2}-\\d{2}")){
+            bindingResult.rejectValue("plantedDate", "plantedDate.formatError", "Date must be in the format DD-MM-YYYY");
+
+        }
         if(!plant.getPlantedDate().isEmpty()) {
             plant.setPlantedDate(refactorPlantedDate(plant.getPlantedDate()));
         }
@@ -167,10 +170,14 @@ public class PlantController {
      */
     @PostMapping("/gardens/{gardenId}/plants/{plantId}/edit")
     public String submitEditPlantForm(@PathVariable("gardenId") long gardenId,
-                               @PathVariable("plantId") long plantId,
-                               @Validated(ValidationSequence.class) @ModelAttribute("plant") Plant plant,
+                               @PathVariable("plantId") long plantId, @RequestParam("image") MultipartFile file,
+                               @Valid @ModelAttribute("plant") Plant plant,
                                BindingResult bindingResult, Model model) {
-        logger.info("/garden/{}/plant/{}", gardenId, plant);
+
+        logger.info(plant.getPlantedDate());
+        if (!plant.getPlantedDate().isEmpty() && !plant.getPlantedDate().matches("\\d{4}-\\d{2}-\\d{2}")) {
+            bindingResult.rejectValue("plantedDate", "plantedDate.formatError", "Date must be in the format YYYY-MM-DD");
+        }
 
         if(!plant.getPlantedDate().isEmpty()) {
             plant.setPlantedDate(refactorPlantedDate(plant.getPlantedDate()));

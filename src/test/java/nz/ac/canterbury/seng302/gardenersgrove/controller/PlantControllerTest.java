@@ -94,7 +94,7 @@ public class PlantControllerTest {
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
         when(plantService.getPlantById(plantId)).thenReturn(Optional.of(validPlant));
-        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, validPlant, bindingResult, model);
+        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, validPlant, bindingResult, model);
 
         assertEquals(expectedReturnPage, returnPage);
 
@@ -110,7 +110,7 @@ public class PlantControllerTest {
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
-        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, invalidPlant, bindingResult, model);
+        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, invalidPlant, bindingResult, model);
 
         assertEquals(expectedReturnPage, returnPage);
     }

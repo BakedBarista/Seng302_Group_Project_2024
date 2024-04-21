@@ -8,7 +8,7 @@
     <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
 </head>
 <body>
-<div th:replace="~{navbar :: navbar}"></div>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
 <div>
     <div>
         <form id="addPlantForm" th:action="@{/gardens/{gardenId}/add-plant(gardenId=${gardenId})}" th:object="${plant}"  method="post" enctype="multipart/form-data">

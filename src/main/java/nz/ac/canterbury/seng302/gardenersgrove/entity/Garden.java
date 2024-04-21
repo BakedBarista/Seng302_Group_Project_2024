@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -19,9 +18,8 @@ public class Garden {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Garden name cannot be empty", groups = {ValidationGroups.FirstOrder.class})
-    @Pattern(regexp = "^[\\p{L}0-9 .,'-]+$", message = "Garden name must only include letters, numbers, spaces, dots, commas, hyphens, or apostrophes", groups = {ValidationGroups.SecondOrder.class})
-    @Size(min = 3, max = 50, message = "Name must be between 3 and 50 characters.", groups = {ValidationGroups.SecondOrder.class})
+    @NotBlank(message = "Garden name cannot be empty")
+    @Pattern(regexp = "^$|^[\\p{L}0-9 .,'-]+$", message = "Garden name must only include letters, numbers, spaces, dots, commas, hyphens, or apostrophes")
     @Column(nullable = false)
     private String name;
 
@@ -40,12 +38,12 @@ public class Garden {
     @Pattern(regexp = "^(|([a-zA-Z0-9 ,.'-]+))$", message = "Please enter a valid suburb")
     @Column
     private String suburb;
-    @NotBlank(message = "City and Country are required", groups = {ValidationGroups.FirstOrder.class})
-    @Pattern(regexp = "^[\\p{L}0-9 .'-]+$", message = "Please enter a valid City name", groups = {ValidationGroups.SecondOrder.class})
+    @NotBlank(message = "City and Country are required")
+    @Pattern(regexp = "^[\\p{L}0-9 .'-]+$", message = "Please enter a valid City name")
     @Column
     private String city;
-    @NotBlank(message = "City and Country are required", groups = {ValidationGroups.FirstOrder.class})
-    @Pattern(regexp = "^[\\p{L}0-9 .'-]+$", message = "Please enter a valid country name", groups = {ValidationGroups.SecondOrder.class})
+    @NotBlank(message = "City and Country are required")
+    @Pattern(regexp = "^[\\p{L}0-9 .'-]+$", message = "Please enter a valid country name")
     @Column
     private String country;
 
@@ -57,7 +55,7 @@ public class Garden {
     @Column
     private Double lat;
 
-    @ValidEuropeanDecimal(message = "Garden size must be a positive number", groups = {ValidationGroups.FirstOrder.class})
+    @ValidEuropeanDecimal(message = "Garden size must be a positive number")
     @Column(nullable = true)
     private String size;
 
