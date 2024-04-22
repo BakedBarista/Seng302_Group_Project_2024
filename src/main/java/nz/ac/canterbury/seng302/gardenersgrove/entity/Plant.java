@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.ValidationGroups;
+
 
 
 /**
@@ -18,21 +18,21 @@ public class Plant {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Plant name cannot by empty and must only include letters, numbers, spaces, dots, commas, hyphens or apostrophes", groups = {ValidationGroups.FirstOrder.class})
-    @Pattern(regexp = "^[a-zA-Z0-9 \\-.,']*$", message = "Plant name cannot by empty and must only include letters, numbers, spaces, dots, commas, hyphens or apostrophes", groups = {ValidationGroups.SecondOrder.class})
+    @NotBlank(message = "Plant name cannot by empty and must only include letters, numbers, spaces, dots, commas, hyphens or apostrophes")
+    @Pattern(regexp = "^[a-zA-Z0-9 \\-.,']*$", message = "Plant name cannot by empty and must only include letters, numbers, spaces, dots, commas, hyphens or apostrophes")
     @Column(nullable = false)
     private String name;
 
-    @Pattern(regexp = "^[0-9]*$", message = "Plant count must be a positive number", groups = {ValidationGroups.FirstOrder.class})
+    @Pattern(regexp = "^[0-9]*$", message = "Plant count must be a positive number")
     @Column(nullable = false)
     private String count;
 
-    @Size(min = 0, max = 511, message = "Plant description must be less than 512 characters", groups = {ValidationGroups.SecondOrder.class})
+    @Size(min = 0, max = 511, message = "Plant description must be less than 512 characters")
     @Column(nullable = false, length = 512)
     private String description;
 
 
-    @Column(nullable = false)
+    @Column()
     private String plantedDate;
 
     @ManyToOne
