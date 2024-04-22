@@ -1,18 +1,13 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
-
-import com.modernmt.text.profanity.dictionary.Profanity;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.ValidationSequence;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.ModerationService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.ProfanityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,10 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import java.util.Optional;
-import java.util.Set;
-
-import com.modernmt.text.profanity.*;
-import org.springframework.web.client.RestTemplate;
 
 /**
  * Controller for garden forms
@@ -38,8 +29,6 @@ public class GardenController {
 
     @Autowired
     ModerationService moderationService;
-
-    ProfanityService filterProxy = new ProfanityService();;
 
     @Autowired
     public GardenController(GardenService gardenService, PlantService plantService) {
@@ -74,16 +63,13 @@ public class GardenController {
         logger.info("POST /gardens - submit the new garden form {} {} {} {} {}", garden.getName(),garden.getStreetNumber(),garden.getStreetName(), garden.getLon(), garden.getLat());
         if (bindingResult.hasErrors()) {
             model.addAttribute("garden", garden);
-
             return "gardens/createGarden";
         }
 
-        // check to see if profanity is present for any language and inform the user if there is
-        Profanity aProfanity = filterProxy.findAllLanguages(garden.getDescription());
-        if (aProfanity != null){
+        logger.info(String.valueOf(moderationService.moderateDescription(garden.getDescription())));
+        if (moderationService.checkIfDescriptionIsFlagged(garden.getDescription())) {
             model.addAttribute("garden", garden);
-            model.addAttribute("profanity", aProfanity.text());
-            logger.info("Profanities detected: {}", aProfanity.text());
+            model.addAttribute("profanity", "Description is inappropriate, please fix this");
             return "gardens/createGarden";
         }
 

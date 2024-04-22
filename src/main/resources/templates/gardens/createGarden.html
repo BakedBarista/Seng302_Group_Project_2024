@@ -77,7 +77,7 @@
             <input type="text" class="form-control" id="description" placeholder="Description"
                    th:name="description" th:value="${garden.description}" data-cy="size" autofocus>
             <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}" style="color: red;"></div>
-            <div th:if="${profanity != null}" style="color: red;">We have found profanity in your description</div>
+            <div th:if="${profanity != null}" style="color: red;"><span th:text="${profanity}"></span></div>
             <br/>
             <button type="submit">Submit!</button><button type="button" onclick="history.back()">Cancel</button>
         </form>
