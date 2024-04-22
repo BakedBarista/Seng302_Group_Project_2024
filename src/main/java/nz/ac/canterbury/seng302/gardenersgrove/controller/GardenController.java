@@ -66,7 +66,6 @@ public class GardenController {
             return "gardens/createGarden";
         }
 
-        logger.info(String.valueOf(moderationService.moderateDescription(garden.getDescription())));
         if (moderationService.checkIfDescriptionIsFlagged(garden.getDescription())) {
             model.addAttribute("garden", garden);
             model.addAttribute("profanity", "Description is inappropriate, please fix this");
