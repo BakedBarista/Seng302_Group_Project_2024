@@ -10,11 +10,11 @@ public class Requests {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "sent_userId")
+    @JoinColumn(name = "user1_id")
     private GardenUser sent_userId;
 
     @ManyToOne
-    @JoinColumn(name = "recieve_userId")
+    @JoinColumn(name = "user2_id")
     private GardenUser recieve_userId;
 
     /**

@@ -19,7 +19,7 @@ public class FriendService {
 
     /**
      * test query
-     * @return a List of the existing gardens.
-     */
-    public List<GardenUser> getAllFriends(long id) { return friendsRepository.getAllFriends(id);}
+     * @return a List of all friends.
+    */
+    public List<GardenUser> getAllFriends(Long user) { return friendsRepository.getAllFriends(user);}
 }

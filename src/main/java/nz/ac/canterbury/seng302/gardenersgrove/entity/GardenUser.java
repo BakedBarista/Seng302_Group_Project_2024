@@ -42,13 +42,13 @@ public class GardenUser {
     @Lob
     private byte[] profilePicture;
 
-    // these are a set of friendships in the friends table where the user is user1
-    @OneToMany(mappedBy = "user1")
-    private Set<Friends> friendshipsAsUser1 = new HashSet<>(); 
+    // // these are a set of friendships in the friends table where the user is user1
+    // @OneToMany(mappedBy = "user1")
+    // private Set<Friends> friendshipsAsUser1 = new HashSet<>(); 
     
-    // these are a set of friendships in the friends table where the user is user2
-    @OneToMany(mappedBy = "user2")
-    private Set<Friends> friendshipsAsUser2 = new HashSet<>();
+    // // these are a set of friendships in the friends table where the user is user2
+    // @OneToMany(mappedBy = "user2")
+    // private Set<Friends> friendshipsAsUser2 = new HashSet<>();
 
 
     /**
@@ -79,18 +79,18 @@ public class GardenUser {
      *
      * @return Set<Friends> both their id and the other users id
      */ 
-    public Set<Friends> getFriendshipsAsUser2() {
-        return friendshipsAsUser2;
-    }
+    // public Set<Friends> getFriendshipsAsUser2() {
+    //     return friendshipsAsUser2;
+    // }
 
-    /**
-     * Gets the set of friends where user is user 1
-     *
-     * @return Set<Friends> both their id and the other users id
-     */ 
-    public Set<Friends> getFriendshipsAsUser1() {
-        return friendshipsAsUser1;
-    }
+    // /**
+    //  * Gets the set of friends where user is user 1
+    //  *
+    //  * @return Set<Friends> both their id and the other users id
+    //  */ 
+    // public Set<Friends> getFriendshipsAsUser1() {
+    //     return friendshipsAsUser1;
+    // }
 
 
     /**
