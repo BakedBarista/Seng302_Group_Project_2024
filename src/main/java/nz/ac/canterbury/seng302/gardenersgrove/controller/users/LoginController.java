@@ -76,7 +76,7 @@ public class LoginController {
 
         try {
             request.login(email, password);
-            return "redirect:/users/user";
+            return "redirect:/";
         } catch (ServletException e) {
             logger.error("Error while login ", e);
         }
