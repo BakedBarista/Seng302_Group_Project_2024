@@ -70,7 +70,8 @@ public class SecurityConfiguration {
                     "/users/login",
                     "/css/**",
                     "/js/**",
-                    "/webjars/**"
+                    "/webjars/**",
+                    "/icons/**"
                 ).permitAll();
             auth.anyRequest().authenticated();
         });
