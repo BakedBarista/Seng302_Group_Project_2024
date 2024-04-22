@@ -64,16 +64,18 @@ public class ManageFriendsController {
         logger.info("users/manageFriends");
         
         Long loggedInUserId = (Long) authentication.getPrincipal();
+        GardenUser loggedInUser = userService.getUserById(loggedInUserId);
 
         List<GardenUser> allUsers = gardenUserService.getUser();
         
         List<GardenUser> Friends = friendService.getAllFriends(id);
 
-        List<GardenUser> sentRequests = requestRepository.getSentRequests(loggedInUserId);
-
+        List<Requests> sentRequests = requestRepository.getSentRequests(loggedInUserId);
+        List<Requests> receivedRequests = requestRepository.getReceivedRequests(loggedInUserId);
         model.addAttribute("friends", Friends);
         model.addAttribute("allUsers", allUsers);
         model.addAttribute("sentRequests", sentRequests);
+        model.addAttribute("receivedRequests", receivedRequests);
         return "users/manageFriends";
     }
 
@@ -87,17 +89,19 @@ public class ManageFriendsController {
         GardenUser loggedInUser = userService.getUserById(loggedInUserId);
         GardenUser sentTo = userService.getUserById(requestedUser);
         
-        Requests requestEntity = new Requests(loggedInUser, sentTo);
+        Requests requestEntity = new Requests(loggedInUser, sentTo, "pending");
         
-
+        
         requestRepository.save(requestEntity);
 
         List<GardenUser> allUsers = gardenUserService.getUser();
         List<GardenUser> Friends = friendService.getAllFriends(id);
-        List<GardenUser> sentRequests = requestRepository.getSentRequests(loggedInUserId);
+        List<Requests> sentRequests = requestRepository.getSentRequests(loggedInUserId);
+        List<Requests> receivedRequests = requestRepository.getReceivedRequests(loggedInUserId);
         model.addAttribute("friends", Friends);
         model.addAttribute("allUsers", allUsers);
         model.addAttribute("sentRequests", sentRequests);
+        model.addAttribute("receivedRequests", receivedRequests);
 
         return "users/manageFriends";
     }

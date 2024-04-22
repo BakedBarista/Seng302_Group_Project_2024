@@ -17,6 +17,10 @@ import java.util.List;
 
 @Repository
 public interface RequestRepository extends CrudRepository<Requests, Long> {
-    @Query("SELECT u.user1 FROM Friends u WHERE u.user2.id = ?1")
-    List<GardenUser> getAllFriends(Long user);
+    @Query("SELECT u FROM Requests u WHERE u.sent_user_id.id = ?1")
+    List<Requests> getSentRequests(Long user);
+    
+    @Query("SELECT u FROM Requests u WHERE u.received_user_id.id = ?1")
+    List<Requests> getReceivedRequests(Long user);
+
 }

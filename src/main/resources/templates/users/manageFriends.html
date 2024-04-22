@@ -27,10 +27,21 @@
 			</li>
 		</ul>
 		<div>
-			<h2>Invites</h2>
+			<h2>sent requests: </h2>
 			<ul>
 				<li th:each="frien : ${sentRequests}">
-					<span th:text="${frien.fname}"></span>
+					<span th:text="${frien.status}"></span>
+					<span th:text="${frien.receive_user_id.fname}"></span>
+				</li>
+			</ul>
+		</div>
+
+		<div>
+			<h2>received requests: </h2>
+			<ul>
+				<li th:each="frien : ${receivedRequests}">
+					<span th:text="${frien.status}"></span>
+					<span th:text="${frien.sent_user_id.fname}"></span>
 				</li>
 			</ul>
 		</div>
