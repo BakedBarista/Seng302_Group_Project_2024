@@ -17,7 +17,7 @@
 		<div th:object="${friends}"> hi</div>
 		<h2>Friends List</h2>
 		<ul>
-			<li th:each="frien : ${friend}">
+			<li th:each="frien : ${allUsers}">
 				<span th:text="${frien.id}"></span>
 				<span th:text="${frien.fname}"></span>
 				<form th:action="@{/users/manageFriends}" method="post" style="display: inline;">
@@ -26,11 +26,13 @@
 				</form>
 			</li>
 		</ul>
+		<div>
+			<h2>Invites</h2>
+			<ul>
+				<li th:each="frien : ${sentRequests}">
+					<span th:text="${frien.fname}"></span>
+				</li>
+			</ul>
+		</div>
 	</body>
-	<script>
-		function addFriend(id){
-			
-
-		}
-	</script>
 </html>

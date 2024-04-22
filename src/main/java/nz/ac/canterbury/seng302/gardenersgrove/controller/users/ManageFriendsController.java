@@ -63,12 +63,17 @@ public class ManageFriendsController {
                         Model model) {
         logger.info("users/manageFriends");
         
+        Long loggedInUserId = (Long) authentication.getPrincipal();
+
         List<GardenUser> allUsers = gardenUserService.getUser();
         
         List<GardenUser> Friends = friendService.getAllFriends(id);
+
+        List<GardenUser> sentRequests = requestRepository.getSentRequests(loggedInUserId);
+
         model.addAttribute("friends", Friends);
-        model.addAttribute("friend", allUsers);
-        
+        model.addAttribute("allUsers", allUsers);
+        model.addAttribute("sentRequests", sentRequests);
         return "users/manageFriends";
     }
 
@@ -88,10 +93,11 @@ public class ManageFriendsController {
         requestRepository.save(requestEntity);
 
         List<GardenUser> allUsers = gardenUserService.getUser();
-        
         List<GardenUser> Friends = friendService.getAllFriends(id);
+        List<GardenUser> sentRequests = requestRepository.getSentRequests(loggedInUserId);
         model.addAttribute("friends", Friends);
-        model.addAttribute("friend", allUsers);
+        model.addAttribute("allUsers", allUsers);
+        model.addAttribute("sentRequests", sentRequests);
 
         return "users/manageFriends";
     }
