@@ -3,6 +3,8 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,9 +39,10 @@ public class GardenService {
      */
     public Optional<Garden> getGardenById(long id) {return gardenRepository.findById(id);}
 
-    public List<Garden> getPublicGardens() {
-        return gardenRepository.findByIsPublicTrue();
+    public Page<Garden> getPublicGardens(Pageable pageable) {
+        return gardenRepository.findByIsPublicTrue(pageable);
     }
+
 
 }
 
