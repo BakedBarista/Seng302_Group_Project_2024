@@ -1,10 +1,13 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Requests;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.RequestRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
+
 import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -25,20 +28,20 @@ import jakarta.servlet.http.HttpServletRequest;
 public class ManageFriendsController {
     private Logger logger = LoggerFactory.getLogger(LoginController.class);
 
-    private FriendService friendService;
 
     @Autowired
+    private FriendService friendService;
     private GardenUserService gardenUserService;
     private GardenUserService userService;
-    private RequestRepository requestRepository;
+    private RequestService requestService;
 
     @Autowired
     public void setUserService(GardenUserService userService) {
         this.userService = userService;
     }
     @Autowired
-    public void setRequestService(RequestRepository requestRepository) {
-        this.requestRepository = requestRepository;
+    public void setRequestService(RequestService requestService) {
+        this.requestService = requestService;
     }
     @Autowired
     public void ManageUserController(GardenUserService gardenUserService) {
@@ -70,8 +73,8 @@ public class ManageFriendsController {
         
         List<GardenUser> Friends = friendService.getAllFriends(id);
 
-        List<Requests> sentRequests = requestRepository.getSentRequests(loggedInUserId);
-        List<Requests> receivedRequests = requestRepository.getReceivedRequests(loggedInUserId);
+        List<Requests> sentRequests = requestService.getSentRequests(loggedInUserId);
+        List<Requests> receivedRequests = requestService.getReceivedRequests(loggedInUserId);
         model.addAttribute("friends", Friends);
         model.addAttribute("allUsers", allUsers);
         model.addAttribute("sentRequests", sentRequests);
@@ -81,7 +84,9 @@ public class ManageFriendsController {
 
     @PostMapping("users/manageFriends")
     public String login(Authentication authentication, 
-        @RequestParam(name = "requestedUser") Long requestedUser, 
+        @RequestParam(name = "requestedUser", required = false) Long requestedUser, 
+        @RequestParam(name = "acceptUser", required = false) Long acceptUser, 
+        @RequestParam(name = "declineUser", required = false) Long declineUser, 
         Model model,
         HttpServletRequest request) {
 
@@ -92,12 +97,12 @@ public class ManageFriendsController {
         Requests requestEntity = new Requests(loggedInUser, sentTo, "pending");
         
         
-        requestRepository.save(requestEntity);
+        requestService.save(requestEntity);
 
         List<GardenUser> allUsers = gardenUserService.getUser();
         List<GardenUser> Friends = friendService.getAllFriends(id);
-        List<Requests> sentRequests = requestRepository.getSentRequests(loggedInUserId);
-        List<Requests> receivedRequests = requestRepository.getReceivedRequests(loggedInUserId);
+        List<Requests> sentRequests = requestService.getSentRequests(loggedInUserId);
+        List<Requests> receivedRequests = requestService.getReceivedRequests(loggedInUserId);
         model.addAttribute("friends", Friends);
         model.addAttribute("allUsers", allUsers);
         model.addAttribute("sentRequests", sentRequests);
@@ -106,4 +111,62 @@ public class ManageFriendsController {
         return "users/manageFriends";
     }
 
+    @PostMapping("users/manageFriends/accept")
+    public String login(Authentication authentication, 
+        @RequestParam(name = "acceptUser", required = false) Long acceptUser, 
+        Model model,
+        HttpServletRequest request) {
+
+        Long loggedInUserId = (Long) authentication.getPrincipal();
+        GardenUser loggedInUser = userService.getUserById(loggedInUserId);
+
+        GardenUser recivedFrom = userService.getUserById(acceptUser);
+        
+        Friends test = new Friends(loggedInUser, recivedFrom);
+
+        friendService.save(test);
+
+
+        Requests updateStatus = requestService.getRequest(recivedFrom.getId(), loggedInUser.getId());
+        requestService.delete(updateStatus);
+
+        List<GardenUser> allUsers = gardenUserService.getUser();
+        List<GardenUser> Friends = friendService.getAllFriends(id);
+        List<Requests> sentRequests = requestService.getSentRequests(loggedInUserId);
+        List<Requests> receivedRequests = requestService.getReceivedRequests(loggedInUserId);
+        model.addAttribute("friends", Friends);
+        model.addAttribute("allUsers", allUsers);
+        model.addAttribute("sentRequests", sentRequests);
+        model.addAttribute("receivedRequests", receivedRequests);
+
+        return "users/manageFriends";
+    }
+
+    @PostMapping("users/manageFriends/decline")
+    public String login(Authentication authentication, 
+        @RequestParam(name = "declineUser", required = false) Long declineUser,
+        @RequestParam(required = false) String error,
+        Model model,    
+        HttpServletRequest request) {
+
+        Long loggedInUserId = (Long) authentication.getPrincipal();
+        GardenUser loggedInUser = userService.getUserById(loggedInUserId);
+
+        GardenUser recivedFrom = userService.getUserById(declineUser);
+        
+        Requests updateStatus = requestService.getRequest(recivedFrom.getId(), loggedInUser.getId());
+        updateStatus.setStatus("declined");
+        requestService.save(updateStatus);
+        
+        List<GardenUser> allUsers = gardenUserService.getUser();
+        List<GardenUser> Friends = friendService.getAllFriends(id);
+        List<Requests> sentRequests = requestService.getSentRequests(loggedInUserId);
+        List<Requests> receivedRequests = requestService.getReceivedRequests(loggedInUserId);
+        model.addAttribute("friends", Friends);
+        model.addAttribute("allUsers", allUsers);
+        model.addAttribute("sentRequests", sentRequests);
+        model.addAttribute("receivedRequests", receivedRequests);
+
+        return "users/manageFriends";
+    }
 }

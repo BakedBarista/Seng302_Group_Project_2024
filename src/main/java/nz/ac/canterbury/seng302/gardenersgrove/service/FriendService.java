@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.FriendsRepository;
 
@@ -22,4 +23,8 @@ public class FriendService {
      * @return a List of all friends.
     */
     public List<GardenUser> getAllFriends(Long user) { return friendsRepository.getAllFriends(user);}
+
+    public void save(Friends friendEntity) {
+        friendsRepository.save(friendEntity);
+    }
 }

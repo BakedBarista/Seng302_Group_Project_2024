@@ -27,7 +27,7 @@ public class Friends {
      * @param user2 user to be added as friend to user1
      * @param status pending accepted or denied
      */
-    public Friends(GardenUser user1, GardenUser user2, String status) {
+    public Friends(GardenUser user1, GardenUser user2) {
         this.user1 = user1;
         this.user2 = user2;
     }

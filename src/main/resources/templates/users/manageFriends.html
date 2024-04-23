@@ -15,7 +15,7 @@
 		<nav th:replace="~{fragments/navbar :: navbar}"></nav>
 		<p> hello</p>
 		<div th:object="${friends}"> hi</div>
-		<h2>Friends List</h2>
+		<h2>all users:</h2>
 		<ul>
 			<li th:each="frien : ${allUsers}">
 				<span th:text="${frien.id}"></span>
@@ -26,6 +26,15 @@
 				</form>
 			</li>
 		</ul>
+		<div>
+			<h2>friends: </h2>
+			<ul>
+				<li th:each="frien : ${friends}">
+					<span th:text="${frien.fname}"></span>
+				</li>
+			</ul>
+		</div>
+
 		<div>
 			<h2>sent requests: </h2>
 			<ul>
@@ -40,8 +49,13 @@
 			<h2>received requests: </h2>
 			<ul>
 				<li th:each="frien : ${receivedRequests}">
-					<span th:text="${frien.status}"></span>
 					<span th:text="${frien.sent_user_id.fname}"></span>
+					<form th:action="@{/users/manageFriends/accept}" method="post" style="display: inline;">
+						<button type="submit" name="acceptUser" th:value="${frien.sent_user_id.id}">accept</button>
+					</form>
+					<form th:action="@{/users/manageFriends/decline}" method="post" style="display: inline;">
+						<button type="submit" name="declineUser" th:value="${frien.sent_user_id.id}">decline</button>
+					</form>
 				</li>
 			</ul>
 		</div>
