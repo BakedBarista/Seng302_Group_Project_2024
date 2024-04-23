@@ -55,6 +55,10 @@ public class GardenUserService {
         return user.get();
     }
 
+    public List<GardenUser> getUserBySearch(String name) {
+        return gardenUserRepository.findBySearch(name);
+    }
+
     /**
      * Gets a single GardenUser by their email and password
      * 

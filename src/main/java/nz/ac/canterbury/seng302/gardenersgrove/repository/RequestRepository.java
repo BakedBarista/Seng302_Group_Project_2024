@@ -19,7 +19,7 @@ public interface RequestRepository extends CrudRepository<Requests, Long> {
     @Query("SELECT u FROM Requests u WHERE u.sent_user_id.id = ?1")
     List<Requests> getSentRequests(Long user);
     
-    @Query("SELECT p FROM Requests p WHERE p.receive_user_id.id = ?1")
+    @Query("SELECT p FROM Requests p WHERE p.receive_user_id.id = ?1 and p.status = 'pending'")
     List<Requests> getReceivedRequests(Long user);
  
     @Query("SELECT p FROM Requests p WHERE p.receive_user_id.id = ?1 AND p.sent_user_id.id = ?2")

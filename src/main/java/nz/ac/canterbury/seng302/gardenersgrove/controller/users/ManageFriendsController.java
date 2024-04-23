@@ -55,14 +55,14 @@ public class ManageFriendsController {
 
     long id =1 ;
     /**
-     * Shows the login page
+     * Shows the manage friends page
      *
      * @param error error message, if there's any
      * @param model Thymeleaf model
      * @return login page view
      */
     @GetMapping("users/manageFriends")
-    public String login(Authentication authentication, @RequestParam(required = false) String error,
+    public String manageFriends(Authentication authentication, @RequestParam(required = false) String error,
                         Model model) {
         logger.info("users/manageFriends");
         
@@ -83,7 +83,7 @@ public class ManageFriendsController {
     }
 
     @PostMapping("users/manageFriends")
-    public String login(Authentication authentication, 
+    public String manageFriends(Authentication authentication, 
         @RequestParam(name = "requestedUser", required = false) Long requestedUser, 
         @RequestParam(name = "acceptUser", required = false) Long acceptUser, 
         @RequestParam(name = "declineUser", required = false) Long declineUser, 
@@ -112,7 +112,7 @@ public class ManageFriendsController {
     }
 
     @PostMapping("users/manageFriends/accept")
-    public String login(Authentication authentication, 
+    public String manageFriendsAccepts(Authentication authentication, 
         @RequestParam(name = "acceptUser", required = false) Long acceptUser, 
         Model model,
         HttpServletRequest request) {
@@ -120,14 +120,14 @@ public class ManageFriendsController {
         Long loggedInUserId = (Long) authentication.getPrincipal();
         GardenUser loggedInUser = userService.getUserById(loggedInUserId);
 
-        GardenUser recivedFrom = userService.getUserById(acceptUser);
+        GardenUser receivedFrom = userService.getUserById(acceptUser);
         
-        Friends test = new Friends(loggedInUser, recivedFrom);
+        Friends test = new Friends(loggedInUser, receivedFrom);
 
         friendService.save(test);
 
 
-        Requests updateStatus = requestService.getRequest(recivedFrom.getId(), loggedInUser.getId());
+        Requests updateStatus = requestService.getRequest(receivedFrom.getId(), loggedInUser.getId());
         requestService.delete(updateStatus);
 
         List<GardenUser> allUsers = gardenUserService.getUser();
@@ -143,7 +143,7 @@ public class ManageFriendsController {
     }
 
     @PostMapping("users/manageFriends/decline")
-    public String login(Authentication authentication, 
+    public String manageFriendsDecline(Authentication authentication, 
         @RequestParam(name = "declineUser", required = false) Long declineUser,
         @RequestParam(required = false) String error,
         Model model,    
@@ -152,9 +152,9 @@ public class ManageFriendsController {
         Long loggedInUserId = (Long) authentication.getPrincipal();
         GardenUser loggedInUser = userService.getUserById(loggedInUserId);
 
-        GardenUser recivedFrom = userService.getUserById(declineUser);
+        GardenUser receivedFrom = userService.getUserById(declineUser);
         
-        Requests updateStatus = requestService.getRequest(recivedFrom.getId(), loggedInUser.getId());
+        Requests updateStatus = requestService.getRequest(receivedFrom.getId(), loggedInUser.getId());
         updateStatus.setStatus("declined");
         requestService.save(updateStatus);
         
@@ -162,6 +162,30 @@ public class ManageFriendsController {
         List<GardenUser> Friends = friendService.getAllFriends(id);
         List<Requests> sentRequests = requestService.getSentRequests(loggedInUserId);
         List<Requests> receivedRequests = requestService.getReceivedRequests(loggedInUserId);
+        model.addAttribute("friends", Friends);
+        model.addAttribute("allUsers", allUsers);
+        model.addAttribute("sentRequests", sentRequests);
+        model.addAttribute("receivedRequests", receivedRequests);
+
+        return "users/manageFriends";
+    }
+
+    @PostMapping("users/manageFriends/search")
+    public String manageFriendsSearch(Authentication authentication, 
+        @RequestParam(name = "searchUser", required = false) String searchUser, 
+        Model model,
+        HttpServletRequest request) {
+
+        Long loggedInUserId = (Long) authentication.getPrincipal();
+        GardenUser loggedInUser = userService.getUserById(loggedInUserId);
+        System.out.println(searchUser);
+        
+        List<GardenUser> searchResults = userService.getUserBySearch(searchUser);
+        List<GardenUser> allUsers = gardenUserService.getUser();
+        List<GardenUser> Friends = friendService.getAllFriends(id);
+        List<Requests> sentRequests = requestService.getSentRequests(loggedInUserId);
+        List<Requests> receivedRequests = requestService.getReceivedRequests(loggedInUserId);
+        model.addAttribute("searchResults", searchResults);
         model.addAttribute("friends", Friends);
         model.addAttribute("allUsers", allUsers);
         model.addAttribute("sentRequests", sentRequests);
