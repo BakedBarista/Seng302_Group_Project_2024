@@ -9,7 +9,7 @@
 <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
 
 <body>
-<div th:replace="~{navbar :: navbar}"></div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
 <div>
     <h2 th:text="${garden.name}">Garden Name</h2>
 <!--    <p><strong>ID: </strong><span th:text="${garden.id}"></span></p>-->
