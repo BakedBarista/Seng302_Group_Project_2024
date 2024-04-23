@@ -3,7 +3,6 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Requests;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.RequestRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
@@ -13,14 +12,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 
 import java.util.List;
+import java.util.Optional;
 
-import org.h2.engine.Mode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -67,11 +67,12 @@ public class ManageFriendsController {
         logger.info("users/manageFriends");
         
         Long loggedInUserId = (Long) authentication.getPrincipal();
-        GardenUser loggedInUser = userService.getUserById(loggedInUserId);
 
         List<GardenUser> allUsers = gardenUserService.getUser();
         
         List<GardenUser> Friends = friendService.getAllFriends(id);
+
+        GardenUser loggedInUser = userService.getUserById(loggedInUserId);
 
         List<Requests> sentRequests = requestService.getSentRequests(loggedInUserId);
         List<Requests> receivedRequests = requestService.getReceivedRequests(loggedInUserId);
@@ -82,33 +83,36 @@ public class ManageFriendsController {
         return "users/manageFriends";
     }
 
-    @PostMapping("users/manageFriends")
+    @PostMapping("users/manageFriends/invite")
     public String manageFriends(Authentication authentication, 
         @RequestParam(name = "requestedUser", required = false) Long requestedUser, 
         @RequestParam(name = "acceptUser", required = false) Long acceptUser, 
         @RequestParam(name = "declineUser", required = false) Long declineUser, 
         Model model,
         HttpServletRequest request) {
-
+        
         Long loggedInUserId = (Long) authentication.getPrincipal();
         GardenUser loggedInUser = userService.getUserById(loggedInUserId);
         GardenUser sentTo = userService.getUserById(requestedUser);
-        
-        Requests requestEntity = new Requests(loggedInUser, sentTo, "pending");
-        
-        
-        requestService.save(requestEntity);
+        System.out.println(sentTo);
 
-        List<GardenUser> allUsers = gardenUserService.getUser();
-        List<GardenUser> Friends = friendService.getAllFriends(id);
-        List<Requests> sentRequests = requestService.getSentRequests(loggedInUserId);
-        List<Requests> receivedRequests = requestService.getReceivedRequests(loggedInUserId);
-        model.addAttribute("friends", Friends);
-        model.addAttribute("allUsers", allUsers);
-        model.addAttribute("sentRequests", sentRequests);
-        model.addAttribute("receivedRequests", receivedRequests);
+        Friends allReadyFriends = friendService.getRequest(loggedInUser.getId(), sentTo.getId());
+        System.out.println(allReadyFriends);
+        
+        Optional<Requests> test = requestService.getRequest(sentTo.getId(), loggedInUser.getId());
 
-        return "users/manageFriends";
+        System.out.println(test);
+
+        if (!test.isPresent()) {
+            if (allReadyFriends == null){
+                if(loggedInUser != sentTo){
+                    Requests requestEntity = new Requests(loggedInUser, sentTo, "pending");
+                    requestService.save(requestEntity);
+                }
+            }
+        }
+
+        return "redirect:/users/manageFriends";
     }
 
     @PostMapping("users/manageFriends/accept")
@@ -121,25 +125,23 @@ public class ManageFriendsController {
         GardenUser loggedInUser = userService.getUserById(loggedInUserId);
 
         GardenUser receivedFrom = userService.getUserById(acceptUser);
-        
+        System.out.println(receivedFrom);
+        System.out.println(loggedInUser);
+
         Friends test = new Friends(loggedInUser, receivedFrom);
 
         friendService.save(test);
 
 
-        Requests updateStatus = requestService.getRequest(receivedFrom.getId(), loggedInUser.getId());
-        requestService.delete(updateStatus);
+        Optional<Requests> updateStatusOptional = requestService.getRequest(loggedInUser.getId(), receivedFrom.getId());
 
-        List<GardenUser> allUsers = gardenUserService.getUser();
-        List<GardenUser> Friends = friendService.getAllFriends(id);
-        List<Requests> sentRequests = requestService.getSentRequests(loggedInUserId);
-        List<Requests> receivedRequests = requestService.getReceivedRequests(loggedInUserId);
-        model.addAttribute("friends", Friends);
-        model.addAttribute("allUsers", allUsers);
-        model.addAttribute("sentRequests", sentRequests);
-        model.addAttribute("receivedRequests", receivedRequests);
+        if (updateStatusOptional.isPresent()) {
+            System.out.println("gets here");
+            Requests updateStatus = updateStatusOptional.get();
+            requestService.delete(updateStatus);
+        }
 
-        return "users/manageFriends";
+        return "redirect:/users/manageFriends";
     }
 
     @PostMapping("users/manageFriends/decline")
@@ -154,43 +156,27 @@ public class ManageFriendsController {
 
         GardenUser receivedFrom = userService.getUserById(declineUser);
         
-        Requests updateStatus = requestService.getRequest(receivedFrom.getId(), loggedInUser.getId());
-        updateStatus.setStatus("declined");
-        requestService.save(updateStatus);
+        Optional<Requests> updateStatusOptional = requestService.getRequest(receivedFrom.getId(), loggedInUser.getId());
         
-        List<GardenUser> allUsers = gardenUserService.getUser();
-        List<GardenUser> Friends = friendService.getAllFriends(id);
-        List<Requests> sentRequests = requestService.getSentRequests(loggedInUserId);
-        List<Requests> receivedRequests = requestService.getReceivedRequests(loggedInUserId);
-        model.addAttribute("friends", Friends);
-        model.addAttribute("allUsers", allUsers);
-        model.addAttribute("sentRequests", sentRequests);
-        model.addAttribute("receivedRequests", receivedRequests);
-
-        return "users/manageFriends";
+        if (updateStatusOptional.isPresent()) {
+            Requests updateStatus = updateStatusOptional.get();
+            updateStatus.setStatus("declined");
+            requestService.save(updateStatus);
+        }
+        
+        return "redirect:/users/manageFriends";
     }
 
     @PostMapping("users/manageFriends/search")
     public String manageFriendsSearch(Authentication authentication, 
         @RequestParam(name = "searchUser", required = false) String searchUser, 
         Model model,
-        HttpServletRequest request) {
-
+        HttpServletRequest request, RedirectAttributes rm) {
+            
         Long loggedInUserId = (Long) authentication.getPrincipal();
-        GardenUser loggedInUser = userService.getUserById(loggedInUserId);
-        System.out.println(searchUser);
-        
-        List<GardenUser> searchResults = userService.getUserBySearch(searchUser);
-        List<GardenUser> allUsers = gardenUserService.getUser();
-        List<GardenUser> Friends = friendService.getAllFriends(id);
-        List<Requests> sentRequests = requestService.getSentRequests(loggedInUserId);
-        List<Requests> receivedRequests = requestService.getReceivedRequests(loggedInUserId);
-        model.addAttribute("searchResults", searchResults);
-        model.addAttribute("friends", Friends);
-        model.addAttribute("allUsers", allUsers);
-        model.addAttribute("sentRequests", sentRequests);
-        model.addAttribute("receivedRequests", receivedRequests);
+        List<GardenUser> searchResults = userService.getUserBySearch(searchUser, loggedInUserId);
 
-        return "users/manageFriends";
+        rm.addFlashAttribute("searchResults", searchResults);
+        return "redirect:/users/manageFriends";
     }
 }

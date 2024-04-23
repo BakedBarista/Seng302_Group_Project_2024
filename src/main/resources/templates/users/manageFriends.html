@@ -23,7 +23,7 @@
 				<li th:each="frien : ${searchResults}">
 					<span th:text="${frien.fname}"></span>
 					<span th:text=" ${frien.lname}"></span>
-					<form th:action="@{/users/manageFriends}" method="post" style="display: inline;">
+					<form th:action="@{/users/manageFriends/invite}" method="post" style="display: inline;">
 						<input type="hidden" name="requestedUser" th:value="${frien.id}"/>
 						<button type="submit">Invite as Friend</button>
 					</form>

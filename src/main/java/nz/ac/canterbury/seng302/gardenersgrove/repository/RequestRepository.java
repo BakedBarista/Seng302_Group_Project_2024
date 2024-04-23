@@ -8,6 +8,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 
 /**
@@ -21,7 +22,8 @@ public interface RequestRepository extends CrudRepository<Requests, Long> {
     
     @Query("SELECT p FROM Requests p WHERE p.receive_user_id.id = ?1 and p.status = 'pending'")
     List<Requests> getReceivedRequests(Long user);
- 
+    
+    
     @Query("SELECT p FROM Requests p WHERE p.receive_user_id.id = ?1 AND p.sent_user_id.id = ?2")
-    Requests getRequest(Long user1, Long user2);
+    Optional<Requests> getRequest(Long user1, Long user2);
 }

@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -31,8 +32,9 @@ public class RequestService {
         requestRepository.delete(requestEntity);
     }
 
-    public Requests getRequest(Long user1, Long user2) {
+    public Optional<Requests> getRequest(Long user1, Long user2) {
         return requestRepository.getRequest(user1, user2);
     }
+
     
 }

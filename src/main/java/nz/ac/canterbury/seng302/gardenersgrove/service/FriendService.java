@@ -6,8 +6,11 @@ import nz.ac.canterbury.seng302.gardenersgrove.repository.FriendsRepository;
 
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Service class for Friends
@@ -22,9 +25,26 @@ public class FriendService {
      * test query
      * @return a List of all friends.
     */
-    public List<GardenUser> getAllFriends(Long user) { return friendsRepository.getAllFriends(user);}
+    public List<GardenUser> getAllFriends(Long user) { 
+        List<Friends> friendsPairList = friendsRepository.getAllFriends(user);
+        List<GardenUser> friendsList = new ArrayList<>();
+        
+        for (Friends friend : friendsPairList) {
+            if (friend.getUser1().getId().equals(user)) {
+                friendsList.add(friend.getUser2());
+            } else {
+                friendsList.add(friend.getUser1());
+            }
+        }
+        return friendsList;
+    }
+
 
     public void save(Friends friendEntity) {
         friendsRepository.save(friendEntity);
+    }
+
+    public Friends getRequest(Long user1, Long user2) {
+        return friendsRepository.getRequest(user1, user2);
     }
 }

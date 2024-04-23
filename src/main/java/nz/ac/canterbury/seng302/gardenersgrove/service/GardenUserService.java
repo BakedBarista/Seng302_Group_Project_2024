@@ -55,8 +55,8 @@ public class GardenUserService {
         return user.get();
     }
 
-    public List<GardenUser> getUserBySearch(String name) {
-        return gardenUserRepository.findBySearch(name);
+    public List<GardenUser> getUserBySearch(String name, Long currentUserId) {
+        return gardenUserRepository.findBySearch(name, currentUserId);
     }
 
     /**
