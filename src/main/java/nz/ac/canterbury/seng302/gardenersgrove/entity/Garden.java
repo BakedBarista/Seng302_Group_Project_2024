@@ -57,8 +57,8 @@ public class Garden {
     public Boolean getIsPublic() {
         return isPublic;
     }
-    public void setPublic(Boolean aPublic) {
-        isPublic = aPublic;
+    public void setPublic(Boolean isPublic) {
+        this.isPublic = isPublic;
     }
 
     public Long getId() {
