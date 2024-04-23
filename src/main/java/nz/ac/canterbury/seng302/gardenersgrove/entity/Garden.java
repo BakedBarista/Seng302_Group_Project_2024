@@ -59,6 +59,9 @@ public class Garden {
     @Column(nullable = true)
     private String size;
 
+    @Column(nullable = false)
+    private Boolean isPublic = false;
+
     public Garden() {}
 
     /**
@@ -84,6 +87,12 @@ public class Garden {
         this.lon = lon;
         this.size = gardenSize;
         this.description = description;
+    }
+    public Boolean getIsPublic() {
+        return isPublic;
+    }
+    public void setPublic(Boolean isPublic) {
+        this.isPublic = isPublic;
     }
 
     public Long getId() {
