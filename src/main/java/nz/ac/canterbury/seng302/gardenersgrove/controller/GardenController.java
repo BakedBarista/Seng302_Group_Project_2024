@@ -13,6 +13,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import java.util.Optional;
@@ -158,9 +160,19 @@ public class GardenController {
     }
 
 
-
-
-
-
-
+    /**
+     * send the user to public gardens with a subset of gardens matching
+     * their given search
+     * @param search string that user is searching
+     * @param model
+     * @return public garden page
+     */
+    @PostMapping("/gardens/public/search")
+    public String searchPublicGardens(@RequestParam(name = "search", required = false, defaultValue = "") String search,
+            Model model) {
+        logger.info("Search: " + search);
+        List<Garden> gardens = gardenService.getAllGardens();
+        model.addAttribute("gardens", gardens);
+        return "gardens/publicGardens";
+    }
 }
