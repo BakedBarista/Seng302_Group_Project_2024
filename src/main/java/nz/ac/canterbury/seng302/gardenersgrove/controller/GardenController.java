@@ -149,6 +149,15 @@ public class GardenController {
     }
 
 
+    @GetMapping("/gardens/public")
+    public String publicGardens(Model model) {
+        logger.info("Get /gardens/public - display all public gardens");
+        List<Garden> gardens = gardenService.getAllGardens();
+        model.addAttribute("gardens", gardens);
+        return "gardens/publicGardens";
+    }
+
+
 
 
 
