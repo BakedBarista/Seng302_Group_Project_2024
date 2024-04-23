@@ -30,7 +30,7 @@ class PlantServiceTest {
     @Test
     void AddPlant_ValidPlantWithGardenId_ReturnsPlantWithCorrectGardenId() {
         Plant testPlant = new Plant("Rose", "5", "Flower", "01/01/2024");
-        Garden testGarden = new Garden("Test Garden", "Test Location", "5");
+        Garden testGarden = new Garden("Test Garden", "Test Location", "5", "Test Description");
         Long gardenId = 1L;
         testGarden.setId(gardenId);
 
@@ -101,8 +101,8 @@ class PlantServiceTest {
         Plant testPlant1 = new Plant("Rose", "5", "Flower", "01/01/2024");
         Plant testPlant2 = new Plant("Daisy", "3", "Flower", "01/01/2024");
         Plant testPlant3 = new Plant("Tulip", "2", "Flower", "01/01/2024");
-        Garden testGarden1 = new Garden("Test Garden 1", "Test Location", "5");
-        Garden testGarden2 = new Garden("Test Garden 2", "Test Location", "5");
+        Garden testGarden1 = new Garden("Test Garden 1", "Test Location", "5", "Test Description");
+        Garden testGarden2 = new Garden("Test Garden 2", "Test Location", "5","Test Description");
         Long gardenId1 = 1L;
         Long gardenId2 = 2L;
 

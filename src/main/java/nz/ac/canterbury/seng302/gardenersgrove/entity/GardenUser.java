@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
+import java.time.Instant;
 import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -39,6 +40,12 @@ public class GardenUser {
     @Column(nullable = true)
     @Lob
     private byte[] profilePicture;
+
+    @Column(nullable = true)
+    private String emailValidationToken;
+
+    @Column(nullable = true)
+    private Instant emailValidationTokenExpiryInstant;
 
     /**
      * JPA required no-args constructor
@@ -201,5 +208,37 @@ public class GardenUser {
     public void setProfilePicture(String contentType, byte[] profilePicture) {
         this.profilePictureContentType = contentType;
         this.profilePicture = profilePicture;
+    }
+
+    /**
+     * Set the emailValidationToken of this user
+     */
+    public void setEmailValidationToken(String emailValidationToken) {
+        this.emailValidationToken = emailValidationToken;
+    }
+
+    /**
+     * get this users emailValidationToken
+     *  - may be null
+     * @return emailValidationToken
+     */
+    public String getEmailValidationToken() {
+        return emailValidationToken;
+    }
+
+    /**
+     * Set the emailValidationTokenExpiryInstant of this user
+     */
+    public void setEmailValidationTokenExpiryInstant(Instant timeInstance) {
+        this.emailValidationTokenExpiryInstant = timeInstance;
+    }
+
+    /**
+     * Return the emailValidationTokenExpiryInstant of this user
+     *  - may be null
+     * @return
+     */
+    public Instant getEmailValidationTokenExpiryInstant() {
+        return this.emailValidationTokenExpiryInstant;
     }
 }

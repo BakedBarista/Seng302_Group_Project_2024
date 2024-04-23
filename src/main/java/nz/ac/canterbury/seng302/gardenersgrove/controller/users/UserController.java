@@ -2,7 +2,10 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.time.Instant;
 
+import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +27,9 @@ public class UserController {
 
     @Autowired
     private GardenUserService userService;
+
+    @Autowired
+    private TokenService tokenService;
 
     private static final String DEFAULT_PROFILE_PICTURE_URL = "https://www.gravatar.com/avatar/00000000000000000000000000000000?s=100&d=identicon";
 
