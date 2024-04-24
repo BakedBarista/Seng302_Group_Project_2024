@@ -38,9 +38,10 @@ jacocoTestReport {
 	dependsOn test
 
 	reports {
-		xml.destination file("$buildDir/jacoco/test-report.xml")
-		csv.destination file("$buildDir/jacoco/test-report.csv")
-		html.destination file("$buildDir/jacoco/html")
+		xml.required = true
+		xml.destination = file("$buildDir/jacoco/test-report.xml")
+		csv.required = false
+		html.destination = file("$buildDir/jacoco/html")
 	}
 }
 
