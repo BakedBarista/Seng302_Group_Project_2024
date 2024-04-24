@@ -14,8 +14,7 @@ import java.time.Clock;
 import java.util.Base64;
 
 /**
- * Class to make and deal with authentication tokens
- *
+ * Class to make and deal with authentication tokens*
  * uses some code from https://stackoverflow.com/a/56628391
  * for createAuthenticationToken method
  */
@@ -61,7 +60,7 @@ public class TokenService {
         }
 
         logger.info("made new email token {}", token);
-
+        System.out.println(token);
         return token.toString();
     }
 

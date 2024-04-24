@@ -3,7 +3,9 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +22,8 @@ import java.util.List;
 
 import java.util.Optional;
 
+
+
 /**
  * Controller for garden forms
  */
@@ -30,10 +34,13 @@ public class GardenController {
     private final GardenService gardenService;
     private final PlantService plantService;
 
+    private final GardenUserService gardenUserService;
+
     @Autowired
-    public GardenController(GardenService gardenService, PlantService plantService) {
+    public GardenController(GardenService gardenService, PlantService plantService, GardenUserService gardenUserService) {
         this.gardenService = gardenService;
         this.plantService = plantService;
+        this.gardenUserService = gardenUserService;
     }
 
     /**
@@ -45,13 +52,11 @@ public class GardenController {
      * @return gardenFormTemplate
      */
     @GetMapping("/gardens/create")
-    public String form(@RequestParam(name="displayName", required = false, defaultValue = "") String displayName,
-                       @RequestParam(name="displayLocation", required = false, defaultValue = "") String displayLocation,
-                       @RequestParam(name="displaySize", required = false, defaultValue = "") String displaySize,
-                       Model model) {
+    public String form(Model model) {
         logger.info("GET /gardens/create - display the new garden form");
         model.addAttribute("garden", new Garden());
-        List<Garden> gardens = gardenService.getAllGardens();
+        GardenUser owner = gardenUserService.getCurrentUser();
+        List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
         model.addAttribute("gardens", gardens);
         return "gardens/createGarden";
     }
@@ -67,11 +72,14 @@ public class GardenController {
     public String submitForm(@Valid @ModelAttribute("garden") Garden garden,
                              BindingResult bindingResult, Model model) {
         logger.info("POST /gardens - submit the new garden form");
+
         if (bindingResult.hasErrors()) {
             model.addAttribute("garden", garden);
-
             return "gardens/createGarden";
         }
+        GardenUser owner = gardenUserService.getCurrentUser();
+        garden.setOwner(owner);
+
         Garden savedGarden = gardenService.addGarden(garden);
         return "redirect:/gardens/" + savedGarden.getId();
     }
@@ -84,7 +92,13 @@ public class GardenController {
     @GetMapping("/gardens")
     public String responses(Model model) {
         logger.info("Get /gardens - display all gardens");
-        model.addAttribute("gardens", gardenService.getAllGardens());
+        GardenUser currentUser = gardenUserService.getCurrentUser();
+        if(currentUser != null) {
+            List<Garden> userGardens = gardenService.getGardensByOwnerId(currentUser.getId());
+            model.addAttribute("gardens", userGardens);
+        }
+
+
         return "gardens/viewGardens";
     }
 
@@ -98,17 +112,26 @@ public class GardenController {
                                Model model) {
 
         logger.info("Get /gardens/id - display garden detail");
-        model.addAttribute("garden", gardenService.getGardenById(id).get());
-        model.addAttribute("plants", plantService.getPlantsByGardenId(id));
-        List<Garden> gardens = gardenService.getAllGardens();
+        Optional<Garden> gardenOpt = gardenService.getGardenById(id);
+        if(gardenOpt.isPresent()) {
+            Garden garden = gardenOpt.get();
+            model.addAttribute("garden", garden);
+            model.addAttribute("owner", garden.getOwner());
+            model.addAttribute("plants", plantService.getPlantsByGardenId(id));
+        }
+
+
+        GardenUser currentUser = gardenUserService.getCurrentUser();
+        List<Garden> gardens = gardenService.getGardensByOwnerId(currentUser.getId());
+        model.addAttribute("currentUser", currentUser);
         model.addAttribute("gardens", gardens);
         return "gardens/gardenDetails";
     }
 
     /**
      * Updates the public status of the garden
-     * @param id
-     * @param isPublic
+     * @param id garden id
+     * @param isPublic public status
      * @return redirect to gardens
      */
     @PostMapping("/gardens/{id}")
@@ -136,7 +159,8 @@ public class GardenController {
         Optional<Garden> garden = gardenService.getGardenById(id);
         logger.info(String.valueOf(garden));
         model.addAttribute("garden", garden.orElse(null));
-        List<Garden> gardens = gardenService.getAllGardens();
+        GardenUser owner = gardenUserService.getCurrentUser();
+        List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
         model.addAttribute("gardens", gardens);
         return "gardens/editGarden";
     }
@@ -181,8 +205,13 @@ public class GardenController {
         Pageable pageable = PageRequest.of(page, size);
         Page<Garden> gardenPage = gardenService.getPublicGardens(pageable);
         model.addAttribute("gardenPage", gardenPage);
+        GardenUser owner = gardenUserService.getCurrentUser();
+        List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
+        model.addAttribute("gardens", gardens);
         return "gardens/publicGardens";
     }
+
+
 
 
 

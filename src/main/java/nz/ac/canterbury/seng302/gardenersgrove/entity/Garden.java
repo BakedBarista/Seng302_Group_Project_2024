@@ -42,6 +42,10 @@ public class Garden {
 
 
 
+    @ManyToOne
+    @JoinColumn(name = "owner_id", nullable = false)
+    private GardenUser owner;
+
     public Garden() {}
 
     /**
@@ -61,6 +65,12 @@ public class Garden {
     }
     public void setPublic(Boolean isPublic) {
         this.isPublic = isPublic;
+    }
+    public void setOwner(GardenUser owner) {
+        this.owner = owner;
+    }
+    public GardenUser getOwner() {
+        return owner;
     }
 
     public Long getId() {

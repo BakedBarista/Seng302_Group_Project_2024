@@ -2,9 +2,10 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +37,9 @@ public class UploadController {
     Logger logger = LoggerFactory.getLogger(UploadController.class);
     private final PlantService plantService;
 
+    private final GardenUserService gardenUserService;
+
+
     @Autowired
     private GardenService gardenService;
 
@@ -45,8 +49,9 @@ public class UploadController {
     private static final List<String> allowedExtension = Arrays.asList("jpg", "png", "svg");
 
 
-    public UploadController(PlantService plantService) {
+    public UploadController(PlantService plantService, GardenUserService gardenUserService) {
         this.plantService = plantService;
+        this.gardenUserService = gardenUserService;
 
     }
     /**
@@ -58,8 +63,8 @@ public class UploadController {
                                     Model model) {
         model.addAttribute("plantId", plantId);
         model.addAttribute("gardenId", gardenId);
-        //this.gardenService = new GardenService(gardenRepository);
-        List<Garden> gardens = gardenService.getAllGardens();
+        GardenUser owner = gardenUserService.getCurrentUser();
+        List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
         model.addAttribute("gardens", gardens);
         return "images/uploadPage";
     }
@@ -69,7 +74,6 @@ public class UploadController {
                               @RequestParam("image")MultipartFile file,
                               @RequestParam(name = "garden_Id")Long gardenId,
                               @RequestParam(name = "plant_Id")Long plantId) throws IOException, MultipartException {
-        logger.info("/uploadImage", file, gardenId,plantId);
         Optional<Plant> optionalPlant = plantService.getPlantById(plantId);
         String filename = file.getOriginalFilename();
         String extension = filename.substring(filename.lastIndexOf(".") + 1);

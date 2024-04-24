@@ -44,5 +44,9 @@ public class GardenService {
     }
 
 
+    public List<Garden> getGardensByOwnerId(Long ownerId) {
+        return gardenRepository.findByOwnerId(ownerId);
+    }
+
 }
 
