@@ -5,8 +5,6 @@ import java.util.concurrent.Executor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.task.AsyncTaskExecutor;
-import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -39,17 +37,18 @@ public class EmailSenderService {
      * @param body    The plain-text body of the email
      */
     public void sendEmail(GardenUser to, String subject, String body) {
-        StringBuilder recipientBuilder = new StringBuilder();
-        recipientBuilder.append(to.getFname());
-        if (to.getLname() != null) {
-            recipientBuilder.append(" ").append(to.getLname());
-        }
-        recipientBuilder.append(" <").append(to.getEmail()).append(">");
-        String recipient = recipientBuilder.toString();
-
-        sendEmail(recipient, subject, body);
+        sendEmail(formatNameAddr(to), subject, body);
     }
 
+    private String formatNameAddr(GardenUser user) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(user.getFname());
+        if (user.getLname() != null) {
+            sb.append(" ").append(user.getLname());
+        }
+        sb.append(" <").append(user.getEmail()).append(">");
+        return sb.toString();
+    }
 
     /**
      * Sends a plain-text email to the specified recipient with the specified
