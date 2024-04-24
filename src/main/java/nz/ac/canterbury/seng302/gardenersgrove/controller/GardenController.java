@@ -175,7 +175,7 @@ public class GardenController {
     @GetMapping("/gardens/public")
     public String publicGardens(
             @RequestParam (defaultValue = "0") int page,
-            @RequestParam (defaultValue = "12") int size,
+            @RequestParam (defaultValue = "10") int size,
             Model model ) {
         logger.info("Get /gardens/public - display all public gardens");
         Pageable pageable = PageRequest.of(page, size);
