@@ -75,7 +75,7 @@ public class LoginController {
         }
 
         if (!(user.getEmailValidationToken() == null)) {
-            return "redirect:/users/user/"+user.getId()+"/authenticateEmail";
+            return "redirect:/users/user/" + user.getId() + "/authenticateEmail";
         }
 
         try {

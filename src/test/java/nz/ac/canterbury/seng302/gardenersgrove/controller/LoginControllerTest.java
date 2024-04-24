@@ -5,12 +5,9 @@ import nz.ac.canterbury.seng302.gardenersgrove.controller.users.LoginController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import org.junit.jupiter.api.Assertions;
-import org.mockito.Mockito;
+import org.mockito.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.ui.Model;
 
 import java.time.Instant;
@@ -30,49 +27,50 @@ public class LoginControllerTest {
     @InjectMocks
     private LoginController loginController;
 
+    @Spy
+    private GardenUser user;
+
+    private String email;
+
+    private String password;
+
+    private long id;
+
     @BeforeEach
     public void setUp() {
+        id = 1;
+        String firstName = "jane";
+        String lastName = "doe";
+        email = "jane.doe@mail.com";
+        password = "TESTPassword123!";
+        String dob = "01/01/2000";
+        user = new GardenUser(firstName, lastName, email, password, dob);
+
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
     public void testWhenIHaveNotConfirmedEmail_andITryToLogin_IAmTakenToTokenConfirmationPage() {
-        long id = 1;
-        String validFirstName = "jane";
-        String validLastName = "doe";
-        String validEmail = "jane.doe@mail.com";
-        String validPassword = "TESTPassword123!";
-        String validDOB = "01/01/2000";
         String expectedResource = "redirect:/users/user/"+id+"/authenticateEmail";
 
-        GardenUser unconfirmedUser = new GardenUser(validFirstName, validLastName, validEmail, validPassword, validDOB);
-        unconfirmedUser.setId(id);
-        unconfirmedUser.setEmailValidationToken("123456");
-        unconfirmedUser.setEmailValidationTokenExpiryInstant(Instant.now().plus(10, ChronoUnit.MINUTES));
+        user.setEmailValidationToken("123456");
+        user.setEmailValidationTokenExpiryInstant(Instant.now().plus(10, ChronoUnit.MINUTES));
 
-        Mockito.doReturn(unconfirmedUser).when(userService).getUserByEmailAndPassword(validEmail, validPassword);
+        Mockito.doReturn(id).when(user).getId();
+        Mockito.doReturn(user).when(userService).getUserByEmailAndPassword(email, password);
 
-        String resource = loginController.authenticateLogin(validEmail, validPassword, "", model, httpServletRequest);
+        String resource = loginController.authenticateLogin(email, password, "", model, httpServletRequest);
 
         Assertions.assertEquals(expectedResource, resource);
     }
 
     @Test
     public void testWhenIHaveConfirmedEmail_andITryToLogin_IAmSuccessfullyLoggedIn() {
-        long id = 1;
-        String validFirstName = "jane";
-        String validLastName = "doe";
-        String validEmail = "jane.doe@mail.com";
-        String validPassword = "TESTPassword123!";
-        String validDOB = "01/01/2000";
-        String expectedResource = "redirect:/users/user";
+        String expectedResource = "redirect:/";
 
-        GardenUser confirmedUser = new GardenUser(validFirstName, validLastName, validEmail, validPassword, validDOB);
-        confirmedUser.setId(id);
+        Mockito.doReturn(user).when(userService).getUserByEmailAndPassword(email, password);
 
-        Mockito.doReturn(confirmedUser).when(userService).getUserByEmailAndPassword(validEmail, validPassword);
-
-        String resource = loginController.authenticateLogin(validEmail, validPassword, "", model, httpServletRequest);
+        String resource = loginController.authenticateLogin(email, password, "", model, httpServletRequest);
 
         Assertions.assertEquals(expectedResource, resource);
     }
