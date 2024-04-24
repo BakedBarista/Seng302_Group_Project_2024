@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.2.2'
 	id 'io.spring.dependency-management' version '1.1.4'
+  id "org.sonarqube" version "3.5.0.2730"
 }
 
 group = 'nz.ac.canterbury.seng302.team-800'
@@ -29,4 +30,11 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+sonar {
+  properties {
+    property "sonar.projectKey", "seng302-2024-team800"
+    property "sonar.qualitygate.wait", true 
+  }
 }
