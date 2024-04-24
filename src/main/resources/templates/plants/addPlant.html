@@ -3,16 +3,15 @@
 <head>
     <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
     <title>Add a New Plant</title>
-    <link th:href="@{/css/navbar.css}" rel="stylesheet" />
-    <link th:href="@{/css/styles.css}" rel="stylesheet" />
+
+    <!-- This needs to be here for Bootstrap and general CSS imports -->
+    <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
 </head>
 <body>
-<div th:replace="~{navbar :: navbar}"></div>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
 <div>
     <div>
         <form id="addPlantForm" th:action="@{/gardens/{gardenId}/add-plant(gardenId=${gardenId})}" th:object="${plant}"  method="post" enctype="multipart/form-data">
-
-
         <!-- Plant Name Field -->
             <label for="name">Plant Name:</label>
             <input type="text" id="name" name="name" placeholder="Enter Plant Name" th:value="${plant.name}" >
@@ -59,6 +58,8 @@
         </form>
     </div>
 </div>
+<th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
 </body>
 <script th:src="@{/js/nextFormBox.js}"></script>
+<script th:src="@{/js/imageHandler.js}"></script>
 </html>

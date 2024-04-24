@@ -1,14 +1,14 @@
 -- Gardens
-INSERT INTO garden (name, location, size) VALUES ('Enchanted Oasis', 'Mystic Meadow', 1200);
-INSERT INTO garden (name, location, size) VALUES ('Zen Harmony', 'Tranquil Terrace', 800);
-INSERT INTO garden (name, location, size) VALUES ('Eternal Eden', 'Serene Sanctuary', 1500);
-INSERT INTO garden (name, location, size) VALUES ('Whimsical Wonderland', 'Dreamy Dell', 1000);
-INSERT INTO garden (name, location, size) VALUES ('Secret Garden', 'Hidden Haven', 900);
-INSERT INTO garden (name, location, size) VALUES ('Celestial Courtyard', 'Stellar Space', 1300);
-INSERT INTO garden (name, location, size) VALUES ('Lush Utopia', 'Verdant Vale', 1100);
-INSERT INTO garden (name, location, size) VALUES ('Sapphire Retreat', 'Azure Arbor', 950);
-INSERT INTO garden (name, location, size) VALUES ('Majestic Mirage', 'Ephemeral Enclave', 1200);
-INSERT INTO garden (name, location, size) VALUES ('Moonlit Meadow', 'Silver Shores', 850);
+INSERT INTO garden (name, location, size, is_public) VALUES ('Enchanted Oasis', 'Mystic Meadow', 1200, true);
+INSERT INTO garden (name, location, size, is_public) VALUES ('Zen Harmony', 'Tranquil Terrace', 800, true);
+INSERT INTO garden (name, location, size, is_public) VALUES ('Eternal Eden', 'Serene Sanctuary', 1500, true);
+INSERT INTO garden (name, location, size, is_public) VALUES ('Whimsical Wonderland', 'Dreamy Dell', 1000, true);
+INSERT INTO garden (name, location, size, is_public) VALUES ('Secret Garden', 'Hidden Haven', 900, true);
+INSERT INTO garden (name, location, size, is_public) VALUES ('Celestial Courtyard', 'Stellar Space', 1300, true);
+INSERT INTO garden (name, location, size, is_public) VALUES ('Lush Utopia', 'Verdant Vale', 1100, true);
+INSERT INTO garden (name, location, size, is_public) VALUES ('Sapphire Retreat', 'Azure Arbor', 950, true);
+INSERT INTO garden (name, location, size, is_public) VALUES ('Majestic Mirage', 'Ephemeral Enclave', 1200, true);
+INSERT INTO garden (name, location, size, is_public) VALUES ('Moonlit Meadow', 'Silver Shores', 850, true);
 
 -- Garden 1
 INSERT INTO plant (name, count, description, planted_date, garden_id, plant_image_path) VALUES

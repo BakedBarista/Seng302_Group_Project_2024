@@ -36,4 +36,10 @@ public class GardenService {
      * @return the object of given id
      */
     public Optional<Garden> getGardenById(long id) {return gardenRepository.findById(id);}
+
+    public List<Garden> getPublicGardens() {
+        return gardenRepository.findByIsPublicTrue();
+    }
+
 }
+

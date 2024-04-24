@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>Edit Plant</title>
-    <link th:href="@{/css/navbar.css}" rel="stylesheet" />
-    <link th:href="@{/css/styles.css}" rel="stylesheet" />
+
+    <!-- This needs to be here for Bootstrap and general CSS imports -->
+    <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
 </head>
 <body>
-<div th:replace="~{navbar :: navbar}"></div>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
 <div>
     <div>
-        <form th:action="@{/gardens/{gardenId}/plants/{plantId}/edit(gardenId=${gardenId}, plantId=${plantId})}" th:object="${plant}" method="post">
+        <form th:action="@{/gardens/{gardenId}/plants/{plantId}/edit(gardenId=${gardenId}, plantId=${plantId})}" th:object="${plant}" method="post" enctype="multipart/form-data">
             <label for="name"> Plant Name: </label>
             <input type="text" class="form-control" id="name" placeholder="Name"
                    th:name="name" th:value="${plant.name}" data-cy="name" autofocus>
@@ -33,9 +34,10 @@
             <div>
                 <h3>Plant Image:</h3>
                 <div class="image-container">
-                    <img th:src="@{${plant.plantImagePath}}"/>
+                    <img id="preview-image" th:src="@{${plant.plantImagePath}}"/>
                     <img th:unless="${plant.plantImagePath}" src="/default.png" alt="Default Plant Image" />
-                    <a class="add-image-button" th:href="@{/uploadImage(garden_Id=${gardenId}, plant_Id=${plantId})}">+</a>
+                    <label for="image" class="add-image-button">+</label>
+                    <input type="file" id="image" name="image" accept=".png,.jpg,.jpeg,.svg" class="form-control-file" style = "display: none;">
                 </div>
             </div>
             <div>
@@ -44,6 +46,8 @@
         </form>
     </div>
 </div>
+<th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
 </body>
 <script th:src="@{/js/nextFormBox.js}"></script>
+<script th:src="@{/js/imageHandler.js}"></script>
 </html>

@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
 <head>
-    <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
+    <meta http-equiv="Content-Type" context="text/html; charset=UTF-8" />
     <title>Upload image</title>
-    <link th:href="@{/css/navbar.css}" rel="stylesheet" />
-    <link th:href="@{/css/styles.css}" rel="stylesheet" />
+    <!-- This needs to be here for Bootstrap and general CSS imports -->
+    <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
 </head>
 <body>
-<div th:replace="~{navbar :: navbar}"></div>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
 <section class="my-5">
     <div class="container">
         <div class="row">
@@ -22,15 +22,15 @@
                     <div class="alert alert-danger" th:if="${fileTypeError}">
                         <div th:text="${fileTypeError}" style="color: red"></div>
                     </div>
-
                     <div class="alert alert-danger" th:if="${fileSizeError}">
                         <div th:text="${fileSizeError}" style="color: red"></div>
                     </div>
                     <button type="submit" class="btn btn-primary">Upload image</button>
-                    <button type="button" th:onclick="'window.location.href = \'' + @{/gardens/{gardenId}/plants/{plantId}/edit(gardenId=${gardenId}, plantId=${plantId})} + '\''">Cancel</button>
+                    <button type="button" th:onclick="'window.location.href = \'' + @{/gardens/{gardenId}(gardenId=${gardenId})} + '\''">Cancel</button>
                 </form>
             </div>
         </div>
     </div>
 </section>
 </body>
+</html>
