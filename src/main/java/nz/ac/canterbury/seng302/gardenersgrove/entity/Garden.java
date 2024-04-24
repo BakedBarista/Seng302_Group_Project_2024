@@ -40,6 +40,8 @@ public class Garden {
     @Column(nullable = false)
     private Boolean isPublic = false;
 
+
+
     public Garden() {}
 
     /**

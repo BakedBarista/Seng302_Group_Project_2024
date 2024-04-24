@@ -8,6 +8,9 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -170,10 +173,14 @@ public class GardenController {
 
 
     @GetMapping("/gardens/public")
-    public String publicGardens(Model model) {
+    public String publicGardens(
+            @RequestParam (defaultValue = "0") int page,
+            @RequestParam (defaultValue = "10") int size,
+            Model model ) {
         logger.info("Get /gardens/public - display all public gardens");
-        List<Garden> gardens = gardenService.getPublicGardens();
-        model.addAttribute("gardens", gardens);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Garden> gardenPage = gardenService.getPublicGardens(pageable);
+        model.addAttribute("gardenPage", gardenPage);
         return "gardens/publicGardens";
     }
 
