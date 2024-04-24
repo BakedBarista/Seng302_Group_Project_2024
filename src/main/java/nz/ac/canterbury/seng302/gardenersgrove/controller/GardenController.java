@@ -56,6 +56,7 @@ public class GardenController {
         logger.info("GET /gardens/create - display the new garden form");
         model.addAttribute("garden", new Garden());
         GardenUser owner = gardenUserService.getCurrentUser();
+
         List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
         model.addAttribute("gardens", gardens);
         return "gardens/createGarden";

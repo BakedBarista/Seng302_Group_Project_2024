@@ -2,7 +2,9 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,20 +27,36 @@ public class GardenControllerTest {
     @Mock
     private PlantService plantService;
 
+    @Mock
+    private GardenUserService gardenUserService;
+
     @InjectMocks
     private GardenController gardenController;
+
+    private GardenUser gardenUser;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
+        GardenUser mockUser = mock(GardenUser.class);
+        when(mockUser.getId()).thenReturn(1L);
+        when(gardenUserService.getCurrentUser()).thenReturn(mockUser);
+        when(gardenService.getGardensByOwnerId(1L)).thenReturn(Collections.emptyList());
+
     }
 
     @Test
     public void testForm() {
         Model model = mock(Model.class);
-        String result = gardenController.form("","","", model);
+        String result = gardenController.form(model);
+
+        verify(model).addAttribute(eq("garden"), any(Garden.class));
+        verify(model).addAttribute(eq("gardens"), anyList());
+
         assertEquals("gardens/createGarden", result);
     }
+
+
 
     @Test
     public void testSubmitForm_ValidationFailure() {
