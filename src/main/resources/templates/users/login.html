@@ -11,6 +11,7 @@
         <nav th:replace="~{fragments/navbar :: navbar}"></nav>
         <main class="main-container">
             <h1>Sign In</h1>
+            <span th:if="${justAuthenticated == true}">Your account has been activated, please log in<br></span>
             <form th:action="login" method="post">
                 <label th:class="'form-group ' + ${incorrectEmail != null ? 'form-group-error' : ''}">
                     Email
