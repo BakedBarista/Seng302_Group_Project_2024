@@ -44,16 +44,6 @@ public class EditUserController {
     }
 
     /**
-     * Setter method for userServer
-     *
-     * @param userService The GardenUserService to be set
-     */
-    public void setUserService(GardenUserService userService) {
-        this.userService = userService;
-    }
-
-
-    /**
      * Shows the edit user form
      *
      * @param authentication authentication object representing the current user
@@ -205,9 +195,9 @@ public class EditUserController {
             @RequestParam(name = "oldPassword") String oldPassword,
             @RequestParam(name = "newPassword") String newPassword,
             @RequestParam(name = "confirmPassword") String confirmPassword,
-            Model model) {
+            Authentication authentication, Model model) {
 
-        long id = (long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        long id = (long) authentication.getPrincipal();
 
         UserValidation userRegoValidation = new UserValidation();
 
