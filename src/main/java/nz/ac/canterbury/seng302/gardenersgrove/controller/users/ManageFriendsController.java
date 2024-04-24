@@ -72,8 +72,6 @@ public class ManageFriendsController {
         
         List<GardenUser> Friends = friendService.getAllFriends(id);
 
-        GardenUser loggedInUser = userService.getUserById(loggedInUserId);
-
         List<Requests> sentRequests = requestService.getSentRequests(loggedInUserId);
         List<Requests> receivedRequests = requestService.getReceivedRequests(loggedInUserId);
         model.addAttribute("friends", Friends);
@@ -85,53 +83,35 @@ public class ManageFriendsController {
 
     @PostMapping("users/manageFriends/invite")
     public String manageFriends(Authentication authentication, 
-        @RequestParam(name = "requestedUser", required = false) Long requestedUser, 
-        @RequestParam(name = "acceptUser", required = false) Long acceptUser, 
-        @RequestParam(name = "declineUser", required = false) Long declineUser, 
-        Model model,
-        HttpServletRequest request) {
+        @RequestParam(name = "requestedUser", required = false) Long requestedUser) {
         
         Long loggedInUserId = (Long) authentication.getPrincipal();
         GardenUser loggedInUser = userService.getUserById(loggedInUserId);
         GardenUser sentTo = userService.getUserById(requestedUser);
-        System.out.println(sentTo);
+        Friends alreadyFriends = friendService.getRequest(loggedInUser.getId(), sentTo.getId());
+        Optional<Requests> requestExists = requestService.getRequest(sentTo.getId(), loggedInUser.getId());
 
-        Friends allReadyFriends = friendService.getRequest(loggedInUser.getId(), sentTo.getId());
-        System.out.println(allReadyFriends);
-        
-        Optional<Requests> test = requestService.getRequest(sentTo.getId(), loggedInUser.getId());
-
-        System.out.println(test);
-
-        if (!test.isPresent()) {
-            if (allReadyFriends == null){
+        if (!requestExists.isPresent()) {
+            if (alreadyFriends == null){
                 if(loggedInUser != sentTo){
                     Requests requestEntity = new Requests(loggedInUser, sentTo, "pending");
                     requestService.save(requestEntity);
                 }
             }
         }
-
         return "redirect:/users/manageFriends";
     }
 
     @PostMapping("users/manageFriends/accept")
     public String manageFriendsAccepts(Authentication authentication, 
-        @RequestParam(name = "acceptUser", required = false) Long acceptUser, 
-        Model model,
-        HttpServletRequest request) {
+        @RequestParam(name = "acceptUser", required = false) Long acceptUser) {
 
         Long loggedInUserId = (Long) authentication.getPrincipal();
         GardenUser loggedInUser = userService.getUserById(loggedInUserId);
-
         GardenUser receivedFrom = userService.getUserById(acceptUser);
-        System.out.println(receivedFrom);
-        System.out.println(loggedInUser);
+        Friends newFriends = new Friends(loggedInUser, receivedFrom);
 
-        Friends test = new Friends(loggedInUser, receivedFrom);
-
-        friendService.save(test);
-
+        friendService.save(newFriends);
 
         Optional<Requests> updateStatusOptional = requestService.getRequest(loggedInUser.getId(), receivedFrom.getId());
 
@@ -147,15 +127,11 @@ public class ManageFriendsController {
     @PostMapping("users/manageFriends/decline")
     public String manageFriendsDecline(Authentication authentication, 
         @RequestParam(name = "declineUser", required = false) Long declineUser,
-        @RequestParam(required = false) String error,
-        Model model,    
-        HttpServletRequest request) {
+        @RequestParam(required = false) String error) {
 
         Long loggedInUserId = (Long) authentication.getPrincipal();
         GardenUser loggedInUser = userService.getUserById(loggedInUserId);
-
         GardenUser receivedFrom = userService.getUserById(declineUser);
-        
         Optional<Requests> updateStatusOptional = requestService.getRequest(receivedFrom.getId(), loggedInUser.getId());
         
         if (updateStatusOptional.isPresent()) {
@@ -163,15 +139,12 @@ public class ManageFriendsController {
             updateStatus.setStatus("declined");
             requestService.save(updateStatus);
         }
-        
         return "redirect:/users/manageFriends";
     }
 
     @PostMapping("users/manageFriends/search")
     public String manageFriendsSearch(Authentication authentication, 
-        @RequestParam(name = "searchUser", required = false) String searchUser, 
-        Model model,
-        HttpServletRequest request, RedirectAttributes rm) {
+        @RequestParam(name = "searchUser", required = false) String searchUser, RedirectAttributes rm) {
             
         Long loggedInUserId = (Long) authentication.getPrincipal();
         List<GardenUser> searchResults = userService.getUserBySearch(searchUser, loggedInUserId);

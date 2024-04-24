@@ -25,8 +25,8 @@ public class Requests {
 
     /**
      * Creates a new FormResult object
-     * @param user1 first user to be added as a friend
-     * @param user2 user to be added as friend to user1
+     * @param sent first user to be added as a friend
+     * @param receive user to be added as friend to user1
      * @param status pending accepted or denied
      */
     public Requests(GardenUser sent, GardenUser receive, String status) {
