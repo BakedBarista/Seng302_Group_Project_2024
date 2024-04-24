@@ -74,6 +74,10 @@ public class LoginController {
             logger.warn("User was not logged in");
         }
 
+        if (!(user.getEmailValidationToken() == null)) {
+            return "redirect:/users/user/" + user.getId() + "/authenticateEmail";
+        }
+
         try {
             request.login(email, password);
             return "redirect:/";

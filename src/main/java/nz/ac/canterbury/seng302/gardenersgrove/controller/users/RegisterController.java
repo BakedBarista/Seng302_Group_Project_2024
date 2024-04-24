@@ -145,15 +145,9 @@ public class RegisterController {
                 logger.warn("User was not logged in");
             }
 
-            try {
-                request.login(email, password);
-                addEmailTokenAndTimeToUser(user.getId());
-                return "redirect:/users/user/"+user.getId()+"/authenticateEmail";
-            } catch (ServletException e) {
-                logger.error("Error while login ", e);
-            }
+            addEmailTokenAndTimeToUser(user.getId());
+            return "redirect:/users/user/"+user.getId()+"/authenticateEmail";
         }
-
 
         model.addAttribute("fname", fname);
         model.addAttribute("lname", lname);
