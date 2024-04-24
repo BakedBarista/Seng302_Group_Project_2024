@@ -34,12 +34,14 @@ public class GardenServiceTest {
         String city = "Test City";
         String country = "Test Country";
         String postCode = "1234";
+        Double lon = 1.0;
+        Double lat = 2.0;
         String gardenSize = "100";
         String gardenDescription = "Test Description";
 
-        Mockito.when(gardenRepository.save(Mockito.any(Garden.class))).thenReturn(new Garden(gardenName, streetNumber,streetName,suburb,city,country,postCode, gardenSize, gardenDescription));
+        Mockito.when(gardenRepository.save(Mockito.any(Garden.class))).thenReturn(new Garden(gardenName, streetNumber,streetName,suburb,city,country,postCode,lon,lat, gardenSize, gardenDescription));
 
-        Garden garden = gardenService.addGarden(new Garden(gardenName, streetNumber,streetName,suburb,city,country,postCode, gardenSize, gardenDescription));
+        Garden garden = gardenService.addGarden(new Garden(gardenName, streetNumber,streetName,suburb,city,country,postCode,lon,lat, gardenSize, gardenDescription));
 
         Assertions.assertEquals(gardenName, garden.getName());
         Assertions.assertEquals(streetNumber, garden.getStreetNumber());
@@ -56,8 +58,8 @@ public class GardenServiceTest {
     @Test
     public void getAllGardens_ReturnsAllGardens() {
         List<Garden> mockGardens = Arrays.asList(
-                new Garden("Garden1", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041", "100", "Big"),
-                new Garden("Garden2", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041", "100", "Small")
+                new Garden("Garden1", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041",1.0,2.0, "100", "Big"),
+                new Garden("Garden2", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041", 1.0,2.0,"100", "Small")
         );
         Mockito.when(gardenRepository.findAll()).thenReturn(mockGardens);
 
@@ -69,7 +71,7 @@ public class GardenServiceTest {
 
     @Test
     public void getGardenById_ReturnsGarden() {
-        Garden garden = new Garden("Garden", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041", "100", "Big");
+        Garden garden = new Garden("Garden", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041",1.0,2.0, "100", "Big");
 
         Mockito.when(gardenRepository.findById(1L)).thenReturn(java.util.Optional.of(garden));
 

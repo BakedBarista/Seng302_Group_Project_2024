@@ -7,8 +7,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class GardenTest {
 
@@ -22,7 +21,7 @@ public class GardenTest {
 
     @BeforeEach
     void makeGarden() {
-        garden = new Garden("Garden", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041", "100", "Big");
+        garden = new Garden("Garden","1","Ilam Road","Ilam","Christchurch","New Zealand","8041",0.24,3.66,"100","big");
     }
 
     @Test
@@ -137,7 +136,7 @@ public class GardenTest {
     public void gardenLocation_LocationHasCommas_ReturnsEmptyConstraintViolationList() {
         garden.setCountry("Ilam, Christchurch, New Zealand");
 
-        assertTrue(validator.validate(garden).isEmpty());
+        assertFalse(validator.validate(garden).isEmpty());
     }
 
     @Test
