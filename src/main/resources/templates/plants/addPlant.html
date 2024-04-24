@@ -8,10 +8,10 @@
     <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
 </head>
 <body>
-<div th:replace="~{navbar :: navbar}"></div>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
 <div>
     <div>
-        <form id="addPlantForm" th:action="@{/gardens/{gardenId}/add-plant(gardenId=${gardenId})}" th:object="${plant}"  method="post" enctype="multipart/form-data">
+        <form id="addPlantForm" th:action="@{/gardens/{gardenId}/add-plant(gardenId=${gardenId})}" th:object="${plant}"  method="post" enctype="multipart/form-data" novalidate>
         <!-- Plant Name Field -->
             <label for="name">Plant Name:</label>
             <input type="text" id="name" name="name" placeholder="Enter Plant Name" th:value="${plant.name}" >

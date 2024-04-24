@@ -111,4 +111,22 @@ public class GardenControllerTest {
         assertEquals("Test Size", garden.getSize());
         assertEquals("Test Description", garden.getDescription());
     }
+
+    @Test
+    public void setUpdateStatusTrueQueryDatabaseReturnTrue() {
+        when(gardenService.getGardenById(1L)).thenReturn(Optional.of(new Garden()));
+        when(gardenService.addGarden(any())).thenReturn(new Garden());
+        String result = gardenController.updatePublicStatus(1L, true);
+        assertEquals(gardenService.getGardenById(1L).get().getIsPublic(), true);
+        assertEquals("redirect:/gardens/1", result);
+    }
+    @Test
+    public void setUpdateStatusFalseQueryDatabaseReturnFalse() {
+        when(gardenService.getGardenById(1L)).thenReturn(Optional.of(new Garden()));
+        when(gardenService.addGarden(any())).thenReturn(new Garden());
+        String result = gardenController.updatePublicStatus(1L, false);
+        assertEquals(gardenService.getGardenById(1L).get().getIsPublic(), false);
+        assertEquals("redirect:/gardens/1", result);
+
+    }
 }

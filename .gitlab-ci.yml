@@ -41,6 +41,7 @@ deploy-staging:
     - cp -r ./build/libs /home/gitlab-runner/staging
     - cp runner-scripts/staging.sh /home/gitlab-runner/staging.sh
     - chmod u+x /home/gitlab-runner/staging.sh
+    - ./runner-scripts/generate-env.sh staging
     - sudo systemctl restart staging
   artifacts:
     paths:
@@ -57,6 +58,7 @@ deploy-production:
     - cp -r ./build/libs /home/gitlab-runner/production
     - cp runner-scripts/production.sh /home/gitlab-runner/production.sh
     - chmod u+x /home/gitlab-runner/production.sh
+    - ./runner-scripts/generate-env.sh production
     - sudo systemctl restart production
   artifacts:
     paths:

@@ -71,7 +71,8 @@ public class SecurityConfiguration {
                     "/users/user/*/authenticateEmail",
                     "/css/**",
                     "/js/**",
-                    "/webjars/**"
+                    "/webjars/**",
+                    "/icons/**"
                 ).permitAll();
             auth.anyRequest().authenticated();
         });

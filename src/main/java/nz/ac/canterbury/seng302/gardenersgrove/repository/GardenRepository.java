@@ -15,4 +15,6 @@ import java.util.Optional;
 public interface GardenRepository extends CrudRepository<Garden, Long> {
     Optional<Garden> findById(long id);
     List<Garden> findAll();
+
+    List<Garden> findByIsPublicTrue();
 }
