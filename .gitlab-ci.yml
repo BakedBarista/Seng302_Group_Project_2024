@@ -26,7 +26,7 @@ sonarqube-check:
   only:
     - merge_requests
     - main
-    - develop
+    - dev
 
 # builds all branches, except dev and main
 branch-build:
