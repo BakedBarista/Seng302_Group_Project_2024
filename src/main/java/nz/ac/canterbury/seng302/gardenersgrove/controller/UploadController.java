@@ -80,12 +80,12 @@ public class UploadController {
             redirectAttributes.addFlashAttribute("fileTypeError", "Image must be of type png, jpg or svg");
             return "redirect:/uploadImage";
         }
-        String directory = "./images/";
+        Path directory = Paths.get("./images/").normalize();
         String fileName = "plant" + plantId + "image" + "-" + filename;
-        Path filePath = Paths.get(directory + fileName);
+        Path filePath = directory.resolve(fileName).normalize();
         // Check that we don't write outside of the directory
-        if (!filePath.normalize().startsWith(directory)) {
-            throw new IOException("Invalid file path");
+        if (!filePath.startsWith(directory)) {
+            throw new IOException("Invalid file path: " + filePath);
         }
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
         //Check size
@@ -111,12 +111,12 @@ public class UploadController {
     public String upload(MultipartFile file, Long plantId) throws Exception {
         Optional<Plant> optionalPlant = plantService.getPlantById(plantId);
         String filename = file.getOriginalFilename();
-        String directory = "./images/";
+        Path directory = Paths.get("./images/").normalize();
         String fileName = "plant" + plantId + "image" + "-" + filename;
-        Path filePath = Paths.get(directory + fileName);
+        Path filePath = directory.resolve(fileName).normalize();
         // Check that we don't write outside of the directory
-        if (!filePath.normalize().startsWith(directory)) {
-            throw new IOException("Invalid file path");
+        if (!filePath.startsWith(directory)) {
+            throw new IOException("Invalid file path: " + filePath);
         }
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
         if(optionalPlant.isPresent()){
