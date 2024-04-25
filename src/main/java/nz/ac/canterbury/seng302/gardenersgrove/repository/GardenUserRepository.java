@@ -39,6 +39,6 @@ public interface GardenUserRepository extends CrudRepository<GardenUser, Long> {
     @Query("SELECT u FROM GardenUser u WHERE u.email = ?1")
     Optional<GardenUser> findByEmail(String email);
 
-    @Query("SELECT p FROM GardenUser p WHERE (LOWER(p.fname)= LOWER(?1) or LOWER(p.email)= LOWER(?1)) and p.id!=?2")
-    List<GardenUser> findBySearch(String name, Long currentUserId);
+    @Query("SELECT p FROM GardenUser p WHERE ((LOWER(p.fname)=LOWER(?1) and LOWER(p.lname)=LOWER(?2)) or LOWER(p.email)=LOWER(?1)) and p.id!=?3")
+    List<GardenUser> findBySearch(String first, String last, Long currentUserId);
 }

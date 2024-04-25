@@ -128,18 +128,14 @@ public class ManageFriendsController {
     public String manageFriendsDecline(Authentication authentication, 
         @RequestParam(name = "declineUser", required = false) Long declineUser,
         @RequestParam(required = false) String error) {
-
         Long loggedInUserId = (Long) authentication.getPrincipal();
         GardenUser loggedInUser = userService.getUserById(loggedInUserId);
         GardenUser receivedFrom = userService.getUserById(declineUser);
-        Optional<Requests> updateStatusOptional = requestService.getRequest(receivedFrom.getId(), loggedInUser.getId());
-        
-        if (updateStatusOptional.isPresent()) {
-            System.out.println("gets ");
-            Requests updateStatus = updateStatusOptional.get();
-            updateStatus.setStatus("declined");
-            requestService.save(updateStatus);
-        }
+        Optional<Requests> updateStatusOptional = requestService.getRequest(loggedInUser.getId(), receivedFrom.getId());
+        Requests updateStatus = updateStatusOptional.get();
+        updateStatus.setStatus("declined");
+        requestService.save(updateStatus);
+  
         return "redirect:/users/manageFriends";
     }
 

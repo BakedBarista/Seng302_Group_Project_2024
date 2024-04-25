@@ -56,7 +56,12 @@ public class GardenUserService {
     }
 
     public List<GardenUser> getUserBySearch(String name, Long currentUserId) {
-        return gardenUserRepository.findBySearch(name, currentUserId);
+        String[] names = name.split(" ");
+        String first = names[0];
+        String last = names.length > 1 ? names[1] : "";
+        System.out.println(first);
+        System.out.println(last);
+        return gardenUserRepository.findBySearch(first, last, currentUserId);
     }
 
     /**
