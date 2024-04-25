@@ -1,8 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.Gson;
+import nz.ac.canterbury.seng302.gardenersgrove.types.WeatherData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +36,8 @@ public class WeatherAPIService {
      * @param lng longitude value of location
      * @return the current weather forecast in a JSON format
      */
-    public Map<String, String> getCurrentWeather(double lat, double lng) {
-        HashMap<String, String> currentWeather = new HashMap<>();
+    public Map<String, Object> getCurrentWeather(double lat, double lng) {
+        HashMap<String, Object> currentWeather = new HashMap<>();
         String locationQuery = "&q=" + lat + "," + lng;
         String url = apiUrlCurrentWeather + locationQuery;
         logger.info("Requesting the current forecast for Lat: {} Lng: {}", lat, lng);
@@ -51,16 +50,14 @@ public class WeatherAPIService {
             logger.info("Weather data was successfully fetched.");
             logger.debug("API Result: {}", result.getBody());
             logger.debug("Parsing JSON weather result...");
-            JsonElement jsonResponse = JsonParser.parseString(result.getBody());
-            JsonObject jsonObject = jsonResponse.getAsJsonObject();
 
-            JsonObject location = jsonObject.getAsJsonObject("location");
-            JsonObject current = jsonObject.getAsJsonObject("current");
+            Gson gson = new Gson();
+            WeatherData weatherData = gson.fromJson(result.getBody(), WeatherData.class);
 
-            String city = location.get("name").getAsString();
-            String conditions = current.getAsJsonObject("condition").get("text").getAsString();
-            String temperature = current.get("temp_c").getAsString();
-            String humidity = current.get("humidity").getAsString();
+            String city = weatherData.getLocation().getName();
+            String conditions = weatherData.getCurrent().getCondition().getText();
+            double temperature = weatherData.getCurrent().getTemp_c();
+            int humidity = weatherData.getCurrent().getHumidity();
 
             currentWeather.put("city", city);
             currentWeather.put("conditions",conditions);
