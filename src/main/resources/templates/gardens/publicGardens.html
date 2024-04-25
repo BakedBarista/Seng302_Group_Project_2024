@@ -24,23 +24,29 @@
             </div>
         </form>
     </div>
-    <p class="text-secondary">showing results X to Y of Z</p>
-    <div class="row">
-        <!-- Garden Items -->
-        <th:block th:each="garden : ${gardens}">
-            <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                <!-- The anchor tag wrapping the card. The link should go to the garden's detail page -->
-                <a th:href="@{/gardens/{id}(id=${garden.id})}" class="text-decoration-none text-dark">
-                    <div class="card h-100">
-                        <img th:src="@{/img/gorila.png}" class="card-img-top" th:alt="${garden.name}">
-                        <div class="card-footer">
-                            <h5 class="card-title" th:text="${garden.name}">Garden 1</h5>
-                            <p class="card-text">By Todd Vermeir</p>
+
+    <div th:if="${gardens.empty}">
+        No gardens match your search...
+    </div>
+    <div th:unless="${gardens.empty}">
+        <p class="text-secondary">showing results X to Y of Z</p>
+        <div class="row">
+            <!-- Garden Items -->
+            <th:block th:each="garden : ${gardens}">
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                    <!-- The anchor tag wrapping the card. The link should go to the garden's detail page -->
+                    <a th:href="@{/gardens/{id}(id=${garden.id})}" class="text-decoration-none text-dark">
+                        <div class="card h-100">
+                            <img th:src="@{/img/gorila.png}" class="card-img-top" th:alt="${garden.name}">
+                            <div class="card-footer">
+                                <h5 class="card-title" th:text="${garden.name}">Garden 1</h5>
+                                <p class="card-text">By Todd Vermeir</p>
+                            </div>
                         </div>
-                    </div>
-                </a>
-            </div>
-        </th:block>
+                    </a>
+                </div>
+            </th:block>
+        </div>
     </div>
 </div>
 
