@@ -171,7 +171,7 @@ public class GardenController {
     public String searchPublicGardens(@RequestParam(name = "search", required = false, defaultValue = "") String search,
             Model model) {
         logger.info("Search: " + search);
-        List<Garden> gardens = gardenService.getAllGardens();
+        List<Garden> gardens = gardenService.findAllThatContainQuery(search);
         model.addAttribute("gardens", gardens);
         return "gardens/publicGardens";
     }
