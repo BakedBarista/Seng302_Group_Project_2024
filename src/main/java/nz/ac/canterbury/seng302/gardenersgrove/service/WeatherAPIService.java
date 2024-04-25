@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -24,7 +23,6 @@ public class WeatherAPIService {
     private final String apiKey = "c5491038c30146868ae23158242203";
     private final String apiUrlCurrentWeather = "https://api.weatherapi.com/v1/current.json?key=" + apiKey;
     private final String apiUrlForecastWeather = "https://api.weatherapi.com/v1/forecast.json?key=" + apiKey;
-    private final Gson gson = new Gson();
 
     @Autowired
     public WeatherAPIService(RestTemplate restTemplate) {
@@ -43,7 +41,7 @@ public class WeatherAPIService {
         HashMap<String, String> currentWeather = new HashMap<>();
         String locationQuery = "&q=" + lat + "," + lng;
         String url = apiUrlCurrentWeather + locationQuery;
-        logger.info(String.format("Requesting the current forecast for Lat: %f Lng: %f", lat, lng));
+        logger.info("Requesting the current forecast for Lat: {} Lng: {}", lat, lng);
 
         // Get API response for location
         ResponseEntity<String> result = restTemplate.getForEntity(url, String.class);
