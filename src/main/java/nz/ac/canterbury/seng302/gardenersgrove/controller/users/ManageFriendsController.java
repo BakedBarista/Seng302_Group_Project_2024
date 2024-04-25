@@ -150,7 +150,7 @@ public class ManageFriendsController {
         @RequestParam(required = false) String error,
         Model model,    
         HttpServletRequest request) {
-
+        System.out.println("gets here");
         Long loggedInUserId = (Long) authentication.getPrincipal();
         GardenUser loggedInUser = userService.getUserById(loggedInUserId);
 
@@ -159,6 +159,7 @@ public class ManageFriendsController {
         Optional<Requests> updateStatusOptional = requestService.getRequest(receivedFrom.getId(), loggedInUser.getId());
         
         if (updateStatusOptional.isPresent()) {
+            System.out.println("gets ");
             Requests updateStatus = updateStatusOptional.get();
             updateStatus.setStatus("declined");
             requestService.save(updateStatus);

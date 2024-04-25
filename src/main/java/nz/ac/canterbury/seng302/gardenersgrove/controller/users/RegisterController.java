@@ -165,8 +165,14 @@ public class RegisterController {
             GardenUser user = new GardenUser("John", "Doe", "john.doe@gmail.com", "password",
                     "01/01/1970");
             userService.addUser(user);
+            GardenUser user1 = new GardenUser("Immy", "Doe", "immy@gmail.com", "password",
+                    "01/01/1970");
+            userService.addUser(user1);
+            GardenUser user2 = new GardenUser("Liam", "Doe", "liam@gmail.com", "password",
+                    "01/01/1970");
+            userService.addUser(user2);
 
-            logger.info("Created dummy user for testing purposes");
+            logger.info("Created dummy users for testing purposes");
         } catch (Exception e) {
             logger.error("Error while creating dummy user", e);
         }
