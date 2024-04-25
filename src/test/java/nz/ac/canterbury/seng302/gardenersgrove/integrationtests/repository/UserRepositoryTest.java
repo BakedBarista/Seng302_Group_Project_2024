@@ -44,7 +44,7 @@ public class UserRepositoryTest {
         List<GardenUser> userList = gardenUserRepository.findAll();
         
         Assertions.assertThat(userList).isNotNull();
-        Assertions.assertThat(userList.size()).isEqualTo(2);
+        Assertions.assertThat(userList.size()).isEqualTo(3);
     }
 
     //testing the find by ide method in the repository

@@ -50,7 +50,7 @@ public class GardenUser {
     /**
      * JPA required no-args constructor
      */
-    protected GardenUser() {}
+    public GardenUser() {}
 
     /**
      * Creates a new GardenUser object
@@ -240,5 +240,9 @@ public class GardenUser {
      */
     public Instant getEmailValidationTokenExpiryInstant() {
         return this.emailValidationTokenExpiryInstant;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 }

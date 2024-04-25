@@ -33,7 +33,6 @@ public class GardenControllerTest {
     @InjectMocks
     private GardenController gardenController;
 
-    private GardenUser gardenUser;
 
     @BeforeEach
     public void setUp() {

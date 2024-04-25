@@ -9,7 +9,6 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,19 +38,15 @@ public class UploadController {
 
     private final GardenUserService gardenUserService;
 
-
-    @Autowired
-    private GardenService gardenService;
-
-//   @Autowired
-//    private GardenRepository gardenRepository;
+    private final GardenService gardenService;
 
     private static final List<String> allowedExtension = Arrays.asList("jpg", "png", "svg");
 
 
-    public UploadController(PlantService plantService, GardenUserService gardenUserService) {
+    public UploadController(PlantService plantService, GardenUserService gardenUserService, GardenService gardenService) {
         this.plantService = plantService;
         this.gardenUserService = gardenUserService;
+        this.gardenService = gardenService;
 
     }
     /**

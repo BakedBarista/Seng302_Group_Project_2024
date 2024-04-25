@@ -1,3 +1,5 @@
+INSERT INTO garden_user (fname, lname, email, password, dob) VALUES ('Jane', 'Doe', 'jane.doe@gmail.com', 'password', '01/01/1970');
+
 -- Gardens
 INSERT INTO garden (name, location, size, is_public, owner_id) VALUES ('Enchanted Oasis', 'Mystic Meadow', 1200, true, 1);
 INSERT INTO garden (name, location, size, is_public, owner_id) VALUES ('Zen Harmony', 'Tranquil Terrace', 800, true, 1);
