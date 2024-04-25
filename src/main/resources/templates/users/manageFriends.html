@@ -2,169 +2,157 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
 
 <head>
-	<!-- TODO: Update this title for your page -->
-	<title>Manage Friends</title>
+    <!-- TODO: Update this title for your page -->
+    <title>Manage Friends</title>
 
-	<meta http-equiv="Content-Type" context="text/html; charset=UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Content-Type" context="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
-	<!-- This needs to be here for Bootstrap and general CSS imports -->
-	<!--/*/ <th:block th:insert="~{fragments/general.html :: headerfiles}">
+    <!-- This needs to be here for Bootstrap and general CSS imports -->
+    <!--/*/ <th:block th:insert="~{fragments/general.html :: headerfiles}">
         </th:block> /*/-->
 </head>
 
 <body>
-	<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
 
-	<div class="container">
+<div class="container">
 
-		<!-- Button trigger modal -->
-		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-			Launch demo modal
-		</button>
+    <div class="d-flex">
+        <button id="showSearchFormBtn" class="btn btn-primary">Add Friend</button>
 
-		<!-- Modal -->
-		<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-			aria-hidden="true">
-			<div class="modal-dialog" role="document">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
-					</div>
-					<div class="modal-body">
-						...
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-						<button type="button" class="btn btn-primary">Save changes</button>
-					</div>
-				</div>
-			</div>
-		</div>
+        <form id="searchForm" th:action="@{/users/manageFriends/search}" method="post" class="form-inline d-none">
+            <div class="d-flex">
+                <input type="search" name="searchUser" class="form-control" aria-label="Search" placeholder="Search"/>
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </div>
 
-		<form th:action="@{/users/manageFriends/search}" method="post" class="form-inline d-flex">
-			<input type="search" name="searchUser" class="form-control" aria-label="Search" placeholder="Search" />
-			<button class="btn btn-outline-success" type="submit">Search</button>
-		</form>
-		<div class="card col-sm-6">
-			<ul>
-				<li th:each="frien : ${searchResults}">
-					<span th:text="${frien.fname}"></span>
-					<span th:text=" ${frien.lname}"></span>
-					<form th:action="@{/users/manageFriends/invite}" method="post">
-						<input type="hidden" name="requestedUser" th:value="${frien.id}" class="d-inline" />
-						<button type="submit" class="btn btn-success btn-sm mr-2">Invite as Friend</button>
-					</form>
-				</li>
-			</ul>
-		</div>
+        </form>
+    </div>
 
-		<div class="row">
-			<div class="card col-sm-5">
-				<div class="card-body h-100">
-					<h2>My friends: </h2>
-					<table class="table">
-						<thead>
-							<tr>
-								<th scope="col">Name</th>
-								<th scope="col">Link</th>
-							</tr>
-						</thead>
-						<tbody th:if="${friends.empty}">
-							<tr>
-								<td colspan="2">No friends found.</td>
-							</tr>
-						</tbody>
-						<tbody th:each="frien : ${friends}">
-							<tr>
-								<td>
-									<span th:text="${frien.fname}"> </span>
-									<span th:if="${frien != null}" th:text="${frien.lname}"></span>
-								</td>
-								<td>
-									<a href="http://localhost:8080/gardens">View gardens</a>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-			</div>
+    <ul>
+        <li th:each="frien : ${searchResults}">
+            <span th:text="${frien.fname}"></span>
+            <span th:text=" ${frien.lname}"></span>
+            <form th:action="@{/users/manageFriends/invite}" method="post">
+                <input type="hidden" name="requestedUser" th:value="${frien.id}" class="d-inline"/>
+                <button type="submit" class="btn btn-success btn-sm mr-2">Invite as Friend</button>
+            </form>
+        </li>
+    </ul>
 
-			<div class="col-sm-4">
-				<div class="card mb-1 h-100">
-					<h2>sent requests: </h2>
-					<table class="table">
-						<thead>
-							<tr>
-								<th scope="col">Name</th>
-								<th scope="col">Status</th>
-							</tr>
-						</thead>
-						<tbody th:if="${sentRequests.empty}">
-							<tr>
-								<td colspan="2">No requests sent.</td>
-							</tr>
-						</tbody>
-						<tbody th:each="frien : ${sentRequests}">
-							<tr>
-								<td>
-									<span th:text="${frien.receive_user_id.fname}"> </span>
-									<span th:if="${frien.receive_user_id != null}"
-										th:text="${frien.receive_user_id.lname}"></span>
-								</td>
-								<td th:text="${frien.status}"></td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
+    <div class="row">
+        <div class="card col-sm-5">
+            <div class="card-body h-100">
+                <h2>My friends: </h2>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Link</th>
+                    </tr>
+                    </thead>
+                    <tbody th:if="${friends.empty}">
+                    <tr>
+                        <td colspan="2">No friends found.</td>
+                    </tr>
+                    </tbody>
+                    <tbody th:each="frien : ${friends}">
+                    <tr>
+                        <td>
+                            <span th:text="${frien.fname}"> </span>
+                            <span th:if="${frien != null}" th:text="${frien.lname}"></span>
+                        </td>
+                        <td>
+                            <a href="#">View gardens</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-				<div class="card h-100">
-					<h2>received requests: </h2>
+        <div class="col-sm-4">
+            <div class="card mb-1 h-100">
+                <h2>sent requests: </h2>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Status</th>
+                    </tr>
+                    </thead>
+                    <tbody th:if="${sentRequests.empty}">
+                    <tr>
+                        <td colspan="2">No requests sent.</td>
+                    </tr>
+                    </tbody>
+                    <tbody th:each="frien : ${sentRequests}">
+                    <tr>
+                        <td>
+                            <span th:text="${frien.receive_user_id.fname}"> </span>
+                            <span th:if="${frien.receive_user_id != null}"
+                                  th:text="${frien.receive_user_id.lname}"></span>
+                        </td>
+                        <td th:text="${frien.status}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
 
-					<table class="table">
-						<thead>
-							<tr>
-								<th scope="col">Name</th>
-								<th scope="col"></th>
-							</tr>
-						</thead>
-						<tbody th:if="${receivedRequests.empty}">
-							<tr>
-								<td colspan="2">No friend requests.</td>
-							</tr>
-						</tbody>
+            <div class="card h-100">
+                <h2>received requests: </h2>
 
-						<tbody th:each="frien : ${receivedRequests}">
-							<tr>
-								<td>
-									<span th:text="${frien.sent_user_id.fname}"> </span>
-									<span th:if="${frien.sent_user_id != null}"
-										th:text="${frien.sent_user_id.lname}"></span>
-								</td>
-								<td>
-									<form th:action="@{/users/manageFriends/accept}" method="post" class="d-inline">
-										<button type="submit" name="acceptUser" th:value="${frien.sent_user_id.id}"
-											class="btn btn-success btn-sm mr-2">accept</button>
-									</form>
-									<form th:action="@{/users/manageFriends/decline}" method="post" class="d-inline">
-										<button type="submit" name="declineUser" th:value="${frien.sent_user_id.id}"
-											class="btn btn-success btn-sm mr-2">decline</button>
-									</form>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-			</div>
-		</div>
-	</div>
-	
-	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <!-- Bootstrap JavaScript -->
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col"></th>
+                    </tr>
+                    </thead>
+                    <tbody th:if="${receivedRequests.empty}">
+                    <tr>
+                        <td colspan="2">No friend requests.</td>
+                    </tr>
+                    </tbody>
+
+                    <tbody th:each="frien : ${receivedRequests}">
+                    <tr>
+                        <td>
+                            <span th:text="${frien.sent_user_id.fname}"> </span>
+                            <span th:if="${frien.sent_user_id != null}"
+                                  th:text="${frien.sent_user_id.lname}"></span>
+                        </td>
+                        <td>
+                            <form th:action="@{/users/manageFriends/accept}" method="post" class="d-inline">
+                                <button type="submit" name="acceptUser" th:value="${frien.sent_user_id.id}"
+                                        class="btn btn-success btn-sm mr-2">accept
+                                </button>
+                            </form>
+                            <form th:action="@{/users/manageFriends/decline}" method="post" class="d-inline">
+                                <button type="submit" name="declineUser" th:value="${frien.sent_user_id.id}"
+                                        class="btn btn-success btn-sm mr-2">decline
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('showSearchFormBtn').addEventListener('click', function() {
+            var searchForm = document.getElementById('searchForm');
+            searchForm.classList.toggle('d-none');
+        });
+    });
+</script>
+
+
 </body>
 
 </html>
