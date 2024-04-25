@@ -23,6 +23,9 @@ junit:
 
 sonarqube-check:
   stage: sonarqube
+  variables:
+    GIT_STRATEGY: clone # clone entire repo instead of reusing workspace
+    GIT_DEPTH: 0 # avoid shallow clone to give sonar all the info it needs
   script:
     - ./gradlew sonar
 
