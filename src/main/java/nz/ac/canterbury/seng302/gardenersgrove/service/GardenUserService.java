@@ -104,6 +104,11 @@ public class GardenUserService {
         gardenUserRepository.save(user.get());
     }
 
+    /**
+     * Gets the currently authenticated user
+     *
+     * @return The currently authenticated user
+     */
     public GardenUser getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
