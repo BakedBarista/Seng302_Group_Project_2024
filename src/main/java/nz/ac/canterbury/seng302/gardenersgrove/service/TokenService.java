@@ -27,11 +27,13 @@ public class TokenService {
     private final SecureRandom secureRandom = new SecureRandom();
     private final Base64.Encoder base64Encoder = Base64.getUrlEncoder();
 
-    @Autowired
     private GardenUserRepository userRepository;
-
-    @Autowired
     private Clock clock;
+
+    public TokenService(GardenUserRepository userRepository, Clock clock) {
+        this.userRepository = userRepository;
+        this.clock = clock;
+    }
 
     /**
      * create a random 32-character authentication token and return it
