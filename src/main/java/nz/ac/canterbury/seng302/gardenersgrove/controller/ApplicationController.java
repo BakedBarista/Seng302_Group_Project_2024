@@ -39,9 +39,16 @@ public class ApplicationController {
         logger.info("GET /");
         this.gardenService = new GardenService(gardenRepository);
         this.gardenUserService = new GardenUserService(gardenUserRepository);
-        GardenUser owner = gardenUserService.getCurrentUser();
-        List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
-        model.addAttribute("gardens", gardens);
+        try {
+            GardenUser owner = gardenUserService.getCurrentUser();
+            if(owner.getId() != null) {
+                List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
+                model.addAttribute("gardens", gardens);
+            }
+        }
+        catch (Exception e) {
+        logger.error("Error getting gardens for user");
+        }
         return "home";
     }
 }

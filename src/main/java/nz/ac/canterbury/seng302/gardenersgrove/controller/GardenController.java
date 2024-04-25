@@ -45,9 +45,6 @@ public class GardenController {
 
     /**
      * Gets form to be displayed
-     * @param displayName  garden name to be displayed
-     * @param displayLocation garden location to be displayed
-     * @param displaySize garden size to be displayed
      * @param model representation of name, location and size
      * @return gardenFormTemplate
      */
