@@ -20,12 +20,15 @@ import java.util.List;
  */
 @Controller
 public class ApplicationController {
-    Logger logger = LoggerFactory.getLogger(ApplicationController.class);
+    private static Logger logger = LoggerFactory.getLogger(ApplicationController.class);
+
     private GardenService gardenService;
-    @Autowired
-    private GardenRepository gardenRepository;
-    @Autowired
     private EmailSenderService emailSenderService;
+
+    public ApplicationController(GardenService gardenService, EmailSenderService emailSenderService) {
+        this.gardenService = gardenService;
+        this.emailSenderService = emailSenderService;
+    }
 
     /**
      * Redirects GET default url '/' to '/demo'
@@ -34,7 +37,6 @@ public class ApplicationController {
     @GetMapping("/")
     public String home( Model model) {
         logger.info("GET /");
-        this.gardenService = new GardenService(gardenRepository);
         List<Garden> gardens = gardenService.getAllGardens();
         model.addAttribute("gardens", gardens);
         return "home";
