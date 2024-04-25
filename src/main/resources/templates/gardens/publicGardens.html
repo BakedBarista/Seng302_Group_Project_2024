@@ -14,8 +14,8 @@
 
 <div class="container mt-4">
     <div class="mb-3">
-        <form class="input-group w-100" action="#" th:action="@{/gardens/public/search}" method="post">
-            <input type="text" class="form-control" placeholder="Search Public Gardens"
+        <form class="input-group w-100" action="#" th:action="@{/gardens/public/search}" method="post" id="searchSubmit">
+            <input type="text" class="form-control" placeholder="Search Public Gardens" id="search"
                    aria-label="Search Public Gardens" aria-describedby="button-addon" name="search">
             <div class="input-group-append">
                 <button class="btn btn-outline-secondary" type="submit" id="button-addon">
@@ -52,5 +52,14 @@
 
 <!-- Bootstrap scripts from your fragment -->
 <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
+<script>
+    const searchBox = document.getElementById("search")
+    const form = document.getElementById("searchSubmit")
+    searchBox.addEventListener("keydown", (event) => {
+        if (event.key === 'Enter') {
+            form.submit()
+        }
+    })
+</script>
 </body>
 </html>
