@@ -83,6 +83,10 @@ public class UploadController {
         String directory = "./images/";
         String fileName = "plant" + plantId + "image" + "-" + filename;
         Path filePath = Paths.get(directory + fileName);
+        // Check that we don't write outside of the directory
+        if (!filePath.normalize().startsWith(directory)) {
+            throw new IOException("Invalid file path");
+        }
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
         //Check size
         if (file.getSize() > 10 * 1024 * 1024) { // 10MB limit
@@ -110,6 +114,10 @@ public class UploadController {
         String directory = "./images/";
         String fileName = "plant" + plantId + "image" + "-" + filename;
         Path filePath = Paths.get(directory + fileName);
+        // Check that we don't write outside of the directory
+        if (!filePath.normalize().startsWith(directory)) {
+            throw new IOException("Invalid file path");
+        }
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
         if(optionalPlant.isPresent()){
             Plant plant = optionalPlant.get();
