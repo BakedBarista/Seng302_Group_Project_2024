@@ -39,6 +39,7 @@ public class GardenService {
      */
     public Optional<Garden> getGardenById(long id) {return gardenRepository.findById(id);}
 
+
     public Page<Garden> getPublicGardens(Pageable pageable) {
         return gardenRepository.findByIsPublicTrue(pageable);
     }

@@ -4,6 +4,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
@@ -24,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import java.util.Optional;
-
+import java.util.stream.Collectors;
 
 
 /**
@@ -209,6 +210,13 @@ public class GardenController {
         GardenUser owner = gardenUserService.getCurrentUser();
         List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
         model.addAttribute("gardens", gardens);
+        List<Garden> gardensWithPlants = gardenPage.getContent().stream()
+                .map(garden -> {
+                    List<Plant> plants = plantService.getPlantsByGardenId(garden.getId());
+                    garden.setPlants(plants); // Assuming Garden has a setPlants method
+                    return garden;
+                })
+                .collect(Collectors.toList());
         return "gardens/publicGardens";
     }
 
