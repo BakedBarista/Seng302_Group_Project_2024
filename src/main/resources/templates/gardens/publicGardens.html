@@ -27,6 +27,9 @@
 
     <div th:if="${gardens.empty}">
         No gardens match your search...
+        <a href="#" role="button" onclick="clearSearch()">
+            Reset search
+        </a>
     </div>
     <div th:unless="${gardens.empty}">
         <p class="text-secondary">
@@ -89,5 +92,14 @@
 
 <!-- Bootstrap scripts from your fragment -->
 <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
+<script>
+    function clearSearch() {
+        const input = document.getElementById("searchField");
+        const form = document.getElementById("searchForm");
+
+        input.value = "";
+        form.submit();
+    }
+</script>
 </body>
 </html>
