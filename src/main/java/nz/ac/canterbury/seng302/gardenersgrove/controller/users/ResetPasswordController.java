@@ -1,12 +1,21 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
+import jakarta.validation.Valid;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.LoginDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.ResetPasswordDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.Objects;
 
 @Controller
 public class ResetPasswordController {
@@ -33,9 +42,27 @@ public class ResetPasswordController {
      */
     @PostMapping("/users/reset-password")
     public String resetPasswordConfirmation(
-            @RequestParam(name = "email") String email) {
+            @RequestParam(name = "email") String email,
+            @Valid @ModelAttribute("resetPasswordDTO") ResetPasswordDTO resetPasswordDTO,
+            BindingResult bindingResult,
+            Model model)
+            {
         logger.info("POST /users/reset-password");
+        logger.info("Email entered: {}", email);
 
+        if (Objects.equals(email, "")) {
+            return "users/resetPassword";
+        }
+        for (FieldError errors : bindingResult.getFieldErrors()) {
+            String fieldName = errors.getField();
+            String errorMessage = errors.getDefaultMessage();
+            logger.info("Validation error in field '" + fieldName + "': " + errorMessage);
+        }
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("resetPasswordDTO", resetPasswordDTO);
+            return "users/resetPassword";
+        }
         // TODO: send email with reset password link
 
         return "users/resetPasswordConfirmation";
