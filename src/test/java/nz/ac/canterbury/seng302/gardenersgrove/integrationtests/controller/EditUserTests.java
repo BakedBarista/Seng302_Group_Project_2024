@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.EditUserController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditPasswordDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
@@ -11,7 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class EditUserControllerTest {
@@ -133,8 +134,17 @@ class EditUserControllerTest {
         when(userService.getUserById(userId)).thenReturn(user);
         when(authentication.getPrincipal()).thenReturn(userId);
 
-        controller.submitPassword("P#ssw0rd", "N3wP@ssword", "N3wP@ssword", authentication, model);
+        EditPasswordDTO editPassword = new EditPasswordDTO();
+        editPassword.setOldPassword("P#ssw0rd");
+        editPassword.setNewPassword("N3wP@ssw0rd");
+        editPassword.setConfirmPassword("N3wP@ssw0rd");
 
-        verify(emailSenderService, times(1)).sendEmail(eq(user), eq("Password Changed"), any());
+        BindingResult bindingResult = mock(BindingResult.class);
+        when(bindingResult.hasErrors()).thenReturn(false);
+
+        controller.submitPassword(editPassword, bindingResult, authentication, model);
+
+        assertTrue(user.checkPassword("N3wP@ssw0rd"));
+        verify(emailSenderService).sendEmail(eq(user), eq("Password Changed"), any());
     }
 }
