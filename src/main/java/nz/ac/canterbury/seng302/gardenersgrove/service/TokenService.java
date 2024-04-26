@@ -14,9 +14,9 @@ import java.time.Clock;
 import java.util.Base64;
 
 /**
- * Class to make and deal with authentication tokens
- *
+ * Class to make and deal with authentication tokens*
  * uses some code from https://stackoverflow.com/a/56628391
+ * for createAuthenticationToken method
  */
 @Component
 public class TokenService {
@@ -26,11 +26,13 @@ public class TokenService {
     private final SecureRandom secureRandom = new SecureRandom();
     private final Base64.Encoder base64Encoder = Base64.getUrlEncoder();
 
-    @Autowired
     private GardenUserRepository userRepository;
-
-    @Autowired
     private Clock clock;
+
+    public TokenService(GardenUserRepository userRepository, Clock clock) {
+        this.userRepository = userRepository;
+        this.clock = clock;
+    }
 
     /**
      * create a random 32-character authentication token and return it
@@ -60,10 +62,13 @@ public class TokenService {
         }
 
         logger.info("made new email token {}", token);
-
+        System.out.println(token);
         return token.toString();
     }
 
+    /**
+     *  Scheduled clean up of expired tokens every 60 seconds
+     */
     @Scheduled(fixedRate = 60_000)
     @Transactional
     public void cleanUpTokens() {

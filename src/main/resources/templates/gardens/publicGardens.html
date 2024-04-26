@@ -29,18 +29,23 @@
         No gardens match your search...
     </div>
     <div th:unless="${gardens.empty}">
-        <p class="text-secondary">showing results X to Y of Z</p>
+        <p class="text-secondary">
+            Showing results <span th:text="${gardenPage.number * gardenPage.size + 1}"></span>
+            to <span th:text="${gardenPage.number * gardenPage.size + gardenPage.numberOfElements}"></span>
+            of <span th:text="${gardenPage.totalElements}"></span>
+        </p>
+
         <div class="row">
-            <!-- Garden Items -->
-            <th:block th:each="garden : ${gardens}">
+            <th:block th:each="garden : ${gardenPage.content}">
                 <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                    <!-- The anchor tag wrapping the card. The link should go to the garden's detail page -->
                     <a th:href="@{/gardens/{id}(id=${garden.id})}" class="text-decoration-none text-dark">
                         <div class="card h-100">
                             <img th:src="@{/img/gorila.png}" class="card-img-top" th:alt="${garden.name}">
                             <div class="card-footer">
-                                <h5 class="card-title" th:text="${garden.name}">Garden 1</h5>
-                                <p class="card-text">By Todd Vermeir</p>
+                                <h5 class="card-title" th:text="${garden.name}"></h5>
+                                <p class="card-text" th:text="'Created by: ' + ${garden.owner.fname} + (${garden.owner.lname} != null ? ' ' + ${garden.owner.lname} : '')">
+                                    Created by: John Doe
+                                </p>
                             </div>
                         </div>
                     </a>
@@ -48,6 +53,38 @@
             </th:block>
         </div>
     </div>
+
+    <!-- Pagination Controls -->
+    <nav>
+    <ul class="pagination">
+        <!-- First page link -->
+        <li class="page-item" th:classappend="${gardenPage.isFirst() ? 'disabled' : ''}">
+            <a class="page-link" th:href="@{/gardens/public(page=0, size=${gardenPage.size})}">First</a>
+        </li>
+
+        <!-- Previous page link -->
+        <li class="page-item" th:classappend="${gardenPage.hasPrevious() ? '' : 'disabled'}">
+            <a class="page-link" th:href="@{/gardens/public(page=${gardenPage.number - 1}, size=${gardenPage.size})}">Previous</a>
+        </li>
+
+        <!-- Dynamic page links: showing current page and 2 pages in both directions if they exist -->
+        <li th:each="i : ${#numbers.sequence(gardenPage.number - 2, gardenPage.number + 2)}"
+            th:if="${i >= 0 and i < gardenPage.totalPages}" class="page-item"
+            th:classappend="${i == gardenPage.number ? 'active' : ''}">
+            <a class="page-link" th:href="@{/gardens/public(page=${i}, size=${gardenPage.size})}" th:text="${i + 1}"></a>
+        </li>
+
+        <!-- Next page link -->
+        <li class="page-item" th:classappend="${gardenPage.hasNext() ? '' : 'disabled'}">
+            <a class="page-link" th:href="@{/gardens/public(page=${gardenPage.number + 1}, size=${gardenPage.size})}">Next</a>
+        </li>
+
+        <!-- Last page link -->
+        <li class="page-item" th:classappend="${gardenPage.isLast() ? 'disabled' : ''}">
+            <a class="page-link" th:href="@{/gardens/public(page=${gardenPage.totalPages - 1}, size=${gardenPage.size})}">Last</a>
+        </li>
+    </ul>
+    </nav>
 </div>
 
 <!-- Bootstrap scripts from your fragment -->

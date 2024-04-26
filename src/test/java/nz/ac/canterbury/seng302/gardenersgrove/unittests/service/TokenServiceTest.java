@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
 
 public class TokenServiceTest {
-    private TokenService tokenService = new TokenService();
+    private TokenService tokenService = new TokenService(null, null);
 
     @Test
     public void testCreateAuthenticationToken_Is32Characters_OnlyContainsBase64Characters() {

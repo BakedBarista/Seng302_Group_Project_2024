@@ -37,6 +37,15 @@ public class Garden {
     @Column()
     private String size;
 
+    @Column(nullable = false)
+    private Boolean isPublic = false;
+
+
+
+    @ManyToOne
+    @JoinColumn(name = "owner_id", nullable = false)
+    private GardenUser owner;
+
     public Garden() {}
 
     /**
@@ -50,6 +59,18 @@ public class Garden {
         this.location = gardenLocation;
         this.size = gardenSize;
         this.description = description;
+    }
+    public Boolean getIsPublic() {
+        return isPublic;
+    }
+    public void setPublic(Boolean isPublic) {
+        this.isPublic = isPublic;
+    }
+    public void setOwner(GardenUser owner) {
+        this.owner = owner;
+    }
+    public GardenUser getOwner() {
+        return owner;
     }
 
     public Long getId() {
