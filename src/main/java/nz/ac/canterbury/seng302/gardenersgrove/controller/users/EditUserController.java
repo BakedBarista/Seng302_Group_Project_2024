@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,12 +15,15 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.validation.Valid;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditPasswordDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 
 /**
@@ -32,16 +34,12 @@ public class EditUserController {
 
     private Logger logger = LoggerFactory.getLogger(EditUserController.class);
 
-    @Autowired
     private GardenUserService userService;
+    private EmailSenderService emailSenderService;
 
-    /**
-     * Setter method for userServer
-     *
-     * @param userService The GardenUserService to be set
-     */
-    public void setUserService(GardenUserService userService) {
+    public EditUserController(GardenUserService userService, EmailSenderService emailSenderService) {
         this.userService = userService;
+        this.emailSenderService = emailSenderService;
     }
 
     /**
@@ -139,10 +137,10 @@ public class EditUserController {
     public String submitPassword(
             @Valid @ModelAttribute("editPasswordDTO") EditPasswordDTO editPasswordDTO,
             BindingResult bindingResult,
-            Model model) {
+            Authentication authentication, Model model) {
         logger.info("POST /users/edit/password");
 
-        long id = (long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        long id = (long) authentication.getPrincipal();
 
         GardenUser user = userService.getUserById(id);
 
@@ -161,11 +159,13 @@ public class EditUserController {
         if (bindingResult.hasErrors()) {
             logger.error("Error in password change form: {}", bindingResult.getAllErrors());
             model.addAttribute("editPasswordDTO", editPasswordDTO);
+
             return "users/editPassword";
         }
 
         user.setPassword(newPassword);
         userService.addUser(user);
+        emailSenderService.sendEmail(user, "Password Changed", "Your password has been updated");
         return "redirect:/users/user";
 
     }
