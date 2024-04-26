@@ -3,70 +3,166 @@
 <head>
     <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
     <title>Garden Details</title>
-    <link th:href="@{/css/navbar.css}" rel="stylesheet" />
-    <link th:href="@{/css/styles.css}" rel="stylesheet" />
+    <link th:href="@{/css/navbar.css}" rel="stylesheet"/>
+    <link th:href="@{/css/styles.css}" rel="stylesheet"/>
 </head>
 <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
 
 <body>
 <div th:replace="~{fragments/navbar :: navbar}"></div>
-<div>
-    <h2 th:text="${garden.name}">Garden Name</h2>
-<!--    <p><strong>ID: </strong><span th:text="${garden.id}"></span></p>-->
-    <p><strong>Location: </strong><span th:text="${garden.location}"></span></p>
-    <p><strong>Size: </strong><span th:text="${garden.size}"></span> m&sup2;</p>
-    <p><strong>Description: </strong><span th:text="${garden.description}"></span></p>
-    <form th:action="@{/gardens/{id}(id=${garden.id})}" method="post">
-        <p>
-            <strong>Set Public:</strong>
-            <input type="checkbox" class="form-check-input" id="isPublic" name="isPublic" th:checked="${garden.isPublic}" onchange="this.form.submit()"/>
-        </p>
-    </form>
-
-
-
+<main>
+    <h1>GARDEN NAME</h1>
     <div>
-        <a class="button-link" th:href="@{/gardens/{id}/edit(id=${garden.id})}"><button>Edit Garden</button></a>
-        <a class="button-link" th:href="@{/gardens/{id}/add-plant(id=${garden.id})}"><button>Add Plant</button></a>
-        <!--        <button><a th:href="@{/gardens}">Return to Gardens</a></button>-->
-    </div>
-
-
-        <h3>Plants:</h3>
-        <div class="scrolling-table">
-            <table>
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>Name</th>
-                        <th>Count</th>
-                        <th>Description</th>
-                        <th>Planted Date</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:if="${plants.empty}">
-                        <td colspan="3"> Please add a plant first</td>
-                    </tr>
-                    <tr th:each="plant : ${plants}">
-                        <td>
-                            <div class="image-container">
-                                <img th:src="@{${plant.plantImagePath}}" />
-                                <img th:unless="${plant.plantImagePath}" src="/default.png" alt="Default Plant Image" />
-                                <a class="add-image-button" th:href="@{/uploadImage(garden_Id=${garden.id}, plant_Id=${plant.id})}">+</a>
-                            </div>
-                        </td>
-                        <td><span th:text="${plant.name}">Name</span></td>
-                        <td><span th:text="${plant.count}">Count</span></td>
-                        <td><span th:text="${plant.description}">Description</span></td>
-                        <td><span th:text="${plant.plantedDate}">Planted Date</span></td>
-                        <td><a class="button-link" th:href="@{/gardens/{gardenId}/plants/{plantId}/edit(gardenId=${garden.id}, plantId=${plant.id})}"><button>Edit</button></a></td>
-                    </tr>
-                </tbody>
-            </table>
+        <div>
+            <p>Description: garden description here</p>
+        </div>
+        <div>
+            <p>Size: 1200 m2</p>
+            <p>Location: Christchurch, NZ</p>
         </div>
     </div>
-    <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
-    </body>
+    <div>
+        <h2>Weather:</h2>
+<!--        3 weathers cards here-->
+        <div class="d-flex flex-lg-row flex-column justify-content-center">
+            <div class="card weather-card m-1 " style="width: 400px;">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div class="weather-icon">
+                        <img th:src="@{/icon/sunny.svg}" alt="Sunny" width="40" height="40"> <!-- Replace with your sun icon -->
+                        <p>Sunny</p>
+                    </div>
+                    <div class="weather-date">
+                        <h5>Today</h5>
+                        <h6>26 Apr</h6>
+                    </div>
+                    <div class="temperature">
+                        <img th:src="@{/icon/max-temp.svg}" alt="Max:" width="20" height="20"> <!-- Replace with your sun icon -->
+                        <span class="temp-high">18.0°C</span>
+                    </div>
+                    <div class="temperature-low">
+                        <img th:src="@{/icon/min-temp.svg}" alt="Min:" width="20" height="20"> <!-- Replace with your sun icon -->
+                        <span>2.0°C</span>
+                    </div>
+                    <div class="humidity">
+                        <img th:src="@{/icon/humidity.svg}" alt="Humidity:" width="20" height="20"> <!-- Replace with your sun icon -->
+                        <span>88%</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card weather-card m-1" style="width: 400px;">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div class="weather-icon">
+                        <img th:src="@{/icon/sunny.svg}" alt="Sunny" width="40" height="40"> <!-- Replace with your sun icon -->
+                        <p>Sunny</p>
+                    </div>
+                    <div class="weather-date">
+                        <h5>Today</h5>
+                        <h6>26 Apr</h6>
+                    </div>
+                    <div class="temperature">
+                        <img th:src="@{/icon/max-temp.svg}" alt="Max:" width="20" height="20"> <!-- Replace with your sun icon -->
+                        <span class="temp-high">18.0°C</span>
+                    </div>
+                    <div class="temperature-low">
+                        <img th:src="@{/icon/min-temp.svg}" alt="Min:" width="20" height="20"> <!-- Replace with your sun icon -->
+                        <span>2.0°C</span>
+                    </div>
+                    <div class="humidity">
+                        <img th:src="@{/icon/humidity.svg}" alt="Humidity:" width="20" height="20"> <!-- Replace with your sun icon -->
+                        <span>88%</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card weather-card m-1" style="width: 400px;">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div class="weather-icon">
+                        <img th:src="@{/icon/sunny.svg}" alt="Sunny" width="40" height="40"> <!-- Replace with your sun icon -->
+                        <p>Sunny</p>
+                    </div>
+                    <div class="weather-date">
+                        <h5>Today</h5>
+                        <h6>26 Apr</h6>
+                    </div>
+                    <div class="temperature">
+                        <img th:src="@{/icon/max-temp.svg}" alt="Max:" width="20" height="20"> <!-- Replace with your sun icon -->
+                        <span class="temp-high">18.0°C</span>
+                    </div>
+                    <div class="temperature-low">
+                        <img th:src="@{/icon/min-temp.svg}" alt="Min:" width="20" height="20"> <!-- Replace with your sun icon -->
+                        <span>2.0°C</span>
+                    </div>
+                    <div class="humidity">
+                        <img th:src="@{/icon/humidity.svg}" alt="Humidity:" width="20" height="20"> <!-- Replace with your sun icon -->
+                        <span>88%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+            weather card
+    </div>
+    <div>
+        <h2>Plants: </h2>
+        Plants here...
+    </div>
+</main>
+
+
+<!--<div>-->
+<!--    <h2 th:text="${garden.name}">Garden Name</h2>-->
+<!--&lt;!&ndash;    <p><strong>ID: </strong><span th:text="${garden.id}"></span></p>&ndash;&gt;-->
+<!--    <p><strong>Location: </strong><span th:text="${garden.location}"></span></p>-->
+<!--    <p><strong>Size: </strong><span th:text="${garden.size}"></span> m&sup2;</p>-->
+<!--    <p><strong>Description: </strong><span th:text="${garden.description}"></span></p>-->
+<!--    <form th:action="@{/gardens/{id}(id=${garden.id})}" method="post">-->
+<!--        <p>-->
+<!--            <strong>Set Public:</strong>-->
+<!--            <input type="checkbox" class="form-check-input" id="isPublic" name="isPublic" th:checked="${garden.isPublic}" onchange="this.form.submit()"/>-->
+<!--        </p>-->
+<!--    </form>-->
+
+
+<!--    <div>-->
+<!--        <a class="button-link" th:href="@{/gardens/{id}/edit(id=${garden.id})}"><button>Edit Garden</button></a>-->
+<!--        <a class="button-link" th:href="@{/gardens/{id}/add-plant(id=${garden.id})}"><button>Add Plant</button></a>-->
+<!--        &lt;!&ndash;        <button><a th:href="@{/gardens}">Return to Gardens</a></button>&ndash;&gt;-->
+<!--    </div>-->
+
+
+<!--        <h3>Plants:</h3>-->
+<!--        <div class="scrolling-table">-->
+<!--            <table>-->
+<!--                <thead>-->
+<!--                    <tr>-->
+<!--                        <th></th>-->
+<!--                        <th>Name</th>-->
+<!--                        <th>Count</th>-->
+<!--                        <th>Description</th>-->
+<!--                        <th>Planted Date</th>-->
+<!--                        <th></th>-->
+<!--                    </tr>-->
+<!--                </thead>-->
+<!--                <tbody>-->
+<!--                    <tr th:if="${plants.empty}">-->
+<!--                        <td colspan="3"> Please add a plant first</td>-->
+<!--                    </tr>-->
+<!--                    <tr th:each="plant : ${plants}">-->
+<!--                        <td>-->
+<!--                            <div class="image-container">-->
+<!--                                <img th:src="@{${plant.plantImagePath}}" />-->
+<!--                                <img th:unless="${plant.plantImagePath}" src="/default.png" alt="Default Plant Image" />-->
+<!--                                <a class="add-image-button" th:href="@{/uploadImage(garden_Id=${garden.id}, plant_Id=${plant.id})}">+</a>-->
+<!--                            </div>-->
+<!--                        </td>-->
+<!--                        <td><span th:text="${plant.name}">Name</span></td>-->
+<!--                        <td><span th:text="${plant.count}">Count</span></td>-->
+<!--                        <td><span th:text="${plant.description}">Description</span></td>-->
+<!--                        <td><span th:text="${plant.plantedDate}">Planted Date</span></td>-->
+<!--                        <td><a class="button-link" th:href="@{/gardens/{gardenId}/plants/{plantId}/edit(gardenId=${garden.id}, plantId=${plant.id})}"><button>Edit</button></a></td>-->
+<!--                    </tr>-->
+<!--                </tbody>-->
+<!--            </table>-->
+<!--        </div>-->
+<!--    </div>-->
+<th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
+</body>
 </html>
