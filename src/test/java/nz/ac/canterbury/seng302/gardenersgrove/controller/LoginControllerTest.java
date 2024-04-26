@@ -3,12 +3,16 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.LoginController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.LoginDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+
+import org.apache.commons.logging.Log;
 import org.junit.jupiter.api.Assertions;
 import org.mockito.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -59,7 +63,12 @@ public class LoginControllerTest {
         Mockito.doReturn(id).when(user).getId();
         Mockito.doReturn(user).when(userService).getUserByEmailAndPassword(email, password);
 
-        String resource = loginController.authenticateLogin(email, password, "", model, httpServletRequest);
+        LoginDTO loginDTO = new LoginDTO();
+        loginDTO.setEmail(email);
+        loginDTO.setPassword(password);
+        BindingResult bindingResult = Mockito.mock(BindingResult.class);
+        Mockito.when(bindingResult.hasErrors()).thenReturn(false);
+        String resource = loginController.authenticateLogin(loginDTO, bindingResult, model, httpServletRequest);
 
         Assertions.assertEquals(expectedResource, resource);
     }
@@ -70,7 +79,12 @@ public class LoginControllerTest {
 
         Mockito.doReturn(user).when(userService).getUserByEmailAndPassword(email, password);
 
-        String resource = loginController.authenticateLogin(email, password, "", model, httpServletRequest);
+        LoginDTO loginDTO = new LoginDTO();
+        loginDTO.setEmail(email);
+        loginDTO.setPassword(password);
+        BindingResult bindingResult = Mockito.mock(BindingResult.class);
+        Mockito.when(bindingResult.hasErrors()).thenReturn(false);
+        String resource = loginController.authenticateLogin(loginDTO, bindingResult, model, httpServletRequest);
 
         Assertions.assertEquals(expectedResource, resource);
     }

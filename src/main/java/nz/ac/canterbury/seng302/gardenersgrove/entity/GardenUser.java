@@ -3,11 +3,12 @@ package nz.ac.canterbury.seng302.gardenersgrove.entity;
 import java.time.Instant;
 import java.util.List;
 
+import jakarta.persistence.*;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import jakarta.persistence.*;
 
 /**
  * Entity class reflecting an entry of fname, lname, email, password and date of birth(DOB)
@@ -27,9 +28,10 @@ public class GardenUser {
 
     @Column(nullable = false, unique = true)
     private String email;
-
+    
     @Column(nullable = false)
     private String password;
+
 
     @Column(nullable = true)
     private String DOB;
