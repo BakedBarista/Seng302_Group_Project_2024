@@ -28,7 +28,6 @@ public class FriendService {
     public List<GardenUser> getAllFriends(Long user) { 
         List<Friends> friendsPairList = friendsRepository.getAllFriends(user);
         List<GardenUser> friendsList = new ArrayList<>();
-        
         for (Friends friend : friendsPairList) {
             if (friend.getUser1().getId().equals(user)) {
                 friendsList.add(friend.getUser2());
