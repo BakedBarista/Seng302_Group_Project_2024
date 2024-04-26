@@ -37,33 +37,101 @@ public class GardenServiceIntegrationTests {
 
     private PlantService plantService;
 
+    private Garden garden;
+
+    private Plant plant;
+
     @BeforeEach
     public void setUp() {
         gardenUserService = new GardenUserService(gardenUserRepository);
         gardenService = new GardenService(gardenRepository);
         plantService = new PlantService(plantRepository, gardenRepository);
+
+        GardenUser gardenUser = new GardenUser("John", "Doe", "john.doe@gmail.com", "password", "01/01/2000");
+        gardenUserService.addUser(gardenUser);
+
+        garden = new Garden("Garden Name", "Garden Location", "100", "Garden Description");
+        garden.setPublic(true);
+        garden.setOwner(gardenUser);
+        gardenService.addGarden(garden);
+
+        plant = new Plant("Plant Name", "1", "Plant Description", "02/01/2000");
+        plantService.addPlant(plant, garden.getId());
     }
 
     @Test
     public void testWhenISearchGardenName_AndThereIsAGardenWithGardenName_ReturnListWithGarden() {
-        GardenUser gardenUser = new GardenUser("John", "Doe", "john.doe@gmail.com", "password", "01/01/2000");
-        gardenUserService.addUser(gardenUser);
-
-        Garden garden = new Garden("Garden Name", "Garden Location", "100", "Garden Description");
-        garden.setOwner(gardenUser);
-
-        Plant plant = new Plant();
-
-        gardenService.addGarden(garden);
-//        plantService.addPlant(plant, 0L);
-
         String search = "Garden Name";
-
         List<Garden> gardens = gardenService.findAllThatContainQuery(search);
-        for (Garden iterateGarden : gardens) {
-            System.out.println(iterateGarden);
-        }
 
         Assertions.assertTrue(gardens.contains(garden));
+    }
+
+    @Test
+    public void testWhenISearchPlantName_AndThereIsAGardenWithAPlantWithPlantName_ReturnListWithGarden() {
+        String search = "Plant Name";
+        List<Garden> gardens = gardenService.findAllThatContainQuery(search);
+
+        Assertions.assertTrue(gardens.contains(garden));
+    }
+
+    @Test
+    public void testWhenISearchGardenNameFullCaps_AndThereIsAGardenWithGardenName_ReturnListWithGarden() {
+        String search = "GARDEN NAME";
+        List<Garden> gardens = gardenService.findAllThatContainQuery(search);
+
+        Assertions.assertTrue(gardens.contains(garden));
+    }
+
+    @Test
+    public void testWhenISearchPlantNameFullCaps_AndThereIsAGardenWithAPlantWithPlantName_ReturnListWithGarden() {
+        String search = "PLANT NAME";
+        List<Garden> gardens = gardenService.findAllThatContainQuery(search);
+
+        Assertions.assertTrue(gardens.contains(garden));
+    }
+
+    @Test
+    public void testWhenISearchGardenNameSubstring_AndThereIsAGardenWithGardenName_ReturnListWithGarden() {
+        String search = "Garden Na";
+        List<Garden> gardens = gardenService.findAllThatContainQuery(search);
+
+        Assertions.assertTrue(gardens.contains(garden));
+    }
+
+    @Test
+    public void testWhenISearchPlantNameSubstring_AndThereIsAGardenWithPlantWithPlantName_ReturnListWithGarden() {
+        String search = "Plant Na";
+        List<Garden> gardens = gardenService.findAllThatContainQuery(search);
+
+        Assertions.assertTrue(gardens.contains(garden));
+    }
+
+    @Test
+    public void testWhenISearchARandomString_ThatIsNotASubstringOfAnyGardenNorPlant_ReturnAnEmptyList() {
+        String search = "dfiuhgfidufhghughufkcvhjbkvcjhbhjvcbjhfhjksdfhjgksdhjkgdfsgdhfghudsgdfuhigdg";
+        List<Garden> gardens = gardenService.findAllThatContainQuery(search);
+
+        Assertions.assertTrue(gardens.isEmpty());
+    }
+
+    @Test
+    public void testWhenISearchGardenName_AndThereIsAPrivateGardenWithGardenName_ReturnListWithoutGarden() {
+        garden.setPublic(false);
+
+        String search = "Garden Name";
+        List<Garden> gardens = gardenService.findAllThatContainQuery(search);
+
+        Assertions.assertFalse(gardens.contains(garden));
+    }
+
+    @Test
+    public void testWhenISearchPlantName_AndThereIsAPrivateGardenWithAPlantWithPlantName_ReturnListWithoutGarden() {
+        garden.setPublic(false);
+
+        String search = "Plant Name";
+        List<Garden> gardens = gardenService.findAllThatContainQuery(search);
+
+        Assertions.assertFalse(gardens.contains(garden));
     }
 }

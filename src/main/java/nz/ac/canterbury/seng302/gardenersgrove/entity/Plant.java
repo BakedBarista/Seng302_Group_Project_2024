@@ -31,7 +31,6 @@ public class Plant {
     @Column(nullable = false, length = 512)
     private String description;
 
-
     @Column()
     private String plantedDate;
 
