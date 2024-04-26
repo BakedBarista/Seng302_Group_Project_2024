@@ -63,7 +63,15 @@ public class RegisterControllerTest {
 
         registerController.addEmailTokenAndTimeToUser(user.getId());
 
-        Mockito.verify(emailSenderService).sendEmail(Mockito.any(GardenUser.class), Mockito.eq("Welcome to Gardener's Grove"),
-                Mockito.any());
+        user = gardenUserService.getUserById(user.getId());
+        Mockito.verify(emailSenderService).sendEmail(
+                Mockito.assertArg((GardenUser actualUser) -> {
+                    Assertions.assertEquals(user.getId(), actualUser.getId());
+                }),
+                Mockito.eq("Welcome to Gardener's Grove"),
+                Mockito.assertArg((message) -> {
+                    String token = user.getEmailValidationToken();
+                    Assertions.assertTrue(message.contains(token));
+                }));
     }
 }
