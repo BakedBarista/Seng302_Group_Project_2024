@@ -36,6 +36,13 @@ public class GardenService {
         return gardenRepository.findAllThatContainQuery(query);
     }
 
+    /**
+     * Get a page for pagination of user gardens that meet the given query string
+     * (e.g. garden name or plant in garden name is a substring of the query)
+     * @param query
+     * @param pageable
+     * @return page to display
+     */
     public Page<Garden> findPageThatContainsQuery(String query, Pageable pageable) {
         return gardenRepository.findPageThatContainsQuery(query, pageable);
     }
@@ -57,7 +64,6 @@ public class GardenService {
     public Page<Garden> getPublicGardens(Pageable pageable) {
         return gardenRepository.findByIsPublicTrue(pageable);
     }
-
 
     public List<Garden> getGardensByOwnerId(Long ownerId) {
         return gardenRepository.findByOwnerId(ownerId);

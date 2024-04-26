@@ -23,9 +23,9 @@ public interface GardenRepository extends CrudRepository<Garden, Long> {
 
     List<Garden> findByOwnerId(Long owner_id);
 
-    @Query("SELECT DISTINCT g FROM Plant p JOIN p.garden g WHERE g.name ILIKE %?1% OR p.name ILIKE %?1% AND g.isPublic")
+    @Query("SELECT DISTINCT g FROM Plant p JOIN p.garden g WHERE (g.name ILIKE %?1% OR p.name ILIKE %?1%) AND g.isPublic")
     List<Garden> findAllThatContainQuery(String query);
 
-    @Query("SELECT DISTINCT g FROM Plant p JOIN p.garden g WHERE g.name ILIKE %?1% OR p.name ILIKE %?1% AND g.isPublic")
+    @Query("SELECT DISTINCT g FROM Plant p JOIN p.garden g WHERE (g.name ILIKE %?1% OR p.name ILIKE %?1%) AND g.isPublic")
     Page<Garden> findPageThatContainsQuery(String query, Pageable pageable);
 }
