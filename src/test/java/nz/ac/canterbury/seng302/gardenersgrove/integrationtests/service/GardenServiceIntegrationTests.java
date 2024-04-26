@@ -134,4 +134,12 @@ public class GardenServiceIntegrationTests {
 
         Assertions.assertFalse(gardens.contains(garden));
     }
+
+    @Test
+    public void testWhenISearchEmptyString_ReturnAllPublicGardens() {
+        List<Garden> blankQueryGardenList = gardenService.findAllThatContainQuery("");
+        List<Garden> allGardens = gardenService.getAllGardens();
+
+        Assertions.assertEquals(allGardens, blankQueryGardenList);
+    }
 }
