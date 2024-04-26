@@ -19,6 +19,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.RegisterDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
 
@@ -31,11 +32,23 @@ public class RegisterController {
 
     private Logger logger = LoggerFactory.getLogger(RegisterController.class);
 
-    @Autowired
     private GardenUserService userService;
-
-    @Autowired
     private TokenService tokenService;
+    private EmailSenderService emailSenderService;
+
+    /**
+     * Constructs a new RegisterController
+     * 
+     * @param userService        The GardenUserService to use
+     * @param tokenService       The TokenService to use
+     * @param emailSenderService The EmailSenderService to use
+     */
+    public RegisterController(GardenUserService userService, TokenService tokenService,
+            EmailSenderService emailSenderService) {
+        this.userService = userService;
+        this.tokenService = tokenService;
+        this.emailSenderService = emailSenderService;
+    }
 
     /**
      * Shows the user the registration form
@@ -49,13 +62,12 @@ public class RegisterController {
         return "users/registerTemplate";
     }
 
-
     /**
      * Handles the submission of user registration form
      *
-     * @param model Thymeleaf model
+     * @param model   Thymeleaf model
      * @param request HttpServletRequest object
-     * @return  view name for the user registration template or a redirect URL
+     * @return view name for the user registration template or a redirect URL
      */
     @PostMapping("/users/register")
     public String submitRegister(
@@ -95,7 +107,7 @@ public class RegisterController {
         }
 
         addEmailTokenAndTimeToUser(user.getId());
-        return "redirect:/users/user/"+user.getId()+"/authenticateEmail";
+        return "redirect:/users/user/" + user.getId() + "/authenticateEmail";
     }
 
     /**
@@ -116,6 +128,7 @@ public class RegisterController {
 
     /**
      * adds a random token and this time instance to a given user in the DB
+     * 
      * @param userId
      * @return
      */
@@ -127,6 +140,10 @@ public class RegisterController {
         Instant time = Instant.now().plus(10, ChronoUnit.MINUTES);
         user.setEmailValidationToken(token);
         user.setEmailValidationTokenExpiryInstant(time);
+
+        emailSenderService.sendEmail(user, "Welcome to Gardener's Grove",
+                "Your account has been created!\n\n"
+                        + "If this was not you, you can ignore this message and the account will be deleted after 10 minutes.");
 
         userService.addUser(user);
     }
