@@ -20,5 +20,5 @@ public interface GardenRepository extends CrudRepository<Garden, Long> {
 
     Page<Garden> findByIsPublicTrue(Pageable pageable);
 
-
+    List<Garden> findByOwnerId(Long owner_id);
 }

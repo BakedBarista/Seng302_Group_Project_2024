@@ -82,12 +82,25 @@ public class GardenServiceTest {
         Page<Garden> expectedPage = new PageImpl<>(gardens, pageable, gardens.size());
         when(gardenServiceMock.getPublicGardens(pageable)).thenReturn(expectedPage);
 
-        // Assuming the controller calls the method like this
         Page<Garden> result = gardenServiceMock.getPublicGardens(pageable);
 
         assertNotNull(result);
-        assertEquals(2, result.getContent().size()); // Check if the content size is as expected
+        assertEquals(2, result.getContent().size());
         verify(gardenServiceMock).getPublicGardens(pageable);
     }
 
+    public void getGardensByOwnerId_ReturnsGardens() {
+        List<Garden> mockGardens = Arrays.asList(
+                new Garden("Garden 1", "Location 1", "100", "Small"),
+                new Garden("Garden 2", "Location 2", "200", "Big")
+        );
+        Mockito.when(gardenRepository.findByOwnerId(1L)).thenReturn(mockGardens);
+
+        List<Garden> returnedGardens = gardenService.getGardensByOwnerId(1L);
+
+        Assertions.assertEquals(2, returnedGardens.size());
+        Assertions.assertEquals(mockGardens, returnedGardens);
     }
+        
+
+}

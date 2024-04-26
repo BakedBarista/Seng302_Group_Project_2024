@@ -1,14 +1,16 @@
+INSERT INTO garden_user (fname, lname, email, password, dob) VALUES ('Jane', 'Doe', 'jane.doe@gmail.com', 'password', '01/01/1970');
+
 -- Gardens
-INSERT INTO garden (name, location, size, is_public) VALUES ('Enchanted Oasis', 'Mystic Meadow', 1200, true);
-INSERT INTO garden (name, location, size, is_public) VALUES ('Zen Harmony', 'Tranquil Terrace', 800, true);
-INSERT INTO garden (name, location, size, is_public) VALUES ('Eternal Eden', 'Serene Sanctuary', 1500, true);
-INSERT INTO garden (name, location, size, is_public) VALUES ('Whimsical Wonderland', 'Dreamy Dell', 1000, true);
-INSERT INTO garden (name, location, size, is_public) VALUES ('Secret Garden', 'Hidden Haven', 900, true);
-INSERT INTO garden (name, location, size, is_public) VALUES ('Celestial Courtyard', 'Stellar Space', 1300, true);
-INSERT INTO garden (name, location, size, is_public) VALUES ('Lush Utopia', 'Verdant Vale', 1100, true);
-INSERT INTO garden (name, location, size, is_public) VALUES ('Sapphire Retreat', 'Azure Arbor', 950, true);
-INSERT INTO garden (name, location, size, is_public) VALUES ('Majestic Mirage', 'Ephemeral Enclave', 1200, true);
-INSERT INTO garden (name, location, size, is_public) VALUES ('Moonlit Meadow', 'Silver Shores', 850, true);
+INSERT INTO garden (name, location, size, is_public, owner_id) VALUES ('Enchanted Oasis', 'Mystic Meadow', 1200, true, 1);
+INSERT INTO garden (name, location, size, is_public, owner_id) VALUES ('Zen Harmony', 'Tranquil Terrace', 800, true, 1);
+INSERT INTO garden (name, location, size, is_public, owner_id) VALUES ('Eternal Eden', 'Serene Sanctuary', 1500, true, 1);
+INSERT INTO garden (name, location, size, is_public, owner_id) VALUES ('Whimsical Wonderland', 'Dreamy Dell', 1000, true, 1);
+INSERT INTO garden (name, location, size, is_public, owner_id) VALUES ('Secret Garden', 'Hidden Haven', 900, true, 1);
+INSERT INTO garden (name, location, size, is_public, owner_id) VALUES ('Celestial Courtyard', 'Stellar Space', 1300, true, 1);
+INSERT INTO garden (name, location, size, is_public, owner_id) VALUES ('Lush Utopia', 'Verdant Vale', 1100, true, 1);
+INSERT INTO garden (name, location, size, is_public, owner_id) VALUES ('Sapphire Retreat', 'Azure Arbor', 950, true, 1);
+INSERT INTO garden (name, location, size, is_public, owner_id) VALUES ('Majestic Mirage', 'Ephemeral Enclave', 1200, true, 1);
+INSERT INTO garden (name, location, size, is_public, owner_id) VALUES ('Moonlit Meadow', 'Silver Shores', 850, true, 1);
 
 -- Garden 1
 INSERT INTO plant (name, count, description, planted_date, garden_id, plant_image_path) VALUES

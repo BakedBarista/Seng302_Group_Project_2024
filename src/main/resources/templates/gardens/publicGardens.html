@@ -36,7 +36,9 @@
                         <img th:src="@{/img/gorila.png}" class="card-img-top" th:alt="${garden.name}">
                         <div class="card-footer">
                             <h5 class="card-title" th:text="${garden.name}"></h5>
-                            <p class="card-text">By Todd Vermeir</p>
+                            <p class="card-text" th:text="'Created by: ' + ${garden.owner.fname} + (${garden.owner.lname} != null ? ' ' + ${garden.owner.lname} : '')">
+                                Created by: John Doe
+                            </p>
                         </div>
                     </div>
                 </a>
