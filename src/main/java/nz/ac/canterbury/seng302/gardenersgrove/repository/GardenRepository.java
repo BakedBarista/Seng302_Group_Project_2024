@@ -1,6 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.repository;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,5 +18,7 @@ public interface GardenRepository extends CrudRepository<Garden, Long> {
     Optional<Garden> findById(long id);
     List<Garden> findAll();
 
-    List<Garden> findByIsPublicTrue();
+    Page<Garden> findByIsPublicTrue(Pageable pageable);
+
+    List<Garden> findByOwnerId(Long owner_id);
 }
