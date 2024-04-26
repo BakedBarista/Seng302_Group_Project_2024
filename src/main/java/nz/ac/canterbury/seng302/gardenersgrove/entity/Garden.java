@@ -38,13 +38,15 @@ public class Garden {
     @Pattern(regexp = "^(|([a-zA-Z0-9 ,.'-]+))$", message = "Please enter a valid suburb")
     @Column
     private String suburb;
+
     @NotBlank(message = "City and Country are required")
-    @Pattern(regexp = "^[\\p{L}0-9 .'-]+$", message = "Please enter a valid City name")
-    @Column
+    @Pattern(regexp = "^$|^[\\p{L}0-9 .,'-]+$", message = "Please enter a valid City name")
+    @Column(nullable = false)
     private String city;
+
     @NotBlank(message = "City and Country are required")
-    @Pattern(regexp = "^[\\p{L}0-9 .'-]+$", message = "Please enter a valid country name")
-    @Column
+    @Pattern(regexp = "^$|^[\\p{L}0-9 .,'-]+$", message = "Please enter a valid country name")
+    @Column(nullable = false)
     private String country;
 
     @Pattern(regexp = "^(|([0-9]+))$", message = "Please enter a valid post code")
