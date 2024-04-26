@@ -31,7 +31,8 @@ public class LocationAPIController {
 
     /**
      * Return result from the location API request
-     * @param currentValue
+     *
+     * @param currentValue The value where the location data is requested
      * @return location information in json format
      */
     @GetMapping("/get_location")

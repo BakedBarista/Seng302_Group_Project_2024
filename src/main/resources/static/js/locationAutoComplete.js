@@ -1,3 +1,10 @@
+/**
+ * Initializes an address autocomplete feature on the specified container element.
+ *
+ * @param {HTMLElement} containerElement - The container element where the autocomplete feature is added.
+ * @param {Function} callback - The callback function to be called when an address is selected.
+ * @param {Object} options - Additional options for customising the autocomplete feature (currently unused).
+ */
 function addressAutocomplete(containerElement, callback, options) {
 
     const MIN_ADDRESS_LENGTH = 3;
@@ -129,6 +136,9 @@ function addressAutocomplete(containerElement, callback, options) {
 
     });
 
+    /**
+     *
+     */
     /* Add support for keyboard navigation */
     inputElement.addEventListener("keydown", function(e) {
         var autocompleteItemsElement = containerElement.querySelector(".autocomplete-items");
@@ -164,6 +174,12 @@ function addressAutocomplete(containerElement, callback, options) {
         }
     });
 
+    /**
+     *
+     * @param items
+     * @param index
+     * @returns {boolean}
+     */
     function setActive(items, index) {
         if (!items || !items.length) return false;
 
@@ -179,6 +195,7 @@ function addressAutocomplete(containerElement, callback, options) {
         callback(currentItems[index]);
     }
 
+    // Close the dropdown list
     function closeDropDownList() {
         const autocompleteItemsElement = inputContainerElement.querySelector(".autocomplete-items");
         if (autocompleteItemsElement) {
@@ -188,6 +205,8 @@ function addressAutocomplete(containerElement, callback, options) {
         focusedItemIndex = -1;
     }
 
+
+    // Add an icon to the button
     function addIcon(buttonElement) {
         const svgElement = document.createElementNS("http://www.w3.org/2000/svg", 'svg');
         svgElement.setAttribute('viewBox', "0 0 24 24");
@@ -214,6 +233,11 @@ function addressAutocomplete(containerElement, callback, options) {
     });
 }
 
+/**
+ * Populates address fields with properties from the selected address in the autocomplete container
+ *
+ * @param {Object} selectedAddress - The selected address with the address information
+ */
 function populateAddressFields(selectedAddress) {
     // Populate address fields with properties from the selectedAddress address
     document.getElementById("streetNumber").value = selectedAddress.housenumber || null;
@@ -225,6 +249,7 @@ function populateAddressFields(selectedAddress) {
     document.getElementById("lat").value = selectedAddress.lat || null;
     document.getElementById("lon").value = selectedAddress.lon || null;
 }
+
 
 addressAutocomplete(document.getElementById("autocomplete-container"),
     populateAddressFields,
