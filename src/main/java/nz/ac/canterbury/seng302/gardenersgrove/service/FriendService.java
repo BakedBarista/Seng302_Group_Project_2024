@@ -47,4 +47,5 @@ public class FriendService {
     public Friends getRequest(Long user1, Long user2) {
         return friendsRepository.getRequest(user1, user2);
     }
+
 }

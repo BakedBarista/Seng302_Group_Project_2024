@@ -1,7 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.time.Instant;
 import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -42,19 +41,17 @@ public class GardenUser {
     @Lob
     private byte[] profilePicture;
 
-    // // these are a set of friendships in the friends table where the user is user1
-    // @OneToMany(mappedBy = "user1")
-    // private Set<Friends> friendshipsAsUser1 = new HashSet<>(); 
-    
-    // // these are a set of friendships in the friends table where the user is user2
-    // @OneToMany(mappedBy = "user2")
-    // private Set<Friends> friendshipsAsUser2 = new HashSet<>();
+    @Column(nullable = true)
+    private String emailValidationToken;
+
+    @Column(nullable = true)
+    private Instant emailValidationTokenExpiryInstant;
 
 
     /**
      * JPA required no-args constructor
      */
-    protected GardenUser() {}
+    public GardenUser() {}
 
     /**
      * Createsimport java.util.HashSet; a new GardenUser object
@@ -231,5 +228,41 @@ public class GardenUser {
     public void setProfilePicture(String contentType, byte[] profilePicture) {
         this.profilePictureContentType = contentType;
         this.profilePicture = profilePicture;
+    }
+
+    /**
+     * Set the emailValidationToken of this user
+     */
+    public void setEmailValidationToken(String emailValidationToken) {
+        this.emailValidationToken = emailValidationToken;
+    }
+
+    /**
+     * get this users emailValidationToken
+     *  - may be null
+     * @return emailValidationToken
+     */
+    public String getEmailValidationToken() {
+        return emailValidationToken;
+    }
+
+    /**
+     * Set the emailValidationTokenExpiryInstant of this user
+     */
+    public void setEmailValidationTokenExpiryInstant(Instant timeInstance) {
+        this.emailValidationTokenExpiryInstant = timeInstance;
+    }
+
+    /**
+     * Return the emailValidationTokenExpiryInstant of this user
+     *  - may be null
+     * @return
+     */
+    public Instant getEmailValidationTokenExpiryInstant() {
+        return this.emailValidationTokenExpiryInstant;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 }

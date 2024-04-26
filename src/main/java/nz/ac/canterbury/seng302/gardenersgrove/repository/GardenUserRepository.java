@@ -2,10 +2,12 @@ package nz.ac.canterbury.seng302.gardenersgrove.repository;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,4 +43,14 @@ public interface GardenUserRepository extends CrudRepository<GardenUser, Long> {
 
     @Query("SELECT p FROM GardenUser p WHERE ((LOWER(p.fname)=LOWER(?1) and LOWER(p.lname)=LOWER(?2)) or LOWER(p.email)=LOWER(?1)) and p.id!=?3")
     List<GardenUser> findBySearch(String first, String last, Long currentUserId);
+    
+    /**
+     * Deletes all GardenUsers with email verifiation tokens whose expiry date/time
+     * has passed.
+     *
+     * @param now The current time
+     */
+    @Modifying
+    @Query("DELETE FROM GardenUser u WHERE u.emailValidationTokenExpiryInstant < ?1")
+    int deleteUsersWithExpiredEmailTokens(Instant now);
 }

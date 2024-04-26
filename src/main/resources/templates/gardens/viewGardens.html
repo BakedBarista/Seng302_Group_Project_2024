@@ -10,7 +10,7 @@
         <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
     </head>
     <body>
-        <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
         <div>
             <div>
                 <h3>Your Gardens:</h3>
@@ -20,6 +20,7 @@
                         <th>Name</th>
                         <th>Location</th>
                         <th>Size</th>
+                        <th>Description</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -30,6 +31,7 @@
                         <td><a th:href="@{'/gardens/' + ${garden.id}}"><span th:text="${garden.name}"> Name </span></a></td>
                         <td><span th:text="${garden.location}"> Location </span></td>
                         <td><span th:text="${garden.size}"> Size </span></td>
+                        <td><span th:text="${garden.description}"> Description </span></td>
                     </tr>
                     </tbody>
                 </table>

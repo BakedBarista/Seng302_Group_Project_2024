@@ -70,8 +70,7 @@ public class ManageFriendsController {
 
         List<GardenUser> allUsers = gardenUserService.getUser();
         
-        List<GardenUser> Friends = friendService.getAllFriends(id);
-
+        List<GardenUser> Friends = friendService.getAllFriends(loggedInUserId);
         List<Requests> sentRequests = requestService.getSentRequests(loggedInUserId);
         List<Requests> receivedRequests = requestService.getReceivedRequests(loggedInUserId);
         model.addAttribute("friends", Friends);

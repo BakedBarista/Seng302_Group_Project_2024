@@ -1,18 +1,20 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,6 +30,9 @@ public class PlantControllerTest {
     @Mock
     private GardenService gardenService;
 
+    @Mock
+    private GardenUserService gardenUserService;
+
     private Model model;
 
     @InjectMocks
@@ -36,6 +41,11 @@ public class PlantControllerTest {
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
+        GardenUser mockUser = mock(GardenUser.class);
+        when(mockUser.getId()).thenReturn(1L);
+        when(gardenUserService.getCurrentUser()).thenReturn(mockUser);
+        when(gardenService.getGardensByOwnerId(1L)).thenReturn(Collections.emptyList());
+
         model = mock(Model.class);
     }
 
@@ -90,7 +100,6 @@ public class PlantControllerTest {
         Plant validPlant = new Plant("Plant", "10", "Yellow", "11/03/2024");
         long gardenId = 0;
         long plantId = 0;
-        MultipartFile file = new MockMultipartFile("file","image.jpg","image/jpeg","file content".getBytes());
         String expectedReturnPage = "redirect:/gardens/" + gardenId;
 
         BindingResult bindingResult = mock(BindingResult.class);
@@ -108,7 +117,6 @@ public class PlantControllerTest {
         Plant invalidPlant = new Plant("#invalid", "10", "Yellow", "11/03/2024");
         long gardenId = 0;
         long plantId = 0;
-        MultipartFile file = new MockMultipartFile("file","image.jpg","image/jpeg","file content".getBytes());
         String expectedReturnPage = "plants/editPlant";
 
         BindingResult bindingResult = mock(BindingResult.class);

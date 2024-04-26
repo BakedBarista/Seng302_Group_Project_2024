@@ -8,9 +8,13 @@
     </head>
     <body>
         <nav th:replace="~{fragments/navbar :: navbar}"></nav>
-        <main>
-            <h1>500 Internal Server Error 🛠️</h1>
-            <img src="/img/gorila.png" alt="Gorila" width="500" height="500" />
+        <main class="text-center align-items-center">
+            <img src="/img/gorila.png" alt="Gorila" width="300" height="300" />
+            <div class="d-flex justify-content-center mt-5 align-middle">
+                <h1 class="px-2">500</h1>
+                <div class="vr"></div>
+                <h1 class="px-2">Internal Server Error</h1>
+            </div>
         </main>
         <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
     </body>

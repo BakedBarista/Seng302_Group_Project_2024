@@ -64,7 +64,7 @@
                             <span th:if="${friend != null}" th:text="${friend.lname}"></span>
                         </td>
                         <td>
-                            <a href="#">View gardens</a>
+                            <a th:href="@{/viewFriendGardens/{id}(id=${friend.id})}">View gardens</a>
                         </td>
                     </tr>
                     </tbody>

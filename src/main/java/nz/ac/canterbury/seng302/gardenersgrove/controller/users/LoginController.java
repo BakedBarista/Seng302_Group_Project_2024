@@ -74,9 +74,13 @@ public class LoginController {
             logger.warn("User was not logged in");
         }
 
+        if (!(user.getEmailValidationToken() == null)) {
+            return "redirect:/users/user/" + user.getId() + "/authenticateEmail";
+        }
+
         try {
             request.login(email, password);
-            return "redirect:/users/user";
+            return "redirect:/";
         } catch (ServletException e) {
             logger.error("Error while login ", e);
         }
