@@ -93,19 +93,6 @@ public class RegisterController {
                 registerDTO.getPassword(), registerDTO.getDOB());
         userService.addUser(user);
 
-        try {
-            request.logout();
-        } catch (ServletException e) {
-            logger.warn("User was not logged in");
-        }
-
-        try {
-            request.login(registerDTO.getEmail(), registerDTO.getPassword());
-        } catch (ServletException e) {
-            logger.error("Error while login ", e);
-            return "users/registerTemplate";
-        }
-
         addEmailTokenAndTimeToUser(user.getId());
         return "redirect:/users/user/" + user.getId() + "/authenticateEmail";
     }
@@ -145,6 +132,7 @@ public class RegisterController {
 
         emailSenderService.sendEmail(user, "Welcome to Gardener's Grove",
                 "Your account has been created!\n\n"
+                        + "Your token is: " + token + "\n\n"
                         + "If this was not you, you can ignore this message and the account will be deleted after 10 minutes.");
     }
 }
