@@ -36,6 +36,10 @@ public class GardenService {
         return gardenRepository.findAllThatContainQuery(query);
     }
 
+    public Page<Garden> findPageThatContainsQuery(String query, Pageable pageable) {
+        return gardenRepository.findPageThatContainsQuery(query, pageable);
+    }
+
     /**
      * Adds a garden to the database.
      * @param garden object to save.
