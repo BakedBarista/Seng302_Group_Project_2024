@@ -89,6 +89,7 @@ public class GardenServiceTest {
         verify(gardenServiceMock).getPublicGardens(pageable);
     }
 
+    @Test
     public void getGardensByOwnerId_ReturnsGardens() {
         List<Garden> mockGardens = Arrays.asList(
                 new Garden("Garden 1", "Location 1", "100", "Small"),
@@ -98,8 +99,8 @@ public class GardenServiceTest {
 
         List<Garden> returnedGardens = gardenService.getGardensByOwnerId(1L);
 
-        Assertions.assertEquals(2, returnedGardens.size());
-        Assertions.assertEquals(mockGardens, returnedGardens);
+        assertEquals(2, returnedGardens.size());
+        assertEquals(mockGardens, returnedGardens);
     }
         
 
