@@ -52,39 +52,39 @@
                 </div>
             </th:block>
         </div>
+
+        <!-- Pagination Controls -->
+        <nav>
+            <ul class="pagination">
+                <!-- First page link -->
+                <li class="page-item" th:classappend="${gardenPage.isFirst() ? 'disabled' : ''}">
+                    <a class="page-link" th:href="@{/gardens/public(page=0, size=${gardenPage.size})}">First</a>
+                </li>
+
+                <!-- Previous page link -->
+                <li class="page-item" th:classappend="${gardenPage.hasPrevious() ? '' : 'disabled'}">
+                    <a class="page-link" th:href="@{/gardens/public(page=${gardenPage.number - 1}, size=${gardenPage.size})}">Previous</a>
+                </li>
+
+                <!-- Dynamic page links: showing current page and 2 pages in both directions if they exist -->
+                <li th:each="i : ${#numbers.sequence(gardenPage.number - 2, gardenPage.number + 2)}"
+                    th:if="${i >= 0 and i < gardenPage.totalPages}" class="page-item"
+                    th:classappend="${i == gardenPage.number ? 'active' : ''}">
+                    <a class="page-link" th:href="@{/gardens/public(page=${i}, size=${gardenPage.size})}" th:text="${i + 1}"></a>
+                </li>
+
+                <!-- Next page link -->
+                <li class="page-item" th:classappend="${gardenPage.hasNext() ? '' : 'disabled'}">
+                    <a class="page-link" th:href="@{/gardens/public(page=${gardenPage.number + 1}, size=${gardenPage.size})}">Next</a>
+                </li>
+
+                <!-- Last page link -->
+                <li class="page-item" th:classappend="${gardenPage.isLast() ? 'disabled' : ''}">
+                    <a class="page-link" th:href="@{/gardens/public(page=${gardenPage.totalPages - 1}, size=${gardenPage.size})}">Last</a>
+                </li>
+            </ul>
+        </nav>
     </div>
-
-    <!-- Pagination Controls -->
-    <nav>
-    <ul class="pagination">
-        <!-- First page link -->
-        <li class="page-item" th:classappend="${gardenPage.isFirst() ? 'disabled' : ''}">
-            <a class="page-link" th:href="@{/gardens/public(page=0, size=${gardenPage.size})}">First</a>
-        </li>
-
-        <!-- Previous page link -->
-        <li class="page-item" th:classappend="${gardenPage.hasPrevious() ? '' : 'disabled'}">
-            <a class="page-link" th:href="@{/gardens/public(page=${gardenPage.number - 1}, size=${gardenPage.size})}">Previous</a>
-        </li>
-
-        <!-- Dynamic page links: showing current page and 2 pages in both directions if they exist -->
-        <li th:each="i : ${#numbers.sequence(gardenPage.number - 2, gardenPage.number + 2)}"
-            th:if="${i >= 0 and i < gardenPage.totalPages}" class="page-item"
-            th:classappend="${i == gardenPage.number ? 'active' : ''}">
-            <a class="page-link" th:href="@{/gardens/public(page=${i}, size=${gardenPage.size})}" th:text="${i + 1}"></a>
-        </li>
-
-        <!-- Next page link -->
-        <li class="page-item" th:classappend="${gardenPage.hasNext() ? '' : 'disabled'}">
-            <a class="page-link" th:href="@{/gardens/public(page=${gardenPage.number + 1}, size=${gardenPage.size})}">Next</a>
-        </li>
-
-        <!-- Last page link -->
-        <li class="page-item" th:classappend="${gardenPage.isLast() ? 'disabled' : ''}">
-            <a class="page-link" th:href="@{/gardens/public(page=${gardenPage.totalPages - 1}, size=${gardenPage.size})}">Last</a>
-        </li>
-    </ul>
-    </nav>
 </div>
 
 <!-- Bootstrap scripts from your fragment -->
