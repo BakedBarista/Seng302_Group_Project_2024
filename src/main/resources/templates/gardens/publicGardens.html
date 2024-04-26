@@ -36,14 +36,14 @@
                         <div class="card-img-top bg-success card-img-top-fixed d-flex align-items-center">
                         <div class="row g-0">
                                 <th:block th:if="${garden.getPlants().isEmpty()}">
-                                    <div class="col-12"> <!-- Full width if there are no plants -->
+                                    <div class="col-12">
                                         <img src="/img/defaultgarden.jpg" class="img-fluid" alt="Default Garden Image">
                                     </div>
                                 </th:block>
                                 <th:block th:each="plant, iterStat : ${garden.getPlants()}">
                                     <div class="col" th:class="${#lists.size(garden.getPlants()) == 1 ? 'col-12' :
                                               #lists.size(garden.getPlants()) == 2 ? 'col-6' :
-                                              'col-6 col-sm-4 col-lg-6'}" th:if="${iterStat.index < 4}"> <!-- Ensure a maximum of 4 plant images, displayed in 2x2 grid -->
+                                              'col-6 col-sm-4 col-lg-6'}" th:if="${iterStat.index < 4}">
                                         <img th:if="${plant.plantImagePath != null}" th:src="@{${plant.plantImagePath}}" class="img-fluid plant-img" th:alt="${plant.name}">
                                         <img th:unless="${plant.plantImagePath != null}" src="/img/defaultgarden.jpg" class="img-fluid plant-img" alt="Default Image">
                                     </div>

@@ -179,20 +179,20 @@ button {
 
 
 .col-6 {
-    flex: 0 0 auto;  /* don't grow or shrink */
-    width: 50%;  /* set width to take half of the parent */
+    flex: 0 0 auto;
+    width: 50%;
     display: flex;
-    justify-content: center;  /* center the images horizontally */
-    align-items: center;  /* center the images vertically */
+    justify-content: center;
+    align-items: center;
 }
 
 .card-img-top-fixed {
-    height: 200px; /* Adjust this value based on your requirement */
+    height: 200px;
     overflow: hidden;
 }
 
 .card-hover {
-    transition: transform 0.3s ease-in-out; /* Smooth transition for scaling */
+    transition: transform 0.3s ease-in-out;
 }
 
 .card-hover:hover {

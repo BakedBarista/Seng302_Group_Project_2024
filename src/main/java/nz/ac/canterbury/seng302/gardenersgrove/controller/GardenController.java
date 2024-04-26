@@ -213,7 +213,7 @@ public class GardenController {
         List<Garden> gardensWithPlants = gardenPage.getContent().stream()
                 .map(garden -> {
                     List<Plant> plants = plantService.getPlantsByGardenId(garden.getId());
-                    garden.setPlants(plants); // Assuming Garden has a setPlants method
+                    garden.setPlants(plants);
                     return garden;
                 })
                 .collect(Collectors.toList());
