@@ -18,8 +18,8 @@
                 <input type="text" class="form-control" id="name" placeholder="Garden Name"
                        th:name="name" th:value="${garden.name}" data-cy="name" autofocus>
                 <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" style="color: red;"></div>
-
             </div>
+            <br/>
             <!-- Garden Location Field -->
             <div>
                 <label for="autocomplete-container"> Garden Location: </label>
@@ -73,11 +73,7 @@
             <div th:if="${#fields.hasErrors('size')}" th:errors="*{size}" style="color: red;"></div>
             <br/>
             <!-- Garden Description -->
-            <label for="size"> Garden Description: </label>
-            <input type="text" class="form-control" id="description" placeholder="Description"
-                   th:name="description" th:value="${garden.description}" data-cy="size" autofocus>
-            <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}" style="color: red;"></div>
-            <div th:if="${profanity != null}" style="color: red;"><span th:text="${profanity}"></span></div>
+            <nav th:replace="~{fragments/description-box :: description-box-with-char-count}"></nav>
             <br/>
             <button type="submit">Submit!</button><button type="button" onclick="history.back()">Cancel</button>
         </form>

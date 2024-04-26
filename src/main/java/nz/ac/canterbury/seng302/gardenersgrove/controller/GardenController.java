@@ -68,7 +68,7 @@ public class GardenController {
 
         if (moderationService.checkIfDescriptionIsFlagged(garden.getDescription())) {
             model.addAttribute("garden", garden);
-            model.addAttribute("profanity", "Description is inappropriate, please fix this");
+            model.addAttribute("profanity", "The description does not match the language standards of the app.");
             return "gardens/createGarden";
         }
 
@@ -137,6 +137,12 @@ public class GardenController {
         if (result.hasErrors()) {
             model.addAttribute("garden", garden);
             model.addAttribute("id", id);
+            return "gardens/editGarden";
+        }
+
+        if (moderationService.checkIfDescriptionIsFlagged(garden.getDescription())) {
+            model.addAttribute("garden", garden);
+            model.addAttribute("profanity", "The description does not match the language standards of the app.");
             return "gardens/editGarden";
         }
 
