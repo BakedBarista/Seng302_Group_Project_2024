@@ -34,7 +34,7 @@ public class RegisterControllerTest {
     }
 
     @Test
-    public void whenAddEmailTokenAndTimeToUserCalled_thenTokenAndTimeAreAddedToUser() {
+    void whenAddEmailTokenAndTimeToUserCalled_thenTokenAndTimeAreAddedToUser() {
         // add user to persistence and then call function to add token and time instant
         String firstName = "jane";
         String lastName = "doe";
@@ -51,7 +51,7 @@ public class RegisterControllerTest {
     }
 
     @Test
-    public void whenAddEmailTokenAndTimeToUserCalled_thenAnEmailIsSent() {
+    void whenAddEmailTokenAndTimeToUserCalled_thenAnEmailIsSent() {
         // add user to persistence and then call function to add token and time instant
         String firstName = "jane";
         String lastName = "doe";
