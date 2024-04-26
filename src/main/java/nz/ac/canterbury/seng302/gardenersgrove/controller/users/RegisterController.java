@@ -141,10 +141,10 @@ public class RegisterController {
         user.setEmailValidationToken(token);
         user.setEmailValidationTokenExpiryInstant(time);
 
+        userService.addUser(user);
+
         emailSenderService.sendEmail(user, "Welcome to Gardener's Grove",
                 "Your account has been created!\n\n"
                         + "If this was not you, you can ignore this message and the account will be deleted after 10 minutes.");
-
-        userService.addUser(user);
     }
 }
