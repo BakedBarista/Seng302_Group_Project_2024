@@ -28,31 +28,16 @@ import jakarta.servlet.http.HttpServletRequest;
 public class ManageFriendsController {
     private Logger logger = LoggerFactory.getLogger(LoginController.class);
 
-
-    @Autowired
     private FriendService friendService;
-    private GardenUserService gardenUserService;
     private GardenUserService userService;
     private RequestService requestService;
 
     @Autowired
-    public void setUserService(GardenUserService userService) {
+    public ManageFriendsController(FriendService friendService, GardenUserService userService, RequestService requestService) {
         this.userService = userService;
-    }
-    @Autowired
-    public void setRequestService(RequestService requestService) {
+        this.friendService = friendService;
         this.requestService = requestService;
     }
-    @Autowired
-    public void ManageUserController(GardenUserService gardenUserService) {
-        this.gardenUserService = gardenUserService;
-    }
-
-    public ManageFriendsController(FriendService friendService) {
-        this.friendService = friendService;
-    }
-
-
     long id =1 ;
     /**
      * Shows the manage friends page
@@ -62,13 +47,13 @@ public class ManageFriendsController {
      * @return login page view
      */
     @GetMapping("users/manageFriends")
-    public String manageFriends(Authentication authentication, @RequestParam(required = false) String error,
+    public String manageFriends(Authentication authentication,
                         Model model) {
         logger.info("users/manageFriends");
         
         Long loggedInUserId = (Long) authentication.getPrincipal();
 
-        List<GardenUser> allUsers = gardenUserService.getUser();
+        List<GardenUser> allUsers = userService.getUser();
         
         List<GardenUser> Friends = friendService.getAllFriends(loggedInUserId);
         List<Requests> sentRequests = requestService.getSentRequests(loggedInUserId);

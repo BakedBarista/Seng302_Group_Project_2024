@@ -55,8 +55,6 @@ public class GardenControllerTest {
         assertEquals("gardens/createGarden", result);
     }
 
-
-
     @Test
     public void testSubmitForm_ValidationFailure() {
         Model model = mock(Model.class);
@@ -144,6 +142,5 @@ public class GardenControllerTest {
         String result = gardenController.updatePublicStatus(1L, false);
         assertEquals(gardenService.getGardenById(1L).get().getIsPublic(), false);
         assertEquals("redirect:/gardens/1", result);
-
     }
 }
