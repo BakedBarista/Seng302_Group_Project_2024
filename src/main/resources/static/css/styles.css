@@ -176,3 +176,39 @@ button {
     color: red;
     font-family: bold, serif;
 }
+
+
+.col-6 {
+    flex: 0 0 auto;  /* don't grow or shrink */
+    width: 50%;  /* set width to take half of the parent */
+    display: flex;
+    justify-content: center;  /* center the images horizontally */
+    align-items: center;  /* center the images vertically */
+}
+
+.card-img-top-fixed {
+    height: 200px; /* Adjust this value based on your requirement */
+    overflow: hidden;
+}
+
+.card-hover {
+    transition: transform 0.3s ease-in-out; /* Smooth transition for scaling */
+}
+
+.card-hover:hover {
+    transform: scale(1.10);
+    z-index: 10;
+}
+.plant-img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+
+
+
+
+
+
+
