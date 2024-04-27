@@ -110,23 +110,30 @@ public class ManageFriendsController {
 
     @PostMapping("users/manageFriends/decline")
     public String manageFriendsDecline(Authentication authentication, 
-        @RequestParam(name = "declineUser", required = false) Long declineUser,
-        @RequestParam(required = false) String error) {
+        @RequestParam(name = "declineUser", required = false) Long declineUser) {
+
         Long loggedInUserId = (Long) authentication.getPrincipal();
         GardenUser loggedInUser = userService.getUserById(loggedInUserId);
         GardenUser receivedFrom = userService.getUserById(declineUser);
-        Optional<Requests> updateStatusOptional = requestService.getRequest(loggedInUser.getId(), receivedFrom.getId());
-        Requests updateStatus = updateStatusOptional.get();
-        updateStatus.setStatus("declined");
-        requestService.save(updateStatus);
-  
+
+        if ( loggedInUser != null && receivedFrom != null ) {
+            Optional<Requests> optionalRequest = requestService.getRequest(loggedInUserId, declineUser);
+            Friends alreadyFriends = friendService.getFriendship(loggedInUserId, declineUser);
+
+            if (optionalRequest.isPresent() && alreadyFriends == null) {
+                Requests request = optionalRequest.get();
+                request.setStatus("declined");
+                requestService.save(request);
+            }
+        }
         return "redirect:/users/manageFriends";
     }
 
     @PostMapping("users/manageFriends/search")
-    public String manageFriendsSearch(Authentication authentication, 
-        @RequestParam(name = "searchUser", required = false) String searchUser, RedirectAttributes rm) {
-            
+    public String manageFriendsSearch(Authentication authentication,
+                                      @RequestParam(name = "searchUser", required = false) String searchUser,
+                                      RedirectAttributes rm) {
+
         Long loggedInUserId = (Long) authentication.getPrincipal();
         List<GardenUser> searchResults = userService.getUserBySearch(searchUser, loggedInUserId);
 
