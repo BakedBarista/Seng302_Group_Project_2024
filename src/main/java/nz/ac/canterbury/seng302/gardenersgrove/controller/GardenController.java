@@ -196,7 +196,11 @@ public class GardenController {
         return "redirect:/gardens/" + id;
     }
 
-
+    /**
+     * Deletes the garden
+     * @param id garden id
+     * @return redirect to gardens
+     */
     @GetMapping("/gardens/public")
     public String publicGardens(
             @RequestParam (defaultValue = "0") int page,
@@ -211,14 +215,6 @@ public class GardenController {
         model.addAttribute("gardens", gardens);
         return "gardens/publicGardens";
     }
-
-
-
-
-
-
-
-
 
 }
 
