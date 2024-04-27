@@ -16,7 +16,7 @@
     <div class="mb-3">
         <form class="input-group w-100" action="#" th:action="@{/gardens/public/search}" method="post" id="searchForm">
             <input type="text" class="form-control" placeholder="Search Public Gardens" id="searchField"
-                   aria-label="Search Public Gardens" aria-describedby="button-addon" name="search">
+                   aria-label="Search Public Gardens" aria-describedby="button-addon" name="search" th:value="${previousSearch}">
             <div class="input-group-append">
                 <button class="btn btn-outline-secondary" type="submit" id="button-addon">
                     <i class="bi bi-search"></i>

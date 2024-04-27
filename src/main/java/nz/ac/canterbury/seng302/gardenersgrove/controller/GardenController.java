@@ -228,6 +228,7 @@ public class GardenController {
         model.addAttribute("gardenPage", gardenPage);
         List<Garden> gardens = gardenService.findAllThatContainQuery(search);
         model.addAttribute("gardens", gardens);
+        model.addAttribute("previousSearch", search);
         return "gardens/publicGardens";
     }
 }
