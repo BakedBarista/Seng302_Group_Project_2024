@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
 import jakarta.validation.Valid;
+import jakarta.validation.Validation;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.LoginDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.ResetPasswordDTO;
@@ -50,19 +51,14 @@ public class ResetPasswordController {
         logger.info("POST /users/reset-password");
         logger.info("Email entered: {}", email);
 
-        if (Objects.equals(email, "")) {
+        if (bindingResult.hasFieldErrors("email")) {
+            for (FieldError errors : bindingResult.getFieldErrors()) {
+                logger.info("Validation error in email field: {}", errors.getDefaultMessage());
+                model.addAttribute("incorrectEmail", errors.getDefaultMessage());
+            }
             return "users/resetPassword";
-        }
-        for (FieldError errors : bindingResult.getFieldErrors()) {
-            String fieldName = errors.getField();
-            String errorMessage = errors.getDefaultMessage();
-            logger.info("Validation error in field '" + fieldName + "': " + errorMessage);
         }
 
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("resetPasswordDTO", resetPasswordDTO);
-            return "users/resetPassword";
-        }
         // TODO: send email with reset password link
 
         return "users/resetPasswordConfirmation";
