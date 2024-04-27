@@ -66,8 +66,8 @@ public class ManageFriendsController {
     }
 
     @PostMapping("users/manageFriends/invite")
-    public String manageFriends(Authentication authentication, 
-        @RequestParam(name = "requestedUser", required = false) Long requestedUser) {
+    public String manageFriendsInvite(Authentication authentication,
+                                @RequestParam(name = "requestedUser", required = false) Long requestedUser) {
         
         Long loggedInUserId = (Long) authentication.getPrincipal();
         GardenUser loggedInUser = userService.getUserById(loggedInUserId);
@@ -87,21 +87,20 @@ public class ManageFriendsController {
     }
 
     @PostMapping("users/manageFriends/accept")
-    public String manageFriendsAccepts(Authentication authentication, 
+    public String manageFriendsAccept(Authentication authentication,
         @RequestParam(name = "acceptUser", required = false) Long acceptUser) {
 
         Long loggedInUserId = (Long) authentication.getPrincipal();
         GardenUser loggedInUser = userService.getUserById(loggedInUserId);
         GardenUser receivedFrom = userService.getUserById(acceptUser);
-        Friends newFriends = new Friends(loggedInUser, receivedFrom);
 
-        friendService.save(newFriends);
+        Optional<Requests> requestExists = requestService.getRequest(loggedInUser.getId(), receivedFrom.getId());
 
-        Optional<Requests> updateStatusOptional = requestService.getRequest(loggedInUser.getId(), receivedFrom.getId());
+        if (requestExists.isPresent()) {
+            Friends newFriends = new Friends(loggedInUser, receivedFrom);
+            friendService.save(newFriends);
 
-        if (updateStatusOptional.isPresent()) {
-            System.out.println("gets here");
-            Requests updateStatus = updateStatusOptional.get();
+            Requests updateStatus = requestExists.get();
             requestService.delete(updateStatus);
         }
 
