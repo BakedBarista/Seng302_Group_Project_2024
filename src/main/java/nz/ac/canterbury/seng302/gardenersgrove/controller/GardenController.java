@@ -227,7 +227,7 @@ public class GardenController {
         @PathVariable() Long id,
         Model model) {  
             Long loggedInUserId = (Long) authentication.getPrincipal();
-            Friends isFriend = friendService.getRequest(loggedInUserId, id);
+            Friends isFriend = friendService.getFriendship(loggedInUserId, id);
             GardenUser owner = gardenUserService.getUserById(id);
 
             List<Garden> privateGardens = gardenService.getPrivateGardensByOwnerId(owner);

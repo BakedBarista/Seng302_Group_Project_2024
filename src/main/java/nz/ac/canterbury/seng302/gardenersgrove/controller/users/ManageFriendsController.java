@@ -22,8 +22,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 @Controller
 public class ManageFriendsController {
     private Logger logger = LoggerFactory.getLogger(LoginController.class);
@@ -72,7 +70,7 @@ public class ManageFriendsController {
         Long loggedInUserId = (Long) authentication.getPrincipal();
         GardenUser loggedInUser = userService.getUserById(loggedInUserId);
         GardenUser sentTo = userService.getUserById(requestedUser);
-        Friends alreadyFriends = friendService.getRequest(loggedInUser.getId(), sentTo.getId());
+        Friends alreadyFriends = friendService.getFriendship(loggedInUser.getId(), sentTo.getId());
         Optional<Requests> requestExists = requestService.getRequest(sentTo.getId(), loggedInUser.getId());
 
         if (!requestExists.isPresent()) {
@@ -94,14 +92,16 @@ public class ManageFriendsController {
         GardenUser loggedInUser = userService.getUserById(loggedInUserId);
         GardenUser receivedFrom = userService.getUserById(acceptUser);
 
-        Optional<Requests> requestExists = requestService.getRequest(loggedInUser.getId(), receivedFrom.getId());
+        if ( loggedInUser != null && receivedFrom != null ) {
+            Optional<Requests> requestExists = requestService.getRequest(loggedInUser.getId(), receivedFrom.getId());
 
-        if (requestExists.isPresent()) {
-            Friends newFriends = new Friends(loggedInUser, receivedFrom);
-            friendService.save(newFriends);
+            if (requestExists.isPresent()) {
+                Friends newFriends = new Friends(loggedInUser, receivedFrom);
+                friendService.save(newFriends);
 
-            Requests updateStatus = requestExists.get();
-            requestService.delete(updateStatus);
+                Requests updateStatus = requestExists.get();
+                requestService.delete(updateStatus);
+            }
         }
 
         return "redirect:/users/manageFriends";

@@ -7,10 +7,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.repository.FriendsRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 /**
  * Service class for Friends
@@ -44,7 +41,7 @@ public class FriendService {
         friendsRepository.save(friendEntity);
     }
 
-    public Friends getRequest(Long user1, Long user2) {
+    public Friends getFriendship(Long user1, Long user2) {
         return friendsRepository.getRequest(user1, user2);
     }
 
