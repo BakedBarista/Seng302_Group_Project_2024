@@ -324,13 +324,11 @@ public class ManageFriendsControllerTest {
     @Test
     public void whenSearchWithEmail_andUserExists_thenSearchResultsNotEmpty() {
         String searchUser = "john.doe@gmail.com";
-        List<GardenUser> searchResults = new ArrayList<>();
         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
-        when(gardenUserService.getUserBySearch(searchUser, loggedInUserId)).thenReturn(searchResults);
-
+        List<GardenUser> searchResults = gardenUserService.getUserBySearch(searchUser, loggedInUserId);
         RedirectAttributes rm = new RedirectAttributesModelMap();
         String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
-
+        System.out.println(searchResults);
         assert(!searchResults.isEmpty());
         assertEquals("redirect:/users/manageFriends", result);
     }
@@ -341,10 +339,8 @@ public class ManageFriendsControllerTest {
     @Test
     public void whenSearchWithEmail_andUserDoesNotExist_thenSearchResultsEmpty() {
         String searchUser = "jane.doe@gmail.com";
-        List<GardenUser> searchResults = new ArrayList<>();
         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
-        when(gardenUserService.getUserBySearch(searchUser, loggedInUserId)).thenReturn(searchResults);
-
+        List<GardenUser> searchResults = gardenUserService.getUserBySearch(searchUser, loggedInUserId);
         RedirectAttributes rm = new RedirectAttributesModelMap();
         String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
 
@@ -357,10 +353,8 @@ public class ManageFriendsControllerTest {
     @Test
     public void whenSearchWithName_andUserExists_thenSearchResultsNotEmpty() {
         String searchUser = "john doe";
-        List<GardenUser> searchResults = new ArrayList<>();
         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
-        when(gardenUserService.getUserBySearch(searchUser, loggedInUserId)).thenReturn(searchResults);
-
+        List<GardenUser> searchResults = gardenUserService.getUserBySearch(searchUser, loggedInUserId);
         RedirectAttributes rm = new RedirectAttributesModelMap();
         String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
 
@@ -373,10 +367,8 @@ public class ManageFriendsControllerTest {
     @Test
     public void whenSearchWithName_andUserDoesNotExist_thenSearchResultsEmpty() {
         String searchUser = "jane doe";
-        List<GardenUser> searchResults = new ArrayList<>();
         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
-        when(gardenUserService.getUserBySearch(searchUser, loggedInUserId)).thenReturn(searchResults);
-
+        List<GardenUser> searchResults = gardenUserService.getUserBySearch(searchUser, loggedInUserId);
         RedirectAttributes rm = new RedirectAttributesModelMap();
         String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
 
@@ -389,10 +381,8 @@ public class ManageFriendsControllerTest {
     @Test
     public void whenSearchLoggedInUsersName_thenSearchResultsEmpty() {
         String searchUser = "current user";
-        List<GardenUser> searchResults = new ArrayList<>();
         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
-        when(gardenUserService.getUserBySearch(searchUser, loggedInUserId)).thenReturn(searchResults);
-
+        List<GardenUser> searchResults = gardenUserService.getUserBySearch(searchUser, loggedInUserId);
         RedirectAttributes rm = new RedirectAttributesModelMap();
         String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
 
@@ -405,10 +395,8 @@ public class ManageFriendsControllerTest {
     @Test
     public void whenSearchLoggedInUsersEmail_thenSearchResultsEmpty() {
         String searchUser = "logged.in@gmail.com";
-        List<GardenUser> searchResults = new ArrayList<>();
         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
-        when(gardenUserService.getUserBySearch(searchUser, loggedInUserId)).thenReturn(searchResults);
-
+        List<GardenUser> searchResults = gardenUserService.getUserBySearch(searchUser, loggedInUserId);
         RedirectAttributes rm = new RedirectAttributesModelMap();
         String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
 
