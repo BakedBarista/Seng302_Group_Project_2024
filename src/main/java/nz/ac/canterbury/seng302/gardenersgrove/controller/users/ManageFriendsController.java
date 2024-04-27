@@ -93,9 +93,10 @@ public class ManageFriendsController {
         GardenUser receivedFrom = userService.getUserById(acceptUser);
 
         if ( loggedInUser != null && receivedFrom != null ) {
-            Optional<Requests> requestExists = requestService.getRequest(loggedInUser.getId(), receivedFrom.getId());
+            Optional<Requests> requestExists = requestService.getRequest(loggedInUserId, acceptUser);
+            Friends alreadyFriends = friendService.getFriendship(loggedInUserId, acceptUser);
 
-            if (requestExists.isPresent()) {
+            if (requestExists.isPresent() && alreadyFriends == null) {
                 Friends newFriends = new Friends(loggedInUser, receivedFrom);
                 friendService.save(newFriends);
 
