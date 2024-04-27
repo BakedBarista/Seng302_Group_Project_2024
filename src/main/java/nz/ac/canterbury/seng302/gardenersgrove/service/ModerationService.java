@@ -19,6 +19,11 @@ public class ModerationService {
 
     private static final String MODERATION_API_URL = "https://api.openai.com/v1/moderations";
 
+    /**
+     * Calls OPENAI Text Moderation API with given description
+     * @param description garden description
+     * @return moderation response in json format
+     */
     public ResponseEntity<String> moderateDescription(String description) {
         logger.info("Moderating description {}", description);
 
@@ -40,6 +45,11 @@ public class ModerationService {
         }
     }
 
+    /**
+     * Check if description is flagged as inappropriate
+     * @param description
+     * @return
+     */
     public boolean checkIfDescriptionIsFlagged(String description) {
         String responseBody = moderateDescription(description).getBody();
 
