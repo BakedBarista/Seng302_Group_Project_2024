@@ -1,3 +1,20 @@
+* {
+    font-family: "Open Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    font-variation-settings: "wdth" 100;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: "DM Serif Display", serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+
+
+
 /* Adjustments for navbar */
 .navbar-custom {
     padding-top: 1rem;
@@ -74,16 +91,6 @@
         margin: 0;
         max-width: none;
     }
-}
-
-* {
-    font-family: arial, sans-serif;
-}
-
-h2 {
-    font-family: sans-serif;
-    font-size: 1.5em;
-    text-transform: uppercase;
 }
 
 .scrolling-table {
