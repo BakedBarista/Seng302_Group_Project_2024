@@ -60,3 +60,4 @@ public interface GardenUserRepository extends CrudRepository<GardenUser, Long> {
     @Query("UPDATE GardenUser u SET u.resetPasswordToken = null, u.resetPasswordTokenExpiryInstant = null WHERE u.resetPasswordTokenExpiryInstant < ?1")
     int removeExpiredResetPasswordTokens(Instant now);
 }
+

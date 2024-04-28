@@ -3,7 +3,6 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +14,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Base64;
+import java.util.UUID;
 
 /**
  * Class to make and deal with authentication tokens*
@@ -30,6 +30,7 @@ public class TokenService {
     private final Base64.Encoder base64Encoder = Base64.getUrlEncoder();
 
     private GardenUserRepository userRepository;
+
     private Clock clock;
 
     public TokenService(GardenUserRepository userRepository, Clock clock) {
@@ -38,18 +39,12 @@ public class TokenService {
     }
 
     /**
-     * create a random 32-character authentication token and return it
+     * create a random 128-bit authentication token and return it
      * 
      * @return token
      */
     public String createAuthenticationToken() {
-        byte[] randomBytes = new byte[24];
-        secureRandom.nextBytes(randomBytes);
-
-        String token = base64Encoder.encodeToString(randomBytes);
-        logger.info("made new authentication token {}", token);
-
-        return token;
+        return UUID.randomUUID().toString();
     }
 
     /**
@@ -76,6 +71,14 @@ public class TokenService {
     public void addResetPasswordTokenAndTimeToUser(GardenUser user) {
         logger.info("called addResetPasswordTokenAndTimeToUser");
         String token = createAuthenticationToken();
+
+        Instant time = Instant.now().plus(10, ChronoUnit.MINUTES);
+        user.setResetPasswordToken(token);
+        user.setResetPasswordTokenExpiryInstant(time);
+    }
+
+    public void addResetPasswordTokenAndTimeToUser(GardenUser user, String token) {
+        logger.info("called addResetPasswordTokenAndTimeToUser");
 
         Instant time = Instant.now().plus(10, ChronoUnit.MINUTES);
         user.setResetPasswordToken(token);
@@ -116,4 +119,7 @@ public class TokenService {
             logger.info("removed {} reset password tokens", deletedPasswordTokens);
         }
     }
+
+
+
 }
