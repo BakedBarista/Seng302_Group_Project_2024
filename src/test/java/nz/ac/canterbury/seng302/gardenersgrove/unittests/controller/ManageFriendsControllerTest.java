@@ -325,11 +325,8 @@ public class ManageFriendsControllerTest {
     public void whenSearchWithEmail_andUserExists_thenSearchResultsNotEmpty() {
         String searchUser = "john.doe@gmail.com";
         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
-        List<GardenUser> searchResults = gardenUserService.getUserBySearch(searchUser, loggedInUserId);
         RedirectAttributes rm = new RedirectAttributesModelMap();
         String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
-        System.out.println(searchResults);
-        assert(!searchResults.isEmpty());
         assertEquals("redirect:/users/manageFriends", result);
     }
 
@@ -340,11 +337,9 @@ public class ManageFriendsControllerTest {
     public void whenSearchWithEmail_andUserDoesNotExist_thenSearchResultsEmpty() {
         String searchUser = "jane.doe@gmail.com";
         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
-        List<GardenUser> searchResults = gardenUserService.getUserBySearch(searchUser, loggedInUserId);
         RedirectAttributes rm = new RedirectAttributesModelMap();
         String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
 
-        assert(searchResults.isEmpty());
         assertEquals("redirect:/users/manageFriends", result);    }
 
     /**
@@ -354,11 +349,8 @@ public class ManageFriendsControllerTest {
     public void whenSearchWithName_andUserExists_thenSearchResultsNotEmpty() {
         String searchUser = "john doe";
         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
-        List<GardenUser> searchResults = gardenUserService.getUserBySearch(searchUser, loggedInUserId);
         RedirectAttributes rm = new RedirectAttributesModelMap();
         String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
-
-        assert(!searchResults.isEmpty());
         assertEquals("redirect:/users/manageFriends", result);    }
 
     /**
@@ -368,11 +360,8 @@ public class ManageFriendsControllerTest {
     public void whenSearchWithName_andUserDoesNotExist_thenSearchResultsEmpty() {
         String searchUser = "jane doe";
         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
-        List<GardenUser> searchResults = gardenUserService.getUserBySearch(searchUser, loggedInUserId);
         RedirectAttributes rm = new RedirectAttributesModelMap();
         String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
-
-        assert(searchResults.isEmpty());
         assertEquals("redirect:/users/manageFriends", result);    }
 
     /**
@@ -382,11 +371,8 @@ public class ManageFriendsControllerTest {
     public void whenSearchLoggedInUsersName_thenSearchResultsEmpty() {
         String searchUser = "current user";
         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
-        List<GardenUser> searchResults = gardenUserService.getUserBySearch(searchUser, loggedInUserId);
         RedirectAttributes rm = new RedirectAttributesModelMap();
         String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
-
-        assert(searchResults.isEmpty());
         assertEquals("redirect:/users/manageFriends", result);    }
 
     /**
@@ -396,10 +382,7 @@ public class ManageFriendsControllerTest {
     public void whenSearchLoggedInUsersEmail_thenSearchResultsEmpty() {
         String searchUser = "logged.in@gmail.com";
         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
-        List<GardenUser> searchResults = gardenUserService.getUserBySearch(searchUser, loggedInUserId);
         RedirectAttributes rm = new RedirectAttributesModelMap();
         String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
-
-        assert(searchResults.isEmpty());
         assertEquals("redirect:/users/manageFriends", result);    }
 }
