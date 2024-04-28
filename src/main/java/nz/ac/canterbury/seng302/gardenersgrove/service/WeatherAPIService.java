@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -76,6 +78,14 @@ public class WeatherAPIService {
                     weatherValues.put("minTemp", daysWeather.get("mintemp_c").getAsDouble());
                     weatherValues.put("avgHumidity", daysWeather.get("avghumidity").getAsInt());
                     weatherValues.put("conditions", daysWeather.getAsJsonObject("condition").get("text").getAsString());
+                    weatherValues.put("windSpeed", daysWeather.get("maxwind_kph").getAsDouble());
+                    weatherValues.put("precipitation", daysWeather.get("totalprecip_mm").getAsDouble());
+                    weatherValues.put("uv", daysWeather.get("uv").getAsInt());
+
+                    // Transform date into Day Date Month
+                    LocalDate date = LocalDate.parse(day.getAsJsonObject().get("date").getAsString());
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE dd MMM");
+                    weatherValues.put("date", date.format(formatter));
                     forecastWeather.add(weatherValues);
                 }
             } else {
