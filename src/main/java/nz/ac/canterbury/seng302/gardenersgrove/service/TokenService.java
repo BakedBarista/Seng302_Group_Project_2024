@@ -77,6 +77,10 @@ public class TokenService {
         user.setResetPasswordTokenExpiryInstant(time);
     }
 
+    /**
+     * adds an already made token and this time instance to a given user in the DB
+     * @param user
+     */
     public void addResetPasswordTokenAndTimeToUser(GardenUser user, String token) {
         logger.info("called addResetPasswordTokenAndTimeToUser");
 
