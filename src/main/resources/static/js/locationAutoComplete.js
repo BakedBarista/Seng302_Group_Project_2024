@@ -20,7 +20,7 @@ function addressAutocomplete(containerElement, callback, options) {
     // create input element
     const inputElement = document.createElement("input");
     inputElement.setAttribute("type", "text");
-    inputElement.setAttribute("placeholder", "Enter an address here");
+    inputElement.setAttribute("placeholder", "Start typing address here or fill manually");
     inputContainerElement.appendChild(inputElement);
 
     // add input field clear button
@@ -67,12 +67,12 @@ function addressAutocomplete(containerElement, callback, options) {
             });
         }
 
-        if (!currentValue) {
+        if (currentValue) {
+            clearButton.classList.add("visible");
+        } else {
             clearButton.classList.remove("visible");
         }
 
-        // Show clearButton when there is a text
-        clearButton.classList.add("visible");
 
         // Skip empty or short address strings
         if (!currentValue || currentValue.length < MIN_ADDRESS_LENGTH) {
