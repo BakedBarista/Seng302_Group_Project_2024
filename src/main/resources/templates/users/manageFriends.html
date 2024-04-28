@@ -26,23 +26,44 @@
                 <input type="search" name="searchUser" class="form-control" aria-label="Search" placeholder="Search"/>
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </div>
-
         </form>
     </div>
 
-    <ul>
-        <li th:each="friend : ${searchResults}">
-            <span th:text="${friend.fname}"></span>
-            <span th:text=" ${friend.lname}"></span>
-            <form th:action="@{/users/manageFriends/invite}" method="post">
-                <input type="hidden" name="requestedUser" th:value="${friend.id}" class="d-inline"/>
-                <button type="submit" class="btn btn-success btn-sm mr-2">Invite as Friend</button>
-            </form>
-        </li>
-    </ul>
+    <div th:if="${searchResults != null}" class="m-3 text-danger">
+    <span th:if="${searchResults.empty}">
+        <strong>
+            There is nobody with that name or email in Gardener’s Grove
+        </strong>
+    </span>
+    </div>
+
+    <div class="col-md-6 col-sm-10" th:if="${searchResults != null}">
+        <table class="table" th:if="${!searchResults.empty}">
+            <thead>
+            <tr>
+                <th>Search Results</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="friend : ${searchResults}">
+                <td>
+                    <span th:text="${friend.fname} "></span>
+                    <span th:if="${friend.lname != null}" th:text="${friend.lname}"></span>
+                </td>
+                <td>
+                    <form th:action="@{/users/manageFriends/invite}" method="post">
+                        <input type="hidden" name="requestedUser" th:value="${friend.id}" class="d-inline"/>
+                        <button type="submit" class="btn btn-success btn-sm mr-2">Invite as Friend</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 
     <div class="row justify-content-between">
-        <div class="card col-sm-7">
+        <div class="card col-md-7 col-sm-10">
             <div class="card-body h-100">
                 <h2>My friends: </h2>
                 <table class="table">
@@ -61,7 +82,7 @@
                     <tr>
                         <td>
                             <span th:text="${friend.fname}"> </span>
-                            <span th:if="${friend != null}" th:text="${friend.lname}"></span>
+                            <span th:if="${friend.lname != null}" th:text="${friend.lname}"></span>
                         </td>
                         <td>
                             <a th:href="@{/viewFriendGardens/{id}(id=${friend.id})}">View gardens</a>
@@ -150,7 +171,7 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('showSearchFormBtn').addEventListener('click', function () {
-            var searchForm = document.getElementById('searchForm');
+            let searchForm = document.getElementById('searchForm');
             searchForm.classList.toggle('d-none');
         });
     });
