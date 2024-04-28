@@ -5,7 +5,6 @@ import java.time.temporal.ChronoUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
@@ -93,19 +91,6 @@ public class RegisterController {
                 registerDTO.getPassword(), registerDTO.getDOB());
         userService.addUser(user);
 
-        try {
-            request.logout();
-        } catch (ServletException e) {
-            logger.warn("User was not logged in");
-        }
-
-        try {
-            request.login(registerDTO.getEmail(), registerDTO.getPassword());
-        } catch (ServletException e) {
-            logger.error("Error while login ", e);
-            return "users/registerTemplate";
-        }
-
         addEmailTokenAndTimeToUser(user.getId());
         return "redirect:/users/user/" + user.getId() + "/authenticateEmail";
     }
@@ -145,6 +130,7 @@ public class RegisterController {
 
         emailSenderService.sendEmail(user, "Welcome to Gardener's Grove",
                 "Your account has been created!\n\n"
+                        + "Your token is: " + token + "\n\n"
                         + "If this was not you, you can ignore this message and the account will be deleted after 10 minutes.");
     }
 }
