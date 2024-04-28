@@ -19,9 +19,11 @@ public class FriendService {
     public FriendService(FriendsRepository friendsRepository) {this.friendsRepository = friendsRepository;}
 
     /**
-     * test query
-     * @return a List of all friends.
-    */
+     * Retrieves all friends of a user based on their ID while removing themselves
+     *
+     * @param user The ID of the user whose friends are being retrieved
+     * @return A list of GardenUser objects
+     */
     public List<GardenUser> getAllFriends(Long user) { 
         List<Friends> friendsPairList = friendsRepository.getAllFriends(user);
         List<GardenUser> friendsList = new ArrayList<>();
@@ -35,11 +37,22 @@ public class FriendService {
         return friendsList;
     }
 
-
+    /**
+     * Saves a friendship
+     *
+     * @param friendEntity The friendship entity
+     */
     public void save(Friends friendEntity) {
         friendsRepository.save(friendEntity);
     }
 
+    /**
+     * Retrieves a friendship between two users
+     *
+     * @param user1 The ID of the first user
+     * @param user2 The ID of the second user
+     * @return A Friends object 
+     */
     public Friends getFriendship(Long user1, Long user2) {
         return friendsRepository.getRequest(user1, user2);
     }

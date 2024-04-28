@@ -39,7 +39,7 @@ public class ManageFriendsController {
         this.friendService = friendService;
         this.requestService = requestService;
     }
-    long id =1 ;
+
     /**
      * Shows the manage friends page
      *
@@ -53,12 +53,11 @@ public class ManageFriendsController {
         logger.info("users/manageFriends");
         
         Long loggedInUserId = (Long) authentication.getPrincipal();
-
         List<GardenUser> allUsers = userService.getUser();
-        
         List<GardenUser> Friends = friendService.getAllFriends(loggedInUserId);
         List<Requests> sentRequests = requestService.getSentRequests(loggedInUserId);
         List<Requests> receivedRequests = requestService.getReceivedRequests(loggedInUserId);
+        //base attributes to set up the page.
         model.addAttribute("friends", Friends);
         model.addAttribute("allUsers", allUsers);
         model.addAttribute("sentRequests", sentRequests);
@@ -66,6 +65,13 @@ public class ManageFriendsController {
         return "users/manageFriends";
     }
 
+    /**
+     * Handles inviting a new friend
+     *
+     * @param authentication An Authentication object representing the current user's authentication details
+     * @param requestedUser  The ID of the user to whom the invitation is sent
+     * @return A redirection to the "/users/manageFriends"
+     */
     @PostMapping("users/manageFriends/invite")
     public String manageFriendsInvite(Authentication authentication,
                                 @RequestParam(name = "requestedUser", required = false) Long requestedUser) {
@@ -75,7 +81,7 @@ public class ManageFriendsController {
         GardenUser sentTo = userService.getUserById(requestedUser);
         Friends alreadyFriends = friendService.getFriendship(loggedInUser.getId(), sentTo.getId());
         Optional<Requests> requestExists = requestService.getRequest(sentTo.getId(), loggedInUser.getId());
-
+        //checking is they have already been declined/ already friends                           
         if (!requestExists.isPresent()) {
             if (alreadyFriends == null){
                 if(loggedInUser != sentTo){
@@ -87,6 +93,13 @@ public class ManageFriendsController {
         return "redirect:/users/manageFriends";
     }
 
+    /**
+     * Handles accepting a new friend.
+     *
+     * @param authentication An Authentication object representing the current user's authentication details
+     * @param acceptUser     The ID of the user whose friend request is being accepted
+     * @return A redirection to the "/users/manageFriends"
+     */
     @PostMapping("users/manageFriends/accept")
     public String manageFriendsAccept(Authentication authentication,
         @RequestParam(name = "acceptUser", required = false) Long acceptUser) {
@@ -111,6 +124,13 @@ public class ManageFriendsController {
         return "redirect:/users/manageFriends";
     }
 
+    /**
+     * Handles the declining a friend request.
+     *
+     * @param authentication An Authentication object representing the current user's authentication details
+     * @param declineUser    The ID of the user whose friend request is being declined
+     * @return A redirection to the "/users/manageFriends"
+    */ 
     @PostMapping("users/manageFriends/decline")
     public String manageFriendsDecline(Authentication authentication, 
         @RequestParam(name = "declineUser", required = false) Long declineUser) {
@@ -132,6 +152,14 @@ public class ManageFriendsController {
         return "redirect:/users/manageFriends";
     }
 
+    /**
+     * Handles the search for users to add as friends
+     *
+     * @param authentication An Authentication object representing the current user's authentication details
+     * @param searchUser     The username to search for
+     * @param rm             RedirectAttributes used to add flash attributes to
+     * @return A redirection to the "/users/manageFriends" .
+     */
     @PostMapping("users/manageFriends/search")
     public String manageFriendsSearch(Authentication authentication,
                                       @RequestParam(name = "searchUser", required = false) String searchUser,
@@ -146,6 +174,14 @@ public class ManageFriendsController {
         return "redirect:/users/manageFriends";
     }
 
+    /**
+     * Displays the profile of a friend
+     *
+     * @param authentication An Authentication object representing the current user's authentication details.
+     * @param id             The ID of the friend whose profile is being viewed.
+     * @param model          Thymeleaf model
+     * @return The name of the view template for displaying the friend's profile.
+     */
     @GetMapping("users/friendProfile/{id}")
     public String viewFriendProfile(Authentication authentication,
                                     @PathVariable() Long id,
@@ -153,7 +189,7 @@ public class ManageFriendsController {
         Long loggedInUserId = (Long) authentication.getPrincipal();
         Friends isFriend = friendService.getFriendship(loggedInUserId, id);
         var friend = userService.getUserById(id);
-
+        // a user cannot view another non friends page
         if (isFriend == null) {
             return "redirect:/";
         }
@@ -161,5 +197,4 @@ public class ManageFriendsController {
         model.addAttribute("Friend", friend);
         return "users/friendProfile";
     }
-
 }
