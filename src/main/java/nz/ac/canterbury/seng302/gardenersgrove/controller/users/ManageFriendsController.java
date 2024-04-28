@@ -179,7 +179,7 @@ public class ManageFriendsController {
      * @return The name of the view template for displaying the friend's profile.
      */
     @GetMapping("users/friendProfile/{id}")
-    public String viewFriend(Authentication authentication,
+    public String viewFriendProfile(Authentication authentication,
                                     @PathVariable() Long id,
                                     Model model) {
         Long loggedInUserId = (Long) authentication.getPrincipal();
