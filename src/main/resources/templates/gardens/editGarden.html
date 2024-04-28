@@ -32,6 +32,7 @@
                     <label for="autocomplete-container"> Garden Location: </label>
                     <div class="autocomplete-container" id="autocomplete-container"></div>
                 </div>
+                <div class="container" style="margin-left: 40px">
                 <div class="row g-2">
                     <!-- Street Number Field -->
                     <div class="col-2">
@@ -78,6 +79,7 @@
                            th:name="postCode" th:value="${garden.postCode}" data-cy="postCode"
                            th:classappend="${#fields.hasErrors('postCode')} ? 'error-field' : ''">
                     <div th:if="${#fields.hasErrors('postCode')}" th:errors="*{postCode}" style="color: red;"></div>
+                </div>
                 </div>
                 <input type="hidden" id="lat" th:name="lat" th:value="${garden.lat}">
                 <input type="hidden" id="lon" th:name="lon" th:value="${garden.lon}">
