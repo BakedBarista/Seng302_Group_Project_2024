@@ -182,7 +182,7 @@ public class ManageFriendsControllerTest {
         Friends newFriends = new Friends(loggedInUser, otherUser);
 
         // Had to trim the newFriends object because it had a newline and was failing the test
-        // Previously: verify(friendService).save(newFriends)
+//        verify(friendService).save(newFriends);
         verify(friendService).save(argThat(actual -> actual.toString().trim().equals(newFriends.toString().trim())));
 
         verify(requestService).getRequest(loggedInUser.getId(), otherUser.getId());
