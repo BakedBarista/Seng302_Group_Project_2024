@@ -15,7 +15,8 @@
 </head>
 <body>
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
-<div class="container-fluid">
+<div>
+    <div>
         <form class="row g-3" action="#" th:action="@{/gardens/create}" th:object="${garden}" method="post">
             <!-- Garden Name Field -->
             <div class="col-8">
@@ -31,7 +32,8 @@
                     <label for="autocomplete-container"> Garden Location: </label>
                     <div class="autocomplete-container" id="autocomplete-container"></div>
                 </div>
-            <div class="container second-container" style="margin-left: 40px">
+            <div><button type="button" onclick="toggleSubform()">Enter Manually</button></div>
+            <div class="subform-container" style="display: none; margin-left: 40px">
                 <div class="row g-2">
                     <!-- Street Number Field -->
                     <div class="col-2">
@@ -96,7 +98,7 @@
                 <nav th:replace="~{fragments/description-box :: description-box-with-char-count}"></nav>
             </div>
             <div class="col-lg-12">
-                <button type="submit" class="btn btn-primary btn-sm">Submit!</button>
+                <button type="submit" class="btn btn-primary btn-sm">Submit</button>
                 <button type="button" class="btn btn-outline-secondary btn-sm" onclick="history.back()">Cancel</button>
             </div>
         </form>
@@ -106,4 +108,5 @@
 <script th:src="@{/js/nextFormBox.js}"></script>
 <script th:src="@{/js/locationAutoComplete.js}"></script>
 <script th:src="@{/js/nextFormBox.js}"></script>
+<script th:src="@{/js/toggleSubform.js}"></script>
 </html>
