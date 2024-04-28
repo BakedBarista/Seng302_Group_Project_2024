@@ -102,7 +102,7 @@ function addressAutocomplete(containerElement, callback, options) {
             promise.then((data) => {
 
                 // here we get address suggestions
-                currentItems = data.results;
+                let currentItems = data.results;
 
                 /*
                 Handles no location match
@@ -139,10 +139,13 @@ function addressAutocomplete(containerElement, callback, options) {
 
                     /* Set the value for the autocomplete text field and notify: */
                     noLocationMatch.addEventListener("click", function (e) {
-                        console.log(inputElement.value)
-                        let address = inputElement.value.split(" ");
-                        // inputElement.value = currentItems[index].formatted;
-                        // callback(currentItems[index]);
+                        currentItems = inputElement.value;
+
+
+                        let addressString = inputElement.value.split(/\s|,/ );
+                        callback(addressString);
+                        console.log(addressString[0], addressString[1]);
+                        populateAddress(addressString);
                         /* Close the list of autocompleted values: */
                         closeDropDownList();
 
@@ -197,10 +200,11 @@ function addressAutocomplete(containerElement, callback, options) {
     });
 
     /**
+     * Setting the item in the autocomplete dropdown list
      *
-     * @param items
-     * @param index
-     * @returns {boolean}
+     * @param items - An array of items div elements in the dropdown
+     * @param {number} index -  The index of the item
+     * @returns {boolean} - Returns false if there are no items, otherwise true
      */
     function setActive(items, index) {
         if (!items || !items.length) return false;
@@ -261,16 +265,31 @@ function addressAutocomplete(containerElement, callback, options) {
  * @param {Object} selectedAddress - The selected address with the address information
  */
 function populateAddressFields(selectedAddress) {
-        // Populate address fields with properties from the selectedAddress address
-        document.getElementById("streetNumber").value = selectedAddress.housenumber || null;
-        document.getElementById("streetName").value = selectedAddress.street || null;
-        document.getElementById("suburb").value = selectedAddress.suburb || null;
-        document.getElementById("city").value = selectedAddress.city || null;
-        document.getElementById("country").value = selectedAddress.country || null;
-        document.getElementById("postCode").value = selectedAddress.postcode || null;
-        document.getElementById("lat").value = selectedAddress.lat || null;
-        document.getElementById("lon").value = selectedAddress.lon || null;
+    // Populate address fields with properties from the selectedAddress address
+    document.getElementById("streetNumber").value = selectedAddress.housenumber || null;
+    document.getElementById("streetName").value = selectedAddress.street || null;
+    document.getElementById("suburb").value = selectedAddress.suburb || null;
+    document.getElementById("city").value = selectedAddress.city || null;
+    document.getElementById("country").value = selectedAddress.country || null;
+    document.getElementById("postCode").value = selectedAddress.postcode || null;
+    document.getElementById("lat").value = selectedAddress.lat || null;
+    document.getElementById("lon").value = selectedAddress.lon || null;
 
+
+}
+
+/**
+ * Populates address fields with item in the input with no location match
+ *
+ * @param {Object} currentItem - The current address input
+ */
+function populateAddress(currentItem) {
+    document.getElementById("streetNumber").value = currentItem[0] || null;
+    document.getElementById("streetName").value = currentItem[1] + " " + currentItem[2] || null;
+    document.getElementById("suburb").value = currentItem[3] || null;
+    document.getElementById("city").value = currentItem[4] || null;
+    document.getElementById("country").value = currentItem[5] || null;
+    document.getElementById("postCode").value = currentItem[6] || null;
 }
 
 
