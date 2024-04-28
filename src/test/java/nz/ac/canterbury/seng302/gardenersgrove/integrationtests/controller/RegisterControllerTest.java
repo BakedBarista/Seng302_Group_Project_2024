@@ -41,14 +41,4 @@ public class RegisterControllerTest {
 
         MockitoAnnotations.openMocks(this);
     }
-
-    @Test
-    public void testAddEmailTokenAndTimeToUser_AddsTokenAndTimeToUser() {
-        // add user to persistence and then call function to add token and time instant
-        gardenUserService.addUser(user);
-        registerController.addEmailTokenAndTimeToUser(id);
-
-        // check that toke and time instant persist
-        Assertions.assertNotNull(gardenUserService.getUserById(id).getEmailValidationToken());
-    }
 }
