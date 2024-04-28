@@ -10,96 +10,78 @@
 
 <body>
 <div th:replace="~{fragments/navbar :: navbar}"></div>
-<main>
-    <h1>GARDEN NAME</h1>
-    <div>
-        <div>
-            <p>Description: garden description here</p>
+<main class="mx-5 pt-2">
+    <h1 class="pb-4" th:text="${garden.name}">GARDEN NAME</h1>
+    <div class="row">
+        <div class="col-xl-6 col-12">
+            <h3>Info:</h3>
+            <div class="d-flex">
+                <img th:src="@{/icon/book-02-stroke-rounded.svg}" alt="" width="20" height="20" />
+    <!--            <p class="mx-1"><strong>Description: </strong><span th:text="${garden.description}"></span></p>-->
+                <p class="mx-1"><strong>Description: </strong>Blah blah blah garden description stuff here</p>
+            </div>
+            <div class="d-flex">
+                <img th:src="@{/icon/location-04-stroke-rounded.svg}" alt="" width="20" height="20" />
+                <p class="mx-1"><strong>Location: </strong><span th:text="${garden.location}"></span></p>
+            </div>
+            <div class="d-flex">
+                <img th:src="@{/icon/aspect-ratio-stroke-rounded.svg}" alt="" width="20" height="20" />
+                <p class="mx-1"><strong>Size: </strong><span th:text="${garden.size}"></span> m&sup2;</p>
+            </div>
         </div>
-        <div>
-            <p>Size: 1200 m2</p>
-            <p>Location: Christchurch, NZ</p>
+        <div class="col-xl-6 col-12">
+            <h2>Weather:</h2>
+<!--            TODO: watering alert going here-->
+<!--            <div class="alert alert-warning alert-dismissible fade show" role="alert">-->
+<!--                <strong>You should water your plants, it's hot the next few days</strong>-->
+<!--                <button type="button" class="close" data-dismiss="alert" aria-label="Close">-->
+<!--                    <span aria-hidden="true">&times;</span>-->
+<!--                </button>-->
+<!--            </div>-->
+            <div class="d-flex flex-row" >
+                <div class="card mx-1" th:each="daysWeather: ${weatherForecast}" style="width: 250px;">
+                   <div class="border-0 m-0 p-0">
+                       <div class="text-center">
+                           <img th:src="@{/icon/sun-02-stroke-rounded.svg}" alt="Sunny" width="50" height="50">
+                           <p class="m-0" style="font-size: 16pt;"><strong th:text="${daysWeather.conditions}">Conditions</strong></p>
+                           <p style="font-size: 10pt; color: #1E1E1E70;" th:text="${daysWeather.date}">Date</p>
+                       </div>
+                   </div>
+                    <div class="text-center border-0 m-0 p-0" style="font-size: 22pt;">
+                        <p><strong><span th:text="${daysWeather.maxTemp}">24</span></strong>&deg;</p>
+                    </div>
+                    <div class="text-center border-0 m-0 p-0" style="font-size: 10pt;">
+                        <div class="row m-0 p-0">
+                            <div class="col border-1 m-0 p-0">
+                                <img th:src="@{/icon/fast-wind-stroke-rounded.svg}" alt="" width="24" height="24">
+                                <p class="m-0" style="font-size: 10pt; color: #1E1E1E70;">Wind</p>
+                                <p class="m-0"><span th:text="${daysWeather.windSpeed}"></span> kph</p>
+                            </div>
+                            <div class="col border-start m-0 p-0">
+                                <img th:src="@{/icon/humidity.svg}" alt="" width="24" height="24">
+                                <p class="m-0" style="font-size: 10pt; color: #1E1E1E70;">Humidity</p>
+                                <p class="m-0"><span th:text="${daysWeather.avgHumidity}"></span>%</p>
+                            </div>
+                        </div>
+                        <div class="row border-1 m-0 p-0">
+                            <div class="col border-1 border-end border-top m-0 p-0">
+                                <img th:src="@{/icon/uv-02-stroke-rounded.svg}" alt="" width="24" height="24">
+                                <p class="m-0" style="font-size: 10pt; color: #1E1E1E70;">UV</p>
+                                <p class="m-0" th:text="${daysWeather.uv}"></p>
+                            </div>
+                            <div class="col border-top m-0 p-0">
+                                <img th:src="@{/icon/rain-stroke-rounded.svg}" alt="" width="24" height="24">
+                                <p class="m-0" style="font-size: 10pt; color: #1E1E1E70;">Precipitation</p>
+                                <p class="m-0"><span th:text="${daysWeather.precipitation}"></span> mm</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
-    <div>
-        <h2>Weather:</h2>
-<!--        3 weathers cards here-->
-        <div class="d-flex flex-lg-row flex-column justify-content-center">
-            <div class="card weather-card m-1 " style="width: 400px;">
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <div class="weather-icon">
-                        <img th:src="@{/icon/sunny.svg}" alt="Sunny" width="40" height="40"> <!-- Replace with your sun icon -->
-                        <p>Sunny</p>
-                    </div>
-                    <div class="weather-date">
-                        <h5>Today</h5>
-                        <h6>26 Apr</h6>
-                    </div>
-                    <div class="temperature">
-                        <img th:src="@{/icon/max-temp.svg}" alt="Max:" width="20" height="20"> <!-- Replace with your sun icon -->
-                        <span class="temp-high">18.0°C</span>
-                    </div>
-                    <div class="temperature-low">
-                        <img th:src="@{/icon/min-temp.svg}" alt="Min:" width="20" height="20"> <!-- Replace with your sun icon -->
-                        <span>2.0°C</span>
-                    </div>
-                    <div class="humidity">
-                        <img th:src="@{/icon/humidity.svg}" alt="Humidity:" width="20" height="20"> <!-- Replace with your sun icon -->
-                        <span>88%</span>
-                    </div>
-                </div>
-            </div>
-            <div class="card weather-card m-1" style="width: 400px;">
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <div class="weather-icon">
-                        <img th:src="@{/icon/sunny.svg}" alt="Sunny" width="40" height="40"> <!-- Replace with your sun icon -->
-                        <p>Sunny</p>
-                    </div>
-                    <div class="weather-date">
-                        <h5>Today</h5>
-                        <h6>26 Apr</h6>
-                    </div>
-                    <div class="temperature">
-                        <img th:src="@{/icon/max-temp.svg}" alt="Max:" width="20" height="20"> <!-- Replace with your sun icon -->
-                        <span class="temp-high">18.0°C</span>
-                    </div>
-                    <div class="temperature-low">
-                        <img th:src="@{/icon/min-temp.svg}" alt="Min:" width="20" height="20"> <!-- Replace with your sun icon -->
-                        <span>2.0°C</span>
-                    </div>
-                    <div class="humidity">
-                        <img th:src="@{/icon/humidity.svg}" alt="Humidity:" width="20" height="20"> <!-- Replace with your sun icon -->
-                        <span>88%</span>
-                    </div>
-                </div>
-            </div>
-            <div class="card weather-card m-1" style="width: 400px;">
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <div class="weather-icon">
-                        <img th:src="@{/icon/sunny.svg}" alt="Sunny" width="40" height="40"> <!-- Replace with your sun icon -->
-                        <p>Sunny</p>
-                    </div>
-                    <div class="weather-date">
-                        <h5>Today</h5>
-                        <h6>26 Apr</h6>
-                    </div>
-                    <div class="temperature">
-                        <img th:src="@{/icon/max-temp.svg}" alt="Max:" width="20" height="20"> <!-- Replace with your sun icon -->
-                        <span class="temp-high">18.0°C</span>
-                    </div>
-                    <div class="temperature-low">
-                        <img th:src="@{/icon/min-temp.svg}" alt="Min:" width="20" height="20"> <!-- Replace with your sun icon -->
-                        <span>2.0°C</span>
-                    </div>
-                    <div class="humidity">
-                        <img th:src="@{/icon/humidity.svg}" alt="Humidity:" width="20" height="20"> <!-- Replace with your sun icon -->
-                        <span>88%</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-            weather card
-    </div>
+
     <div>
         <h2>Plants: </h2>
         Plants here...
