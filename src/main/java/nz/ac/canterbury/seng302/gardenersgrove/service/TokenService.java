@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,8 @@ import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 
 import java.security.SecureRandom;
 import java.time.Clock;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Base64;
 
 /**
@@ -74,9 +77,29 @@ public class TokenService {
     public void cleanUpTokens() {
         logger.debug("cleaning up tokens");
 
-        int deleted = userRepository.deleteUsersWithExpiredEmailTokens(clock.instant());
-        if (deleted != 0) {
-            logger.info("deleted {} users with expired tokens", deleted);
+        int deletedEmailTokens = userRepository.deleteUsersWithExpiredEmailTokens(clock.instant());
+        if (deletedEmailTokens != 0) {
+            logger.info("deleted {} users with expired tokens", deletedEmailTokens);
+        }
+
+        int deletedPasswordTokens = userRepository.removeExpiredResetPasswordTokens(clock.instant());
+        if (deletedPasswordTokens != 0) {
+            logger.info("removed {} reset password tokens", deletedPasswordTokens);
         }
     }
+//
+//    /**
+//     * adds a random token and this time instance to a given user in the DB
+//     * @param userId
+//     * @return
+//     */
+//    public void addEmailTokenAndTimeToUser(Long userId) {
+//        logger.info("called addTokenAndTimeToUser");
+//        String token = createEmailToken();
+//
+//        GardenUser user = userService.getUserById(userId);
+//        Instant time = Instant.now().plus(10, ChronoUnit.MINUTES);
+//        user.setResetPasswordToken(token);
+//        user.setResetPasswordTokenExpiryInstant(time);
+//    }
 }

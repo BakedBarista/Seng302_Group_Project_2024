@@ -95,6 +95,7 @@ public class RegisterController {
         }
 
         addEmailTokenAndTimeToUser(user.getId());
+        userService.addUser(user);
         return "redirect:/users/user/"+user.getId()+"/authenticateEmail";
     }
 
@@ -127,7 +128,5 @@ public class RegisterController {
         Instant time = Instant.now().plus(10, ChronoUnit.MINUTES);
         user.setEmailValidationToken(token);
         user.setEmailValidationTokenExpiryInstant(time);
-
-        userService.addUser(user);
     }
 }

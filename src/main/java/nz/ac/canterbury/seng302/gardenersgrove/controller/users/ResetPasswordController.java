@@ -15,10 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class ResetPasswordController {
     private Logger logger = LoggerFactory.getLogger(LoginController.class);
 
-    @Autowired
     private GardenUserService userService;
 
-    @Autowired
     private EmailSenderService emailSenderService;
 
     public ResetPasswordController(GardenUserService userService, EmailSenderService emailSenderService) {
@@ -28,7 +26,6 @@ public class ResetPasswordController {
 
     /**
      * Shows the reset password page
-     *
      * This is linked to from the login page
      *
      * @return reset password page view
@@ -50,10 +47,13 @@ public class ResetPasswordController {
             @RequestParam(name = "email") String email) {
         logger.info("POST /users/reset-password");
 
-        // TODO: send email with reset password link
-        // attach token to account
-        emailSenderService.sendEmail(userService.getUserByEmail(email), "subject", "body");
-        // set timer to remove url after 10 minutes
+        boolean emailExists = true;
+        if (emailExists) {
+
+
+            emailSenderService.sendEmail(userService.getUserByEmail(email),
+                    "Reset your GardenersGrove Password", "Click the url");
+        }
 
         return "users/resetPasswordConfirmation";
     }

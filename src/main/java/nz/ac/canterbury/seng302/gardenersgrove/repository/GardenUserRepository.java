@@ -50,4 +50,13 @@ public interface GardenUserRepository extends CrudRepository<GardenUser, Long> {
     @Modifying
     @Query("DELETE FROM GardenUser u WHERE u.emailValidationTokenExpiryInstant < ?1")
     int deleteUsersWithExpiredEmailTokens(Instant now);
+
+    /**
+     * Removes all expired reset password tokens from users
+     *
+     * @param now The current time
+     */
+    @Modifying
+    @Query("UPDATE GardenUser SET resetPasswordToken = null, resetPasswordTokenExpiryInstant = null WHERE resetPasswordTokenExpiryInstant < ?1")
+    int removeExpiredResetPasswordTokens(Instant now);
 }
