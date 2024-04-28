@@ -70,33 +70,12 @@ public class TokenService {
     }
 
     /**
-     *  Scheduled clean up of expired tokens every 60 seconds
-     */
-    @Scheduled(fixedRate = 60_000)
-    @Transactional
-    public void cleanUpTokens() {
-        logger.debug("cleaning up tokens");
-
-        Instant now = clock.instant();
-
-        int deletedEmailTokens = userRepository.deleteUsersWithExpiredEmailTokens(now);
-        if (deletedEmailTokens != 0) {
-            logger.info("deleted {} users with expired tokens", deletedEmailTokens);
-        }
-
-        int deletedPasswordTokens = userRepository.removeExpiredResetPasswordTokens(now);
-        if (deletedPasswordTokens != 0) {
-            logger.info("removed {} reset password tokens", deletedPasswordTokens);
-        }
-    }
-
-    /**
      * adds a reset token and this time instance to a given user in the DB
      * @param user
      */
     public void addResetTokenAndTimeToUser(GardenUser user) {
         logger.info("called addTokenAndTimeToUser");
-        String token = "123"; // TODO - replace with call to 128-bit token
+        String token = createAuthenticationToken(); // TODO - replace with call to 128-bit token ?
 
         Instant time = Instant.now().plus(10, ChronoUnit.MINUTES);
         user.setResetPasswordToken(token);
@@ -115,5 +94,26 @@ public class TokenService {
         Instant time = Instant.now().plus(10, ChronoUnit.MINUTES);
         user.setEmailValidationToken(token);
         user.setEmailValidationTokenExpiryInstant(time);
+    }
+
+    /**
+     *  Scheduled clean up of expired tokens every 60 seconds
+     */
+    @Scheduled(fixedRate = 60_000)
+    @Transactional
+    public void cleanUpTokens() {
+        logger.debug("cleaning up tokens");
+
+        Instant now = clock.instant();
+
+        int deletedEmailTokens = userRepository.deleteUsersWithExpiredEmailTokens(now);
+        if (deletedEmailTokens != 0) {
+            logger.info("deleted {} users with expired tokens", deletedEmailTokens);
+        }
+
+        int deletedPasswordTokens = userRepository.removeExpiredResetPasswordTokens(now);
+        if (deletedPasswordTokens != 0) {
+            logger.info("removed {} reset password tokens", deletedPasswordTokens);
+        }
     }
 }
