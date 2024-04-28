@@ -83,8 +83,8 @@ public class GardenServiceTest {
     @Test
     public void getGardensByOwnerId_ReturnsGardens() {
         List<Garden> mockGardens = Arrays.asList(
-                new Garden("Garden 1", "Location 1", "100", "Small"),
-                new Garden("Garden 2", "Location 2", "200", "Big")
+                new Garden("Garden 1", "1","Test Road","Test Suburb","Test City","Test Country","1000",0.55,0.55, "100", "Small"),
+                new Garden("Garden 2", "2","Test Road","Test Suburb","Test City","Test Country","1000",0.55,0.55, "100", "Small")
         );
         Mockito.when(gardenRepository.findByOwnerId(1L)).thenReturn(mockGardens);
 

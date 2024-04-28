@@ -136,7 +136,7 @@ public class GardenTest {
     public void gardenLocation_LocationHasCommas_ReturnsEmptyConstraintViolationList() {
         garden.setCountry("Ilam, Christchurch, New Zealand");
 
-        assertFalse(validator.validate(garden).isEmpty());
+        assertTrue(validator.validate(garden).isEmpty());
     }
 
     @Test
