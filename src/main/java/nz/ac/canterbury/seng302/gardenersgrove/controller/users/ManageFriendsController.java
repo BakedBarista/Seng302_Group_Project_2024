@@ -11,7 +11,9 @@ import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -137,6 +139,8 @@ public class ManageFriendsController {
 
         Long loggedInUserId = (Long) authentication.getPrincipal();
         List<GardenUser> searchResults = userService.getUserBySearch(searchUser, loggedInUserId);
+
+
 
         rm.addFlashAttribute("searchResults", searchResults);
         return "redirect:/users/manageFriends";

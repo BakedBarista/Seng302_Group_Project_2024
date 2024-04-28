@@ -43,6 +43,7 @@
             <tr>
                 <th>Search Results</th>
                 <th></th>
+                <th></th>
             </tr>
             </thead>
             <tbody>
@@ -50,6 +51,9 @@
                 <td>
                     <span th:text="${friend.fname} "></span>
                     <span th:if="${friend.lname != null}" th:text="${friend.lname}"></span>
+                </td>
+                <td>
+                    <span th:text="${friend.email}"></span>
                 </td>
                 <td>
                     <form th:action="@{/users/manageFriends/invite}" method="post">
