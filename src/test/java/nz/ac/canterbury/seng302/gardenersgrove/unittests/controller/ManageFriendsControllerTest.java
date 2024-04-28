@@ -21,6 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -233,11 +234,9 @@ public class ManageFriendsControllerTest {
         when(gardenUserService.getUserById(otherUserId)).thenReturn(otherUser);
 
         Friends newFriends = new Friends(loggedInUser, otherUser);
-//        friendService.save(newFriends);
+        friendService.save(newFriends);
 
         String result = manageFriendsController.manageFriendsAccept(authentication, otherUserId);
-
-        verify(friendService, never()).save(any(Friends.class));
         verify(requestService, never()).delete(any(Requests.class));
         assertEquals("redirect:/users/manageFriends", result);
     }
@@ -324,10 +323,13 @@ public class ManageFriendsControllerTest {
     @Test
     public void whenSearchWithEmail_andUserExists_thenSearchResultsNotEmpty() {
         String searchUser = "john.doe@gmail.com";
+        List<GardenUser> searchResults = Collections.singletonList(new GardenUser());
         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+        when(gardenUserService.getUserBySearch(searchUser, loggedInUserId)).thenReturn(searchResults);
         RedirectAttributes rm = new RedirectAttributesModelMap();
         String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
         assertEquals("redirect:/users/manageFriends", result);
+        assertEquals(searchResults, rm.getFlashAttributes().get("searchResults"));
     }
 
     /**
@@ -336,11 +338,13 @@ public class ManageFriendsControllerTest {
     @Test
     public void whenSearchWithEmail_andUserDoesNotExist_thenSearchResultsEmpty() {
         String searchUser = "jane.doe@gmail.com";
+        List<GardenUser> searchResults = Collections.emptyList();
         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+        when(gardenUserService.getUserBySearch(searchUser, loggedInUserId)).thenReturn(searchResults);
         RedirectAttributes rm = new RedirectAttributesModelMap();
         String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
-
-        assertEquals("redirect:/users/manageFriends", result);    }
+        assertEquals("redirect:/users/manageFriends", result);
+        assertEquals(searchResults, rm.getFlashAttributes().get("searchResults"));    }
 
     /**
      * Testing the manageFriendsSearch method
@@ -348,10 +352,13 @@ public class ManageFriendsControllerTest {
     @Test
     public void whenSearchWithName_andUserExists_thenSearchResultsNotEmpty() {
         String searchUser = "john doe";
+        List<GardenUser> searchResults = Collections.singletonList(new GardenUser());
         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+        when(gardenUserService.getUserBySearch(searchUser, loggedInUserId)).thenReturn(searchResults);
         RedirectAttributes rm = new RedirectAttributesModelMap();
         String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
-        assertEquals("redirect:/users/manageFriends", result);    }
+        assertEquals("redirect:/users/manageFriends", result);
+        assertEquals(searchResults, rm.getFlashAttributes().get("searchResults"));    }
 
     /**
      * Testing the manageFriendsSearch method
@@ -359,10 +366,13 @@ public class ManageFriendsControllerTest {
     @Test
     public void whenSearchWithName_andUserDoesNotExist_thenSearchResultsEmpty() {
         String searchUser = "jane doe";
+        List<GardenUser> searchResults = Collections.emptyList();
         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+        when(gardenUserService.getUserBySearch(searchUser, loggedInUserId)).thenReturn(searchResults);
         RedirectAttributes rm = new RedirectAttributesModelMap();
         String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
-        assertEquals("redirect:/users/manageFriends", result);    }
+        assertEquals("redirect:/users/manageFriends", result);
+        assertEquals(searchResults, rm.getFlashAttributes().get("searchResults"));    }
 
     /**
      * Testing the manageFriendsSearch method
@@ -370,10 +380,13 @@ public class ManageFriendsControllerTest {
     @Test
     public void whenSearchLoggedInUsersName_thenSearchResultsEmpty() {
         String searchUser = "current user";
+        List<GardenUser> searchResults = Collections.emptyList();
         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+        when(gardenUserService.getUserBySearch(searchUser, loggedInUserId)).thenReturn(searchResults);
         RedirectAttributes rm = new RedirectAttributesModelMap();
         String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
-        assertEquals("redirect:/users/manageFriends", result);    }
+        assertEquals("redirect:/users/manageFriends", result);
+        assertEquals(searchResults, rm.getFlashAttributes().get("searchResults"));    }
 
     /**
      * Testing the manageFriendsSearch method
@@ -381,23 +394,63 @@ public class ManageFriendsControllerTest {
     @Test
     public void whenSearchLoggedInUsersEmail_thenSearchResultsEmpty() {
         String searchUser = "logged.in@gmail.com";
+        List<GardenUser> searchResults = Collections.emptyList();
         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+        when(gardenUserService.getUserBySearch(searchUser, loggedInUserId)).thenReturn(searchResults);
         RedirectAttributes rm = new RedirectAttributesModelMap();
         String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
-        assertEquals("redirect:/users/manageFriends", result);    }
+        assertEquals("redirect:/users/manageFriends", result);
+        assertEquals(searchResults, rm.getFlashAttributes().get("searchResults"));    }
 
     /**
      * Testing the viewFriendProfile method
      */
-//    @Test
-//    public void whenUserIsFriend_thenShowProfile() {
-//        Model model = mock(Model.class);
-//
-//        Friends newFriends = new Friends(loggedInUser, otherUser);
-//        friendService.save(newFriends);
-//
-//        when(authentication.getPrincipal()).thenReturn(loggedInUserId);
-//        String result = manageFriendsController.viewFriendProfile(authentication, otherUserId, model);
-//        assertEquals("users/friendProfile", result);
-//    }
+    @Test
+    public void whenUserIsFriend_thenShowProfile() {
+        Model model = mock(Model.class);
+
+        Friends newFriends = new Friends(loggedInUser, otherUser);
+        friendService.save(newFriends);
+
+        when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+        when(friendService.getFriendship(loggedInUserId, otherUserId)).thenReturn(newFriends);
+        when(gardenUserService.getUserById(otherUserId)).thenReturn(otherUser);
+
+        String result = manageFriendsController.viewFriendProfile(authentication, otherUserId, model);
+
+        verify(model).addAttribute(eq("Friend"), any(GardenUser.class));
+        assertEquals("users/friendProfile", result);
+    }
+
+    /**
+     * Testing the viewFriendProfile method
+     */
+    @Test
+    public void whenUserIsNotFriend_thenRedirectHome() {
+        Model model = mock(Model.class);
+
+        when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+        when(friendService.getFriendship(loggedInUserId, otherUserId)).thenReturn(null);
+
+        String result = manageFriendsController.viewFriendProfile(authentication, otherUserId, model);
+
+        verify(model, never()).addAttribute(eq("Friend"), any(GardenUser.class));
+        assertEquals("redirect:/", result);
+    }
+
+    /**
+     * Testing the viewFriendProfile method
+     */
+    @Test
+    public void whenUserIsInvalid_thenRedirectHome() {
+        Model model = mock(Model.class);
+
+        when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+        when(friendService.getFriendship(loggedInUserId, invalidUserId)).thenReturn(null);
+
+        String result = manageFriendsController.viewFriendProfile(authentication, invalidUserId, model);
+
+        verify(model, never()).addAttribute(eq("Friend"), any(GardenUser.class));
+        assertEquals("redirect:/", result);
+    }
 }
