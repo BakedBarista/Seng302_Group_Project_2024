@@ -13,7 +13,7 @@
 <div>
     <h2 th:text="${garden.name}">Garden Name</h2>
 <!--    <p><strong>ID: </strong><span th:text="${garden.id}"></span></p>-->
-    <p><strong>Location: </strong><span th:text="${garden.streetNumber + ' ' + garden.streetName + ' ' + garden.suburb + ' ' + garden.city}"></span></p>
+    <p><strong>Location: </strong><span th:text="${garden.streetNumber + ' ' + garden.streetName + ' ' + garden.suburb + ' ' + garden.city + ' ' + garden.country}"></span></p>
     <p><strong>Size: </strong><span th:text="${garden.size}"></span> m&sup2;</p>
     <p><strong>Description: </strong><span th:text="${garden.description}"></span></p>
     <form th:action="@{/gardens/{id}(id=${garden.id})}" method="post">
@@ -22,8 +22,6 @@
             <input type="checkbox" class="form-check-input" id="isPublic" name="isPublic" th:checked="${garden.isPublic}" onchange="this.form.submit()"/>
         </p>
     </form>
-
-
 
     <div>
         <a class="button-link" th:href="@{/gardens/{id}/edit(id=${garden.id})}"><button>Edit Garden</button></a>
