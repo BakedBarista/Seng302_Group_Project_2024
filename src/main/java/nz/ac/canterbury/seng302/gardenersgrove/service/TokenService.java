@@ -77,29 +77,43 @@ public class TokenService {
     public void cleanUpTokens() {
         logger.debug("cleaning up tokens");
 
-        int deletedEmailTokens = userRepository.deleteUsersWithExpiredEmailTokens(clock.instant());
+        Instant now = clock.instant();
+
+        int deletedEmailTokens = userRepository.deleteUsersWithExpiredEmailTokens(now);
         if (deletedEmailTokens != 0) {
             logger.info("deleted {} users with expired tokens", deletedEmailTokens);
         }
 
-        int deletedPasswordTokens = userRepository.removeExpiredResetPasswordTokens(clock.instant());
+        int deletedPasswordTokens = userRepository.removeExpiredResetPasswordTokens(now);
         if (deletedPasswordTokens != 0) {
             logger.info("removed {} reset password tokens", deletedPasswordTokens);
         }
     }
-//
-//    /**
-//     * adds a random token and this time instance to a given user in the DB
-//     * @param userId
-//     * @return
-//     */
-//    public void addEmailTokenAndTimeToUser(Long userId) {
-//        logger.info("called addTokenAndTimeToUser");
-//        String token = createEmailToken();
-//
-//        GardenUser user = userService.getUserById(userId);
-//        Instant time = Instant.now().plus(10, ChronoUnit.MINUTES);
-//        user.setResetPasswordToken(token);
-//        user.setResetPasswordTokenExpiryInstant(time);
-//    }
+
+    /**
+     * adds a reset token and this time instance to a given user in the DB
+     * @param user
+     */
+    public void addResetTokenAndTimeToUser(GardenUser user) {
+        logger.info("called addTokenAndTimeToUser");
+        String token = "123"; // TODO - replace with call to 128-bit token
+
+        Instant time = Instant.now().plus(10, ChronoUnit.MINUTES);
+        user.setResetPasswordToken(token);
+        user.setResetPasswordTokenExpiryInstant(time);
+    }
+
+    /**
+     * adds a random token and this time instance to a given user in the DB
+     *  - must add user to persistence after this happens
+     * @param user
+     */
+    public void addEmailTokenAndTimeToUser(GardenUser user) {
+        logger.info("called addTokenAndTimeToUser");
+        String token = createEmailToken();
+
+        Instant time = Instant.now().plus(10, ChronoUnit.MINUTES);
+        user.setEmailValidationToken(token);
+        user.setEmailValidationTokenExpiryInstant(time);
+    }
 }

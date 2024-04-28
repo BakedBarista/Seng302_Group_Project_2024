@@ -94,7 +94,7 @@ public class RegisterController {
             return "users/registerTemplate";
         }
 
-        addEmailTokenAndTimeToUser(user.getId());
+        tokenService.addEmailTokenAndTimeToUser(user);
         userService.addUser(user);
         return "redirect:/users/user/"+user.getId()+"/authenticateEmail";
     }
@@ -113,20 +113,5 @@ public class RegisterController {
         } catch (Exception e) {
             logger.error("Error while creating dummy user", e);
         }
-    }
-
-    /**
-     * adds a random token and this time instance to a given user in the DB
-     * @param userId
-     * @return
-     */
-    public void addEmailTokenAndTimeToUser(Long userId) {
-        logger.info("called addTokenAndTimeToUser");
-        String token = tokenService.createEmailToken();
-
-        GardenUser user = userService.getUserById(userId);
-        Instant time = Instant.now().plus(10, ChronoUnit.MINUTES);
-        user.setEmailValidationToken(token);
-        user.setEmailValidationTokenExpiryInstant(time);
     }
 }

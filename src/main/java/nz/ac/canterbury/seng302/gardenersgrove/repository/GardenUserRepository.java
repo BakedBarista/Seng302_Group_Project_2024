@@ -57,6 +57,6 @@ public interface GardenUserRepository extends CrudRepository<GardenUser, Long> {
      * @param now The current time
      */
     @Modifying
-    @Query("UPDATE GardenUser SET resetPasswordToken = null, resetPasswordTokenExpiryInstant = null WHERE resetPasswordTokenExpiryInstant < ?1")
+    @Query("UPDATE GardenUser u SET u.resetPasswordToken = null, u.resetPasswordTokenExpiryInstant = null WHERE u.resetPasswordTokenExpiryInstant < ?1")
     int removeExpiredResetPasswordTokens(Instant now);
 }
