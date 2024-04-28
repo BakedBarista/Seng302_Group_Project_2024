@@ -19,30 +19,41 @@ public class ResetPasswordController {
     @Autowired
     private TokenService tokenService;
 
+    /**
+     * Handles the reset password get request
+     * @return the reset password page
+     */
     @GetMapping("/users/reset-password")
     public String resetPassword() {
         logger.info("GET /users/reset-password");
         return "users/resetPassword";
     }
 
+    /**
+     * Handles the reset password post request
+     * @param email the email
+     * @param request the HTTP request
+     * @return the reset password confirmation page
+     */
     @PostMapping("/users/reset-password")
     public String resetPasswordConfirmation(
             @RequestParam(name = "email") String email, HttpServletRequest request) {
-        logger.info("POST /users/reset-password");
-        String token = UUID.randomUUID().toString();
-        logger.info("Reset password token: " + token);
 
-        String baseUrl = request.getScheme() + "://" + request.getServerName();
-        if (request.getServerPort() != 80 && request.getServerPort() != 443) {
-            baseUrl += ":" + request.getServerPort();
-        }
-        String resetPasswordLink = baseUrl + "/users/reset-password/callback?token=" + token;
+
+        String token = tokenService.createAuthenticationToken();
+        String resetPasswordLink = generateUrlString(request, token);
         logger.info("Reset password link: " + resetPasswordLink);
         // TODO: send email with reset password link
 
         return "users/resetPasswordConfirmation";
     }
 
+    /**
+     * Handles the reset password callback get request
+     * @param token the token
+     * @param model the model
+     * @return the reset password callback page
+     */
     @GetMapping("/users/reset-password/callback")
     public String resetPasswordCallback(
             @RequestParam(name = "token") String token, Model model) {
@@ -51,6 +62,13 @@ public class ResetPasswordController {
         return "users/resetPasswordCallback";
     }
 
+    /**
+     *  Handles the reset password callback post request
+     * @param token the token
+     * @param newPassword the new password
+     * @param retypePassword the retyped password
+     * @return the redirect to the login page
+     */
     @PostMapping("/users/reset-password/callback")
     public String resetPasswordCallbackPost(
             @RequestParam(name = "token") String token,
@@ -60,5 +78,21 @@ public class ResetPasswordController {
         // TODO: verify token and reset password
 
         return "redirect:/users/login";
+    }
+
+    /**
+     * Generates a URL string for the reset password link
+     * @param request the HTTP request
+     * @return the URL string
+     */
+    public String generateUrlString(HttpServletRequest request, String token) {
+
+        String baseUrl = request.getScheme() + "://" + request.getServerName();
+        if (request.getServerPort() != 80 && request.getServerPort() != 443) {
+            baseUrl += ":" + request.getServerPort();
+        }
+        baseUrl += "/users/reset-password/callback?token=" + token;
+        return baseUrl;
+
     }
 }
