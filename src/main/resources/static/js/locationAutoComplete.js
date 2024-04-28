@@ -1,3 +1,4 @@
+let LOCATION_MATCH = false;
 /**
  * Initializes an address autocomplete feature on the specified container element.
  *
@@ -103,29 +104,50 @@ function addressAutocomplete(containerElement, callback, options) {
                 // here we get address suggestions
                 currentItems = data.results;
 
+                /*
+                Handles no location match
+                 */
+                const noLocationMatch = document.createElement("div");
+                noLocationMatch.innerHTML = "No matching location found, location-based services may not work (<u style='color: blue;'>Use location</u>)";
 
                 /*create a DIV element that will contain the items (values):*/
                 const autocompleteItemsElement = document.createElement("div");
                 autocompleteItemsElement.setAttribute("class", "autocomplete-items");
                 inputContainerElement.appendChild(autocompleteItemsElement);
 
-                /* For each item in the results */
-                data.results.forEach((result, index) => {
-                    /* Create a DIV element for each element: */
+                if (data.results.length !== 0) {
+                    LOCATION_MATCH = true;
+                    /* For each item in the results */
+                    data.results.forEach((result, index) => {
+                        /* Create a DIV element for each element: */
+                        const itemElement = document.createElement("div");
+                        /* Set formatted address as item value */
+                        itemElement.innerHTML = result.formatted;
+                        autocompleteItemsElement.appendChild(itemElement);
+
+                        /* Set the value for the autocomplete text field and notify: */
+                        itemElement.addEventListener("click", function (e) {
+                            inputElement.value = currentItems[index].formatted;
+                            callback(currentItems[index]);
+                            /* Close the list of autocompleted values: */
+                            closeDropDownList();
+                        });
+                    });
+                } else {
+                    autocompleteItemsElement.appendChild(noLocationMatch);
                     const itemElement = document.createElement("div");
-                    /* Set formatted address as item value */
-                    itemElement.innerHTML = result.formatted;
-                    autocompleteItemsElement.appendChild(itemElement);
 
                     /* Set the value for the autocomplete text field and notify: */
-                    itemElement.addEventListener("click", function(e) {
-                        inputElement.value = currentItems[index].formatted;
-                        callback(currentItems[index]);
+                    noLocationMatch.addEventListener("click", function (e) {
+                        console.log(inputElement.value)
+                        let address = inputElement.value.split(" ");
+                        // inputElement.value = currentItems[index].formatted;
+                        // callback(currentItems[index]);
                         /* Close the list of autocompleted values: */
                         closeDropDownList();
-                    });
-                });
 
+                    });
+                }
             }, (err) => {
                 if (!err.canceled) {
                     console.log(err);
@@ -239,15 +261,16 @@ function addressAutocomplete(containerElement, callback, options) {
  * @param {Object} selectedAddress - The selected address with the address information
  */
 function populateAddressFields(selectedAddress) {
-    // Populate address fields with properties from the selectedAddress address
-    document.getElementById("streetNumber").value = selectedAddress.housenumber || null;
-    document.getElementById("streetName").value = selectedAddress.street || null;
-    document.getElementById("suburb").value = selectedAddress.suburb || null;
-    document.getElementById("city").value = selectedAddress.city || null;
-    document.getElementById("country").value = selectedAddress.country || null;
-    document.getElementById("postCode").value = selectedAddress.postcode || null;
-    document.getElementById("lat").value = selectedAddress.lat || null;
-    document.getElementById("lon").value = selectedAddress.lon || null;
+        // Populate address fields with properties from the selectedAddress address
+        document.getElementById("streetNumber").value = selectedAddress.housenumber || null;
+        document.getElementById("streetName").value = selectedAddress.street || null;
+        document.getElementById("suburb").value = selectedAddress.suburb || null;
+        document.getElementById("city").value = selectedAddress.city || null;
+        document.getElementById("country").value = selectedAddress.country || null;
+        document.getElementById("postCode").value = selectedAddress.postcode || null;
+        document.getElementById("lat").value = selectedAddress.lat || null;
+        document.getElementById("lon").value = selectedAddress.lon || null;
+
 }
 
 
