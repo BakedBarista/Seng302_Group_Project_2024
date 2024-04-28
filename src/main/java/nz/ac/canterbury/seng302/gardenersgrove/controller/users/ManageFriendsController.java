@@ -22,37 +22,20 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 @Controller
 public class ManageFriendsController {
     private Logger logger = LoggerFactory.getLogger(LoginController.class);
 
-
-    @Autowired
     private FriendService friendService;
-    private GardenUserService gardenUserService;
     private GardenUserService userService;
     private RequestService requestService;
 
     @Autowired
-    public void setUserService(GardenUserService userService) {
+    public ManageFriendsController(FriendService friendService, GardenUserService userService, RequestService requestService) {
         this.userService = userService;
-    }
-    @Autowired
-    public void setRequestService(RequestService requestService) {
+        this.friendService = friendService;
         this.requestService = requestService;
     }
-    @Autowired
-    public void ManageUserController(GardenUserService gardenUserService) {
-        this.gardenUserService = gardenUserService;
-    }
-
-    public ManageFriendsController(FriendService friendService) {
-        this.friendService = friendService;
-    }
-
-
     long id =1 ;
     /**
      * Shows the manage friends page
@@ -62,13 +45,13 @@ public class ManageFriendsController {
      * @return login page view
      */
     @GetMapping("users/manageFriends")
-    public String manageFriends(Authentication authentication, @RequestParam(required = false) String error,
+    public String manageFriends(Authentication authentication,
                         Model model) {
         logger.info("users/manageFriends");
         
         Long loggedInUserId = (Long) authentication.getPrincipal();
 
-        List<GardenUser> allUsers = gardenUserService.getUser();
+        List<GardenUser> allUsers = userService.getUser();
         
         List<GardenUser> Friends = friendService.getAllFriends(loggedInUserId);
         List<Requests> sentRequests = requestService.getSentRequests(loggedInUserId);
@@ -81,13 +64,13 @@ public class ManageFriendsController {
     }
 
     @PostMapping("users/manageFriends/invite")
-    public String manageFriends(Authentication authentication, 
-        @RequestParam(name = "requestedUser", required = false) Long requestedUser) {
+    public String manageFriendsInvite(Authentication authentication,
+                                @RequestParam(name = "requestedUser", required = false) Long requestedUser) {
         
         Long loggedInUserId = (Long) authentication.getPrincipal();
         GardenUser loggedInUser = userService.getUserById(loggedInUserId);
         GardenUser sentTo = userService.getUserById(requestedUser);
-        Friends alreadyFriends = friendService.getRequest(loggedInUser.getId(), sentTo.getId());
+        Friends alreadyFriends = friendService.getFriendship(loggedInUser.getId(), sentTo.getId());
         Optional<Requests> requestExists = requestService.getRequest(sentTo.getId(), loggedInUser.getId());
 
         if (!requestExists.isPresent()) {
@@ -102,22 +85,24 @@ public class ManageFriendsController {
     }
 
     @PostMapping("users/manageFriends/accept")
-    public String manageFriendsAccepts(Authentication authentication, 
+    public String manageFriendsAccept(Authentication authentication,
         @RequestParam(name = "acceptUser", required = false) Long acceptUser) {
 
         Long loggedInUserId = (Long) authentication.getPrincipal();
         GardenUser loggedInUser = userService.getUserById(loggedInUserId);
         GardenUser receivedFrom = userService.getUserById(acceptUser);
-        Friends newFriends = new Friends(loggedInUser, receivedFrom);
 
-        friendService.save(newFriends);
+        if ( loggedInUser != null && receivedFrom != null ) {
+            Optional<Requests> requestExists = requestService.getRequest(loggedInUserId, acceptUser);
+            Friends alreadyFriends = friendService.getFriendship(loggedInUserId, acceptUser);
 
-        Optional<Requests> updateStatusOptional = requestService.getRequest(loggedInUser.getId(), receivedFrom.getId());
+            if (requestExists.isPresent() && alreadyFriends == null) {
+                Friends newFriends = new Friends(loggedInUser, receivedFrom);
+                friendService.save(newFriends);
 
-        if (updateStatusOptional.isPresent()) {
-            System.out.println("gets here");
-            Requests updateStatus = updateStatusOptional.get();
-            requestService.delete(updateStatus);
+                Requests updateStatus = requestExists.get();
+                requestService.delete(updateStatus);
+            }
         }
 
         return "redirect:/users/manageFriends";
@@ -125,23 +110,30 @@ public class ManageFriendsController {
 
     @PostMapping("users/manageFriends/decline")
     public String manageFriendsDecline(Authentication authentication, 
-        @RequestParam(name = "declineUser", required = false) Long declineUser,
-        @RequestParam(required = false) String error) {
+        @RequestParam(name = "declineUser", required = false) Long declineUser) {
+
         Long loggedInUserId = (Long) authentication.getPrincipal();
         GardenUser loggedInUser = userService.getUserById(loggedInUserId);
         GardenUser receivedFrom = userService.getUserById(declineUser);
-        Optional<Requests> updateStatusOptional = requestService.getRequest(loggedInUser.getId(), receivedFrom.getId());
-        Requests updateStatus = updateStatusOptional.get();
-        updateStatus.setStatus("declined");
-        requestService.save(updateStatus);
-  
+
+        if ( loggedInUser != null && receivedFrom != null ) {
+            Optional<Requests> optionalRequest = requestService.getRequest(loggedInUserId, declineUser);
+            Friends alreadyFriends = friendService.getFriendship(loggedInUserId, declineUser);
+
+            if (optionalRequest.isPresent() && alreadyFriends == null) {
+                Requests request = optionalRequest.get();
+                request.setStatus("declined");
+                requestService.save(request);
+            }
+        }
         return "redirect:/users/manageFriends";
     }
 
     @PostMapping("users/manageFriends/search")
-    public String manageFriendsSearch(Authentication authentication, 
-        @RequestParam(name = "searchUser", required = false) String searchUser, RedirectAttributes rm) {
-            
+    public String manageFriendsSearch(Authentication authentication,
+                                      @RequestParam(name = "searchUser", required = false) String searchUser,
+                                      RedirectAttributes rm) {
+
         Long loggedInUserId = (Long) authentication.getPrincipal();
         List<GardenUser> searchResults = userService.getUserBySearch(searchUser, loggedInUserId);
 
