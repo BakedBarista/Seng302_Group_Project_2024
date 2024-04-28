@@ -43,7 +43,7 @@ public class TokenServiceTest {
     public void testAddResetPasswordTokenAndTimeToUser_AddsResetPasswordTokenAndTimeToUser() {
         // add user to persistence and then call function to add token and time instant
         GardenUser user = new GardenUser("Jane", "Doe", "jdo456@uclive.ac.nz", "password123", "01/01/1970");
-        tokenService.addResetTokenAndTimeToUser(user);
+        tokenService.addResetPasswordTokenAndTimeToUser(user);
 
         // check that toke and time instant persist
         Assertions.assertNotNull(user.getResetPasswordToken());

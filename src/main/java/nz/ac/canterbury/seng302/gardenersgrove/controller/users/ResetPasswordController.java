@@ -1,7 +1,9 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,9 @@ public class ResetPasswordController {
     private GardenUserService userService;
 
     private EmailSenderService emailSenderService;
+
+    @Autowired
+    private TokenService tokenService;
 
     public ResetPasswordController(GardenUserService userService, EmailSenderService emailSenderService) {
         this.userService = userService;
@@ -47,12 +52,15 @@ public class ResetPasswordController {
             @RequestParam(name = "email") String email) {
         logger.info("POST /users/reset-password");
 
+        String url = "";
+
         boolean emailExists = true;
         if (emailExists) {
+            GardenUser user = userService.getUserByEmail(email);
 
+            tokenService.addResetPasswordTokenAndTimeToUser(user);
 
-            emailSenderService.sendEmail(userService.getUserByEmail(email),
-                    "Reset your GardenersGrove Password", "Click the url");
+            emailSenderService.sendEmail(user, "Reset your GardenersGrove Password", "Click the url" + url);
         }
 
         return "users/resetPasswordConfirmation";

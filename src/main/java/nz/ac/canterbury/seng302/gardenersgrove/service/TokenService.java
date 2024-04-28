@@ -73,9 +73,9 @@ public class TokenService {
      * adds a reset token and this time instance to a given user in the DB
      * @param user
      */
-    public void addResetTokenAndTimeToUser(GardenUser user) {
-        logger.info("called addTokenAndTimeToUser");
-        String token = createAuthenticationToken(); // TODO - replace with call to 128-bit token ?
+    public void addResetPasswordTokenAndTimeToUser(GardenUser user) {
+        logger.info("called addResetPasswordTokenAndTimeToUser");
+        String token = createAuthenticationToken();
 
         Instant time = Instant.now().plus(10, ChronoUnit.MINUTES);
         user.setResetPasswordToken(token);
