@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -140,4 +141,21 @@ public class ManageFriendsController {
         rm.addFlashAttribute("searchResults", searchResults);
         return "redirect:/users/manageFriends";
     }
+
+    @GetMapping("users/friendProfile/{id}")
+    public String viewFriend(Authentication authentication,
+                                    @PathVariable() Long id,
+                                    Model model) {
+        Long loggedInUserId = (Long) authentication.getPrincipal();
+        Friends isFriend = friendService.getFriendship(loggedInUserId, id);
+        var friend = userService.getUserById(id);
+
+        if (isFriend == null) {
+            return "redirect:/";
+        }
+        
+        model.addAttribute("Friend", friend);
+        return "users/friendProfile";
+    }
+
 }

@@ -71,6 +71,7 @@
                     <tr>
                         <th scope="col">Name</th>
                         <th scope="col">Link</th>
+                        <th scope="col">Profile</th>
                     </tr>
                     </thead>
                     <tbody th:if="${friends.empty}">
@@ -86,6 +87,9 @@
                         </td>
                         <td>
                             <a th:href="@{/viewFriendGardens/{id}(id=${friend.id})}">View gardens</a>
+                        </td>
+                        <td>
+                            <a th:href="@{/users/friendProfile/{id}(id=${friend.id})}">View profile</a>
                         </td>
                     </tr>
                     </tbody>

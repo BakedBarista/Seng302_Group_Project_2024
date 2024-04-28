@@ -232,8 +232,6 @@ public class GardenController {
 
             List<Garden> privateGardens = gardenService.getPrivateGardensByOwnerId(owner);
             List<Garden> publicGardens = gardenService.getPublicGardensByOwnerId(owner);
-            System.out.println(publicGardens);
-            System.out.println(privateGardens);
             if (isFriend != null) {
                 model.addAttribute("privateGardens", privateGardens);
             }
