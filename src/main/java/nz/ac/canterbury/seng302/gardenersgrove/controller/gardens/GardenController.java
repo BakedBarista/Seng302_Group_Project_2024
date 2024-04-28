@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.WeatherAPIService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,11 +27,13 @@ public class GardenController {
 
     private final GardenService gardenService;
     private final PlantService plantService;
+    private final WeatherAPIService weatherAPIService;
 
     @Autowired
-    public GardenController(GardenService gardenService, PlantService plantService) {
+    public GardenController(GardenService gardenService, PlantService plantService, WeatherAPIService weatherAPIService) {
         this.gardenService = gardenService;
         this.plantService = plantService;
+        this.weatherAPIService = weatherAPIService;
     }
 
     /**
@@ -99,6 +102,9 @@ public class GardenController {
         model.addAttribute("plants", plantService.getPlantsByGardenId(id));
         List<Garden> gardens = gardenService.getAllGardens();
         model.addAttribute("gardens", gardens);
+
+        //TODO: Implement with carls location API for lat lng
+        model.addAttribute("weatherForecast", weatherAPIService.getForecastWeather(-43.5299, 172.6333));
         return "gardens/gardenDetails";
     }
 
