@@ -80,6 +80,21 @@ public class GardenServiceTest {
         Assertions.assertEquals(garden, returnedGarden);
     }
 
+    @Test
+    public void getGardensByOwnerId_ReturnsGardens() {
+        List<Garden> mockGardens = Arrays.asList(
+                new Garden("Garden 1", "Location 1", "100", "Small"),
+                new Garden("Garden 2", "Location 2", "200", "Big")
+        );
+        Mockito.when(gardenRepository.findByOwnerId(1L)).thenReturn(mockGardens);
+
+        List<Garden> returnedGardens = gardenService.getGardensByOwnerId(1L);
+
+        Assertions.assertEquals(2, returnedGardens.size());
+        Assertions.assertEquals(mockGardens, returnedGardens);
+    }
+
+
 
 
 

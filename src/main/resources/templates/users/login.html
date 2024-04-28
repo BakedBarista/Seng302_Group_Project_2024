@@ -12,19 +12,20 @@
         <main class="main-container">
             <h1>Sign In</h1>
             <span th:if="${justAuthenticated == true}">Your account has been activated, please log in<br></span>
-            <form th:action="login" method="post">
-                <label th:class="'form-group ' + ${incorrectEmail != null ? 'form-group-error' : ''}">
+            <form th:action="login" method="post" th:object="${loginDTO}">
+                <label th:class="'form-group ' + ${#fields.hasErrors('email') ? 'form-group-error' : ''}">
                     Email
-                    <input type="text" th:name="email" th:value="*{email}" inputmode="email" />
-                    <span class="error" th:if="${incorrectEmail != null}" th:text="*{incorrectEmail}"></span>
+                    <input type="text" th:name="email" th:value="*{email}" inputmode="email">
+                    <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: red;"></div>
                 </label>
-                <label th:class="'form-group ' + ${invalidCredentials != null ? 'form-group-error' : ''}" >
+                <label th:class="'form-group ' + ${#fields.hasErrors('password') ? 'form-group-error' : ''}">
                     Password
-                    <input type="password" th:name="password" />
-                    <span class="error" th:if="${invalidCredentials != null}" th:text="*{invalidCredentials}"></span>
+                    <input type="password" th:name="password">
+                    <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" style="color: red;"></div>
                 </label>
                 <button class="btn form-group">Sign In</button>
                 <a href="/" class="btn form-group">Cancel</a>
+                <a href="/users/reset-password" class="btn form-group">Forgot your password?</a>
                 <a href="/users/register" class="btn form-group">Not registered? Create an account</a>
             </form>
         </main>

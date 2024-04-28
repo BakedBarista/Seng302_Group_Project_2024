@@ -4,6 +4,9 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,7 +18,7 @@ import java.util.List;
  */
 @Service
 public class GardenUserService {
-    private GardenUserRepository gardenUserRepository;
+    private final GardenUserRepository gardenUserRepository;
 
     @Autowired
     public GardenUserService(GardenUserRepository gardenUserRepository) {
@@ -49,10 +52,7 @@ public class GardenUserService {
      */
     public GardenUser getUserByEmail(String email) {
         var user = gardenUserRepository.findByEmail(email);
-        if (user.isEmpty()) {
-            return null;
-        }
-        return user.get();
+        return user.orElse(null);
     }
 
     /**
@@ -83,11 +83,8 @@ public class GardenUserService {
      */
     public GardenUser getUserById(long id) {
         var user = gardenUserRepository.findById(id);
-        if (user.isEmpty()) {
-            return null;
-        }
+        return user.orElse(null);
 
-        return user.get();
     }
 
     /**
@@ -106,5 +103,21 @@ public class GardenUserService {
         user.get().setProfilePicture(contentType, profilePicture);
         gardenUserRepository.save(user.get());
     }
+
+    /**
+     * Gets the currently authenticated user
+     *
+     * @return The currently authenticated user
+     */
+    public GardenUser getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new UsernameNotFoundException("No authenticated user found");
+        }
+        long userId = Long.parseLong(authentication.getName());
+        return getUserById(userId);
+    }
+
+
 
 }
