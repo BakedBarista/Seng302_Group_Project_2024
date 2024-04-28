@@ -18,9 +18,9 @@
             <p th:text="${Friend.lname}"></p>
             <h3>Email</h3>
             <p th:text="${Friend.email}"></p>
-            <div th:if="${Friend.dob != null}"> 
+            <div th:if="${Friend.DOB != null}"> 
                 <h3>Date of Birth</h3>
-                <p th:text="${Friend.dob}"></p>
+                <p th:text="${Friend.DOB}"></p>
             </div>
         </main>
         <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
