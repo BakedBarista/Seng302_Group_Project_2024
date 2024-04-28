@@ -36,3 +36,9 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+task dev(type: org.springframework.boot.gradle.tasks.run.BootRun, dependsOn: 'bootRun') {
+	group = 'Application'
+	description = 'Runs the application with the dev profile'
+	environment "SPRING_PROFILES_ACTIVE", "dev"
+}
