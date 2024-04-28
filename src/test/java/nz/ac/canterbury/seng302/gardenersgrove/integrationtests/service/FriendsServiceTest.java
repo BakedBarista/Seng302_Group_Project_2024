@@ -78,14 +78,6 @@ public class FriendsServiceTest {
         assertEquals(request, relationShip3);
     }
 
-    // @Test
-    // public void whenGetRequestCalledReverse_thenReturnsRequest() {
-    //     Friends relationShip3 = new Friends(testUser1, testUser4);
-    //     friendService.save(relationShip3);
-    //     var request = friendService.getRequest(testUser4.getId(), testUser1.getId());
-    //     assertEquals(request, relationShip3);
-    // }
-
     @Test
     public void whenGetRequestCalledEmptyDatabse_thenReturnsEmpty() {
         var request = friendService.getFriendship(testUser2.getId(), testUser3.getId());
