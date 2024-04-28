@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidEuropeanDecimal;
 
+import java.util.ArrayList;
 
 
 /**
@@ -23,7 +24,6 @@ public class Garden {
     @Column(nullable = false)
     private String name;
 
-
     @NotBlank(message = "Location cannot by empty")
     @Pattern(regexp = "^$|^[A-Za-z0-9 .,'-]+$", message = "Location name must only include letters, numbers, spaces, dots, commas, hyphens or apostrophes")
     @Column(nullable = false)
@@ -39,8 +39,6 @@ public class Garden {
 
     @Column(nullable = false)
     private Boolean isPublic = false;
-
-
 
     @ManyToOne
     @JoinColumn(name = "owner_id", nullable = false)

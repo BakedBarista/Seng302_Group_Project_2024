@@ -13,73 +13,93 @@
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 
 <div class="container mt-4">
-    <div class="input-group mb-3">
-        <input type="text" class="form-control" placeholder="Search Public Gardens" aria-label="Search Public Gardens" aria-describedby="button-addon2">
-        <div class="input-group-append">
-            <button class="btn btn-outline-secondary" type="button" id="button-addon2">
-                <i class="bi bi-search"></i>
-            </button>
-        </div>
-    </div>
-
-    <p class="text-secondary">
-        Showing results <span th:text="${gardenPage.number * gardenPage.size + 1}"></span>
-        to <span th:text="${gardenPage.number * gardenPage.size + gardenPage.numberOfElements}"></span>
-        of <span th:text="${gardenPage.totalElements}"></span>
-    </p>
-
-    <div class="row">
-        <th:block th:each="garden : ${gardenPage.content}">
-            <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                <a th:href="@{/gardens/{id}(id=${garden.id})}" class="text-decoration-none text-dark">
-                    <div class="card h-100">
-                        <img th:src="@{/img/gorila.png}" class="card-img-top" th:alt="${garden.name}">
-                        <div class="card-footer">
-                            <h5 class="card-title" th:text="${garden.name}"></h5>
-                            <p class="card-text" th:text="'Created by: ' + ${garden.owner.fname} + (${garden.owner.lname} != null ? ' ' + ${garden.owner.lname} : '')">
-                                Created by: John Doe
-                            </p>
-                        </div>
-                    </div>
-                </a>
+    <div class="mb-3">
+        <form class="input-group w-100" action="#" th:action="@{/gardens/public/search}" method="post" id="searchForm">
+            <input type="text" class="form-control" placeholder="Search Public Gardens" id="searchField"
+                   aria-label="Search Public Gardens" aria-describedby="button-addon" name="search" th:value="${previousSearch}">
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="submit" id="button-addon">
+                    <i class="bi bi-search"></i>
+                </button>
             </div>
-        </th:block>
+        </form>
     </div>
 
-    <!-- Pagination Controls -->
-    <nav>
-    <ul class="pagination">
-        <!-- First page link -->
-        <li class="page-item" th:classappend="${gardenPage.isFirst() ? 'disabled' : ''}">
-            <a class="page-link" th:href="@{/gardens/public(page=0, size=${gardenPage.size})}">First</a>
-        </li>
+    <div th:if="${gardens.empty}">
+        No gardens match your search...
+        <a href="#" role="button" onclick="clearSearch()">
+            Reset search
+        </a>
+    </div>
+    <div th:unless="${gardens.empty}">
+        <p class="text-secondary">
+            Showing results <span th:text="${gardenPage.number * gardenPage.size + 1}"></span>
+            to <span th:text="${gardenPage.number * gardenPage.size + gardenPage.numberOfElements}"></span>
+            of <span th:text="${gardenPage.totalElements}"></span>
+        </p>
 
-        <!-- Previous page link -->
-        <li class="page-item" th:classappend="${gardenPage.hasPrevious() ? '' : 'disabled'}">
-            <a class="page-link" th:href="@{/gardens/public(page=${gardenPage.number - 1}, size=${gardenPage.size})}">Previous</a>
-        </li>
+        <div class="row">
+            <th:block th:each="garden : ${gardenPage.content}">
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                    <a th:href="@{/gardens/{id}(id=${garden.id})}" class="text-decoration-none text-dark">
+                        <div class="card h-100">
+                            <img th:src="@{/img/gorila.png}" class="card-img-top" th:alt="${garden.name}">
+                            <div class="card-footer">
+                                <h5 class="card-title" th:text="${garden.name}"></h5>
+                                <p class="card-text" th:text="'Created by: ' + ${garden.owner.fname} + (${garden.owner.lname} != null ? ' ' + ${garden.owner.lname} : '')">
+                                    Created by: John Doe
+                                </p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </th:block>
+        </div>
 
-        <!-- Dynamic page links: showing current page and 2 pages in both directions if they exist -->
-        <li th:each="i : ${#numbers.sequence(gardenPage.number - 2, gardenPage.number + 2)}"
-            th:if="${i >= 0 and i < gardenPage.totalPages}" class="page-item"
-            th:classappend="${i == gardenPage.number ? 'active' : ''}">
-            <a class="page-link" th:href="@{/gardens/public(page=${i}, size=${gardenPage.size})}" th:text="${i + 1}"></a>
-        </li>
+        <!-- Pagination Controls -->
+        <nav>
+            <ul class="pagination">
+                <!-- First page link -->
+                <li class="page-item" th:classappend="${gardenPage.isFirst() ? 'disabled' : ''}">
+                    <a class="page-link" th:href="@{/gardens/public(page=0, size=${gardenPage.size})}">First</a>
+                </li>
 
-        <!-- Next page link -->
-        <li class="page-item" th:classappend="${gardenPage.hasNext() ? '' : 'disabled'}">
-            <a class="page-link" th:href="@{/gardens/public(page=${gardenPage.number + 1}, size=${gardenPage.size})}">Next</a>
-        </li>
+                <!-- Previous page link -->
+                <li class="page-item" th:classappend="${gardenPage.hasPrevious() ? '' : 'disabled'}">
+                    <a class="page-link" th:href="@{/gardens/public(page=${gardenPage.number - 1}, size=${gardenPage.size})}">Previous</a>
+                </li>
 
-        <!-- Last page link -->
-        <li class="page-item" th:classappend="${gardenPage.isLast() ? 'disabled' : ''}">
-            <a class="page-link" th:href="@{/gardens/public(page=${gardenPage.totalPages - 1}, size=${gardenPage.size})}">Last</a>
-        </li>
-    </ul>
-    </nav>
+                <!-- Dynamic page links: showing current page and 2 pages in both directions if they exist -->
+                <li th:each="i : ${#numbers.sequence(gardenPage.number - 2, gardenPage.number + 2)}"
+                    th:if="${i >= 0 and i < gardenPage.totalPages}" class="page-item"
+                    th:classappend="${i == gardenPage.number ? 'active' : ''}">
+                    <a class="page-link" th:href="@{/gardens/public(page=${i}, size=${gardenPage.size})}" th:text="${i + 1}"></a>
+                </li>
+
+                <!-- Next page link -->
+                <li class="page-item" th:classappend="${gardenPage.hasNext() ? '' : 'disabled'}">
+                    <a class="page-link" th:href="@{/gardens/public(page=${gardenPage.number + 1}, size=${gardenPage.size})}">Next</a>
+                </li>
+
+                <!-- Last page link -->
+                <li class="page-item" th:classappend="${gardenPage.isLast() ? 'disabled' : ''}">
+                    <a class="page-link" th:href="@{/gardens/public(page=${gardenPage.totalPages - 1}, size=${gardenPage.size})}">Last</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
 </div>
 
 <!-- Bootstrap scripts from your fragment -->
 <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
+<script>
+    function clearSearch() {
+        const input = document.getElementById("searchField");
+        const form = document.getElementById("searchForm");
+
+        input.value = "";
+        form.submit();
+    }
+</script>
 </body>
 </html>
