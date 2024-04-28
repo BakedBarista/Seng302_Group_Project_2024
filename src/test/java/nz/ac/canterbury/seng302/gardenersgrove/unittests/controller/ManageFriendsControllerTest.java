@@ -385,4 +385,19 @@ public class ManageFriendsControllerTest {
         RedirectAttributes rm = new RedirectAttributesModelMap();
         String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
         assertEquals("redirect:/users/manageFriends", result);    }
+
+    /**
+     * Testing the viewFriendProfile method
+     */
+//    @Test
+//    public void whenUserIsFriend_thenShowProfile() {
+//        Model model = mock(Model.class);
+//
+//        Friends newFriends = new Friends(loggedInUser, otherUser);
+//        friendService.save(newFriends);
+//
+//        when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+//        String result = manageFriendsController.viewFriendProfile(authentication, otherUserId, model);
+//        assertEquals("users/friendProfile", result);
+//    }
 }
