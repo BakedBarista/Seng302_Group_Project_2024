@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.List;
 
@@ -39,6 +40,8 @@ public class FriendsServiceTest {
 
     private GardenUser testUser3;
 
+    private GardenUser testUser4;
+
 
 
     @BeforeEach
@@ -46,10 +49,12 @@ public class FriendsServiceTest {
         testUser1 = new GardenUser("John", "Doe", "jdo123@uclive.ac.nz", "password",null);
         testUser2 = new GardenUser("Jane", "Doe", "jdo456@uclive.ac.nz", "password",null);
         testUser3 = new GardenUser("Jame", "Doe", "jdo457@uclive.ac.nz", "password",null);
+        testUser4 = new GardenUser("James", "Doe", "jdo458@uclive.ac.nz", "password",null);
 
         testUser1 = gardenUserRepository.save(testUser1);
         testUser2 = gardenUserRepository.save(testUser2);
         testUser3 = gardenUserRepository.save(testUser3);
+        testUser3 = gardenUserRepository.save(testUser4);
         
         Friends relationShip1 = new Friends(testUser1, testUser2);
         Friends relationShip2 = new Friends(testUser1, testUser3);
@@ -65,5 +70,35 @@ public class FriendsServiceTest {
         assertEquals(friends, users);
     }
 
+    @Test
+    public void whenGetRequestCalled_thenReturnsRequest() {
+        Friends relationShip3 = new Friends(testUser2, testUser3);
+        friendService.save(relationShip3);
+        var request = friendService.getFriendship(testUser2.getId(), testUser3.getId());
+        assertEquals(request, relationShip3);
+    }
+
+    // @Test
+    // public void whenGetRequestCalledReverse_thenReturnsRequest() {
+    //     Friends relationShip3 = new Friends(testUser1, testUser4);
+    //     friendService.save(relationShip3);
+    //     var request = friendService.getRequest(testUser4.getId(), testUser1.getId());
+    //     assertEquals(request, relationShip3);
+    // }
+
+    @Test
+    public void whenGetRequestCalledEmptyDatabse_thenReturnsEmpty() {
+        var request = friendService.getFriendship(testUser2.getId(), testUser3.getId());
+        assertNull(request);
+    }
+
+    @Test
+    public void whenGetRequestCalledInvaildId_thenReturnsEmpty() {
+        Friends relationShip3 = new Friends(testUser2, testUser4);
+        friendService.save(relationShip3);
+        long invaildId = -1;
+        var request = friendService.getFriendship(testUser2.getId(), invaildId);
+        assertNull(request);
+    }
 
 }
