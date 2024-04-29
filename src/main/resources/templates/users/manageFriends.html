@@ -18,7 +18,7 @@
 
 <div class="container">
 
-    <div class="d-flex mt-2">
+    <div class="d-flex mt-2 mb-2">
         <button id="showSearchFormBtn" class="btn btn-primary">Add Friend</button>
 
         <form id="searchForm" th:action="@{/users/manageFriends/search}" method="post" class="form-inline d-none">
@@ -48,14 +48,15 @@
             </thead>
             <tbody>
             <tr th:each="friend : ${searchResults}">
-                <td>
+                <td class="align-middle">
+                    <img class="rounded-circle overflow-hidden border border-dark" th:src="@{'/users/' + ${friend.id} + '/profile-picture'}" style="width: 40px; height: 40px;">
                     <span th:text="${friend.fname} "></span>
                     <span th:if="${friend.lname != null}" th:text="${friend.lname}"></span>
                 </td>
-                <td>
+                <td class="align-middle">
                     <span th:text="${friend.email}"></span>
                 </td>
-                <td>
+                <td class="align-middle">
                     <form th:action="@{/users/manageFriends/invite}" method="post">
                         <input type="hidden" name="requestedUser" th:value="${friend.id}" class="d-inline"/>
                         <button type="submit" class="btn btn-success btn-sm mr-2">Invite as Friend</button>
@@ -63,15 +64,17 @@
                 </td>
             </tr>
             <tr th:if="${mySelf != null}">
-                <td>
+                <td class="align-middle">
+                    <img class="rounded-circle overflow-hidden border border-dark" th:src="@{'/users/' + ${mySelf.id} + '/profile-picture'}" style="width: 40px; height: 40px;">
                     <span th:text="${mySelf.fname} "></span>
                     <span th:if="${mySelf.lname != null}" th:text="${mySelf.lname}"></span>
+                    <span>(me)</span>
                 </td>
-                <td>
+                <td class="align-middle">
                     <span th:text="${mySelf.email}"></span>
                 </td>
                 <td>
-                    <button type="button" class="btn btn-primary btn-sm mr-2">Myself</button>
+                    <a href="http://localhost:8080/users/user" class="btn btn-primary btn-sm mr-2">View Profile</a>
                 </td>
             </tr>
             </tbody>
@@ -97,15 +100,15 @@
                     </tbody>
                     <tbody th:each="friend : ${friends}">
                     <tr>
-                        <td>
+                        <td class="align-middle">
                             <img class="rounded-circle overflow-hidden border border-dark" th:src="@{'/users/' + ${friend.id} + '/profile-picture'}" style="width: 40px; height: 40px;">
                             <span th:text="${friend.fname}"> </span>
                             <span th:if="${friend.lname != null}" th:text="${friend.lname}"></span>
                         </td>
-                        <td>
+                        <td class="align-middle">
                             <a th:href="@{/viewFriendGardens/{id}(id=${friend.id})}">View gardens</a>
                         </td>
-                        <td>
+                        <td class="align-middle">
                             <a th:href="@{/users/friendProfile/{id}(id=${friend.id})}">View profile</a>
                         </td>
                     </tr>
@@ -132,12 +135,13 @@
                         </tbody>
                         <tbody th:each="friend : ${sentRequests}">
                         <tr>
-                            <td>
+                            <td class="align-middle">
+                                <img class="rounded-circle overflow-hidden border border-dark" th:src="@{'/users/' + ${friend.receive_user_id.id} + '/profile-picture'}" style="width: 40px; height: 40px;">
                                 <span th:text="${friend.receive_user_id.fname}"> </span>
                                 <span th:if="${friend.receive_user_id != null}"
                                       th:text="${friend.receive_user_id.lname}"></span>
                             </td>
-                            <td th:text="${friend.status}"></td>
+                            <td class="align-middle" th:text="${friend.status}"></td>
                         </tr>
                         </tbody>
                     </table>
@@ -164,6 +168,7 @@
                         <tbody th:each="friend : ${receivedRequests}">
                         <tr>
                             <td>
+                                <img class="rounded-circle overflow-hidden border border-dark" th:src="@{'/users/' + ${friend.sent_user_id.id} + '/profile-picture'}" style="width: 40px; height: 40px;">
                                 <span th:text="${friend.sent_user_id.fname}"> </span>
                                 <span th:if="${friend.sent_user_id != null}"
                                       th:text="${friend.sent_user_id.lname}"></span>

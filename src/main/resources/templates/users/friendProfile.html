@@ -1,29 +1,33 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
-    <head>
-        <meta http-equiv="Content-Type" context="text/html; charset=UTF-8" />
-        <title>Friends Profile | Gardener's Grove</title>
+<head>
+    <meta http-equiv="Content-Type" context="text/html; charset=UTF-8"/>
+    <title>Friends Profile | Gardener's Grove</title>
 
-        <!-- This needs to be here for Bootstrap and general CSS imports -->
-        <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
-    </head>
-    <body>
-        <nav th:replace="~{fragments/navbar :: navbar}"></nav>
-        <main class="main-container">
-            <h1> Friend Profile</h1>
+    <!-- This needs to be here for Bootstrap and general CSS imports -->
+    <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
+</head>
+<body>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+<div class="container">
+    <a href="http://localhost:8080/users/manageFriends" class="btn btn-primary mt-3 mb-3">Back to My Friends</a>
+    <main class="main-container">
+        <h1> Friend Profile</h1>
 
-            <img class="rounded-circle overflow-hidden border border-dark" th:src="@{'/users/' + ${Friend.id} + '/profile-picture'}" style="width: 200px; height: 200px;">
-            <h3>First Name</h3>
-            <p th:text="${Friend.fname}"></p>
-            <h3>Last Name</h3>
-            <p th:text="${Friend.lname}"></p>
-            <h3>Email</h3>
-            <p th:text="${Friend.email}"></p>
-            <div th:if="${Friend.DOB != null}"> 
-                <h3>Date of Birth</h3>
-                <p th:text="${Friend.DOB}"></p>
-            </div>
-        </main>
-        <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
-    </body>
+        <img class="rounded-circle overflow-hidden border border-dark"
+             th:src="@{'/users/' + ${Friend.id} + '/profile-picture'}" style="width: 200px; height: 200px;">
+        <h3>First Name</h3>
+        <p th:text="${Friend.fname}"></p>
+        <h3>Last Name</h3>
+        <p th:text="${Friend.lname}"></p>
+        <h3>Email</h3>
+        <p th:text="${Friend.email}"></p>
+        <div th:if="${Friend.DOB != null}">
+            <h3>Date of Birth</h3>
+            <p th:text="${Friend.DOB}"></p>
+        </div>
+    </main>
+</div>
+<th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
+</body>
 </html>
