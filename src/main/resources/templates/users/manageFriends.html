@@ -1,18 +1,209 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
-	<head>
-		<!-- TODO: Update this title for your page -->
-		<title>Gardener's Grove</title>
 
-		<meta http-equiv="Content-Type" context="text/html; charset=UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
+<head>
+    <!-- TODO: Update this title for your page -->
+    <title>Manage Friends</title>
 
-		<!-- This needs to be here for Bootstrap and general CSS imports -->
-		<!--/*/ <th:block th:insert="~{fragments/general.html :: headerfiles}">
+    <meta http-equiv="Content-Type" context="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <!-- This needs to be here for Bootstrap and general CSS imports -->
+    <!--/*/ <th:block th:insert="~{fragments/general.html :: headerfiles}">
         </th:block> /*/-->
-	</head>
-	<body>
-		<nav th:replace="~{fragments/navbar :: navbar}"></nav>
-		<p> hello</p>
-	</body>
+</head>
+
+<body>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+<div class="container">
+
+    <div class="d-flex mt-2 mb-2">
+        <button id="showSearchFormBtn" class="btn btn-primary">Add Friend</button>
+
+        <form id="searchForm" th:action="@{/users/manageFriends/search}" method="post" class="form-inline d-none">
+            <div class="d-flex">
+                <input type="search" name="searchUser" class="form-control" aria-label="Search" placeholder="Search"/>
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </div>
+        </form>
+    </div>
+
+    <div th:if="${searchResults != null}" class="m-3 text-danger">
+        <span th:if="${searchResults.empty and mySelf == null}">
+            <strong>
+                There is nobody with that name or email in Gardener’s Grove
+            </strong>
+        </span>
+    </div>
+
+    <div class="col-md-6 col-sm-10" th:if="${searchResults != null}">
+        <table class="table" th:if="${!searchResults.empty or mySelf != null}">
+            <thead>
+            <tr>
+                <th>Search Results</th>
+                <th></th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="friend : ${searchResults}">
+                <td class="align-middle">
+                    <img class="rounded-circle overflow-hidden border border-dark" th:src="@{'/users/' + ${friend.id} + '/profile-picture'}" style="width: 40px; height: 40px;">
+                    <span th:text="${friend.fname} "></span>
+                    <span th:if="${friend.lname != null}" th:text="${friend.lname}"></span>
+                </td>
+                <td class="align-middle">
+                    <span th:text="${friend.email}"></span>
+                </td>
+                <td class="align-middle">
+                    <form th:action="@{/users/manageFriends/invite}" method="post">
+                        <input type="hidden" name="requestedUser" th:value="${friend.id}" class="d-inline"/>
+                        <button type="submit" class="btn btn-success btn-sm mr-2">Invite as Friend</button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${mySelf != null}">
+                <td class="align-middle">
+                    <img class="rounded-circle overflow-hidden border border-dark" th:src="@{'/users/' + ${mySelf.id} + '/profile-picture'}" style="width: 40px; height: 40px;">
+                    <span th:text="${mySelf.fname} "></span>
+                    <span th:if="${mySelf.lname != null}" th:text="${mySelf.lname}"></span>
+                    <span>(me)</span>
+                </td>
+                <td class="align-middle">
+                    <span th:text="${mySelf.email}"></span>
+                </td>
+                <td>
+                    <a href="http://localhost:8080/users/user" class="btn btn-primary btn-sm mr-2">View Profile</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="row justify-content-between">
+        <div class="card col-md-7 col-sm-10">
+            <div class="card-body h-100">
+                <h2>My friends: </h2>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Link</th>
+                        <th scope="col">Profile</th>
+                    </tr>
+                    </thead>
+                    <tbody th:if="${friends.empty}">
+                    <tr>
+                        <td colspan="2">No friends found.</td>
+                    </tr>
+                    </tbody>
+                    <tbody th:each="friend : ${friends}">
+                    <tr>
+                        <td class="align-middle">
+                            <img class="rounded-circle overflow-hidden border border-dark" th:src="@{'/users/' + ${friend.id} + '/profile-picture'}" style="width: 40px; height: 40px;">
+                            <span th:text="${friend.fname}"> </span>
+                            <span th:if="${friend.lname != null}" th:text="${friend.lname}"></span>
+                        </td>
+                        <td class="align-middle">
+                            <a th:href="@{/viewFriendGardens/{id}(id=${friend.id})}">View gardens</a>
+                        </td>
+                        <td class="align-middle">
+                            <a th:href="@{/users/friendProfile/{id}(id=${friend.id})}">View profile</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="col-sm-10 col-md-5">
+            <div class="card mb-1 h-100">
+                <div class="card-body">
+                    <h2>sent requests: </h2>
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Status</th>
+                        </tr>
+                        </thead>
+                        <tbody th:if="${sentRequests.empty}">
+                        <tr>
+                            <td colspan="2">No requests sent.</td>
+                        </tr>
+                        </tbody>
+                        <tbody th:each="friend : ${sentRequests}">
+                        <tr>
+                            <td class="align-middle">
+                                <img class="rounded-circle overflow-hidden border border-dark" th:src="@{'/users/' + ${friend.receive_user_id.id} + '/profile-picture'}" style="width: 40px; height: 40px;">
+                                <span th:text="${friend.receive_user_id.fname}"> </span>
+                                <span th:if="${friend.receive_user_id != null}"
+                                      th:text="${friend.receive_user_id.lname}"></span>
+                            </td>
+                            <td class="align-middle" th:text="${friend.status}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card h-100">
+                <div class="card-body">
+                    <h2>received requests: </h2>
+
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col"></th>
+                        </tr>
+                        </thead>
+                        <tbody th:if="${receivedRequests.empty}">
+                        <tr>
+                            <td colspan="2">No friend requests.</td>
+                        </tr>
+                        </tbody>
+
+                        <tbody th:each="friend : ${receivedRequests}">
+                        <tr>
+                            <td>
+                                <img class="rounded-circle overflow-hidden border border-dark" th:src="@{'/users/' + ${friend.sent_user_id.id} + '/profile-picture'}" style="width: 40px; height: 40px;">
+                                <span th:text="${friend.sent_user_id.fname}"> </span>
+                                <span th:if="${friend.sent_user_id != null}"
+                                      th:text="${friend.sent_user_id.lname}"></span>
+                            </td>
+                            <td>
+                                <form th:action="@{/users/manageFriends/accept}" method="post" class="d-inline">
+                                    <button type="submit" name="acceptUser" th:value="${friend.sent_user_id.id}"
+                                            class="btn btn-success btn-sm mr-2">accept
+                                    </button>
+                                </form>
+                                <form th:action="@{/users/manageFriends/decline}" method="post" class="d-inline">
+                                    <button type="submit" name="declineUser" th:value="${friend.sent_user_id.id}"
+                                            class="btn btn-success btn-sm mr-2">decline
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('showSearchFormBtn').addEventListener('click', function () {
+            let searchForm = document.getElementById('searchForm');
+            searchForm.classList.toggle('d-none');
+        });
+    });
+</script>
+
+
+</body>
+
 </html>

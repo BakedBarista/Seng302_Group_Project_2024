@@ -9,7 +9,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Service class for GardenUser, defined by the @link{Service} annotation.
@@ -53,6 +55,29 @@ public class GardenUserService {
     public GardenUser getUserByEmail(String email) {
         var user = gardenUserRepository.findByEmail(email);
         return user.orElse(null);
+    }
+
+    public List<GardenUser> getUserBySearch(String name, Long currentUserId) {
+        String[] names = name.split(" ");
+        String first = names[0];
+        String last = names.length > 1 ? names[1] : "";
+        List<GardenUser> empty = new ArrayList<GardenUser>();
+        
+        if(names.length > 2){
+            return empty;
+        }
+        return gardenUserRepository.findBySearch(first, last, currentUserId);
+    }
+
+    public Optional<GardenUser> checkSearchMyself(String name, Long currentUserId) {
+        String[] names = name.split(" ");
+        String first = names[0];
+        String last = names.length > 1 ? names[1] : "";
+
+        if(names.length > 2){
+            return null;
+        }
+        return gardenUserRepository.findBySearchMe(first, last, currentUserId);
     }
 
     /**
