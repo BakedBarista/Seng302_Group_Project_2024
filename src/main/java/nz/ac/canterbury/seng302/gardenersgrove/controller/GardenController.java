@@ -16,16 +16,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-
 import org.springframework.web.bind.annotation.*;
 
-
-
 import java.util.List;
-
 import java.util.Optional;
-
-
 
 /**
  * Controller for garden forms
@@ -197,9 +191,11 @@ public class GardenController {
     }
 
     /**
-     * Deletes the garden
-     * @param id garden id
-     * @return redirect to gardens
+     * gets all public gardens
+     * @param page page number
+     * @param size size of page
+     * @param model representation of results
+     * @return publicGardens page
      */
     @GetMapping("/gardens/public")
     public String publicGardens(
