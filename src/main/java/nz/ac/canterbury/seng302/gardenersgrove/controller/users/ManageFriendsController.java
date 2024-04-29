@@ -7,6 +7,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
 
+import org.apache.catalina.User;
 import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -107,6 +108,12 @@ public class ManageFriendsController {
         Long loggedInUserId = (Long) authentication.getPrincipal();
         GardenUser loggedInUser = userService.getUserById(loggedInUserId);
         GardenUser receivedFrom = userService.getUserById(acceptUser);
+
+        Optional<Requests> requestDeclineExists = requestService.getRequest(acceptUser, loggedInUserId);
+        if(requestDeclineExists.isPresent()){
+            Requests updateStatus = requestDeclineExists.get();
+            requestService.delete(updateStatus);
+        }
 
         if ( loggedInUser != null && receivedFrom != null ) {
             Optional<Requests> requestExists = requestService.getRequest(loggedInUserId, acceptUser);
