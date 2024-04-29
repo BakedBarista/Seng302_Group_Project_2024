@@ -26,6 +26,28 @@ public class GardenService {
     public List<Garden> getAllGardens() { return gardenRepository.findAll();}
 
     /**
+     * Get all gardens whose name or plants' name contain
+     * a given query string.
+     * Caps sensitivity is dealt with via SQL statement in GardenRepository.
+     * @param query string to be matched against
+     * @return a list of gardens whose name or plants' name substring the query
+     */
+    public List<Garden> findAllThatContainQuery(String query) {
+        return gardenRepository.findAllThatContainQuery(query);
+    }
+
+    /**
+     * Get a page for pagination of user gardens that meet the given query string
+     * (e.g. garden name or plant in garden name is a substring of the query)
+     * @param query
+     * @param pageable
+     * @return page to display
+     */
+    public Page<Garden> findPageThatContainsQuery(String query, Pageable pageable) {
+        return gardenRepository.findPageThatContainsQuery(query, pageable);
+    }
+
+    /**
      * Adds a garden to the database.
      * @param garden object to save.
      * @return the saved garden object.

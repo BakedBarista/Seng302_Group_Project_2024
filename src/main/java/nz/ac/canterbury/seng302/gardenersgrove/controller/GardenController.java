@@ -18,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -201,7 +202,8 @@ public class GardenController {
     public String publicGardens(
             @RequestParam (defaultValue = "0") int page,
             @RequestParam (defaultValue = "10") int size,
-            Model model ) {
+            @RequestParam(name = "search", required = false, defaultValue = "") String search,
+            Model model) {
         logger.info("Get /gardens/public - display all public gardens");
         Pageable pageable = PageRequest.of(page, size);
         Page<Garden> gardenPage = gardenService.getPublicGardens(pageable);
@@ -212,6 +214,27 @@ public class GardenController {
         return "gardens/publicGardens";
     }
 
+    /**
+     * send the user to public gardens with a subset of gardens matching
+     * their given search
+     * @param search string that user is searching
+     * @param model
+     * @return public garden page
+     */
+    @PostMapping("/gardens/public/search")
+    public String searchPublicGardens(@RequestParam (defaultValue = "0") int page,
+                                      @RequestParam (defaultValue = "10") int size,
+                                      @RequestParam(name = "search", required = false, defaultValue = "") String search,
+                                      Model model) {
+        logger.info("Search: " + search);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Garden> gardenPage = gardenService.findPageThatContainsQuery(search, pageable);
+        model.addAttribute("gardenPage", gardenPage);
+        List<Garden> gardens = gardenService.findAllThatContainQuery(search);
+        model.addAttribute("gardens", gardens);
+        model.addAttribute("previousSearch", search);
+        return "gardens/publicGardens";
+    }
 }
 
 
