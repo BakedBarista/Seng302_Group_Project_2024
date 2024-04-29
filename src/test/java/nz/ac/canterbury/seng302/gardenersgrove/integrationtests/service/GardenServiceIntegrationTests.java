@@ -138,7 +138,7 @@ public class GardenServiceIntegrationTests {
     @Test
     public void testWhenISearchEmptyString_ReturnAllPublicGardens() {
         List<Garden> blankQueryGardenList = gardenService.findAllThatContainQuery("");
-        List<Garden> allGardens = gardenService.getAllGardens();
+        List<Garden> allGardens = gardenService.getPublicGardens();
 
         Assertions.assertEquals(allGardens, blankQueryGardenList);
     }
