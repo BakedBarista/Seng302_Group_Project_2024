@@ -26,8 +26,10 @@ dependencies {
 	// Spring Boot Starter Mail
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 
-	// https://mvnrepository.com/artifact/com.google.code.gson/gson
-	implementation 'com.google.code.gson:gson:2.10.1'
+	// JSON deserialization (for external REST API, lab 6)
+	implementation 'com.fasterxml.jackson.core:jackson-core:2.16.1'
+	implementation 'com.fasterxml.jackson.core:jackson-annotations:2.16.1'
+	implementation 'com.fasterxml.jackson.core:jackson-databind:2.16.1'
 
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
