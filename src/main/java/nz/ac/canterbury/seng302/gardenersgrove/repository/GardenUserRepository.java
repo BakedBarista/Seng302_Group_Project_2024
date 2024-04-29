@@ -33,6 +33,14 @@ public interface GardenUserRepository extends CrudRepository<GardenUser, Long> {
     List<GardenUser> findAll();
 
     /**
+     * Retrieves a GardenUser by their reset password token.
+     * 
+     * @param token The reset password token of the GardenUser to retrieve
+     * @return An Optional containing the GardenUser if found, or empty if not found
+     */
+    Optional<GardenUser> findByResetPasswordToken(String token);
+
+    /**
      * Retrieves a GardenUser by its email address.
      *
      * @param email The email address of the GardenUser to retrieve

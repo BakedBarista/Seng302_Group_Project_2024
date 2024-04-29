@@ -14,7 +14,6 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.HexFormat;
-import java.util.UUID;
 
 /**
  * Class to make and deal with authentication tokens
