@@ -75,6 +75,7 @@ public class WeatherAPIService {
                         weatherValues.put("maxTemp", forecastDay.getDay().getMaxTemp());
                         weatherValues.put("avgHumidity", forecastDay.getDay().getHumidity());
                         weatherValues.put("conditions", forecastDay.getDay().getCondition().getConditions());
+                        weatherValues.put("iconUrl", forecastDay.getDay().getCondition().getIconUrl());
                         weatherValues.put("windSpeed", forecastDay.getDay().getWindSpeed());
                         weatherValues.put("precipitation", forecastDay.getDay().getPrecipitation());
                         weatherValues.put("uv", forecastDay.getDay().getUv());

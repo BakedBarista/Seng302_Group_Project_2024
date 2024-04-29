@@ -163,12 +163,24 @@ public class WeatherAPIResponse {
                     @JsonProperty("text")
                     private String conditions;
 
+                    @JsonDeserialize
+                    @JsonProperty("icon")
+                    private String iconUrl;
+
                     public String getConditions() {
                         return conditions;
                     }
 
                     public void setConditions(String conditions) {
                         this.conditions = conditions;
+                    }
+
+                    public String getIconUrl() {
+                        return iconUrl;
+                    }
+
+                    public void setIconUrl(String iconUrl) {
+                        this.iconUrl = iconUrl;
                     }
                 }
             }
