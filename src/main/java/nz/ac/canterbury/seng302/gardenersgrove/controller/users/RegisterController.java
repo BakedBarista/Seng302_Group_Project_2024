@@ -36,7 +36,7 @@ public class RegisterController {
 
     /**
      * Constructs a new RegisterController
-     * 
+     *
      * @param userService        The GardenUserService to use
      * @param tokenService       The TokenService to use
      * @param emailSenderService The EmailSenderService to use
@@ -89,9 +89,13 @@ public class RegisterController {
 
         GardenUser user = new GardenUser(registerDTO.getFname(), registerDTO.getLname(), registerDTO.getEmail(),
                 registerDTO.getPassword(), registerDTO.getDOB());
+
+        String token = tokenService.createEmailToken();
+        tokenService.addEmailTokenAndTimeToUser(user, token);
         userService.addUser(user);
 
-        addEmailTokenAndTimeToUser(user.getId());
+        sendRegisterEmail(user, token);
+
         return "redirect:/users/user/" + user.getId() + "/authenticateEmail";
     }
 
@@ -112,25 +116,15 @@ public class RegisterController {
     }
 
     /**
-     * adds a random token and this time instance to a given user in the DB
-     * 
-     * @param userId
-     * @return
+     * Deals with sending register email to user
+     * @param user
+     * @param token
      */
-    public void addEmailTokenAndTimeToUser(Long userId) {
-        logger.info("called addTokenAndTimeToUser");
-        String token = tokenService.createEmailToken();
-
-        GardenUser user = userService.getUserById(userId);
-        Instant time = Instant.now().plus(10, ChronoUnit.MINUTES);
-        user.setEmailValidationToken(token);
-        user.setEmailValidationTokenExpiryInstant(time);
-
-        userService.addUser(user);
-
+    public void sendRegisterEmail(GardenUser user, String token) {
         emailSenderService.sendEmail(user, "Welcome to Gardener's Grove",
                 "Your account has been created!\n\n"
                         + "Your token is: " + token + "\n\n"
                         + "If this was not you, you can ignore this message and the account will be deleted after 10 minutes.");
+
     }
 }
