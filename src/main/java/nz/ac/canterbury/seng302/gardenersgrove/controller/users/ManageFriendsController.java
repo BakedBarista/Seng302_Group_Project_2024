@@ -167,9 +167,10 @@ public class ManageFriendsController {
 
         Long loggedInUserId = (Long) authentication.getPrincipal();
         List<GardenUser> searchResults = userService.getUserBySearch(searchUser, loggedInUserId);
-
-
-
+        Optional<GardenUser> checkMyself = userService.checkSearchMyself(searchUser, loggedInUserId);
+        if(checkMyself.isPresent()){
+            rm.addFlashAttribute("mySelf", checkMyself.get());
+        }
         rm.addFlashAttribute("searchResults", searchResults);
         return "redirect:/users/manageFriends";
     }

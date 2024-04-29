@@ -175,6 +175,9 @@ public class RegisterController {
             GardenUser user2 = new GardenUser("Liam", "Doe", "liam@gmail.com", "password",
                     "01/01/1970");
             userService.addUser(user2);
+            GardenUser user3 = new GardenUser("Liam", "Doe", "liam2@gmail.com", "password",
+                    "01/01/1970");
+            userService.addUser(user3);
 
             logger.info("Created dummy users for testing purposes");
         } catch (Exception e) {

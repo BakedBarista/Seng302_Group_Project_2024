@@ -30,15 +30,15 @@
     </div>
 
     <div th:if="${searchResults != null}" class="m-3 text-danger">
-    <span th:if="${searchResults.empty}">
-        <strong>
-            There is nobody with that name or email in Gardener’s Grove
-        </strong>
-    </span>
+        <span th:if="${searchResults.empty and mySelf == null}">
+            <strong>
+                There is nobody with that name or email in Gardener’s Grove
+            </strong>
+        </span>
     </div>
 
     <div class="col-md-6 col-sm-10" th:if="${searchResults != null}">
-        <table class="table" th:if="${!searchResults.empty}">
+        <table class="table" th:if="${!searchResults.empty or mySelf != null}">
             <thead>
             <tr>
                 <th>Search Results</th>
@@ -60,6 +60,18 @@
                         <input type="hidden" name="requestedUser" th:value="${friend.id}" class="d-inline"/>
                         <button type="submit" class="btn btn-success btn-sm mr-2">Invite as Friend</button>
                     </form>
+                </td>
+            </tr>
+            <tr th:if="${mySelf != null}">
+                <td>
+                    <span th:text="${mySelf.fname} "></span>
+                    <span th:if="${mySelf.lname != null}" th:text="${mySelf.lname}"></span>
+                </td>
+                <td>
+                    <span th:text="${mySelf.email}"></span>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-primary btn-sm mr-2">Myself</button>
                 </td>
             </tr>
             </tbody>
