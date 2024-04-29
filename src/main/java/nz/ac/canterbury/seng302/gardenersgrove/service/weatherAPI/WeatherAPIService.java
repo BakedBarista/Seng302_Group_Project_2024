@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng302.gardenersgrove.service;
+package nz.ac.canterbury.seng302.gardenersgrove.service.weatherAPI;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
