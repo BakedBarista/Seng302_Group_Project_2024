@@ -90,7 +90,7 @@ public class ResetPasswordController {
         GardenUser user = userService.getUserByResetPasswordToken(token);
         if (user == null) {
             logger.error("Invalid token: {}", token);
-            return "users/resetPasswordExpired";
+            return "redirect:/users/login?error=resetPasswordLinkExpired";
         }
 
         ResetPasswordDTO resetPasswordDTO = new ResetPasswordDTO();
@@ -133,7 +133,7 @@ public class ResetPasswordController {
         GardenUser user = userService.getUserByResetPasswordToken(token);
         if (user == null) {
             logger.error("Invalid token: {}", token);
-            return "users/resetPasswordExpired";
+            return "redirect:/users/login?error=resetPasswordLinkExpired";
         }
 
         user.setPassword(newPassword);
