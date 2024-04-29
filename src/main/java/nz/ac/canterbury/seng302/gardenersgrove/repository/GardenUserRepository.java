@@ -57,3 +57,4 @@ public interface GardenUserRepository extends CrudRepository<GardenUser, Long> {
     @Query("DELETE FROM GardenUser u WHERE u.emailValidationTokenExpiryInstant < ?1")
     int deleteUsersWithExpiredEmailTokens(Instant now);
 }
+

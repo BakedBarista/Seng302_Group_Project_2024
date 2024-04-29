@@ -2,7 +2,6 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -26,11 +25,14 @@ public class TokenService {
     private final SecureRandom secureRandom = new SecureRandom();
     private final Base64.Encoder base64Encoder = Base64.getUrlEncoder();
 
-    @Autowired
     private GardenUserRepository userRepository;
 
-    @Autowired
     private Clock clock;
+
+    public TokenService(GardenUserRepository userRepository, Clock clock) {
+        this.userRepository = userRepository;
+        this.clock = clock;
+    }
 
     /**
      * create a random 32-character authentication token and return it
@@ -42,7 +44,8 @@ public class TokenService {
         secureRandom.nextBytes(randomBytes);
 
         String token = base64Encoder.encodeToString(randomBytes);
-        logger.info("made new authentication token {}", token);
+
+
 
         return token;
     }
@@ -77,4 +80,7 @@ public class TokenService {
             logger.info("deleted {} users with expired tokens", deleted);
         }
     }
+
+
+
 }

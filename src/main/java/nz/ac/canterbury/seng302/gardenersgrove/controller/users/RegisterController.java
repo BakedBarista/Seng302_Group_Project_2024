@@ -1,26 +1,25 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
-import jakarta.annotation.PostConstruct;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
-import nz.ac.canterbury.seng302.gardenersgrove.validation.UserValidation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.RegisterDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
 
 /**
  * Controller for registering new users
@@ -31,16 +30,23 @@ public class RegisterController {
 
     private Logger logger = LoggerFactory.getLogger(RegisterController.class);
 
-    @Autowired
     private GardenUserService userService;
-
-    @Autowired
     private TokenService tokenService;
+    private EmailSenderService emailSenderService;
 
-    private GardenUser user;
-
-    private int maxNameLength = 64;
-
+    /**
+     * Constructs a new RegisterController
+     * 
+     * @param userService        The GardenUserService to use
+     * @param tokenService       The TokenService to use
+     * @param emailSenderService The EmailSenderService to use
+     */
+    public RegisterController(GardenUserService userService, TokenService tokenService,
+            EmailSenderService emailSenderService) {
+        this.userService = userService;
+        this.tokenService = tokenService;
+        this.emailSenderService = emailSenderService;
+    }
 
     /**
      * Shows the user the registration form
@@ -48,116 +54,45 @@ public class RegisterController {
      * @return redirect to /demo
      */
     @GetMapping("/users/register")
-    public String register() {
+    public String register(Model model) {
         logger.info("GET /users/register");
+        model.addAttribute("registerDTO", new RegisterDTO());
         return "users/registerTemplate";
     }
-
 
     /**
      * Handles the submission of user registration form
      *
-     * @param fname user's first name
-     * @param lname user's last name
-     * @param noLname Boolean, true if user has no last name
-     * @param email user's email address
-     * @param password user's password
-     * @param confirmPassword confirmation of the user's password
-     * @param dob user's date of birth
-     * @param model Thymeleaf model
+     * @param model   Thymeleaf model
      * @param request HttpServletRequest object
-     * @return  view name for the user registration template or a redirect URL
+     * @return view name for the user registration template or a redirect URL
      */
     @PostMapping("/users/register")
     public String submitRegister(
-            @RequestParam(name = "fname") String fname,
-            @RequestParam(name = "lname", required = false) String lname,
-            @RequestParam(name = "noLname", defaultValue = "false") boolean noLname,
-            @RequestParam(name = "email") String email,
-            @RequestParam(name = "password") String password,
-            @RequestParam(name = "confirmPassword") String confirmPassword,
-            @RequestParam(name = "dob", required = false) String dob,
+            @Valid @ModelAttribute("registerDTO") RegisterDTO registerDTO,
+            BindingResult bindingResult,
             Model model,
             HttpServletRequest request) {
         logger.info("POST /users/register");
 
-        if (noLname) {
-            lname = null;
+        if (userService.getUserByEmail(registerDTO.getEmail()) != null) {
+            bindingResult.rejectValue("email", null, "This email address is already in use");
         }
 
-        if (dob.isEmpty()) {
-            dob = null;
+        if (!registerDTO.getPassword().equals(registerDTO.getConfirmPassword())) {
+            bindingResult.rejectValue("confirmPassword", null, "Passwords do not match");
         }
 
-        UserValidation userValidation = new UserValidation();
-        boolean valid = true;
-
-
-        if ((!userValidation.userFirstNameValidation(fname))){
-            model.addAttribute("incorrectFirstName", "First name cannot be empty and must only include letters, spaces,hyphens or apostrophes");
-            valid = false;
-        } else if ((fname.length() > maxNameLength)) {
-            model.addAttribute("firstNameTooLong", "First name must be 64 characters long or less");
-            valid = false;
+        if (bindingResult.hasErrors()) {
+            return "users/registerTemplate";
         }
 
-        if ((!userValidation.userLastNameValidation(lname, noLname))){
-            model.addAttribute("incorrectLastName", "Last name cannot be empty and must only include letters, spaces,hyphens or apostrophes");
-            valid = false;
-        } else if (noLname==false && lname.length() > maxNameLength){
-            model.addAttribute("lastNameTooLong", "Last name must be 64 characters long or less");
-            valid = false;
-        }
+        GardenUser user = new GardenUser(registerDTO.getFname(), registerDTO.getLname(), registerDTO.getEmail(),
+                registerDTO.getPassword(), registerDTO.getDOB());
+        userService.addUser(user);
 
-        if (userService.getUserByEmail(email) != null) {
-             model.addAttribute("emailInuse", "This email address is already in use");
-            valid = false;
-        }else if (!userValidation.userEmailValidation(email)){
-             model.addAttribute("incorrectEmail", "Email address must be in the form ‘jane@doe.nz’");
-            valid = false;
-        }
-
-        if (!userValidation.userPasswordMatchValidation(password, confirmPassword)){
-            model.addAttribute("matchPassword", "Passwords do not match");
-            valid = false;
-        } else if (!userValidation.userPasswordStrengthValidation(password)){
-            model.addAttribute("weakPassword", "Your password must beat least 8 characters long and include at least one uppercase letter, one lowercase letter, one number,and one special character");
-            valid = false;
-         }
-
-         if (!userValidation.userInvalidDateValidation(dob)){
-             model.addAttribute("invalidDob", "Date is not in valid format, (DD/MM/YYYY)");
-            valid = false;
-         } else if (!userValidation.userYoungDateValidation(dob)){
-             model.addAttribute("youngDob", "You must be 13 years or older to create an account");
-            valid = false;
-         } else if (!userValidation.userOldDateValidation(dob)){
-             model.addAttribute("oldDob", "The maximum age allowed is 120 years");
-            valid = false;
-         }
-
-        if (valid) {
-            GardenUser user = userService.addUser(new GardenUser(fname, lname, email, password, dob));
-
-            try {
-                request.logout();
-            } catch (ServletException e) {
-                logger.warn("User was not logged in");
-            }
-
-            addEmailTokenAndTimeToUser(user.getId());
-            return "redirect:/users/user/"+user.getId()+"/authenticateEmail";
-        }
-
-        model.addAttribute("fname", fname);
-        model.addAttribute("lname", lname);
-        model.addAttribute("noLname", noLname);
-        model.addAttribute("email", email);
-        model.addAttribute("password", password);
-        model.addAttribute("confirmPassword", confirmPassword);
-        model.addAttribute("dob", dob);
-
-        return "users/registerTemplate";
+        addEmailTokenAndTimeToUser(user.getId());
+        return "redirect:/users/user/" + user.getId() + "/authenticateEmail";
     }
 
     /**
@@ -187,6 +122,7 @@ public class RegisterController {
 
     /**
      * adds a random token and this time instance to a given user in the DB
+     * 
      * @param userId
      * @return
      */
@@ -200,5 +136,10 @@ public class RegisterController {
         user.setEmailValidationTokenExpiryInstant(time);
 
         userService.addUser(user);
+
+        emailSenderService.sendEmail(user, "Welcome to Gardener's Grove",
+                "Your account has been created!\n\n"
+                        + "Your token is: " + token + "\n\n"
+                        + "If this was not you, you can ignore this message and the account will be deleted after 10 minutes.");
     }
 }
