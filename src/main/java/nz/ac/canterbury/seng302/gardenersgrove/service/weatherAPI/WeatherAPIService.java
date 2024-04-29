@@ -1,9 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service.weatherAPI;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +25,10 @@ public class WeatherAPIService {
     private static Logger logger = LoggerFactory.getLogger(WeatherAPIService.class);
     private final RestTemplate restTemplate;
     @Value("${WEATHER_API}")
-    private String apiKey;
-    private final String apiUrlForecastWeather = "https://api.weatherapi.com/v1/forecast.json?key=";
+    private String API_KEY;
+    private final String WEATHER_API_URL = "https://api.weatherapi.com/v1/forecast.json?key=";
+    private final ObjectMapper objectMapper = new ObjectMapper()
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
     @Autowired
     public WeatherAPIService(RestTemplate restTemplate) {
@@ -36,65 +37,68 @@ public class WeatherAPIService {
 
     /**
      * Fetches the forecasted weather for the next 3 days (including today as one of the days)
+     * The included data is the City Name, Max Temp, Avg Humidity, Conditions, Wind Speed (kph), Precipitation (mm),
+     * and UV
      * @param lat latitude value of location
      * @param lng longitude value of location
-     * @return a list of the weather forecast values for each day in an Map form:
-     *      {
-     *          'city': string,
-     *          'minTemp': double,
-     *          'maxTemp': double,
-     *          'humidity': string,
-     *          'conditions': string,
-     *      }
+     * @return a list of the weather forecast values for each day in a map.
      */
     // TODO: Implement caching of the weather response
     public List<HashMap<String, Object>> getForecastWeather(double lat, double lng) {
         ArrayList<HashMap<String, Object>> forecastWeather = new ArrayList<>();
         String locationQuery = "&q=" + lat + "," + lng + "&days=3";
-        String url = apiUrlForecastWeather + apiKey + locationQuery;
+        String url = WEATHER_API_URL + API_KEY + locationQuery;
+
         logger.info("Requesting the future forecast for Lat: {} Lng: {}", lat, lng);
 
         try {
             logger.debug("Requesting weather for API on URL: {}", url);
             ResponseEntity<String> result = restTemplate.getForEntity(url, String.class);
             HttpStatusCode statusCode = result.getStatusCode();
+            logger.info("API responded with status code: {}", statusCode);
 
             if (statusCode == HttpStatus.OK && result.getBody() != null) {
                 logger.info("Weather data was successfully fetched.");
                 logger.debug("API Result: {}", result.getBody());
-                logger.debug("Parsing JSON weather result...");
+                logger.info("Parsing JSON weather result...");
 
-                // Process the JSON response using GSON
-                JsonObject jsonResponse = JsonParser.parseString(result.getBody()).getAsJsonObject();
-                JsonObject location = jsonResponse.getAsJsonObject("location");
-                JsonArray forecastDays = jsonResponse.getAsJsonObject("forecast").getAsJsonArray("forecastday");
+                try {
+                    String jsonResponse = result.getBody();
+                    WeatherAPIResponse weatherAPIResponse = null;
+                    weatherAPIResponse = objectMapper.readValue(jsonResponse, WeatherAPIResponse.class);
+                    logger.info("{}", weatherAPIResponse);
 
-                for (JsonElement day: forecastDays) {
-                    HashMap<String, Object> weatherValues = new HashMap<>();
-                    JsonObject daysWeather = day.getAsJsonObject().getAsJsonObject("day");
+                    for (WeatherAPIResponse.Forecast.ForecastDay forecastDay: weatherAPIResponse.getForecast().getForecastDays()) {
+                        HashMap<String, Object> weatherValues = new HashMap<>();
 
-                    weatherValues.put("city", location.get("name").getAsString());
-                    weatherValues.put("maxTemp", daysWeather.get("maxtemp_c").getAsDouble());
-                    weatherValues.put("minTemp", daysWeather.get("mintemp_c").getAsDouble());
-                    weatherValues.put("avgHumidity", daysWeather.get("avghumidity").getAsInt());
-                    weatherValues.put("conditions", daysWeather.getAsJsonObject("condition").get("text").getAsString());
-                    weatherValues.put("windSpeed", daysWeather.get("maxwind_kph").getAsDouble());
-                    weatherValues.put("precipitation", daysWeather.get("totalprecip_mm").getAsDouble());
-                    weatherValues.put("uv", daysWeather.get("uv").getAsInt());
+                        weatherValues.put("city", weatherAPIResponse.getLocation().getLocationName());
+                        weatherValues.put("maxTemp", forecastDay.getDay().getMaxTemp());
+                        weatherValues.put("avgHumidity", forecastDay.getDay().getHumidity());
+                        weatherValues.put("conditions", forecastDay.getDay().getCondition().getConditions());
+                        weatherValues.put("windSpeed", forecastDay.getDay().getWindSpeed());
+                        weatherValues.put("precipitation", forecastDay.getDay().getPrecipitation());
+                        weatherValues.put("uv", forecastDay.getDay().getUv());
 
-                    // Transform date into Day Date Month
-                    LocalDate date = LocalDate.parse(day.getAsJsonObject().get("date").getAsString());
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE dd MMM");
-                    weatherValues.put("date", date.format(formatter));
-                    forecastWeather.add(weatherValues);
+                        // Transform date into format we want e.g.: 2024-04-29 to Monday 29 Apr
+                        LocalDate date = LocalDate.parse(forecastDay.getDate());
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE dd MMM");
+                        weatherValues.put("date", date.format(formatter));
+                        logger.debug("Weather values for {}: {}", date, weatherValues);
+                        forecastWeather.add(weatherValues);
+                    }
+                } catch (JsonProcessingException e) {
+                    logger.error("Error parsing API response", e);
+                } catch (NullPointerException e) {
+                    logger.error("Something went wrong accessing one of the results", e);
                 }
             } else {
                 logger.error("Weather data was not returned successfully");
             }
             logger.debug("Weather JSON parsed as: {}", forecastWeather);
         } catch (HttpClientErrorException e) {
-            logger.error("Something went wrong accessing the weather API data. Check the API key.");
+            logger.error("Something went wrong accessing the weather API data. Check the API key", e);
         }
+        logger.info("Weather data returned as: {}", forecastWeather);
         return forecastWeather;
     }
 }
