@@ -11,12 +11,13 @@ public class TokenServiceTest {
     private TokenService tokenService = new TokenService(null, null);
 
     @Test
-    public void testCreateAuthenticationToken_Is32Characters_OnlyContainsBase64Characters() {
-        int expectedLength = 32;
+    public void testCreateAuthenticationToken_Is128bits() {
+        int expectedBits = 128;
         String token = tokenService.createAuthenticationToken();
+        String tokenWithoutHyphens = token.replace("-", "");
 
-        Assertions.assertEquals(expectedLength, token.length());
-        Assertions.assertTrue(token.matches("^[A-Za-z0-9-_]+$"));
+        int tokenLengthInBits = tokenWithoutHyphens.length() * 4;
+        Assertions.assertEquals(expectedBits, tokenLengthInBits);
     }
 
     @Test
