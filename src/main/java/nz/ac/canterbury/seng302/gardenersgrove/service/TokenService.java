@@ -13,13 +13,11 @@ import java.security.SecureRandom;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Base64;
+import java.util.HexFormat;
 import java.util.UUID;
 
 /**
- * Class to make and deal with authentication tokens*
- * uses some code from https://stackoverflow.com/a/56628391
- * for createAuthenticationToken method
+ * Class to make and deal with authentication tokens
  */
 @Component
 public class TokenService {
@@ -27,7 +25,7 @@ public class TokenService {
     private Logger logger = LoggerFactory.getLogger(TokenService.class);
 
     private final SecureRandom secureRandom = new SecureRandom();
-    private final Base64.Encoder base64Encoder = Base64.getUrlEncoder();
+    private final HexFormat hexFormat = HexFormat.of();
 
     private GardenUserRepository userRepository;
 
@@ -41,16 +39,29 @@ public class TokenService {
     /**
      * create a random 128-bit authentication token and return it
      * 
-     * @return token
+     * @return 128-bit hexadecimal token
      */
     public String createAuthenticationToken() {
-        return UUID.randomUUID().toString();
+        StringBuilder token = new StringBuilder();
+
+        byte[] chunk = new byte[4];
+        for (int i = 0; i < 4; i++) {
+            if (i != 0) {
+                token.append("-");
+            }
+
+            secureRandom.nextBytes(chunk);
+            hexFormat.formatHex(token, chunk);
+        }
+
+        logger.info("made new authentication token {}", token);
+        return token.toString();
     }
 
     /**
      * Create a random 6-digit token for email verification on signup
      * 
-     * @return token
+     * @return 6-digit decimal token
      */
     public String createEmailToken() {
         StringBuilder token = new StringBuilder();
@@ -60,7 +71,6 @@ public class TokenService {
         }
 
         logger.info("made new email token {}", token);
-        System.out.println(token);
         return token.toString();
     }
 
@@ -137,7 +147,4 @@ public class TokenService {
             logger.info("removed {} reset password tokens", deletedPasswordTokens);
         }
     }
-
-
-
 }
