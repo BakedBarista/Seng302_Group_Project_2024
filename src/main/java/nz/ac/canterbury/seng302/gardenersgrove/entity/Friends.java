@@ -20,6 +20,8 @@ public class Friends {
     @JoinColumn(name = "user2_id")
     private GardenUser user2;
     
+    @Column(nullable = false)
+    private String status;
 
     /**
      * Creates a new FormResult object
@@ -27,9 +29,10 @@ public class Friends {
      * @param user2 user to be added as friend to user1
      * @param status pending accepted or denied
      */
-    public Friends(GardenUser user1, GardenUser user2) {
+    public Friends(GardenUser user1, GardenUser user2, String status) {
         this.user1 = user1;
         this.user2 = user2;
+        this.status = status;
     }
 
     public Friends() {
@@ -45,6 +48,14 @@ public class Friends {
 
     public GardenUser getUser2() {
         return user2;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
 

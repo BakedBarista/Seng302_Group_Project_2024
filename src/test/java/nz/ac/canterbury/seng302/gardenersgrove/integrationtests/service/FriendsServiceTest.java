@@ -28,12 +28,6 @@ public class FriendsServiceTest {
     @Autowired
     private GardenUserRepository gardenUserRepository;
 
-    @Autowired
-    private FriendsRepository friendsRepository;
-
-    private Friends relationShip1;
-    private Friends relationShip2;
-
     private GardenUser testUser1;
 
     private GardenUser testUser2;
@@ -56,8 +50,8 @@ public class FriendsServiceTest {
         testUser3 = gardenUserRepository.save(testUser3);
         testUser3 = gardenUserRepository.save(testUser4);
         
-        Friends relationShip1 = new Friends(testUser1, testUser2);
-        Friends relationShip2 = new Friends(testUser1, testUser3);
+        Friends relationShip1 = new Friends(testUser1, testUser2, "pending");
+        Friends relationShip2 = new Friends(testUser1, testUser3, "pending");
 
         friendService.save(relationShip1);
         friendService.save(relationShip2);
@@ -72,7 +66,7 @@ public class FriendsServiceTest {
 
     @Test
     public void whenGetRequestCalled_thenReturnsRequest() {
-        Friends relationShip3 = new Friends(testUser2, testUser3);
+        Friends relationShip3 = new Friends(testUser2, testUser3, "pending");
         friendService.save(relationShip3);
         var request = friendService.getFriendship(testUser2.getId(), testUser3.getId());
         assertEquals(request, relationShip3);
@@ -86,7 +80,7 @@ public class FriendsServiceTest {
 
     @Test
     public void whenGetRequestCalledInvaildId_thenReturnsEmpty() {
-        Friends relationShip3 = new Friends(testUser2, testUser4);
+        Friends relationShip3 = new Friends(testUser2, testUser4, "pending");
         friendService.save(relationShip3);
         long invaildId = -1;
         var request = friendService.getFriendship(testUser2.getId(), invaildId);

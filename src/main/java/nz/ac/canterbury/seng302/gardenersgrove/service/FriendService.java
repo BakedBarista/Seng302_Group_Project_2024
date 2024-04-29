@@ -57,4 +57,24 @@ public class FriendService {
         return friendsRepository.getRequest(user1, user2);
     }
 
+     /**
+     * Retrieves all sent friend requests by a user based on their ID.
+     *
+     * @param user The ID of the user whose sent friend requests are being retrieved
+     * @return A list of Requests objects
+     */
+    public List<Friends> getSentRequests(Long user) {
+        return friendsRepository.getSentRequests(user);
+    }
+
+    /**
+     * Retrieves all pending friend requests
+     *
+     * @param user The ID of the user whose pending received friend requests are being retrieved
+     * @return A list of Requests objects 
+     */
+    public List<Friends> getReceivedRequests(Long user) {
+        return friendsRepository.getReceivedRequests(user);
+    }
+
 }
