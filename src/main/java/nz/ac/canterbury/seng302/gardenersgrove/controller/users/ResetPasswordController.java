@@ -61,7 +61,10 @@ public class ResetPasswordController {
             tokenService.addResetPasswordTokenAndTimeToUser(user, token);
             userService.addUser(user);
 
-            emailSenderService.sendEmail(user, "Reset your GardenersGrove Password", "Click the url" + resetPasswordLink);
+            String subject = "Reset your GardenersGrove Password";
+            String body = "Click here " + resetPasswordLink + " to reset your password!" +
+                    "\nThis link will expire after 10 minutes, you do not need to take action if this is not you.";
+            emailSenderService.sendEmail(user, subject, body);
         }
 
         return "users/resetPasswordConfirmation";
