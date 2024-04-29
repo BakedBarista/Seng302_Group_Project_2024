@@ -80,6 +80,7 @@ public class TokenService {
     /**
      * adds an already made token and this time instance to a given user in the DB
      * @param user
+     * @param token already made token
      */
     public void addResetPasswordTokenAndTimeToUser(GardenUser user, String token) {
         logger.info("called addResetPasswordTokenAndTimeToUser");
@@ -97,6 +98,19 @@ public class TokenService {
     public void addEmailTokenAndTimeToUser(GardenUser user) {
         logger.info("called addTokenAndTimeToUser");
         String token = createEmailToken();
+
+        Instant time = Instant.now().plus(10, ChronoUnit.MINUTES);
+        user.setEmailValidationToken(token);
+        user.setEmailValidationTokenExpiryInstant(time);
+    }
+
+    /**
+     * adds an already made token and this time instance to a given user in the DB
+     * @param user
+     * @param token already made token
+     */
+    public void addEmailTokenAndTimeToUser(GardenUser user, String token) {
+        logger.info("called addTokenAndTimeToUser");
 
         Instant time = Instant.now().plus(10, ChronoUnit.MINUTES);
         user.setEmailValidationToken(token);

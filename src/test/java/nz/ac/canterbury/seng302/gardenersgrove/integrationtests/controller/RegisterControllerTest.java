@@ -2,15 +2,20 @@ package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.RegisterController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.RegisterDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+
+import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
+import org.springframework.validation.BindingResult;
 
 @SpringBootTest
 public class RegisterControllerTest {
@@ -21,24 +26,41 @@ public class RegisterControllerTest {
     @Autowired
     private GardenUserService gardenUserService;
 
-    @Autowired
-    private TokenService tokenService;
-
-    @Spy
     private GardenUser user;
 
-    private long id;
+    @MockBean
+    private EmailSenderService emailSenderService;
+
+    @Mock
+    private BindingResult bindingResult;
 
     @BeforeEach
     public void setUp() {
-        id = 1;
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    void whenSubmitRegisterIsCalled_thenAnEmailIsSent() {
+        // add user to persistence and then call function to add token and time instant
         String firstName = "jane";
         String lastName = "doe";
-        String email = "jane.doe@mail.com";
+        String email = "john.doe@mail.com";
         String password = "TESTPassword123!";
         String dob = "01/01/2000";
+        String token = "token";
         user = new GardenUser(firstName, lastName, email, password, dob);
+        user.setEmailValidationToken(token);
+        gardenUserService.addUser(user);
+        registerController.sendRegisterEmail(user, token);
 
-        MockitoAnnotations.openMocks(this);
+        user = gardenUserService.getUserById(user.getId());
+        Mockito.verify(emailSenderService).sendEmail(
+                Mockito.assertArg((GardenUser actualUser) -> {
+                    Assertions.assertEquals(user.getId(), actualUser.getId());
+                }),
+                Mockito.eq("Welcome to Gardener's Grove"),
+                Mockito.assertArg((message) -> {
+                    Assertions.assertTrue(message.contains(token));
+                }));
     }
 }

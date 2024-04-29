@@ -1,6 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.service;
 
+import nz.ac.canterbury.seng302.gardenersgrove.controller.users.RegisterController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
 
@@ -33,6 +35,12 @@ public class TokenServiceIntegrationTests {
     private TokenService tokenService;
     @Autowired
     private GardenUserService userService;
+
+    @Autowired
+    private GardenUserService gardenUserService;
+
+    @MockBean
+    private EmailSenderService emailSenderService;
 
     private Instant now;
     private GardenUser user;
@@ -111,5 +119,23 @@ public class TokenServiceIntegrationTests {
 
         Assertions.assertNotNull(userService.getUserById(userId).getResetPasswordToken());
         Mockito.verify(clock).instant();
+    }
+
+    @Test
+    void whenAddEmailTokenAndTimeToUserCalled_thenTokenAndTimeAreAddedToUser() {
+        // add user to persistence and then call function to add token and time instant
+        String firstName = "jane";
+        String lastName = "doe";
+        String email = "jane.doe@mail.com";
+        String password = "TESTPassword123!";
+        String dob = "01/01/2000";
+        user = new GardenUser(firstName, lastName, email, password, dob);
+        gardenUserService.addUser(user);
+
+        tokenService.addEmailTokenAndTimeToUser(user);
+        gardenUserService.addUser(user);
+
+        // check that toke and time instant persist
+        Assertions.assertNotNull(gardenUserService.getUserById(user.getId()).getEmailValidationToken());
     }
 }
