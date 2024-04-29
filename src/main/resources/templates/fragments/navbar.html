@@ -37,15 +37,15 @@
               <a class="nav-link" th:href="@{/gardens/public}">View Public Gardens</a>
             </li>
             <li class="nav-item" th:if="${isAuthenticated}">
-              <div class="h3 p-1" data-bs-toggle="dropdown" aria-expanded="false">
-<!--                TODO: This icon is a placeholder if we can't retrieve their user profile picture-->
-                <img th:src="@{/icon/user-profile-circle.svg}" alt="Profile" width="25" height="25" />
-              </div>
-              <ul class="dropdown-menu dropdown-menu-right" id="user-dropdown">
-                <li><a class="dropdown-item" th:href="@{/users/user}">Your Profile</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item text-danger" th:href="@{/users/logout}">Sign Out</a></li>
-              </ul>
+              <button class="nav-link" type="button dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-person-circle h3"></i></button>
+<!-- <i class="bi bi-person-circle h3"></i> -->
+			  <ul class="dropdown-menu dropdown-menu-right" id="user-dropdown">
+				<li><a class="dropdown-item" th:href="@{/users/user}">Your Profile</a></li>
+				<li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" th:href="@{/users/manageFriends}">Manage Friends</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item text-danger" th:href="@{/users/logout}">Sign Out</a></li>
+			  </ul>
             </li>
           </ul>
         </div>
