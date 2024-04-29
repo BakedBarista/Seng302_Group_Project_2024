@@ -29,6 +29,6 @@ public interface FriendsRepository extends CrudRepository<Friends, Long> {
      * @param user2 The ID of the second user
      * @return A Friends object.
      */
-    @Query("SELECT p FROM Friends p WHERE (p.user1.id = ?1 AND p.user2.id = ?2) or (p.user2.id = ?2 AND p.user1.id = ?1) ")
+    @Query("SELECT p FROM Friends p WHERE (p.user1.id = ?1 AND p.user2.id = ?2) or (p.user1.id = ?2 AND p.user2.id = ?1) ")
     Friends getRequest(Long user1, Long user2);
 }

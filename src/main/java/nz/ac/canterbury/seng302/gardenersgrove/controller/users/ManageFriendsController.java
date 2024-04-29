@@ -189,6 +189,7 @@ public class ManageFriendsController {
                                     Model model) {
         Long loggedInUserId = (Long) authentication.getPrincipal();
         Friends isFriend = friendService.getFriendship(loggedInUserId, id);
+        System.out.println(isFriend);
         var friend = userService.getUserById(id);
         // a user cannot view another non friends page
         if (isFriend == null) {

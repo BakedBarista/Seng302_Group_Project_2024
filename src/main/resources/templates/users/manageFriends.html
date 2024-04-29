@@ -98,6 +98,7 @@
                     <tbody th:each="friend : ${friends}">
                     <tr>
                         <td>
+                            <img class="rounded-circle overflow-hidden border border-dark" th:src="@{'/users/' + ${friend.id} + '/profile-picture'}" style="width: 40px; height: 40px;">
                             <span th:text="${friend.fname}"> </span>
                             <span th:if="${friend.lname != null}" th:text="${friend.lname}"></span>
                         </td>

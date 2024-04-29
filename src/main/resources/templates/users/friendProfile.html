@@ -11,7 +11,8 @@
         <nav th:replace="~{fragments/navbar :: navbar}"></nav>
         <main class="main-container">
             <h1> Friend Profile</h1>
-            <div th:insert="~{fragments/edit-profile-picture.html}"></div>
+
+            <img class="rounded-circle overflow-hidden border border-dark" th:src="@{'/users/' + ${Friend.id} + '/profile-picture'}" style="width: 200px; height: 200px;">
             <h3>First Name</h3>
             <p th:text="${Friend.fname}"></p>
             <h3>Last Name</h3>
