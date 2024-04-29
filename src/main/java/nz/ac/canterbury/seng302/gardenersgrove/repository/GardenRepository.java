@@ -19,13 +19,17 @@ public interface GardenRepository extends CrudRepository<Garden, Long> {
     Optional<Garden> findById(long id);
     List<Garden> findAll();
 
-    Page<Garden> findByIsPublicTrue(Pageable pageable);
+    Page<Garden> findByIsPublicTrueOrderByIdDesc(Pageable pageable);
+
+    List<Garden> findByIsPublicTrueOrderByIdDesc();
 
     List<Garden> findByOwnerId(Long owner_id);
 
-    @Query("SELECT g FROM Garden g WHERE ((g.name ILIKE %?1%) OR EXISTS (SELECT p FROM Plant p WHERE p.garden = g AND p.name ILIKE %?1%)) AND g.isPublic")
+    @Query("SELECT g FROM Garden g WHERE ((g.name ILIKE %?1%) OR " +
+            "EXISTS (SELECT p FROM Plant p WHERE p.garden = g AND p.name ILIKE %?1%)) AND g.isPublic ORDER BY g.id DESC")
     List<Garden> findAllThatContainQuery(String query);
 
-    @Query("SELECT g FROM Garden g WHERE ((g.name ILIKE %?1%) OR EXISTS (SELECT p FROM Plant p WHERE p.garden = g AND p.name ILIKE %?1%)) AND g.isPublic")
+    @Query("SELECT g FROM Garden g WHERE ((g.name ILIKE %?1%) OR " +
+            "EXISTS (SELECT p FROM Plant p WHERE p.garden = g AND p.name ILIKE %?1%)) AND g.isPublic ORDER BY g.id DESC")
     Page<Garden> findPageThatContainsQuery(String query, Pageable pageable);
 }

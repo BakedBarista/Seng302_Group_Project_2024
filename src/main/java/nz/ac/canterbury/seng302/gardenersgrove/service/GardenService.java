@@ -61,8 +61,21 @@ public class GardenService {
      */
     public Optional<Garden> getGardenById(long id) {return gardenRepository.findById(id);}
 
-    public Page<Garden> getPublicGardens(Pageable pageable) {
-        return gardenRepository.findByIsPublicTrue(pageable);
+    /**
+     * Gets the page for all public gardens
+     * @param pageable
+     * @return page
+     */
+    public Page<Garden> getPageForPublicGardens(Pageable pageable) {
+        return gardenRepository.findByIsPublicTrueOrderByIdDesc(pageable);
+    }
+
+    /**
+     * Gets a list of all public gardens
+     * @return list of all public gardens
+     */
+    public List<Garden> getPublicGardens() {
+        return gardenRepository.findByIsPublicTrueOrderByIdDesc();
     }
 
     public List<Garden> getGardensByOwnerId(Long ownerId) {
