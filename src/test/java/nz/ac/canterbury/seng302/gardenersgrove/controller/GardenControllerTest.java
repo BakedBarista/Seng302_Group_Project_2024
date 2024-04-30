@@ -3,7 +3,9 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.GardenController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weatherAPI.WeatherAPIService;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,25 +32,40 @@ public class GardenControllerTest {
     @Mock
     private WeatherAPIService weatherAPIService;
 
+    @Mock
+    private GardenUserService gardenUserService;
+
     @InjectMocks
     private GardenController gardenController;
+
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
+        GardenUser mockUser = mock(GardenUser.class);
+        when(mockUser.getId()).thenReturn(1L);
+        when(gardenUserService.getCurrentUser()).thenReturn(mockUser);
+        when(gardenService.getGardensByOwnerId(1L)).thenReturn(Collections.emptyList());
+
     }
 
     @Test
     public void testForm() {
         Model model = mock(Model.class);
-        String result = gardenController.form("","","", model);
+        String result = gardenController.form(model);
+
+        verify(model).addAttribute(eq("garden"), any(Garden.class));
+        verify(model).addAttribute(eq("gardens"), anyList());
+
         assertEquals("gardens/createGarden", result);
     }
+
+
 
     @Test
     public void testSubmitForm_ValidationFailure() {
         Model model = mock(Model.class);
-        Garden invalidGarden = new Garden("","","","");
+        Garden invalidGarden = new Garden("","","","","","","",0.0,0.0,"","");
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
         String result = gardenController.submitForm(invalidGarden, bindingResult, model);
@@ -58,7 +75,7 @@ public class GardenControllerTest {
     @Test
     public void testSubmitForm_ValidationSuccess() {
         Model model = mock(Model.class);
-        Garden validGarden = new Garden("Test Garden","Test Location","100","Test Description");
+        Garden validGarden = new Garden("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"100","test description");
         validGarden.setId((long) 1);
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
@@ -80,7 +97,7 @@ public class GardenControllerTest {
     @Test
     public void testGardenDetail() {
         Model model = mock(Model.class);
-        Garden garden = new Garden("Test Garden", "Test Location", "Test Size","Test Description");
+        Garden garden = new Garden("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"100","test description");
         when(gardenService.getGardenById(1L)).thenReturn(Optional.of(garden));
         when(plantService.getPlantsByGardenId(1L)).thenReturn(Collections.emptyList());
 
@@ -94,7 +111,7 @@ public class GardenControllerTest {
     @Test
     public void testGetGarden() {
         Model model = mock(Model.class);
-        Garden garden = new Garden("Test Garden", "Test Location", "Test Size","Test Description");
+        Garden garden = new Garden("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"100","test description");
         when(gardenService.getGardenById(1)).thenReturn(Optional.of(garden));
 
         String result = gardenController.getGarden(1, model);
@@ -105,16 +122,21 @@ public class GardenControllerTest {
     @Test
     public void testUpdateGarden() {
         Model model = mock(Model.class);
-        Garden garden = new Garden("Test Garden", "Test Location", "Test Size", "Test Description");
+        Garden garden = new Garden("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"100","test description");
         when(gardenService.getGardenById(1)).thenReturn(Optional.of(garden));
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
         String result = gardenController.updateGarden(1, garden, bindingResult, model);
         assertEquals("redirect:/gardens/1", result);
         assertEquals("Test Garden", garden.getName());
-        assertEquals("Test Location", garden.getLocation());
-        assertEquals("Test Size", garden.getSize());
-        assertEquals("Test Description", garden.getDescription());
+        assertEquals("1", garden.getStreetNumber());
+        assertEquals("test", garden.getStreetName());
+        assertEquals("test suburb", garden.getSuburb());
+        assertEquals("test city", garden.getCity());
+        assertEquals("test country", garden.getCountry());
+        assertEquals("1234",garden.getPostCode());
+        assertEquals("100", garden.getSize());
+        assertEquals("test description", garden.getDescription());
     }
 
     @Test

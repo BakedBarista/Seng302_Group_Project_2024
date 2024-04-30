@@ -1,10 +1,15 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
+import java.util.concurrent.Executor;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 
 /**
  * Used to send emails. Currently only support plain-text emails.
@@ -16,14 +21,38 @@ public class EmailSenderService {
     private static Logger logger = LoggerFactory.getLogger(EmailSenderService.class);
 
     private JavaMailSender emailSender;
+    private Executor executor;
 
-    public EmailSenderService(JavaMailSender emailSender) {
+    public EmailSenderService(JavaMailSender emailSender, @Qualifier("taskScheduler") Executor executor) {
         this.emailSender = emailSender;
+        this.executor = executor;
+    }
+
+    /**
+     * Sends a plain-text email to the specified user with the specified
+     * subject and body. This method spawns a new thread to send the email.
+     * 
+     * @param to      The user to send the email to
+     * @param subject The subject of the email
+     * @param body    The plain-text body of the email
+     */
+    public void sendEmail(GardenUser to, String subject, String body) {
+        sendEmail(formatNameAddr(to), subject, body);
+    }
+
+    private String formatNameAddr(GardenUser user) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(user.getFname());
+        if (user.getLname() != null) {
+            sb.append(" ").append(user.getLname());
+        }
+        sb.append(" <").append(user.getEmail()).append(">");
+        return sb.toString();
     }
 
     /**
      * Sends a plain-text email to the specified recipient with the specified
-     * subject and body.
+     * subject and body. This method spawns a new thread to send the email.
      * 
      * See https://datatracker.ietf.org/doc/html/rfc5322#section-3.4 for the grammar
      * of the address list.
@@ -34,27 +63,23 @@ public class EmailSenderService {
      * @param body    The plain-text body of the email
      */
     public void sendEmail(String to, String subject, String body) {
+        // Send the email on a separate thread to improve responsiveness
+        executor.execute(() -> sendEmailOnCurrentThread(to, subject, body));
+    }
+
+    private void sendEmailOnCurrentThread(String to, String subject, String body) {
         logger.info("Sending email to \"{}\" with subject \"{}\"", to, subject);
 
-        // Create a new SimpleMailMessage object to compose the email
+        // Construct a new SimpleMailMessage object
         SimpleMailMessage message = new SimpleMailMessage();
-
-        // Set the sender's email address
         message.setFrom(FROM_HEADER);
-
-        // Set the recipient's email address
         message.setTo(to);
-
-        // Set the subject of the email
         message.setSubject(subject);
-
-        // Set the body of the email
         message.setText(body);
 
         // Send the email using the emailSender object
         emailSender.send(message);
 
-        // Print a success message to the console
         logger.info("Message sent successfully");
     }
 }

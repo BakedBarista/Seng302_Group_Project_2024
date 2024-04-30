@@ -3,17 +3,25 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.gardens;
 
 import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weatherAPI.WeatherAPIService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -29,29 +37,28 @@ public class GardenController {
     private final PlantService plantService;
     private final WeatherAPIService weatherAPIService;
 
+    private final GardenUserService gardenUserService;
+
     @Autowired
-    public GardenController(GardenService gardenService, PlantService plantService, WeatherAPIService weatherAPIService) {
+    public GardenController(GardenService gardenService, PlantService plantService, GardenUserService gardenUserService WeatherAPIService weatherApiService) {
         this.gardenService = gardenService;
         this.plantService = plantService;
-        this.weatherAPIService = weatherAPIService;
+        this.gardenUserService = gardenUserService;
+        this.weatherApiService = weatherApiService;
     }
 
     /**
      * Gets form to be displayed
-     * @param displayName  garden name to be displayed
-     * @param displayLocation garden location to be displayed
-     * @param displaySize garden size to be displayed
      * @param model representation of name, location and size
      * @return gardenFormTemplate
      */
     @GetMapping("/gardens/create")
-    public String form(@RequestParam(name="displayName", required = false, defaultValue = "") String displayName,
-                       @RequestParam(name="displayLocation", required = false, defaultValue = "") String displayLocation,
-                       @RequestParam(name="displaySize", required = false, defaultValue = "") String displaySize,
-                       Model model) {
+    public String form(Model model) {
         logger.info("GET /gardens/create - display the new garden form");
         model.addAttribute("garden", new Garden());
-        List<Garden> gardens = gardenService.getAllGardens();
+        GardenUser owner = gardenUserService.getCurrentUser();
+
+        List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
         model.addAttribute("gardens", gardens);
         return "gardens/createGarden";
     }
@@ -67,11 +74,14 @@ public class GardenController {
     public String submitForm(@Valid @ModelAttribute("garden") Garden garden,
                              BindingResult bindingResult, Model model) {
         logger.info("POST /gardens - submit the new garden form");
+
         if (bindingResult.hasErrors()) {
             model.addAttribute("garden", garden);
-
             return "gardens/createGarden";
         }
+        GardenUser owner = gardenUserService.getCurrentUser();
+        garden.setOwner(owner);
+
         Garden savedGarden = gardenService.addGarden(garden);
         return "redirect:/gardens/" + savedGarden.getId();
     }
@@ -84,7 +94,13 @@ public class GardenController {
     @GetMapping("/gardens")
     public String responses(Model model) {
         logger.info("Get /gardens - display all gardens");
-        model.addAttribute("gardens", gardenService.getAllGardens());
+        GardenUser currentUser = gardenUserService.getCurrentUser();
+        if(currentUser != null) {
+            List<Garden> userGardens = gardenService.getGardensByOwnerId(currentUser.getId());
+            model.addAttribute("gardens", userGardens);
+        }
+
+
         return "gardens/viewGardens";
     }
 
@@ -98,9 +114,18 @@ public class GardenController {
                                Model model) {
 
         logger.info("Get /gardens/id - display garden detail");
-        model.addAttribute("garden", gardenService.getGardenById(id).get());
-        model.addAttribute("plants", plantService.getPlantsByGardenId(id));
-        List<Garden> gardens = gardenService.getAllGardens();
+        Optional<Garden> gardenOpt = gardenService.getGardenById(id);
+        if(gardenOpt.isPresent()) {
+            Garden garden = gardenOpt.get();
+            model.addAttribute("garden", garden);
+            model.addAttribute("owner", garden.getOwner());
+            model.addAttribute("plants", plantService.getPlantsByGardenId(id));
+        }
+
+
+        GardenUser currentUser = gardenUserService.getCurrentUser();
+        List<Garden> gardens = gardenService.getGardensByOwnerId(currentUser.getId());
+        model.addAttribute("currentUser", currentUser);
         model.addAttribute("gardens", gardens);
 
         //TODO: Implement with carls location API for lat lng
@@ -112,8 +137,8 @@ public class GardenController {
 
     /**
      * Updates the public status of the garden
-     * @param id
-     * @param isPublic
+     * @param id garden id
+     * @param isPublic public status
      * @return redirect to gardens
      */
     @PostMapping("/gardens/{id}")
@@ -141,7 +166,8 @@ public class GardenController {
         Optional<Garden> garden = gardenService.getGardenById(id);
         logger.info(String.valueOf(garden));
         model.addAttribute("garden", garden.orElse(null));
-        List<Garden> gardens = gardenService.getAllGardens();
+        GardenUser owner = gardenUserService.getCurrentUser();
+        List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
         model.addAttribute("gardens", gardens);
         return "gardens/editGarden";
     }
@@ -168,9 +194,16 @@ public class GardenController {
         Optional<Garden> existingGarden = gardenService.getGardenById(id);
         if (existingGarden.isPresent()) {
             existingGarden.get().setName(garden.getName());
-            existingGarden.get().setLocation(garden.getLocation());
+            existingGarden.get().setStreetNumber(garden.getStreetNumber());
+            existingGarden.get().setStreetName(garden.getStreetName());
+            existingGarden.get().setSuburb(garden.getSuburb());
+            existingGarden.get().setCity(garden.getCity());
+            existingGarden.get().setCountry(garden.getCountry());
+            existingGarden.get().setPostCode(garden.getPostCode());
             existingGarden.get().setSize(garden.getSize());
             existingGarden.get().setDescription(garden.getDescription());
+            existingGarden.get().setLon(garden.getLon());
+            existingGarden.get().setLat(garden.getLat());
             gardenService.addGarden(existingGarden.get());
         }
         return "redirect:/gardens/" + id;
@@ -178,17 +211,40 @@ public class GardenController {
 
 
     @GetMapping("/gardens/public")
-    public String publicGardens(Model model) {
+    public String publicGardens(
+            @RequestParam (defaultValue = "0") int page,
+            @RequestParam (defaultValue = "10") int size,
+            @RequestParam(name = "search", required = false, defaultValue = "") String search,
+            Model model) {
         logger.info("Get /gardens/public - display all public gardens");
-        List<Garden> gardens = gardenService.getPublicGardens();
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Garden> gardenPage = gardenService.getPublicGardens(pageable);
+        model.addAttribute("gardenPage", gardenPage);
+        GardenUser owner = gardenUserService.getCurrentUser();
+        List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
         model.addAttribute("gardens", gardens);
         return "gardens/publicGardens";
     }
 
-
-
-
-
-
-
+    /**
+     * send the user to public gardens with a subset of gardens matching
+     * their given search
+     * @param search string that user is searching
+     * @param model
+     * @return public garden page
+     */
+    @PostMapping("/gardens/public/search")
+    public String searchPublicGardens(@RequestParam (defaultValue = "0") int page,
+                                      @RequestParam (defaultValue = "10") int size,
+                                      @RequestParam(name = "search", required = false, defaultValue = "") String search,
+                                      Model model) {
+        logger.info("Search: " + search);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Garden> gardenPage = gardenService.findPageThatContainsQuery(search, pageable);
+        model.addAttribute("gardenPage", gardenPage);
+        List<Garden> gardens = gardenService.findAllThatContainQuery(search);
+        model.addAttribute("gardens", gardens);
+        model.addAttribute("previousSearch", search);
+        return "gardens/publicGardens";
+    }
 }
