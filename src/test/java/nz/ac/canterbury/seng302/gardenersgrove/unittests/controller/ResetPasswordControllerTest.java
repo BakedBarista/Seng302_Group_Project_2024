@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng302.gardenersgrove.controller;
+package nz.ac.canterbury.seng302.gardenersgrove.unittests.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
@@ -28,7 +28,7 @@ public class ResetPasswordControllerTest {
     }
 
     @Test
-    public void testGenerateUrlString() {
+    public void whenGenerateUrlStringCalled_thenUrlIsGenerated() {
         // Set up the expected behaviors of the mock object
         when(request.getScheme()).thenReturn("https");
         when(request.getServerName()).thenReturn("example.com");
@@ -40,8 +40,8 @@ public class ResetPasswordControllerTest {
     }
 
     @Test
-    public void testGenerateUrlStringStandardPorts() {
-        // Testing with standard HTTP and HTTPS ports
+    public void givenPort80InUse_whenGenerateUrlStringCalled_thenUrlOmitsPort() {
+        // Testing with standard HTTP port
         when(request.getScheme()).thenReturn("http");
         when(request.getServerName()).thenReturn("example.com");
         when(request.getServerPort()).thenReturn(80); // Standard HTTP port
@@ -49,10 +49,16 @@ public class ResetPasswordControllerTest {
         String url = generator.generateUrlString(request, token);
 
         assertEquals("http://example.com/users/reset-password/callback?token=abc123xyz", url);
+    }
 
+    @Test
+    public void givenPort443InUse_whenGenerateUrlStringCalled_thenUrlOmitsPort() {
+        // Testing with standard HTTPS port
         when(request.getScheme()).thenReturn("https");
+        when(request.getServerName()).thenReturn("example.com");
         when(request.getServerPort()).thenReturn(443); // Standard HTTPS port
-        url = generator.generateUrlString(request, token);
+
+        String url = generator.generateUrlString(request, token);
 
         assertEquals("https://example.com/users/reset-password/callback?token=abc123xyz", url);
     }
