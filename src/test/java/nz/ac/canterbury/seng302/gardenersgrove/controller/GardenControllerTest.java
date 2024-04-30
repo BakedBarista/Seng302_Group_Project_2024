@@ -144,6 +144,5 @@ public class GardenControllerTest {
         String result = gardenController.updatePublicStatus(1L, false);
         assertEquals(gardenService.getGardenById(1L).get().getIsPublic(), false);
         assertEquals("redirect:/gardens/1", result);
-
     }
 }
