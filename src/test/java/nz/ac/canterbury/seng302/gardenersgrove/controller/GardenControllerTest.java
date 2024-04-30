@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.GardenControll
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.weatherAPI.WeatherAPIService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -25,6 +26,9 @@ public class GardenControllerTest {
 
     @Mock
     private PlantService plantService;
+
+    @Mock
+    private WeatherAPIService weatherAPIService;
 
     @InjectMocks
     private GardenController gardenController;
