@@ -239,13 +239,13 @@ public class GardenController {
             Friends isFriend = friendService.getFriendship(loggedInUserId, id);
             GardenUser owner = gardenUserService.getUserById(id);
 
-            List<Garden> privateGardens = gardenService.getPrivateGardensByOwnerId(owner);
-            List<Garden> publicGardens = gardenService.getPublicGardensByOwnerId(owner);
-            if (isFriend != null) {
-                model.addAttribute("privateGardens", privateGardens);
-            }
-
-            model.addAttribute("publicGardens", publicGardens);
+//            List<Garden> privateGardens = gardenService.getPrivateGardensByOwnerId(owner);
+//            List<Garden> publicGardens = gardenService.getPublicGardensByOwnerId(owner);
+//            if (isFriend != null) {
+//                model.addAttribute("privateGardens", privateGardens);
+//            }
+//
+//            model.addAttribute("publicGardens", publicGardens);
 
         return "gardens/friendGardens";
     }

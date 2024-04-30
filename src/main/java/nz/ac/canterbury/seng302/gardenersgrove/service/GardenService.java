@@ -88,13 +88,13 @@ public class GardenService {
         return gardenRepository.findByOwnerId(ownerId);
     }
 
-    public List<Garden> getPublicGardensByOwnerId(GardenUser ownerId) {
-        return gardenRepository.findUserPublicGarden(ownerId);
-    }
-
-    public List<Garden> getPrivateGardensByOwnerId(GardenUser ownerId) {
-        return gardenRepository.findUserPrivateGarden(ownerId);
-    }
+//    public List<Garden> getPublicGardensByOwnerId(GardenUser ownerId) {
+//        return gardenRepository.findUserPublicGarden(ownerId);
+//    }
+//
+//    public List<Garden> getPrivateGardensByOwnerId(GardenUser ownerId) {
+//        return gardenRepository.findUserPrivateGarden(ownerId);
+//    }
 
 }
 
