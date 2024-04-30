@@ -20,8 +20,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -40,11 +38,11 @@ public class GardenController {
     private final GardenUserService gardenUserService;
 
     @Autowired
-    public GardenController(GardenService gardenService, PlantService plantService, GardenUserService gardenUserService WeatherAPIService weatherApiService) {
+    public GardenController(GardenService gardenService, PlantService plantService, GardenUserService gardenUserService, WeatherAPIService weatherAPIService) {
         this.gardenService = gardenService;
         this.plantService = plantService;
         this.gardenUserService = gardenUserService;
-        this.weatherApiService = weatherApiService;
+        this.weatherAPIService = weatherAPIService;
     }
 
     /**
@@ -120,18 +118,16 @@ public class GardenController {
             model.addAttribute("garden", garden);
             model.addAttribute("owner", garden.getOwner());
             model.addAttribute("plants", plantService.getPlantsByGardenId(id));
-        }
 
+            List<Map<String, Object>> forecastResult = weatherAPIService.getForecastWeather(id, garden.getLat(), garden.getLon());
+            model.addAttribute("weatherForecast", forecastResult);
+            model.addAttribute("displayWeather", !forecastResult.isEmpty());
+        }
 
         GardenUser currentUser = gardenUserService.getCurrentUser();
         List<Garden> gardens = gardenService.getGardensByOwnerId(currentUser.getId());
         model.addAttribute("currentUser", currentUser);
         model.addAttribute("gardens", gardens);
-
-        //TODO: Implement with carls location API for lat lng
-//        List<Map<String, Object>> forecastResult = weatherAPIService.getForecastWeather(id, 0.5, 0.5);
-        model.addAttribute("weatherForecast", forecastResult);
-        model.addAttribute("displayWeather", !forecastResult.isEmpty());
         return "gardens/gardenDetails";
     }
 
