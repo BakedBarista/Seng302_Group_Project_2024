@@ -5,13 +5,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
-import org.mockito.Mockito;
 
 public class TokenServiceTest {
     private TokenService tokenService = new TokenService(null, null);
 
     @Test
-    public void testCreateAuthenticationToken_Is128bits() {
+    public void whenCreateAuthenticationTokenCalled_thenTokenHas128bits() {
         int expectedBits = 128;
         String token = tokenService.createAuthenticationToken();
         String tokenWithoutHyphens = token.replace("-", "");
@@ -21,7 +20,7 @@ public class TokenServiceTest {
     }
 
     @Test
-    public void testCreateEmailToken_IsSixDigits_OnlyContainsIntegers() {
+    public void whenCreateEmailTokenCalled_thenTokenIsSixDigits_andOnlyContainsIntegers() {
         int expectedLength = 6;
         String token = tokenService.createEmailToken();
 
@@ -30,7 +29,7 @@ public class TokenServiceTest {
     }
 
     @Test
-    public void testAddEmailTokenAndTimeToUser_AddsTokenAndTimeToUser() {
+    public void whenAddEmailTokenAndTimeToUserCallen_thenTokenIsAddedToUser() {
         // add user to persistence and then call function to add token and time instant
         GardenUser user = new GardenUser("Jane", "Doe", "jdo456@uclive.ac.nz", "password123", "01/01/1970");
         tokenService.addEmailTokenAndTimeToUser(user);
@@ -41,7 +40,7 @@ public class TokenServiceTest {
     }
 
     @Test
-    public void testAddResetPasswordTokenAndTimeToUser_AddsResetPasswordTokenAndTimeToUser() {
+    public void givenAddResetPasswordTokenAndTimeToUserCalled_thenResetPasswordTokenIsAddedToUser() {
         // add user to persistence and then call function to add token and time instant
         GardenUser user = new GardenUser("Jane", "Doe", "jdo456@uclive.ac.nz", "password123", "01/01/1970");
         tokenService.addResetPasswordTokenAndTimeToUser(user);
