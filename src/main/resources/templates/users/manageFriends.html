@@ -30,7 +30,7 @@
     </div>
 
     <div th:if="${searchResults != null}" class="m-3 text-danger">
-        <span th:if="${searchResults.empty and mySelf == null and alreadyFriends.empty}">
+        <span th:if="${searchResults.empty and mySelf == null and alreadyFriends.empty and declineSent.empty and declineReceived.empty}">
             <strong>
                 There is nobody with that name or email in Gardener’s Grove
             </strong>
@@ -52,9 +52,6 @@
                     <img class="rounded-circle overflow-hidden border border-dark" th:src="@{'/users/' + ${friend.id} + '/profile-picture'}" style="width: 40px; height: 40px;">
                     <span th:text="${friend.fname} "></span>
                     <span th:if="${friend.lname != null}" th:text="${friend.lname}"></span>
-                </td>
-                <td class="align-middle">
-                    <span th:text="${friend.email}"></span>
                 </td>
                 <td class="align-middle">
                     <form th:action="@{/users/manageFriends/invite}" method="post">
@@ -88,6 +85,29 @@
                 </td>
                 <td class="align-middle text-muted">
                     <strong>Pending...</strong>
+                </td>
+            </tr>
+            <tr th:each="user : ${declineSent}">
+                <td class="align-middle">
+                    <img class="rounded-circle overflow-hidden border border-dark" th:src="@{'/users/' + ${user.id} + '/profile-picture'}" style="width: 40px; height: 40px;">
+                    <span th:text="${user.fname} "></span>
+                    <span th:if="${user.lname != null}" th:text="${user.lname}"></span>
+                </td>
+                <td class="align-middle">
+                    <form th:action="@{/users/manageFriends/invite}" method="post">
+                        <input type="hidden" name="requestedUser" th:value="${user.id}" class="d-inline"/>
+                        <button type="submit" class="btn btn-success btn-sm mr-2">Invite as Friend</button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${declineReceived != null}" th:each="user : ${declineReceived}">
+                <td class="align-middle">
+                    <img class="rounded-circle overflow-hidden border border-dark" th:src="@{'/users/' + ${user.id} + '/profile-picture'}" style="width: 40px; height: 40px;">
+                    <span th:text="${user.fname} "></span>
+                    <span th:if="${user.lname != null}" th:text="${user.lname}"></span>
+                </td>
+                <td class="align-middle text-danger">
+                    <strong>Declined</strong>
                 </td>
             </tr>
             </tbody>

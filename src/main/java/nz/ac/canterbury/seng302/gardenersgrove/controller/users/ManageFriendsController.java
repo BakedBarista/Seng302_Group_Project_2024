@@ -10,11 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -160,17 +156,28 @@ public class ManageFriendsController {
         List<GardenUser> searchResults = userService.getUserBySearch(searchUser, loggedInUserId);
         Optional<GardenUser> checkMyself = userService.checkSearchMyself(searchUser, loggedInUserId);
   
-        List<GardenUser> alreadyFriendsList = new ArrayList<GardenUser>();
+        List<GardenUser> alreadyFriendsPending = new ArrayList<GardenUser>();
+        List<GardenUser> alreadyFriendsDeclineSent = new ArrayList<GardenUser>();
+        List<GardenUser> alreadyFriendsDeclineReceived = new ArrayList<GardenUser>();
         //so we dont get index out of range
         List<GardenUser> copyOfSearchResults = new ArrayList<>(searchResults);
 
-        if (searchResults != null) {
+        if (!searchResults.isEmpty()) {
             for (GardenUser user : copyOfSearchResults) {
                 Friends alreadyFriends = friendService.getFriendship(loggedInUserId, user.getId());
-                
+                List<Friends> declineSent = friendService.getSentRequestsDeclined(user.getId());
+                List<Friends> declineReceived = friendService.getReceivedRequestsDeclined(user.getId());
+
                 if (alreadyFriends != null) {
-                    alreadyFriendsList.add(user);
+                    if (Objects.equals(alreadyFriends.getStatus(), "pending")){
+                        alreadyFriendsPending.add(user);
+                    } else if (!declineSent.isEmpty()) {
+                        alreadyFriendsDeclineSent.add(user);
+                    } else if (!declineReceived.isEmpty()) {
+                        alreadyFriendsDeclineReceived.add(user);
+                    }
                     searchResults.remove(user);
+
                 }
             }
         }
@@ -179,10 +186,16 @@ public class ManageFriendsController {
         if(checkMyself.isPresent()){
             rm.addFlashAttribute("mySelf", checkMyself.get());
         }
-        if (alreadyFriendsList != null) {
-            rm.addFlashAttribute("alreadyFriends", alreadyFriendsList);
-        } 
-        if (searchResults != null) {
+        if (!alreadyFriendsPending.isEmpty()) {
+            rm.addFlashAttribute("alreadyFriends", alreadyFriendsPending);
+        }
+        if (!alreadyFriendsDeclineSent.isEmpty()) {
+            rm.addFlashAttribute("declineSent", alreadyFriendsDeclineSent);
+        }
+        if (!alreadyFriendsDeclineReceived.isEmpty()) {
+            rm.addFlashAttribute("declineReceived", alreadyFriendsDeclineReceived);
+        }
+        if (!searchResults.isEmpty()) {
             rm.addFlashAttribute("searchResults", searchResults);
         } 
         return "redirect:/users/manageFriends";
