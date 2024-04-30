@@ -21,7 +21,7 @@ import org.springframework.validation.BindingResult;
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.ResetPasswordController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.ResetPasswordDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.ResetPasswordCallbackDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
@@ -102,7 +102,7 @@ public class ResetPasswordControllerTest {
         String result = controller.resetPasswordCallback(token, model);
 
         assertEquals("users/resetPasswordCallback", result);
-        verify(model).addAttribute(eq("resetPasswordDTO"), assertArg((ResetPasswordDTO resetPasswordDTO) -> {
+        verify(model).addAttribute(eq("resetPasswordDTO"), assertArg((ResetPasswordCallbackDTO resetPasswordDTO) -> {
             assertEquals(token, resetPasswordDTO.getToken());
         }));
     }
@@ -121,7 +121,7 @@ public class ResetPasswordControllerTest {
     void givenLinkNotExpired_whenFormSubmitted_thenPasswordChanged() {
         when(userService.getUserByResetPasswordToken(token)).thenReturn(user);
 
-        ResetPasswordDTO resetPasswordDTO = new ResetPasswordDTO();
+        ResetPasswordCallbackDTO resetPasswordDTO = new ResetPasswordCallbackDTO();
         resetPasswordDTO.setToken(token);
         resetPasswordDTO.setNewPassword("newPassword");
         resetPasswordDTO.setConfirmPassword("newPassword");
@@ -140,7 +140,7 @@ public class ResetPasswordControllerTest {
     void givenLinkExpired_whenFormSubmitted_thenRedirectedToLogin() {
         when(userService.getUserByResetPasswordToken(token)).thenReturn(null);
 
-        ResetPasswordDTO resetPasswordDTO = new ResetPasswordDTO();
+        ResetPasswordCallbackDTO resetPasswordDTO = new ResetPasswordCallbackDTO();
         resetPasswordDTO.setToken(token);
         resetPasswordDTO.setNewPassword("newPassword");
         resetPasswordDTO.setConfirmPassword("newPassword");

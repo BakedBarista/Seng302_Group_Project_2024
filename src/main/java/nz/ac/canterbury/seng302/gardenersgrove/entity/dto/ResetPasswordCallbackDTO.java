@@ -5,9 +5,9 @@ import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.Validatio
 import jakarta.validation.constraints.Pattern;
 
 /**
- * Data transfer object for the reset password form
+ * Data transfer object for the reset password callback form
  */
-public class ResetPasswordDTO {
+public class ResetPasswordCallbackDTO {
     private String token;
 
     @Pattern(regexp = PASSWORD_REGEX, message = "Your password must beat least 8 characters long and include at least one uppercase letter, one lowercase letter, one number and one special character")

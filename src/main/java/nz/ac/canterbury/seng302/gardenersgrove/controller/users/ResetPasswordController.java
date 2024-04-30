@@ -3,7 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.ResetPasswordDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.ResetPasswordCallbackDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
@@ -92,7 +92,7 @@ public class ResetPasswordController {
             return "redirect:/users/login?error=resetPasswordLinkExpired";
         }
 
-        ResetPasswordDTO resetPasswordDTO = new ResetPasswordDTO();
+        ResetPasswordCallbackDTO resetPasswordDTO = new ResetPasswordCallbackDTO();
         resetPasswordDTO.setToken(token);
         model.addAttribute("resetPasswordDTO", resetPasswordDTO);
 
@@ -109,7 +109,7 @@ public class ResetPasswordController {
      */
     @PostMapping("/users/reset-password/callback")
     public String resetPasswordCallbackPost(
-            @Valid @ModelAttribute("resetPasswordDTO") ResetPasswordDTO resetPasswordDTO,
+            @Valid @ModelAttribute("resetPasswordDTO") ResetPasswordCallbackDTO resetPasswordDTO,
             BindingResult bindingResult,
             Model model) {
         logger.info("GET /users/reset-password/callback");
