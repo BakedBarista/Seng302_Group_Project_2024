@@ -96,7 +96,7 @@ public class RegisterController {
 
         sendRegisterEmail(user, token);
 
-        return "redirect:/users/user/" + user.getId() + "/authenticateEmail";
+        return "redirect:/users/user/" + user.getId() + "/authenticate-email";
     }
 
     /**
