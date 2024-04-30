@@ -29,15 +29,15 @@ public class AuthenticationController {
      * @param model
      * @return authentication page
      */
-    @GetMapping("/users/user/{userId}/authenticateEmail")
+    @GetMapping("/users/user/{userId}/authenticate-email")
     public String authenticateEmail(@PathVariable("userId") Long userId, Model model) {
         // if the user has an authentication token
         GardenUser user = userService.getUserById(userId);
         if (user != null  && user.getEmailValidationToken() != null) {
             model.addAttribute("userId", userId);
-            return "/authentication/emailAuthentication";
+            return "authentication/emailAuthentication";
         } else {
-            return "/error/404";
+            return "error/404";
         }
     }
 
@@ -49,7 +49,7 @@ public class AuthenticationController {
      * @param authenticationToken
      * @return home page if authenticated, otherwise authentication page
      */
-    @PostMapping("/users/user/{userId}/authenticateEmail")
+    @PostMapping("/users/user/{userId}/authenticate-email")
     public String validateAuthenticationToken(@PathVariable("userId") Long userId,
                                               @ModelAttribute("authenticationToken") String authenticationToken,
                                               RedirectAttributes redirectAttributes,
@@ -62,7 +62,7 @@ public class AuthenticationController {
         // token has expired
         if (user == null) {
             model.addAttribute("tokenExpired", true);
-            return "/authentication/emailAuthentication";
+            return "authentication/emailAuthentication";
         }
         boolean authenticated = user.getEmailValidationToken().equals(authenticationToken);
 
@@ -79,7 +79,7 @@ public class AuthenticationController {
         }
         else {
             model.addAttribute("tokenIncorrect", true);
-            return "/authentication/emailAuthentication";
+            return "authentication/emailAuthentication";
         }
     }
 }

@@ -2,8 +2,10 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 
 import jakarta.validation.Valid;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
@@ -13,15 +15,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import java.util.Optional;
 
 /**
@@ -35,12 +36,14 @@ public class GardenController {
     private final PlantService plantService;
 
     private final GardenUserService gardenUserService;
+    private final FriendService friendService;
 
     @Autowired
-    public GardenController(GardenService gardenService, PlantService plantService, GardenUserService gardenUserService) {
+    public GardenController(GardenService gardenService, PlantService plantService, GardenUserService gardenUserService, FriendService friendService) {
         this.gardenService = gardenService;
         this.plantService = plantService;
         this.gardenUserService = gardenUserService;
+        this.friendService = friendService;
     }
 
     /**
@@ -185,15 +188,28 @@ public class GardenController {
         Optional<Garden> existingGarden = gardenService.getGardenById(id);
         if (existingGarden.isPresent()) {
             existingGarden.get().setName(garden.getName());
-            existingGarden.get().setLocation(garden.getLocation());
+            existingGarden.get().setStreetNumber(garden.getStreetNumber());
+            existingGarden.get().setStreetName(garden.getStreetName());
+            existingGarden.get().setSuburb(garden.getSuburb());
+            existingGarden.get().setCity(garden.getCity());
+            existingGarden.get().setCountry(garden.getCountry());
+            existingGarden.get().setPostCode(garden.getPostCode());
             existingGarden.get().setSize(garden.getSize());
             existingGarden.get().setDescription(garden.getDescription());
+            existingGarden.get().setLon(garden.getLon());
+            existingGarden.get().setLat(garden.getLat());
             gardenService.addGarden(existingGarden.get());
         }
         return "redirect:/gardens/" + id;
     }
 
-
+    /**
+     * gets all public gardens
+     * @param page page number
+     * @param size size of page
+     * @param model representation of results
+     * @return publicGardens page
+     */
     @GetMapping("/gardens/public")
     public String publicGardens(
             @RequestParam (defaultValue = "0") int page,
@@ -207,6 +223,33 @@ public class GardenController {
         model.addAttribute("gardens", gardens);
         return "gardens/publicGardens";
     }
+
+
+    /**
+     * Gets the id of garden
+     * @param model representation of results
+     * @return viewFriendGardens page
+     */
+    @GetMapping("/viewFriendGardens/{id}")
+    public String viewFriendGardens(
+        Authentication authentication,
+        @PathVariable() Long id,
+        Model model) {  
+            Long loggedInUserId = (Long) authentication.getPrincipal();
+            Friends isFriend = friendService.getFriendship(loggedInUserId, id);
+            GardenUser owner = gardenUserService.getUserById(id);
+
+            List<Garden> privateGardens = gardenService.getPrivateGardensByOwnerId(owner);
+            List<Garden> publicGardens = gardenService.getPublicGardensByOwnerId(owner);
+            if (isFriend != null) {
+                model.addAttribute("privateGardens", privateGardens);
+            }
+
+            model.addAttribute("publicGardens", publicGardens);
+
+        return "gardens/friendGardens";
+    }
+    
 
     /**
      * send the user to public gardens with a subset of gardens matching
@@ -230,3 +273,7 @@ public class GardenController {
         return "gardens/publicGardens";
     }
 }
+
+
+
+

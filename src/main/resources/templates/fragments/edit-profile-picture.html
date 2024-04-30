@@ -1,13 +1,13 @@
 <img
     class="profile-picture-large"
-    th:src="'/users/' + ${userId} + '/profile-picture'"
+    th:src="@{'/users/' + ${userId} + '/profile-picture'}"
     width="100"
     height="100"
     alt="profile picture"
 />
 
 <form
-    th:action="'/users/profile-picture'"
+    th:action="@{'/users/profile-picture'}"
     method="post"
     enctype="multipart/form-data"
     id="profilePictureForm"

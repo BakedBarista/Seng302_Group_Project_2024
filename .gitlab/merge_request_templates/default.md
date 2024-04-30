@@ -1,5 +1,6 @@
 - Story number:
 - Task name:
+- SonarQube link: https://sonarqube.csse.canterbury.ac.nz/dashboard?id=seng302-2024-team800&branch=[branch-name]
 
 # Task description
 
@@ -20,7 +21,7 @@
 # Review Checklist
 
 - [ ] Does it follow our coding standards?
-- [ ] Does it have any code smells?
+- [ ] Is it code-smell free?
 - [ ] Are all public methods documented?
 - [ ] Is the code tested properly?
 - [ ] Does it meet the NFRs?

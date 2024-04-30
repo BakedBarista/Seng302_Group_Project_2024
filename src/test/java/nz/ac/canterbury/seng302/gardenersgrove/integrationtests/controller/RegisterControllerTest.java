@@ -1,18 +1,21 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.controller;
 
+import nz.ac.canterbury.seng302.gardenersgrove.controller.users.RegisterController;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.RegisterDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import nz.ac.canterbury.seng302.gardenersgrove.controller.users.RegisterController;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import org.springframework.validation.BindingResult;
 
 @SpringBootTest
 public class RegisterControllerTest {
@@ -28,40 +31,27 @@ public class RegisterControllerTest {
     @MockBean
     private EmailSenderService emailSenderService;
 
+    @Mock
+    private BindingResult bindingResult;
+
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    void whenAddEmailTokenAndTimeToUserCalled_thenTokenAndTimeAreAddedToUser() {
-        // add user to persistence and then call function to add token and time instant
-        String firstName = "jane";
-        String lastName = "doe";
-        String email = "jane.doe@mail.com";
-        String password = "TESTPassword123!";
-        String dob = "01/01/2000";
-        user = new GardenUser(firstName, lastName, email, password, dob);
-        gardenUserService.addUser(user);
-
-        registerController.addEmailTokenAndTimeToUser(user.getId());
-
-        // check that toke and time instant persist
-        Assertions.assertNotNull(gardenUserService.getUserById(user.getId()).getEmailValidationToken());
-    }
-
-    @Test
-    void whenAddEmailTokenAndTimeToUserCalled_thenAnEmailIsSent() {
+    void whenSubmitRegisterIsCalled_thenAnEmailIsSent() {
         // add user to persistence and then call function to add token and time instant
         String firstName = "jane";
         String lastName = "doe";
         String email = "john.doe@mail.com";
         String password = "TESTPassword123!";
         String dob = "01/01/2000";
+        String token = "token";
         user = new GardenUser(firstName, lastName, email, password, dob);
+        user.setEmailValidationToken(token);
         gardenUserService.addUser(user);
-
-        registerController.addEmailTokenAndTimeToUser(user.getId());
+        registerController.sendRegisterEmail(user, token);
 
         user = gardenUserService.getUserById(user.getId());
         Mockito.verify(emailSenderService).sendEmail(
@@ -70,7 +60,6 @@ public class RegisterControllerTest {
                 }),
                 Mockito.eq("Welcome to Gardener's Grove"),
                 Mockito.assertArg((message) -> {
-                    String token = user.getEmailValidationToken();
                     Assertions.assertTrue(message.contains(token));
                 }));
     }

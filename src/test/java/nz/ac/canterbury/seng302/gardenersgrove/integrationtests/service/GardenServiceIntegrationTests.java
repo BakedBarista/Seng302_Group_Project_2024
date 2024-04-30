@@ -50,7 +50,7 @@ public class GardenServiceIntegrationTests {
         GardenUser gardenUser = new GardenUser("John", "Doe", "john.doe@gmail.com", "password", "01/01/2000");
         gardenUserService.addUser(gardenUser);
 
-        garden = new Garden("Garden Name", "Garden Location", "100", "Garden Description");
+        garden = new Garden("Garden Name", "1","Test Street","Test Suburb","Test City","Test Country","1000",0.55,0.55, "100", "Garden Description");
         garden.setPublic(true);
         garden.setOwner(gardenUser);
         gardenService.addGarden(garden);
