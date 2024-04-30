@@ -104,7 +104,7 @@ public class GardenController {
         model.addAttribute("gardens", gardens);
 
         //TODO: Implement with carls location API for lat lng
-        model.addAttribute("weatherForecast", weatherAPIService.getForecastWeather(-43.5299, 172.6333));
+//        model.addAttribute("weatherForecast", weatherAPIService.getForecastWeather(id, -43.5299, 172.6333));
         return "gardens/gardenDetails";
     }
 
