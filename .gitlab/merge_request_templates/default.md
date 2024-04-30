@@ -1,5 +1,6 @@
 - Story number:
 - Task name:
+- SonarQube link: https://sonarqube.csse.canterbury.ac.nz/dashboard?id=seng302-2024-team800&branch=[branch-name]
 
 # Task description
 

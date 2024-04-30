@@ -46,7 +46,7 @@
                 <div th:if="${#fields.hasErrors('DOB')}" th:errors="*{DOB}" style="color: red;"></div>
             </label>
             <button class="btn">Sign Up</button>
-            <a href="/" class="btn">Cancel</a>
+            <a th:href="@{/}" class="btn">Cancel</a>
         </form>
     </main>
     <script>

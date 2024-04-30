@@ -61,7 +61,7 @@ public class GardenUser {
     public GardenUser() {}
 
     /**
-     * Creates a new GardenUser object
+     * Createsimport java.util.HashSet; a new GardenUser object
      *
      * @param fname first name of user
      * @param lname last name of user 
@@ -77,6 +77,25 @@ public class GardenUser {
 
         this.setPassword(password);
     }
+
+    /**
+     * Gets the set of friends where user is user 2
+     *
+     * @return Set<Friends> both their id and the other users id
+     */ 
+    // public Set<Friends> getFriendshipsAsUser2() {
+    //     return friendshipsAsUser2;
+    // }
+
+    // /**
+    //  * Gets the set of friends where user is user 1
+    //  *
+    //  * @return Set<Friends> both their id and the other users id
+    //  */ 
+    // public Set<Friends> getFriendshipsAsUser1() {
+    //     return friendshipsAsUser1;
+    // }
+
 
     /**
      * Gets the authorities granted to the user
