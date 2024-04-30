@@ -30,7 +30,7 @@
     </div>
 
     <div th:if="${searchResults != null}" class="m-3 text-danger">
-        <span th:if="${searchResults.empty and mySelf == null and alreadyFriends == null}">
+        <span th:if="${searchResults.empty and mySelf == null and alreadyFriends.empty}">
             <strong>
                 There is nobody with that name or email in Gardener’s Grove
             </strong>
