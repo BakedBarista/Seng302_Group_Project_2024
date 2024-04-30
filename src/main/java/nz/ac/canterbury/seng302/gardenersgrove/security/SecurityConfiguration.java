@@ -68,7 +68,7 @@ public class SecurityConfiguration {
                     "/",
                     "/users/register",
                     "/users/login",
-                    "/users/user/*/authenticateEmail",
+                    "/users/user/*/authenticate-email",
                     "/users/reset-password/**",
                     "/css/**",
                     "/js/**",
