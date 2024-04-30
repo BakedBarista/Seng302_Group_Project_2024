@@ -217,13 +217,19 @@ public class ManageFriendsController {
      * @param authentication object contain user's current authentication details
      * @id id of the user who received the friend request
      */
-    @PostMapping("users/manageFriends/search")
+    @PostMapping("users/manageFriends/cancel")
     public String cancelSentRequest(Authentication authentication,
-                             Long id) {
+                                    @RequestParam(name = "userId", required = false) Long requestedUser) {
         Long loggedInUserId = (Long) authentication.getPrincipal();
         GardenUser loggedInUser = userService.getUserById(loggedInUserId);
-        GardenUser cancelRequestTo = userService.getUserById(id);
-        logger.info("Cancel friend request sent to {}", cancelRequestTo.getFname());
+        GardenUser cancelRequestTo = userService.getUserById(requestedUser);
+        logger.info("user1 {}, user2 {}", loggedInUserId, cancelRequestTo.getId());
+        Friends friendship = friendService.getFriendship(loggedInUser.getId(), cancelRequestTo.getId());
+        logger.info("friendship {}", friendship.getStatus());
+        friendship.setStatus("");
+        friendService.save(friendship);
+        logger.info("friendship {}", friendship.getStatus());
+        logger.info("Cancel friend request sent to {}", friendship.getUser2().getFname());
 
         return "redirect:/users/manageFriends";
     }

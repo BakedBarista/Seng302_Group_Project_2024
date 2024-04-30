@@ -155,9 +155,11 @@
                                 <span th:if="${friend.user2 != null}"
                                       th:text="${friend.user2.lname}"></span>
                             </td>
-                            <td class="align-middle" th:text="${friend.status}"></td>
+                            <td class="align-middle" th:if="${friend.status != ''}"
+                                th:text="${friend.status}"></td>
                             <form th:action="@{/users/manageFriends/cancel}" method="post" class="d-inline">
-                            <td class="align-middle"><button class="btn btn-success btn-sm mr-2">Cancel</button></td>
+                                <input type="hidden" name="userId" th:value="${friend.user2.id}" class="d-inline"/>
+                                <td class="align-middle"><button class="btn btn-success btn-sm mr-2">Cancel</button></td>
                             </form>
                         </tr>
                         </tbody>
