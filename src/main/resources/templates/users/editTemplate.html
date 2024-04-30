@@ -12,7 +12,7 @@
     <main class="main-container">
         <h1>Edit</h1>
         <div th:insert="fragments/edit-profile-picture.html"></div>
-        <p><a href="/users/edit/password">Change Password</a></p>
+        <p><a th:href="@{/users/edit/password}">Change Password</a></p>
         <form th:action="edit" method="post" th:object="${editUserDTO}">
             <label th:class="'form-group ' + ${#fields.hasErrors('fname') ? 'form-group-error' : ''}">
                 First Name
@@ -38,7 +38,7 @@
                 <div th:if="${#fields.hasErrors('DOB')}" th:errors="*{DOB}" style="color: red;"></div>
             </label>
             <button class="btn">Submit</button>
-            <a href="/users/user" class="btn">Cancel</a>
+            <a th:href="@{/users/user}" class="btn">Cancel</a>
         </form>
     </main>
     <script>

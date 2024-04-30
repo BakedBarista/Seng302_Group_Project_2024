@@ -41,6 +41,18 @@ public interface GardenUserRepository extends CrudRepository<GardenUser, Long> {
     @Query("SELECT u FROM GardenUser u WHERE u.email = ?1")
     Optional<GardenUser> findByEmail(String email);
 
+    @Query("SELECT p FROM GardenUser p WHERE ((LOWER(p.fname)=LOWER(?1) and LOWER(p.lname)=LOWER(?2)) or LOWER(p.email)=LOWER(?1)) and p.id!=?3")
+    List<GardenUser> findBySearch(String first, String last, Long currentUserId);
+
+    @Query("SELECT p FROM GardenUser p WHERE (LOWER(p.fname)=LOWER(?1) and p.lname is null) and p.id!=?2")
+    List<GardenUser> findBySearchNoLname(String first, Long currentUserId);
+    
+    @Query("SELECT p FROM GardenUser p WHERE ((LOWER(p.fname)=LOWER(?1) and LOWER(p.lname)=LOWER(?2)) or LOWER(p.email)=LOWER(?1)) and p.id=?3")
+    Optional<GardenUser> findBySearchMe(String first, String last, Long currentUserId);
+
+    @Query("SELECT p FROM GardenUser p WHERE (LOWER(p.fname)=LOWER(?1) and p.lname is null)  and p.id=?2")
+    Optional<GardenUser> findBySearchMeNoLname(String first, Long currentUserId);
+
     /**
      * Deletes all GardenUsers with email verifiation tokens whose expiry date/time
      * has passed.
