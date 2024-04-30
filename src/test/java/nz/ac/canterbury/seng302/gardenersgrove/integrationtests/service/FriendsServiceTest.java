@@ -123,4 +123,13 @@ public class FriendsServiceTest {
         var request = friendService.getReceivedRequests(testUser3.getId());
         assertTrue(request.isEmpty());
     }
+
+    @Test
+    public void whenRemovedFriend_thenFriendRemoved() {
+        Friends relationShip3 = new Friends(testUser3, testUser4, "pending");
+        friendService.save(relationShip3);
+        friendService.removeFriend(testUser3.getId(), testUser4.getId());
+        var request = friendService.getFriendship(testUser3.getId(), testUser4.getId());
+        assertNull(request);
+    }
 }
