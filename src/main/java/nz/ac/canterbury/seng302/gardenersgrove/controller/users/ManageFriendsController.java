@@ -78,14 +78,12 @@ public class ManageFriendsController {
         if (requestingMyself) {
             return "redirect:/users/manageFriends";
         }
-        System.out.println("hellow");
         List<Friends> iDeclinedFriend = friendService.getReceivedRequestsDeclined(loggedInUser.getId());
         for (Friends user2 : iDeclinedFriend) {
             if (sentTo == user2.getUser1()) {
                 return "redirect:/users/manageFriends";
             }
         }
-        System.out.println("hi");
         Friends newFriends = new Friends(loggedInUser, sentTo, "pending");
         friendService.save(newFriends);
 
@@ -111,7 +109,6 @@ public class ManageFriendsController {
 
         List<Friends> sentAndDeclinedList = friendService.getSentRequestsDeclined(loggedInUserId);
         for (Friends request : sentAndDeclinedList) {
-            System.out.println(request);
             if (request.getUser1().getId() == loggedInUserId && request.getUser2().getId() == acceptUser) {
                 friendService.delete(request);
             }
@@ -188,7 +185,6 @@ public class ManageFriendsController {
                 List<Friends> declineSent = friendService.getSentRequestsDeclined(loggedInUserId);
                 List<Friends> requestReceived = friendService.getReceivedRequests(loggedInUserId);
                 Friends alreadyFriends = friendService.getAcceptedFriendship(loggedInUserId, user.getId());
-                System.out.println(declineSent);
 
                 if (requestPending != null) {
                     if (Objects.equals(requestPending.getStatus(), "pending")) {
