@@ -52,5 +52,7 @@ public interface FriendsRepository extends CrudRepository<Friends, Long> {
      */
     @Query("SELECT u FROM Friends u WHERE u.user2.id = ?1 and u.status = 'pending'")
     List<Friends> getReceivedRequests(Long user);
+
+    
     
 }
