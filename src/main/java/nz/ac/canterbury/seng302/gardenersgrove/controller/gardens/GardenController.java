@@ -161,7 +161,7 @@ public class GardenController {
      * @return redirect to gardens
      */
     @GetMapping("/gardens/{id}/edit")
-    public String getGarden(@PathVariable() long id, Model model) {
+    public String getGarden(@PathVariable long id, Model model) {
         logger.info("Get /garden/{}", id);
         Optional<Garden> garden = gardenService.getGardenById(id);
         logger.info(String.valueOf(garden));
