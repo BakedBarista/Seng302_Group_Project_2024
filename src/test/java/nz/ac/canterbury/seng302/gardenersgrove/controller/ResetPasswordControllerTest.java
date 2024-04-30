@@ -1,6 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import org.junit.jupiter.api.BeforeEach;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -12,6 +14,8 @@ public class ResetPasswordControllerTest {
     private HttpServletRequest request;
     private String token;
     private ResetPasswordController generator;
+    private GardenUserService userService;
+    private EmailSenderService emailSenderService;
 
     @BeforeEach
     public void setUp() {
@@ -20,7 +24,7 @@ public class ResetPasswordControllerTest {
         // Example token
         token = "abc123xyz";
         // ResetPasswordController instance
-        generator = new ResetPasswordController();
+        generator = new ResetPasswordController(userService, emailSenderService);
     }
 
     @Test
