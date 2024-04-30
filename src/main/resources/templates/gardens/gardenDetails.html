@@ -14,11 +14,11 @@
         <div class="col-xl-6 col-12">
             <h3>Info:</h3>
             <div class="d-flex">
-                <img th:src="@{/icon/book-02-stroke-rounded.svg}" alt="" width="20" height="20" />
+                <img th:src="@{/icons/book-02-stroke-rounded.svg}" alt="" width="20" height="20" />
                 <p class="mx-1"><strong>Description: </strong><span th:text="${garden.description}"></span></p>
             </div>
             <div class="d-flex">
-                <img th:src="@{/icon/location-04-stroke-rounded.svg}" alt="" width="20" height="20" />
+                <img th:src="@{/icons/location-04-stroke-rounded.svg}" alt="" width="20" height="20" />
                 <p class="mx-1"><strong>Location: </strong>
                     <span th:text="${garden.streetNumber}"></span>
                     <span th:text="${garden.streetName}"></span><span th:if="${garden.streetName}">,</span>
@@ -28,10 +28,10 @@
                 </p>
             </div>
             <div class="d-flex">
-                <img th:src="@{/icon/aspect-ratio-stroke-rounded.svg}" alt="" width="20" height="20" />
+                <img th:src="@{/icons/aspect-ratio-stroke-rounded.svg}" alt="" width="20" height="20" />
                 <p class="mx-1"><strong>Size: </strong><span th:text="${garden.size}"></span> m&sup2;</p>
             </div>
-            <div><a class="btn btn-primary" th:href="@{/gardens/{id}/edit(id=${garden.id})}"><img th:src="@{/icon/edit-white.svg}" alt="" width="20" height="20" /> Edit Garden</a></div>
+            <div><a class="btn btn-primary" th:href="@{/gardens/{id}/edit(id=${garden.id})}"><img th:src="@{/icons/edit-white.svg}" alt="" width="20" height="20" /> Edit Garden</a></div>
         </div>
         <div class="col-xl-6 col-12">
             <h2>Weather:</h2>
@@ -58,24 +58,24 @@
                     <div class="text-center border-0 m-0 p-0" style="font-size: 10pt;">
                         <div class="row m-0 p-0">
                             <div class="col border-1 m-0 p-0">
-                                <img th:src="@{/icon/fast-wind-stroke-rounded.svg}" alt="" width="24" height="24">
+                                <img th:src="@{/icons/fast-wind-stroke-rounded.svg}" alt="" width="24" height="24">
                                 <p class="m-0" style="font-size: 10pt; color: #1E1E1E70;">Wind</p>
                                 <p class="m-0"><span th:text="${daysWeather.windSpeed}"></span> kph</p>
                             </div>
                             <div class="col border-start m-0 p-0">
-                                <img th:src="@{/icon/humidity.svg}" alt="" width="24" height="24">
+                                <img th:src="@{/icons/humidity.svg}" alt="" width="24" height="24">
                                 <p class="m-0" style="font-size: 10pt; color: #1E1E1E70;">Humidity</p>
                                 <p class="m-0"><span th:text="${daysWeather.avgHumidity}"></span>%</p>
                             </div>
                         </div>
                         <div class="row border-1 m-0 p-0">
                             <div class="col border-1 border-end border-top m-0 p-0">
-                                <img th:src="@{/icon/uv-02-stroke-rounded.svg}" alt="" width="24" height="24">
+                                <img th:src="@{/icons/uv-02-stroke-rounded.svg}" alt="" width="24" height="24">
                                 <p class="m-0" style="font-size: 10pt; color: #1E1E1E70;">UV</p>
                                 <p class="m-0" th:text="${daysWeather.uv}"></p>
                             </div>
                             <div class="col border-top m-0 p-0">
-                                <img th:src="@{/icon/rain-stroke-rounded.svg}" alt="" width="24" height="24">
+                                <img th:src="@{/icons/rain-stroke-rounded.svg}" alt="" width="24" height="24">
                                 <p class="m-0" style="font-size: 10pt; color: #1E1E1E70;">Precipitation</p>
                                 <p class="m-0"><span th:text="${daysWeather.precipitation}"></span> mm</p>
                             </div>
@@ -94,7 +94,7 @@
             <h2 class="flex-grow-1 text-center">  Your Plants</h2>
 
            
-            <a type="button" th:href="@{/gardens/{id}/add-plant(id=${garden.id})}" class="btn btn-primary ms-auto"><img th:src="@{/icon/add-square-white.svg}" alt="" width="20" height="20" /> New Plant</a>
+            <a type="button" th:href="@{/gardens/{id}/add-plant(id=${garden.id})}" class="btn btn-primary ms-auto"><img th:src="@{/icons/add-square-white.svg}" alt="" width="20" height="20" /> New Plant</a>
         </div>
         <div th:if="${plants.empty}">
             <p th:text="${currentUser.id == owner.id} ? 'Please add a plant first' : ${garden.name} + ' does not currently contain any plants'"></p>
@@ -110,19 +110,19 @@
                     </div>
                     <div class="card-body m-0">
                         <div class="d-flex">
-                            <p><strong><span class="mx-1" th:text="${plant.name}" style="font-weight: bold;">Plant Name</span></strong><a th:href="@{/gardens/{gardenId}/plants/{plantId}/edit(gardenId=${garden.id}, plantId=${plant.id})}"><img th:src="@{/icon/edit.svg}" alt="" width="20" height="20" /></a></p>
+                            <p><strong><span class="mx-1" th:text="${plant.name}" style="font-weight: bold;">Plant Name</span></strong><a th:href="@{/gardens/{gardenId}/plants/{plantId}/edit(gardenId=${garden.id}, plantId=${plant.id})}"><img th:src="@{/icons/edit.svg}" alt="" width="20" height="20" /></a></p>
                             <div class="d-flex justify-content-end ms-auto">
-                                <img th:src="@{/icon/natural-food-stroke-rounded.svg}" alt="" width="20" height="20" />
+                                <img th:src="@{/icons/natural-food-stroke-rounded.svg}" alt="" width="20" height="20" />
                                 <p class="mx-1" th:text="${plant.count}">Plant Count</p>
                             </div>
                         </div>
 
                         <div class="d-flex">
-                            <img th:src="@{/icon/book-02-stroke-rounded.svg}" alt="" width="20" height="20" />
+                            <img th:src="@{/icons/book-02-stroke-rounded.svg}" alt="" width="20" height="20" />
                             <p class="mx-1" th:text="${plant.description}">Description</p>
                         </div>
                         <div class="d-flex">
-                            <img th:src="@{/icon/calendar-03-stroke-rounded.svg}" alt="" width="20" height="20" />
+                            <img th:src="@{/icons/calendar-03-stroke-rounded.svg}" alt="" width="20" height="20" />
                             <p class="mx-1" th:text="${plant.plantedDate}">Planted Date</p>
                         </div>
                     </div>
