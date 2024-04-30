@@ -39,7 +39,7 @@ public class LoginController {
             Model model) {
         logger.info("GET /users/login");
 
-        if (error.equals("resetPasswordLinkExpired")) {
+        if (error != null && error.equals("resetPasswordLinkExpired")) {
             model.addAttribute("generalError", "Reset password link has expired.");
         }
 
