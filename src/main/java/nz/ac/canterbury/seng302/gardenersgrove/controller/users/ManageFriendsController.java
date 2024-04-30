@@ -211,4 +211,20 @@ public class ManageFriendsController {
         model.addAttribute("Friend", friend);
         return "users/friendProfile";
     }
+
+    /**
+     * Cancel an existing friend request
+     * @param authentication object contain user's current authentication details
+     * @id id of the user who received the friend request
+     */
+    @PostMapping("users/manageFriends/search")
+    public String cancelSentRequest(Authentication authentication,
+                             Long id) {
+        Long loggedInUserId = (Long) authentication.getPrincipal();
+        GardenUser loggedInUser = userService.getUserById(loggedInUserId);
+        GardenUser cancelRequestTo = userService.getUserById(id);
+        logger.info("Cancel friend request sent to {}", cancelRequestTo.getFname());
+
+        return "redirect:/users/manageFriends";
+    }
 }
