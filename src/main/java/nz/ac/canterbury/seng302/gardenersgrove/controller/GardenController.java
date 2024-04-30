@@ -188,9 +188,16 @@ public class GardenController {
         Optional<Garden> existingGarden = gardenService.getGardenById(id);
         if (existingGarden.isPresent()) {
             existingGarden.get().setName(garden.getName());
-            existingGarden.get().setLocation(garden.getLocation());
+            existingGarden.get().setStreetNumber(garden.getStreetNumber());
+            existingGarden.get().setStreetName(garden.getStreetName());
+            existingGarden.get().setSuburb(garden.getSuburb());
+            existingGarden.get().setCity(garden.getCity());
+            existingGarden.get().setCountry(garden.getCountry());
+            existingGarden.get().setPostCode(garden.getPostCode());
             existingGarden.get().setSize(garden.getSize());
             existingGarden.get().setDescription(garden.getDescription());
+            existingGarden.get().setLon(garden.getLon());
+            existingGarden.get().setLat(garden.getLat());
             gardenService.addGarden(existingGarden.get());
         }
         return "redirect:/gardens/" + id;
