@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.service;
 
-import nz.ac.canterbury.seng302.gardenersgrove.controller.users.RegisterController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;

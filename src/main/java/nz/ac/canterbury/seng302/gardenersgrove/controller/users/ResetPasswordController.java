@@ -1,35 +1,36 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.UUID;
+import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.ResetPasswordDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
 
 @Controller
 public class ResetPasswordController {
     private Logger logger = LoggerFactory.getLogger(LoginController.class);
 
-    @Autowired
     private TokenService tokenService;
 
     private GardenUserService userService;
 
     private EmailSenderService emailSenderService;
 
-    public ResetPasswordController(GardenUserService userService, EmailSenderService emailSenderService) {
+    public ResetPasswordController(GardenUserService userService, EmailSenderService emailSenderService, TokenService tokenService) {
         this.userService = userService;
         this.emailSenderService = emailSenderService;
+        this.tokenService = tokenService;
     }
 
     /**
@@ -51,9 +52,9 @@ public class ResetPasswordController {
     @PostMapping("/users/reset-password")
     public String resetPasswordConfirmation(
             @RequestParam(name = "email") String email, HttpServletRequest request) {
-        boolean emailExists = true;
+        GardenUser user = userService.getUserByEmail(email);
+        boolean emailExists = user != null;
         if (emailExists) {
-            GardenUser user = userService.getUserByEmail(email);
             String token = tokenService.createAuthenticationToken();
             String resetPasswordLink = generateUrlString(request, token);
             logger.info("Reset password link: " + resetPasswordLink);
@@ -84,7 +85,17 @@ public class ResetPasswordController {
             @RequestParam(name = "token") String token,
             Model model) {
         logger.info("GET /users/reset-password/callback");
-        model.addAttribute("token", token);
+
+        GardenUser user = userService.getUserByResetPasswordToken(token);
+        if (user == null) {
+            logger.error("Invalid token");
+            return "redirect:/users/login?error=resetPasswordLinkExpired";
+        }
+
+        ResetPasswordDTO resetPasswordDTO = new ResetPasswordDTO();
+        resetPasswordDTO.setToken(token);
+        model.addAttribute("resetPasswordDTO", resetPasswordDTO);
+
         return "users/resetPasswordCallback";
     }
 
@@ -98,12 +109,38 @@ public class ResetPasswordController {
      */
     @PostMapping("/users/reset-password/callback")
     public String resetPasswordCallbackPost(
-            @RequestParam(name = "token") String token,
-            @RequestParam(name = "newPassword") String newPassword,
-            @RequestParam(name = "retypePassword") String retypePassword) {
+            @Valid @ModelAttribute("resetPasswordDTO") ResetPasswordDTO resetPasswordDTO,
+            BindingResult bindingResult,
+            Model model) {
         logger.info("GET /users/reset-password/callback");
 
-        // TODO: verify token and reset password
+        String token = resetPasswordDTO.getToken();
+        String newPassword = resetPasswordDTO.getNewPassword();
+        String confirmPassword = resetPasswordDTO.getConfirmPassword();
+
+        if (!newPassword.equals(confirmPassword)) {
+            bindingResult.rejectValue("confirmPassword", null, "The new passwords do not match");
+        }
+
+        if (bindingResult.hasErrors()) {
+            logger.error("Error in password change form: {}", bindingResult.getAllErrors());
+            model.addAttribute("resetPasswordDTO", resetPasswordDTO);
+
+            return "users/resetPasswordCallback";
+        }
+
+        GardenUser user = userService.getUserByResetPasswordToken(token);
+        if (user == null) {
+            logger.error("Invalid token");
+            return "redirect:/users/login?error=resetPasswordLinkExpired";
+        }
+
+        user.setPassword(newPassword);
+        user.setResetPasswordToken(null);
+        user.setResetPasswordTokenExpiryInstant(null);
+        userService.addUser(user);
+
+        emailSenderService.sendEmail(user, "Password Changed", "Your password has been updated");
 
         return "redirect:/users/login";
     }
