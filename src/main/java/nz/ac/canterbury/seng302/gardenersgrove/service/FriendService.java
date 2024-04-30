@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.FriendsRepository;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.List;
  * Service class for Friends
  */
 @Service
+@Transactional
 public class FriendService {
     private final FriendsRepository friendsRepository;
 
@@ -76,5 +78,14 @@ public class FriendService {
     public List<Friends> getReceivedRequests(Long user) {
         return friendsRepository.getReceivedRequests(user);
     }
+
+    public void removeFriend(Long user1Id, Long user2Id) {
+        // Logic to remove the friendship
+
+        friendsRepository.deleteByUser2IdAndUser1Id(user2Id, user1Id);
+        friendsRepository.deleteByUser1IdAndUser2Id(user1Id, user2Id);
+
+    }
+
 
 }

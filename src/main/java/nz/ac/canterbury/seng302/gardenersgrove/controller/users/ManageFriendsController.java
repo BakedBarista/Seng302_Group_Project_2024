@@ -211,4 +211,12 @@ public class ManageFriendsController {
         model.addAttribute("Friend", friend);
         return "users/friendProfile";
     }
+
+    @PostMapping("users/manageFriends/remove")
+    public String removeFriend(Authentication authentication, @RequestParam(name = "friendId") Long friendId) {
+        Long loggedInUserId = (Long) authentication.getPrincipal();
+        friendService.removeFriend(loggedInUserId, friendId);
+        return "redirect:/users/manageFriends";
+    }
+
 }
