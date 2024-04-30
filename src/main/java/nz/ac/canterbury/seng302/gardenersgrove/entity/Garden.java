@@ -87,11 +87,6 @@ public class Garden {
     @Lob
     private String weatherForecast;
 
-//    @ElementCollection
-//    private List<WeatherForecast> weatherForecast;
-
-//    @Convert(converter = HashMapListConverter.class)
-//    private List<Map<String, Object>> weatherForecast;
     public Garden() {
     }
 
@@ -218,14 +213,15 @@ public class Garden {
         this.timezoneId = timezoneId;
     }
 
-    @Override
-    public String toString() {
-        return "Garden{" +
-                "id=" + id +
-                ", gardenName='" + name + '\'' +
-                ", gardenLocation='" + location + '\'' +
-                ", gardenSize='" + size + '\'' +
-                '}';
+//    @Override
+//    public String toString() {
+//        return "Garden{" +
+//                "id=" + id +
+//                ", gardenName='" + name + '\'' +
+//                ", gardenLocation='" + location + '\'' +
+//                ", gardenSize='" + size + '\'' +
+//                '}';
+//    }
 
     public String getStreetNumber() {
         return streetNumber;
