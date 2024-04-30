@@ -47,6 +47,15 @@ public class FriendService {
     }
 
     /**
+     * Saves a friendship
+     *
+     * @param friendEntity The friendship entity
+     */
+    public void delete(Friends friendEntity) {
+        friendsRepository.delete(friendEntity);
+    }
+
+    /**
      * Retrieves a friendship between two users
      *
      * @param user1 The ID of the first user
@@ -55,6 +64,18 @@ public class FriendService {
      */
     public Friends getFriendship(Long user1, Long user2) {
         return friendsRepository.getRequest(user1, user2);
+    }
+
+    public Friends getAcceptedFriendship(Long user1, Long user2) {
+        return friendsRepository.getAcceptedFriendship(user1, user2);
+    }
+
+    public Friends getSent(Long user1, Long user2) {
+        return friendsRepository.getSent(user1, user2);
+    }
+
+    public Friends getReceived(Long user1, Long user2) {
+        return friendsRepository.getSent(user2, user1);
     }
 
      /**
@@ -83,7 +104,7 @@ public class FriendService {
     }
 
     public List<Friends> getSentRequestsDeclined(Long user) {
-        return friendsRepository.getReceivedRequests(user);
+        return friendsRepository.getSentRequestsDeclined(user);
     }
 
 }

@@ -34,6 +34,12 @@ public interface FriendsRepository extends CrudRepository<Friends, Long> {
     @Query("SELECT p FROM Friends p WHERE (p.user1.id = ?1 AND p.user2.id = ?2) or (p.user1.id = ?2 AND p.user2.id = ?1) ")
     Friends getRequest(Long user1, Long user2);
 
+    @Query("SELECT p FROM Friends p WHERE ((p.user1.id = ?1 AND p.user2.id = ?2) or (p.user1.id = ?2 AND p.user2.id = ?1)) and p.status = 'accepted'")
+    Friends getAcceptedFriendship(Long user1, Long user2);
+
+
+    @Query("SELECT p FROM Friends p WHERE p.user1.id = ?1 AND p.user2.id = ?2")
+    Friends getSent(Long user1, Long user2);
 
     /**
      * Retrieves all sent friend requests by a user
