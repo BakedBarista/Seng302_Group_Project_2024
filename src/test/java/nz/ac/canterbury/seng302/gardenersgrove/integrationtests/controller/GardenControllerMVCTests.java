@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
@@ -44,6 +45,9 @@ public class GardenControllerMVCTests {
     @Mock
     private GardenUserService gardenUserService;  // Mocking GardenUserService
 
+    @Mock
+    private FriendService friendService;
+
 
     @BeforeEach
     public void setUp() {
@@ -54,7 +58,7 @@ public class GardenControllerMVCTests {
         gardenUserService = mock(GardenUserService.class);
         gardenService = mock(GardenService.class);
         plantService = mock(PlantService.class);
-        gardenController = new GardenController(gardenService, plantService, gardenUserService);
+        gardenController = new GardenController(gardenService, plantService, gardenUserService,friendService);
 
         // Setting up lenient behavior to avoid unnecessary stubbing exceptions
         lenient().when(owner.getId()).thenReturn(1L);
