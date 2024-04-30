@@ -1,12 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
 import jakarta.validation.Valid;
-import jakarta.validation.Validation;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.LoginDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.ResetPasswordDTO;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.UUID;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
@@ -22,10 +18,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
-
-import java.util.Objects;
-
 @Controller
 public class ResetPasswordController {
     private Logger logger = LoggerFactory.getLogger(LoginController.class);
@@ -60,20 +52,19 @@ public class ResetPasswordController {
      */
     @PostMapping("/users/reset-password")
     public String resetPasswordConfirmation(
-            @RequestParam(name = "email") String email, HttpServletRequest request) {
+            @RequestParam(name = "email") String email, HttpServletRequest request, @Valid @ModelAttribute("resetPasswordDTO") ResetPasswordDTO resetPasswordDTO,
+            BindingResult bindingResult,
+            Model model) {
+
+        logger.info("POST /users/reset-password");
+        logger.info("Email entered: {}", email);
+
         boolean emailExists = true;
         if (emailExists) {
             GardenUser user = userService.getUserByEmail(email);
             String token = tokenService.createAuthenticationToken();
             String resetPasswordLink = generateUrlString(request, token);
             logger.info("Reset password link: " + resetPasswordLink);
-            @RequestParam(name = "email") String email,
-            @Valid @ModelAttribute("resetPasswordDTO") ResetPasswordDTO resetPasswordDTO,
-            BindingResult bindingResult,
-            Model model)
-            {
-        logger.info("POST /users/reset-password");
-        logger.info("Email entered: {}", email);
 
         if (bindingResult.hasFieldErrors("email")) {
             for (FieldError errors : bindingResult.getFieldErrors()) {
