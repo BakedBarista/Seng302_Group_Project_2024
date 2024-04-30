@@ -19,7 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import org.springframework.web.bind.annotation.*;
+import java.util.Collections;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -204,6 +204,7 @@ public class GardenController {
             existingGarden.get().setDescription(garden.getDescription());
             existingGarden.get().setLon(garden.getLon());
             existingGarden.get().setLat(garden.getLat());
+            existingGarden.get().setWeatherForecast(Collections.emptyList());
             gardenService.addGarden(existingGarden.get());
         }
         return "redirect:/gardens/" + id;
