@@ -22,7 +22,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -249,13 +248,13 @@ public class GardenController {
             Friends isFriend = friendService.getFriendship(loggedInUserId, id);
             GardenUser owner = gardenUserService.getUserById(id);
 
-            List<Garden> privateGardens = gardenService.getPrivateGardensByOwnerId(owner);
-            List<Garden> publicGardens = gardenService.getPublicGardensByOwnerId(owner);
+//            List<Garden> privateGardens = gardenService.getPrivateGardensByOwnerId(owner);
+//            List<Garden> publicGardens = gardenService.getPublicGardensByOwnerId(owner);
             if (isFriend != null) {
-                model.addAttribute("privateGardens", privateGardens);
+                //model.addAttribute("privateGardens", privateGardens);
             }
 
-            model.addAttribute("publicGardens", publicGardens);
+            //model.addAttribute("publicGardens", publicGardens);
 
         return "gardens/friendGardens";
     }
@@ -265,7 +264,7 @@ public class GardenController {
      * send the user to public gardens with a subset of gardens matching
      * their given search
      * @param search string that user is searching
-     * @param model
+     * @param model representation of results
      * @return public garden page
      */
     @PostMapping("/gardens/public/search")

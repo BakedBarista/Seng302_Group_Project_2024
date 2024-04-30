@@ -24,13 +24,13 @@
         </form>
     </div>
 
-    <div th:if="${gardens.empty}">
+    <div th:if="${gardenPage.empty}">
         No gardens match your search...
         <a href="#" role="button" onclick="clearSearch()">
             Reset search
         </a>
     </div>
-    <div th:unless="${gardens.empty}">
+    <div th:unless="${gardenPage.empty}">
         <p class="text-secondary">
             Showing results <span th:text="${gardenPage.number * gardenPage.size + 1}"></span>
             to <span th:text="${gardenPage.number * gardenPage.size + gardenPage.numberOfElements}"></span>
