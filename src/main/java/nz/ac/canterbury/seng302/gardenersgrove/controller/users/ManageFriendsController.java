@@ -221,15 +221,9 @@ public class ManageFriendsController {
     public String cancelSentRequest(Authentication authentication,
                                     @RequestParam(name = "userId", required = false) Long requestedUser) {
         Long loggedInUserId = (Long) authentication.getPrincipal();
-        GardenUser loggedInUser = userService.getUserById(loggedInUserId);
-        GardenUser cancelRequestTo = userService.getUserById(requestedUser);
-        logger.info("user1 {}, user2 {}", loggedInUserId, cancelRequestTo.getId());
-        Friends friendship = friendService.getFriendship(loggedInUser.getId(), cancelRequestTo.getId());
-        logger.info("friendship {}", friendship.getStatus());
-        friendship.setStatus("");
-        friendService.save(friendship);
-        logger.info("friendship {}", friendship.getStatus());
-        logger.info("Cancel friend request sent to {}", friendship.getUser2().getFname());
+        logger.info("Canceling request to {}",userService.getUserById(requestedUser).getFname());
+        Friends friendship = friendService.getFriendship(loggedInUserId,requestedUser);
+        friendService.removeFriendship(friendship);
 
         return "redirect:/users/manageFriends";
     }

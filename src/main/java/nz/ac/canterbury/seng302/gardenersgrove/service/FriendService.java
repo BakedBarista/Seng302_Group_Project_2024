@@ -4,6 +4,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.FriendsRepository;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -75,6 +76,15 @@ public class FriendService {
      */
     public List<Friends> getReceivedRequests(Long user) {
         return friendsRepository.getReceivedRequests(user);
+    }
+
+    /**
+     * Remove friend/cancel request
+     * @param friends Friendship to remove
+     */
+    public void removeFriendship(Friends friends) {
+        friendsRepository.delete(friends);
+
     }
 
 }
