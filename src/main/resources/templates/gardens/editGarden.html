@@ -16,7 +16,7 @@
     <nav th:replace="~{fragments/navbar :: navbar}"></nav>
     <div>
         <div>
-            <form class="row g-3" th:action="@{/gardens/{gardenId}/edit(gardenId=${id})}" th:object="${garden}" method="post">
+            <form class="container-xl" th:action="@{/gardens/{gardenId}/edit(gardenId=${id})}" th:object="${garden}" method="post">
                 <!-- Garden Name Field -->
                 <div class="col-8">
                     <label for="name"> Garden Name: </label>
