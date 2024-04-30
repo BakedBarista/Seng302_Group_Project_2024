@@ -1,5 +1,10 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
+import jakarta.validation.Valid;
+import jakarta.validation.Validation;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.LoginDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.ResetPasswordDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.UUID;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
@@ -11,10 +16,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
+
+import java.util.Objects;
 
 @Controller
 public class ResetPasswordController {
@@ -57,6 +67,21 @@ public class ResetPasswordController {
             String token = tokenService.createAuthenticationToken();
             String resetPasswordLink = generateUrlString(request, token);
             logger.info("Reset password link: " + resetPasswordLink);
+            @RequestParam(name = "email") String email,
+            @Valid @ModelAttribute("resetPasswordDTO") ResetPasswordDTO resetPasswordDTO,
+            BindingResult bindingResult,
+            Model model)
+            {
+        logger.info("POST /users/reset-password");
+        logger.info("Email entered: {}", email);
+
+        if (bindingResult.hasFieldErrors("email")) {
+            for (FieldError errors : bindingResult.getFieldErrors()) {
+                logger.info("Validation error in email field: {}", errors.getDefaultMessage());
+                model.addAttribute("incorrectEmail", errors.getDefaultMessage());
+            }
+            return "users/resetPassword";
+        }
 
             tokenService.addResetPasswordTokenAndTimeToUser(user, token);
             userService.addUser(user);
