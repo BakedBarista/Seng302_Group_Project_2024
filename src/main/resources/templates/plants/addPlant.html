@@ -50,7 +50,7 @@
                 <h3>Plant Image:</h3>
                 <div class="image-container">
                     <img th:src="@{${plant.plantImagePath}}" />
-                    <img th:unless="${plant.plantImagePath}" src="/default.png" alt="Default Plant Image" />
+                    <img th:unless="${plant.plantImagePath}" th:src="@{/default.png}" alt="Default Plant Image" />
                 </div>
             </div>
             <button type="submit">Submit!</button>
