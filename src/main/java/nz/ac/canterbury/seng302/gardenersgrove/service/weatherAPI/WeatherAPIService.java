@@ -89,6 +89,11 @@ public class WeatherAPIService {
         if (fetchFromApi) {
             logger.info("Fetching a new weather forecast from API...");
             weatherForecast = getForecastWeatherFromAPI(lat, lng);
+
+            if (weatherForecast.isEmpty()) {
+                logger.error("No weather forecast returned from API.");
+                return Collections.emptyList();
+            }
             String newTimezoneId = (String) weatherForecast.get(0).get("timezoneId");
             String newLastUpdateDate = (String) weatherForecast.get(0).get("date");
 
@@ -139,7 +144,6 @@ public class WeatherAPIService {
 
                         weatherValues.put("city", weatherAPIResponse.getLocation().getLocationName());
                         weatherValues.put("timezoneId", weatherAPIResponse.getLocation().getTimezoneId());
-//                        weatherValues.put("localtime", weatherAPIResponse.getLocation().getLocaltime());
                         weatherValues.put("maxTemp", forecastDay.getDay().getMaxTemp());
                         weatherValues.put("avgHumidity", forecastDay.getDay().getHumidity());
                         weatherValues.put("conditions", forecastDay.getDay().getCondition().getConditions());
@@ -155,6 +159,7 @@ public class WeatherAPIService {
                         logger.debug("Weather values for {}: {}", date, weatherValues);
                         forecastWeather.add(weatherValues);
                     }
+                    return forecastWeather;
                 } catch (JsonProcessingException e) {
                     logger.error("Error parsing API response", e);
                 } catch (NullPointerException e) {
@@ -165,9 +170,9 @@ public class WeatherAPIService {
             }
             logger.debug("Weather JSON parsed as: {}", forecastWeather);
         } catch (HttpClientErrorException e) {
-            logger.error("Something went wrong accessing the weather API data. Check the API key", e);
+            logger.error("Something went wrong accessing the weather API data. Check the location & API key");
         }
         logger.info("Weather data returned as: {}", forecastWeather);
-        return forecastWeather;
+        return Collections.emptyList();
     }
 }

@@ -12,10 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -104,7 +104,9 @@ public class GardenController {
         model.addAttribute("gardens", gardens);
 
         //TODO: Implement with carls location API for lat lng
-//        model.addAttribute("weatherForecast", weatherAPIService.getForecastWeather(id, -43.5299, 172.6333));
+//        List<Map<String, Object>> forecastResult = weatherAPIService.getForecastWeather(id, 0.5, 0.5);
+        model.addAttribute("weatherForecast", forecastResult);
+        model.addAttribute("displayWeather", !forecastResult.isEmpty());
         return "gardens/gardenDetails";
     }
 
