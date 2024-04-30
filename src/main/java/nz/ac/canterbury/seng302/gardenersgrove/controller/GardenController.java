@@ -19,12 +19,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import java.util.Optional;
 
 /**
@@ -190,15 +188,28 @@ public class GardenController {
         Optional<Garden> existingGarden = gardenService.getGardenById(id);
         if (existingGarden.isPresent()) {
             existingGarden.get().setName(garden.getName());
-            existingGarden.get().setLocation(garden.getLocation());
+            existingGarden.get().setStreetNumber(garden.getStreetNumber());
+            existingGarden.get().setStreetName(garden.getStreetName());
+            existingGarden.get().setSuburb(garden.getSuburb());
+            existingGarden.get().setCity(garden.getCity());
+            existingGarden.get().setCountry(garden.getCountry());
+            existingGarden.get().setPostCode(garden.getPostCode());
             existingGarden.get().setSize(garden.getSize());
             existingGarden.get().setDescription(garden.getDescription());
+            existingGarden.get().setLon(garden.getLon());
+            existingGarden.get().setLat(garden.getLat());
             gardenService.addGarden(existingGarden.get());
         }
         return "redirect:/gardens/" + id;
     }
 
-
+    /**
+     * gets all public gardens
+     * @param page page number
+     * @param size size of page
+     * @param model representation of results
+     * @return publicGardens page
+     */
     @GetMapping("/gardens/public")
     public String publicGardens(
             @RequestParam (defaultValue = "0") int page,
@@ -264,3 +275,7 @@ public class GardenController {
         return "gardens/publicGardens";
     }
 }
+
+
+
+

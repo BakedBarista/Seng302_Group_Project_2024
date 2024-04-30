@@ -2,16 +2,15 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Requests;
 import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
 
 import org.apache.catalina.User;
 import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,13 +31,11 @@ public class ManageFriendsController {
 
     private FriendService friendService;
     private GardenUserService userService;
-    private RequestService requestService;
 
     @Autowired
-    public ManageFriendsController(FriendService friendService, GardenUserService userService, RequestService requestService) {
+    public ManageFriendsController(FriendService friendService, GardenUserService userService) {
         this.userService = userService;
         this.friendService = friendService;
-        this.requestService = requestService;
     }
 
     /**
@@ -56,8 +53,8 @@ public class ManageFriendsController {
         Long loggedInUserId = (Long) authentication.getPrincipal();
         List<GardenUser> allUsers = userService.getUser();
         List<GardenUser> Friends = friendService.getAllFriends(loggedInUserId);
-        List<Requests> sentRequests = requestService.getSentRequests(loggedInUserId);
-        List<Requests> receivedRequests = requestService.getReceivedRequests(loggedInUserId);
+        List<Friends> sentRequests = friendService.getSentRequests(loggedInUserId);
+        List<Friends> receivedRequests = friendService.getReceivedRequests(loggedInUserId);
         //base attributes to set up the page.
         model.addAttribute("friends", Friends);
         model.addAttribute("allUsers", allUsers);
@@ -80,20 +77,24 @@ public class ManageFriendsController {
         Long loggedInUserId = (Long) authentication.getPrincipal();
         GardenUser loggedInUser = userService.getUserById(loggedInUserId);
         GardenUser sentTo = userService.getUserById(requestedUser);
-        Friends alreadyFriends = friendService.getFriendship(loggedInUser.getId(), sentTo.getId());
-        Optional<Requests> requestExists = requestService.getRequest(sentTo.getId(), loggedInUser.getId());
-        //checking is they have already been declined/ already friends                           
-        if (!requestExists.isPresent()) {
-            if (alreadyFriends == null){
-                if(loggedInUser != sentTo){
-                    Requests requestEntity = new Requests(loggedInUser, sentTo, "pending");
-                    requestService.save(requestEntity);
-                }
-            }
+        Friends friendShip = friendService.getFriendship(loggedInUser.getId(), sentTo.getId());
+        boolean requestingMyself = loggedInUserId == requestedUser;
+        if (requestingMyself) {
+            return "redirect:/users/manageFriends";
         }
+        
+        if(friendShip != null){
+            return "redirect:/users/manageFriends";
+        }
+
+        Friends newFriends = new Friends(loggedInUser, sentTo, "pending");
+        friendService.save(newFriends);
+
         return "redirect:/users/manageFriends";
     }
 
+ // sent is 1 request is 2
+ 
     /**
      * Handles accepting a new friend.
      *
@@ -106,26 +107,11 @@ public class ManageFriendsController {
         @RequestParam(name = "acceptUser", required = false) Long acceptUser) {
 
         Long loggedInUserId = (Long) authentication.getPrincipal();
-        GardenUser loggedInUser = userService.getUserById(loggedInUserId);
-        GardenUser receivedFrom = userService.getUserById(acceptUser);
 
-        Optional<Requests> requestDeclineExists = requestService.getRequest(acceptUser, loggedInUserId);
-        if(requestDeclineExists.isPresent()){
-            Requests updateStatus = requestDeclineExists.get();
-            requestService.delete(updateStatus);
-        }
-
-        if ( loggedInUser != null && receivedFrom != null ) {
-            Optional<Requests> requestExists = requestService.getRequest(loggedInUserId, acceptUser);
-            Friends alreadyFriends = friendService.getFriendship(loggedInUserId, acceptUser);
-
-            if (requestExists.isPresent() && alreadyFriends == null) {
-                Friends newFriends = new Friends(loggedInUser, receivedFrom);
-                friendService.save(newFriends);
-
-                Requests updateStatus = requestExists.get();
-                requestService.delete(updateStatus);
-            }
+        Friends friendShip = friendService.getFriendship(loggedInUserId, acceptUser);
+        if(friendShip != null){
+            friendShip.setStatus("accepted");
+            friendService.save(friendShip);
         }
 
         return "redirect:/users/manageFriends";
@@ -147,13 +133,11 @@ public class ManageFriendsController {
         GardenUser receivedFrom = userService.getUserById(declineUser);
 
         if ( loggedInUser != null && receivedFrom != null ) {
-            Optional<Requests> optionalRequest = requestService.getRequest(loggedInUserId, declineUser);
-            Friends alreadyFriends = friendService.getFriendship(loggedInUserId, declineUser);
+            Friends friendShip = friendService.getFriendship(loggedInUserId, declineUser);
 
-            if (optionalRequest.isPresent() && alreadyFriends == null) {
-                Requests request = optionalRequest.get();
-                request.setStatus("declined");
-                requestService.save(request);
+            if (friendShip != null) {
+                friendShip.setStatus("declined");
+                friendService.save(friendShip);
             }
         }
         return "redirect:/users/manageFriends";
@@ -175,10 +159,32 @@ public class ManageFriendsController {
         Long loggedInUserId = (Long) authentication.getPrincipal();
         List<GardenUser> searchResults = userService.getUserBySearch(searchUser, loggedInUserId);
         Optional<GardenUser> checkMyself = userService.checkSearchMyself(searchUser, loggedInUserId);
+  
+        List<GardenUser> alreadyFriendsList = new ArrayList<GardenUser>();
+        //so we dont get index out of range
+        List<GardenUser> copyOfSearchResults = new ArrayList<>(searchResults);
+
+        if (searchResults != null) {
+            for (GardenUser user : copyOfSearchResults) {
+                Friends alreadyFriends = friendService.getFriendship(loggedInUserId, user.getId());
+                
+                if (alreadyFriends != null) {
+                    alreadyFriendsList.add(user);
+                    searchResults.remove(user);
+                }
+            }
+        }
+
+
         if(checkMyself.isPresent()){
             rm.addFlashAttribute("mySelf", checkMyself.get());
         }
-        rm.addFlashAttribute("searchResults", searchResults);
+        if (alreadyFriendsList != null) {
+            rm.addFlashAttribute("alreadyFriends", alreadyFriendsList);
+        } 
+        if (searchResults != null) {
+            rm.addFlashAttribute("searchResults", searchResults);
+        } 
         return "redirect:/users/manageFriends";
     }
 
@@ -196,7 +202,6 @@ public class ManageFriendsController {
                                     Model model) {
         Long loggedInUserId = (Long) authentication.getPrincipal();
         Friends isFriend = friendService.getFriendship(loggedInUserId, id);
-        System.out.println(isFriend);
         var friend = userService.getUserById(id);
         // a user cannot view another non friends page
         if (isFriend == null) {
