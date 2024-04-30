@@ -5,29 +5,35 @@
     <title>Garden Details</title>
     <link th:href="@{/css/navbar.css}" rel="stylesheet"/>
     <link th:href="@{/css/styles.css}" rel="stylesheet"/>
+    <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
 </head>
-<th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
 
 <body>
 <div th:replace="~{fragments/navbar :: navbar}"></div>
-<main class="mx-5 pt-2">
+<main class="mx-5 pt-2 pb-5">
     <h1 class="pb-4" th:text="${garden.name}">GARDEN NAME</h1>
     <div class="row">
         <div class="col-xl-6 col-12">
             <h3>Info:</h3>
             <div class="d-flex">
                 <img th:src="@{/icon/book-02-stroke-rounded.svg}" alt="" width="20" height="20" />
-    <!--            <p class="mx-1"><strong>Description: </strong><span th:text="${garden.description}"></span></p>-->
-                <p class="mx-1"><strong>Description: </strong>Blah blah blah garden description stuff here</p>
+                <p class="mx-1"><strong>Description: </strong><span th:text="${garden.description}"></span></p>
             </div>
             <div class="d-flex">
                 <img th:src="@{/icon/location-04-stroke-rounded.svg}" alt="" width="20" height="20" />
-                <p class="mx-1"><strong>Location: </strong><span th:text="${garden.location}"></span></p>
+                <p class="mx-1"><strong>Location: </strong>
+                    <span th:text="${garden.streetNumber}"></span>
+                    <span th:text="${garden.streetName}"></span><span th:if="${garden.streetName}">,</span>
+                    <span th:text="${garden.suburb}"></span><span th:if="${garden.suburb}">,</span>
+                    <span th:text="${garden.city}"></span><span th:if="${garden.city}">,</span>
+                    <span th:text="${garden.country}"></span>
+                </p>
             </div>
             <div class="d-flex">
                 <img th:src="@{/icon/aspect-ratio-stroke-rounded.svg}" alt="" width="20" height="20" />
                 <p class="mx-1"><strong>Size: </strong><span th:text="${garden.size}"></span> m&sup2;</p>
             </div>
+            <div><a class="btn btn-primary" th:href="@{/gardens/{id}/edit(id=${garden.id})}"><img th:src="@{/icon/edit-white.svg}" alt="" width="20" height="20" /> Edit Garden</a></div>
         </div>
         <div class="col-xl-6 col-12">
             <h2>Weather:</h2>
@@ -39,7 +45,7 @@
 <!--                </button>-->
 <!--            </div>-->
             <div class="d-flex flex-row" >
-                <div th:if="${!displayWeather}">Can't return weather</div>
+                <div th:if="${!displayWeather}">Location not found, please update your location to see the weather.</div>
                 <div class="card mx-1" th:if="${displayWeather}" th:each="daysWeather: ${weatherForecast}" style="width: 250px;">
                    <div class="border-0 m-0 p-0">
                        <div class="text-center">
@@ -49,7 +55,7 @@
                        </div>
                    </div>
                     <div class="text-center border-0 m-0 p-0" style="font-size: 22pt;">
-                        <p><strong><span th:text="${daysWeather.maxTemp}">24</span></strong>&deg;</p>
+                        <p><strong><span th:text="${daysWeather.maxTemp}">24</span></strong>&deg;<span style="font-size: 10pt;">/12</span></p>
                     </div>
                     <div class="text-center border-0 m-0 p-0" style="font-size: 10pt;">
                         <div class="row m-0 p-0">
@@ -84,10 +90,43 @@
 
         </div>
     </div>
-
+    <hr />
     <div>
-        <h2>Plants: </h2>
-        Plants here...
+        <div class="d-flex justify-content-center align-items-center mb-3">
+            <h2 class="flex-grow-1 text-center">  Your Plants</h2>
+
+            <a type="button" th:href="@{/gardens/{id}/add-plant(id=${garden.id})}" class="btn btn-primary ms-auto"><img th:src="@{/icon/add-square-white.svg}" alt="" width="20" height="20" /> New Plant</a>
+        </div>
+        <div class="flex">
+            <div class="row gap-2 justify-content-center">
+                <div th:each="plant : ${plants}" class="card rounded-2 p-0 m-0 col-xxl-2 col-lg-3 col-md-4 col-sm-6 col-12">
+                    <div class="card-header m-0 p-0 bg-transparent rounded-2">
+                        <img class="w-100" alt="Plant Picture" style="max-height: 300px;" th:if="${plant.plantImagePath}" th:src="@{${plant.plantImagePath}}" />
+                        <img class="w-100" style="height: 200px;" th:unless="${plant.plantImagePath}" src="/default.png" alt="Default Plant Image" />
+                        <a class="add-image-button" th:href="@{/uploadImage(garden_Id=${garden.id}, plant_Id=${plant.id})}">+</a>
+                    </div>
+                    <div class="card-body m-0">
+                        <div class="d-flex">
+                            <p><strong><span class="mx-1" th:text="${plant.name}" style="font-weight: bold;">Plant Name</span></strong><a th:href="@{/gardens/{gardenId}/plants/{plantId}/edit(gardenId=${garden.id}, plantId=${plant.id})}"><img th:src="@{/icon/edit.svg}" alt="" width="20" height="20" /></a></p>
+                            <div class="d-flex justify-content-end ms-auto">
+                                <img th:src="@{/icon/natural-food-stroke-rounded.svg}" alt="" width="20" height="20" />
+                                <p class="mx-1" th:text="${plant.count}">Plant Count</p>
+                            </div>
+                        </div>
+
+                        <div class="d-flex">
+                            <img th:src="@{/icon/book-02-stroke-rounded.svg}" alt="" width="20" height="20" />
+                            <p class="mx-1" th:text="${plant.description}">Description</p>
+                        </div>
+                        <div class="d-flex">
+                            <img th:src="@{/icon/calendar-03-stroke-rounded.svg}" alt="" width="20" height="20" />
+                            <p class="mx-1" th:text="${plant.plantedDate}">Planted Date</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
     </div>
 </main>
 
