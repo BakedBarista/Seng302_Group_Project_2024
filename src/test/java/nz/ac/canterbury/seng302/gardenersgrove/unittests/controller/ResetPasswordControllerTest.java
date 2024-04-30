@@ -13,6 +13,8 @@ import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
@@ -46,40 +48,21 @@ public class ResetPasswordControllerTest {
         user = new GardenUser("John", "Doe", "john.doe@gmail.com", "password", null);
     }
 
-    @Test
-    void whenGenerateUrlStringCalled_thenUrlIsGenerated() {
+    @ParameterizedTest
+    @CsvSource({
+        "https,example.com,8080,https://example.com:8080/users/reset-password/callback?token=abc123xyz",
+        "http,example.com,80,http://example.com/users/reset-password/callback?token=abc123xyz",
+        "https,example.com,443,https://example.com/users/reset-password/callback?token=abc123xyz",
+    })
+    void whenGenerateUrlStringCalled_thenUrlIsGenerated(String scheme, String host, int port, String expectedUrl) {
         // Set up the expected behaviors of the mock object
-        when(request.getScheme()).thenReturn("https");
-        when(request.getServerName()).thenReturn("example.com");
-        when(request.getServerPort()).thenReturn(8080); // Non-standard port
+        when(request.getScheme()).thenReturn(scheme);
+        when(request.getServerName()).thenReturn(host);
+        when(request.getServerPort()).thenReturn(port);
 
         String url = controller.generateUrlString(request, token);
 
-        assertEquals("https://example.com:8080/users/reset-password/callback?token=abc123xyz", url);
-    }
-
-    @Test
-    void givenPort80InUse_whenGenerateUrlStringCalled_thenUrlOmitsPort() {
-        // Testing with standard HTTP port
-        when(request.getScheme()).thenReturn("http");
-        when(request.getServerName()).thenReturn("example.com");
-        when(request.getServerPort()).thenReturn(80); // Standard HTTP port
-
-        String url = controller.generateUrlString(request, token);
-
-        assertEquals("http://example.com/users/reset-password/callback?token=abc123xyz", url);
-    }
-
-    @Test
-    void givenPort443InUse_whenGenerateUrlStringCalled_thenUrlOmitsPort() {
-        // Testing with standard HTTPS port
-        when(request.getScheme()).thenReturn("https");
-        when(request.getServerName()).thenReturn("example.com");
-        when(request.getServerPort()).thenReturn(443); // Standard HTTPS port
-
-        String url = controller.generateUrlString(request, token);
-
-        assertEquals("https://example.com/users/reset-password/callback?token=abc123xyz", url);
+        assertEquals(expectedUrl, url);
     }
 
     @Test
@@ -148,9 +131,9 @@ public class ResetPasswordControllerTest {
         String result = controller.resetPasswordCallbackPost(resetPasswordDTO, bindingResult, model);
 
         assertEquals("redirect:/users/login", result);
-        verify(userService).addUser(eq(user));
+        verify(userService).addUser(user);
         assertTrue(user.checkPassword("newPassword"));
-        verify(emailSenderService).sendEmail(eq(user), eq("Password Changed"), eq("Your password has been updated"));
+        verify(emailSenderService).sendEmail(user, "Password Changed", "Your password has been updated");
     }
 
     @Test
