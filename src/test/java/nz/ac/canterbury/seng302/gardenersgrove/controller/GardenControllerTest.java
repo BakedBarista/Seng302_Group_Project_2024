@@ -2,7 +2,9 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,18 +27,31 @@ public class GardenControllerTest {
     @Mock
     private PlantService plantService;
 
+    @Mock
+    private GardenUserService gardenUserService;
+
     @InjectMocks
     private GardenController gardenController;
+
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
+        GardenUser mockUser = mock(GardenUser.class);
+        when(mockUser.getId()).thenReturn(1L);
+        when(gardenUserService.getCurrentUser()).thenReturn(mockUser);
+        when(gardenService.getGardensByOwnerId(1L)).thenReturn(Collections.emptyList());
+
     }
 
     @Test
     public void testForm() {
         Model model = mock(Model.class);
-        String result = gardenController.form("","","", model);
+        String result = gardenController.form(model);
+
+        verify(model).addAttribute(eq("garden"), any(Garden.class));
+        verify(model).addAttribute(eq("gardens"), anyList());
+
         assertEquals("gardens/createGarden", result);
     }
 
@@ -111,4 +126,22 @@ public class GardenControllerTest {
         assertEquals("Test Size", garden.getSize());
         assertEquals("Test Description", garden.getDescription());
     }
+
+    @Test
+    public void setUpdateStatusTrueQueryDatabaseReturnTrue() {
+        when(gardenService.getGardenById(1L)).thenReturn(Optional.of(new Garden()));
+        when(gardenService.addGarden(any())).thenReturn(new Garden());
+        String result = gardenController.updatePublicStatus(1L, true);
+        assertEquals(gardenService.getGardenById(1L).get().getIsPublic(), true);
+        assertEquals("redirect:/gardens/1", result);
+    }
+    @Test
+    public void setUpdateStatusFalseQueryDatabaseReturnFalse() {
+        when(gardenService.getGardenById(1L)).thenReturn(Optional.of(new Garden()));
+        when(gardenService.addGarden(any())).thenReturn(new Garden());
+        String result = gardenController.updatePublicStatus(1L, false);
+        assertEquals(gardenService.getGardenById(1L).get().getIsPublic(), false);
+        assertEquals("redirect:/gardens/1", result);
+    }
+
 }

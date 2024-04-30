@@ -1,26 +1,29 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
-import nz.ac.canterbury.seng302.gardenersgrove.validation.UserValidation;
 import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import nz.ac.canterbury.seng302.gardenersgrove.validation.UserValidation;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.validation.Valid;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditPasswordDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 
 /**
@@ -31,29 +34,19 @@ public class EditUserController {
 
     private Logger logger = LoggerFactory.getLogger(EditUserController.class);
 
-    @Autowired
     private GardenUserService userService;
-    private GardenUser user;
+    private EmailSenderService emailSenderService;
 
-    private Boolean isNoLname;
-
-    private int maxNameLength = 64;
-
-    /**
-     * Setter method for userServer
-     *
-     * @param userService The GardenUserService to be set
-     */
-    public void setUserService(GardenUserService userService) {
+    public EditUserController(GardenUserService userService, EmailSenderService emailSenderService) {
         this.userService = userService;
+        this.emailSenderService = emailSenderService;
     }
-
 
     /**
      * Shows the edit user form
      *
      * @param authentication authentication object representing the current user
-     * @param model Thymeleaf model
+     * @param model          Thymeleaf model
      * @return The edit user template view
      */
     @GetMapping("/users/edit")
@@ -62,127 +55,71 @@ public class EditUserController {
 
         Long userId = (Long) authentication.getPrincipal();
         GardenUser user = userService.getUserById(userId);
-
         model.addAttribute("userId", userId);
-        model.addAttribute("fname", user.getFname());
-        model.addAttribute("lname", user.getLname());
-        model.addAttribute("noLname", user.getLname() == null);
-        model.addAttribute("email", user.getEmail());
-        model.addAttribute("dob", user.getDOB());
+
+        EditUserDTO editUserDTO = new EditUserDTO();
+        editUserDTO.setFname(user.getFname());
+        editUserDTO.setLname(user.getLname());
+        editUserDTO.setEmail(user.getEmail());
+        editUserDTO.setDOB(user.getDOB());
+        model.addAttribute("editUserDTO", editUserDTO);
 
         return "users/editTemplate";
     }
 
-
     /**
      * Handles the submission of user edits
      *
-     * @param fname user's current first name
-     * @param lname user's current last name
-     * @param noLname True if the user has no last name
-     * @param email user's current email
-     * @param dob user's current date of birth
+     * @param fname          user's current first name
+     * @param lname          user's current last name
+     * @param noLname        True if the user has no last name
+     * @param email          user's current email
+     * @param dob            user's current date of birth
      * @param authentication authentication object representing the current user
-     * @param model the Thymeleaf model
+     * @param model          the Thymeleaf model
      * @return The view name for the edit user template or a redirect URL
      */
     @PostMapping("/users/edit")
     public String submitUser(
-            @RequestParam(name = "fname") String fname,
-            @RequestParam(name = "lname", required = false) String lname,
-            @RequestParam(name = "noLname", defaultValue = "false") boolean noLname,
-            @RequestParam(name = "email") String email,
-            @RequestParam(name = "dob") String dob,
+            @Valid @ModelAttribute("user") EditUserDTO editUserDTO,
+            BindingResult bindingResult,
             Authentication authentication, Model model) {
         logger.info("POST /users/edit");
 
-        isNoLname = noLname;
         Long userId = (Long) authentication.getPrincipal();
 
-        if (noLname) {
-            lname = null;
-        }
-        if (dob.isEmpty()) {
-            dob = null;
-        }
-
-        user = userService.getUserById(userId);
-        // Validation
+        GardenUser user = userService.getUserById(userId);
         String currentEmail = user.getEmail();
-        UserValidation userValidation = new UserValidation();
-        boolean valid = true;
 
-        if (!email.equalsIgnoreCase(currentEmail)) {
-            if (userService.getUserByEmail(email) != null) {
-                model.addAttribute("emailInuse", "This email address is already in use");
-                valid = false;
-            } else if (!userValidation.userEmailValidation(email)) {
-                model.addAttribute("incorrectEmail", "Email address must be in the form ‘jane@doe.nz’");
-                valid = false;
-            }
+        if (!editUserDTO.getEmail().equalsIgnoreCase(currentEmail)
+                && userService.getUserByEmail(editUserDTO.getEmail()) != null) {
+            bindingResult.rejectValue("email", null, "This email address is already in use");
         }
 
-        if ((!userValidation.userFirstNameEmptyValidation(fname))){
-            model.addAttribute("emptyFirstName", "First name cannot be empty");
-            valid = false;
-        } else if (!userValidation.userFirstNameWrongCharactersValidation(fname)){
-            model.addAttribute("wrongCharFirstName", "First name must only include letters, spaces,hyphens or apostrophes");
-            valid = false;
-        } else if ((fname.length() > maxNameLength)) {
-            model.addAttribute("firstNameTooLong", "First name must be 64 characters long or less");
-            valid = false;
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("user", user);
+            return "users/editTemplate";
         }
 
-        if ((!userValidation.userLastNameEmptyValidation(lname, noLname))){
-            model.addAttribute("emptyLastName", "Last name cannot be empty");
-            valid = false;
-        } else if (!userValidation.userLastNameWrongCharactersValidation(lname, noLname)){
-            model.addAttribute("wrongCharLastName", "Last name must only include letters, spaces,hyphens or apostrophes");
-            valid = false;
-        } else if (noLname==false && lname.length() > maxNameLength){
-            model.addAttribute("lastNameTooLong", "Last name must be 64 characters long or less");
-            valid = false;
-        }
+        user.setFname(editUserDTO.getFname());
+        user.setLname(editUserDTO.getLname());
+        user.setEmail(editUserDTO.getEmail());
+        user.setDOB(editUserDTO.getDOB());
+        userService.addUser(user);
 
-        if (!userValidation.userInvalidDateValidation(dob)){
-            model.addAttribute("invalidDob", "Date is not in valid format, (DD/MM/YYYY)");
-            valid = false;
-        } else if (!userValidation.userYoungDateValidation(dob)){
-            model.addAttribute("youngDob", "You must be 13 years or older to create an account");
-            valid = false;
-        } else if (!userValidation.userOldDateValidation(dob)){
-            model.addAttribute("oldDob", "The maximum age allowed is 120 years");
-            valid = false;
-        }
+        return "redirect:/users/user";
 
-        if (valid) {
-            GardenUser user = userService.getUserById(userId);
-            user.setFname(fname);
-            user.setLname(lname);
-            user.setEmail(email);
-            user.setDOB(dob);
-            userService.addUser(user);
-
-            return "redirect:/users/user";
-
-        }
-
-        model.addAttribute("userId", userId);
-        model.addAttribute("fname", fname);
-        model.addAttribute("lname", lname);
-        model.addAttribute("noLname", noLname);
-        model.addAttribute("email", email);
-        model.addAttribute("dob", dob);
-
-        return "users/editTemplate";
     }
 
     /**
      * Shows the user the form
      */
     @GetMapping("/users/edit/password")
-    public String editPassword() {
+    public String editPassword(Model model) {
         logger.info("GET /users/edit/password");
+
+        EditPasswordDTO editPasswordDTO = new EditPasswordDTO();
+        model.addAttribute("editPasswordDTO", editPasswordDTO);
 
         return "users/editPassword";
     }
@@ -190,56 +127,55 @@ public class EditUserController {
     /**
      * Handles submission of password edits
      *
-     * @param oldPassword user's current password
-     * @param newPassword user's new password
+     * @param oldPassword     user's current password
+     * @param newPassword     user's new password
      * @param confirmPassword confirmation of the new password
-     * @param model Thymeleaf model
+     * @param model           Thymeleaf model
      * @return edit user template
      */
     @PostMapping("/users/edit/password")
     public String submitPassword(
-            @RequestParam(name = "oldPassword") String oldPassword,
-            @RequestParam(name = "newPassword") String newPassword,
-            @RequestParam(name = "confirmPassword") String confirmPassword,
-            Model model) {
+            @Valid @ModelAttribute("editPasswordDTO") EditPasswordDTO editPasswordDTO,
+            BindingResult bindingResult,
+            Authentication authentication, Model model) {
+        logger.info("POST /users/edit/password");
 
-        long id = (long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        UserValidation userRegoValidation = new UserValidation();
+        long id = (long) authentication.getPrincipal();
 
         GardenUser user = userService.getUserById(id);
 
-        boolean valid = true;
+        String oldPassword = editPasswordDTO.getOldPassword();
+        String newPassword = editPasswordDTO.getNewPassword();
+        String confirmPassword = editPasswordDTO.getConfirmPassword();
 
-        if(!user.checkPassword(oldPassword)){
-            model.addAttribute("incorrectOld", "Your old password is incorrect");
-            valid = false;
+        if (!user.checkPassword(oldPassword)) {
+            bindingResult.rejectValue("oldPassword", null, "Your old password is incorrect");
         }
 
-        if(!userRegoValidation.userPasswordMatchValidation(newPassword, confirmPassword)){
-            model.addAttribute("incorrectMatch", "The new passwords do not match");
-            valid = false;
-        }else if(!userRegoValidation.userPasswordStrengthValidation(newPassword)){
-            model.addAttribute("incorrectStrength", "Your password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character");
-            valid = false;
+        if (!newPassword.equals(confirmPassword)) {
+            bindingResult.rejectValue("confirmPassword", null, "The new passwords do not match");
         }
 
-        if (valid) {
-            user.setPassword(newPassword);
-            userService.addUser(user);
+        if (bindingResult.hasErrors()) {
+            logger.error("Error in password change form: {}", bindingResult.getAllErrors());
+            model.addAttribute("editPasswordDTO", editPasswordDTO);
+
             return "users/editPassword";
         }
 
-        return "users/editPassword";
-    }
+        user.setPassword(newPassword);
+        userService.addUser(user);
+        emailSenderService.sendEmail(user, "Password Changed", "Your password has been updated");
+        return "redirect:/users/user";
 
+    }
 
     /**
      * Handles the submission of profile picture edits
      *
      * @param authentication authentication object representing the current user
-     * @param file the MultipartFile containing the new profile picture
-     * @param referer the referer header value
+     * @param file           the MultipartFile containing the new profile picture
+     * @param referer        the referer header value
      * @return A redirect URL
      * @throws IOException
      */

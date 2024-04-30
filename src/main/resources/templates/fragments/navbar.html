@@ -33,6 +33,9 @@
             <li class="nav-item" th:if="${!isAuthenticated}">
               <a class="nav-link" th:href="@{/users/login}"><button type="button" class="btn btn-primary">Sign In</button></a>
             </li>
+            <li class = "nav-item" th:if="${isAuthenticated}">
+              <a class="nav-link" th:href="@{/gardens/public}">Browse Gardens</a>
+            </li>
             <li class="nav-item" th:if="${isAuthenticated}">
               <div class="h3 p-1" data-bs-toggle="dropdown" aria-expanded="false">
 <!--                TODO: This icon is a placeholder if we can't retrieve their user profile picture-->
@@ -41,13 +44,14 @@
               <ul class="dropdown-menu dropdown-menu-right" id="user-dropdown">
                 <li><a class="dropdown-item" th:href="@{/users/user}">Your Profile</a></li>
                 <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" th:href="@{/users/manageFriends}">Manage Friends</a></li>
+                <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item text-danger" th:href="@{/users/logout}">Sign Out</a></li>
               </ul>
             </li>
           </ul>
         </div>
       </div>
-    </div>
   </nav>
 </div>
 </body>

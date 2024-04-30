@@ -11,7 +11,7 @@
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 <div>
     <div>
-        <form id="addPlantForm" th:action="@{/gardens/{gardenId}/add-plant(gardenId=${gardenId})}" th:object="${plant}"  method="post" enctype="multipart/form-data">
+        <form id="addPlantForm" th:action="@{/gardens/{gardenId}/add-plant(gardenId=${gardenId})}" th:object="${plant}"  method="post" enctype="multipart/form-data" novalidate>
         <!-- Plant Name Field -->
             <label for="name">Plant Name:</label>
             <input type="text" id="name" name="name" placeholder="Enter Plant Name" th:value="${plant.name}" >
@@ -50,7 +50,7 @@
                 <h3>Plant Image:</h3>
                 <div class="image-container">
                     <img th:src="@{${plant.plantImagePath}}" />
-                    <img th:unless="${plant.plantImagePath}" src="/default.png" alt="Default Plant Image" />
+                    <img th:unless="${plant.plantImagePath}" th:src="@{/default.png}" alt="Default Plant Image" />
                 </div>
             </div>
             <button type="submit">Submit!</button>

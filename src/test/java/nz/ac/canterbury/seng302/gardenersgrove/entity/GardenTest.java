@@ -378,4 +378,5 @@ public class GardenTest {
 
         assertTrue(validator.validate(garden).isEmpty());
     }
+
 }

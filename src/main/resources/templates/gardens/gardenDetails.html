@@ -1,61 +1,78 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
-    <head>
-        <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
-        <title>Garden Details</title>
+<head>
+    <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
+    <title>Garden Details</title>
+    <link th:href="@{/css/styles.css}" rel="stylesheet" />
+</head>
+<th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
 
-        <!-- This needs to be here for Bootstrap and general CSS imports -->
-        <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
-    </head>
-    <body>
-    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
-    <div>
-        <h2 th:text="${garden.name}">Garden Name</h2>
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div>
+    <h2 th:text="${garden.name}">Garden Name</h2>
+    <p th:text="'Created by: ' + ${owner.fname} + (${owner.lname} != null ? ' ' + ${owner.lname} : '')">
+        Created by: John Doe
+    </p>
     <!--    <p><strong>ID: </strong><span th:text="${garden.id}"></span></p>-->
-        <p><strong>Location: </strong><span th:text="${garden.location}"></span></p>
-        <p><strong>Size: </strong><span th:text="${garden.size}"></span> m&sup2;</p>
-        <p><strong>Description: </strong><span th:text="${garden.description}"></span></p>
-        <div>
-            <a class="button-link" th:href="@{/gardens/{id}/edit(id=${garden.id})}"><button>Edit Garden</button></a>
-            <a class="button-link" th:href="@{/gardens/{id}/add-plant(id=${garden.id})}"><button>Add Plant</button></a>
-            <!--        <button><a th:href="@{/gardens}">Return to Gardens</a></button>-->
-        </div>
-
-        <h3>Plants:</h3>
-        <div class="scrolling-table">
-            <table>
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>Name</th>
-                        <th>Count</th>
-                        <th>Description</th>
-                        <th>Planted Date</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:if="${plants.empty}">
-                        <td colspan="3"> Please add a plant first</td>
-                    </tr>
-                    <tr th:each="plant : ${plants}">
-                        <td>
-                            <div class="image-container">
-                                <img th:src="@{${plant.plantImagePath}}" />
-                                <img th:unless="${plant.plantImagePath}" src="/default.png" alt="Default Plant Image" />
-                                <a class="add-image-button" th:href="@{/uploadImage(garden_Id=${garden.id}, plant_Id=${plant.id})}">+</a>
-                            </div>
-                        </td>
-                        <td><span th:text="${plant.name}">Name</span></td>
-                        <td><span th:text="${plant.count}">Count</span></td>
-                        <td><span th:text="${plant.description}">Description</span></td>
-                        <td><span th:text="${plant.plantedDate}">Planted Date</span></td>
-                        <td><a class="button-link" th:href="@{/gardens/{gardenId}/plants/{plantId}/edit(gardenId=${garden.id}, plantId=${plant.id})}"><button>Edit</button></a></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+    <p><strong>Location: </strong><span th:text="${garden.location}"></span></p>
+    <p><strong>Size: </strong><span th:text="${garden.size}"></span> m&sup2;</p>
+    <p><strong>Description: </strong><span th:text="${garden.description}"></span></p>
+    <div th:if="${currentUser.id == owner.id}">
+        <form th:action="@{/gardens/{id}(id=${garden.id})}" method="post">
+            <p>
+                <strong>Set Public:</strong>
+                <input type="checkbox" class="form-check-input" id="isPublic" name="isPublic" th:checked="${garden.isPublic}" onchange="this.form.submit()"/>
+            </p>
+        </form>
+        <a class="button-link" th:href="@{/gardens/{id}/edit(id=${garden.id})}"><button>Edit Garden</button></a>
+        <a class="button-link" th:href="@{/gardens/{id}/add-plant(id=${garden.id})}"><button>Add Plant</button></a>
+        <!--        <button><a th:href="@{/gardens}">Return to Gardens</a></button>-->
     </div>
+
+
+    <h3>Plants:</h3>
+    <div class="scrolling-table">
+        <table>
+            <thead>
+            <tr>
+                <th></th>
+                <th>Name</th>
+                <th>Count</th>
+                <th>Description</th>
+                <th>Planted Date</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${plants.empty}">
+                <td colspan="6" th:text="${currentUser.id == owner.id} ? 'Please add a plant first' : ${garden.name} + ' does not currently contain any plants'"></td>
+            </tr>
+            <tr th:each="plant : ${plants}">
+                <td>
+                    <div class="image-container">
+                        <img th:src="@{${plant.plantImagePath}}" />
+                        <img th:unless="${plant.plantImagePath}" th:src="@{/default.png}" alt="Default Plant Image" />
+                        <div th:if="${currentUser.id == owner.id}">
+                        <a class="add-image-button" th:href="@{/uploadImage(garden_Id=${garden.id}, plant_Id=${plant.id})}">+</a>
+                        </div>
+                    </div>
+                </td>
+                <td><span th:text="${plant.name}">Name</span></td>
+                <td><span th:text="${plant.count}">Count</span></td>
+                <td><span th:text="${plant.description}">Description</span></td>
+                <td><span th:text="${plant.plantedDate}">Planted Date</span></td>
+                <div th:if="${currentUser.id == owner.id}">
+                <td><a class="button-link" th:href="@{/gardens/{gardenId}/plants/{plantId}/edit(gardenId=${garden.id}, plantId=${plant.id})}"><button>Edit</button></a></td>
+                </div>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
+</body>
+</html>
     <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
     </body>
 </html>

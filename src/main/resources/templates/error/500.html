@@ -9,7 +9,7 @@
     <body>
         <nav th:replace="~{fragments/navbar :: navbar}"></nav>
         <main class="text-center align-items-center">
-            <img src="/img/gorila.png" alt="Gorila" width="300" height="300" />
+            <img th:src="@{/img/gorila.png}" alt="Gorila" width="300" height="300" />
             <div class="d-flex justify-content-center mt-5 align-middle">
                 <h1 class="px-2">500</h1>
                 <div class="vr"></div>

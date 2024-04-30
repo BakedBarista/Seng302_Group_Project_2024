@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidEuropeanDecimal;
 
+import java.util.ArrayList;
 
 
 /**
@@ -23,7 +24,6 @@ public class Garden {
     @Column(nullable = false)
     private String name;
 
-
     @NotBlank(message = "Location cannot by empty")
     @Pattern(regexp = "^$|^[A-Za-z0-9 .,'-]+$", message = "Location name must only include letters, numbers, spaces, dots, commas, hyphens or apostrophes")
     @Column(nullable = false)
@@ -36,6 +36,13 @@ public class Garden {
     @ValidEuropeanDecimal(message = "Garden size must be a positive number")
     @Column()
     private String size;
+
+    @Column(nullable = false)
+    private Boolean isPublic = false;
+
+    @ManyToOne
+    @JoinColumn(name = "owner_id", nullable = false)
+    private GardenUser owner;
 
     public Garden() {}
 
@@ -50,6 +57,18 @@ public class Garden {
         this.location = gardenLocation;
         this.size = gardenSize;
         this.description = description;
+    }
+    public Boolean getIsPublic() {
+        return isPublic;
+    }
+    public void setPublic(Boolean isPublic) {
+        this.isPublic = isPublic;
+    }
+    public void setOwner(GardenUser owner) {
+        this.owner = owner;
+    }
+    public GardenUser getOwner() {
+        return owner;
     }
 
     public Long getId() {
