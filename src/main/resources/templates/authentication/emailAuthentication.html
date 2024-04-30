@@ -19,34 +19,32 @@
     <h1>Authenticate Email</h1>
     <h6>We emailed you an authentication code!</h6>
     <br>
-    <form id = "authenticationForm" th:action="@{/users/user/{userId}/authenticateEmail (userId=${userId})}" method="post">
+    <span th:if="${tokenExpired == true}">
+        Signup code invalid... please make a new account
+        <br>
+        <br>
+    </span>
+    <span th:if="${tokenIncorrect == true}">
+        Signup code incorrect... please try again
+        <br>
+        <br>
+    </span>
+    <form id = "authenticationForm" th:action="@{/users/user/{userId}/authenticate-email (userId=${userId})}" method="post">
         <label for="authenticationToken"> Authentication Code: </label>
         <div class = "groupElements">
             <input type="text" pattern="\d*" maxlength="6" class="form-control" id="authenticationToken" placeholder="type your six digit code here..."
                    th:name="authenticationToken" data-cy="size" autofocus>
-            <button id = "pasteButton" type="button">Paste</button>
         </div>
     </form>
 </main>
 <script>
     const authenticationBox = document.getElementById("authenticationToken");
     const form = document.getElementById("authenticationForm");
-    const paste = document.getElementById("pasteButton");
 
     authenticationBox.addEventListener("input", function () {
         const value = authenticationBox.value;
         if (value.length === 6) {
             form.submit();
-        }
-    })
-
-    paste.addEventListener("click", async function () {
-        // doesn't work in all browsers (like firefox)
-        try {
-            authenticationBox.value = await navigator.clipboard.readText();
-            console.log(navigator.clipboard.readText())
-        } catch (err) {
-            console.log(err)
         }
     })
 </script>

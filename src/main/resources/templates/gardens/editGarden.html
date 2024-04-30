@@ -1,78 +1,109 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
     <head>
+
         <meta charset="UTF-8">
         <title>Edit Garden</title>
         <!-- This needs to be here for Bootstrap and general CSS imports -->
         <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
+        <style>
+            .error-field {
+                background-color: pink;
+            }
+        </style>
     </head>
     <body>
-        <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+    <div>
         <div>
-            <div>
-                <form th:action="@{/gardens/{gardenId}/edit(gardenId=${id})}" th:object="${garden}" method="post">
-                    <!-- Garden Name Field -->
+            <form class="container-xl" th:action="@{/gardens/{gardenId}/edit(gardenId=${id})}" th:object="${garden}" method="post">
+                <!-- Garden Name Field -->
+                <div class="col-8">
                     <label for="name"> Garden Name: </label>
-                    <input type="text" class="form-control" id="name" placeholder="Name"
-                           th:name="name" th:value="${garden.name}" data-cy="name" autofocus>
+                    <input type="text" class="form-control" id="name" placeholder="Garden Name"
+                           th:name="name" th:value="${garden.name}" data-cy="name"
+                           th:classappend="${#fields.hasErrors('name')} ? 'error-field' : ''">
                     <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" style="color: red;"></div>
-                    <br/>
-                    <!-- Garden Location Field -->
-                    <div>
-                        <label for="autocomplete-container"> Garden Location: </label>
-                        <div class="autocomplete-container" id="autocomplete-container"></div>
-                    </div>
-                    <div class="form-group">
+                </div>
+                <!-- Garden Location Field -->
+                <div class="col-8">
+                    <label for="autocomplete-container"> Garden Location: </label>
+                    <div class="autocomplete-container" id="autocomplete-container"></div>
+                </div>
+                <div class="container" style="margin-left: 40px">
+                <div class="row g-2">
+                    <!-- Street Number Field -->
+                    <div class="col-2">
                         <label for="streetNumber">Street Number</label>
                         <input type="text" class="form-control" id="streetNumber" placeholder="1"
-                               th:name="streetNumber" th:value="${garden.streetNumber}" data-cy="streetNumber">
+                               th:name="streetNumber" th:value="${garden.streetNumber}" data-cy="streetNumber"
+                               th:classappend="${#fields.hasErrors('streetNumber')} ? 'error-field' : ''">
+                        <div th:if="${#fields.hasErrors('streetNumber')}" th:errors="*{streetNumber}" style="color: red;"></div>
                     </div>
-                    <div class="form-group">
+                    <!-- Street Name Field -->
+                    <div class="col-6">
                         <label for="streetName">Street Name</label>
+                        <div class="sname" id="sname"></div>
                         <input type="text" class="form-control" id="streetName" placeholder="Main St"
-                               th:name="streetName" th:value="${garden.streetName}" data-cy="streetNumber">
+                               th:name="streetName" th:value="${garden.streetName}" data-cy="streetNumber"
+                               th:classappend="${#fields.hasErrors('streetName')} ? 'error-field' : ''">
+                        <div th:if="${#fields.hasErrors('streetName')}" th:errors="*{streetName}" style="color: red;"></div>
                     </div>
-                    <div class="form-group">
-                        <label for="suburb">Suburb</label>
-                        <input type="text" class="form-control" id="suburb" placeholder="Suburb"
-                               th:name="suburb" th:value="${garden.suburb}" data-cy="suburb">
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group col-md-6">
-                            <label for="city">City</label>
-                            <input type="text" class="form-control" id="city"  placeholder="City"
-                                   th:name="city" th:value="${garden.city}" data-cy="city">
-                            <div th:if="${#fields.hasErrors('city')}" th:errors="*{city}" style="color: red;"></div>
-                        </div>
-                        <div class="form-group col-md-6">
-                            <label for="country">Country</label>
-                            <input type="text" class="form-control" id="country" placeholder="Country"
-                                   th:name="country" th:value="${garden.country}" data-cy="country">
-                            <div th:if="${#fields.hasErrors('country')}" th:errors="*{country}" style="color: red;"></div>
-                        </div>
-                        <div class="form-group col-md-4">
-                            <label for="postCode">Postcode</label>
-                            <input type="text" class="form-control" id="postCode"  placeholder="Post Code"
-                                   th:name="postCode" th:value="${garden.postCode}" data-cy="postCode">
-                        </div>
-                    </div>
-                    <input type="hidden" id="lat" th:name="lat" th:value="${garden.lat}">
-                    <input type="hidden" id="lon" th:name="lon" th:value="${garden.lon}">
-                    <br/>
-                    <!-- Garden Size Field -->
-                    <label for="size"> Garden Size (m&sup2;): </label>
+                </div>
+                <div class="col-md-8">
+                    <label for="suburb">Suburb</label>
+                    <input type="text" class="form-control" id="suburb" placeholder="Suburb"
+                           th:name="suburb" th:value="${garden.suburb}" data-cy="suburb"
+                           th:classappend="${#fields.hasErrors('suburb')} ? 'error-field' : ''">
+                    <div th:if="${#fields.hasErrors('suburb')}" th:errors="*{suburb}" style="color: red;"></div>
+                </div>
+                <div class="col-md-8">
+                    <label for="city">City</label>
+                    <input type="text" class="form-control" id="city"  placeholder="City"
+                           th:name="city" th:value="${garden.city}" data-cy="city"
+                           th:classappend="${#fields.hasErrors('city')} ? 'error-field' : ''">
+                    <div th:if="${#fields.hasErrors('city')}" th:errors="*{city}" style="color: red;"></div>
+                </div>
+                <div class="col-md-6">
+                    <label for="country">Country</label>
+                    <input type="text" class="form-control" id="country" placeholder="Country"
+                           th:name="country" th:value="${garden.country}" data-cy="country"
+                           th:classappend="${#fields.hasErrors('country')} ? 'error-field' : ''">
+                    <div th:if="${#fields.hasErrors('country')}" th:errors="*{country}" style="color: red;"></div>
+                </div>
+                <div class="col-md-2">
+                    <label for="postCode">Postcode</label>
+                    <input type="text" class="form-control" id="postCode"  placeholder="Post Code"
+                           th:name="postCode" th:value="${garden.postCode}" data-cy="postCode"
+                           th:classappend="${#fields.hasErrors('postCode')} ? 'error-field' : ''">
+                    <div th:if="${#fields.hasErrors('postCode')}" th:errors="*{postCode}" style="color: red;"></div>
+                </div>
+                </div>
+                <input type="hidden" id="lat" th:name="lat" th:value="${garden.lat}">
+                <input type="hidden" id="lon" th:name="lon" th:value="${garden.lon}">
+                <!-- Garden Size Field -->
+                <div class="form-group col-md-8">
+                    <label for="size"> Garden Size (m^2) (Optional): </label>
                     <input type="text" class="form-control" id="size" placeholder="Size of Garden"
-                           th:name="size" th:value="${garden.size}" data-cy="size" autofocus>
+                           th:name="size" th:value="${garden.size}" data-cy="size"
+                           th:classappend="${#fields.hasErrors('size')} ? 'error-field' : ''">
                     <div th:if="${#fields.hasErrors('size')}" th:errors="*{size}" style="color: red;"></div>
-                    <br/>
-                    <!-- Garden Description -->
+                </div>
+                <!-- Garden Description -->
+                <div class="form-group col-lg-8">
+                    <!-- Adjusted column size from col-md-8 to col-md-6 -->
                     <nav th:replace="~{fragments/description-box :: description-box-with-char-count}"></nav>
-                    <br/>
-                    <button type="submit">Submit!</button><button type="button" th:onclick="'window.location.href = \'' + @{/gardens/{gardenId}(gardenId=${id})} + '\''">Cancel</button>
-                </form>
+                </div>
+                <div class="col-lg-12">
+                    <button type="submit" class="btn btn-primary btn-sm">Submit!</button>
+<!--                    <button type="submit">Submit!</button>-->
+                    <button type="button" class="btn btn-outline-secondary btn-sm" th:onclick="'window.location.href = \'' + @{/gardens/{gardenId}(gardenId=${id})} + '\''">Cancel</button>
+<!--                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="history.back()">Cancel</button>-->
+                </div>
+            </form>
         </div>
-        </div>
-        <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
+    </div>
+    <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
     </body>
     <script th:src="@{/js/nextFormBox.js}"></script>
     <script th:src="@{/js/locationAutoComplete.js}"></script>

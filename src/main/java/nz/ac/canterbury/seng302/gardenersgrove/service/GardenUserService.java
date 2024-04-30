@@ -4,9 +4,14 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Service class for GardenUser, defined by the @link{Service} annotation.
@@ -15,7 +20,7 @@ import java.util.List;
  */
 @Service
 public class GardenUserService {
-    private GardenUserRepository gardenUserRepository;
+    private final GardenUserRepository gardenUserRepository;
 
     @Autowired
     public GardenUserService(GardenUserRepository gardenUserRepository) {
@@ -49,10 +54,62 @@ public class GardenUserService {
      */
     public GardenUser getUserByEmail(String email) {
         var user = gardenUserRepository.findByEmail(email);
-        if (user.isEmpty()) {
+        return user.orElse(null);
+    }
+
+    /**
+     * Retrieves a list of GardenUser entities based on a search query that includes both first name and last name.
+     * If only one name is provided, it searches by the first name only. If more than two names are provided,
+     * it returns an empty list
+     *
+     * @param name           first name and last name separated by a space
+     * @param currentUserId  the ID of the current user
+     * @return a list of GardenUser entities
+     */
+    public List<GardenUser> getUserBySearch(String name, Long currentUserId) {
+        String[] names = name.split(" ");
+        String first = names[0];
+
+        List<GardenUser> empty = new ArrayList<GardenUser>();
+
+        if(names.length == 1){
+            return gardenUserRepository.findBySearchNoLname(first, currentUserId);
+        }
+
+        String last = names[1];
+
+        if(names.length > 2){
+            return empty;
+        }
+        System.out.println(first + last);
+
+        return gardenUserRepository.findBySearch(first, last, currentUserId);
+    }
+
+    /**
+     * Checks if the search query matches the current user's name. The search query should contain the
+     * first name and last name separated by a space. If only one name is provided, it searches by
+     * the first name only. If more than two names are provided, it returns an empty optional
+     *
+     * @param name           first name and last name separated by a space
+     * @param currentUserId  current user
+     * @return an optional containing the GardenUser entity
+     */
+    public Optional<GardenUser> checkSearchMyself(String name, Long currentUserId) {
+        String[] names = name.split(" ");
+        String first = names[0];
+
+        if(names.length == 1){
+            return gardenUserRepository.findBySearchMeNoLname(first, currentUserId);
+        }
+
+        String last = names[1];
+        if(names.length > 2){
             return null;
         }
-        return user.get();
+
+        System.out.println(first + last + "me");
+        return gardenUserRepository.findBySearchMe(first, last, currentUserId);
     }
 
     /**
@@ -83,11 +140,8 @@ public class GardenUserService {
      */
     public GardenUser getUserById(long id) {
         var user = gardenUserRepository.findById(id);
-        if (user.isEmpty()) {
-            return null;
-        }
+        return user.orElse(null);
 
-        return user.get();
     }
 
     /**
@@ -106,5 +160,35 @@ public class GardenUserService {
         user.get().setProfilePicture(contentType, profilePicture);
         gardenUserRepository.save(user.get());
     }
+
+    /**
+     * Gets the currently authenticated user
+     *
+     * @return The currently authenticated user
+     */
+    public GardenUser getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new UsernameNotFoundException("No authenticated user found");
+        }
+        long userId = Long.parseLong(authentication.getName());
+        return getUserById(userId);
+    }
+
+    /**
+     * Gets a single GardenUser by their reset password token
+     * 
+     * @param token The reset password token to search for
+     * @return The user with the given reset password token, or null if no such user
+     */
+    public GardenUser getUserByResetPasswordToken(String token) {
+        if (token == null) {
+            return null;
+        }
+        var user = gardenUserRepository.findByResetPasswordToken(token);
+        return user.orElse(null);
+    }
+
+
 
 }

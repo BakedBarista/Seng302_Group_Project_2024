@@ -1,9 +1,11 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
+import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.ValidationSequence;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 
 import org.slf4j.Logger;
@@ -12,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,6 +32,7 @@ public class PlantController {
     Logger logger = LoggerFactory.getLogger(PlantController.class);
 
     private final PlantService plantService;
+    private final GardenUserService gardenUserService;
     private final UploadController uploadController;
     private static final List<String> allowedExtension = Arrays.asList("jpg", "png","jpeg", "svg");
     private static final Integer MAX_FILE_SIZE = 10*1024*1024;
@@ -38,18 +40,19 @@ public class PlantController {
     private final GardenService gardenService;
 
     @Autowired
-    public PlantController(PlantService plantService, GardenService gardenService, UploadController uploadController) {
+    public PlantController(PlantService plantService, GardenService gardenService, UploadController uploadController, GardenUserService gardenUserService) {
         this.plantService = plantService;
         this.gardenService = gardenService;
         this.uploadController = uploadController;
+        this.gardenUserService = gardenUserService;
     }
 
     /**
      * send user to add plant form - add plant and garden id to model for
      * use in html file through thymeleaf
-     * @param model
-     * @param gardenId
-     * @return
+     * @param model representation of results
+     * @param gardenId the id of the garden the plant is being added to
+     * @return redirect to add plant form
      */
     @GetMapping("/gardens/{id}/add-plant")
     public String addPlantForm(@PathVariable("id") Long gardenId, Model model){
@@ -58,7 +61,8 @@ public class PlantController {
         model.addAttribute("gardenId", gardenId);
         model.addAttribute("plant", new Plant("","","",""));
 
-        List<Garden> gardens = gardenService.getAllGardens();
+        GardenUser owner = gardenUserService.getCurrentUser();
+        List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
         model.addAttribute("gardens", gardens);
         return "plants/addPlant";
     }
@@ -68,20 +72,24 @@ public class PlantController {
      * check for validity of data and return user to
      * garden details page if data is valid with newly submitted plant entity
      * - else keep them on the add plant form with data persistent and error messages displayed
-     * @param gardenId
-     * @param plant
-     * @param bindingResult
-     * @param model
-     * @return
+     * @param gardenId the id of the garden the plant is being added to
+     * @param plant the plant entity being added
+     * @param bindingResult binding result
+     * @param model representation of results
+     * @return redirect to gardens page
      */
     @PostMapping("/gardens/{gardenId}/add-plant")
     public String submitAddPlantForm(@PathVariable("gardenId") Long gardenId,
-                                     @Validated(ValidationSequence.class) @ModelAttribute("plant") Plant plant,
+                                      @Valid @ModelAttribute("plant") Plant plant,
                                      BindingResult bindingResult,
                                      @RequestParam("image") MultipartFile file,
                                       Model model) {
-        logger.info(plant.getPlantedDate());
 
+
+        if (!plant.getPlantedDate().isEmpty() && !plant.getPlantedDate().matches("\\d{4}-\\d{2}-\\d{2}")){
+            bindingResult.rejectValue("plantedDate", "plantedDate.formatError", "Date must be in the format DD-MM-YYYY");
+
+        }
         if(!plant.getPlantedDate().isEmpty()) {
             plant.setPlantedDate(refactorPlantedDate(plant.getPlantedDate()));
         }
@@ -142,7 +150,6 @@ public class PlantController {
                             Model model) {
         logger.info("/garden/{}/plant/{}/edit", gardenId, plantId);
         Optional<Plant> plant = plantService.getPlantById(plantId);
-        List<Garden> gardens = gardenService.getAllGardens();
 
         if (plant.isPresent()) {
             Plant plantOpt = plant.get();
@@ -152,6 +159,8 @@ public class PlantController {
                 plantOpt.setPlantedDate(databaseDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
             }
         }
+        GardenUser owner = gardenUserService.getCurrentUser();
+        List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
         model.addAttribute("gardens", gardens);
         model.addAttribute("gardenId", gardenId);
         model.addAttribute("plantId", plantId);
@@ -167,10 +176,14 @@ public class PlantController {
      */
     @PostMapping("/gardens/{gardenId}/plants/{plantId}/edit")
     public String submitEditPlantForm(@PathVariable("gardenId") long gardenId,
-                               @PathVariable("plantId") long plantId,
-                               @Validated(ValidationSequence.class) @ModelAttribute("plant") Plant plant,
+                               @PathVariable("plantId") long plantId, @RequestParam("image") MultipartFile file,
+                               @Valid @ModelAttribute("plant") Plant plant,
                                BindingResult bindingResult, Model model) {
-        logger.info("/garden/{}/plant/{}", gardenId, plant);
+
+        logger.info(plant.getPlantedDate());
+        if (!plant.getPlantedDate().isEmpty() && !plant.getPlantedDate().matches("\\d{4}-\\d{2}-\\d{2}")) {
+            bindingResult.rejectValue("plantedDate", "plantedDate.formatError", "Date must be in the format YYYY-MM-DD");
+        }
 
         if(!plant.getPlantedDate().isEmpty()) {
             plant.setPlantedDate(refactorPlantedDate(plant.getPlantedDate()));
@@ -196,8 +209,7 @@ public class PlantController {
     }
 
     /**
-     * take in date given via form and convert to dd/mm/yyyy (fix for thymeleaf form issue)
-     *
+     * take in date given via form and convert to dd/mm/yyyy (fix for thymeleaf form issue)*
      * note : catches DateTimeParseException when date is already in dd/mm/yyyy for test purposes
      *
      * @param date the date string that needs to be formatted

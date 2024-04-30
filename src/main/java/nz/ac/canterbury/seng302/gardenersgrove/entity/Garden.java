@@ -3,9 +3,10 @@ package nz.ac.canterbury.seng302.gardenersgrove.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+
 import jakarta.validation.constraints.Size;
 import nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidEuropeanDecimal;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.ValidationGroups;
+
 
 
 
@@ -18,9 +19,8 @@ public class Garden {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Garden name cannot be empty", groups = {ValidationGroups.FirstOrder.class})
-    @Pattern(regexp = "^[\\p{L}0-9 .,'-]+$", message = "Garden name must only include letters, numbers, spaces, dots, commas, hyphens, or apostrophes", groups = {ValidationGroups.SecondOrder.class})
-    @Size(min = 3, max = 50, message = "Name must be between 3 and 50 characters.", groups = {ValidationGroups.SecondOrder.class})
+    @NotBlank(message = "Garden name cannot be empty")
+    @Pattern(regexp = "^$|^[\\p{L}0-9 .,'-]+$", message = "Garden name must only include letters, numbers, spaces, dots, commas, hyphens, or apostrophes")
     @Column(nullable = false)
     private String name;
 
@@ -28,25 +28,29 @@ public class Garden {
     @Pattern(regexp = "^.*[a-zA-Z].*|$", message = "Description must be 512 characters or less and contain some text")
     private String description;
 
-
+    @Pattern(regexp = "^(|([0-9]+[a-zA-Z]?(\\s?\\-?\\s?[0-9]+[a-zA-Z]?)?))$", message = "Please enter a valid street number")
     @Column
     private String streetNumber;
 
-
+    @Pattern(regexp = "^(|([a-zA-Z0-9 ,.'-]+))$", message = "Please enter a valid street name")
     @Column
     private String streetName;
 
+    @Pattern(regexp = "^(|([a-zA-Z0-9 ,.'-]+))$", message = "Please enter a valid suburb")
     @Column
     private String suburb;
-    @NotBlank(message = "City and Country are required", groups = {ValidationGroups.FirstOrder.class})
-    @Pattern(regexp = "^[\\p{L}0-9 .'-]+$", message = "Please enter a valid City name", groups = {ValidationGroups.SecondOrder.class})
-    @Column
+
+    @NotBlank(message = "City and Country are required")
+    @Pattern(regexp = "^$|^[\\p{L}0-9 .,'-]+$", message = "Please enter a valid City name")
+    @Column(nullable = false)
     private String city;
-    @NotBlank(message = "City and Country are required", groups = {ValidationGroups.FirstOrder.class})
-    @Pattern(regexp = "^[\\p{L}0-9 .'-]+$", message = "Please enter a valid country name", groups = {ValidationGroups.SecondOrder.class})
-    @Column
+
+    @NotBlank(message = "City and Country are required")
+    @Pattern(regexp = "^$|^[\\p{L}0-9 .,'-]+$", message = "Please enter a valid country name")
+    @Column(nullable = false)
     private String country;
 
+    @Pattern(regexp = "^(|([0-9]+))$", message = "Please enter a valid post code")
     @Column
     private String postCode;
     @Column
@@ -54,9 +58,18 @@ public class Garden {
     @Column
     private Double lat;
 
-    @ValidEuropeanDecimal(message = "Garden size must be a positive number", groups = {ValidationGroups.FirstOrder.class})
+    @ValidEuropeanDecimal(message = "Garden size must be a positive number")
     @Column(nullable = true)
     private String size;
+
+    @Column(nullable = false)
+    private Boolean isPublic = false;
+
+
+
+    @ManyToOne
+    @JoinColumn(name = "owner_id", nullable = false)
+    private GardenUser owner;
 
     public Garden() {}
 
@@ -83,6 +96,18 @@ public class Garden {
         this.lon = lon;
         this.size = gardenSize;
         this.description = description;
+    }
+    public Boolean getIsPublic() {
+        return isPublic;
+    }
+    public void setPublic(Boolean isPublic) {
+        this.isPublic = isPublic;
+    }
+    public void setOwner(GardenUser owner) {
+        this.owner = owner;
+    }
+    public GardenUser getOwner() {
+        return owner;
     }
 
     public Long getId() {

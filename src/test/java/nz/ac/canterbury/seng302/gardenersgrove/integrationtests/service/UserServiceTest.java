@@ -7,6 +7,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @DataJpaTest
 @Import(GardenUserService.class)
@@ -70,4 +73,50 @@ public class UserServiceTest {
         Assertions.assertEquals(gardenUser2.getProfilePictureContentType(), contentType);
         Assertions.assertEquals(gardenUser2.getProfilePicture(), bytes);
     }
+
+    @Test
+    public void getCurrentUser() {
+        GardenUser gardenUser = new GardenUser("fname", "lname", "email", "password", "dob");
+        userService.addUser(gardenUser);
+
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(gardenUser, null, gardenUser.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.getPrincipal() instanceof GardenUser) {
+            GardenUser currentUser = (GardenUser) auth.getPrincipal();
+            Assertions.assertEquals(gardenUser, currentUser);
+
+        } else {
+            throw new IllegalStateException("Authentication principal is not an instance of GardenUser");
+        }
+        SecurityContextHolder.clearContext();
+    }
+
+    @Test
+    void givenTokenNotExpired_whenGetUserByResetPasswordTokenCalled_thenReturnsUser() {
+        String token = "abc123xyz";
+
+        GardenUser gardenUser = new GardenUser("fname", "lname", "email", "password", "dob");
+        gardenUser.setResetPasswordToken(token);
+        userService.addUser(gardenUser);
+
+        GardenUser user = userService.getUserByResetPasswordToken(token);
+
+        Assertions.assertEquals(gardenUser, user);
+    }
+
+    @Test
+    void givenTokenExpired_whenGetUserByResetPasswordTokenCalled_thenReturnsNull() {
+        String token = "abc123xyz";
+
+        GardenUser gardenUser = new GardenUser("fname", "lname", "email", "password", "dob");
+        userService.addUser(gardenUser);
+
+        GardenUser user = userService.getUserByResetPasswordToken(token);
+
+        Assertions.assertNull(user);
+    }
 }
+

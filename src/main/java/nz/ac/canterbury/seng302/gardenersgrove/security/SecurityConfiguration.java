@@ -68,9 +68,13 @@ public class SecurityConfiguration {
                     "/",
                     "/users/register",
                     "/users/login",
+                    "/users/user/*/authenticate-email",
+                    "/users/reset-password/**",
                     "/css/**",
                     "/js/**",
-                    "/webjars/**"
+                    "/webjars/**",
+                    "/icons/**",
+                    "/img/**"
                 ).permitAll();
             auth.anyRequest().authenticated();
         });

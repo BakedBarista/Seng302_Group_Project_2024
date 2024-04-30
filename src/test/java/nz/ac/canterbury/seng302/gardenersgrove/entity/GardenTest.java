@@ -3,13 +3,11 @@ package nz.ac.canterbury.seng302.gardenersgrove.entity;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.ValidationGroups;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class GardenTest {
 
@@ -23,9 +21,7 @@ public class GardenTest {
 
     @BeforeEach
     void makeGarden() {
-        double lat = 10;
-        double lon = 10;
-        garden = new Garden("Garden", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041", lat, lon, "100", "Big");
+        garden = new Garden("Garden","1","Ilam Road","Ilam","Christchurch","New Zealand","8041",0.24,3.66,"100","big");
     }
 
     @Test
@@ -84,9 +80,9 @@ public class GardenTest {
         Integer expectedConstraintSetSize = 1;
 
 
-        ConstraintViolation<Garden> violation = validator.validate(garden, ValidationGroups.SecondOrder.class).iterator().next();
+        ConstraintViolation<Garden> violation = validator.validate(garden).iterator().next();
 
-        assertEquals(expectedConstraintSetSize, validator.validate(garden, ValidationGroups.SecondOrder.class).size());
+        assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
         assertEquals(expectedMessage, violation.getMessage());
     }
 
@@ -97,9 +93,9 @@ public class GardenTest {
         Integer expectedConstraintSetSize = 1;
 
 
-        ConstraintViolation<Garden> violation = validator.validate(garden, ValidationGroups.SecondOrder.class).iterator().next();
+        ConstraintViolation<Garden> violation = validator.validate(garden).iterator().next();
 
-        assertEquals(expectedConstraintSetSize, validator.validate(garden, ValidationGroups.SecondOrder.class).size());
+        assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
         assertEquals(expectedMessage, violation.getMessage());
     }
     @Test
@@ -109,9 +105,9 @@ public class GardenTest {
         Integer expectedConstraintSetSize = 1;
 
 
-        ConstraintViolation<Garden> violation = validator.validate(garden, ValidationGroups.FirstOrder.class).iterator().next();
+        ConstraintViolation<Garden> violation = validator.validate(garden).iterator().next();
 
-        assertEquals(expectedConstraintSetSize, validator.validate(garden, ValidationGroups.FirstOrder.class).size());
+        assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
         assertEquals(expectedMessage, violation.getMessage());
     }
 
@@ -171,9 +167,9 @@ public class GardenTest {
         Integer expectedConstraintSetSize = 1;
 
 
-        ConstraintViolation<Garden> violation = validator.validate(garden, ValidationGroups.SecondOrder.class).iterator().next();
+        ConstraintViolation<Garden> violation = validator.validate(garden).iterator().next();
 
-        assertEquals(expectedConstraintSetSize, validator.validate(garden, ValidationGroups.SecondOrder.class).size());
+        assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
         assertEquals(expectedMessage, violation.getMessage());
     }
 
@@ -184,9 +180,9 @@ public class GardenTest {
         Integer expectedConstraintSetSize = 1;
 
 
-        ConstraintViolation<Garden> violation = validator.validate(garden, ValidationGroups.SecondOrder.class).iterator().next();
+        ConstraintViolation<Garden> violation = validator.validate(garden).iterator().next();
 
-        assertEquals(expectedConstraintSetSize, validator.validate(garden, ValidationGroups.SecondOrder.class).size());
+        assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
         assertEquals(expectedMessage, violation.getMessage());
     }
     @Test
@@ -196,9 +192,9 @@ public class GardenTest {
         Integer expectedConstraintSetSize = 1;
 
 
-        ConstraintViolation<Garden> violation = validator.validate(garden, ValidationGroups.FirstOrder.class).iterator().next();
+        ConstraintViolation<Garden> violation = validator.validate(garden).iterator().next();
 
-        assertEquals(expectedConstraintSetSize, validator.validate(garden, ValidationGroups.FirstOrder.class).size());
+        assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
         assertEquals(expectedMessage, violation.getMessage());
     }
 
@@ -216,9 +212,9 @@ public class GardenTest {
         Integer expectedConstraintSetSize = 1;
 
 
-        ConstraintViolation<Garden> violation = validator.validate(garden, ValidationGroups.FirstOrder.class).iterator().next();
+        ConstraintViolation<Garden> violation = validator.validate(garden).iterator().next();
 
-        assertEquals(expectedConstraintSetSize, validator.validate(garden, ValidationGroups.FirstOrder.class).size());
+        assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
         assertEquals(expectedMessage, violation.getMessage());
     }
 
@@ -242,9 +238,9 @@ public class GardenTest {
         String expectedMessage = "Garden size must be a positive number";
         Integer expectedConstraintSetSize = 1;
 
-        ConstraintViolation<Garden> violation = validator.validate(garden, ValidationGroups.FirstOrder.class).iterator().next();
+        ConstraintViolation<Garden> violation = validator.validate(garden).iterator().next();
 
-        assertEquals(expectedConstraintSetSize, validator.validate(garden, ValidationGroups.FirstOrder.class).size());
+        assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
         assertEquals(expectedMessage, violation.getMessage());
     }
 
@@ -255,9 +251,9 @@ public class GardenTest {
         Integer expectedConstraintSetSize = 1;
 
 
-        ConstraintViolation<Garden> violation = validator.validate(garden, ValidationGroups.FirstOrder.class).iterator().next();
+        ConstraintViolation<Garden> violation = validator.validate(garden).iterator().next();
 
-        assertEquals(expectedConstraintSetSize, validator.validate(garden, ValidationGroups.FirstOrder.class).size());
+        assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
         assertEquals(expectedMessage, violation.getMessage());
     }
 
@@ -268,9 +264,9 @@ public class GardenTest {
         Integer expectedConstraintSetSize = 1;
 
 
-        ConstraintViolation<Garden> violation = validator.validate(garden, ValidationGroups.FirstOrder.class).iterator().next();
+        ConstraintViolation<Garden> violation = validator.validate(garden).iterator().next();
 
-        assertEquals(expectedConstraintSetSize, validator.validate(garden, ValidationGroups.FirstOrder.class).size());
+        assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
         assertEquals(expectedMessage, violation.getMessage());
     }
 
@@ -281,9 +277,9 @@ public class GardenTest {
         Integer expectedConstraintSetSize = 1;
 
 
-        ConstraintViolation<Garden> violation = validator.validate(garden, ValidationGroups.FirstOrder.class).iterator().next();
+        ConstraintViolation<Garden> violation = validator.validate(garden).iterator().next();
 
-        assertEquals(expectedConstraintSetSize, validator.validate(garden, ValidationGroups.FirstOrder.class).size());
+        assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
         assertEquals(expectedMessage, violation.getMessage());
     }
 
@@ -381,4 +377,5 @@ public class GardenTest {
 
         assertTrue(validator.validate(garden).isEmpty());
     }
+
 }

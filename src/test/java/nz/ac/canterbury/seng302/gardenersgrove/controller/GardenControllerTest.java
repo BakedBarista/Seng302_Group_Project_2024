@@ -3,8 +3,10 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.ModerationService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,6 +34,9 @@ public class GardenControllerTest {
     @Mock
     ModerationService moderationService;
 
+    @Mock
+    private GardenUserService gardenUserService;
+
     @InjectMocks
     private GardenController gardenController;
 
@@ -39,12 +44,21 @@ public class GardenControllerTest {
     public void setUp() {
         MockitoAnnotations.openMocks(this);
         gardenController.moderationService = moderationService;
+        GardenUser mockUser = mock(GardenUser.class);
+        when(mockUser.getId()).thenReturn(1L);
+        when(gardenUserService.getCurrentUser()).thenReturn(mockUser);
+        when(gardenService.getGardensByOwnerId(1L)).thenReturn(Collections.emptyList());
+
     }
 
     @Test
     public void testForm() {
         Model model = mock(Model.class);
         String result = gardenController.form(model);
+
+        verify(model).addAttribute(eq("garden"), any(Garden.class));
+        verify(model).addAttribute(eq("gardens"), anyList());
+
         assertEquals("gardens/createGarden", result);
     }
 
@@ -126,26 +140,22 @@ public class GardenControllerTest {
         assertEquals("100", garden.getSize());
         assertEquals("test description", garden.getDescription());
     }
-// Test updated edit form
-//    @Test
-//    public void testUpdateGarden() {
-//        Model model = mock(Model.class);
-//        Garden garden = new Garden("Test Garden", "Test Location", "testStreetNumber",
-//                "testStreetName","testSuburb", "testCity", "testCountry", "testPostCode","Test Size");
-//        when(gardenService.getGardenById(1)).thenReturn(Optional.of(garden));
-//        BindingResult bindingResult = mock(BindingResult.class);
-//        when(bindingResult.hasErrors()).thenReturn(false);
-//        String result = gardenController.updateGarden(1, garden, bindingResult, model);
-//        assertEquals("redirect:/gardens/1", result);
-//        assertEquals("Test Garden", garden.getName());
-//        assertEquals("Test Location", garden.getLocation());
-//        assertEquals("testStreetNumber", garden.getStreetNumber());
-//        assertEquals("testStreetName", garden.getStreetName());
-//        assertEquals("testSuburb", garden.getSuburb());
-//        assertEquals("testCity", garden.getCity());
-//        assertEquals("testCountry", garden.getCountry());
-//        assertEquals("testPostCode", garden.getPostCode());
-//
-//        assertEquals("Test Size", garden.getSize());
-//    }
+
+    @Test
+    public void setUpdateStatusTrueQueryDatabaseReturnTrue() {
+        when(gardenService.getGardenById(1L)).thenReturn(Optional.of(new Garden()));
+        when(gardenService.addGarden(any())).thenReturn(new Garden());
+        String result = gardenController.updatePublicStatus(1L, true);
+        assertEquals(gardenService.getGardenById(1L).get().getIsPublic(), true);
+        assertEquals("redirect:/gardens/1", result);
+    }
+    @Test
+    public void setUpdateStatusFalseQueryDatabaseReturnFalse() {
+        when(gardenService.getGardenById(1L)).thenReturn(Optional.of(new Garden()));
+        when(gardenService.addGarden(any())).thenReturn(new Garden());
+        String result = gardenController.updatePublicStatus(1L, false);
+        assertEquals(gardenService.getGardenById(1L).get().getIsPublic(), false);
+        assertEquals("redirect:/gardens/1", result);
+    }
+
 }

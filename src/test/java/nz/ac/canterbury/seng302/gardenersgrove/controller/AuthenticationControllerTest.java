@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.AuthenticationController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -42,7 +43,7 @@ public class AuthenticationControllerTest {
     @Test
     public void testWhenTokenExistsForUser_UserIsSentToEmailAuthenticationPage() {
         long userId = 1;
-        String expectedPage = "/authentication/emailAuthentication";
+        String expectedPage = "authentication/emailAuthentication";
         Instant time = Instant.now();
 
         user.setEmailValidationToken("000000");
@@ -51,15 +52,15 @@ public class AuthenticationControllerTest {
         when(userService.getUserById(userId)).thenReturn(user);
         String actualPage = authenticationController.authenticateEmail(userId, model);
 
-        assertEquals(expectedPage, actualPage);
+        Assertions.assertEquals(expectedPage, actualPage);
     }
 
     @Test
     public void testWhenTokenDoesNotExistsForUser_UserIsNotSentToEmailAuthenticationPage() {
         long userId = 1;
-        String notExpectedPage = "/authentication/emailAuthentication";
+        String notExpectedPage = "authentication/emailAuthentication";
         // may change at later date
-        String expectedPage = "/error/404";
+        String expectedPage = "error/404";
 
         // explicitly setting null here
         user.setEmailValidationToken(null);
@@ -83,7 +84,7 @@ public class AuthenticationControllerTest {
         user.setEmailValidationTokenExpiryInstant(time);
 
         when(userService.getUserById(userId)).thenReturn(user);
-        String actualPage = authenticationController.validateAuthenticationToken(userId, token, redirectAttributes);
+        String actualPage = authenticationController.validateAuthenticationToken(userId, token, redirectAttributes, model);
 
         assertEquals(expectedPage, actualPage);
     }
@@ -91,7 +92,7 @@ public class AuthenticationControllerTest {
     @Test
     public void testWhenUserGivesIncorrectToken_UserIsTakenBackToEmailAuthenticationPage() {
         long userId = 1;
-        String expectedPage = "/authentication/emailAuthentication";
+        String expectedPage = "authentication/emailAuthentication";
         String userInputtedToken = "000000";
         String storedToken = "000001";
         Instant time = Instant.now();
@@ -100,8 +101,9 @@ public class AuthenticationControllerTest {
         user.setEmailValidationTokenExpiryInstant(time);
 
         when(userService.getUserById(userId)).thenReturn(user);
-        String actualPage = authenticationController.validateAuthenticationToken(userId, userInputtedToken, redirectAttributes);
+        String actualPage = authenticationController.validateAuthenticationToken(userId, userInputtedToken, redirectAttributes, model);
 
+        verify(model).addAttribute("tokenIncorrect", true);
         assertEquals(expectedPage, actualPage);
     }
 
@@ -115,7 +117,7 @@ public class AuthenticationControllerTest {
         user.setEmailValidationTokenExpiryInstant(time);
 
         when(userService.getUserById(userId)).thenReturn(user);
-        authenticationController.validateAuthenticationToken(userId, token, redirectAttributes);
+        authenticationController.validateAuthenticationToken(userId, token, redirectAttributes, model);
 
         GardenUser user = userService.getUserById(userId);
         assertNull(user.getEmailValidationToken());
@@ -133,9 +135,26 @@ public class AuthenticationControllerTest {
         user.setEmailValidationTokenExpiryInstant(time);
 
         when(userService.getUserById(userId)).thenReturn(user);
-        authenticationController.validateAuthenticationToken(userId, userInputtedToken, redirectAttributes);
+        authenticationController.validateAuthenticationToken(userId, userInputtedToken, redirectAttributes, model);
 
+        verify(model).addAttribute("tokenIncorrect", true);
         assertEquals(storedToken, user.getEmailValidationToken());
         assertEquals(time, user.getEmailValidationTokenExpiryInstant());
     }
+
+    @Test
+    public void testWhenTokenExpired_AndUserInputsAnyToken_UserIsInformedOfTokenExpiration() {
+        long userId = 1;
+        String userInputtedToken = "000000";
+        String expectedPage = "authentication/emailAuthentication";
+
+        // mock that the user was deleted
+        when(userService.getUserById(userId)).thenReturn(null);
+        String actualPage = authenticationController.validateAuthenticationToken(userId, userInputtedToken, redirectAttributes, model);
+
+        // check that the tokenExpired attribute was added to the model
+        verify(model).addAttribute("tokenExpired", true);
+        assertEquals(expectedPage, actualPage);
+    }
+
 }
