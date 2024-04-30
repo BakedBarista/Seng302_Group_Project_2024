@@ -78,6 +78,10 @@ public class ManageFriendsController {
         GardenUser loggedInUser = userService.getUserById(loggedInUserId);
         GardenUser sentTo = userService.getUserById(requestedUser);
         Friends friendShip = friendService.getFriendship(loggedInUser.getId(), sentTo.getId());
+        boolean requestingMyself = loggedInUserId == requestedUser;
+        if (requestingMyself) {
+            return "redirect:/users/manageFriends";
+        }
         
         if(friendShip != null){
             return "redirect:/users/manageFriends";
@@ -104,7 +108,7 @@ public class ManageFriendsController {
 
         Long loggedInUserId = (Long) authentication.getPrincipal();
 
-        Friends friendShip = friendService.getFriendship(acceptUser, loggedInUserId);
+        Friends friendShip = friendService.getFriendship(loggedInUserId, acceptUser);
         if(friendShip != null){
             friendShip.setStatus("accepted");
             friendService.save(friendShip);
@@ -198,7 +202,6 @@ public class ManageFriendsController {
                                     Model model) {
         Long loggedInUserId = (Long) authentication.getPrincipal();
         Friends isFriend = friendService.getFriendship(loggedInUserId, id);
-        System.out.println(isFriend);
         var friend = userService.getUserById(id);
         // a user cannot view another non friends page
         if (isFriend == null) {
