@@ -37,12 +37,24 @@ public class WeatherAPIResponse {
         @JsonProperty("name")
         private String locationName;
 
+        @JsonDeserialize
+        @JsonProperty("tz_id")
+        private String timezoneId;
+
         public String getLocationName() {
             return locationName;
         }
 
         public void setLocationName(String locationName) {
             this.locationName = locationName;
+        }
+
+        public String getTimezoneId() {
+            return timezoneId;
+        }
+
+        public void setTimezoneId(String timezoneId) {
+            this.timezoneId = timezoneId;
         }
     }
 
