@@ -2,6 +2,10 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.UUID;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +22,15 @@ public class ResetPasswordController {
 
     @Autowired
     private TokenService tokenService;
+
+    private GardenUserService userService;
+
+    private EmailSenderService emailSenderService;
+
+    public ResetPasswordController(GardenUserService userService, EmailSenderService emailSenderService) {
+        this.userService = userService;
+        this.emailSenderService = emailSenderService;
+    }
 
     /**
      * Handles the reset password get request
@@ -38,43 +51,58 @@ public class ResetPasswordController {
     @PostMapping("/users/reset-password")
     public String resetPasswordConfirmation(
             @RequestParam(name = "email") String email, HttpServletRequest request) {
+        boolean emailExists = true;
+        if (emailExists) {
+            GardenUser user = userService.getUserByEmail(email);
+            String token = tokenService.createAuthenticationToken();
+            String resetPasswordLink = generateUrlString(request, token);
+            logger.info("Reset password link: " + resetPasswordLink);
 
+            tokenService.addResetPasswordTokenAndTimeToUser(user, token);
+            userService.addUser(user);
 
-        String token = tokenService.createAuthenticationToken();
-        String resetPasswordLink = generateUrlString(request, token);
-        logger.info("Reset password link: " + resetPasswordLink);
-        // TODO: send email with reset password link
+            String subject = "Reset your GardenersGrove Password";
+            String body = "Click here " + resetPasswordLink + " to reset your password!" +
+                    "\nThis link will expire after 10 minutes, you do not need to take action if this is not you.";
+            emailSenderService.sendEmail(user, subject, body);
+        }
 
         return "users/resetPasswordConfirmation";
     }
 
     /**
-     * Handles the reset password callback get request
-     * @param token the token
-     * @param model the model
-     * @return the reset password callback page
+     * Shows the reset password callback page
+     *
+     * This is the link that is included in the reset password email
+     *
+     * @param token the token that was sent in the reset password email
+     * @param model used to embed the token in the form so that we still have it when the form is submitted
+     * @return reset password callback page view
      */
     @GetMapping("/users/reset-password/callback")
     public String resetPasswordCallback(
-            @RequestParam(name = "token") String token, Model model) {
+            @RequestParam(name = "token") String token,
+            Model model) {
         logger.info("GET /users/reset-password/callback");
         model.addAttribute("token", token);
         return "users/resetPasswordCallback";
     }
 
     /**
-     *  Handles the reset password callback post request
-     * @param token the token
+     * Submits the reset password callback form
+     *
+     * @param token the token that was sent in the reset password email
      * @param newPassword the new password
-     * @param retypePassword the retyped password
-     * @return the redirect to the login page
+     * @param retypePassword the new password, retyped
+     * @return redirects to the login page
      */
     @PostMapping("/users/reset-password/callback")
     public String resetPasswordCallbackPost(
             @RequestParam(name = "token") String token,
             @RequestParam(name = "newPassword") String newPassword,
             @RequestParam(name = "retypePassword") String retypePassword) {
-        logger.info("POST /users/reset-password/callback");
+        logger.info("GET /users/reset-password/callback");
+
         // TODO: verify token and reset password
 
         return "redirect:/users/login";

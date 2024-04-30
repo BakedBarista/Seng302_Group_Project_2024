@@ -49,6 +49,11 @@ public class GardenUser {
     @Column(nullable = true)
     private Instant emailValidationTokenExpiryInstant;
 
+    @Column(nullable = true)
+    private String resetPasswordToken;
+
+    @Column(nullable = true)
+    private Instant resetPasswordTokenExpiryInstant;
 
     /**
      * JPA required no-args constructor
@@ -234,18 +239,36 @@ public class GardenUser {
 
     /**
      * Set the emailValidationToken of this user
+     *  - may be null
      */
     public void setEmailValidationToken(String emailValidationToken) {
         this.emailValidationToken = emailValidationToken;
     }
 
+
     /**
-     * get this users emailValidationToken
+     * Get this users emailValidationToken
      *  - may be null
      * @return emailValidationToken
      */
     public String getEmailValidationToken() {
         return emailValidationToken;
+    }
+
+    /**
+     * Get this users resetPasswordToken
+     *  - may be null
+     * @return emailValidationToken
+     */
+    public String getResetPasswordToken() {
+        return resetPasswordToken;
+    }
+
+    /**
+     * Set the resetPasswordToken of this user
+     */
+    public void setResetPasswordToken(String resetPasswordToken) {
+        this.resetPasswordToken = resetPasswordToken;
     }
 
     /**
@@ -258,10 +281,26 @@ public class GardenUser {
     /**
      * Return the emailValidationTokenExpiryInstant of this user
      *  - may be null
-     * @return
+     * @return emailValidationTokenExpiryInstant
      */
     public Instant getEmailValidationTokenExpiryInstant() {
         return this.emailValidationTokenExpiryInstant;
+    }
+
+    /**
+     * Set the resetPasswordTokenExpiryInstant of this user
+     */
+    public void setResetPasswordTokenExpiryInstant(Instant timeInstance) {
+        this.resetPasswordTokenExpiryInstant = timeInstance;
+    }
+
+    /**
+     * Return the resetPasswordTokenExpiryInstant of this user
+     *  - may be null
+     * @return resetPasswordTokenExpiryInstant
+     */
+    public Instant getResetPasswordTokenExpiryInstant() {
+        return this.resetPasswordTokenExpiryInstant;
     }
 
     public void setId(long id) {
