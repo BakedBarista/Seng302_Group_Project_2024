@@ -49,13 +49,13 @@ public class ResetPasswordController {
 
     /**
      * Handles the reset password post request
-     * @param email the email
      * @param request the HTTP request
      * @return the reset password confirmation page
      */
     @PostMapping("/users/reset-password")
     public String resetPasswordConfirmation(
-            HttpServletRequest request, @Valid @ModelAttribute("resetPasswordDTO") ResetPasswordDTO resetPasswordDTO,
+            HttpServletRequest request,
+            @Valid @ModelAttribute("resetPasswordDTO") ResetPasswordDTO resetPasswordDTO,
             BindingResult bindingResult,
             Model model) {
         String email = resetPasswordDTO.getEmail();
@@ -111,9 +111,9 @@ public class ResetPasswordController {
             return "redirect:/users/login?error=resetPasswordLinkExpired";
         }
 
-        ResetPasswordCallbackDTO resetPasswordDTO = new ResetPasswordCallbackDTO();
-        resetPasswordDTO.setToken(token);
-        model.addAttribute("resetPasswordDTO", resetPasswordDTO);
+        ResetPasswordCallbackDTO resetPasswordCallbackDTO = new ResetPasswordCallbackDTO();
+        resetPasswordCallbackDTO.setToken(token);
+        model.addAttribute("resetPasswordCallbackDTO", resetPasswordCallbackDTO);
 
         return "users/resetPasswordCallback";
     }
@@ -121,21 +121,19 @@ public class ResetPasswordController {
     /**
      * Submits the reset password callback form
      *
-     * @param token the token that was sent in the reset password email
-     * @param newPassword the new password
-     * @param retypePassword the new password, retyped
      * @return redirects to the login page
      */
     @PostMapping("/users/reset-password/callback")
     public String resetPasswordCallbackPost(
-            @Valid @ModelAttribute("resetPasswordDTO") ResetPasswordCallbackDTO resetPasswordDTO,
+            @Valid @ModelAttribute("resetPasswordCallbackDTO") ResetPasswordCallbackDTO resetPasswordCallbackDTO,
             BindingResult bindingResult,
             Model model) {
         logger.info("GET /users/reset-password/callback");
+        logger.info("");
 
-        String token = resetPasswordDTO.getToken();
-        String newPassword = resetPasswordDTO.getNewPassword();
-        String confirmPassword = resetPasswordDTO.getConfirmPassword();
+        String token = resetPasswordCallbackDTO.getToken();
+        String newPassword = resetPasswordCallbackDTO.getNewPassword();
+        String confirmPassword = resetPasswordCallbackDTO.getConfirmPassword();
 
         if (!newPassword.equals(confirmPassword)) {
             bindingResult.rejectValue("confirmPassword", null, "The new passwords do not match");
@@ -143,7 +141,7 @@ public class ResetPasswordController {
 
         if (bindingResult.hasErrors()) {
             logger.error("Error in password change form: {}", bindingResult.getAllErrors());
-            model.addAttribute("resetPasswordDTO", resetPasswordDTO);
+            model.addAttribute("resetPasswordCallbackDTO", resetPasswordCallbackDTO);
 
             return "users/resetPasswordCallback";
         }
