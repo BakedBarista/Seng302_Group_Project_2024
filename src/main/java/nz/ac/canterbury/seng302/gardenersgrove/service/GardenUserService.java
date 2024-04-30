@@ -57,26 +57,58 @@ public class GardenUserService {
         return user.orElse(null);
     }
 
+    /**
+     * Retrieves a list of GardenUser entities based on a search query that includes both first name and last name.
+     * If only one name is provided, it searches by the first name only. If more than two names are provided,
+     * it returns an empty list
+     *
+     * @param name           first name and last name separated by a space
+     * @param currentUserId  the ID of the current user
+     * @return a list of GardenUser entities
+     */
     public List<GardenUser> getUserBySearch(String name, Long currentUserId) {
         String[] names = name.split(" ");
         String first = names[0];
-        String last = names.length > 1 ? names[1] : "";
+
         List<GardenUser> empty = new ArrayList<GardenUser>();
-        
+
+        if(names.length == 1){
+            return gardenUserRepository.findBySearchNoLname(first, currentUserId);
+        }
+
+        String last = names[1];
+
         if(names.length > 2){
             return empty;
         }
+        System.out.println(first + last);
+
         return gardenUserRepository.findBySearch(first, last, currentUserId);
     }
 
+    /**
+     * Checks if the search query matches the current user's name. The search query should contain the
+     * first name and last name separated by a space. If only one name is provided, it searches by
+     * the first name only. If more than two names are provided, it returns an empty optional
+     *
+     * @param name           first name and last name separated by a space
+     * @param currentUserId  current user
+     * @return an optional containing the GardenUser entity
+     */
     public Optional<GardenUser> checkSearchMyself(String name, Long currentUserId) {
         String[] names = name.split(" ");
         String first = names[0];
-        String last = names.length > 1 ? names[1] : "";
 
+        if(names.length == 1){
+            return gardenUserRepository.findBySearchMeNoLname(first, currentUserId);
+        }
+
+        String last = names[1];
         if(names.length > 2){
             return null;
         }
+
+        System.out.println(first + last + "me");
         return gardenUserRepository.findBySearchMe(first, last, currentUserId);
     }
 

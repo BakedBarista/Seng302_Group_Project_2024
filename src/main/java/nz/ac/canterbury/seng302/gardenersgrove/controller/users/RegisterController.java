@@ -104,7 +104,7 @@ public class RegisterController {
             GardenUser user = new GardenUser("John", "Doe", "john.doe@gmail.com", "password",
                     "01/01/1970");
             userService.addUser(user);
-            GardenUser user1 = new GardenUser("Immy", "Doe", "immy@gmail.com", "password",
+            GardenUser user1 = new GardenUser("Immy", null, "immy@gmail.com", "password",
                     "01/01/1970");
             userService.addUser(user1);
             GardenUser user2 = new GardenUser("Liam", "Doe", "liam@gmail.com", "password",
