@@ -53,9 +53,9 @@ public class ResetPasswordController {
     @PostMapping("/users/reset-password")
     public String resetPasswordConfirmation(
             @RequestParam(name = "email") String email, HttpServletRequest request) {
-        boolean emailExists = true;
+        GardenUser user = userService.getUserByEmail(email);
+        boolean emailExists = user != null;
         if (emailExists) {
-            GardenUser user = userService.getUserByEmail(email);
             String token = tokenService.createAuthenticationToken();
             String resetPasswordLink = generateUrlString(request, token);
             logger.info("Reset password link: " + resetPasswordLink);
