@@ -35,9 +35,9 @@ public class AuthenticationController {
         GardenUser user = userService.getUserById(userId);
         if (user != null  && user.getEmailValidationToken() != null) {
             model.addAttribute("userId", userId);
-            return "/authentication/emailAuthentication";
+            return "authentication/emailAuthentication";
         } else {
-            return "/error/404";
+            return "error/404";
         }
     }
 
@@ -62,7 +62,7 @@ public class AuthenticationController {
         // token has expired
         if (user == null) {
             model.addAttribute("tokenExpired", true);
-            return "/authentication/emailAuthentication";
+            return "authentication/emailAuthentication";
         }
         boolean authenticated = user.getEmailValidationToken().equals(authenticationToken);
 
@@ -79,7 +79,7 @@ public class AuthenticationController {
         }
         else {
             model.addAttribute("tokenIncorrect", true);
-            return "/authentication/emailAuthentication";
+            return "authentication/emailAuthentication";
         }
     }
 }

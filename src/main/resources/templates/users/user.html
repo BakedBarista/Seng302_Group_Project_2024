@@ -23,7 +23,7 @@
             <p th:if="${dob != null}">[[${dob}]]</p>
             <p th:if="${dob == null}">&mdash;</p>
             <p>
-                <a href="/users/edit">Edit</a>
+                <a th:href="@{/users/edit}">Edit</a>
             </p>
         </main>
         <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
