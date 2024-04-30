@@ -16,12 +16,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import java.util.Optional;
 
 /**
@@ -193,7 +191,13 @@ public class GardenController {
         return "redirect:/gardens/" + id;
     }
 
-
+    /**
+     * gets all public gardens
+     * @param page page number
+     * @param size size of page
+     * @param model representation of results
+     * @return publicGardens page
+     */
     @GetMapping("/gardens/public")
     public String publicGardens(
             @RequestParam (defaultValue = "0") int page,
@@ -232,3 +236,7 @@ public class GardenController {
         return "gardens/publicGardens";
     }
 }
+
+
+
+
