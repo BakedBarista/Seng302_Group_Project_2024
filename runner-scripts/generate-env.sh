@@ -1,4 +1,4 @@
-DOT_ENV_PATH=/home/benjamindavies/$1/.env
+DOT_ENV_PATH=/home/gitlab-runner/$1/.env
 
 rm -f $DOT_ENV_PATH
 echo "export DB_USERNAME='$DB_USERNAME'" >> $DOT_ENV_PATH
