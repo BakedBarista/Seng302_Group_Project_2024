@@ -10,7 +10,6 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 /**
@@ -68,19 +67,21 @@ public class SecurityConfiguration {
                     "/",
                     "/users/register",
                     "/users/login",
-                    "/users/user/*/authenticateEmail",
+                    "/users/user/*/authenticate-email",
                     "/users/reset-password/**",
                     "/css/**",
                     "/js/**",
                     "/webjars/**",
-                    "/icons/**"
+                    "/icons/**",
+                    "/img/**"
                 ).permitAll();
             auth.anyRequest().authenticated();
         });
 
         // Instead of returning 403, redirect to "/users/login"
         http.exceptionHandling(exceptionHandling -> exceptionHandling
-                .accessDeniedHandler((_req, res, _exception) -> res.sendRedirect("/users/login")));
+                .authenticationEntryPoint((request, response, authException) -> response.sendRedirect("/users/login"))
+                .accessDeniedHandler((request, response, exception) -> response.sendRedirect("/users/login")));
 
         // Define logging out, a POST "/users/logout" endpoint now exists under the hood,
         // redirect to "/users/login", invalidate session and remove cookie

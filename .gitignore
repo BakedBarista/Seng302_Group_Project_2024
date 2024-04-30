@@ -79,3 +79,7 @@ out/
 
 ### Mac
 .DS_Store
+
+### Custom
+target/
+.env

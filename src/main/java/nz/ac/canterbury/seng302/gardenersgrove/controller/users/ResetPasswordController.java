@@ -1,10 +1,19 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.ResetPasswordDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -12,12 +21,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class ResetPasswordController {
     private Logger logger = LoggerFactory.getLogger(LoginController.class);
 
+    private TokenService tokenService;
+
+    private GardenUserService userService;
+
+    private EmailSenderService emailSenderService;
+
+    public ResetPasswordController(GardenUserService userService, EmailSenderService emailSenderService, TokenService tokenService) {
+        this.userService = userService;
+        this.emailSenderService = emailSenderService;
+        this.tokenService = tokenService;
+    }
+
     /**
-     * Shows the reset password page
-     *
-     * This is linked to from the login page
-     *
-     * @return reset password page view
+     * Handles the reset password get request
+     * @return the reset password page
      */
     @GetMapping("/users/reset-password")
     public String resetPassword() {
@@ -26,17 +44,29 @@ public class ResetPasswordController {
     }
 
     /**
-     * Sends a reset password email to the given email address
-     *
-     * @param email the email address to send the reset password email to
-     * @return reset password confirmation page view
+     * Handles the reset password post request
+     * @param email the email
+     * @param request the HTTP request
+     * @return the reset password confirmation page
      */
     @PostMapping("/users/reset-password")
     public String resetPasswordConfirmation(
-            @RequestParam(name = "email") String email) {
-        logger.info("POST /users/reset-password");
+            @RequestParam(name = "email") String email, HttpServletRequest request) {
+        GardenUser user = userService.getUserByEmail(email);
+        boolean emailExists = user != null;
+        if (emailExists) {
+            String token = tokenService.createAuthenticationToken();
+            String resetPasswordLink = generateUrlString(request, token);
+            logger.info("Reset password link: " + resetPasswordLink);
 
-        // TODO: send email with reset password link
+            tokenService.addResetPasswordTokenAndTimeToUser(user, token);
+            userService.addUser(user);
+
+            String subject = "Reset your GardenersGrove Password";
+            String body = "Click here " + resetPasswordLink + " to reset your password!" +
+                    "\nThis link will expire after 10 minutes, you do not need to take action if this is not you.";
+            emailSenderService.sendEmail(user, subject, body);
+        }
 
         return "users/resetPasswordConfirmation";
     }
@@ -55,7 +85,17 @@ public class ResetPasswordController {
             @RequestParam(name = "token") String token,
             Model model) {
         logger.info("GET /users/reset-password/callback");
-        model.addAttribute("token", token);
+
+        GardenUser user = userService.getUserByResetPasswordToken(token);
+        if (user == null) {
+            logger.error("Invalid token");
+            return "redirect:/users/login?error=resetPasswordLinkExpired";
+        }
+
+        ResetPasswordDTO resetPasswordDTO = new ResetPasswordDTO();
+        resetPasswordDTO.setToken(token);
+        model.addAttribute("resetPasswordDTO", resetPasswordDTO);
+
         return "users/resetPasswordCallback";
     }
 
@@ -69,13 +109,55 @@ public class ResetPasswordController {
      */
     @PostMapping("/users/reset-password/callback")
     public String resetPasswordCallbackPost(
-            @RequestParam(name = "token") String token,
-            @RequestParam(name = "newPassword") String newPassword,
-            @RequestParam(name = "retypePassword") String retypePassword) {
+            @Valid @ModelAttribute("resetPasswordDTO") ResetPasswordDTO resetPasswordDTO,
+            BindingResult bindingResult,
+            Model model) {
         logger.info("GET /users/reset-password/callback");
 
-        // TODO: verify token and reset password
+        String token = resetPasswordDTO.getToken();
+        String newPassword = resetPasswordDTO.getNewPassword();
+        String confirmPassword = resetPasswordDTO.getConfirmPassword();
+
+        if (!newPassword.equals(confirmPassword)) {
+            bindingResult.rejectValue("confirmPassword", null, "The new passwords do not match");
+        }
+
+        if (bindingResult.hasErrors()) {
+            logger.error("Error in password change form: {}", bindingResult.getAllErrors());
+            model.addAttribute("resetPasswordDTO", resetPasswordDTO);
+
+            return "users/resetPasswordCallback";
+        }
+
+        GardenUser user = userService.getUserByResetPasswordToken(token);
+        if (user == null) {
+            logger.error("Invalid token");
+            return "redirect:/users/login?error=resetPasswordLinkExpired";
+        }
+
+        user.setPassword(newPassword);
+        user.setResetPasswordToken(null);
+        user.setResetPasswordTokenExpiryInstant(null);
+        userService.addUser(user);
+
+        emailSenderService.sendEmail(user, "Password Changed", "Your password has been updated");
 
         return "redirect:/users/login";
+    }
+
+    /**
+     * Generates a URL string for the reset password link
+     * @param request the HTTP request
+     * @return the URL string
+     */
+    public String generateUrlString(HttpServletRequest request, String token) {
+
+        String baseUrl = request.getScheme() + "://" + request.getServerName();
+        if (request.getServerPort() != 80 && request.getServerPort() != 443) {
+            baseUrl += ":" + request.getServerPort();
+        }
+        baseUrl += "/users/reset-password/callback?token=" + token;
+        return baseUrl;
+
     }
 }

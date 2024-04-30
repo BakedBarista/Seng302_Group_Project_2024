@@ -12,20 +12,31 @@
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 
 <div class="container mt-4">
-    <div class="input-group mb-3">
-        <input type="text" class="form-control" placeholder="Search Public Gardens" aria-label="Search Public Gardens" aria-describedby="button-addon2">
-        <div class="input-group-append">
-            <button class="btn btn-outline-secondary" type="button" id="button-addon2">
-                <i class="bi bi-search"></i>
-            </button>
-        </div>
+    <div class="mb-3">
+        <form class="input-group w-100" action="#" th:action="@{/gardens/public/search}" method="post" id="searchForm">
+            <input type="text" class="form-control" placeholder="Search Public Gardens" id="searchField"
+                   aria-label="Search Public Gardens" aria-describedby="button-addon" name="search" th:value="${previousSearch}">
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="submit" id="button-addon">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+        </form>
     </div>
 
-    <p class="text-secondary">
-        Showing results <span th:text="${gardenPage.number * gardenPage.size + 1}"></span>
-        to <span th:text="${gardenPage.number * gardenPage.size + gardenPage.numberOfElements}"></span>
-        of <span th:text="${gardenPage.totalElements}"></span>
-    </p>
+    <div th:if="${gardens.empty}">
+        No gardens match your search...
+        <a href="#" role="button" onclick="clearSearch()">
+            Reset search
+        </a>
+    </div>
+    <div th:unless="${gardens.empty}">
+        <p class="text-secondary">
+            Showing results <span th:text="${gardenPage.number * gardenPage.size + 1}"></span>
+            to <span th:text="${gardenPage.number * gardenPage.size + gardenPage.numberOfElements}"></span>
+            of <span th:text="${gardenPage.totalElements}"></span>
+        </p>
+    </div>
 
     <div class="row">
         <th:block th:each="garden : ${gardenPage.content}">
@@ -34,7 +45,7 @@
                     <div class="card h-100 card-hover">
                         <!-- Plant images grid -->
                         <div class="card-img-top bg-success card-img-top-fixed d-flex align-items-center">
-                        <div class="row g-0">
+                            <div class="row g-0">
                                 <th:block th:if="${garden.getPlants().isEmpty()}">
                                     <div class="col-12">
                                         <img src="/img/defaultgarden.jpg" class="img-fluid" alt="Default Garden Image">
@@ -57,11 +68,12 @@
                     </div>
                 </a>
             </div>
+
         </th:block>
     </div>
 
 
-    <!-- Pagination Controls -->
+        <!-- Pagination Controls -->
     <nav>
         <ul class="pagination justify-content-center">
             <!-- First page link -->
@@ -94,7 +106,17 @@
     </nav>
 </div>
 
+
 <!-- Bootstrap scripts from your fragment -->
 <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
+<script>
+    function clearSearch() {
+        const input = document.getElementById("searchField");
+        const form = document.getElementById("searchForm");
+
+        input.value = "";
+        form.submit();
+    }
+</script>
 </body>
 </html>

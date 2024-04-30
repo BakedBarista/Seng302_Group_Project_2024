@@ -49,13 +49,19 @@ public class GardenUser {
     @Column(nullable = true)
     private Instant emailValidationTokenExpiryInstant;
 
+    @Column(nullable = true)
+    private String resetPasswordToken;
+
+    @Column(nullable = true)
+    private Instant resetPasswordTokenExpiryInstant;
+
     /**
      * JPA required no-args constructor
      */
     public GardenUser() {}
 
     /**
-     * Creates a new GardenUser object
+     * Createsimport java.util.HashSet; a new GardenUser object
      *
      * @param fname first name of user
      * @param lname last name of user 
@@ -71,6 +77,25 @@ public class GardenUser {
 
         this.setPassword(password);
     }
+
+    /**
+     * Gets the set of friends where user is user 2
+     *
+     * @return Set<Friends> both their id and the other users id
+     */ 
+    // public Set<Friends> getFriendshipsAsUser2() {
+    //     return friendshipsAsUser2;
+    // }
+
+    // /**
+    //  * Gets the set of friends where user is user 1
+    //  *
+    //  * @return Set<Friends> both their id and the other users id
+    //  */ 
+    // public Set<Friends> getFriendshipsAsUser1() {
+    //     return friendshipsAsUser1;
+    // }
+
 
     /**
      * Gets the authorities granted to the user
@@ -214,18 +239,36 @@ public class GardenUser {
 
     /**
      * Set the emailValidationToken of this user
+     *  - may be null
      */
     public void setEmailValidationToken(String emailValidationToken) {
         this.emailValidationToken = emailValidationToken;
     }
 
+
     /**
-     * get this users emailValidationToken
+     * Get this users emailValidationToken
      *  - may be null
      * @return emailValidationToken
      */
     public String getEmailValidationToken() {
         return emailValidationToken;
+    }
+
+    /**
+     * Get this users resetPasswordToken
+     *  - may be null
+     * @return emailValidationToken
+     */
+    public String getResetPasswordToken() {
+        return resetPasswordToken;
+    }
+
+    /**
+     * Set the resetPasswordToken of this user
+     */
+    public void setResetPasswordToken(String resetPasswordToken) {
+        this.resetPasswordToken = resetPasswordToken;
     }
 
     /**
@@ -238,10 +281,26 @@ public class GardenUser {
     /**
      * Return the emailValidationTokenExpiryInstant of this user
      *  - may be null
-     * @return
+     * @return emailValidationTokenExpiryInstant
      */
     public Instant getEmailValidationTokenExpiryInstant() {
         return this.emailValidationTokenExpiryInstant;
+    }
+
+    /**
+     * Set the resetPasswordTokenExpiryInstant of this user
+     */
+    public void setResetPasswordTokenExpiryInstant(Instant timeInstance) {
+        this.resetPasswordTokenExpiryInstant = timeInstance;
+    }
+
+    /**
+     * Return the resetPasswordTokenExpiryInstant of this user
+     *  - may be null
+     * @return resetPasswordTokenExpiryInstant
+     */
+    public Instant getResetPasswordTokenExpiryInstant() {
+        return this.resetPasswordTokenExpiryInstant;
     }
 
     public void setId(long id) {

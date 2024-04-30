@@ -43,7 +43,7 @@ public class AuthenticationControllerTest {
     @Test
     public void testWhenTokenExistsForUser_UserIsSentToEmailAuthenticationPage() {
         long userId = 1;
-        String expectedPage = "/authentication/emailAuthentication";
+        String expectedPage = "authentication/emailAuthentication";
         Instant time = Instant.now();
 
         user.setEmailValidationToken("000000");
@@ -58,9 +58,9 @@ public class AuthenticationControllerTest {
     @Test
     public void testWhenTokenDoesNotExistsForUser_UserIsNotSentToEmailAuthenticationPage() {
         long userId = 1;
-        String notExpectedPage = "/authentication/emailAuthentication";
+        String notExpectedPage = "authentication/emailAuthentication";
         // may change at later date
-        String expectedPage = "/error/404";
+        String expectedPage = "error/404";
 
         // explicitly setting null here
         user.setEmailValidationToken(null);
@@ -92,7 +92,7 @@ public class AuthenticationControllerTest {
     @Test
     public void testWhenUserGivesIncorrectToken_UserIsTakenBackToEmailAuthenticationPage() {
         long userId = 1;
-        String expectedPage = "/authentication/emailAuthentication";
+        String expectedPage = "authentication/emailAuthentication";
         String userInputtedToken = "000000";
         String storedToken = "000001";
         Instant time = Instant.now();
@@ -146,7 +146,7 @@ public class AuthenticationControllerTest {
     public void testWhenTokenExpired_AndUserInputsAnyToken_UserIsInformedOfTokenExpiration() {
         long userId = 1;
         String userInputtedToken = "000000";
-        String expectedPage = "/authentication/emailAuthentication";
+        String expectedPage = "authentication/emailAuthentication";
 
         // mock that the user was deleted
         when(userService.getUserById(userId)).thenReturn(null);
