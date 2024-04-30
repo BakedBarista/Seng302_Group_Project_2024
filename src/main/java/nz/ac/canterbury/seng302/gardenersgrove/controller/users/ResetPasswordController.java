@@ -22,16 +22,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class ResetPasswordController {
     private Logger logger = LoggerFactory.getLogger(LoginController.class);
 
-    @Autowired
     private TokenService tokenService;
 
     private GardenUserService userService;
 
     private EmailSenderService emailSenderService;
 
-    public ResetPasswordController(GardenUserService userService, EmailSenderService emailSenderService) {
+    public ResetPasswordController(GardenUserService userService, EmailSenderService emailSenderService, TokenService tokenService) {
         this.userService = userService;
         this.emailSenderService = emailSenderService;
+        this.tokenService = tokenService;
     }
 
     /**
