@@ -73,7 +73,8 @@ public class SecurityConfiguration {
                     "/css/**",
                     "/js/**",
                     "/webjars/**",
-                    "/icons/**"
+                    "/icons/**",
+                    "/img/**"
                 ).permitAll();
             auth.anyRequest().authenticated();
         });
