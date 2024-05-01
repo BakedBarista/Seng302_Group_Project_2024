@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidEuropeanDecimal;
 
+import java.util.List;
 
 
 
@@ -64,6 +65,9 @@ public class Garden {
 
     @Column(nullable = false)
     private Boolean isPublic = false;
+
+    @OneToMany(mappedBy = "garden", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Plant> plants;
 
 
 
@@ -208,5 +212,12 @@ public class Garden {
 
     public void setCountry(String country) {
         this.country = country;
+    }
+
+    public void setPlants(List<Plant> plants) {
+        this.plants = plants;
+    }
+    public List<Plant> getPlants() {
+        return plants;
     }
 }
