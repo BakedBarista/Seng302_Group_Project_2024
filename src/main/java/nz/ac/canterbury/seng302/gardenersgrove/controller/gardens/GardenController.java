@@ -1,14 +1,17 @@
-package nz.ac.canterbury.seng302.gardenersgrove.controller;
+package nz.ac.canterbury.seng302.gardenersgrove.controller.gardens;
 
 
 import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.ModerationService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.weatherAPI.WeatherAPIService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +24,12 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 
 /**
  * Controller for garden forms
@@ -34,16 +40,21 @@ public class GardenController {
 
     private final GardenService gardenService;
     private final PlantService plantService;
+    private final WeatherAPIService weatherAPIService;
+
+    private final ModerationService moderationService;
 
     private final GardenUserService gardenUserService;
     private final FriendService friendService;
 
     @Autowired
-    public GardenController(GardenService gardenService, PlantService plantService, GardenUserService gardenUserService, FriendService friendService) {
+    public GardenController(GardenService gardenService, PlantService plantService, GardenUserService gardenUserService, WeatherAPIService weatherAPIService, FriendService friendService, ModerationService moderationService) {
         this.gardenService = gardenService;
         this.plantService = plantService;
         this.gardenUserService = gardenUserService;
+        this.weatherAPIService = weatherAPIService;
         this.friendService = friendService;
+        this.moderationService = moderationService;
     }
 
     /**
@@ -80,6 +91,13 @@ public class GardenController {
         }
         GardenUser owner = gardenUserService.getCurrentUser();
         garden.setOwner(owner);
+
+        //Checks description for inappropriate content
+        if (moderationService.checkIfDescriptionIsFlagged(garden.getDescription())) {
+            model.addAttribute("garden", garden);
+            model.addAttribute("profanity", "The description does not match the language standards of the app.");
+            return "gardens/createGarden";
+        }
 
         Garden savedGarden = gardenService.addGarden(garden);
         return "redirect:/gardens/" + savedGarden.getId();
@@ -119,14 +137,49 @@ public class GardenController {
             model.addAttribute("garden", garden);
             model.addAttribute("owner", garden.getOwner());
             model.addAttribute("plants", plantService.getPlantsByGardenId(id));
-        }
 
+            List<List<Map<String, Object>>> weatherResult = weatherAPIService.getWeatherData(id, garden.getLat(), garden.getLon());
+            List<Map<String, Object>> weatherPrevious = Collections.emptyList();
+            List<Map<String, Object>> weatherForecast = Collections.emptyList();
+            boolean displayWeatherAlert = false;
+
+            if (!weatherResult.isEmpty()) {
+                weatherPrevious = weatherResult.get(0);
+                weatherForecast = weatherResult.get(1);
+                displayWeatherAlert = garden.getDisplayWeatherAlert();
+            }
+
+            model.addAttribute("weatherPrevious", weatherPrevious);
+            model.addAttribute("weatherForecast", weatherForecast);
+            model.addAttribute("displayWeather", !weatherResult.isEmpty());
+            model.addAttribute("displayRecommendation", displayWeatherAlert);
+            model.addAttribute("wateringRecommendation", garden.getWateringRecommendation());
+        }
 
         GardenUser currentUser = gardenUserService.getCurrentUser();
         List<Garden> gardens = gardenService.getGardensByOwnerId(currentUser.getId());
         model.addAttribute("currentUser", currentUser);
         model.addAttribute("gardens", gardens);
         return "gardens/gardenDetails";
+    }
+
+    /**
+     * Hides the weather alert for a specific garden for the remainder of the day
+     * @param id the ID of the garden to hide alerts for
+     * @return redirects back to the detail page
+     */
+    @PostMapping("/gardens/{id}/hide-weather-alert")
+    public String hideWeatherAlertForGarden(@PathVariable(name = "id") Long id) {
+        logger.info("POST /gardens/{}/hide-weather-alert", id);
+        Optional<Garden> gardenOptional = gardenService.getGardenById(id);
+
+        if (gardenOptional.isPresent()) {
+            logger.info("Setting alert to hide for Garden {} until next day.", id);
+            Garden garden = gardenOptional.get();
+            garden.setDisplayWeatherAlert(false);
+            gardenService.addGarden(garden);
+        }
+        return "redirect:/gardens/" + id;
     }
 
     /**
@@ -155,7 +208,7 @@ public class GardenController {
      * @return redirect to gardens
      */
     @GetMapping("/gardens/{id}/edit")
-    public String getGarden(@PathVariable() long id, Model model) {
+    public String getGarden(@PathVariable(name = "id") long id, Model model) {
         logger.info("Get /garden/{}", id);
         Optional<Garden> garden = gardenService.getGardenById(id);
         logger.info(String.valueOf(garden));
@@ -175,13 +228,19 @@ public class GardenController {
      * @return redirect to gardens
      */
     @PostMapping("/gardens/{id}/edit")
-    public String updateGarden(@PathVariable long id,
+    public String updateGarden(@PathVariable(name = "id") long id,
                                @Valid @ModelAttribute("garden") Garden garden,
                                BindingResult result,
                                Model model) {
         if (result.hasErrors()) {
             model.addAttribute("garden", garden);
             model.addAttribute("id", id);
+            return "gardens/editGarden";
+        }
+        //Checks description for inappropriate content
+        if (moderationService.checkIfDescriptionIsFlagged(garden.getDescription())) {
+            model.addAttribute("garden", garden);
+            model.addAttribute("profanity", "The description does not match the language standards of the app.");
             return "gardens/editGarden";
         }
 
@@ -198,6 +257,7 @@ public class GardenController {
             existingGarden.get().setDescription(garden.getDescription());
             existingGarden.get().setLon(garden.getLon());
             existingGarden.get().setLat(garden.getLat());
+            existingGarden.get().setWeatherForecast(Collections.emptyList());
             gardenService.addGarden(existingGarden.get());
         }
         return "redirect:/gardens/" + id;
@@ -212,15 +272,32 @@ public class GardenController {
      */
     @GetMapping("/gardens/public")
     public String publicGardens(
-            @RequestParam (defaultValue = "0") int page,
-            @RequestParam (defaultValue = "10") int size,
+            @RequestParam(defaultValue = "0") String pageStr,
+            @RequestParam(defaultValue = "10") String sizeStr,
             Model model) {
+        int page;
+        int size;
+
+        try {
+            page = Math.max(0, Integer.parseInt(pageStr));
+            size = Math.max(10, Integer.parseInt(sizeStr));
+        } catch (NumberFormatException e) {
+            page = 0;
+            size = 10;
+        }
         logger.info("Get /gardens/public - display all public gardens");
         Pageable pageable = PageRequest.of(page, size);
         Page<Garden> gardenPage = gardenService.getPageForPublicGardens(pageable);
         model.addAttribute("gardenPage", gardenPage);
-        List<Garden> gardens = gardenService.getPublicGardens();
+        List<Garden> gardens = gardenService.getGardensByOwnerId(gardenUserService.getCurrentUser().getId());
         model.addAttribute("gardens", gardens);
+        List<Garden> gardensWithPlants = gardenPage.getContent().stream()
+                .map(garden -> {
+                    List<Plant> plants = plantService.getPlantsByGardenId(garden.getId());
+                    garden.setPlants(plants);
+                    return garden;
+                })
+                .collect(Collectors.toList());
         return "gardens/publicGardens";
     }
 
@@ -234,7 +311,7 @@ public class GardenController {
     public String viewFriendGardens(
         Authentication authentication,
         @PathVariable() Long id,
-        Model model) {  
+        Model model) {
             Long loggedInUserId = (Long) authentication.getPrincipal();
             Friends isFriend = friendService.getFriendship(loggedInUserId, id);
             GardenUser owner = gardenUserService.getUserById(id);
@@ -249,13 +326,13 @@ public class GardenController {
 
         return "gardens/friendGardens";
     }
-    
+
 
     /**
      * send the user to public gardens with a subset of gardens matching
      * their given search
      * @param search string that user is searching
-     * @param model
+     * @param model representation of results
      * @return public garden page
      */
     @PostMapping("/gardens/public/search")

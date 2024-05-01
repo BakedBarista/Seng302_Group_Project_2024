@@ -104,7 +104,7 @@ public class GardenUserService {
 
         String last = names[1];
         if(names.length > 2){
-            return null;
+            return Optional.empty();
         }
 
         return gardenUserRepository.findBySearchMe(first, last, currentUserId);

@@ -153,6 +153,23 @@ public class ResetPasswordControllerTest {
     }
 
     @Test
+    void givenLinkNotExpired_andFieldsHasErrors_whenFormSubmitted_thenPasswordNotChanged() {
+        BindingResult bindingResult = mock(BindingResult.class);
+        Model model = mock(Model.class);
+
+        ResetPasswordCallbackDTO resetPasswordDTO = new ResetPasswordCallbackDTO();
+        resetPasswordDTO.setToken(token);
+        resetPasswordDTO.setNewPassword("newPassword");
+        resetPasswordDTO.setConfirmPassword("newWrongPassword");
+
+        when(bindingResult.hasErrors()).thenReturn(true);
+
+        String result = controller.resetPasswordCallbackPost(resetPasswordDTO, bindingResult, model);
+        assertEquals("users/resetPasswordCallback", result);
+
+    }
+
+    @Test
     void givenLinkExpired_whenFormSubmitted_thenRedirectedToLogin() {
         when(userService.getUserByResetPasswordToken(token)).thenReturn(null);
 
@@ -168,4 +185,5 @@ public class ResetPasswordControllerTest {
         assertEquals("redirect:/users/login?error=resetPasswordLinkExpired", result);
         verify(userService, times(0)).addUser(any());
     }
+
 }

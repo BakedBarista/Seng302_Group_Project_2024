@@ -32,6 +32,10 @@ dependencies {
 	// Spring Boot Starter Mail
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 
+	// JSON deserialization (for external REST API, lab 6)
+	implementation 'com.fasterxml.jackson.core:jackson-core:2.16.1'
+	implementation 'com.fasterxml.jackson.core:jackson-annotations:2.16.1'
+	implementation 'com.fasterxml.jackson.core:jackson-databind:2.16.1'
 
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -79,5 +83,12 @@ sonar {
 		property "sonar.sourceEncoding", "UTF-8"
     property "sonar.host.url", "https://sonarqube.csse.canterbury.ac.nz"
 		property "sonar.login", "$System.env.SONARQUBE_TOKEN"
+		property "sonar.sources", "src/main/java,src/main/resources"
   }
+}
+
+task dev(type: org.springframework.boot.gradle.tasks.run.BootRun, dependsOn: 'bootRun') {
+	group = 'Application'
+	description = 'Runs the application with the dev profile'
+	environment "SPRING_PROFILES_ACTIVE", "dev"
 }

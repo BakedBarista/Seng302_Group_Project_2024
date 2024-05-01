@@ -1,9 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -40,8 +38,8 @@ public class GardenService {
     /**
      * Get a page for pagination of user gardens that meet the given query string
      * (e.g. garden name or plant in garden name is a substring of the query)
-     * @param query
-     * @param pageable
+     * @param query string to be matched against
+     * @param pageable pagination information
      * @return page to display
      */
     public Page<Garden> findPageThatContainsQuery(String query, Pageable pageable) {
@@ -64,7 +62,7 @@ public class GardenService {
 
     /**
      * Gets the page for all public gardens
-     * @param pageable
+     * @param pageable pagination information
      * @return page
      */
     public Page<Garden> getPageForPublicGardens(Pageable pageable) {

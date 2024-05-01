@@ -1,15 +1,14 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.time.Instant;
-import java.util.List;
-
 import jakarta.persistence.*;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.time.Instant;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -41,7 +40,7 @@ public class GardenUser {
     @Column(nullable = true)
     private String profilePictureContentType;
 
-    @Column(nullable = true)
+    @Column(nullable = true, columnDefinition = "MEDIUMBLOB")
     @Lob
     private byte[] profilePicture;
 

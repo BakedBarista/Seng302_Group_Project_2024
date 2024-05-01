@@ -25,13 +25,13 @@
                        th:classappend="${#fields.hasErrors('name')} ? 'error-field' : ''">
                 <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" style="color: red;"></div>
             </div>
+            <br/>
             <!-- Garden Location Field -->
                 <div class="col-8">
                     <label for="autocomplete-container"> Garden Location: </label>
                     <div class="autocomplete-container" id="autocomplete-container"></div>
                 </div>
-            <div><button type="button" onclick="toggleSubform()">Enter Manually</button></div>
-            <div class="subform-container" style="display: none; margin-left: 40px">
+            <div class="container" style="margin-left: 30px">
                 <div class="row g-2">
                     <!-- Street Number Field -->
                     <div class="col-2">
@@ -97,7 +97,8 @@
             </div>
             <div class="col-lg-12">
                 <button type="submit" class="btn btn-primary btn-sm">Submit</button>
-                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="history.back()">Cancel</button>
+                <button type="button" class="btn btn-outline-secondary btn-sm btn-cancel">Cancel</button>
+
             </div>
         </form>
 </div>
@@ -108,4 +109,23 @@
 <script th:src="@{/js/locationAutoComplete.js}"></script>
 <script th:src="@{/js/nextFormBox.js}"></script>
 <script th:src="@{/js/toggleSubform.js}"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const currentPath = '/gardens/create';
+        const referrer = document.referrer;
+
+        if (referrer && !referrer.includes(currentPath)) {
+            sessionStorage.setItem('referrer', referrer);
+        } else if (!sessionStorage.getItem('referrer')) {
+            sessionStorage.setItem('referrer', '/defaultPath');
+        }
+
+        const cancelButton = document.querySelector('.btn-cancel');
+        cancelButton.addEventListener('click', function() {
+            window.location.href = sessionStorage.getItem('referrer');
+        });
+    });
+</script>
+
 </html>

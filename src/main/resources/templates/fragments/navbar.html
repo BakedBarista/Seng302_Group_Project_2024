@@ -4,54 +4,49 @@
   <meta charset="UTF-8">
 </head>
 <body>
-  <div th:fragment="navbar">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <div class="container-fluid">
-        <!-- Logo -->
-        <a class="navbar-brand" th:href="@{/}"><h3>Gardeners Grove</h3></a>
-        <!-- Toggle button for mobile -->
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <!-- Navbar links -->
-        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-          <ul class="navbar-nav align-items-center">
-            <li class="nav-item dropdown" th:if="${isAuthenticated}">
-              <a class="nav-link dropdown-toggle" th:href="@{/gardens}" id="navbarDropdownMenuLink" aria-expanded="false">
-                My Gardens
-              </a>
-              <ul class="dropdown-menu" id="garden-dropdown" aria-labelledby="navbarDropdownMenuLink">
-                <li><a class="dropdown-item" th:each="garden : ${gardens}" th:text="${garden.name}" th:href="@{/gardens/} + ${garden.id}"></a></li>
-              </ul>
-            </li>
-            <li class="nav-item" th:if="${isAuthenticated}">
-              <a class="nav-link" th:href="@{/gardens/create}">Create New Garden</a>
-            </li>
-            <li class="nav-item" th:if="${!isAuthenticated}">
-              <a class="nav-link" th:href="@{/users/register}"><button type="button" class="btn btn-secondary">Register</button></a>
-            </li>
-            <li class="nav-item" th:if="${!isAuthenticated}">
-              <a class="nav-link" th:href="@{/users/login}"><button type="button" class="btn btn-primary">Sign In</button></a>
-            </li>
-            <li class = "nav-item" th:if="${isAuthenticated}">
-              <a class="nav-link" th:href="@{/gardens/public}">Browse Gardens</a>
-            </li>
-            <li class="nav-item" th:if="${isAuthenticated}">
-              <div class="h3 p-1" data-bs-toggle="dropdown" aria-expanded="false">
-<!--                TODO: This icon is a placeholder if we can't retrieve their user profile picture-->
-                <img th:src="@{/icon/user-profile-circle.svg}" alt="Profile" width="25" height="25" />
-              </div>
-              <ul class="dropdown-menu dropdown-menu-right" id="user-dropdown">
-                <li><a class="dropdown-item" th:href="@{/users/user}">Your Profile</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" th:href="@{/users/manageFriends}">Manage Friends</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item text-danger" th:href="@{/users/logout}">Sign Out</a></li>
-              </ul>
-            </li>
-          </ul>
-        </div>
+<div th:fragment="navbar">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+      <!-- Logo -->
+      <a class="navbar-brand" th:href="@{/}"><h3>Gardeners Grove</h3></a>
+      <!-- Toggle button for mobile -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <!-- Navbar links -->
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav align-items-center">
+          <li class="nav-item dropdown" th:if="${isAuthenticated}">
+            <a class="nav-link dropdown-toggle" th:href="@{/gardens}" id="navbarDropdownMenuLink" aria-expanded="false">
+              My Gardens
+            </a>
+            <ul class="dropdown-menu" id="garden-dropdown" aria-labelledby="navbarDropdownMenuLink">
+              <li><a class="dropdown-item" th:each="garden : ${gardens}" th:text="${garden.name}" th:href="@{/gardens/} + ${garden.id}"></a></li>
+            </ul>
+          </li>
+          <li class="nav-item" th:if="${isAuthenticated}">
+            <a class="nav-link" th:href="@{/gardens/create}">Create New Garden</a>
+          </li>
+          <li class="nav-item" th:if="${!isAuthenticated}">
+            <a class="nav-link" th:href="@{/users/register}"><button type="button" class="btn btn-secondary">Register</button></a>
+          </li>
+          <li class="nav-item" th:if="${!isAuthenticated}">
+            <a class="nav-link" th:href="@{/users/login}"><button type="button" class="btn btn-primary">Sign In</button></a>
+          </li>
+          <li class = "nav-item" th:if="${isAuthenticated}">
+            <a class="nav-link" th:href="@{/gardens/public}">Browse Gardens</a>
+          </li>
+          <li class="nav-item" th:if="${isAuthenticated}">
+            <img type="button dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" th:src="@{/icons/user-profile-circle.svg}" width="24" height="24" alt="Profile" />
+            <ul class="dropdown-menu dropdown-menu-right" id="user-dropdown">
+              <li><a class="dropdown-item" th:href="@{/users/user}">Your Profile</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item text-danger" th:href="@{/users/logout}">Sign Out</a></li>
+            </ul>
+          </li>
+        </ul>
       </div>
+    </div>
   </nav>
 </div>
 </body>
