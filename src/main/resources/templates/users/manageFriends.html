@@ -29,7 +29,7 @@
     </div>
 
     <div class="col-md-6 col-sm-10" th:if="${searchResults != null}" >
-        <table class="table" th:if="${!searchResults.empty or mySelf != null or !requestPending.empty or !declineSent.empty or !requestReceived.empty or !alreadyFriends.empty}">
+        <table class="table" >
             <thead>
             <tr>
                 <th>Search Results</th>
@@ -38,12 +38,15 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:if="${searchResults != null}">
+            <tr>
                 <td th:if="${searchResults.empty and mySelf == null and requestPending.empty and declineSent.empty and requestReceived.empty and alreadyFriends.empty}"
                     class="text-danger">
-                    <strong>
-                        There is nobody with that name or email in Gardener’s Grove
-                    </strong>
+
+                    There is nobody with that name or email in Gardener’s Grove
+
+                </td>
+            </tr>
+
             <tr th:if="${mySelf != null}">
                 <td class="align-middle">
                     <img class="rounded-circle overflow-hidden border border-dark"
