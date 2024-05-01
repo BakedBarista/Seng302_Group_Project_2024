@@ -7,6 +7,8 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidEuropeanDecimal;
 
+import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationConstants.*;
+
 
 
 
@@ -20,33 +22,35 @@ public class Garden {
     private Long id;
 
     @NotBlank(message = "Garden name cannot be empty")
-    @Pattern(regexp = "^[\\p{L}0-9 .,'-]*$", message = "Garden name must only include letters, numbers, spaces, dots, commas, hyphens, or apostrophes")
+    @Pattern(regexp = GARDEN_REGEX, message = "Garden name must only include letters, numbers, spaces, dots, commas, hyphens, or apostrophes")
     @Column(nullable = false)
     private String name;
 
     @Size(max = 512, message = "Description must be 512 characters or less and contain some text")
-    @Pattern(regexp = "^.*\\p{L}.*|$", message = "Description must be 512 characters or less and contain some text")
+    @Pattern(regexp = "^.*\\p{L}.*|$" , message = "Description must be 512 characters or less and contain some text")
     private String description;
 
     @Pattern(regexp = "^([0-9]+[a-zA-Z]?(\\s?\\-?\\s?[0-9]+[a-zA-Z]?)?)?$", message = "Please enter a valid street number")
     @Column
     private String streetNumber;
 
-    @Pattern(regexp = "^[\\p{L}0-9 ,.'-]*$", message = "Please enter a valid street name")
+    @NotBlank(message = "Street Name is required")
+    @Pattern(regexp = GARDEN_REGEX, message = "Please enter a valid street name")
     @Column
     private String streetName;
 
-    @Pattern(regexp = "^[\\p{L}0-9 .,'-]*$", message = "Please enter a valid suburb")
+    @NotBlank(message = "Suburb is required")
+    @Pattern(regexp = GARDEN_REGEX, message = "Please enter a valid suburb")
     @Column
     private String suburb;
 
     @NotBlank(message = "City and Country are required")
-    @Pattern(regexp = "^[\\p{L}0-9 .,'-]*$", message = "Please enter a valid City name")
+    @Pattern(regexp = GARDEN_REGEX, message = "Please enter a valid City name")
     @Column(nullable = false)
     private String city;
 
     @NotBlank(message = "City and Country are required")
-    @Pattern(regexp = "^[\\p{L}0-9 .,'-]*$", message = "Please enter a valid country name")
+    @Pattern(regexp = GARDEN_REGEX, message = "Please enter a valid country name")
     @Column(nullable = false)
     private String country;
 
