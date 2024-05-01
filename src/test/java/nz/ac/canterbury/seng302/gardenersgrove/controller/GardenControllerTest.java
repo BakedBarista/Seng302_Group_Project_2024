@@ -47,7 +47,6 @@ public class GardenControllerTest {
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-//        gardenController.moderationService = moderationService;
         GardenUser mockUser = mock(GardenUser.class);
         when(mockUser.getId()).thenReturn(1L);
         when(gardenUserService.getCurrentUser()).thenReturn(mockUser);
