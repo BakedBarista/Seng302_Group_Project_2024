@@ -89,7 +89,7 @@ public class GardenService {
 //    public List<Garden> getPublicGardensByOwnerId(GardenUser ownerId) {
 //        return gardenRepository.findUserPublicGarden(ownerId);
 //    }
-
+//
 //    public List<Garden> getPrivateGardensByOwnerId(GardenUser ownerId) {
 //        return gardenRepository.findUserPrivateGarden(ownerId);
 //    }

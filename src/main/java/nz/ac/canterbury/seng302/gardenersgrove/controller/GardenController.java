@@ -250,11 +250,11 @@ public class GardenController {
 
 //            List<Garden> privateGardens = gardenService.getPrivateGardensByOwnerId(owner);
 //            List<Garden> publicGardens = gardenService.getPublicGardensByOwnerId(owner);
-            if (isFriend != null) {
-                //model.addAttribute("privateGardens", privateGardens);
-            }
-
-            //model.addAttribute("publicGardens", publicGardens);
+//            if (isFriend != null) {
+//                model.addAttribute("privateGardens", privateGardens);
+//            }
+//
+//            model.addAttribute("publicGardens", publicGardens);
 
         return "gardens/friendGardens";
     }
