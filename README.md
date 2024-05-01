@@ -18,9 +18,13 @@ gradlew bootRun
 By default, the application will run on local port 8080 [http://localhost:8080](http://localhost:8080)
 
 ### 2 - Using the application
-> - Default user credentials: {First Name: "John", Last Name: "Doe", Email: "john.doe@gmail.com", Password: "password"}
-> - Link to home and login page: {Home: localhost:8080/users, Login: localhost:8080/users/login}
-> - Known Issues: None
+- Default user credentials: 
+   - {First Name: "John", Last Name: "Doe", Email: "john.doe@gmail.com", Password: "password"}
+   - {First Name: "Liam", Last Name: "Doe", Email: "liam@gmail.com", Password: "password"}
+   - {First Name: "Liam", Last Name: "Doe", Email: "liam2@gmail.com", Password: "password"}
+   - {First Name: "Immy", Last Name: null, Email: "immy@gmail.com", Password: "password"}
+- Link to home and login page: {Home: http://localhost:8080, Login: http://localhost:8080/users/login}
+- Known Issues: None
 
 ## How to run tests
 To run the tests:
@@ -37,12 +41,6 @@ gradlew test
 ```
 
 
-## Todo (Sprint 1)
-
-- Add team name into `build.gradle`
-- Update this README title
-- Update this README contributors
-
 ## Todo (Sprint 2)
 
 - Update team name into `build.gradle`
@@ -56,6 +54,7 @@ gradlew test
 - SENG302 teaching team
 - Imogen Keeling (ike24)
 - [Luke Stynes](https://www.github.com/lukestynes)
+- Benjamin Davies (bda71)
 
 ## References
 
