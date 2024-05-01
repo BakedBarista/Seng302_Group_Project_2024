@@ -35,10 +35,22 @@ public interface FriendsRepository extends CrudRepository<Friends, Long> {
     @Query("SELECT p FROM Friends p WHERE (p.user1.id = ?1 AND p.user2.id = ?2) or (p.user1.id = ?2 AND p.user2.id = ?1) ")
     Friends getRequest(Long user1, Long user2);
 
+    /**
+     * Retrieves a Friend object if they are confirmed friends
+     *
+     * @param user1 user who sent the original friend request
+     * @param user2 user who received the original friend request
+     * @return The friend object if the friendship between the users is "accepted"
+     */
     @Query("SELECT p FROM Friends p WHERE ((p.user1.id = ?1 AND p.user2.id = ?2) or (p.user1.id = ?2 AND p.user2.id = ?1)) and p.status = 'accepted'")
     Friends getAcceptedFriendship(Long user1, Long user2);
 
-
+    /**
+     *
+     * @param user1 user who sent the friend request
+     * @param user2 user who received the friend request
+     * @return the friendship where user1 sent the friend request to user2
+     */
     @Query("SELECT p FROM Friends p WHERE p.user1.id = ?1 AND p.user2.id = ?2")
     Friends getSent(Long user1, Long user2);
 
@@ -60,9 +72,11 @@ public interface FriendsRepository extends CrudRepository<Friends, Long> {
     @Query("SELECT u FROM Friends u WHERE u.user2.id = ?1 and u.status = 'pending'")
     List<Friends> getReceivedRequests(Long user);
 
-    @Query("SELECT u FROM Friends u WHERE u.user2.id = ?1 and u.status = 'declined'")
-    List<Friends> getReceivedRequestsDeclined(Long user);
-
+    /**
+     *
+     * @param user user that has been declined
+     * @return a list of all the users who have declined friend request from the user
+     */
     @Query("SELECT u FROM Friends u WHERE u.user1.id = ?1 and u.status = 'declined'")
     List<Friends> getSentRequestsDeclined(Long user);
 
