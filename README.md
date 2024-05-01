@@ -50,6 +50,8 @@ gradlew test
 
 Team 800's Gardener's Grove App is licensed under the **GNU Affero General Public License v3.0**.
 
+Gradle, Spring Boot, Thymeleaf, Jackson are licensed under the Apache License, Version 2.0 (the "License"); you may not use their files except in compliance with the License. You may obtain a copy of the License at https://www.apache.org/licenses/LICENSE-2.0.
+
 ## Code Contributors
 
 - SENG302 teaching team
