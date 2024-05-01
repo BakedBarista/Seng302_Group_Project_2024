@@ -1,5 +1,5 @@
 # SENG302 Team D Gardener's Grove Project
-Team 800's Gardener's Grove Project uses `gradle`, `Spring Boot`, `Thymeleaf`, `GitLab CI`, `H2`, `MariaDB`, `Bootstrap`, `JQuery`, `Cucumber`, `JUnit`, `jacoco`, and `SonarQube`.
+Team 800's Gardener's Grove Project uses `gradle`, `Spring Boot`, `Thymeleaf`, `GitLab CI`, `H2`, `MariaDB`, `Bootstrap`, `JQuery`, `Jackson`, `Cucumber`, `JUnit`, `jacoco`, and `SonarQube`.
 
 ## How to run
 ### 1 - Running the project
@@ -46,15 +46,18 @@ gradlew test
 ```
 
 
-## License
-Team 800's Gardener's Grove App uses the license: **GNU Affero General Public License v3.0**
+## Licenses
+
+Team 800's Gardener's Grove App is licensed under the **GNU Affero General Public License v3.0**.
+
+Gradle, Spring Boot, Thymeleaf, Jackson are licensed under the Apache License, Version 2.0 (the "License"); you may not use their files except in compliance with the License. You may obtain a copy of the License at https://www.apache.org/licenses/LICENSE-2.0.
 
 ## Code Contributors
 
 - SENG302 teaching team
 - Imogen Keeling (ike24)
 - [Luke Stynes (lst89)](https://www.github.com/lukestynes)
-- Benjamin Davies (bda71)
+- [Benjamin Davies (bda71)](https://www.github.com/Benjamin-Davies)
 - Maxzi Francisco (mfr91)
 - Liam Ceelen-Thomas (lce26)
 - Ryan Scofield (rsc104)
