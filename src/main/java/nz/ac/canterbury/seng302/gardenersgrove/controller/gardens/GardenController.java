@@ -125,16 +125,22 @@ public class GardenController {
             model.addAttribute("plants", plantService.getPlantsByGardenId(id));
 
             List<List<Map<String, Object>>> weatherResult = weatherAPIService.getWeatherData(id, garden.getLat(), garden.getLon());
+            List<Map<String, Object>> weatherPrevious = Collections.emptyList();
+            List<Map<String, Object>> weatherForecast = Collections.emptyList();
+            boolean displayWeatherAlert = false;
             logger.info("Garden Controller received: {}", weatherResult);
+
             if (!weatherResult.isEmpty()) {
-                model.addAttribute("weatherPrevious", weatherResult.get(0));
-                model.addAttribute("weatherForecast", weatherResult.get(1));
-                model.addAttribute("displayWeather", !weatherResult.isEmpty());
-            } else {
-                model.addAttribute("weatherPrevious", weatherResult);
-                model.addAttribute("weatherForecast", weatherResult);
-                model.addAttribute("displayWeather", false);
+                weatherPrevious = weatherResult.get(0);
+                weatherForecast = weatherResult.get(1);
+                displayWeatherAlert = garden.getDisplayWeatherAlert();
             }
+
+            model.addAttribute("weatherPrevious", weatherPrevious);
+            model.addAttribute("weatherForecast", weatherForecast);
+            model.addAttribute("displayWeather", !weatherResult.isEmpty());
+            model.addAttribute("displayRecommendation", displayWeatherAlert);
+            model.addAttribute("wateringRecommendation", garden.getWateringRecommendation());
         }
 
         GardenUser currentUser = gardenUserService.getCurrentUser();
@@ -142,6 +148,20 @@ public class GardenController {
         model.addAttribute("currentUser", currentUser);
         model.addAttribute("gardens", gardens);
         return "gardens/gardenDetails";
+    }
+
+    @PostMapping("/gardens/{id}/hide-weather-alert")
+    public String hideWeatherAlertForGarden(@PathVariable(name = "id") Long id) {
+        logger.info("POST /gardens/{}/hide-weather-alert", id);
+        Optional<Garden> gardenOptional = gardenService.getGardenById(id);
+
+        if (gardenOptional.isPresent()) {
+            logger.info("Setting alert to hide for Garden {} until next day.", id);
+            Garden garden = gardenOptional.get();
+            garden.setDisplayWeatherAlert(false);
+            gardenService.addGarden(garden);
+        }
+        return "redirect:/gardens/" + id;
     }
 
     /**
@@ -170,7 +190,7 @@ public class GardenController {
      * @return redirect to gardens
      */
     @GetMapping("/gardens/{id}/edit")
-    public String getGarden(@PathVariable long id, Model model) {
+    public String getGarden(@PathVariable(name = "id") long id, Model model) {
         logger.info("Get /garden/{}", id);
         Optional<Garden> garden = gardenService.getGardenById(id);
         logger.info(String.valueOf(garden));
@@ -190,7 +210,7 @@ public class GardenController {
      * @return redirect to gardens
      */
     @PostMapping("/gardens/{id}/edit")
-    public String updateGarden(@PathVariable long id,
+    public String updateGarden(@PathVariable(name = "id") long id,
                                @Valid @ModelAttribute("garden") Garden garden,
                                BindingResult result,
                                Model model) {
