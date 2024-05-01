@@ -1,5 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.time.Instant;
 import java.util.List;
 
@@ -28,7 +30,7 @@ public class GardenUser {
 
     @Column(nullable = false, unique = true)
     private String email;
-    
+
     @Column(nullable = false)
     private String password;
 
@@ -42,6 +44,15 @@ public class GardenUser {
     @Column(nullable = true)
     @Lob
     private byte[] profilePicture;
+
+    // these are a set of friendships in the friends table where the user is user1
+    @OneToMany(mappedBy = "user1")
+    private Set<Friends> friendshipsAsUser1 = new HashSet<>();
+
+    // these are a set of friendships in the friends table where the user is user2
+    @OneToMany(mappedBy = "user2")
+    private Set<Friends> friendshipsAsUser2 = new HashSet<>();
+
 
     @Column(nullable = true)
     private String emailValidationToken;
@@ -82,19 +93,19 @@ public class GardenUser {
      * Gets the set of friends where user is user 2
      *
      * @return Set<Friends> both their id and the other users id
-     */ 
-    // public Set<Friends> getFriendshipsAsUser2() {
-    //     return friendshipsAsUser2;
-    // }
+     */
+    public Set<Friends> getFriendshipsAsUser2() {
+        return friendshipsAsUser2;
+    }
 
-    // /**
-    //  * Gets the set of friends where user is user 1
-    //  *
-    //  * @return Set<Friends> both their id and the other users id
-    //  */ 
-    // public Set<Friends> getFriendshipsAsUser1() {
-    //     return friendshipsAsUser1;
-    // }
+    /**
+     * Gets the set of friends where user is user 1
+     *
+     * @return Set<Friends> both their id and the other users id
+     */
+    public Set<Friends> getFriendshipsAsUser1() {
+        return friendshipsAsUser1;
+    }
 
 
     /**

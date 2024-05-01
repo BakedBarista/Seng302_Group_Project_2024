@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -54,4 +55,6 @@ public interface FriendsRepository extends CrudRepository<Friends, Long> {
     List<Friends> getReceivedRequests(Long user);
 
 
+    void deleteByUser1IdAndUser2Id(Long user1Id, Long user2Id);
 }
+
