@@ -81,7 +81,6 @@ public class GardenUserService {
         if(names.length > 2){
             return empty;
         }
-        System.out.println(first + last);
 
         return gardenUserRepository.findBySearch(first, last, currentUserId);
     }
@@ -100,6 +99,7 @@ public class GardenUserService {
         String first = names[0];
 
         if(names.length == 1){
+            System.out.println("got here");
             return gardenUserRepository.findBySearchMeNoLname(first, currentUserId);
         }
 
@@ -108,7 +108,6 @@ public class GardenUserService {
             return null;
         }
 
-        System.out.println(first + last + "me");
         return gardenUserRepository.findBySearchMe(first, last, currentUserId);
     }
 

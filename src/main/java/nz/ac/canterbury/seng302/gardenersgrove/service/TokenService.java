@@ -60,7 +60,6 @@ public class TokenService {
         }
 
         logger.info("made new email token {}", token);
-        System.out.println(token);
         return token.toString();
     }
 

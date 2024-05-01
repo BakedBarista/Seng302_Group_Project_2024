@@ -30,7 +30,7 @@
     </div>
 
     <div class="col-md-6 col-sm-10" th:if="${searchResults != null}" >
-        <table class="table" th:if="${!searchResults.empty or mySelf == null or !requestPending.empty or !declineSent.empty or !requestReceived.empty or !alreadyFriends.empty}">
+        <table class="table" th:if="${!searchResults.empty or mySelf != null or !requestPending.empty or !declineSent.empty or !requestReceived.empty or !alreadyFriends.empty}">
             <thead>
             <tr>
                 <th>Search Results</th>
