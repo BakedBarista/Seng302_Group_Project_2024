@@ -6,6 +6,10 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.ArrayList;
 
+/**
+ * A Type class for the Weather API Response that is used by Jackson to deserialise the JSON api data to a known format.
+ * Also prevents any unknown values from being parsed.
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WeatherAPIResponse {
     @JsonDeserialize
