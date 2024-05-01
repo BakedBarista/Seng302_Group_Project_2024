@@ -50,7 +50,7 @@
             </div>
             <div class="d-flex flex-row" >
                 <div th:if="${!displayWeather}">Location not found, please update your location to see the weather.</div>
-                <div class="card mx-1" th:if="${displayWeather}" th:each="daysWeather: ${weatherForecast}" style="width: 250px;">
+                <div class="card mx-1 shadow-sm" th:if="${displayWeather}" th:each="daysWeather: ${weatherForecast}" style="width: 250px;">
                    <div class="border-0 m-0 p-0">
                        <div class="text-center">
                            <img th:src="@{'/icons/weatherIcons/' + ${daysWeather.iconUrl}}" alt="Sunny" width="50" height="50">
@@ -59,28 +59,28 @@
                        </div>
                    </div>
                     <div class="text-center border-0 m-0 p-0" style="font-size: 22pt;">
-                        <p><strong><span th:text="${daysWeather.maxTemp}">24</span></strong>&deg;<span style="font-size: 10pt;">/12</span></p>
+                        <p><strong><span th:text="${daysWeather.maxTemp}">24</span></strong>&deg;/<span style="font-size: 12pt; color: grey;"><span th:text="${daysWeather.minTemp}"></span>&deg;</span></p>
                     </div>
                     <div class="text-center border-0 m-0 p-0" style="font-size: 10pt;">
                         <div class="row m-0 p-0">
-                            <div class="col border-1 m-0 p-0">
+                            <div class="col border-1 m-0 p-2">
                                 <img th:src="@{/icons/fast-wind-stroke-rounded.svg}" alt="" width="24" height="24">
                                 <p class="m-0" style="font-size: 10pt; color: #1E1E1E70;">Wind</p>
                                 <p class="m-0"><span th:text="${daysWeather.windSpeed}"></span> kph</p>
                             </div>
-                            <div class="col border-start m-0 p-0">
+                            <div class="col border-start m-0 p-2">
                                 <img th:src="@{/icons/humidity.svg}" alt="" width="24" height="24">
                                 <p class="m-0" style="font-size: 10pt; color: #1E1E1E70;">Humidity</p>
                                 <p class="m-0"><span th:text="${daysWeather.avgHumidity}"></span>%</p>
                             </div>
                         </div>
                         <div class="row border-1 m-0 p-0">
-                            <div class="col border-1 border-end border-top m-0 p-0">
+                            <div class="col border-1 border-end border-top m-0 p-2">
                                 <img th:src="@{/icons/uv-02-stroke-rounded.svg}" alt="" width="24" height="24">
                                 <p class="m-0" style="font-size: 10pt; color: #1E1E1E70;">UV</p>
                                 <p class="m-0" th:text="${daysWeather.uv}"></p>
                             </div>
-                            <div class="col border-top m-0 p-0">
+                            <div class="col border-top m-0 p-2">
                                 <img th:src="@{/icons/rain-stroke-rounded.svg}" alt="" width="24" height="24">
                                 <p class="m-0" style="font-size: 10pt; color: #1E1E1E70;">Precipitation</p>
                                 <p class="m-0"><span th:text="${daysWeather.precipitation}"></span> mm</p>
@@ -108,7 +108,7 @@
 
         <div class="flex">
             <div class="row gap-2 justify-content-center">
-                <div th:each="plant : ${plants}" class="card rounded-2 p-0 m-0 col-xxl-2 col-lg-3 col-md-4 col-sm-6 col-12">
+                <div th:each="plant : ${plants}" class="card shadow-sm rounded-2 p-0 m-0 col-xxl-2 col-lg-3 col-md-4 col-sm-6 col-12">
                     <div class="card-header m-0 p-0 bg-transparent rounded-2">
                         <img class="w-100" alt="Plant Picture" style="max-height: 300px;" th:if="${plant.plantImagePath}" th:src="@{${plant.plantImagePath}}" />
                         <img class="w-100" style="height: 200px;" th:unless="${plant.plantImagePath}" src="/default.png" alt="Default Plant Image" />

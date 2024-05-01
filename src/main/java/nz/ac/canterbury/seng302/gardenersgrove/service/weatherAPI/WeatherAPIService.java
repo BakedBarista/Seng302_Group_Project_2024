@@ -176,7 +176,7 @@ public class WeatherAPIService {
             weatherValues.put("city", apiResponse.getLocation().getLocationName());
             weatherValues.put("timezoneId", apiResponse.getLocation().getTimezoneId());
             weatherValues.put("maxTemp", forecastDay.getDay().getMaxTemp());
-            weatherValues.put("avgHumidity", forecastDay.getDay().getHumidity());
+                    weatherValues.put("minTemp", forecastDay.getDay().getMinTemp());
             weatherValues.put("conditions", forecastDay.getDay().getCondition().getConditions());
             weatherValues.put("iconUrl", icon);
             weatherValues.put("windSpeed", forecastDay.getDay().getWindSpeed());

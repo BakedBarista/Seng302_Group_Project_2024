@@ -100,6 +100,9 @@ public class WeatherAPIResponse {
                 @JsonDeserialize
                 @JsonProperty("maxtemp_c")
                 private double maxTemp;
+                @JsonDeserialize
+                @JsonProperty("mintemp_c")
+                private double minTemp;
 
                 @JsonDeserialize
                 @JsonProperty("totalprecip_mm")
@@ -128,6 +131,14 @@ public class WeatherAPIResponse {
 
                 public void setMaxTemp(double maxTemp) {
                     this.maxTemp = maxTemp;
+                }
+
+                public double getMinTemp() {
+                    return minTemp;
+                }
+
+                public void setMinTemp(double minTemp) {
+                    this.minTemp = minTemp;
                 }
 
                 public double getPrecipitation() {
