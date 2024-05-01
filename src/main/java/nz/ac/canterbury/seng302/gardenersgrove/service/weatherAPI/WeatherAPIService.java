@@ -170,12 +170,15 @@ public class WeatherAPIService {
         for (WeatherAPIResponse.Forecast.ForecastDay forecastDay: apiResponse.getForecast().getForecastDays()) {
             Map<String, Object> weatherValues = new HashMap<>();
 
+            String[] urlParts = forecastDay.getDay().getCondition().getIconUrl().split("/");
+            String icon = urlParts[urlParts.length - 1];
+
             weatherValues.put("city", apiResponse.getLocation().getLocationName());
             weatherValues.put("timezoneId", apiResponse.getLocation().getTimezoneId());
             weatherValues.put("maxTemp", forecastDay.getDay().getMaxTemp());
             weatherValues.put("avgHumidity", forecastDay.getDay().getHumidity());
             weatherValues.put("conditions", forecastDay.getDay().getCondition().getConditions());
-            weatherValues.put("iconUrl", forecastDay.getDay().getCondition().getIconUrl());
+            weatherValues.put("iconUrl", icon);
             weatherValues.put("windSpeed", forecastDay.getDay().getWindSpeed());
             weatherValues.put("precipitation", forecastDay.getDay().getPrecipitation());
             weatherValues.put("uv", forecastDay.getDay().getUv());
