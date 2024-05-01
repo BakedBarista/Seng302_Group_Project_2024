@@ -1,3 +1,4 @@
+ALTER TABLE garden ALTER COLUMN size TYPE TEXT;
 INSERT INTO garden_user (fname, lname, email, password, dob) VALUES ('Jane', 'Doe', 'jane.doe@gmail.com', 'password', '01/01/1970');
 
 -- Gardens
