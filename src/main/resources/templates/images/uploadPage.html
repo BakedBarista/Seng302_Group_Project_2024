@@ -16,7 +16,7 @@
                 <form method="post" enctype="multipart/form-data" th:action="@{/uploadImage}">
                     <input type="hidden" name="plant_Id" th:value="${plantId}"/>
                     <input type="hidden" name="garden_Id" th:value="${gardenId}">
-                    <div class="form-group">
+                    <div>
                         <input type="file" name="image" accept=".png, .jpg, .jpeg, .svg" class="form-control-file">
                     </div>
                     <div class="alert alert-danger" th:if="${fileTypeError}">

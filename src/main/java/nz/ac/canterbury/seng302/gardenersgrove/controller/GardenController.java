@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.ModerationService;
@@ -22,9 +23,10 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 
 /**
  * Controller for garden forms
@@ -229,15 +231,32 @@ public class GardenController {
      */
     @GetMapping("/gardens/public")
     public String publicGardens(
-            @RequestParam (defaultValue = "0") int page,
-            @RequestParam (defaultValue = "10") int size,
+            @RequestParam(defaultValue = "0") String pageStr,
+            @RequestParam(defaultValue = "10") String sizeStr,
             Model model) {
+        int page;
+        int size;
+
+        try {
+            page = Math.max(0, Integer.parseInt(pageStr));
+            size = Math.max(10, Integer.parseInt(sizeStr));
+        } catch (NumberFormatException e) {
+            page = 0;
+            size = 10;
+        }
         logger.info("Get /gardens/public - display all public gardens");
         Pageable pageable = PageRequest.of(page, size);
         Page<Garden> gardenPage = gardenService.getPageForPublicGardens(pageable);
         model.addAttribute("gardenPage", gardenPage);
-        List<Garden> gardens = gardenService.getPublicGardens();
+        List<Garden> gardens = gardenService.getGardensByOwnerId(gardenUserService.getCurrentUser().getId());
         model.addAttribute("gardens", gardens);
+        List<Garden> gardensWithPlants = gardenPage.getContent().stream()
+                .map(garden -> {
+                    List<Plant> plants = plantService.getPlantsByGardenId(garden.getId());
+                    garden.setPlants(plants);
+                    return garden;
+                })
+                .collect(Collectors.toList());
         return "gardens/publicGardens";
     }
 
@@ -272,7 +291,7 @@ public class GardenController {
      * send the user to public gardens with a subset of gardens matching
      * their given search
      * @param search string that user is searching
-     * @param model
+     * @param model representation of results
      * @return public garden page
      */
     @PostMapping("/gardens/public/search")
