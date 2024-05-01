@@ -9,8 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
     <!-- This needs to be here for Bootstrap and general CSS imports -->
-    <!--/*/ <th:block th:insert="~{fragments/general.html :: headerfiles}">
-        </th:block> /*/-->
+    <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
 </head>
 
 <body>
@@ -29,8 +28,9 @@
         </form>
     </div>
 
-    <div class="col-md-6 col-sm-10" th:if="${searchResults != null}" >
-        <table class="table" th:if="${!searchResults.empty or mySelf == null or !requestPending.empty or !declineSent.empty or !requestReceived.empty or !alreadyFriends.empty}">
+    <div class="col-md-6 col-sm-10" th:if="${searchResults != null}">
+        <table class="table"
+               th:if="${!searchResults.empty or mySelf == null or !requestPending.empty or !declineSent.empty or !requestReceived.empty or !alreadyFriends.empty}">
             <thead>
             <tr>
                 <th>Search Results</th>
@@ -39,18 +39,17 @@
             </tr>
             </thead>
             <tbody>
-
             <tr th:if="${searchResults != null}">
-                <td th:if="${searchResults.empty and mySelf == null and requestPending.empty and declineSent.empty and requestReceived.empty and alreadyFriends.empty}" class="text-danger">
+                <td th:if="${searchResults.empty and mySelf == null and requestPending.empty and declineSent.empty and requestReceived.empty and alreadyFriends.empty}"
+                    class="text-danger">
                     <strong>
                         There is nobody with that name or email in Gardener’s Grove
                     </strong>
-                </td>
-            </tr>
-
             <tr th:if="${mySelf != null}">
                 <td class="align-middle">
-                    <img class="rounded-circle overflow-hidden border border-dark" th:src="@{'/users/' + ${mySelf.id} + '/profile-picture'}" style="width: 40px; height: 40px;">
+                    <img class="rounded-circle overflow-hidden border border-dark"
+                         th:src="@{'/users/' + ${mySelf.id} + '/profile-picture'}" style="width: 40px; height: 40px;"
+                         alt="">
                     <span th:text="${mySelf.fname} "></span>
                     <span th:if="${mySelf.lname != null}" th:text="${mySelf.lname}"></span>
                     <span>(me)</span>
@@ -64,7 +63,9 @@
             </tr>
             <tr th:if="${!alreadyFriends.empty}" th:each="currentFriend : ${alreadyFriends}">
                 <td class="align-middle">
-                    <img class="rounded-circle overflow-hidden border border-dark" th:src="@{'/users/' + ${currentFriend.id} + '/profile-picture'}" style="width: 40px; height: 40px;">
+                    <img class="rounded-circle overflow-hidden border border-dark"
+                         th:src="@{'/users/' + ${currentFriend.id} + '/profile-picture'}"
+                         style="width: 40px; height: 40px;" alt="">
                     <span th:text="${currentFriend.fname} "></span>
                     <span th:if="${currentFriend.lname != null}" th:text="${currentFriend.lname}"></span>
                 </td>
@@ -76,7 +77,9 @@
             </tr>
             <tr th:if="${!requestPending.empty}" th:each="currentFriend : ${requestPending}">
                 <td class="align-middle">
-                    <img class="rounded-circle overflow-hidden border border-dark" th:src="@{'/users/' + ${currentFriend.id} + '/profile-picture'}" style="width: 40px; height: 40px;">
+                    <img class="rounded-circle overflow-hidden border border-dark"
+                         th:src="@{'/users/' + ${currentFriend.id} + '/profile-picture'}"
+                         style="width: 40px; height: 40px;">
                     <span th:text="${currentFriend.fname} "></span>
                     <span th:if="${currentFriend.lname != null}" th:text="${currentFriend.lname}"></span>
                 </td>
@@ -88,7 +91,8 @@
             </tr>
             <tr th:if="${!declineSent.empty}" th:each="user : ${declineSent}">
                 <td class="align-middle">
-                    <img class="rounded-circle overflow-hidden border border-dark" th:src="@{'/users/' + ${user.id} + '/profile-picture'}" style="width: 40px; height: 40px;">
+                    <img class="rounded-circle overflow-hidden border border-dark"
+                         th:src="@{'/users/' + ${user.id} + '/profile-picture'}" style="width: 40px; height: 40px;">
                     <span th:text="${user.fname} "></span>
                     <span th:if="${user.lname != null}" th:text="${user.lname}"></span>
                 </td>
@@ -99,7 +103,8 @@
             </tr>
             <tr th:if="${!requestReceived.empty}" th:each="user : ${requestReceived}">
                 <td class="align-middle">
-                    <img class="rounded-circle overflow-hidden border border-dark" th:src="@{'/users/' + ${user.id} + '/profile-picture'}" style="width: 40px; height: 40px;">
+                    <img class="rounded-circle overflow-hidden border border-dark"
+                         th:src="@{'/users/' + ${user.id} + '/profile-picture'}" style="width: 40px; height: 40px;">
                     <span th:text="${user.fname} "></span>
                     <span th:if="${user.lname != null}" th:text="${user.lname}"></span>
                 </td>
@@ -119,7 +124,8 @@
             </tr>
             <tr th:if="searchResults != null" th:each="friend : ${searchResults}">
                 <td class="align-middle">
-                    <img class="rounded-circle overflow-hidden border border-dark" th:src="@{'/users/' + ${friend.id} + '/profile-picture'}" style="width: 40px; height: 40px;">
+                    <img class="rounded-circle overflow-hidden border border-dark"
+                         th:src="@{'/users/' + ${friend.id} + '/profile-picture'}" style="width: 40px; height: 40px;">
                     <span th:text="${friend.fname} "></span>
                     <span th:if="${friend.lname != null}" th:text="${friend.lname}"></span>
                 </td>
@@ -145,6 +151,7 @@
                         <th scope="col">Name</th>
                         <th scope="col">Link</th>
                         <th scope="col">Profile</th>
+                        <th scope="col">Remove</th>
                     </tr>
                     </thead>
                     <tbody th:if="${friends.empty}">
@@ -155,7 +162,9 @@
                     <tbody th:each="friend : ${friends}">
                     <tr>
                         <td class="align-middle">
-                            <img class="rounded-circle overflow-hidden border border-dark" th:src="@{'/users/' + ${friend.id} + '/profile-picture'}" style="width: 40px; height: 40px;">
+                            <img class="rounded-circle overflow-hidden border border-dark"
+                                 th:src="@{'/users/' + ${friend.id} + '/profile-picture'}"
+                                 style="width: 40px; height: 40px;" alt="">
                             <span th:text="${friend.fname}"> </span>
                             <span th:if="${friend.lname != null}" th:text="${friend.lname}"></span>
                         </td>
@@ -165,6 +174,12 @@
                         <td class="align-middle">
                             <a th:href="@{/users/friendProfile/{id}(id=${friend.id})}">View profile</a>
                         </td>
+                        <td class="align-middle">
+                            <form th:action="@{/users/manageFriends/remove}" method="post">
+                                <input type="hidden" name="friendId" th:value="${friend.id}"/>
+                                <button type="submit" class="btn btn-primary remove-friend-btn">Remove Friend</button>
+                            </form>
+                        </td>
                     </tr>
                     </tbody>
                 </table>
@@ -172,6 +187,45 @@
         </div>
 
         <div class="col-sm-10 col-md-5">
+            <div class="card mb-1 h-100">
+                <div class="card-body">
+                    <h2>sent requests: </h2>
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Status</th>
+                            <th scope="col"></th>
+                        </tr>
+                        </thead>
+                        <tbody th:if="${sentRequests.empty}">
+                        <tr>
+                            <td colspan="2">No requests sent.</td>
+                        </tr>
+                        </tbody>
+                        <tbody th:each="friend : ${sentRequests}">
+                        <tr>
+                            <td class="align-middle">
+                                <img class="rounded-circle overflow-hidden border border-dark"
+                                     th:src="@{'/users/' + ${friend.user2.id} + '/profile-picture'}"
+                                     style="width: 40px; height: 40px;" alt="">
+                                <span th:text="${friend.user2.fname}"> </span>
+                                <span th:if="${friend.user2 != null}"
+                                      th:text="${friend.user2.lname}"></span>
+                            </td>
+                            <td class="align-middle" th:if="${friend.status != ''}"
+                                th:text="${friend.status}"></td>
+                            <form th:action="@{/users/manageFriends/cancel}" method="post" class="d-inline">
+                                <input type="hidden" name="userId" th:value="${friend.user2.id}" class="d-inline"/>
+                                <td class="align-middle">
+                                    <button class="btn btn-success btn-sm mr-2">Cancel</button>
+                                </td>
+                            </form>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
             <div class="card h-100 mb-1">
                 <div class="card-body">
@@ -193,7 +247,9 @@
                         <tbody th:each="friend : ${receivedRequests}">
                         <tr>
                             <td>
-                                <img class="rounded-circle overflow-hidden border border-dark" th:src="@{'/users/' + ${friend.user1.id} + '/profile-picture'}" style="width: 40px; height: 40px;">
+                                <img class="rounded-circle overflow-hidden border border-dark"
+                                     th:src="@{'/users/' + ${friend.user1.id} + '/profile-picture'}"
+                                     style="width: 40px; height: 40px;" alt="">
                                 <span th:text="${friend.user1.fname}"> </span>
                                 <span th:if="${friend.user1 != null}"
                                       th:text="${friend.user1.lname}"></span>
@@ -215,48 +271,62 @@
                     </table>
                 </div>
             </div>
-
-            <div class="card mb-1 h-100">
-                <div class="card-body">
-                    <h2>sent requests: </h2>
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th scope="col">Name</th>
-                            <th scope="col">Status</th>
-                        </tr>
-                        </thead>
-                        <tbody th:if="${sentRequests.empty}">
-                        <tr>
-                            <td colspan="2">No requests sent.</td>
-                        </tr>
-                        </tbody>
-                        <tbody th:each="friend : ${sentRequests}">
-                        <tr>
-                            <td class="align-middle">
-                                <img class="rounded-circle overflow-hidden border border-dark" th:src="@{'/users/' + ${friend.user2.id} + '/profile-picture'}" style="width: 40px; height: 40px;">
-                                <span th:text="${friend.user2.fname}"> </span>
-                                <span th:if="${friend.user2 != null}"
-                                      th:text="${friend.user2.lname}"></span>
-                            </td>
-                            <td class="align-middle" th:text="${friend.status}"></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
         </div>
     </div>
 </div>
 
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalLabel">Confirm Removal</h5>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to remove this friend?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="confirmRemove">Remove Friend</button>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
+
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        document.getElementById('showSearchFormBtn').addEventListener('click', function () {
-            let searchForm = document.getElementById('searchForm');
+        const removeFriendButtons = document.querySelectorAll('.remove-friend-btn');
+        const confirmModal = $('#confirmModal');
+        let formToSubmit = null;
+
+        removeFriendButtons.forEach(button => {
+            button.addEventListener('click', function (event) {
+                event.preventDefault();
+                formToSubmit = button.closest('form');
+                confirmModal.modal('show');
+            });
+        });
+
+        document.getElementById('confirmRemove').addEventListener('click', function () {
+            formToSubmit.submit();
+        });
+
+        let searchFormBtn = document.getElementById('showSearchFormBtn');
+        let searchForm = document.getElementById('searchForm');
+
+        searchFormBtn.addEventListener('click', function () {
             searchForm.classList.toggle('d-none');
         });
+
+        // Ensure modal hides when clicking cancel
+        confirmModal.find('.btn-secondary').on('click', function () {
+            confirmModal.modal('hide');
+        });
     });
+
+
 </script>
 
 
