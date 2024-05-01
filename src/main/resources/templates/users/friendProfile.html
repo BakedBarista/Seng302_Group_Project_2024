@@ -10,7 +10,7 @@
 <body>
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 <div class="container">
-    <a href="http://localhost:8080/users/manageFriends" class="btn btn-primary mt-3 mb-3">Back to My Friends</a>
+    <a th:href="@{/users/manageFriends}" class="btn btn-primary mt-3 mb-3">Back to My Friends</a>
     <main class="main-container">
         <h1> Friend Profile</h1>
 
