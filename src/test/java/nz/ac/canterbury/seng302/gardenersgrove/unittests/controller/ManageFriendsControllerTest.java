@@ -420,4 +420,19 @@
          verify(model, never()).addAttribute(eq("Friend"), any(GardenUser.class));
          assertEquals("redirect:/", result);
      }
+
+     /**
+      * Testing cancelSentRequest method
+      */
+     @Test
+     public void whenUserCancelFriendRequest_thenFriendshipIsRemoved() {
+         Friends friends = new Friends(loggedInUser,otherUser,"pending");
+         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+         when(gardenUserService.getUserById(otherUserId)).thenReturn(otherUser);
+         when(friendService.getFriendship(loggedInUserId,otherUserId)).thenReturn(friends);
+         String result = manageFriendsController.cancelSentRequest(authentication, otherUserId);
+
+         verify(friendService, times(1)).removeFriendship(friends);
+         assertEquals("redirect:/users/manageFriends", result);
+     }
  }
