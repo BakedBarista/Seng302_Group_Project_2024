@@ -16,8 +16,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-
-
 /**
  * Entity class for garden with name, location and size
  */
@@ -85,9 +83,17 @@ public class Garden {
     @JoinColumn(name = "owner_id", nullable = false)
     private GardenUser owner;
 
-
     @Lob
     private String weatherForecast;
+
+    @Lob
+    private String weatherPrevious;
+
+    @Column(nullable = false)
+    private boolean displayWeatherAlert = true;
+
+    @Column
+    private boolean wateringRecommendation;
 
     public Garden() {
     }
@@ -199,6 +205,42 @@ public class Garden {
         }
     }
 
+    /**
+     * Gets the previous weather from the Database and deserialises the JSON to a List of Maps
+     * @return the weather forecast in a list of maps
+     */
+    public List<Map<String, Object>> getWeatherPrevious() {
+        ObjectMapper objectMapper = new ObjectMapper()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        if (weatherForecast == null) {
+            return Collections.emptyList();
+        }
+
+        try {
+            return objectMapper.readValue(weatherForecast, new TypeReference<List<Map<String, Object>>>() {});
+        } catch (JsonProcessingException e) {
+            logger.error("Error processing JSON", e);
+            return Collections.emptyList();
+        }
+    }
+
+    /**
+     * Sets the previous weather in the database and serialises the forecast data into a JSON string
+     * @param weatherPrevious the weather data a List of Maps
+     */
+    public void setWeatherPrevious(List<Map<String, Object>> weatherPrevious) {
+        ObjectMapper objectMapper = new ObjectMapper()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        try {
+            this.weatherPrevious = objectMapper.writeValueAsString(weatherPrevious);
+
+        } catch (JsonProcessingException e) {
+            logger.error("Issue converting weather forecast back into a String", e);
+            this.weatherPrevious = "";
+        }
+    }
+
     public String getForecastLastUpdated() {
         return forecastLastUpdated;
     }
@@ -214,16 +256,6 @@ public class Garden {
     public void setTimezoneId(String timezoneId) {
         this.timezoneId = timezoneId;
     }
-
-//    @Override
-//    public String toString() {
-//        return "Garden{" +
-//                "id=" + id +
-//                ", gardenName='" + name + '\'' +
-//                ", gardenLocation='" + location + '\'' +
-//                ", gardenSize='" + size + '\'' +
-//                '}';
-//    }
 
     public String getStreetNumber() {
         return streetNumber;
@@ -288,6 +320,22 @@ public class Garden {
 
     public void setCountry(String country) {
         this.country = country;
+    }
+
+    public boolean getDisplayWeatherAlert() {
+        return displayWeatherAlert;
+    }
+
+    public void setDisplayWeatherAlert(boolean displayedToday) {
+        this.displayWeatherAlert = displayedToday;
+    }
+
+    public boolean getWateringRecommendation() {
+        return wateringRecommendation;
+    }
+
+    public void setWateringRecommendation(boolean weatherRecommendation) {
+        this.wateringRecommendation = weatherRecommendation;
     }
 
     public void setPlants(List<Plant> plants) {
