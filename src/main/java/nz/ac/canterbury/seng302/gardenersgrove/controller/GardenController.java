@@ -7,6 +7,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.ModerationService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.slf4j.Logger;
@@ -34,6 +35,9 @@ public class GardenController {
 
     private final GardenService gardenService;
     private final PlantService plantService;
+
+    @Autowired
+    ModerationService moderationService;
 
     private final GardenUserService gardenUserService;
     private final FriendService friendService;
@@ -80,6 +84,13 @@ public class GardenController {
         }
         GardenUser owner = gardenUserService.getCurrentUser();
         garden.setOwner(owner);
+
+        //Checks description for inappropriate content
+        if (moderationService.checkIfDescriptionIsFlagged(garden.getDescription())) {
+            model.addAttribute("garden", garden);
+            model.addAttribute("profanity", "The description does not match the language standards of the app.");
+            return "gardens/createGarden";
+        }
 
         Garden savedGarden = gardenService.addGarden(garden);
         return "redirect:/gardens/" + savedGarden.getId();
@@ -184,6 +195,12 @@ public class GardenController {
             model.addAttribute("id", id);
             return "gardens/editGarden";
         }
+        //Checks description for inappropriate content
+        if (moderationService.checkIfDescriptionIsFlagged(garden.getDescription())) {
+            model.addAttribute("garden", garden);
+            model.addAttribute("profanity", "The description does not match the language standards of the app.");
+            return "gardens/editGarden";
+        }
 
         Optional<Garden> existingGarden = gardenService.getGardenById(id);
         if (existingGarden.isPresent()) {
@@ -234,7 +251,7 @@ public class GardenController {
     public String viewFriendGardens(
         Authentication authentication,
         @PathVariable() Long id,
-        Model model) {  
+        Model model) {
             Long loggedInUserId = (Long) authentication.getPrincipal();
             Friends isFriend = friendService.getFriendship(loggedInUserId, id);
             GardenUser owner = gardenUserService.getUserById(id);
@@ -249,7 +266,7 @@ public class GardenController {
 
         return "gardens/friendGardens";
     }
-    
+
 
     /**
      * send the user to public gardens with a subset of gardens matching

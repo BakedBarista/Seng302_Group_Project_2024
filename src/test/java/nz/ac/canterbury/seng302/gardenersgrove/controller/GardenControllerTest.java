@@ -1,16 +1,20 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 
+import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.ModerationService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
@@ -28,15 +32,18 @@ public class GardenControllerTest {
     private PlantService plantService;
 
     @Mock
+    ModerationService moderationService;
+
+    @Mock
     private GardenUserService gardenUserService;
 
     @InjectMocks
     private GardenController gardenController;
 
-
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
+        gardenController.moderationService = moderationService;
         GardenUser mockUser = mock(GardenUser.class);
         when(mockUser.getId()).thenReturn(1L);
         when(gardenUserService.getCurrentUser()).thenReturn(mockUser);
@@ -73,6 +80,8 @@ public class GardenControllerTest {
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
         when(gardenService.addGarden(validGarden)).thenReturn(validGarden);
+
+        Mockito.when(moderationService.moderateDescription(anyString())).thenReturn(ResponseEntity.ok().build());
         String result = gardenController.submitForm(validGarden, bindingResult, model);
         assertEquals("redirect:/gardens/1", result);
     }
