@@ -221,7 +221,7 @@ public class GardenController {
         Pageable pageable = PageRequest.of(page, size);
         Page<Garden> gardenPage = gardenService.getPageForPublicGardens(pageable);
         model.addAttribute("gardenPage", gardenPage);
-        List<Garden> gardens = gardenService.getPublicGardens();
+        List<Garden> gardens = gardenService.getGardensByOwnerId(gardenUserService.getCurrentUser().getId());
         model.addAttribute("gardens", gardens);
         List<Garden> gardensWithPlants = gardenPage.getContent().stream()
                 .map(garden -> {
