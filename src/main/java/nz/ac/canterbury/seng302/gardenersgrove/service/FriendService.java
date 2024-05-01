@@ -98,9 +98,8 @@ public class FriendService {
         return friendsRepository.getReceivedRequests(user);
     }
 
-
     public List<Friends> getReceivedRequestsDeclined(Long user) {
-        return friendsRepository.getReceivedRequests(user);
+        return friendsRepository.getReceivedRequestsDeclined(user);
     }
 
     public List<Friends> getSentRequestsDeclined(Long user) {

@@ -89,11 +89,14 @@
       */
      @Test
      public void whenNotFriends_thenNewFriendshipMadeWithPending() {
+         List<Friends> iDeclinedFriend = new ArrayList<>();
+
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
          when(gardenUserService.getUserById(loggedInUserId)).thenReturn(loggedInUser);
          when(gardenUserService.getUserById(otherUserId)).thenReturn(otherUser);
+         when(friendService.getReceivedRequestsDeclined(loggedInUserId)).thenReturn(iDeclinedFriend);
+         when(friendService.getAcceptedFriendship(loggedInUserId, otherUserId)).thenReturn(null);
          when(friendService.getFriendship(loggedInUserId, otherUserId)).thenReturn(null);
-
          String result = manageFriendsController.manageFriendsInvite(authentication, otherUserId);
 
          verify(friendService, times(1)).save(any(Friends.class));
@@ -105,13 +108,14 @@
       */
      @Test
      public void whenAlreadyFriends_thenNoNewFriendRecord() {
-         Friends newFriends = new Friends(loggedInUser, otherUser, "accepted");
-//         friendService.save(newFriends);
+         Friends existingFriends = new Friends(loggedInUser, otherUser, "accepted");
+         List<Friends> iDeclinedFriend = new ArrayList<>();
 
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
          when(gardenUserService.getUserById(loggedInUserId)).thenReturn(loggedInUser);
          when(gardenUserService.getUserById(otherUserId)).thenReturn(otherUser);
-         when(friendService.getFriendship(loggedInUserId, otherUserId)).thenReturn(newFriends);
+         when(friendService.getReceivedRequestsDeclined(loggedInUserId)).thenReturn(iDeclinedFriend);
+         when(friendService.getAcceptedFriendship(loggedInUserId, otherUserId)).thenReturn(existingFriends);
 
          String result = manageFriendsController.manageFriendsInvite(authentication, otherUserId);
 
@@ -125,10 +129,13 @@
      @Test
      public void whenFriendshipPending_thenNoNewFriendRecord() {
          Friends friendRequest = new Friends(loggedInUser, otherUser, "pending");
+         List<Friends> iDeclinedFriend = new ArrayList<>();
 
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
          when(gardenUserService.getUserById(loggedInUserId)).thenReturn(loggedInUser);
          when(gardenUserService.getUserById(otherUserId)).thenReturn(otherUser);
+         when(friendService.getReceivedRequestsDeclined(loggedInUserId)).thenReturn(iDeclinedFriend);
+         when(friendService.getAcceptedFriendship(loggedInUserId, otherUserId)).thenReturn(null);
          when(friendService.getFriendship(loggedInUserId, otherUserId)).thenReturn(friendRequest);
 
          String result = manageFriendsController.manageFriendsInvite(authentication, otherUserId);
@@ -142,10 +149,10 @@
       */
      @Test
      public void whenLoggedInUserRequestsThemself_thenNoNewFriendRecord() {
+         Friends friendRequest = new Friends(loggedInUser, loggedInUser, "pending");
+
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
          when(gardenUserService.getUserById(loggedInUserId)).thenReturn(loggedInUser);
-         when(gardenUserService.getUserById(loggedInUserId)).thenReturn(loggedInUser);
-         when(friendService.getFriendship(loggedInUserId, loggedInUserId)).thenReturn(null);
 
          String result = manageFriendsController.manageFriendsInvite(authentication, loggedInUserId);
 
@@ -182,6 +189,7 @@
      @Test
      public void whenNoFriendshipPending_thenDoesNotAcceptFriend() {
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+         when(friendService.getFriendship(loggedInUserId, otherUserId)).thenReturn(null);
 
          String result = manageFriendsController.manageFriendsAccept(authentication, otherUserId);
 
@@ -207,10 +215,9 @@
       */
      @Test
      public void whenAlreadyFriends_thenDoesNotAcceptFriend() {
-         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
-
          Friends newFriends = new Friends(loggedInUser, otherUser, "accepted");
-//         friendService.save(newFriends);
+         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+         when(friendService.getAcceptedFriendship(loggedInUserId, otherUserId)).thenReturn(newFriends);
 
          String result = manageFriendsController.manageFriendsAccept(authentication, otherUserId);
          verify(friendService, never()).save(any(Friends.class));
@@ -222,18 +229,18 @@
       */
      @Test
      public void whenFriendshipPending_thenFriendDeclined() {
+         List<Friends> friendShip = new ArrayList<>();
+         Friends existingRequest = new Friends(otherUser, loggedInUser, "pending");
+         friendShip.add(existingRequest);
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
          when(gardenUserService.getUserById(loggedInUserId)).thenReturn(loggedInUser);
          when(gardenUserService.getUserById(otherUserId)).thenReturn(otherUser);
-
-         Friends existingRequest = new Friends(loggedInUser, otherUser, "pending");
-         when(friendService.getFriendship(loggedInUserId, otherUserId)).thenReturn(existingRequest);
+         when(friendService.getReceivedRequests(loggedInUserId)).thenReturn(friendShip);
 
          String result = manageFriendsController.manageFriendsDecline(authentication, otherUserId);
 
          verify(friendService).save(any(Friends.class));
-
-         assertEquals(friendService.getFriendship(loggedInUserId, otherUserId).getStatus(), "declined");
+         assertEquals("declined", existingRequest.getStatus());
          assertEquals("redirect:/users/manageFriends", result);
      }
 
@@ -242,9 +249,11 @@
       */
      @Test
      public void whenNoFriendshipPending_thenDoesNotDeclineFriend() {
+         List<Friends> friendShip = new ArrayList<>();
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
          when(gardenUserService.getUserById(loggedInUserId)).thenReturn(loggedInUser);
          when(gardenUserService.getUserById(otherUserId)).thenReturn(otherUser);
+         when(friendService.getReceivedRequests(loggedInUserId)).thenReturn(friendShip);
 
          String result = manageFriendsController.manageFriendsDecline(authentication, otherUserId);
 
@@ -273,10 +282,10 @@
       */
      @Test
      public void whenAlreadyFriends_thenDoesNotDeclineFriend() {
-         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
-
          Friends newFriends = new Friends(loggedInUser, otherUser, "accepted");
- //        friendService.save(newFriends);
+
+         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+         when(friendService.getAcceptedFriendship(loggedInUserId, otherUserId)).thenReturn(newFriends);
 
          String result = manageFriendsController.manageFriendsAccept(authentication, otherUserId);
 

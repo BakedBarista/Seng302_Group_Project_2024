@@ -74,16 +74,30 @@ public class ManageFriendsController {
         Long loggedInUserId = (Long) authentication.getPrincipal();
         GardenUser loggedInUser = userService.getUserById(loggedInUserId);
         GardenUser sentTo = userService.getUserById(requestedUser);
+
         boolean requestingMyself = loggedInUserId == requestedUser;
         if (requestingMyself) {
             return "redirect:/users/manageFriends";
         }
-        List<Friends> iDeclinedFriend = friendService.getReceivedRequestsDeclined(loggedInUser.getId());
+        List<Friends> iDeclinedFriend = friendService.getReceivedRequestsDeclined(loggedInUserId);
         for (Friends user2 : iDeclinedFriend) {
             if (sentTo == user2.getUser1()) {
                 return "redirect:/users/manageFriends";
             }
         }
+
+        Friends alreadyFriends = friendService.getAcceptedFriendship(loggedInUserId, requestedUser);
+        if (alreadyFriends != null) {
+            return "redirect:/users/manageFriends";
+        }
+
+        Friends requestsPending = friendService.getFriendship(loggedInUserId, requestedUser);
+        if (requestsPending != null) {
+            if (requestsPending.getStatus() == "pending") {
+                return "redirect:/users/manageFriends";
+            }
+        }
+
         Friends newFriends = new Friends(loggedInUser, sentTo, "pending");
         friendService.save(newFriends);
 
@@ -114,6 +128,11 @@ public class ManageFriendsController {
             }
         }
 
+        Friends alreadyFriends = friendService.getAcceptedFriendship(loggedInUserId, acceptUser);
+        if (alreadyFriends != null) {
+            return "redirect:/users/manageFriends";
+        }
+
         Friends friendShip = friendService.getFriendship(loggedInUserId, acceptUser);
 
         if (friendShip != null) {
@@ -140,6 +159,11 @@ public class ManageFriendsController {
         Long loggedInUserId = (Long) authentication.getPrincipal();
         GardenUser loggedInUser = userService.getUserById(loggedInUserId);
         GardenUser receivedFrom = userService.getUserById(declineUser);
+
+        Friends alreadyFriends = friendService.getAcceptedFriendship(loggedInUserId, declineUser);
+        if (alreadyFriends != null) {
+            return "redirect:/users/manageFriends";
+        }
 
         if (loggedInUser != null && receivedFrom != null) {
             List<Friends> friendShip = friendService.getReceivedRequests(loggedInUserId);
