@@ -46,13 +46,8 @@ gradlew test
 ```
 
 
-## Todo (Sprint 2)
-
-- Update team name into `build.gradle`
-- Update this README title
-- Update this README contributors
-- Set up Gitlab CI server (refer to the student guide on Scrumboard)
-- Decide on a LICENSE
+## License
+Team 800's Gardener's Grove App uses the license: **GNU Affero General Public License v3.0**
 
 ## Contributors
 
