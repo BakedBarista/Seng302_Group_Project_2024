@@ -11,20 +11,24 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import jakarta.validation.Valid;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.ResetPasswordDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.Mockito;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.ResetPasswordController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.ResetPasswordDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.ResetPasswordCallbackDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 public class ResetPasswordControllerTest {
 
@@ -36,6 +40,9 @@ public class ResetPasswordControllerTest {
     private EmailSenderService emailSenderService;
     private GardenUser user;
 
+    private ResetPasswordDTO resetPasswordDTO;
+    private Model model;
+
     @BeforeEach
     public void setUp() {
         request = mock(HttpServletRequest.class);
@@ -44,6 +51,7 @@ public class ResetPasswordControllerTest {
         emailSenderService = mock(EmailSenderService.class);
         controller = new ResetPasswordController(userService, emailSenderService, tokenService);
 
+        resetPasswordDTO = mock(ResetPasswordDTO.class);
         token = "abc123xyz";
         user = new GardenUser("John", "Doe", "john.doe@gmail.com", "password", null);
     }
@@ -67,18 +75,23 @@ public class ResetPasswordControllerTest {
 
     @Test
     void givenEmailExists_whenResetPasswordRequested_thenEmailIsSent() {
+        BindingResult bindingResult = Mockito.mock(BindingResult.class);
+
         when(userService.getUserByEmail(user.getEmail())).thenReturn(user);
         when(tokenService.createAuthenticationToken()).thenReturn(token);
         when(request.getScheme()).thenReturn("https");
         when(request.getServerName()).thenReturn("example.com");
         when(request.getServerPort()).thenReturn(443); // Standard HTTPS port
+        when(resetPasswordDTO.getEmail()).thenReturn(user.getEmail());
 
-        String result = controller.resetPasswordConfirmation(user.getEmail(), request);
+        String result = controller.resetPasswordConfirmation(request, resetPasswordDTO, bindingResult, model);
 
         assertEquals("users/resetPasswordConfirmation", result);
         verify(emailSenderService).sendEmail(eq(user), any(),
                 matches("https://example.com/users/reset-password/callback\\?token=abc123xyz"));
+
     }
+
 
     @Test
     void givenEmailDoesntExist_whenResetPasswordRequested_thenEmailIsNotSent() {
@@ -88,7 +101,10 @@ public class ResetPasswordControllerTest {
         when(request.getServerName()).thenReturn("example.com");
         when(request.getServerPort()).thenReturn(443); // Standard HTTPS port
 
-        String result = controller.resetPasswordConfirmation("noreply@example.com", request);
+        BindingResult bindingResult = Mockito.mock(BindingResult.class);
+        Mockito.when(bindingResult.hasErrors()).thenReturn(false);
+
+        String result = controller.resetPasswordConfirmation(request,resetPasswordDTO,bindingResult, model);
 
         assertEquals("users/resetPasswordConfirmation", result);
         verify(emailSenderService, times(0)).sendEmail(any(GardenUser.class), any(), any());
@@ -102,8 +118,8 @@ public class ResetPasswordControllerTest {
         String result = controller.resetPasswordCallback(token, model);
 
         assertEquals("users/resetPasswordCallback", result);
-        verify(model).addAttribute(eq("resetPasswordDTO"), assertArg((ResetPasswordDTO resetPasswordDTO) -> {
-            assertEquals(token, resetPasswordDTO.getToken());
+        verify(model).addAttribute(eq("resetPasswordCallbackDTO"), assertArg((ResetPasswordCallbackDTO resetPasswordCallbackDTO) -> {
+            assertEquals(token, resetPasswordCallbackDTO.getToken());
         }));
     }
 
@@ -121,7 +137,7 @@ public class ResetPasswordControllerTest {
     void givenLinkNotExpired_whenFormSubmitted_thenPasswordChanged() {
         when(userService.getUserByResetPasswordToken(token)).thenReturn(user);
 
-        ResetPasswordDTO resetPasswordDTO = new ResetPasswordDTO();
+        ResetPasswordCallbackDTO resetPasswordDTO = new ResetPasswordCallbackDTO();
         resetPasswordDTO.setToken(token);
         resetPasswordDTO.setNewPassword("newPassword");
         resetPasswordDTO.setConfirmPassword("newPassword");
@@ -140,7 +156,7 @@ public class ResetPasswordControllerTest {
     void givenLinkExpired_whenFormSubmitted_thenRedirectedToLogin() {
         when(userService.getUserByResetPasswordToken(token)).thenReturn(null);
 
-        ResetPasswordDTO resetPasswordDTO = new ResetPasswordDTO();
+        ResetPasswordCallbackDTO resetPasswordDTO = new ResetPasswordCallbackDTO();
         resetPasswordDTO.setToken(token);
         resetPasswordDTO.setNewPassword("newPassword");
         resetPasswordDTO.setConfirmPassword("newPassword");
