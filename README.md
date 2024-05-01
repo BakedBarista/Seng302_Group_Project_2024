@@ -24,7 +24,7 @@ By default, the application will run on local port 8080 [http://localhost:8080](
    - {First Name: "Liam", Last Name: "Doe", Email: "liam2@gmail.com", Password: "password"}
    - {First Name: "Immy", Last Name: null, Email: "immy@gmail.com", Password: "password"}
 
-We have created multiple dummy users for the sake of manually testing **U17 - Send Friend Request** and **U18 - Cancel Friend Request**. 
+We have created multiple default users for the sake of manually testing **U17 - Send Friend Request** and **U18 - Cancel Friend Request**. 
 
 Please not that the user "Immy" does not have a last name in order to double check that it does not break anything when a user does not have a last name.
 
@@ -60,10 +60,3 @@ Team 800's Gardener's Grove App uses the license: **GNU Affero General Public Li
 - Ryan Scofield (rsc104)
 - Todd Vermeir (tve21)
 - Carl Chen (zch66)
-
-## References
-
-- [Spring Boot Docs](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/)
-- [Spring JPA docs](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/)
-- [Thymeleaf Docs](https://www.thymeleaf.org/documentation.html)
-- [Learn resources](https://learn.canterbury.ac.nz/course/view.php?id=17797&section=8)
