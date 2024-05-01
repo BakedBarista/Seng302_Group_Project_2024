@@ -46,15 +46,16 @@ gradlew test
 ```
 
 
-## License
-Team 800's Gardener's Grove App uses the license: **GNU Affero General Public License v3.0**
+## Licenses
+
+Team 800's Gardener's Grove App is licensed under the **GNU Affero General Public License v3.0**.
 
 ## Code Contributors
 
 - SENG302 teaching team
 - Imogen Keeling (ike24)
 - [Luke Stynes (lst89)](https://www.github.com/lukestynes)
-- Benjamin Davies (bda71)
+- [Benjamin Davies (bda71)](https://www.github.com/Benjamin-Davies)
 - Maxzi Francisco (mfr91)
 - Liam Ceelen-Thomas (lce26)
 - Ryan Scofield (rsc104)
