@@ -1,41 +1,23 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity.dto;
 
+import jakarta.persistence.Column;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+
 import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationConstants.*;
 
-import jakarta.validation.constraints.Pattern;
-
-/**
- * Data transfer object for the reset password form
- */
 public class ResetPasswordDTO {
-    private String token;
+    @Pattern(regexp = EMAIL_REGEX, message = "Email address must be in the form ‘jane@doe.nz’")
+    private String email;
 
-    @Pattern(regexp = PASSWORD_REGEX, message = "Your password must beat least 8 characters long and include at least one uppercase letter, one lowercase letter, one number and one special character")
-    private String newPassword;
-
-    private String confirmPassword;
-
-    public String getToken() {
-        return token;
+    public String getEmail() {
+        return email;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public String getNewPassword() {
-        return newPassword;
-    }
-
-    public void setNewPassword(String newPassword) {
-        this.newPassword = newPassword;
-    }
-
-    public String getConfirmPassword() {
-        return confirmPassword;
-    }
-
-    public void setConfirmPassword(String confirmPassword) {
-        this.confirmPassword = confirmPassword;
-    }
 }
+

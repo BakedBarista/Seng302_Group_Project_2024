@@ -94,13 +94,13 @@ public class GardenServiceTest {
         Pageable pageable = PageRequest.of(0, 10);
         List<Garden> gardens = Arrays.asList(new Garden(), new Garden());
         Page<Garden> expectedPage = new PageImpl<>(gardens, pageable, gardens.size());
-        when(gardenServiceMock.getPublicGardens(pageable)).thenReturn(expectedPage);
+        when(gardenServiceMock.getPageForPublicGardens(pageable)).thenReturn(expectedPage);
 
-        Page<Garden> result = gardenServiceMock.getPublicGardens(pageable);
+        Page<Garden> result = gardenServiceMock.getPageForPublicGardens(pageable);
 
         assertNotNull(result);
         assertEquals(2, result.getContent().size());
-        verify(gardenServiceMock).getPublicGardens(pageable);
+        verify(gardenServiceMock).getPageForPublicGardens(pageable);
     }
 
     @Test

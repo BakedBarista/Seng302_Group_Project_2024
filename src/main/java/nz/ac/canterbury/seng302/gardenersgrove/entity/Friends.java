@@ -13,11 +13,11 @@ public class Friends {
     private Long friend_id;
 
     @ManyToOne
-    @JoinColumn(name = "user1_id")
+    @JoinColumn(name = "user1")
     private GardenUser user1;
 
     @ManyToOne
-    @JoinColumn(name = "user2_id")
+    @JoinColumn(name = "user2")
     private GardenUser user2;
     
     @Column(nullable = false)
