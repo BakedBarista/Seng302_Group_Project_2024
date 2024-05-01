@@ -123,14 +123,39 @@ public class WeatherAPIService {
             garden.get().setWeatherPrevious(weatherPrevious);
             garden.get().setTimezoneId(newTimezoneId);
             garden.get().setForecastLastUpdated(newLastUpdateDate);
-            gardenService.addGarden(garden.get());
+            garden.get().setDisplayWeatherAlert(true);
 
         }
         // Combine weather data
         weatherData.add(weatherPrevious);
         weatherData.add(weatherForecast);
+
+        // Set the watering recommendation
+        garden.get().setWateringRecommendation(generateWateringRecommendation(weatherData));
+        gardenService.addGarden(garden.get());
+
         logger.info("Returning weather data as: {}", weatherData);
         return weatherData;
+    }
+
+    public boolean generateWateringRecommendation(List<List<Map<String, Object>>> weatherData) {
+        List<Map<String, Object>> previousWeather = weatherData.get(0);
+        List<Map<String, Object>> forecastWeather = weatherData.get(1);
+
+        // If the current weather is rain, don't water plants
+        if (String.valueOf(forecastWeather.get(0).get("conditions")).toLowerCase().contains("rain")) {
+            return false;
+        }
+
+        // If it has rained last 2 days, don't water plants
+        int rainyDayCount = 0;
+
+        for (Map<String, Object> day: previousWeather) {
+            if (String.valueOf(day.get("conditions")).toLowerCase().contains("rain")) {
+                rainyDayCount ++;
+            }
+        }
+        return rainyDayCount != 2;
     }
 
     /**
