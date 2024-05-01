@@ -164,32 +164,53 @@ public class WeatherAPIService {
      * @param apiResponse the response from the API as a WeatherAPIResponse
      * @return
      */
-    private ArrayList<Map<String, Object>> parseWeatherResponse(WeatherAPIResponse apiResponse) {
+    private ArrayList<Map<String, Object>> parseWeatherResponse(ResponseEntity<String> apiResponse) {
         ArrayList<Map<String, Object>> parsedWeather = new ArrayList<>();
+        HttpStatusCode statusCode = apiResponse.getStatusCode();
 
-        for (WeatherAPIResponse.Forecast.ForecastDay forecastDay: apiResponse.getForecast().getForecastDays()) {
-            Map<String, Object> weatherValues = new HashMap<>();
+        if (statusCode == HttpStatus.OK && apiResponse.getBody() != null) {
+            logger.info("Weather data was successfully fetched.");
+            logger.debug("API Result: {}", apiResponse.getBody());
+            logger.info("Parsing JSON weather result...");
 
-            String[] urlParts = forecastDay.getDay().getCondition().getIconUrl().split("/");
-            String icon = urlParts[urlParts.length - 1];
+            try {
+                String jsonResponse = apiResponse.getBody();
+                WeatherAPIResponse weatherAPIResponse = null;
+                weatherAPIResponse = objectMapper.readValue(jsonResponse, WeatherAPIResponse.class);
+                logger.info("{}", weatherAPIResponse);
 
-            weatherValues.put("city", apiResponse.getLocation().getLocationName());
-            weatherValues.put("timezoneId", apiResponse.getLocation().getTimezoneId());
-            weatherValues.put("maxTemp", forecastDay.getDay().getMaxTemp());
+                for (WeatherAPIResponse.Forecast.ForecastDay forecastDay: weatherAPIResponse.getForecast().getForecastDays()) {
+                    Map<String, Object> weatherValues = new HashMap<>();
+
+                    String[] urlParts = forecastDay.getDay().getCondition().getIconUrl().split("/");
+                    String icon = urlParts[urlParts.length - 1];
+
+                    weatherValues.put("city", weatherAPIResponse.getLocation().getLocationName());
+                    weatherValues.put("timezoneId", weatherAPIResponse.getLocation().getTimezoneId());
+                    weatherValues.put("maxTemp", forecastDay.getDay().getMaxTemp());
                     weatherValues.put("minTemp", forecastDay.getDay().getMinTemp());
-            weatherValues.put("conditions", forecastDay.getDay().getCondition().getConditions());
-            weatherValues.put("iconUrl", icon);
-            weatherValues.put("windSpeed", forecastDay.getDay().getWindSpeed());
-            weatherValues.put("precipitation", forecastDay.getDay().getPrecipitation());
-            weatherValues.put("uv", forecastDay.getDay().getUv());
+                    weatherValues.put("avgHumidity", forecastDay.getDay().getHumidity());
+                    weatherValues.put("conditions", forecastDay.getDay().getCondition().getConditions());
+                    weatherValues.put("iconUrl", icon);
+                    weatherValues.put("windSpeed", forecastDay.getDay().getWindSpeed());
+                    weatherValues.put("precipitation", forecastDay.getDay().getPrecipitation());
+                    weatherValues.put("uv", forecastDay.getDay().getUv());
 
-            // Transform date into format we want e.g.: 2024-04-29 to Monday 29 Apr
-            LocalDate date = LocalDate.parse(forecastDay.getDate());
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE dd MMM");
-            weatherValues.put("date", date.format(formatter));
+                    // Transform date into format we want e.g.: 2024-04-29 to Monday 29 Apr
+                    LocalDate date = LocalDate.parse(forecastDay.getDate());
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE dd MMM");
+                    weatherValues.put("date", date.format(formatter));
 
-            logger.debug("Weather values for {}: {}", date, weatherValues);
-            parsedWeather.add(weatherValues);
+                    logger.debug("Weather values for {}: {}", date, weatherValues);
+                    parsedWeather.add(weatherValues);
+                }
+            } catch (JsonProcessingException e) {
+                logger.error("Error parsing API response", e);
+            } catch (NullPointerException e) {
+                logger.error("Something went wrong accessing one of the results", e);
+            }
+        } else {
+            logger.error("Weather data was not returned successfully");
         }
         return parsedWeather;
     }
@@ -215,28 +236,10 @@ public class WeatherAPIService {
             HttpStatusCode statusCode = result.getStatusCode();
             logger.info("API responded with status code: {}", statusCode);
 
-            if (statusCode == HttpStatus.OK && result.getBody() != null) {
-                logger.info("Weather data was successfully fetched.");
-                logger.debug("API Result: {}", result.getBody());
-                logger.info("Parsing JSON weather result...");
-
-                try {
-                    String jsonResponse = result.getBody();
-                    WeatherAPIResponse weatherAPIResponse = null;
-                    weatherAPIResponse = objectMapper.readValue(jsonResponse, WeatherAPIResponse.class);
-                    logger.info("{}", weatherAPIResponse);
-
-                    forecastWeather = parseWeatherResponse(weatherAPIResponse);
-                    return forecastWeather;
-                } catch (JsonProcessingException e) {
-                    logger.error("Error parsing API response", e);
-                } catch (NullPointerException e) {
-                    logger.error("Something went wrong accessing one of the results", e);
-                }
-            } else {
-                logger.error("Weather data was not returned successfully");
-            }
+            forecastWeather = parseWeatherResponse(result);
             logger.debug("Weather JSON parsed as: {}", forecastWeather);
+
+            return forecastWeather;
         } catch (HttpClientErrorException e) {
             logger.error("Something went wrong accessing the weather API data. Check the location & API key");
         }
@@ -271,28 +274,11 @@ public class WeatherAPIService {
                 HttpStatusCode statusCode = result.getStatusCode();
                 logger.info("API responded with status code: {}", statusCode);
 
-                if (statusCode == HttpStatus.OK && result.getBody() != null) {
-                    logger.info("Weather data was successfully fetched.");
-                    logger.debug("API Result: {}", result.getBody());
-                    logger.info("Parsing JSON weather result...");
-
-                    try {
-                        String jsonResponse = result.getBody();
-                        WeatherAPIResponse weatherAPIResponse = null;
-                        weatherAPIResponse = objectMapper.readValue(jsonResponse, WeatherAPIResponse.class);
-                        logger.info("{}", weatherAPIResponse);
-                        previousWeather = parseWeatherResponse(weatherAPIResponse);
-                        return previousWeather;
-
-                    } catch (JsonProcessingException e) {
-                        logger.error("Error parsing API response", e);
-                    } catch (NullPointerException e) {
-                        logger.error("Something went wrong accessing one of the results", e);
-                    }
-                } else {
-                    logger.error("Weather data was not returned successfully");
-                }
+                previousWeather = parseWeatherResponse(result);
                 logger.debug("Weather JSON parsed as: {}", previousWeather);
+
+                return previousWeather;
+
             } catch (HttpClientErrorException e) {
                 logger.error("Something went wrong accessing the weather API data. Check the location & API key");
             }
