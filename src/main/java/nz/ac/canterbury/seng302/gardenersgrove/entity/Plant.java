@@ -19,7 +19,7 @@ public class Plant {
     private Long id;
 
     @NotBlank(message = "Plant name cannot by empty and must only include letters, numbers, spaces, dots, commas, hyphens or apostrophes")
-    @Pattern(regexp = "^[a-zA-Z0-9 \\-.,']*$", message = "Plant name cannot by empty and must only include letters, numbers, spaces, dots, commas, hyphens or apostrophes")
+    @Pattern(regexp = "^$|^[\\p{L}0-9 .,'-]+$", message = "Plant name cannot by empty and must only include letters, numbers, spaces, dots, commas, hyphens or apostrophes")
     @Column(nullable = false)
     private String name;
 
@@ -27,7 +27,7 @@ public class Plant {
     @Column(nullable = false)
     private String count;
 
-    @Size(min = 0, max = 511, message = "Plant description must be less than 512 characters")
+    @Size(min = 0, max = 512, message = "Plant description must be less than 512 characters")
     @Column(nullable = false, length = 512)
     private String description;
 
