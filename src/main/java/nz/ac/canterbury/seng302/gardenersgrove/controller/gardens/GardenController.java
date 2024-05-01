@@ -142,7 +142,6 @@ public class GardenController {
             List<Map<String, Object>> weatherPrevious = Collections.emptyList();
             List<Map<String, Object>> weatherForecast = Collections.emptyList();
             boolean displayWeatherAlert = false;
-            logger.info("Garden Controller received: {}", weatherResult);
 
             if (!weatherResult.isEmpty()) {
                 weatherPrevious = weatherResult.get(0);
@@ -164,6 +163,11 @@ public class GardenController {
         return "gardens/gardenDetails";
     }
 
+    /**
+     * Hides the weather alert for a specific garden for the remainder of the day
+     * @param id the ID of the garden to hide alerts for
+     * @return redirects back to the detail page
+     */
     @PostMapping("/gardens/{id}/hide-weather-alert")
     public String hideWeatherAlertForGarden(@PathVariable(name = "id") Long id) {
         logger.info("POST /gardens/{}/hide-weather-alert", id);
