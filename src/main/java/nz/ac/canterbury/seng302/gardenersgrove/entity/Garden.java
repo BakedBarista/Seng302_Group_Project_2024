@@ -20,7 +20,7 @@ public class Garden {
     private Long id;
 
     @NotBlank(message = "Garden name cannot be empty")
-    @Pattern(regexp = "^$|^[\\p{L}0-9 .,'-]+$", message = "Garden name must only include letters, numbers, spaces, dots, commas, hyphens, or apostrophes")
+    @Pattern(regexp = "^[\\p{L}0-9 .,'-]*$", message = "Garden name must only include letters, numbers, spaces, dots, commas, hyphens, or apostrophes")
     @Column(nullable = false)
     private String name;
 
@@ -28,29 +28,29 @@ public class Garden {
     @Pattern(regexp = "^.*\\p{L}.*|$", message = "Description must be 512 characters or less and contain some text")
     private String description;
 
-    @Pattern(regexp = "^(|([0-9]+[a-zA-Z]?(\\s?\\-?\\s?[0-9]+[a-zA-Z]?)?))$", message = "Please enter a valid street number")
+    @Pattern(regexp = "^([0-9]+[a-zA-Z]?(\\s?\\-?\\s?[0-9]+[a-zA-Z]?)?)?$", message = "Please enter a valid street number")
     @Column
     private String streetNumber;
 
-    @Pattern(regexp = "^(|([\\p{L}0-9 ,.'-]+))$", message = "Please enter a valid street name")
+    @Pattern(regexp = "^[\\p{L}0-9 ,.'-]*$", message = "Please enter a valid street name")
     @Column
     private String streetName;
 
-    @Pattern(regexp = "^$|^[\\p{L}0-9 .,'-]+$", message = "Please enter a valid suburb")
+    @Pattern(regexp = "^[\\p{L}0-9 .,'-]*$", message = "Please enter a valid suburb")
     @Column
     private String suburb;
 
     @NotBlank(message = "City and Country are required")
-    @Pattern(regexp = "^$|^[\\p{L}0-9 .,'-]+$", message = "Please enter a valid City name")
+    @Pattern(regexp = "^[\\p{L}0-9 .,'-]*$", message = "Please enter a valid City name")
     @Column(nullable = false)
     private String city;
 
     @NotBlank(message = "City and Country are required")
-    @Pattern(regexp = "^$|^[\\p{L}0-9 .,'-]+$", message = "Please enter a valid country name")
+    @Pattern(regexp = "^[\\p{L}0-9 .,'-]*$", message = "Please enter a valid country name")
     @Column(nullable = false)
     private String country;
 
-    @Pattern(regexp = "^(|([0-9]+))$", message = "Please enter a valid post code")
+    @Pattern(regexp = "^[0-9]*$", message = "Please enter a valid post code")
     @Column
     private String postCode;
     @Column
