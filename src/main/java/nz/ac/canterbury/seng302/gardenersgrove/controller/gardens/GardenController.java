@@ -124,9 +124,17 @@ public class GardenController {
             model.addAttribute("owner", garden.getOwner());
             model.addAttribute("plants", plantService.getPlantsByGardenId(id));
 
-            List<Map<String, Object>> forecastResult = weatherAPIService.getForecastWeather(id, garden.getLat(), garden.getLon());
-            model.addAttribute("weatherForecast", forecastResult);
-            model.addAttribute("displayWeather", !forecastResult.isEmpty());
+            List<List<Map<String, Object>>> weatherResult = weatherAPIService.getWeatherData(id, garden.getLat(), garden.getLon());
+            logger.info("Garden Controller received: {}", weatherResult);
+            if (!weatherResult.isEmpty()) {
+                model.addAttribute("weatherPrevious", weatherResult.get(0));
+                model.addAttribute("weatherForecast", weatherResult.get(1));
+                model.addAttribute("displayWeather", !weatherResult.isEmpty());
+            } else {
+                model.addAttribute("weatherPrevious", weatherResult);
+                model.addAttribute("weatherForecast", weatherResult);
+                model.addAttribute("displayWeather", false);
+            }
         }
 
         GardenUser currentUser = gardenUserService.getCurrentUser();
