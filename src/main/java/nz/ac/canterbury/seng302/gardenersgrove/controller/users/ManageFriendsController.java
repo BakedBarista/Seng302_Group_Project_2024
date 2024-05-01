@@ -73,7 +73,7 @@ public class ManageFriendsController {
         GardenUser loggedInUser = userService.getUserById(loggedInUserId);
         GardenUser sentTo = userService.getUserById(requestedUser);
         Friends friendShip = friendService.getFriendship(loggedInUser.getId(), sentTo.getId());
-        boolean requestingMyself = loggedInUserId == requestedUser;
+        boolean requestingMyself = loggedInUserId.equals(requestedUser);
         if (requestingMyself) {
             return "redirect:/users/manageFriends";
         }
