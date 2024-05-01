@@ -99,7 +99,6 @@ public class GardenUserService {
         String first = names[0];
 
         if(names.length == 1){
-            System.out.println("got here");
             return gardenUserRepository.findBySearchMeNoLname(first, currentUserId);
         }
 

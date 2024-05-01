@@ -5,7 +5,6 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 
-import org.apache.catalina.User;
 import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -20,6 +19,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class ManageFriendsController {
@@ -37,7 +40,6 @@ public class ManageFriendsController {
     /**
      * Shows the manage friends page
      *
-     * @param error error message, if there's any
      * @param model Thymeleaf model
      * @return login page view
      */
@@ -74,16 +76,30 @@ public class ManageFriendsController {
         Long loggedInUserId = (Long) authentication.getPrincipal();
         GardenUser loggedInUser = userService.getUserById(loggedInUserId);
         GardenUser sentTo = userService.getUserById(requestedUser);
+
         boolean requestingMyself = loggedInUserId == requestedUser;
         if (requestingMyself) {
             return "redirect:/users/manageFriends";
         }
-        List<Friends> iDeclinedFriend = friendService.getReceivedRequestsDeclined(loggedInUser.getId());
+        List<Friends> iDeclinedFriend = friendService.getReceivedRequestsDeclined(loggedInUserId);
         for (Friends user2 : iDeclinedFriend) {
             if (sentTo == user2.getUser1()) {
                 return "redirect:/users/manageFriends";
             }
         }
+
+        Friends alreadyFriends = friendService.getAcceptedFriendship(loggedInUserId, requestedUser);
+        if (alreadyFriends != null) {
+            return "redirect:/users/manageFriends";
+        }
+
+        Friends requestsPending = friendService.getFriendship(loggedInUserId, requestedUser);
+        if (requestsPending != null) {
+            if (requestsPending.getStatus() == "pending") {
+                return "redirect:/users/manageFriends";
+            }
+        }
+
         Friends newFriends = new Friends(loggedInUser, sentTo, "pending");
         friendService.save(newFriends);
 
@@ -114,6 +130,11 @@ public class ManageFriendsController {
             }
         }
 
+        Friends alreadyFriends = friendService.getAcceptedFriendship(loggedInUserId, acceptUser);
+        if (alreadyFriends != null) {
+            return "redirect:/users/manageFriends";
+        }
+
         Friends friendShip = friendService.getFriendship(loggedInUserId, acceptUser);
 
         if (friendShip != null) {
@@ -140,6 +161,11 @@ public class ManageFriendsController {
         Long loggedInUserId = (Long) authentication.getPrincipal();
         GardenUser loggedInUser = userService.getUserById(loggedInUserId);
         GardenUser receivedFrom = userService.getUserById(declineUser);
+
+        Friends alreadyFriends = friendService.getAcceptedFriendship(loggedInUserId, declineUser);
+        if (alreadyFriends != null) {
+            return "redirect:/users/manageFriends";
+        }
 
         if (loggedInUser != null && receivedFrom != null) {
             List<Friends> friendShip = friendService.getReceivedRequests(loggedInUserId);
@@ -193,7 +219,6 @@ public class ManageFriendsController {
                     }
                 }
 
-                
                 if (!requestReceived.isEmpty()) {
                     for (Friends user2 : requestReceived) {
                         if (user == user2.getUser1()) {
@@ -209,7 +234,6 @@ public class ManageFriendsController {
                         }
                     }
                 }
-                
 
                 if (alreadyFriends != null) {
                     alreadyFriendsList.add(user);
@@ -254,5 +278,34 @@ public class ManageFriendsController {
 
         model.addAttribute("Friend", friend);
         return "users/friendProfile";
+    }
+
+    /**
+     * Removes a friend from the user's friend list
+     * @param authentication An Authentication object representing the current user's authentication details
+     * @param friendId The ID of the friend to be removed
+     * @return A redirection to the "/users/manageFriends"
+     */
+    @PostMapping("users/manageFriends/remove")
+    public String removeFriend(Authentication authentication, @RequestParam(name = "friendId") Long friendId) {
+        Long loggedInUserId = (Long) authentication.getPrincipal();
+        friendService.removeFriend(loggedInUserId, friendId);
+        return "redirect:/users/manageFriends";
+    }
+
+    /**
+     * Cancel an existing friend request
+     * @param authentication object contain user's current authentication details
+     * @id id of the user who received the friend request
+     */
+    @PostMapping("users/manageFriends/cancel")
+    public String cancelSentRequest(Authentication authentication,
+                                    @RequestParam(name = "userId", required = false) Long requestedUser) {
+        Long loggedInUserId = (Long) authentication.getPrincipal();
+        logger.info("Canceling request to {}",userService.getUserById(requestedUser).getFname());
+        Friends friendship = friendService.getFriendship(loggedInUserId,requestedUser);
+        friendService.removeFriendship(friendship);
+
+        return "redirect:/users/manageFriends";
     }
 }

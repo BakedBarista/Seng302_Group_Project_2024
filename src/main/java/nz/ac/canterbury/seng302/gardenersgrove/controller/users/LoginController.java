@@ -10,6 +10,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,8 +34,15 @@ public class LoginController {
      * @return login page view
      */
     @GetMapping("users/login")
-    public String login(Model model) {
+    public String login(
+            @RequestParam(name = "error", required = false) String error,
+            Model model) {
         logger.info("GET /users/login");
+
+        if (error != null && error.equals("resetPasswordLinkExpired")) {
+            model.addAttribute("generalError", "Reset password link has expired.");
+        }
+
         model.addAttribute("loginDTO", new LoginDTO());
         return "users/login";
     }

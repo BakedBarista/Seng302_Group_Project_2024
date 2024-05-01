@@ -93,5 +93,30 @@ public class UserServiceTest {
         }
         SecurityContextHolder.clearContext();
     }
+
+    @Test
+    void givenTokenNotExpired_whenGetUserByResetPasswordTokenCalled_thenReturnsUser() {
+        String token = "abc123xyz";
+
+        GardenUser gardenUser = new GardenUser("fname", "lname", "email", "password", "dob");
+        gardenUser.setResetPasswordToken(token);
+        userService.addUser(gardenUser);
+
+        GardenUser user = userService.getUserByResetPasswordToken(token);
+
+        Assertions.assertEquals(gardenUser, user);
+    }
+
+    @Test
+    void givenTokenExpired_whenGetUserByResetPasswordTokenCalled_thenReturnsNull() {
+        String token = "abc123xyz";
+
+        GardenUser gardenUser = new GardenUser("fname", "lname", "email", "password", "dob");
+        userService.addUser(gardenUser);
+
+        GardenUser user = userService.getUserByResetPasswordToken(token);
+
+        Assertions.assertNull(user);
+    }
 }
 

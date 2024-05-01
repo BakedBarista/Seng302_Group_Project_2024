@@ -29,7 +29,7 @@ public class AuthenticationController {
      * @param model
      * @return authentication page
      */
-    @GetMapping("/users/user/{userId}/authenticateEmail")
+    @GetMapping("/users/user/{userId}/authenticate-email")
     public String authenticateEmail(@PathVariable("userId") Long userId, Model model) {
         // if the user has an authentication token
         GardenUser user = userService.getUserById(userId);
@@ -49,7 +49,7 @@ public class AuthenticationController {
      * @param authenticationToken
      * @return home page if authenticated, otherwise authentication page
      */
-    @PostMapping("/users/user/{userId}/authenticateEmail")
+    @PostMapping("/users/user/{userId}/authenticate-email")
     public String validateAuthenticationToken(@PathVariable("userId") Long userId,
                                               @ModelAttribute("authenticationToken") String authenticationToken,
                                               RedirectAttributes redirectAttributes,

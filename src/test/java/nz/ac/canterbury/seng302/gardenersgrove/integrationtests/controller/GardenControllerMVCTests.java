@@ -76,7 +76,7 @@ public class GardenControllerMVCTests {
         int size = 10;
 
         Page<Garden> expectedGardens = new PageImpl<>(Collections.emptyList(), PageRequest.of(page, size), 0);
-        given(gardenService.getPublicGardens(PageRequest.of(page, size))).willReturn(expectedGardens);
+        given(gardenService.getPageForPublicGardens(PageRequest.of(page, size))).willReturn(expectedGardens);
         // Perform the GET request
         mockMvc.perform(get("/gardens/public")
                         .param("page", String.valueOf(page))

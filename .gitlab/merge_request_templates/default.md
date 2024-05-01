@@ -21,7 +21,7 @@
 # Review Checklist
 
 - [ ] Does it follow our coding standards?
-- [ ] Does it have any code smells?
+- [ ] Is it code-smell free?
 - [ ] Are all public methods documented?
 - [ ] Is the code tested properly?
 - [ ] Does it meet the NFRs?

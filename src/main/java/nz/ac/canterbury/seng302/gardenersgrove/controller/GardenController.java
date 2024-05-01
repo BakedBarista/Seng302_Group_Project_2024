@@ -214,14 +214,12 @@ public class GardenController {
     public String publicGardens(
             @RequestParam (defaultValue = "0") int page,
             @RequestParam (defaultValue = "10") int size,
-            @RequestParam(name = "search", required = false, defaultValue = "") String search,
             Model model) {
         logger.info("Get /gardens/public - display all public gardens");
         Pageable pageable = PageRequest.of(page, size);
-        Page<Garden> gardenPage = gardenService.getPublicGardens(pageable);
+        Page<Garden> gardenPage = gardenService.getPageForPublicGardens(pageable);
         model.addAttribute("gardenPage", gardenPage);
-        GardenUser owner = gardenUserService.getCurrentUser();
-        List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
+        List<Garden> gardens = gardenService.getPublicGardens();
         model.addAttribute("gardens", gardens);
         return "gardens/publicGardens";
     }
@@ -241,13 +239,13 @@ public class GardenController {
             Friends isFriend = friendService.getFriendship(loggedInUserId, id);
             GardenUser owner = gardenUserService.getUserById(id);
 
-            List<Garden> privateGardens = gardenService.getPrivateGardensByOwnerId(owner);
-            List<Garden> publicGardens = gardenService.getPublicGardensByOwnerId(owner);
-            if (isFriend != null) {
-                model.addAttribute("privateGardens", privateGardens);
-            }
-
-            model.addAttribute("publicGardens", publicGardens);
+//            List<Garden> privateGardens = gardenService.getPrivateGardensByOwnerId(owner);
+//            List<Garden> publicGardens = gardenService.getPublicGardensByOwnerId(owner);
+//            if (isFriend != null) {
+//                model.addAttribute("privateGardens", privateGardens);
+//            }
+//
+//            model.addAttribute("publicGardens", publicGardens);
 
         return "gardens/friendGardens";
     }
