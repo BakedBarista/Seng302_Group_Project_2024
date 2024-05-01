@@ -378,4 +378,34 @@ public class GardenTest {
         assertTrue(validator.validate(garden).isEmpty());
     }
 
+    @Test
+    public void gardenName_ContainsDiacritic_ReturnsNoViolations() {
+        garden.setName("Māori Garden");
+
+        assertTrue(validator.validate(garden).isEmpty());
+    }
+
+    @Test
+    public void gardenCity_ContainsDiacritic_ReturnsNoViolations() {
+        garden.setCity("Ōtautahi");
+
+        assertTrue(validator.validate(garden).isEmpty());
+    }
+
+    @Test
+    public void gardenSuburb_ContainsDiacritic_ReturnsNoViolations() {
+        garden.setSuburb("Ōtākaro");
+
+        assertTrue(validator.validate(garden).isEmpty());
+    }
+
+    @Test
+    public void gardenCountry_ContainsDiacritic_ReturnsNoViolations() {
+        garden.setCountry("Aotearoa");
+
+        assertTrue(validator.validate(garden).isEmpty());
+    }
+
+
+
 }
