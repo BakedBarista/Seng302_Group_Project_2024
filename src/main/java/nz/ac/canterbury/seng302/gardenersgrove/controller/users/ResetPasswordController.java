@@ -63,6 +63,14 @@ public class ResetPasswordController {
         logger.info("POST /users/reset-password");
         logger.info("Email entered: {}", email);
 
+        if (bindingResult.hasFieldErrors("email")) {
+            for (FieldError errors : bindingResult.getFieldErrors()) {
+                logger.info("Validation error in email field: {}", errors.getDefaultMessage());
+                model.addAttribute("incorrectEmail", errors.getDefaultMessage());
+            }
+            return "users/resetPassword";
+        }
+
         GardenUser user = userService.getUserByEmail(email);
         boolean emailExists = user != null;
         if (emailExists) {
@@ -79,13 +87,7 @@ public class ResetPasswordController {
             emailSenderService.sendEmail(user, subject, body);
         }
 
-        if (bindingResult.hasFieldErrors("email")) {
-            for (FieldError errors : bindingResult.getFieldErrors()) {
-                logger.info("Validation error in email field: {}", errors.getDefaultMessage());
-                model.addAttribute("incorrectEmail", errors.getDefaultMessage());
-            }
-            return "users/resetPassword";
-        }
+
 
         return "users/resetPasswordConfirmation";
     }
