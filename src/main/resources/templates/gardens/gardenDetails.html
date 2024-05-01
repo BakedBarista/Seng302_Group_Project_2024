@@ -3,76 +3,135 @@
 <head>
     <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
     <title>Garden Details</title>
-    <link th:href="@{/css/styles.css}" rel="stylesheet" />
+    <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
 </head>
-<th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
 
 <body>
 <div th:replace="~{fragments/navbar :: navbar}"></div>
-<div>
-    <h2 th:text="${garden.name}">Garden Name</h2>
-    <p th:text="'Created by: ' + ${owner.fname} + (${owner.lname} != null ? ' ' + ${owner.lname} : '')">
-        Created by: John Doe
-    </p>
-    <!--    <p><strong>ID: </strong><span th:text="${garden.id}"></span></p>-->
-    <p><strong>Location: </strong><span th:text="${garden.streetNumber + ' ' + garden.streetName + ' ' + garden.suburb + ' ' + garden.city + ' ' + garden.country}"></span></p>
-    <p><strong>Size: </strong><span th:text="${garden.size}"></span> m&sup2;</p>
-    <p><strong>Description: </strong><span th:text="${garden.description}"></span></p>
-    <div th:if="${currentUser.id == owner.id}">
-        <form th:action="@{/gardens/{id}(id=${garden.id})}" method="post">
-            <p>
-                <strong>Set Public:</strong>
-                <input type="checkbox" class="form-check-input" id="isPublic" name="isPublic" th:checked="${garden.isPublic}" onchange="this.form.submit()"/>
-            </p>
-        </form>
-        <a class="button-link" th:href="@{/gardens/{id}/edit(id=${garden.id})}"><button>Edit Garden</button></a>
-        <a class="button-link" th:href="@{/gardens/{id}/add-plant(id=${garden.id})}"><button>Add Plant</button></a>
-        <!--        <button><a th:href="@{/gardens}">Return to Gardens</a></button>-->
-    </div>
-
-
-    <h3>Plants:</h3>
-    <div class="scrolling-table">
-        <table>
-            <thead>
-            <tr>
-                <th></th>
-                <th>Name</th>
-                <th>Count</th>
-                <th>Description</th>
-                <th>Planted Date</th>
-                <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:if="${plants.empty}">
-                <td colspan="6" th:text="${currentUser.id == owner.id} ? 'Please add a plant first' : ${garden.name} + ' does not currently contain any plants'"></td>
-            </tr>
-            <tr th:each="plant : ${plants}">
-                <td>
-                    <div class="image-container">
-                        <img th:src="@{${plant.plantImagePath}}" />
-                        <img th:unless="${plant.plantImagePath}" th:src="@{/default.png}" alt="Default Plant Image" />
-                        <div th:if="${currentUser.id == owner.id}">
-                        <a class="add-image-button" th:href="@{/uploadImage(garden_Id=${garden.id}, plant_Id=${plant.id})}">+</a>
+<main class="mx-5 pt-2 pb-5">
+    <h1 class="pb-4" th:text="${garden.name}">GARDEN NAME</h1>
+    <div class="row">
+        <div class="col-xl-6 col-12">
+            <h3>Info:</h3>
+            <div class="d-flex">
+                <img th:src="@{/icons/book-02-stroke-rounded.svg}" alt="" width="20" height="20" />
+                <p class="mx-1"><strong>Description: </strong><span th:text="${garden.description}"></span></p>
+            </div>
+            <div class="d-flex">
+                <img th:src="@{/icons/location-04-stroke-rounded.svg}" alt="" width="20" height="20" />
+                <p class="mx-1"><strong>Location: </strong>
+                    <span th:text="${garden.streetNumber}"></span>
+                    <span th:text="${garden.streetName}"></span><span th:if="${garden.streetName}">,</span>
+                    <span th:text="${garden.suburb}"></span><span th:if="${garden.suburb}">,</span>
+                    <span th:text="${garden.city}"></span><span th:if="${garden.city}">,</span>
+                    <span th:text="${garden.country}"></span>
+                </p>
+            </div>
+            <div class="d-flex">
+                <img th:src="@{/icons/aspect-ratio-stroke-rounded.svg}" alt="" width="20" height="20" />
+                <p class="mx-1"><strong>Size: </strong><span th:text="${garden.size}"></span> m&sup2;</p>
+            </div>
+            <div><a class="btn btn-primary" th:href="@{/gardens/{id}/edit(id=${garden.id})}"><img th:src="@{/icons/edit-white.svg}" alt="" width="20" height="20" /> Edit Garden</a></div>
+        </div>
+        <div class="col-xl-6 col-12">
+            <h2>Weather:</h2>
+<!--            TODO: watering alert going here-->
+<!--            <div class="alert alert-warning alert-dismissible fade show" role="alert">-->
+<!--                <strong>You should water your plants, it's hot the next few days</strong>-->
+<!--                <button type="button" class="close" data-dismiss="alert" aria-label="Close">-->
+<!--                    <span aria-hidden="true">&times;</span>-->
+<!--                </button>-->
+<!--            </div>-->
+            <div class="d-flex flex-row" >
+                <div th:if="${!displayWeather}">Location not found, please update your location to see the weather.</div>
+                <div class="card mx-1" th:if="${displayWeather}" th:each="daysWeather: ${weatherForecast}" style="width: 250px;">
+                   <div class="border-0 m-0 p-0">
+                       <div class="text-center">
+                           <img th:src="${daysWeather.iconUrl}" alt="Sunny" width="50" height="50">
+                           <p class="m-0" style="font-size: 16pt;"><strong th:text="${daysWeather.conditions}">Conditions</strong></p>
+                           <p style="font-size: 10pt; color: #1E1E1E70;" th:text="${daysWeather.date}">Date</p>
+                       </div>
+                   </div>
+                    <div class="text-center border-0 m-0 p-0" style="font-size: 22pt;">
+                        <p><strong><span th:text="${daysWeather.maxTemp}">24</span></strong>&deg;<span style="font-size: 10pt;">/12</span></p>
+                    </div>
+                    <div class="text-center border-0 m-0 p-0" style="font-size: 10pt;">
+                        <div class="row m-0 p-0">
+                            <div class="col border-1 m-0 p-0">
+                                <img th:src="@{/icons/fast-wind-stroke-rounded.svg}" alt="" width="24" height="24">
+                                <p class="m-0" style="font-size: 10pt; color: #1E1E1E70;">Wind</p>
+                                <p class="m-0"><span th:text="${daysWeather.windSpeed}"></span> kph</p>
+                            </div>
+                            <div class="col border-start m-0 p-0">
+                                <img th:src="@{/icons/humidity.svg}" alt="" width="24" height="24">
+                                <p class="m-0" style="font-size: 10pt; color: #1E1E1E70;">Humidity</p>
+                                <p class="m-0"><span th:text="${daysWeather.avgHumidity}"></span>%</p>
+                            </div>
+                        </div>
+                        <div class="row border-1 m-0 p-0">
+                            <div class="col border-1 border-end border-top m-0 p-0">
+                                <img th:src="@{/icons/uv-02-stroke-rounded.svg}" alt="" width="24" height="24">
+                                <p class="m-0" style="font-size: 10pt; color: #1E1E1E70;">UV</p>
+                                <p class="m-0" th:text="${daysWeather.uv}"></p>
+                            </div>
+                            <div class="col border-top m-0 p-0">
+                                <img th:src="@{/icons/rain-stroke-rounded.svg}" alt="" width="24" height="24">
+                                <p class="m-0" style="font-size: 10pt; color: #1E1E1E70;">Precipitation</p>
+                                <p class="m-0"><span th:text="${daysWeather.precipitation}"></span> mm</p>
+                            </div>
                         </div>
                     </div>
-                </td>
-                <td><span th:text="${plant.name}">Name</span></td>
-                <td><span th:text="${plant.count}">Count</span></td>
-                <td><span th:text="${plant.description}">Description</span></td>
-                <td><span th:text="${plant.plantedDate}">Planted Date</span></td>
-                <div th:if="${currentUser.id == owner.id}">
-                <td><a class="button-link" th:href="@{/gardens/{gardenId}/plants/{plantId}/edit(gardenId=${garden.id}, plantId=${plant.id})}"><button>Edit</button></a></td>
                 </div>
-            </tr>
-            </tbody>
-        </table>
+            </div>
+            <p th:if="${displayWeather}" class="text-right justify-content-right" style="color: grey; font-size: 10pt;">Powered by <a href="https://www.weatherapi.com/" title="Free Weather API" target="_blank">WeatherAPI.com</a></p>
+
+
+        </div>
     </div>
-</div>
+    <hr />
+    <div>
+        <div class="d-flex justify-content-center align-items-center mb-3">
+            <h2 class="flex-grow-1 text-center">  Your Plants</h2>
+
+           
+            <a type="button" th:href="@{/gardens/{id}/add-plant(id=${garden.id})}" class="btn btn-primary ms-auto"><img th:src="@{/icons/add-square-white.svg}" alt="" width="20" height="20" /> New Plant</a>
+        </div>
+        <div th:if="${plants.empty}">
+            <p th:text="${currentUser.id == owner.id} ? 'Please add a plant first' : ${garden.name} + ' does not currently contain any plants'"></p>
+        </div>
+
+        <div class="flex">
+            <div class="row gap-2 justify-content-center">
+                <div th:each="plant : ${plants}" class="card rounded-2 p-0 m-0 col-xxl-2 col-lg-3 col-md-4 col-sm-6 col-12">
+                    <div class="card-header m-0 p-0 bg-transparent rounded-2">
+                        <img class="w-100" alt="Plant Picture" style="max-height: 300px;" th:if="${plant.plantImagePath}" th:src="@{${plant.plantImagePath}}" />
+                        <img class="w-100" style="height: 200px;" th:unless="${plant.plantImagePath}" src="/default.png" alt="Default Plant Image" />
+                        <a class="add-image-button" th:href="@{/uploadImage(garden_Id=${garden.id}, plant_Id=${plant.id})}">+</a>
+                    </div>
+                    <div class="card-body m-0">
+                        <div class="d-flex">
+                            <p><strong><span class="mx-1" th:text="${plant.name}" style="font-weight: bold;">Plant Name</span></strong><a th:href="@{/gardens/{gardenId}/plants/{plantId}/edit(gardenId=${garden.id}, plantId=${plant.id})}"><img th:src="@{/icons/edit.svg}" alt="" width="20" height="20" /></a></p>
+                            <div class="d-flex justify-content-end ms-auto">
+                                <img th:src="@{/icons/natural-food-stroke-rounded.svg}" alt="" width="20" height="20" />
+                                <p class="mx-1" th:text="${plant.count}">Plant Count</p>
+                            </div>
+                        </div>
+
+                        <div class="d-flex">
+                            <img th:src="@{/icons/book-02-stroke-rounded.svg}" alt="" width="20" height="20" />
+                            <p class="mx-1" th:text="${plant.description}">Description</p>
+                        </div>
+                        <div class="d-flex">
+                            <img th:src="@{/icons/calendar-03-stroke-rounded.svg}" alt="" width="20" height="20" />
+                            <p class="mx-1" th:text="${plant.plantedDate}">Planted Date</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
 <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
 </body>
-</html>
-    <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
-    </body>
 </html>

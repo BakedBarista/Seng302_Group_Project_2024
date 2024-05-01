@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng302.gardenersgrove.controller;
+package nz.ac.canterbury.seng302.gardenersgrove.controller.gardens;
 
 
 import jakarta.validation.Valid;
@@ -11,6 +11,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.ModerationService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.weatherAPI.WeatherAPIService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,9 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -37,19 +40,21 @@ public class GardenController {
 
     private final GardenService gardenService;
     private final PlantService plantService;
+    private final WeatherAPIService weatherAPIService;
 
-    @Autowired
-    ModerationService moderationService;
+    private final ModerationService moderationService;
 
     private final GardenUserService gardenUserService;
     private final FriendService friendService;
 
     @Autowired
-    public GardenController(GardenService gardenService, PlantService plantService, GardenUserService gardenUserService, FriendService friendService) {
+    public GardenController(GardenService gardenService, PlantService plantService, GardenUserService gardenUserService, WeatherAPIService weatherAPIService, FriendService friendService, ModerationService moderationService) {
         this.gardenService = gardenService;
         this.plantService = plantService;
         this.gardenUserService = gardenUserService;
+        this.weatherAPIService = weatherAPIService;
         this.friendService = friendService;
+        this.moderationService = moderationService;
     }
 
     /**
@@ -132,8 +137,11 @@ public class GardenController {
             model.addAttribute("garden", garden);
             model.addAttribute("owner", garden.getOwner());
             model.addAttribute("plants", plantService.getPlantsByGardenId(id));
-        }
 
+            List<Map<String, Object>> forecastResult = weatherAPIService.getForecastWeather(id, garden.getLat(), garden.getLon());
+            model.addAttribute("weatherForecast", forecastResult);
+            model.addAttribute("displayWeather", !forecastResult.isEmpty());
+        }
 
         GardenUser currentUser = gardenUserService.getCurrentUser();
         List<Garden> gardens = gardenService.getGardensByOwnerId(currentUser.getId());
@@ -168,7 +176,7 @@ public class GardenController {
      * @return redirect to gardens
      */
     @GetMapping("/gardens/{id}/edit")
-    public String getGarden(@PathVariable() long id, Model model) {
+    public String getGarden(@PathVariable long id, Model model) {
         logger.info("Get /garden/{}", id);
         Optional<Garden> garden = gardenService.getGardenById(id);
         logger.info(String.valueOf(garden));
@@ -217,6 +225,7 @@ public class GardenController {
             existingGarden.get().setDescription(garden.getDescription());
             existingGarden.get().setLon(garden.getLon());
             existingGarden.get().setLat(garden.getLat());
+            existingGarden.get().setWeatherForecast(Collections.emptyList());
             gardenService.addGarden(existingGarden.get());
         }
         return "redirect:/gardens/" + id;
