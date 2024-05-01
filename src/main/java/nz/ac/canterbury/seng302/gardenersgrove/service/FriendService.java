@@ -80,7 +80,7 @@ public class FriendService {
     }
 
     public void removeFriend(Long user1Id, Long user2Id) {
-        // Logic to remove the friendship
+        // Logic to remove the friendship, needs to to make sure that the primary user is getting deleted
 
         friendsRepository.deleteByUser1IdAndUser2Id(user1Id, user2Id);
         friendsRepository.deleteByUser1IdAndUser2Id(user2Id, user1Id);
