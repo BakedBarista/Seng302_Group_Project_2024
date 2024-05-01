@@ -211,7 +211,7 @@ public class PlantTest {
 
     @Test
     public void SetDescription_FiveHundredAndTwelveChars_ReturnSizeViolation() {
-        plant.setDescription("a".repeat(512));
+        plant.setDescription("a".repeat(513));
         String expectedMessage = "Plant description must be less than 512 characters";
         Integer expectedConstraintSetSize = 1;
 
