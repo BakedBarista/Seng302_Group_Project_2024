@@ -217,6 +217,8 @@ public class GardenController {
             @RequestParam (defaultValue = "0") int page,
             @RequestParam (defaultValue = "10") int size,
             Model model) {
+        page = Math.max(0, page);
+        size = Math.max(10, 10);
         logger.info("Get /gardens/public - display all public gardens");
         Pageable pageable = PageRequest.of(page, size);
         Page<Garden> gardenPage = gardenService.getPageForPublicGardens(pageable);
