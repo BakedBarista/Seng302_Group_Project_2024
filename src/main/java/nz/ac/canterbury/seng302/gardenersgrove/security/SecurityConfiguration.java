@@ -79,9 +79,10 @@ public class SecurityConfiguration {
         });
 
         // Instead of returning 403, redirect to "/users/login"
-        http.exceptionHandling(exceptionHandling -> exceptionHandling
-                .authenticationEntryPoint((request, response, authException) -> response.sendRedirect("/users/login"))
-                .accessDeniedHandler((request, response, exception) -> response.sendRedirect("/users/login")));
+        // FIXME: Redirects to localhost on prod instance
+        // http.exceptionHandling(exceptionHandling -> exceptionHandling
+        //         .authenticationEntryPoint((request, response, authException) -> response.sendRedirect("/users/login"))
+        //         .accessDeniedHandler((request, response, exception) -> response.sendRedirect("/users/login")));
 
         // Define logging out, a POST "/users/logout" endpoint now exists under the hood,
         // redirect to "/users/login", invalidate session and remove cookie
