@@ -87,6 +87,9 @@ public class Garden {
     @Lob
     private String weatherForecast;
 
+    @Lob
+    private String weatherPrevious;
+
     public Garden() {
     }
 
@@ -197,6 +200,42 @@ public class Garden {
         }
     }
 
+    /**
+     * Gets the previous weather from the Database and deserialises the JSON to a List of Maps
+     * @return the weather forecast in a list of maps
+     */
+    public List<Map<String, Object>> getWeatherPrevious() {
+        ObjectMapper objectMapper = new ObjectMapper()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        if (weatherForecast == null) {
+            return Collections.emptyList();
+        }
+
+        try {
+            return objectMapper.readValue(weatherForecast, new TypeReference<List<Map<String, Object>>>() {});
+        } catch (JsonProcessingException e) {
+            logger.error("Error processing JSON", e);
+            return Collections.emptyList();
+        }
+    }
+
+    /**
+     * Sets the previous weather in the database and serialises the forecast data into a JSON string
+     * @param weatherPrevious the weather data a List of Maps
+     */
+    public void setWeatherPrevious(List<Map<String, Object>> weatherPrevious) {
+        ObjectMapper objectMapper = new ObjectMapper()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        try {
+            this.weatherPrevious = objectMapper.writeValueAsString(weatherPrevious);
+
+        } catch (JsonProcessingException e) {
+            logger.error("Issue converting weather forecast back into a String", e);
+            this.weatherPrevious = "";
+        }
+    }
+
     public String getForecastLastUpdated() {
         return forecastLastUpdated;
     }
@@ -212,16 +251,6 @@ public class Garden {
     public void setTimezoneId(String timezoneId) {
         this.timezoneId = timezoneId;
     }
-
-//    @Override
-//    public String toString() {
-//        return "Garden{" +
-//                "id=" + id +
-//                ", gardenName='" + name + '\'' +
-//                ", gardenLocation='" + location + '\'' +
-//                ", gardenSize='" + size + '\'' +
-//                '}';
-//    }
 
     public String getStreetNumber() {
         return streetNumber;
