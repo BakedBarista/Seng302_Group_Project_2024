@@ -1,9 +1,11 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
+import jakarta.validation.Valid;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.ResetPasswordDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.ResetPasswordDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.ResetPasswordCallbackDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
@@ -12,6 +14,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -45,13 +49,28 @@ public class ResetPasswordController {
 
     /**
      * Handles the reset password post request
-     * @param email the email
      * @param request the HTTP request
      * @return the reset password confirmation page
      */
     @PostMapping("/users/reset-password")
     public String resetPasswordConfirmation(
-            @RequestParam(name = "email") String email, HttpServletRequest request) {
+            HttpServletRequest request,
+            @Valid @ModelAttribute("resetPasswordDTO") ResetPasswordDTO resetPasswordDTO,
+            BindingResult bindingResult,
+            Model model) {
+        String email = resetPasswordDTO.getEmail();
+
+        logger.info("POST /users/reset-password");
+        logger.info("Email entered: {}", email);
+
+        if (bindingResult.hasFieldErrors("email")) {
+            for (FieldError errors : bindingResult.getFieldErrors()) {
+                logger.info("Validation error in email field: {}", errors.getDefaultMessage());
+                model.addAttribute("incorrectEmail", errors.getDefaultMessage());
+            }
+            return "users/resetPassword";
+        }
+
         GardenUser user = userService.getUserByEmail(email);
         boolean emailExists = user != null;
         if (emailExists) {
@@ -67,6 +86,8 @@ public class ResetPasswordController {
                     "\nThis link will expire after 10 minutes, you do not need to take action if this is not you.";
             emailSenderService.sendEmail(user, subject, body);
         }
+
+
 
         return "users/resetPasswordConfirmation";
     }
@@ -92,9 +113,9 @@ public class ResetPasswordController {
             return "redirect:/users/login?error=resetPasswordLinkExpired";
         }
 
-        ResetPasswordDTO resetPasswordDTO = new ResetPasswordDTO();
-        resetPasswordDTO.setToken(token);
-        model.addAttribute("resetPasswordDTO", resetPasswordDTO);
+        ResetPasswordCallbackDTO resetPasswordCallbackDTO = new ResetPasswordCallbackDTO();
+        resetPasswordCallbackDTO.setToken(token);
+        model.addAttribute("resetPasswordCallbackDTO", resetPasswordCallbackDTO);
 
         return "users/resetPasswordCallback";
     }
@@ -102,21 +123,19 @@ public class ResetPasswordController {
     /**
      * Submits the reset password callback form
      *
-     * @param token the token that was sent in the reset password email
-     * @param newPassword the new password
-     * @param retypePassword the new password, retyped
      * @return redirects to the login page
      */
     @PostMapping("/users/reset-password/callback")
     public String resetPasswordCallbackPost(
-            @Valid @ModelAttribute("resetPasswordDTO") ResetPasswordDTO resetPasswordDTO,
+            @Valid @ModelAttribute("resetPasswordCallbackDTO") ResetPasswordCallbackDTO resetPasswordCallbackDTO,
             BindingResult bindingResult,
             Model model) {
         logger.info("GET /users/reset-password/callback");
+        logger.info("");
 
-        String token = resetPasswordDTO.getToken();
-        String newPassword = resetPasswordDTO.getNewPassword();
-        String confirmPassword = resetPasswordDTO.getConfirmPassword();
+        String token = resetPasswordCallbackDTO.getToken();
+        String newPassword = resetPasswordCallbackDTO.getNewPassword();
+        String confirmPassword = resetPasswordCallbackDTO.getConfirmPassword();
 
         if (!newPassword.equals(confirmPassword)) {
             bindingResult.rejectValue("confirmPassword", null, "The new passwords do not match");
@@ -124,7 +143,7 @@ public class ResetPasswordController {
 
         if (bindingResult.hasErrors()) {
             logger.error("Error in password change form: {}", bindingResult.getAllErrors());
-            model.addAttribute("resetPasswordDTO", resetPasswordDTO);
+            model.addAttribute("resetPasswordCallbackDTO", resetPasswordCallbackDTO);
 
             return "users/resetPasswordCallback";
         }

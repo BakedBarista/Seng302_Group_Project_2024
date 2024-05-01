@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,7 +22,7 @@ public interface FriendsRepository extends CrudRepository<Friends, Long> {
      * @param user The ID of the user whose friends we want
      * @return A list of Friends od thta user
      */
-    @Query("SELECT u FROM Friends u WHERE (u.user1.id = ?1 or u.user2.id = ?1) and status='accepted'")
+    @Query("SELECT u FROM Friends u WHERE (u.user1.id = ?1 or u.user2.id = ?1) and u.status='accepted'")
     List<Friends> getAllFriends(Long user);
 
     /**
@@ -53,6 +54,7 @@ public interface FriendsRepository extends CrudRepository<Friends, Long> {
     @Query("SELECT u FROM Friends u WHERE u.user2.id = ?1 and u.status = 'pending'")
     List<Friends> getReceivedRequests(Long user);
 
-    
-    
+
+    void deleteByUser1IdAndUser2Id(Long user1Id, Long user2Id);
 }
+
