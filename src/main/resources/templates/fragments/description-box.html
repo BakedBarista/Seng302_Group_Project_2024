@@ -2,12 +2,19 @@
 <html lang="en">
     <head th:fragment="headerfiles">
         <meta charset="UTF-8">
+        <style>
+            .error-field {
+                background-color: pink;
+            }
+        </style>
     </head>
     <body>
         <div th:fragment="description-box-with-char-count">
             <label for="description"> Garden Description: </label>
             <input type="text" class="form-control" id="description" placeholder="Description"
-                   th:name="description" th:value="${garden.description}" data-cy="size" autofocus>
+                   th:name="description" th:value="${garden.description}" data-cy="size" autofocus
+                    th:classappend="${#fields.hasErrors('description')} ? 'error-field' : ''">
+
             <div class = flex-box>
                 <div th:if="${profanity != null}" style="color: red;"><span th:text="${profanity}"></span></div>
                 <div class = "errorMessage" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
