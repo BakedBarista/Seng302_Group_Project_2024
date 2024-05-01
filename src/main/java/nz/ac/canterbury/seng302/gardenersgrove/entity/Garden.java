@@ -16,8 +16,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-
-
 /**
  * Entity class for garden with name, location and size
  */
@@ -83,12 +81,17 @@ public class Garden {
     @JoinColumn(name = "owner_id", nullable = false)
     private GardenUser owner;
 
-
     @Lob
     private String weatherForecast;
 
     @Lob
     private String weatherPrevious;
+
+    @Column(nullable = false)
+    private boolean displayWeatherAlert = true;
+
+    @Column
+    private boolean wateringRecommendation;
 
     public Garden() {
     }
@@ -315,5 +318,21 @@ public class Garden {
 
     public void setCountry(String country) {
         this.country = country;
+    }
+
+    public boolean getDisplayWeatherAlert() {
+        return displayWeatherAlert;
+    }
+
+    public void setDisplayWeatherAlert(boolean displayedToday) {
+        this.displayWeatherAlert = displayedToday;
+    }
+
+    public boolean getWateringRecommendation() {
+        return wateringRecommendation;
+    }
+
+    public void setWateringRecommendation(boolean weatherRecommendation) {
+        this.wateringRecommendation = weatherRecommendation;
     }
 }
