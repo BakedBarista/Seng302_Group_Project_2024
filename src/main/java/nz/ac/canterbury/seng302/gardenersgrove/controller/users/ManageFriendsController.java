@@ -220,7 +220,7 @@ public class ManageFriendsController {
         return "redirect:/users/manageFriends";
     }
 
-
+    /**
      * Cancel an existing friend request
      * @param authentication object contain user's current authentication details
      * @id id of the user who received the friend request
