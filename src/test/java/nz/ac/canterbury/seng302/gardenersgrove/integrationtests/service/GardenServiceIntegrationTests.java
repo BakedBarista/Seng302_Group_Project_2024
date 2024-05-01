@@ -60,6 +60,17 @@ public class GardenServiceIntegrationTests {
     }
 
     @Test
+    public void testWhenIGetAllPublicGardens_ReturnedGardensAreOrderedByIdDescending() {
+        List<Garden> gardens = gardenService.getPublicGardens();
+
+        Long currentId = gardens.get(0).getId();
+        for (Garden garden : gardens.subList(1, gardens.size() - 1)) {
+            Assertions.assertTrue(currentId > garden.getId());
+            currentId = garden.getId();
+        }
+    }
+
+    @Test
     public void testWhenISearchGardenName_AndThereIsAGardenWithGardenName_ReturnListWithGarden() {
         String search = "Garden Name";
         List<Garden> gardens = gardenService.findAllThatContainQuery(search);
@@ -138,7 +149,7 @@ public class GardenServiceIntegrationTests {
     @Test
     public void testWhenISearchEmptyString_ReturnAllPublicGardens() {
         List<Garden> blankQueryGardenList = gardenService.findAllThatContainQuery("");
-        List<Garden> allGardens = gardenService.getAllGardens();
+        List<Garden> allGardens = gardenService.getPublicGardens();
 
         Assertions.assertEquals(allGardens, blankQueryGardenList);
     }

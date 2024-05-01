@@ -1,24 +1,18 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.util.List;
-
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.FriendsRepository;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
-import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @Import(FriendService.class)
@@ -122,5 +116,14 @@ public class FriendsServiceTest {
         friendService.save(relationShip3);
         var request = friendService.getReceivedRequests(testUser3.getId());
         assertTrue(request.isEmpty());
+    }
+
+    @Test
+    public void whenRemovedFriend_thenFriendRemoved() {
+        Friends relationShip3 = new Friends(testUser3, testUser4, "pending");
+        friendService.save(relationShip3);
+        friendService.removeFriend(testUser3.getId(), testUser4.getId());
+        var request = friendService.getFriendship(testUser3.getId(), testUser4.getId());
+        assertNull(request);
     }
 }

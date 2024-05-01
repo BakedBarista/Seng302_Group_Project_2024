@@ -1,9 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -40,8 +38,8 @@ public class GardenService {
     /**
      * Get a page for pagination of user gardens that meet the given query string
      * (e.g. garden name or plant in garden name is a substring of the query)
-     * @param query
-     * @param pageable
+     * @param query string to be matched against
+     * @param pageable pagination information
      * @return page to display
      */
     public Page<Garden> findPageThatContainsQuery(String query, Pageable pageable) {
@@ -63,12 +61,20 @@ public class GardenService {
     public Optional<Garden> getGardenById(long id) {return gardenRepository.findById(id);}
 
     /**
-     *
-     * @param pageable page number and size
-     * @return a page of public gardens
+     * Gets the page for all public gardens
+     * @param pageable pagination information
+     * @return page
      */
-    public Page<Garden> getPublicGardens(Pageable pageable) {
-        return gardenRepository.findByIsPublicTrue(pageable);
+    public Page<Garden> getPageForPublicGardens(Pageable pageable) {
+        return gardenRepository.findByIsPublicTrueOrderByIdDesc(pageable);
+    }
+
+    /**
+     * Gets a list of all public gardens
+     * @return list of all public gardens
+     */
+    public List<Garden> getPublicGardens() {
+        return gardenRepository.findByIsPublicTrueOrderByIdDesc();
     }
 
     /**
@@ -80,13 +86,13 @@ public class GardenService {
         return gardenRepository.findByOwnerId(ownerId);
     }
 
-    public List<Garden> getPublicGardensByOwnerId(GardenUser ownerId) {
-        return gardenRepository.findUserPublicGarden(ownerId);
-    }
-
-    public List<Garden> getPrivateGardensByOwnerId(GardenUser ownerId) {
-        return gardenRepository.findUserPrivateGarden(ownerId);
-    }
+//    public List<Garden> getPublicGardensByOwnerId(GardenUser ownerId) {
+//        return gardenRepository.findUserPublicGarden(ownerId);
+//    }
+//
+//    public List<Garden> getPrivateGardensByOwnerId(GardenUser ownerId) {
+//        return gardenRepository.findUserPrivateGarden(ownerId);
+//    }
 
 }
 

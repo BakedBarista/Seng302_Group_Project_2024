@@ -5,8 +5,10 @@ import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.ModerationService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weatherAPI.WeatherAPIService;
@@ -26,6 +28,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 
 /**
  * Controller for garden forms
@@ -37,6 +41,9 @@ public class GardenController {
     private final GardenService gardenService;
     private final PlantService plantService;
     private final WeatherAPIService weatherAPIService;
+
+    @Autowired
+    ModerationService moderationService;
 
     private final GardenUserService gardenUserService;
     private final FriendService friendService;
@@ -84,6 +91,13 @@ public class GardenController {
         }
         GardenUser owner = gardenUserService.getCurrentUser();
         garden.setOwner(owner);
+
+        //Checks description for inappropriate content
+        if (moderationService.checkIfDescriptionIsFlagged(garden.getDescription())) {
+            model.addAttribute("garden", garden);
+            model.addAttribute("profanity", "The description does not match the language standards of the app.");
+            return "gardens/createGarden";
+        }
 
         Garden savedGarden = gardenService.addGarden(garden);
         return "redirect:/gardens/" + savedGarden.getId();
@@ -219,6 +233,12 @@ public class GardenController {
             model.addAttribute("id", id);
             return "gardens/editGarden";
         }
+        //Checks description for inappropriate content
+        if (moderationService.checkIfDescriptionIsFlagged(garden.getDescription())) {
+            model.addAttribute("garden", garden);
+            model.addAttribute("profanity", "The description does not match the language standards of the app.");
+            return "gardens/editGarden";
+        }
 
         Optional<Garden> existingGarden = gardenService.getGardenById(id);
         if (existingGarden.isPresent()) {
@@ -248,17 +268,32 @@ public class GardenController {
      */
     @GetMapping("/gardens/public")
     public String publicGardens(
-            @RequestParam (defaultValue = "0") int page,
-            @RequestParam (defaultValue = "10") int size,
-            @RequestParam(name = "search", required = false, defaultValue = "") String search,
+            @RequestParam(defaultValue = "0") String pageStr,
+            @RequestParam(defaultValue = "10") String sizeStr,
             Model model) {
+        int page;
+        int size;
+
+        try {
+            page = Math.max(0, Integer.parseInt(pageStr));
+            size = Math.max(10, Integer.parseInt(sizeStr));
+        } catch (NumberFormatException e) {
+            page = 0;
+            size = 10;
+        }
         logger.info("Get /gardens/public - display all public gardens");
         Pageable pageable = PageRequest.of(page, size);
-        Page<Garden> gardenPage = gardenService.getPublicGardens(pageable);
+        Page<Garden> gardenPage = gardenService.getPageForPublicGardens(pageable);
         model.addAttribute("gardenPage", gardenPage);
-        GardenUser owner = gardenUserService.getCurrentUser();
-        List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
+        List<Garden> gardens = gardenService.getGardensByOwnerId(gardenUserService.getCurrentUser().getId());
         model.addAttribute("gardens", gardens);
+        List<Garden> gardensWithPlants = gardenPage.getContent().stream()
+                .map(garden -> {
+                    List<Plant> plants = plantService.getPlantsByGardenId(garden.getId());
+                    garden.setPlants(plants);
+                    return garden;
+                })
+                .collect(Collectors.toList());
         return "gardens/publicGardens";
     }
 
@@ -272,28 +307,28 @@ public class GardenController {
     public String viewFriendGardens(
         Authentication authentication,
         @PathVariable() Long id,
-        Model model) {  
+        Model model) {
             Long loggedInUserId = (Long) authentication.getPrincipal();
             Friends isFriend = friendService.getFriendship(loggedInUserId, id);
             GardenUser owner = gardenUserService.getUserById(id);
 
-            List<Garden> privateGardens = gardenService.getPrivateGardensByOwnerId(owner);
-            List<Garden> publicGardens = gardenService.getPublicGardensByOwnerId(owner);
-            if (isFriend != null) {
-                model.addAttribute("privateGardens", privateGardens);
-            }
-
-            model.addAttribute("publicGardens", publicGardens);
+//            List<Garden> privateGardens = gardenService.getPrivateGardensByOwnerId(owner);
+//            List<Garden> publicGardens = gardenService.getPublicGardensByOwnerId(owner);
+//            if (isFriend != null) {
+//                model.addAttribute("privateGardens", privateGardens);
+//            }
+//
+//            model.addAttribute("publicGardens", publicGardens);
 
         return "gardens/friendGardens";
     }
-    
+
 
     /**
      * send the user to public gardens with a subset of gardens matching
      * their given search
      * @param search string that user is searching
-     * @param model
+     * @param model representation of results
      * @return public garden page
      */
     @PostMapping("/gardens/public/search")
