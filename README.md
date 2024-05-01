@@ -1,5 +1,5 @@
 # SENG302 Team D Gardener's Grove Project
-Team 800's Gardener's Grove Project uses `gradle`, `Spring Boot`, `Thymeleaf`, `GitLab CI`, `H2`, `MariaDB`, `Bootstrap`, `JQuery`, `Cucumber`, `JUnit`, `jacoco`, and `SonarQube`.
+Team 800's Gardener's Grove Project uses `gradle`, `Spring Boot`, `Thymeleaf`, `GitLab CI`, `H2`, `MariaDB`, `Bootstrap`, `JQuery`, `Jackson`, `Cucumber`, `JUnit`, `jacoco`, and `SonarQube`.
 
 ## How to run
 ### 1 - Running the project
