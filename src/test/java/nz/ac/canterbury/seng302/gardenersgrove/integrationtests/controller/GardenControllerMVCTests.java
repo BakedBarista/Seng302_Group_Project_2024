@@ -2,10 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.GardenController;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weatherAPI.WeatherAPIService;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,6 +49,8 @@ public class GardenControllerMVCTests {
     @Mock
     private FriendService friendService;
 
+    @Mock
+    private ModerationService moderationService;
 
     @BeforeEach
     public void setUp() {
@@ -62,7 +61,8 @@ public class GardenControllerMVCTests {
         gardenUserService = mock(GardenUserService.class);
         gardenService = mock(GardenService.class);
         plantService = mock(PlantService.class);
-        gardenController = new GardenController(gardenService, plantService, gardenUserService, weatherAPIService, friendService);
+        moderationService = mock(ModerationService.class);
+        gardenController = new GardenController(gardenService, plantService, gardenUserService, weatherAPIService, friendService, moderationService);
 
         // Setting up lenient behavior to avoid unnecessary stubbing exceptions
         lenient().when(owner.getId()).thenReturn(1L);

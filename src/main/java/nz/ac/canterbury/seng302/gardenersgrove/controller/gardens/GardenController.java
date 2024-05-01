@@ -42,19 +42,19 @@ public class GardenController {
     private final PlantService plantService;
     private final WeatherAPIService weatherAPIService;
 
-    @Autowired
-    ModerationService moderationService;
+    private final ModerationService moderationService;
 
     private final GardenUserService gardenUserService;
     private final FriendService friendService;
 
     @Autowired
-    public GardenController(GardenService gardenService, PlantService plantService, GardenUserService gardenUserService, WeatherAPIService weatherAPIService, FriendService friendService) {
+    public GardenController(GardenService gardenService, PlantService plantService, GardenUserService gardenUserService, WeatherAPIService weatherAPIService, FriendService friendService, ModerationService moderationService) {
         this.gardenService = gardenService;
         this.plantService = plantService;
         this.gardenUserService = gardenUserService;
         this.weatherAPIService = weatherAPIService;
         this.friendService = friendService;
+        this.moderationService = moderationService;
     }
 
     /**
