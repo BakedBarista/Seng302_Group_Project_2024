@@ -35,4 +35,11 @@ public interface GardenRepository extends CrudRepository<Garden, Long> {
     @Query("SELECT g FROM Garden g WHERE ((g.name ILIKE %?1%) OR " +
             "EXISTS (SELECT p FROM Plant p WHERE p.garden = g AND p.name ILIKE %?1%)) AND g.isPublic ORDER BY g.id DESC")
     Page<Garden> findPageThatContainsQuery(String query, Pageable pageable);
+
+    @Query("SELECT g From Garden g WHERE g.owner = ?1 AND g.isPublic")
+    List<Garden> findUserPublicGarden(GardenUser owner);
+
+    @Query("SELECT g From Garden g WHERE g.owner = ?1 AND not g.isPublic")
+    List<Garden> findUserPrivateGarden(GardenUser owner);
+    
 }

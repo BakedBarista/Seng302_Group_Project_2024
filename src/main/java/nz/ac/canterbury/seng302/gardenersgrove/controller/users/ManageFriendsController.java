@@ -71,7 +71,7 @@ public class ManageFriendsController {
      */
     @PostMapping("users/manageFriends/invite")
     public String manageFriendsInvite(Authentication authentication,
-            @RequestParam(name = "requestedUserId", required = false) Long requestedUserId) {
+            @RequestParam(name = "requestedUser", required = false) Long requestedUserId) {
 
         Long loggedInUserId = (Long) authentication.getPrincipal();
         GardenUser loggedInUser = userService.getUserById(loggedInUserId);
@@ -118,7 +118,7 @@ public class ManageFriendsController {
      */
     @PostMapping("users/manageFriends/accept")
     public String manageFriendsAccept(Authentication authentication,
-            @RequestParam(name = "acceptUserId", required = false) Long acceptUserId) {
+            @RequestParam(name = "acceptUser", required = false) Long acceptUserId) {
 
         Long loggedInUserId = (Long) authentication.getPrincipal();
 
@@ -155,7 +155,7 @@ public class ManageFriendsController {
      */
     @PostMapping("users/manageFriends/decline")
     public String manageFriendsDecline(Authentication authentication,
-            @RequestParam(name = "declineUserId", required = false) Long declineUserId) {
+            @RequestParam(name = "declineUser", required = false) Long declineUserId) {
 
         Long loggedInUserId = (Long) authentication.getPrincipal();
         GardenUser loggedInUser = userService.getUserById(loggedInUserId);
