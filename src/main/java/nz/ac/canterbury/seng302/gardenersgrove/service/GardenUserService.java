@@ -173,6 +173,18 @@ public class GardenUserService {
         return getUserById(userId);
     }
 
-
+    /**
+     * Gets a single GardenUser by their reset password token
+     * 
+     * @param token The reset password token to search for
+     * @return The user with the given reset password token, or null if no such user
+     */
+    public GardenUser getUserByResetPasswordToken(String token) {
+        if (token == null) {
+            return null;
+        }
+        var user = gardenUserRepository.findByResetPasswordToken(token);
+        return user.orElse(null);
+    }
 
 }

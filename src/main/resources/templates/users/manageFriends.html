@@ -186,45 +186,6 @@
         </div>
 
         <div class="col-sm-10 col-md-5">
-            <div class="card mb-1 h-100">
-                <div class="card-body">
-                    <h2>sent requests: </h2>
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th scope="col">Name</th>
-                            <th scope="col">Status</th>
-                            <th scope="col"></th>
-                        </tr>
-                        </thead>
-                        <tbody th:if="${sentRequests.empty}">
-                        <tr>
-                            <td colspan="2">No requests sent.</td>
-                        </tr>
-                        </tbody>
-                        <tbody th:each="friend : ${sentRequests}">
-                        <tr>
-                            <td class="align-middle">
-                                <img class="rounded-circle overflow-hidden border border-dark"
-                                     th:src="@{'/users/' + ${friend.user2.id} + '/profile-picture'}"
-                                     style="width: 40px; height: 40px;" alt="">
-                                <span th:text="${friend.user2.fname}"> </span>
-                                <span th:if="${friend.user2 != null}"
-                                      th:text="${friend.user2.lname}"></span>
-                            </td>
-                            <td class="align-middle" th:if="${friend.status != ''}"
-                                th:text="${friend.status}"></td>
-                            <form th:action="@{/users/manageFriends/cancel}" method="post" class="d-inline">
-                                <input type="hidden" name="userId" th:value="${friend.user2.id}" class="d-inline"/>
-                                <td class="align-middle">
-                                    <button class="btn btn-success btn-sm mr-2">Cancel</button>
-                                </td>
-                            </form>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
 
             <div class="card h-100 mb-1">
                 <div class="card-body">
@@ -270,6 +231,37 @@
                     </table>
                 </div>
             </div>
+
+            <div class="card mb-1 h-100">
+                <div class="card-body">
+                    <h2>sent requests: </h2>
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Status</th>
+                        </tr>
+                        </thead>
+                        <tbody th:if="${sentRequests.empty}">
+                        <tr>
+                            <td colspan="2">No requests sent.</td>
+                        </tr>
+                        </tbody>
+                        <tbody th:each="friend : ${sentRequests}">
+                        <tr>
+                            <td class="align-middle">
+                                <img class="rounded-circle overflow-hidden border border-dark" th:src="@{'/users/' + ${friend.user2.id} + '/profile-picture'}" style="width: 40px; height: 40px;">
+                                <span th:text="${friend.user2.fname}"> </span>
+                                <span th:if="${friend.user2 != null}"
+                                      th:text="${friend.user2.lname}"></span>
+                            </td>
+                            <td class="align-middle" th:text="${friend.status}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>

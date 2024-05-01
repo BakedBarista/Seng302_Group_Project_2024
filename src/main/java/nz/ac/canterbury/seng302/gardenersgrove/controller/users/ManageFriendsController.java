@@ -76,14 +76,15 @@ public class ManageFriendsController {
         Long loggedInUserId = (Long) authentication.getPrincipal();
         GardenUser loggedInUser = userService.getUserById(loggedInUserId);
         GardenUser sentTo = userService.getUserById(requestedUser);
-
+        
         boolean requestingMyself = loggedInUserId == requestedUser;
+
         if (requestingMyself) {
             return "redirect:/users/manageFriends";
         }
-        List<Friends> iDeclinedFriend = friendService.getReceivedRequestsDeclined(loggedInUserId);
+        List<Friends> iDeclinedFriend = friendService.getSentRequestsDeclined(loggedInUserId);
         for (Friends user2 : iDeclinedFriend) {
-            if (sentTo == user2.getUser1()) {
+            if (sentTo == user2.getUser2()) {
                 return "redirect:/users/manageFriends";
             }
         }
