@@ -50,11 +50,11 @@ public class ManageFriendsController {
 
         Long loggedInUserId = (Long) authentication.getPrincipal();
         List<GardenUser> allUsers = userService.getUser();
-        List<GardenUser> Friends = friendService.getAllFriends(loggedInUserId);
+        List<GardenUser> friends = friendService.getAllFriends(loggedInUserId);
         List<Friends> sentRequests = friendService.getSentRequests(loggedInUserId);
         List<Friends> receivedRequests = friendService.getReceivedRequests(loggedInUserId);
         // base attributes to set up the page.
-        model.addAttribute("friends", Friends);
+        model.addAttribute("friends", friends);
         model.addAttribute("allUsers", allUsers);
         model.addAttribute("sentRequests", sentRequests);
         model.addAttribute("receivedRequests", receivedRequests);
@@ -66,77 +66,75 @@ public class ManageFriendsController {
      *
      * @param authentication An Authentication object representing the current
      *                       user's authentication details
-     * @param requestedUser  The ID of the user to whom the invitation is sent
+     * @param requestedUserId  The ID of the user to whom the invitation is sent
      * @return A redirection to the "/users/manageFriends"
      */
     @PostMapping("users/manageFriends/invite")
     public String manageFriendsInvite(Authentication authentication,
-            @RequestParam(name = "requestedUser", required = false) Long requestedUser) {
+            @RequestParam(name = "requestedUserId", required = false) Long requestedUserId) {
 
         Long loggedInUserId = (Long) authentication.getPrincipal();
         GardenUser loggedInUser = userService.getUserById(loggedInUserId);
-        GardenUser sentTo = userService.getUserById(requestedUser);
+        GardenUser sentToUser = userService.getUserById(requestedUserId);
         
-        boolean requestingMyself = loggedInUserId == requestedUser;
+        boolean requestingMyself = loggedInUserId.equals(requestedUserId);
 
         if (requestingMyself) {
             return "redirect:/users/manageFriends";
         }
         List<Friends> iDeclinedFriend = friendService.getSentRequestsDeclined(loggedInUserId);
         for (Friends user2 : iDeclinedFriend) {
-            if (sentTo == user2.getUser2()) {
+            if (sentToUser.getId().equals(user2.getUser2().getId())) {
                 return "redirect:/users/manageFriends";
             }
         }
 
-        Friends alreadyFriends = friendService.getAcceptedFriendship(loggedInUserId, requestedUser);
+        Friends alreadyFriends = friendService.getAcceptedFriendship(loggedInUserId, requestedUserId);
         if (alreadyFriends != null) {
             return "redirect:/users/manageFriends";
         }
 
-        Friends requestsPending = friendService.getFriendship(loggedInUserId, requestedUser);
+        Friends requestsPending = friendService.getFriendship(loggedInUserId, requestedUserId);
         if (requestsPending != null) {
-            if (requestsPending.getStatus() == "pending") {
+            if (requestsPending.getStatus().equals("pending")) {
                 return "redirect:/users/manageFriends";
             }
         }
 
-        Friends newFriends = new Friends(loggedInUser, sentTo, "pending");
+        Friends newFriends = new Friends(loggedInUser, sentToUser, "pending");
         friendService.save(newFriends);
 
         return "redirect:/users/manageFriends";
     }
-
-    // sent is 1 request is 2
 
     /**
      * Handles accepting a new friend.
      *
      * @param authentication An Authentication object representing the current
      *                       user's authentication details
-     * @param acceptUser     The ID of the user whose friend request is being
+     * @param acceptUserId     The ID of the user whose friend request is being
      *                       accepted
      * @return A redirection to the "/users/manageFriends"
      */
     @PostMapping("users/manageFriends/accept")
     public String manageFriendsAccept(Authentication authentication,
-            @RequestParam(name = "acceptUser", required = false) Long acceptUser) {
+            @RequestParam(name = "acceptUserId", required = false) Long acceptUserId) {
 
         Long loggedInUserId = (Long) authentication.getPrincipal();
 
         List<Friends> sentAndDeclinedList = friendService.getSentRequestsDeclined(loggedInUserId);
         for (Friends request : sentAndDeclinedList) {
-            if (request.getUser1().getId() == loggedInUserId && request.getUser2().getId() == acceptUser) {
+            if (request.getUser1().getId().equals(loggedInUserId) && request.getUser2().getId().equals(acceptUserId)) {
                 friendService.delete(request);
             }
         }
 
-        Friends alreadyFriends = friendService.getAcceptedFriendship(loggedInUserId, acceptUser);
+        Friends alreadyFriends = friendService.getAcceptedFriendship(loggedInUserId, acceptUserId);
         if (alreadyFriends != null) {
             return "redirect:/users/manageFriends";
         }
 
-        Friends friendShip = friendService.getFriendship(loggedInUserId, acceptUser);
+        Friends friendShip = friendService.getFriendship(loggedInUserId, acceptUserId);
 
         if (friendShip != null) {
             friendShip.setStatus("accepted");
@@ -151,19 +149,19 @@ public class ManageFriendsController {
      *
      * @param authentication An Authentication object representing the current
      *                       user's authentication details
-     * @param declineUser    The ID of the user whose friend request is being
+     * @param declineUserId    The ID of the user whose friend request is being
      *                       declined
      * @return A redirection to the "/users/manageFriends"
      */
     @PostMapping("users/manageFriends/decline")
     public String manageFriendsDecline(Authentication authentication,
-            @RequestParam(name = "declineUser", required = false) Long declineUser) {
+            @RequestParam(name = "declineUserId", required = false) Long declineUserId) {
 
         Long loggedInUserId = (Long) authentication.getPrincipal();
         GardenUser loggedInUser = userService.getUserById(loggedInUserId);
-        GardenUser receivedFrom = userService.getUserById(declineUser);
+        GardenUser receivedFrom = userService.getUserById(declineUserId);
 
-        Friends alreadyFriends = friendService.getAcceptedFriendship(loggedInUserId, declineUser);
+        Friends alreadyFriends = friendService.getAcceptedFriendship(loggedInUserId, declineUserId);
         if (alreadyFriends != null) {
             return "redirect:/users/manageFriends";
         }
@@ -171,7 +169,7 @@ public class ManageFriendsController {
         if (loggedInUser != null && receivedFrom != null) {
             List<Friends> friendShip = friendService.getReceivedRequests(loggedInUserId);
             for (Friends user : friendShip) {
-                if (user.getUser1().getId() == declineUser && user.getUser2().getId() == loggedInUserId) {
+                if (user.getUser1().getId().equals(declineUserId) && user.getUser2().getId().equals(loggedInUserId)) {
                     user.setStatus("declined");
                     friendService.save(user);
                 }
@@ -198,10 +196,10 @@ public class ManageFriendsController {
         List<GardenUser> searchResults = userService.getUserBySearch(searchUser, loggedInUserId);
         Optional<GardenUser> checkMyself = userService.checkSearchMyself(searchUser, loggedInUserId);
 
-        List<GardenUser> alreadyFriendsList = new ArrayList<GardenUser>();
-        List<GardenUser> requestPendingList = new ArrayList<GardenUser>();
-        List<GardenUser> alreadyFriendsDeclineSent = new ArrayList<GardenUser>();
-        List<GardenUser> receivedRequestList = new ArrayList<GardenUser>();
+        List<GardenUser> alreadyFriendsList = new ArrayList<>();
+        List<GardenUser> requestPendingList = new ArrayList<>();
+        List<GardenUser> alreadyFriendsDeclineSent = new ArrayList<>();
+        List<GardenUser> receivedRequestList = new ArrayList<>();
 
         // so we dont get index out of range
         List<GardenUser> copyOfSearchResults = new ArrayList<>(searchResults);
@@ -222,14 +220,14 @@ public class ManageFriendsController {
 
                 if (!requestReceived.isEmpty()) {
                     for (Friends user2 : requestReceived) {
-                        if (user == user2.getUser1()) {
+                        if (user.getId().equals(user2.getUser1().getId())) {
                             receivedRequestList.add(user);
                             searchResults.remove(user);
                         }
                     }
                 } else if (!declineSent.isEmpty()) {
                     for (Friends user2 : declineSent) {
-                        if (user == user2.getUser2()) {
+                        if (user.getId().equals(user2.getUser2().getId())) {
                             alreadyFriendsDeclineSent.add(user);
                             searchResults.remove(user);
                         }
