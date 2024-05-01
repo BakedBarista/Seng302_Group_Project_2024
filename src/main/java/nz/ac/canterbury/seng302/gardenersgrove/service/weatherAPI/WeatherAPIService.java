@@ -24,7 +24,7 @@ import java.util.*;
 
 @Service
 public class WeatherAPIService {
-    @Value("${WEATHER_API}")
+    @Value("${WEATHER_KEY}")
     private String API_KEY;
 
     private final String WEATHER_API_URL = "https://api.weatherapi.com/v1/forecast.json?key=";
