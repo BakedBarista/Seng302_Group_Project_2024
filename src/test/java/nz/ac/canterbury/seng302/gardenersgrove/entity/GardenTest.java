@@ -378,4 +378,120 @@ public class GardenTest {
         assertTrue(validator.validate(garden).isEmpty());
     }
 
+    @Test
+    public void gardenName_ContainsDiacritic_whenSubmitted_ReturnsNoViolations() {
+        garden.setName("Māori Garden");
+
+        assertTrue(validator.validate(garden).isEmpty());
+    }
+
+    @Test
+    public void gardenCity_ContainsDiacritic_whenSubmitted_ReturnsNoViolations() {
+        garden.setCity("Ōtautahi");
+
+        assertTrue(validator.validate(garden).isEmpty());
+    }
+
+    @Test
+    public void gardenSuburb_ContainsDiacritic_whenSubmitted_ReturnsNoViolations() {
+        garden.setSuburb("Ōtākaro");
+
+        assertTrue(validator.validate(garden).isEmpty());
+    }
+
+    @Test
+    public void gardenCountry_ContainsDiacritic_whenSubmitted_ReturnsNoViolations() {
+        garden.setCountry("Aotearoa");
+
+        assertTrue(validator.validate(garden).isEmpty());
+    }
+
+    @Test
+    public void enterEmptyGardenName_whenSubmitted_ReturnsViolation() {
+        garden.setName(" ");
+        String expectedMessage = "Garden name cannot be empty";
+        Integer expectedConstraintSetSize = 1;
+
+        ConstraintViolation<Garden> violation = validator.validate(garden).iterator().next();
+
+        assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
+        assertEquals(expectedMessage, violation.getMessage());
+    }
+
+    @Test
+    public void enterEmptyStreetName_whenSubmitted_ReturnsViolation() {
+        garden.setStreetName(" ");
+        String expectedMessage = "Street Name is required";
+        Integer expectedConstraintSetSize = 1;
+
+        ConstraintViolation<Garden> violation = validator.validate(garden).iterator().next();
+
+        assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
+        assertEquals(expectedMessage, violation.getMessage());
+    }
+
+    @Test
+    public void enterEmptyStreetNumber_whenSubmitted_ReturnsViolation() {
+        garden.setStreetNumber(" ");
+        String expectedMessage = "Please enter a valid street number";
+        Integer expectedConstraintSetSize = 1;
+
+        ConstraintViolation<Garden> violation = validator.validate(garden).iterator().next();
+
+        assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
+        assertEquals(expectedMessage, violation.getMessage());
+    }
+    @Test
+    public void enterEmptyCity_whenSubmitted_ReturnsViolation() {
+        garden.setCity(" ");
+        String expectedMessage = "City and Country are required";
+        Integer expectedConstraintSetSize = 1;
+
+        ConstraintViolation<Garden> violation = validator.validate(garden).iterator().next();
+
+        assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
+        assertEquals(expectedMessage, violation.getMessage());
+    }
+    @Test
+    public void enterEmptyCountry_whenSubmitted_ReturnsViolation() {
+        garden.setCountry(" ");
+        String expectedMessage = "City and Country are required";
+        Integer expectedConstraintSetSize = 1;
+
+        ConstraintViolation<Garden> violation = validator.validate(garden).iterator().next();
+
+        assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
+        assertEquals(expectedMessage, violation.getMessage());
+    }
+    @Test
+    public void enterEmptyPostCode_whenSubmitted_ReturnsViolation() {
+        garden.setPostCode(" ");
+        String expectedMessage = "Please enter a valid post code";
+        Integer expectedConstraintSetSize = 1;
+
+        ConstraintViolation<Garden> violation = validator.validate(garden).iterator().next();
+
+        assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
+        assertEquals(expectedMessage, violation.getMessage());
+
+
+    }
+
+    @Test
+    public void enterEmptySuburb_whenSubmitted_ReturnsViolation() {
+        garden.setSuburb(" ");
+        String expectedMessage = "Suburb is required";
+        Integer expectedConstraintSetSize = 1;
+
+        ConstraintViolation<Garden> violation = validator.validate(garden).iterator().next();
+
+        assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
+        assertEquals(expectedMessage, violation.getMessage());
+    }
+
+
+
+
+
+
 }

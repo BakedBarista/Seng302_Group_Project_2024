@@ -99,6 +99,15 @@ public class PlantTest {
         assertEquals(expectedConstraintSetSize, validator.validate(plant).size());
         assertEquals(expectedMessage, violation.getMessage());
     }
+
+    @Test
+    public void WhenSetNameToEmptyStringReturnNotBlankViolation() {
+        plant.setName(" ");
+        String expectedMessage = "Plant name cannot by empty and must only include letters, numbers, spaces, dots, commas, hyphens or apostrophes";
+        Integer expectedConstraintSetSize = 1;
+        assertEquals(validator.validate(plant).size(), expectedConstraintSetSize);
+        assertEquals(expectedMessage, validator.validate(plant).iterator().next().getMessage());
+        }
     @Test
     public void SetName_Null_ReturnNotBlankViolation() {
         plant.setName(null);
@@ -210,14 +219,11 @@ public class PlantTest {
     }
 
     @Test
-    public void SetDescription_FiveHundredAndTwelveChars_ReturnSizeViolation() {
-        plant.setDescription("a".repeat(512));
+    public void WhenSetDescriptionLengthTo513CharactersWhenSubmitReturnErrorMessage() {
+        plant.setDescription("a".repeat(513));
         String expectedMessage = "Plant description must be less than 512 characters";
         Integer expectedConstraintSetSize = 1;
-
-
         ConstraintViolation<Plant> violation = validator.validate(plant).iterator().next();
-
         assertEquals(expectedConstraintSetSize, validator.validate(plant).size());
         assertEquals(expectedMessage, violation.getMessage());
     }
