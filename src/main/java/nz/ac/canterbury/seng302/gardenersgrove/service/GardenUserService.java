@@ -81,7 +81,6 @@ public class GardenUserService {
         if(names.length > 2){
             return empty;
         }
-        System.out.println(first + last);
 
         return gardenUserRepository.findBySearch(first, last, currentUserId);
     }
@@ -108,7 +107,6 @@ public class GardenUserService {
             return Optional.empty();
         }
 
-        System.out.println(first + last + "me");
         return gardenUserRepository.findBySearchMe(first, last, currentUserId);
     }
 
@@ -188,7 +186,5 @@ public class GardenUserService {
         var user = gardenUserRepository.findByResetPasswordToken(token);
         return user.orElse(null);
     }
-
-
 
 }

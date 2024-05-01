@@ -50,6 +50,15 @@ public class FriendService {
     }
 
     /**
+     * Saves a friendship
+     *
+     * @param friendEntity The friendship entity
+     */
+    public void delete(Friends friendEntity) {
+        friendsRepository.delete(friendEntity);
+    }
+
+    /**
      * Retrieves a friendship between two users
      *
      * @param user1 The ID of the first user
@@ -58,6 +67,28 @@ public class FriendService {
      */
     public Friends getFriendship(Long user1, Long user2) {
         return friendsRepository.getRequest(user1, user2);
+    }
+
+    /**
+     * Retrieves a Friend object if they are confirmed friends
+     *
+     * @param user1 user who sent the original friend request
+     * @param user2 user who received the original friend request
+     * @return The friend object if the friendship between the users is "accepted"
+     */
+    public Friends getAcceptedFriendship(Long user1, Long user2) {
+        return friendsRepository.getAcceptedFriendship(user1, user2);
+    }
+
+    /**
+     * Retrieves the Friend object where user1 sent a request to user2
+     *
+     * @param user1 user who sent the original request
+     * @param user2 user who received the original request
+     * @return the Friend object where user 1 sent a request to user2
+     */
+    public Friends getSent(Long user1, Long user2) {
+        return friendsRepository.getSent(user1, user2);
     }
 
      /**
@@ -80,9 +111,23 @@ public class FriendService {
         return friendsRepository.getReceivedRequests(user);
     }
 
-    public void removeFriend(Long user1Id, Long user2Id) {
-        // Logic to remove the friendship, needs to to make sure that the primary user is getting deleted
+    /**
+     * Retrieves all users who declined a request from the given user
+     *
+     * @param user The ID of the user whose friend request has been declined
+     * @return A list of the users who declined friend requests from the given user
+     */
+    public List<Friends> getSentRequestsDeclined(Long user) {
+        return friendsRepository.getSentRequestsDeclined(user);
+    }
 
+    /**
+     * Removes the friendship where user1 and user2 are involved. Covers both cases depending on who sent the request
+     *
+     * @param user1Id user who sent the original request
+     * @param user2Id user who received the original request
+     */
+    public void removeFriend(Long user1Id, Long user2Id) {
         friendsRepository.deleteByUser1IdAndUser2Id(user1Id, user2Id);
         friendsRepository.deleteByUser1IdAndUser2Id(user2Id, user1Id);
 

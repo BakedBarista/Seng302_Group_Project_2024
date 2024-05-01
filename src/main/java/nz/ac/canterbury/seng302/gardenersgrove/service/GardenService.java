@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -86,13 +87,13 @@ public class GardenService {
         return gardenRepository.findByOwnerId(ownerId);
     }
 
-//    public List<Garden> getPublicGardensByOwnerId(GardenUser ownerId) {
-//        return gardenRepository.findUserPublicGarden(ownerId);
-//    }
-//
-//    public List<Garden> getPrivateGardensByOwnerId(GardenUser ownerId) {
-//        return gardenRepository.findUserPrivateGarden(ownerId);
-//    }
+    public List<Garden> getPublicGardensByOwnerId(GardenUser user) {
+        return gardenRepository.findUserPublicGarden(user);
+    }
+
+    public List<Garden> getPrivateGardensByOwnerId(GardenUser user) {
+        return gardenRepository.findUserPrivateGarden(user);
+    }
 
 }
 
