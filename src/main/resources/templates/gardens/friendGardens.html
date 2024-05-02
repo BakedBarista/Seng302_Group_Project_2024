@@ -18,7 +18,7 @@
     <a th:href="@{/users/manageFriends}" class="btn btn-primary mt-3 mb-3">Back to My Friends</a>
     <div class="mt-3">
         <h3>Users Public Gardens:</h3>
-        <table id="public-gardens-table">
+        <table id="public-gardens-table" class="table table-sm">
             <thead>
             <tr>
                 <th>Name</th>
@@ -39,7 +39,7 @@
         </table>
         <div th:if="${privateGardens != null}">
             <h3>Users Private Gardens:</h3>
-            <table id="private-gardens-table">
+            <table id="private-gardens-table" class="table table-sm">
                 <thead>
                 <tr>
                     <th>Name</th>
