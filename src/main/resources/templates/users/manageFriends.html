@@ -28,8 +28,8 @@
         </form>
     </div>
 
-    <div class="col-md-6 col-sm-10" th:if="${searchResults != null}" >
-        <table class="table" >
+    <div class="col-md-6 col-sm-10" th:if="${searchResults != null}">
+        <table class="table">
             <thead>
             <tr>
                 <th>Search Results</th>
@@ -153,12 +153,14 @@
                         <th scope="col">Name</th>
                         <th scope="col">Link</th>
                         <th scope="col">Profile</th>
-                        <th scope="col">Remove</th>
+                        <th scope="col"></th>
                     </tr>
                     </thead>
                     <tbody th:if="${friends.empty}">
                     <tr>
                         <td colspan="2">No friends found.</td>
+                        <td></td>
+                        <td></td>
                     </tr>
                     </tbody>
                     <tbody th:each="friend : ${friends}">
@@ -243,6 +245,7 @@
                         <tr>
                             <th scope="col">Name</th>
                             <th scope="col">Status</th>
+                            <th></th>
                         </tr>
                         </thead>
                         <tbody th:if="${sentRequests.empty}">
@@ -253,12 +256,20 @@
                         <tbody th:each="friend : ${sentRequests}">
                         <tr>
                             <td class="align-middle">
-                                <img class="rounded-circle overflow-hidden border border-dark" th:src="@{'/users/' + ${friend.user2.id} + '/profile-picture'}" style="width: 40px; height: 40px;">
+                                <img class="rounded-circle overflow-hidden border border-dark"
+                                     th:src="@{'/users/' + ${friend.user2.id} + '/profile-picture'}"
+                                     style="width: 40px; height: 40px;">
                                 <span th:text="${friend.user2.fname}"> </span>
                                 <span th:if="${friend.user2 != null}"
                                       th:text="${friend.user2.lname}"></span>
                             </td>
                             <td class="align-middle" th:text="${friend.status}"></td>
+                            <form th:action="@{/users/manageFriends/cancel}" method="post" class="d-inline">
+                                <input type="hidden" name="userId" th:value="${friend.user2.id}" class="d-inline"/>
+                                <td class="align-middle">
+                                    <button class="btn btn-warning btn-sm mr-2">Cancel</button>
+                                </td>
+
                         </tr>
                         </tbody>
                     </table>
