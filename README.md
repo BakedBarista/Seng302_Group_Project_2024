@@ -4,6 +4,8 @@ Team 800's Gardener's Grove Project uses `gradle`, `Spring Boot`, `Thymeleaf`, `
 ## Notes on Deployed Instances
 We had the prod instance working but we are having database issues so pretty please don't use that for marking we will fix it before next sprint :D
 
+## API Keys for Local Running (temporary until prod works)
+https://share.1password.com/s#3VGBoJNgAN2wypWSgNpeuS3shOLqBYkzkbDKNF_RIzE
 
 ## How to run
 ### 1 - Running the project
