@@ -27,6 +27,7 @@
 ### Acceptance Testing
 
 # Review Checklist
+## Code
 ### Coding Standards
 - [ ] All public non-trivial methods have Javadoc
 - [ ] There are useful inline comments, not over documented
@@ -49,3 +50,5 @@
 - [ ] Do any forms behave as expected? 
   - [ ] Do they highlight errors?
   - [ ] When an error occurs the form data remains?
+## Other
+- [ ] (For Developer) Once merged you need to make sure that you test it on the test deployment
