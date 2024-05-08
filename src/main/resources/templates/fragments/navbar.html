@@ -6,7 +6,7 @@
 <body>
 <div th:fragment="navbar">
   <nav class="nav-drawer">
-      <h5><a th:href="@{/}">Gardeners Grove</a></h5>
+      <h5><a th:href="@{/}">Gardener's Grove</a></h5>
       <div th:if="${!isAuthenticated}">
         <a class="btn btn-primary" th:href="@{/users/login}">Sign In</a>
         <a class="btn btn-secondary" th:href="@{/users/register}">Register</a>
