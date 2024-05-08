@@ -1,15 +1,15 @@
 # Details
-**Story Number:** [replace]
+**Story Number:** *replace*
 
-**Task Name:** [replace]
+**Task Name:** *replace*
 
-[**SonarQube Link**](https://sonarqube.csse.canterbury.ac.nz/dashboard?id=seng302-2024-team800&branch=branch-name)
+[**SonarQube Link**](https://sonarqube.csse.canterbury.ac.nz/dashboard?id=seng302-2024-team800&branch=${CI_MERGE_REQUEST_SOURCE_BRANCH_NAME})
 
 ### Task Description:
 *Copy the task description here*
 
 ### Relevant AC's:
-*REPLACE [AC1: Given ....]*
+*put the full relevant ac's here*
 
 # Design Decisions
 
