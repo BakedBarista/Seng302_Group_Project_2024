@@ -94,11 +94,69 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 
-/* Adjustments for navbar */
-.navbar-custom {
-    background-color: var(--gg-white);
-    padding-top: 1rem;
-    padding-bottom: 1rem;
+/* Navbar and drawer */
+:root {
+    --gg-nav-drawer-width: 300px;
+    --gg-nav-drawer-padding: 28px;
+}
+
+body {
+    padding-left: var(--gg-nav-drawer-width);
+}
+
+.nav-drawer {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: var(--gg-nav-drawer-width);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+
+    background-color: var(--gg-dark);
+    color: var(--gg-white);
+    padding: var(--gg-nav-drawer-padding) 0;
+}
+
+.nav-drawer a {
+    color: var(--gg-white);
+    font-weight: 600;
+}
+
+.nav-drawer h5 {
+    font-family: var(--gg-body-font);
+    font-weight: 600;
+    margin: 0 var(--gg-nav-drawer-padding) 40px;
+}
+
+.nav-drawer > div {
+    margin: 0 var(--gg-nav-drawer-padding);
+}
+
+.nav-drawer ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex-grow: 1;
+}
+
+.nav-drawer li a {
+    height: 50px;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0 var(--gg-nav-drawer-padding);
+}
+
+.nav-drawer li a:hover,
+.nav-drawer li a:focus  {
+    background-color: var(--gg-primary);
+}
+
+.nav-drawer .btn-primary,
+.nav-drawer .btn-secondary {
+    --bs-btn-hover-border-color: var(--gg-pale);
 }
 
 /* Dropdown on hover */
