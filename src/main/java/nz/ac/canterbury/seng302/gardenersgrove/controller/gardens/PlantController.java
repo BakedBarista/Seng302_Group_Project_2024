@@ -11,12 +11,17 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -33,17 +38,15 @@ public class PlantController {
 
     private final PlantService plantService;
     private final GardenUserService gardenUserService;
-    private final UploadController uploadController;
     private static final List<String> allowedExtension = Arrays.asList("jpg", "png","jpeg", "svg");
     private static final Integer MAX_FILE_SIZE = 10*1024*1024;
 
     private final GardenService gardenService;
 
     @Autowired
-    public PlantController(PlantService plantService, GardenService gardenService, UploadController uploadController, GardenUserService gardenUserService) {
+    public PlantController(PlantService plantService, GardenService gardenService, GardenUserService gardenUserService) {
         this.plantService = plantService;
         this.gardenService = gardenService;
-        this.uploadController = uploadController;
         this.gardenUserService = gardenUserService;
     }
 
@@ -83,7 +86,7 @@ public class PlantController {
                                       @Valid @ModelAttribute("plant") Plant plant,
                                      BindingResult bindingResult,
                                      @RequestParam("image") MultipartFile file,
-                                      Model model) {
+                                      Model model) throws Exception {
 
 
         if (!plant.getPlantedDate().isEmpty() && !plant.getPlantedDate().matches("\\d{4}-\\d{2}-\\d{2}")){
@@ -102,39 +105,9 @@ public class PlantController {
             logger.info("Error In Form");
             return "plants/addPlant";
         }
-        try {
-            if (file != null && !file.isEmpty()) {
-                // Check file size
-                if (file.getSize() > MAX_FILE_SIZE) {
-                    model.addAttribute("plant", plant);
-                    model.addAttribute("gardenId", gardenId);
-                    model.addAttribute("fileSizeError", "Image must be less than 10MB");
-                    logger.error("File size exceeds the limit");
-                    return "plants/addPlant";
-                }
-
-                // Check file type
-                String fileName = file.getOriginalFilename();
-                String extension = fileName.substring(fileName.lastIndexOf(".") + 1);
-                if (!allowedExtension.contains(extension.toLowerCase())) {
-                    model.addAttribute("plant", plant);
-                    model.addAttribute("gardenId", gardenId);
-                    model.addAttribute("fileTypeError", "Image must be of type png, jpg or svg");
-                    logger.error("Invalid file format");
-                    return "plants/addPlant";
-                }
-
-                // Proceed with uploading the file
-                Plant plantToAdd = plantService.addPlant(plant, gardenId);
-                model.addAttribute("image", uploadController.upload(file, plantToAdd.getId()));
-            } else {
-                // No file uploaded
-                logger.error("No file uploaded");
-                plantService.addPlant(plant, gardenId);
-            }
-        } catch (Exception error) {
-            //TODO: something with this error
-            logger.error(String.valueOf(error));
+        Plant savedPlant = plantService.addPlant(plant, gardenId);
+        if(file != null && !file.isEmpty()) {
+            plantService.setPlantImage(savedPlant.getId(), file.getContentType(), file.getBytes());
         }
         return "redirect:/gardens/" + gardenId;
     }
@@ -165,7 +138,6 @@ public class PlantController {
         model.addAttribute("gardenId", gardenId);
         model.addAttribute("plantId", plantId);
         model.addAttribute("plant", plant.orElse(null));
-        model.addAttribute("imagePath",plantService.getPlantById(plantId).get().getPlantImagePath());
         return "plants/editPlant";
     }
 
@@ -222,5 +194,31 @@ public class PlantController {
         } catch (DateTimeParseException alreadyCorrectFormatForTest) {
             return date;
         }
+    }
+
+    @GetMapping("plants/{id}/plant-image")
+    public ResponseEntity<byte[]> plantImage(@PathVariable("id") Long id) {
+        logger.info("GET /users/" + id + "/profile-picture");
+
+        Plant plant = plantService.getPlantById(id).get();
+        logger.info("plant image {}",plant.getPlantImage());
+        if (plant.getPlantImage() == null) {
+            return ResponseEntity.status(302).header(HttpHeaders.LOCATION, "/img/plant.png").build();
+        }
+
+        return ResponseEntity.ok().contentType(MediaType.parseMediaType(plant.getPlantImageContentType()))
+                .body(plant.getPlantImage());
+    }
+
+    @PostMapping("plants/{id}/plant-image")
+    public String uploadPlantImage(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("id") Long id,
+            @RequestHeader(HttpHeaders.REFERER) String referer) throws IOException {
+        logger.info("POST /users/profile-picture");
+
+        plantService.setPlantImage(id, file.getContentType(), file.getBytes());
+
+        return "redirect:" + referer;
     }
 }

@@ -82,4 +82,21 @@ public class PlantService {
     public void setPlantImage(Plant plant) {
         plantRepository.save(plant);
     }
+
+    /**
+     * Sets the profile picture of the user with the given ID.
+     *
+     * @param id ID of the user whose profile picture is to be set
+     * @param contentType contentType The content type of the profile picture
+     * @param plantImage The byte array representing the plant image
+     */
+    public void setPlantImage(long id, String contentType, byte[] plantImage) {
+        var plant = plantRepository.findById(id);
+        if (plant.isEmpty()) {
+            return;
+        }
+
+        plant.get().setPlantImage(contentType, plantImage);
+        plantRepository.save(plant.get());
+    }
 }

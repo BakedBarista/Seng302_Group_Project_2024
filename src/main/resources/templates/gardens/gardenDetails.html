@@ -110,9 +110,19 @@
             <div class="row gap-2 justify-content-center">
                 <div th:each="plant : ${plants}" class="card shadow-sm rounded-2 p-0 m-0 col-xxl-2 col-lg-3 col-md-4 col-sm-6 col-12">
                     <div class="card-header m-0 p-0 bg-transparent rounded-2">
-                        <img class="w-100" alt="Plant Picture" style="max-height: 300px;" th:if="${plant.plantImagePath}" th:src="@{${plant.plantImagePath}}" />
-                        <img class="w-100" style="height: 200px;" th:unless="${plant.plantImagePath}" src="/default.png" alt="Default Plant Image" />
-                        <a class="add-image-button" th:href="@{/uploadImage(garden_Id=${garden.id}, plant_Id=${plant.id})}">+</a>
+                        <img class="w-100" alt="Plant Picture" style="max-height: 300px;" th:src="@{'/plants/' + ${plant.id} + '/plant-image'}" />
+                        <form
+                                th:action="@{'/plants/' + ${plant.id} + '/plant-image'}"
+                                method="post"
+                                enctype="multipart/form-data"
+                                id="profilePictureForm"
+                        >
+                            <label class="form-group link-text" tabindex="0">
+                                +
+                                <input type="file" name="file" id="profilePictureInput" />
+                            </label>
+                            <span id="profilePictureError" class="error" style="display: none"></span>
+                        </form>
                     </div>
                     <div class="card-body m-0">
                         <div class="d-flex">
@@ -139,5 +149,15 @@
     </div>
 </main>
 <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const profilePictureInput = document.getElementById("profilePictureInput");
+        const profilePictureForm = document.getElementById("profilePictureForm");
+
+        profilePictureInput.addEventListener("change", function() {
+            profilePictureForm.submit();
+        });
+    });
+</script>
 </body>
 </html>

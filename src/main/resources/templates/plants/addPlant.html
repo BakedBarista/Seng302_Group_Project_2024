@@ -36,23 +36,13 @@
             <div th:if="${#fields.hasErrors('plantedDate')}" th:errors="*{plantedDate}" style="color: red;"></div>
             <br/>
             <br/>
-            <div class="form-group">
-                <input id="img-preview" onchange="showImage(this)" type="file" name="image" accept=".png, .jpg, .jpeg, .svg" class="form-control-file">
-            </div>
-            <div class="alert alert-danger" th:if="${fileTypeError}">
-                <div th:text="${fileTypeError}" style="color: red"></div>
-            </div>
-
-            <div class="alert alert-danger" th:if="${fileSizeError}">
-                <div th:text="${fileSizeError}" style="color: red"></div>
-            </div>
             <div>
                 <h3>Plant Image:</h3>
                 <div class="image-container">
-                    <img th:src="@{${plant.plantImagePath}}" />
-                    <img th:unless="${plant.plantImagePath}" src="/default.png" alt="Default Plant Image" />
+                    <img id="preview" th:src="@{/img/plant.png}" alt="Default Plant Image" />
                     <label for="image" class="add-image-button">+</label>
-                    <input type="file" id="image" name="image" accept=".png,.jpg,.jpeg,.svg" class="form-control-file" style = "display: none;">
+                    <input type="file" id="image" name="image" accept=".png,.jpg,.jpeg,.svg" class="form-control-file" style = "display: none;" onchange="previewImage(event)">
+                    <span id="plantImageError" class="error" style="display: none"></span>
                 </div>
             </div>
             <button type="submit">Submit!</button>
@@ -63,5 +53,63 @@
 <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
 </body>
 <script th:src="@{/js/nextFormBox.js}"></script>
-<script th:src="@{/js/imageHandler.js}"></script>
+<script>
+    (function () {
+        /** @type {HTMLInputElement} */
+        const plantImageInput = document.getElementById(
+            "image"
+        );
+        /** @type {HTMLSpanElement} */
+        const plantImageError = document.getElementById(
+            "plantImageError"
+        );
+
+        const VALID_MIME_TYPES = ["image/png", "image/jpeg", "image/svg+xml"];
+        let hasError = false;
+
+
+        plantImageInput.addEventListener("change", (ev) => {
+            const file = plantImageInput.files[0];
+            hasError = false;
+            if (!file) {
+                return;
+            }
+
+            plantImageError.textContent = "";
+            plantImageError.style.display = "none";
+
+
+            if (!VALID_MIME_TYPES.includes(file.type)) {
+                plantImageError.style.display = "block";
+                plantImageError.textContent =
+                    "Image must be of type png, jpg or svg";
+                hasError = true;
+                return;
+            }
+
+            if (file.size > 10 * 1024 * 1024) {
+                plantImageError.style.display = "block";
+                plantImageError.textContent =
+                    "File size must be less than 10MB";
+                hasError = true;
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function () {
+                const preview = document.getElementById("preview");
+                preview.src = reader.result;
+                preview.style.display = "block";
+            };
+            reader.readAsDataURL(file);
+        });
+        //Below code is provided by ChatGPT
+        document.getElementById("addPlantForm").addEventListener("submit", function(event) {
+            if (hasError) {
+                event.preventDefault(); // Prevent form submission
+                return false;
+            }
+            return true;
+        });
+    })();
+</script>
 </html>
