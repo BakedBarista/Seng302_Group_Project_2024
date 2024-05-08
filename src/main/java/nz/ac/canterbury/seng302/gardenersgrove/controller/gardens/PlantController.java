@@ -182,7 +182,7 @@ public class PlantController {
 
         logger.info(plant.getPlantedDate());
         if (!plant.getPlantedDate().isEmpty() && !plant.getPlantedDate().matches("\\d{4}-\\d{2}-\\d{2}")) {
-            bindingResult.rejectValue("plantedDate", "plantedDate.formatError", "Date must be in the format YYYY-MM-DD");
+            bindingResult.rejectValue("plantedDate", "plantedDate.formatError", "Date must be in the format DD-MM-YYYY");
         }
 
         if(!plant.getPlantedDate().isEmpty()) {
