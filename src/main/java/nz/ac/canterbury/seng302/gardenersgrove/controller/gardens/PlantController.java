@@ -106,7 +106,8 @@ public class PlantController {
             return "plants/addPlant";
         }
         Plant savedPlant = plantService.addPlant(plant, gardenId);
-        if(file != null && !file.isEmpty()) {
+        //Save plant image
+        if(file != null && !file.isEmpty() && savedPlant != null) {
             plantService.setPlantImage(savedPlant.getId(), file.getContentType(), file.getBytes());
         }
         return "redirect:/gardens/" + gardenId;
@@ -150,7 +151,7 @@ public class PlantController {
     public String submitEditPlantForm(@PathVariable("gardenId") long gardenId,
                                @PathVariable("plantId") long plantId, @RequestParam("image") MultipartFile file,
                                @Valid @ModelAttribute("plant") Plant plant,
-                               BindingResult bindingResult, Model model) {
+                               BindingResult bindingResult, Model model) throws Exception{
 
         logger.info(plant.getPlantedDate());
         if (!plant.getPlantedDate().isEmpty() && !plant.getPlantedDate().matches("\\d{4}-\\d{2}-\\d{2}")) {
@@ -173,10 +174,12 @@ public class PlantController {
             existingPlant.get().setCount(plant.getCount());
             existingPlant.get().setDescription(plant.getDescription());
             existingPlant.get().setPlantedDate(plant.getPlantedDate());
-            plantService.addPlant(existingPlant.get(), gardenId);
+            Plant savedPlant = plantService.addPlant(existingPlant.get(), gardenId);
+            if(file != null && !file.isEmpty() && savedPlant != null) {
+                plantService.setPlantImage(savedPlant.getId(), file.getContentType(), file.getBytes());
+            }
         }
 
-        //plantService.addPlant(updatedPlant);
         return "redirect:/gardens/"+gardenId;
     }
 
@@ -198,10 +201,9 @@ public class PlantController {
 
     @GetMapping("plants/{id}/plant-image")
     public ResponseEntity<byte[]> plantImage(@PathVariable("id") Long id) {
-        logger.info("GET /users/" + id + "/profile-picture");
+        logger.info("GET /plants/" + id + "/plant-image");
 
         Plant plant = plantService.getPlantById(id).get();
-        logger.info("plant image {}",plant.getPlantImage());
         if (plant.getPlantImage() == null) {
             return ResponseEntity.status(302).header(HttpHeaders.LOCATION, "/img/plant.png").build();
         }
@@ -212,10 +214,10 @@ public class PlantController {
 
     @PostMapping("plants/{id}/plant-image")
     public String uploadPlantImage(
-            @RequestParam("file") MultipartFile file,
-            @RequestParam("id") Long id,
+            @RequestParam("image") MultipartFile file,
+            @PathVariable("id") Long id,
             @RequestHeader(HttpHeaders.REFERER) String referer) throws IOException {
-        logger.info("POST /users/profile-picture");
+        logger.info("POST /plants " + id + "/plant-image");
 
         plantService.setPlantImage(id, file.getContentType(), file.getBytes());
 

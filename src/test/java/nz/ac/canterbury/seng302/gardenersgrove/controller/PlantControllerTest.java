@@ -60,7 +60,7 @@ public class PlantControllerTest {
     }
 
     @Test
-    public void testSubmitAddPlantForm_DataIsValid_ReturnToGardenDetailPage() {
+    public void testSubmitAddPlantForm_DataIsValid_ReturnToGardenDetailPage() throws Exception {
         Plant validPlant = new Plant("Plant", "10", "Yellow", "11/03/2024");
         long gardenId = 0;
         String expectedReturnPage = "redirect:/gardens/" + gardenId;
@@ -72,7 +72,7 @@ public class PlantControllerTest {
     }
 
     @Test
-    public void testSubmitAddPlantForm_DataIsInvalid_ReturnToAddPlantForm() {
+    public void testSubmitAddPlantForm_DataIsInvalid_ReturnToAddPlantForm() throws Exception {
         Plant invalidPlant = new Plant("#invalid", "10", "Yellow", "11/03/2024");
         long gardenId = 0;
         String expectedReturnPage = "plants/addPlant";
@@ -97,7 +97,7 @@ public class PlantControllerTest {
     }
 
     @Test
-    public void testSubmitEditPlantForm_DataIsValid_ReturnToGardenDetailPage_PlantAddedToRepository() {
+    public void testSubmitEditPlantForm_DataIsValid_ReturnToGardenDetailPage_PlantAddedToRepository() throws Exception {
         Plant validPlant = new Plant("Plant", "10", "Yellow", "11/03/2024");
         long gardenId = 0;
         long plantId = 0;
@@ -114,7 +114,7 @@ public class PlantControllerTest {
     }
 
     @Test
-    public void testSubmitEditPlantForm_DataIsInvalid_ReturnToEditPlantForm() {
+    public void testSubmitEditPlantForm_DataIsInvalid_ReturnToEditPlantForm() throws Exception {
         Plant invalidPlant = new Plant("#invalid", "10", "Yellow", "11/03/2024");
         long gardenId = 0;
         long plantId = 0;

@@ -11,7 +11,7 @@
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 <div>
     <div>
-        <form th:action="@{/gardens/{gardenId}/plants/{plantId}/edit(gardenId=${gardenId}, plantId=${plantId})}" th:object="${plant}" method="post" enctype="multipart/form-data" novalidate>
+        <form id="editPlantForm" th:action="@{/gardens/{gardenId}/plants/{plantId}/edit(gardenId=${gardenId}, plantId=${plantId})}" th:object="${plant}" method="post" enctype="multipart/form-data" novalidate>
             <label for="name"> Plant Name: </label>
             <input type="text" class="form-control" id="name" placeholder="Name"
                    th:name="name" th:value="${plant.name}" data-cy="name" autofocus>
@@ -33,7 +33,12 @@
             <br/>
             <div>
                 <h3>Plant Image:</h3>
-                <div th:insert="~{fragments/plantImageUpload.html}"></div>
+                <div class="image-container">
+                    <img id="preview" th:src="@{'/plants/' + ${plant.id} + '/plant-image'}" alt="Default Plant Image" />
+                    <label for="image" class="add-image-button">+</label>
+                    <input type="file" id="image" name="image" accept=".png,.jpg,.jpeg,.svg" class="form-control-file" style = "display: none;">
+                    <span id="plantImageError" class="error" style="display: none"></span>
+                </div>
             </div>
             <div>
                 <button type="submit">Submit!</button><a class="button-link" th:href="@{/gardens/{garden_id}(garden_id=${gardenId})}"><button type="button">Cancel</button></a>
@@ -44,5 +49,62 @@
 <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
 </body>
 <script th:src="@{/js/nextFormBox.js}"></script>
-<script th:src="@{/js/imageHandler.js}"></script>
+<script>
+    (function () {
+        /** @type {HTMLInputElement} */
+        const plantImageInput = document.getElementById(
+            "image"
+        );
+        /** @type {HTMLSpanElement} */
+        const plantImageError = document.getElementById(
+            "plantImageError"
+        );
+
+        const VALID_MIME_TYPES = ["image/png", "image/jpeg", "image/svg+xml"];
+        let hasError = false;
+
+
+        plantImageInput.addEventListener("change", (ev) => {
+            const file = plantImageInput.files[0];
+            hasError = false;
+            if (!file) {
+                return;
+            }
+
+            plantImageError.textContent = "";
+            plantImageError.style.display = "none";
+
+
+            if (!VALID_MIME_TYPES.includes(file.type)) {
+                plantImageError.style.display = "block";
+                plantImageError.textContent =
+                    "Image must be of type png, jpg or svg";
+                hasError = true;
+                return;
+            }
+
+            if (file.size > 10 * 1024 * 1024) {
+                plantImageError.style.display = "block";
+                plantImageError.textContent =
+                    "File size must be less than 10MB";
+                hasError = true;
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function () {
+                const preview = document.getElementById("preview");
+                preview.src = reader.result;
+                preview.style.display = "block";
+            };
+            reader.readAsDataURL(file);
+            });
+            document.getElementById("editPlantForm").addEventListener("submit", function(event) {
+                if (hasError) {
+                    event.preventDefault(); // Prevent form submission
+                    return false;
+                }
+                return true;
+            });
+        })();
+</script>
 </html>
