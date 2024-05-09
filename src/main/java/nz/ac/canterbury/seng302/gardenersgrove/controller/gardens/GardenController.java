@@ -236,20 +236,19 @@ public class GardenController {
                                BindingResult result,
                                Model model) {
                                 
-            List<String> locationErrorNames = Arrays.asList("city", "country", "suburb", "streetNumber", "streetName");
-
+            List<String> locationErrorNames = Arrays.asList("city", "country", "suburb", "streetNumber", "streetName", "postCode");
             if (result.hasErrors()) {
                 for (FieldError error : result.getFieldErrors()) {
                     if(locationErrorNames.contains(error.getField())){
-                    if(error.getCode().equals("NotBlank")){
-                        var errorMessage = "Location cannot be empty";
-                        model.addAttribute("locationError", errorMessage);
-                        break;
-                    } else {
-                        var errorMessage = "Location name must only include letters, numbers, spaces, dots, hyphens or apostrophes";
-                        model.addAttribute("locationError", errorMessage);
-                        break;
-                    }
+                        if(error.getCode().equals("Pattern")){
+                            var errorMessage = "Location name must only include letters, numbers, spaces, dots, hyphens or apostrophes";
+                            model.addAttribute("locationError", errorMessage);
+                            break;
+                        } else {
+                            var errorMessage = "Location cannot be empty";
+                            model.addAttribute("locationError", errorMessage);
+                            break;
+                        }
                 }
             }
 
