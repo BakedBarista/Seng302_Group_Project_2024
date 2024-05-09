@@ -15,7 +15,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.security.ThymeLeafAuthenticationExposer;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 
-public class ThymeLeafAuthenticationExposerTests {
+class ThymeLeafAuthenticationExposerTests {
     private GardenUserService userService;
     private ThymeLeafAuthenticationExposer authenticationExposer;
     private HttpServletRequest request;

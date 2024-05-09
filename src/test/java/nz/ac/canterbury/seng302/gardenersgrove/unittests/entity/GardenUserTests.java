@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 
-public class GardenUserTests {
+class GardenUserTests {
     @Test
     void givenHasLName_whenGetFullName_thenReturnsFullName() {
         GardenUser user = new GardenUser();

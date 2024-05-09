@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class GardenTest {
+class GardenTest {
 
     private static Validator validator;
     private Garden garden;
@@ -27,56 +27,56 @@ public class GardenTest {
     }
 
     @Test
-    public void gardenName_NameIsGarden_ReturnsEmptyConstraintViolationList() {
+    void gardenName_NameIsGarden_ReturnsEmptyConstraintViolationList() {
         garden.setName("Garden");
 
         assertTrue(validator.validate(garden).isEmpty());
     }
 
     @Test
-    public void gardenName_NameHasSpace_ReturnsEmptyConstraintViolationList() {
+    void gardenName_NameHasSpace_ReturnsEmptyConstraintViolationList() {
         garden.setName("my garden");
 
         assertTrue(validator.validate(garden).isEmpty());
     }
 
     @Test
-    public void gardenName_NameHasSpaces_ReturnsEmptyConstraintViolationList() {
+    void gardenName_NameHasSpaces_ReturnsEmptyConstraintViolationList() {
         garden.setName("my      garden");
 
         assertTrue(validator.validate(garden).isEmpty());
     }
 
     @Test
-    public void gardenName_NameHasCommas_ReturnsEmptyConstraintViolationList() {
+    void gardenName_NameHasCommas_ReturnsEmptyConstraintViolationList() {
         garden.setName("my,,garden");
 
         assertTrue(validator.validate(garden).isEmpty());
     }
 
     @Test
-    public void gardenName_NameHasHyphens_ReturnsEmptyConstraintViolationList() {
+    void gardenName_NameHasHyphens_ReturnsEmptyConstraintViolationList() {
         garden.setName("my--garden");
 
         assertTrue(validator.validate(garden).isEmpty());
     }
 
     @Test
-    public void gardenName_NameHasApostrophes_ReturnsEmptyConstraintViolationList() {
+    void gardenName_NameHasApostrophes_ReturnsEmptyConstraintViolationList() {
         garden.setName("john's garden");
 
         assertTrue(validator.validate(garden).isEmpty());
     }
 
     @Test
-    public void gardenName_NameHasNumbers_ReturnsEmptyConstraintViolationList() {
+    void gardenName_NameHasNumbers_ReturnsEmptyConstraintViolationList() {
         garden.setName("my garden 2");
 
         assertTrue(validator.validate(garden).isEmpty());
     }
 
     @Test
-    public void gardenName_NameHasExclamationMark_ReturnPatternConstraintViolation() {
+    void gardenName_NameHasExclamationMark_ReturnPatternConstraintViolation() {
         garden.setName("garden!");
         String expectedMessage = "Garden name must only include letters, numbers, spaces, dots, commas, hyphens, or apostrophes";
         Integer expectedConstraintSetSize = 1;
@@ -89,7 +89,7 @@ public class GardenTest {
     }
 
     @Test
-    public void gardenName_NameHasHash_ReturnPatternConstraintViolation() {
+    void gardenName_NameHasHash_ReturnPatternConstraintViolation() {
         garden.setName("garden #2");
         String expectedMessage = "Garden name must only include letters, numbers, spaces, dots, commas, hyphens, or apostrophes";
         Integer expectedConstraintSetSize = 1;
@@ -101,7 +101,7 @@ public class GardenTest {
         assertEquals(expectedMessage, violation.getMessage());
     }
     @Test
-    public void gardenName_Null_ReturnNotBlankViolation() {
+    void gardenName_Null_ReturnNotBlankViolation() {
         garden.setName(null);
         String expectedMessage = "Garden name cannot be empty";
         Integer expectedConstraintSetSize = 1;
@@ -114,56 +114,56 @@ public class GardenTest {
     }
 
     @Test
-    public void gardenLocation_NameIsValid_ReturnsEmptyConstraintViolationList() {
+    void gardenLocation_NameIsValid_ReturnsEmptyConstraintViolationList() {
         garden.setCity("Christchurch");
 
         assertTrue(validator.validate(garden).isEmpty());
     }
 
     @Test
-    public void gardenLocation_LocationHasSpace_ReturnsEmptyConstraintViolationList() {
+    void gardenLocation_LocationHasSpace_ReturnsEmptyConstraintViolationList() {
         garden.setCountry("New Zealand");
 
         assertTrue(validator.validate(garden).isEmpty());
     }
 
     @Test
-    public void gardenLocation_LocationHasSpaces_ReturnsEmptyConstraintViolationList() {
+    void gardenLocation_LocationHasSpaces_ReturnsEmptyConstraintViolationList() {
         garden.setCountry("New      Zealand");
 
         assertTrue(validator.validate(garden).isEmpty());
     }
 
     @Test
-    public void gardenLocation_LocationHasCommas_ReturnsEmptyConstraintViolationList() {
+    void gardenLocation_LocationHasCommas_ReturnsEmptyConstraintViolationList() {
         garden.setCountry("Ilam, Christchurch, New Zealand");
 
         assertTrue(validator.validate(garden).isEmpty());
     }
 
     @Test
-    public void gardenLocation_LocationHasHyphens_ReturnsEmptyConstraintViolationList() {
+    void gardenLocation_LocationHasHyphens_ReturnsEmptyConstraintViolationList() {
         garden.setCity("Christchurch-New-Zealand");
 
         assertTrue(validator.validate(garden).isEmpty());
     }
 
     @Test
-    public void gardenLocation_LocationHasApostrophes_ReturnsEmptyConstraintViolationList() {
+    void gardenLocation_LocationHasApostrophes_ReturnsEmptyConstraintViolationList() {
         garden.setCity("House's");
 
         assertTrue(validator.validate(garden).isEmpty());
     }
 
     @Test
-    public void gardenLocation_LocationHasNumbers_ReturnsEmptyConstraintViolationList() {
+    void gardenLocation_LocationHasNumbers_ReturnsEmptyConstraintViolationList() {
         garden.setCity("2street");
 
         assertTrue(validator.validate(garden).isEmpty());
     }
 
     @Test
-    public void gardenLocation_LocationHasExclamationMark_ReturnPatternConstraintViolation() {
+    void gardenLocation_LocationHasExclamationMark_ReturnPatternConstraintViolation() {
         garden.setCity("Christchurch!");
         String expectedMessage = "Please enter a valid City name";
         Integer expectedConstraintSetSize = 1;
@@ -176,7 +176,7 @@ public class GardenTest {
     }
 
     @Test
-    public void gardenLocation_LocationHasHash_ReturnPatternConstraintViolation() {
+    void gardenLocation_LocationHasHash_ReturnPatternConstraintViolation() {
         garden.setCity("garden #2");
         String expectedMessage = "Please enter a valid City name";
         Integer expectedConstraintSetSize = 1;
@@ -188,7 +188,7 @@ public class GardenTest {
         assertEquals(expectedMessage, violation.getMessage());
     }
     @Test
-    public void gardenLocation_Null_ReturnNotBlankViolation() {
+    void gardenLocation_Null_ReturnNotBlankViolation() {
         garden.setCity(null);
         String expectedMessage = "City and Country are required";
         Integer expectedConstraintSetSize = 1;
@@ -201,14 +201,14 @@ public class GardenTest {
     }
 
     @Test
-    public void gardenSize_CountIsOne_ReturnsEmptyConstraintViolationList() {
+    void gardenSize_CountIsOne_ReturnsEmptyConstraintViolationList() {
         garden.setSize("1");
 
         assertTrue(validator.validate(garden).isEmpty());
     }
 
     @Test
-    public void gardenSize_CountIsNegativeOne_ReturnsEmptyConstraintViolationList() {
+    void gardenSize_CountIsNegativeOne_ReturnsEmptyConstraintViolationList() {
         garden.setSize("-1");
         String expectedMessage = "Garden size must be a positive number";
         Integer expectedConstraintSetSize = 1;
@@ -221,21 +221,21 @@ public class GardenTest {
     }
 
     @Test
-    public void gardenSize_DotAsDecimalPlace_ReturnsEmptyConstraintViolationList() {
+    void gardenSize_DotAsDecimalPlace_ReturnsEmptyConstraintViolationList() {
         garden.setSize("1.5");
 
         assertTrue(validator.validate(garden).isEmpty());
     }
 
     @Test
-    public void gardenSize_CommaAsDecimalPlace_ReturnsEmptyConstraintViolationList() {
+    void gardenSize_CommaAsDecimalPlace_ReturnsEmptyConstraintViolationList() {
         garden.setSize("1,5");
 
         assertTrue(validator.validate(garden).isEmpty());
     }
 
     @Test
-    public void gardenSize_IntegerWithNonNumericChar_ReturnPatternViolation() {
+    void gardenSize_IntegerWithNonNumericChar_ReturnPatternViolation() {
         garden.setSize("1a");
         String expectedMessage = "Garden size must be a positive number";
         Integer expectedConstraintSetSize = 1;
@@ -247,7 +247,7 @@ public class GardenTest {
     }
 
     @Test
-    public void gardenSize_NonNumericChar_ReturnPatternViolation() {
+    void gardenSize_NonNumericChar_ReturnPatternViolation() {
         garden.setSize("a");
         String expectedMessage = "Garden size must be a positive number";
         Integer expectedConstraintSetSize = 1;
@@ -260,7 +260,7 @@ public class GardenTest {
     }
 
     @Test
-    public void gardenSize_DoubleDotAsDecimalPlace_ReturnPatternViolation() {
+    void gardenSize_DoubleDotAsDecimalPlace_ReturnPatternViolation() {
         garden.setSize("1..5");
         String expectedMessage = "Garden size must be a positive number";
         Integer expectedConstraintSetSize = 1;
@@ -273,7 +273,7 @@ public class GardenTest {
     }
 
     @Test
-    public void gardenSize_DoubleCommaAsDecimalPlace_ReturnPatternViolation() {
+    void gardenSize_DoubleCommaAsDecimalPlace_ReturnPatternViolation() {
         garden.setSize("1,,5");
         String expectedMessage = "Garden size must be a positive number";
         Integer expectedConstraintSetSize = 1;
@@ -286,14 +286,14 @@ public class GardenTest {
     }
 
     @Test
-    public void gardenDescription_IsEmpty_ReturnNoViolations() {
+    void gardenDescription_IsEmpty_ReturnNoViolations() {
         garden.setDescription("");
 
         assertTrue(validator.validate(garden).isEmpty());
     }
 
     @Test
-    public void gardenDescription_IsSpaces_ReturnPatternViolation() {
+    void gardenDescription_IsSpaces_ReturnPatternViolation() {
         garden.setDescription("     ");
         String expectedMessage = "Description must be 512 characters or less and contain some text";
         Integer expectedConstraintSetSize = 1;
@@ -305,7 +305,7 @@ public class GardenTest {
     }
 
     @Test
-    public void gardenDescription_IsFiveHundredAndThirteenChars_ReturnPatternViolation() {
+    void gardenDescription_IsFiveHundredAndThirteenChars_ReturnPatternViolation() {
         garden.setDescription("a".repeat(513));
         String expectedMessage = "Description must be 512 characters or less and contain some text";
         Integer expectedConstraintSetSize = 1;
@@ -317,28 +317,28 @@ public class GardenTest {
     }
 
     @Test
-    public void gardenDescription_IsFiveHundredAndTwelveChars_ReturnsNoViolation() {
+    void gardenDescription_IsFiveHundredAndTwelveChars_ReturnsNoViolation() {
         garden.setDescription("a".repeat(512));
 
         assertTrue(validator.validate(garden).isEmpty());
     }
 
     @Test
-    public void gardenDescription_HasAlphaCharsAndSpecialChars_ReturnNoViolations() {
+    void gardenDescription_HasAlphaCharsAndSpecialChars_ReturnNoViolations() {
         garden.setDescription("large!");
 
         assertTrue(validator.validate(garden).isEmpty());
     }
 
     @Test
-    public void gardenDescription_HasAlphaCharsAndNumericChars_ReturnNoViolations() {
+    void gardenDescription_HasAlphaCharsAndNumericChars_ReturnNoViolations() {
         garden.setDescription("my 2nd garden");
 
         assertTrue(validator.validate(garden).isEmpty());
     }
 
     @Test
-    public void gardenDescription_HasJustNumbers_ReturnPatternViolation() {
+    void gardenDescription_HasJustNumbers_ReturnPatternViolation() {
         garden.setDescription("123");
         String expectedMessage = "Description must be 512 characters or less and contain some text";
         Integer expectedConstraintSetSize = 1;
@@ -350,7 +350,7 @@ public class GardenTest {
     }
 
     @Test
-    public void gardenDescription_HasJustSpecialChars_ReturnPatternViolation() {
+    void gardenDescription_HasJustSpecialChars_ReturnPatternViolation() {
         garden.setDescription("!!!");
         String expectedMessage = "Description must be 512 characters or less and contain some text";
         Integer expectedConstraintSetSize = 1;
@@ -362,7 +362,7 @@ public class GardenTest {
     }
 
     @Test
-    public void gardenDescription_HasSpecialCharsAndNumbers_ReturnPatternViolation() {
+    void gardenDescription_HasSpecialCharsAndNumbers_ReturnPatternViolation() {
         garden.setDescription("100!");
         String expectedMessage = "Description must be 512 characters or less and contain some text";
         Integer expectedConstraintSetSize = 1;
@@ -374,42 +374,42 @@ public class GardenTest {
     }
 
     @Test
-    public void gardenDescription_StartsWithNumber_ReturnsNoViolations() {
+    void gardenDescription_StartsWithNumber_ReturnsNoViolations() {
         garden.setDescription("2nd largest garden in christchurch!");
 
         assertTrue(validator.validate(garden).isEmpty());
     }
 
     @Test
-    public void gardenName_ContainsDiacritic_whenSubmitted_ReturnsNoViolations() {
+    void gardenName_ContainsDiacritic_whenSubmitted_ReturnsNoViolations() {
         garden.setName("Māori Garden");
 
         assertTrue(validator.validate(garden).isEmpty());
     }
 
     @Test
-    public void gardenCity_ContainsDiacritic_whenSubmitted_ReturnsNoViolations() {
+    void gardenCity_ContainsDiacritic_whenSubmitted_ReturnsNoViolations() {
         garden.setCity("Ōtautahi");
 
         assertTrue(validator.validate(garden).isEmpty());
     }
 
     @Test
-    public void gardenSuburb_ContainsDiacritic_whenSubmitted_ReturnsNoViolations() {
+    void gardenSuburb_ContainsDiacritic_whenSubmitted_ReturnsNoViolations() {
         garden.setSuburb("Ōtākaro");
 
         assertTrue(validator.validate(garden).isEmpty());
     }
 
     @Test
-    public void gardenCountry_ContainsDiacritic_whenSubmitted_ReturnsNoViolations() {
+    void gardenCountry_ContainsDiacritic_whenSubmitted_ReturnsNoViolations() {
         garden.setCountry("Aotearoa");
 
         assertTrue(validator.validate(garden).isEmpty());
     }
 
     @Test
-    public void enterEmptyGardenName_whenSubmitted_ReturnsViolation() {
+    void enterEmptyGardenName_whenSubmitted_ReturnsViolation() {
         garden.setName(" ");
         String expectedMessage = "Garden name cannot be empty";
         Integer expectedConstraintSetSize = 1;
@@ -421,7 +421,7 @@ public class GardenTest {
     }
 
     @Test
-    public void enterEmptyStreetName_whenSubmitted_ReturnsViolation() {
+    void enterEmptyStreetName_whenSubmitted_ReturnsViolation() {
         garden.setStreetName(" ");
         String expectedMessage = "Street Name is required";
         Integer expectedConstraintSetSize = 1;
@@ -433,7 +433,7 @@ public class GardenTest {
     }
 
     @Test
-    public void enterEmptyStreetNumber_whenSubmitted_ReturnsViolation() {
+    void enterEmptyStreetNumber_whenSubmitted_ReturnsViolation() {
         garden.setStreetNumber(" ");
         String expectedMessage = "Please enter a valid street number";
         Integer expectedConstraintSetSize = 1;
@@ -444,7 +444,7 @@ public class GardenTest {
         assertEquals(expectedMessage, violation.getMessage());
     }
     @Test
-    public void enterEmptyCity_whenSubmitted_ReturnsViolation() {
+    void enterEmptyCity_whenSubmitted_ReturnsViolation() {
         garden.setCity(" ");
         String expectedMessage = "City and Country are required";
         Integer expectedConstraintSetSize = 1;
@@ -455,7 +455,7 @@ public class GardenTest {
         assertEquals(expectedMessage, violation.getMessage());
     }
     @Test
-    public void enterEmptyCountry_whenSubmitted_ReturnsViolation() {
+    void enterEmptyCountry_whenSubmitted_ReturnsViolation() {
         garden.setCountry(" ");
         String expectedMessage = "City and Country are required";
         Integer expectedConstraintSetSize = 1;
@@ -466,7 +466,7 @@ public class GardenTest {
         assertEquals(expectedMessage, violation.getMessage());
     }
     @Test
-    public void enterEmptyPostCode_whenSubmitted_ReturnsViolation() {
+    void enterEmptyPostCode_whenSubmitted_ReturnsViolation() {
         garden.setPostCode(" ");
         String expectedMessage = "Please enter a valid post code";
         Integer expectedConstraintSetSize = 1;
@@ -480,7 +480,7 @@ public class GardenTest {
     }
 
     @Test
-    public void enterEmptySuburb_whenSubmitted_ReturnsViolation() {
+    void enterEmptySuburb_whenSubmitted_ReturnsViolation() {
         garden.setSuburb(" ");
         String expectedMessage = "Suburb is required";
         Integer expectedConstraintSetSize = 1;
