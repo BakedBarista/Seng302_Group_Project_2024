@@ -137,6 +137,9 @@ body {
     list-style: none;
     margin: 0;
     padding: 0;
+}
+    
+.nav-drawer ul.main-list {
     flex-grow: 1;
 }
 
@@ -152,6 +155,10 @@ body {
 .nav-drawer li a:hover,
 .nav-drawer li a:focus  {
     background-color: var(--gg-primary);
+}
+
+.nav-drawer .link-icon {
+    margin-right: 1em;
 }
 
 .nav-drawer .btn-primary,

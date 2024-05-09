@@ -11,15 +11,34 @@
         <a class="btn btn-primary" th:href="@{/users/login}">Sign In</a>
         <a class="btn btn-secondary" th:href="@{/users/register}">Register</a>
       </div>
-      <ul th:if="${isAuthenticated}">
-        <li><a th:href="@{/}">Home</a></li>
-        <li><a th:href="@{/gardens}">My Gardens</a></li>
-        <li><a th:href="@{/users/manageFriends}">Friends</a></li>
+      <ul th:if="${isAuthenticated}" class="main-list">
+        <li>
+          <a th:href="@{/}">
+            <img class="link-icon" th:src="@{/icons/home-01-stroke-rounded-white.svg}" width="24" height="24" aria-hidden />
+            Home
+          </a>
+        </li>
+        <li>
+          <a th:href="@{/gardens}">
+            <img class="link-icon" th:src="@{/icons/natural-food-stroke-rounded-white.svg}" width="24" height="24" aria-hidden />
+            My Gardens
+          </a>
+        </li>
+        <li>
+          <a th:href="@{/users/manageFriends}">
+            <img class="link-icon" th:src="@{/icons/user-multiple-02-stroke-rounded-white.svg}" width="24" height="24" aria-hidden />
+            Friends
+          </a>
+        </li>
       </ul>
-      <div th:if="${isAuthenticated}">
-        <a class="btn btn-primary" th:href="@{/users/user}">My Profile</a>
-        <a class="btn btn-secondary" th:href="@{/users/logout}">Sign Out</a>
-      </div>
+      <ul th:if="${isAuthenticated}">
+        <li>
+          <a th:href="@{/users/user}">
+              <img class="link-icon" th:src="@{/icons/user-stroke-rounded-white.svg}" width="24" height="24" aria-hidden />
+            My Profile
+          </a>
+        </li>
+      </ul>
   </nav>
   <!-- <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
