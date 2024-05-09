@@ -113,6 +113,9 @@ body {
     display: flex;
     flex-direction: column;
 
+    max-height: 100%;
+    overflow-y: auto;
+
     background-color: var(--gg-dark);
     color: var(--gg-white);
     padding: var(--gg-nav-drawer-padding) 0;
@@ -152,8 +155,7 @@ body {
     padding: 0 var(--gg-nav-drawer-padding);
 }
 
-.nav-drawer li a:hover,
-.nav-drawer li a:focus  {
+.nav-drawer li a:hover {
     background-color: var(--gg-primary);
 }
 
