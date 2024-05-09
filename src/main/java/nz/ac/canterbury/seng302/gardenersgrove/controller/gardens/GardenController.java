@@ -24,6 +24,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -92,12 +93,6 @@ public class GardenController {
 
         garden.setOwner(owner);
 
-        //simple test solution for now
-        if(garden.getLon() == null || garden.getLat() == null){
-            Double empty = 1.0;
-            garden.setLat(empty);
-            garden.setLon(empty);
-        }
 
         //Checks description for inappropriate content
         // if (moderationService.checkIfDescriptionIsFlagged(garden.getDescription())) {
@@ -144,8 +139,14 @@ public class GardenController {
             model.addAttribute("garden", garden);
             model.addAttribute("owner", garden.getOwner());
             model.addAttribute("plants", plantService.getPlantsByGardenId(id));
+            List<List<Map<String, Object>>> weatherResult;
 
-            List<List<Map<String, Object>>> weatherResult = weatherAPIService.getWeatherData(id, garden.getLat(), garden.getLon());
+            if(garden.getLat() != null || garden.getLon() != null){
+                weatherResult = weatherAPIService.getWeatherData(id, garden.getLat(), garden.getLon());
+            }else {
+                weatherResult = new ArrayList<>();;
+            }
+
             List<Map<String, Object>> weatherPrevious = Collections.emptyList();
             List<Map<String, Object>> weatherForecast = Collections.emptyList();
             boolean displayWeatherAlert = false;
