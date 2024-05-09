@@ -1,9 +1,11 @@
-package nz.ac.canterbury.seng302.gardenersgrove.entity;
+package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.entity;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.PlantController;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
