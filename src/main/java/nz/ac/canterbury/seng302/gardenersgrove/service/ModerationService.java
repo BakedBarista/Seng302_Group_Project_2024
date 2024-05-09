@@ -51,9 +51,12 @@ public class ModerationService {
      * @return
      */
     public boolean checkIfDescriptionIsFlagged(String description) {
-        String responseBody = moderateDescription(description).getBody();
+        if (description.isEmpty()) {
+            return false;
+        }
 
         try {
+            String responseBody = moderateDescription(description).getBody();
             // note - this may cause problems if OpenAI changes the structure of the content they
             // return as this doesn't properly parse the json string - could not find anything in java to do this
             String flaggedValue = responseBody.split("\"flagged\": ")[1].split(",")[0];
