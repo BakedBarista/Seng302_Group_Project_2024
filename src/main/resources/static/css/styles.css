@@ -100,25 +100,28 @@ h1, h2, h3, h4, h5, h6 {
     --gg-nav-drawer-padding: 28px;
 }
 
-body {
-    padding-left: var(--gg-nav-drawer-width);
-}
-
 .nav-drawer {
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: var(--gg-nav-drawer-width);
-    height: 100vh;
     display: flex;
     flex-direction: column;
-
-    max-height: 100%;
-    overflow-y: auto;
 
     background-color: var(--gg-dark);
     color: var(--gg-white);
     padding: var(--gg-nav-drawer-padding) 0;
+}
+
+@media (min-width: 768px) {
+    body {
+        padding-left: var(--gg-nav-drawer-width);
+    }
+
+    .nav-drawer {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: var(--gg-nav-drawer-width);
+        height: 100vh;
+        overflow-y: auto;
+    }
 }
 
 .nav-drawer a {
@@ -129,11 +132,16 @@ body {
 .nav-drawer h5 {
     font-family: var(--gg-body-font);
     font-weight: 600;
-    margin: 0 var(--gg-nav-drawer-padding) 40px;
+    margin: 0 var(--gg-nav-drawer-padding);
 }
 
-.nav-drawer > div {
+.nav-drawer div {
     margin: 0 var(--gg-nav-drawer-padding);
+}
+
+.nav-drawer .main-list {
+    flex-grow: 1;
+    margin-top: 40px;
 }
 
 .nav-drawer ul {
@@ -142,10 +150,6 @@ body {
     padding: 0;
 }
     
-.nav-drawer ul.main-list {
-    flex-grow: 1;
-}
-
 .nav-drawer li a {
     height: 50px;
 
@@ -160,13 +164,14 @@ body {
 }
 
 .nav-drawer .link-icon {
-    margin-right: 1em;
+    margin-right: 1rem;
 }
 
 .nav-drawer .btn-primary,
 .nav-drawer .btn-secondary {
     --bs-btn-hover-border-color: var(--gg-pale);
 }
+
 
 /* Dropdown on hover */
 .nav-item:hover #garden-dropdown {
