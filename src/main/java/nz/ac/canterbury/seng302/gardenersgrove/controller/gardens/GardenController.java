@@ -84,20 +84,27 @@ public class GardenController {
     public String submitForm(@Valid @ModelAttribute("garden") Garden garden,
                              BindingResult bindingResult, Model model) {
         logger.info("POST /gardens - submit the new garden form");
-
         if (bindingResult.hasErrors()) {
             model.addAttribute("garden", garden);
             return "gardens/createGarden";
         }
         GardenUser owner = gardenUserService.getCurrentUser();
+
         garden.setOwner(owner);
 
-        //Checks description for inappropriate content
-        if (moderationService.checkIfDescriptionIsFlagged(garden.getDescription())) {
-            model.addAttribute("garden", garden);
-            model.addAttribute("profanity", "The description does not match the language standards of the app.");
-            return "gardens/createGarden";
+        //simple test solution for now
+        if(garden.getLon() == null || garden.getLat() == null){
+            Double empty = 1.0;
+            garden.setLat(empty);
+            garden.setLon(empty);
         }
+
+        //Checks description for inappropriate content
+        // if (moderationService.checkIfDescriptionIsFlagged(garden.getDescription())) {
+        //     model.addAttribute("garden", garden);
+        //     model.addAttribute("profanity", "The description does not match the language standards of the app.");
+        //     return "gardens/createGarden";
+        // }
 
         Garden savedGarden = gardenService.addGarden(garden);
         return "redirect:/gardens/" + savedGarden.getId();
