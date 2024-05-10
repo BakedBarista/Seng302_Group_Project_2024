@@ -47,6 +47,12 @@ h1, h2, h3, h4, h5, h6 {
     font-style: normal;
 }
 
+.averia-serif-libre-bold {
+    font-family: "Averia Serif Libre", serif;
+    font-weight: 700;
+    font-style: normal;
+}
+
 
 /* Buttons */
 .btn {
