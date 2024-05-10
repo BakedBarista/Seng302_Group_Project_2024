@@ -11,6 +11,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,6 +23,7 @@ import java.util.Collections;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 public class PlantControllerTest {
@@ -125,5 +130,42 @@ public class PlantControllerTest {
         String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, invalidPlant, bindingResult, model);
 
         assertEquals(expectedReturnPage, returnPage);
+    }
+
+    @Test
+    void whenPlantImageExists_returnPlantImage() {
+        byte[] image = {};
+        String contentType = "image/jpg";
+        Plant plant = new Plant();
+        plant.setPlantImage(contentType,image);
+        when(plantService.getPlantById(1L)).thenReturn(Optional.of(plant));
+
+        ResponseEntity<byte[]> response = plantController.plantImage(1L);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(contentType, response.getHeaders().getContentType().toString());
+        assertEquals(image, response.getBody());
+    }
+
+    @Test
+    void whenPlantImageNotExist_returnDefaultImage() {
+        Plant plant = new Plant();
+        when(plantService.getPlantById(1L)).thenReturn(Optional.of(plant));
+        ResponseEntity<byte[]> response = plantController.plantImage(1L);
+        assertEquals(HttpStatus.FOUND, response.getStatusCode());
+        assertEquals("/img/plant.png", response.getHeaders().getFirst(HttpHeaders.LOCATION));
+    }
+
+    @Test
+    void whenImageUploaded_thenRedirectToReferer() throws Exception {
+        Plant plant = new Plant();
+        String referer = "/gardens/1";
+        byte[] image = {};
+        String contentType = "image/png";
+        String name = "plant.png";
+        String originalFilename = "plant.png";
+        MultipartFile file = new MockMultipartFile(name,originalFilename,contentType,image);
+        when(plantService.getPlantById(1L)).thenReturn(Optional.of(plant));
+        String response = plantController.uploadPlantImage(file,1L, referer);
+        assertEquals("redirect:/gardens/1", response);
     }
 }
