@@ -24,10 +24,14 @@
                     <input type="password" th:name="password">
                     <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" style="color: red;"></div>
                 </label>
+                <p>
+                    <a th:href="@{/users/reset-password}" class="d-inline-block">Forgot your password?</a>
+                </p>
+                <p>
+                    <a th:href="@{/users/register}" class="d-inline-block">Not registered? Create an account</a>
+                </p>
                 <button class="btn btn-primary form-group">Sign In</button>
                 <a th:href="@{/}" class="btn btn-secondary form-group">Cancel</a>
-                <a th:href="@{/users/reset-password}" class="btn form-group">Forgot your password?</a>
-                <a th:href="@{/users/register}" class="btn form-group">Not registered? Create an account</a>
             </form>
         </main>
         <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
