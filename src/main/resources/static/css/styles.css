@@ -30,6 +30,12 @@ body {
     background-color: var(--gg-white);
 }
 
+/* Colours the required astrix for required forms */
+.required-field::after {
+    content: "*";
+    color: red;
+    font-family: bold, serif;
+}
 
 /* Global typography */
 body {
@@ -212,45 +218,6 @@ h1, h2, h3, h4, h5, h6 {
     margin-top: 0;
 }
 
-.form-group {
-    display: block;
-    margin: 16px 0;
-}
-
-.form-group input {
-    display: block;
-    margin: 8px 0;
-}
-
-.form-group-error input {
-    background: pink;
-    outline: 1px solid red;
-}
-
-.form-group input[type="file"] {
-    display: none;
-}
-
-.form-group input {
-    padding: 8px;
-    margin-bottom: 10px;
-}
-
-.form-group.link-text {
-    color: blue;
-    text-decoration: underline;
-}
-
-.form-checkbox {
-    display: block;
-    margin: 16px 0;
-}
-
-.error {
-    display: block;
-    color: red;
-}
-
 .profile-picture-large {
     border-radius: 999px;
     box-shadow: #333 0 0 8px -3px;
@@ -271,10 +238,6 @@ h1, h2, h3, h4, h5, h6 {
 
 .error-field {
     border: 1px solid red;
-}
-
-a {
-    text-decoration: none;
 }
 
 .image-container {
@@ -309,11 +272,6 @@ a {
     border-color: black;
 }
 
-.required-field::after {
-    content: "*";
-    color: red;
-    font-family: bold, serif;
-}
 
 
 .col-6 {

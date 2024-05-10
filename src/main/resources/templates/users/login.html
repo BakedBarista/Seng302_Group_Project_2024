@@ -10,29 +10,31 @@
     <body>
         <nav th:replace="~{fragments/navbar :: navbar}"></nav>
         <main class="main-container">
-            <h1>Sign In</h1>
-            <span th:if="${generalError != null}" th:text="${generalError}" style="color: red;"></span>
-            <span th:if="${justAuthenticated == true}">Your account has been activated, please log in<br></span>
-            <form th:action="login" method="post" th:object="${loginDTO}">
-                <label th:class="'form-group ' + ${#fields.hasErrors('email') ? 'form-group-error' : ''}">
-                    Email
-                    <input type="text" th:name="email" th:value="*{email}" inputmode="email">
-                    <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: red;"></div>
-                </label>
-                <label th:class="'form-group ' + ${#fields.hasErrors('password') ? 'form-group-error' : ''}">
-                    Password
-                    <input type="password" th:name="password">
-                    <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" style="color: red;"></div>
-                </label>
-                <p>
-                    <a th:href="@{/users/reset-password}" class="d-inline-block">Forgot your password?</a>
-                </p>
-                <p>
-                    <a th:href="@{/users/register}" class="d-inline-block">Not registered? Create an account</a>
-                </p>
-                <button class="btn btn-primary form-group">Sign In</button>
-                <a th:href="@{/}" class="btn btn-secondary form-group">Cancel</a>
-            </form>
+            <div class="card p-5">
+                <h1 class="pb-3">Sign In</h1>
+                <span th:if="${generalError != null}" th:text="${generalError}" style="color: red;"></span>
+                <span th:if="${justAuthenticated == true}">Your account has been activated, please log in<br></span>
+                <form th:action="login" method="post" th:object="${loginDTO}">
+                    <div class="mb-3">
+                        <label for="inputEmail" th:class="'form-label ' + ${#fields.hasErrors('email') ? 'is-invalid' : ''}">Email</label>
+                        <input th:class="'form-control ' + ${#fields.hasErrors('email') ? 'is-invalid' : ''}" id="inputEmail" type="text" th:name="email" th:value="*{email}" inputmode="email" />
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: red;"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="inputPassword" th:class="'form-label ' + ${#fields.hasErrors('password') ? 'is-invalid' : ''}">Password</label>
+                        <input th:class="'form-control ' + ${#fields.hasErrors('password') ? 'is-invalid' : ''}" id="inputPassword" type="password" th:name="password" />
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}" th:errors="*{password}" style="color: red;"></div>
+                    </div>
+                    <div class="d-flex flex-column mb-3 gap-2">
+                        <a th:href="@{/users/reset-password}" class="d-inline-block link-underline">Forgot your password?</a>
+                        <a th:href="@{/users/register}" class="d-inline-block link-underline">Not registered? Create an account</a>
+                    </div>
+                    <div class="d-flex flex-row justify-content-left">
+                        <button class="btn btn-primary">Sign In</button>
+                        <a type="button" th:href="@{/}" class="btn btn-outline-primary mx-2">Cancel</a>
+                    </div>
+                </form>
+            </div>
         </main>
         <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
     </body>
