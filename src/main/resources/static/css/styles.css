@@ -49,11 +49,6 @@ h1, h2, h3, h4, h5, h6 {
 
 
 /* Buttons */
-.btn {
-    --bs-btn-border-radius: 100em; /* Set to something large to get evenly rounded corners */
-    --bs-btn-font-weight: 600;
-}
-
 .btn-primary {
     --bs-btn-color: var(--gg-white);
     --bs-btn-bg: var(--gg-primary);
