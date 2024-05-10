@@ -162,6 +162,19 @@ public class GardenUser {
     }
 
     /**
+     * Constructs the user's full name from their first and last names
+     *
+     * @return the user's full name
+     */
+    public String getFullName() {
+        if (lname != null) {
+            return fname + " " + lname;
+        } else {
+            return fname;
+        }
+    }
+
+    /**
      * Setter for the user's email
      *
      * @param email the user's email
