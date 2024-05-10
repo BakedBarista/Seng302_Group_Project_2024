@@ -6,8 +6,9 @@ let locationMatch = false;
  *
  * @param {HTMLElement} containerElement - The container element where the autocomplete feature is added.
  * @param {Function} callback - The callback function to be called when an address is selected.
+ * @param {string} apiUrl - The URL of the API to call for suggestions.
  */
-function addressAutocomplete(containerElement, callback) {
+function autocomplete(containerElement, callback, apiUrl) {
 
     const MIN_ADDRESS_LENGTH = 3;
     const DEBOUNCE_DELAY = 300;
@@ -86,7 +87,7 @@ function addressAutocomplete(containerElement, callback) {
             currentPromiseReject = reject;
 
             debounceTimer = setTimeout(() => {
-                fetch(`/api/get_location?currentValue=${currentValue}`)
+                fetch(`${apiUrl}?currentValue=${currentValue}`)
                     .then(response => {
                         currentPromiseReject = null;
 
@@ -282,9 +283,13 @@ function populateAddress(currentItem) {
 }
 
 
-addressAutocomplete(document.getElementById("autocomplete-container"),
+const locationAutocompleteContainer = document.getElementById(
+  'location-autocomplete-container'
+);
+if (locationAutocompleteContainer) {
+  autocomplete(
+    locationAutocompleteContainer,
     populateAddressFields,
-    (data) => {
-    console.log("Selected option: ");
-    console.log(data);
-});
+    '/api/location-autocomplete'
+  );
+}

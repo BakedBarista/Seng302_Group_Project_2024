@@ -27,8 +27,8 @@
                 </div>
                 <!-- Garden Location Field -->
                 <div class="col-8">
-                    <label for="autocomplete-container"> Garden Location: </label>
-                    <div class="autocomplete-container" id="autocomplete-container"></div>
+                    <label for="location-autocomplete-container"> Garden Location: </label>
+                    <div class="autocomplete-container" id="location-autocomplete-container"></div>
                 </div>
                 <div class="container" style="margin-left: 40px">
                 <div class="row g-2">
@@ -106,5 +106,5 @@
     <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
     </body>
     <script th:src="@{/js/nextFormBox.js}"></script>
-    <script th:src="@{/js/locationAutoComplete.js}"></script>
+    <script th:src="@{/js/autoComplete.js}"></script>
 </html>
