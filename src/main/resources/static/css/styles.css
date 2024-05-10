@@ -147,10 +147,9 @@ a {
 
 .required-field::after {
     content: "*";
-    color: red;
+    color: black;
     font-family: bold, serif;
 }
-
 
 .col-6 {
     flex: 0 0 auto;
