@@ -31,34 +31,6 @@
                             <div class="autocomplete-container" id="autocomplete-container"></div>
                         </div>
                         <div class="container-fluid justify-content-center" style="margin-left: 30px">
-                            <div class="col-10 form-group"
-                                 th:classappend="${#fields.hasErrors('country')} ? 'form-group-error' : ''">
-                                <label for="country" class="required-field">Country: </label>
-                                <input type="text"
-                                       class="form-control"
-                                       id="country"
-                                       placeholder="Country"
-                                       th:name="country"
-                                       th:value="${garden.country}"
-                                       data-cy="country">
-                                <div th:if="${#fields.hasErrors('country')}"
-                                     th:errors="*{country}"
-                                     class="text-danger"></div>
-                            </div>
-                            <div class="col-10 form-group"
-                                 th:classappend="${#fields.hasErrors('city')} ? 'form-group-error' : ''">
-                                <label for="city" class="required-field">City: </label>
-                                <input type="text"
-                                       class="form-control"
-                                       id="city"
-                                       placeholder="City"
-                                       th:name="city"
-                                       th:value="${garden.city}"
-                                       data-cy="city">
-                                <div th:if="${#fields.hasErrors('city')}"
-                                     th:errors="*{city}"
-                                     class="text-danger"></div>
-                            </div>
                             <div class="row">
                                 <!-- Street Number Field -->
                                 <div class="col-3 form-group pb-0 mb-0"
@@ -119,6 +91,34 @@
                                        data-cy="postCode">
                                 <div th:if="${#fields.hasErrors('postCode')}"
                                      th:errors="*{postCode}"
+                                     class="text-danger"></div>
+                            </div>
+                            <div class="col-10 form-group"
+                                 th:classappend="${#fields.hasErrors('city')} ? 'form-group-error' : ''">
+                                <label for="city" class="required-field">City: </label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="city"
+                                       placeholder="City"
+                                       th:name="city"
+                                       th:value="${garden.city}"
+                                       data-cy="city">
+                                <div th:if="${#fields.hasErrors('city')}"
+                                     th:errors="*{city}"
+                                     class="text-danger"></div>
+                            </div>
+                            <div class="col-10 form-group"
+                                 th:classappend="${#fields.hasErrors('country')} ? 'form-group-error' : ''">
+                                <label for="country" class="required-field">Country: </label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="country"
+                                       placeholder="Country"
+                                       th:name="country"
+                                       th:value="${garden.country}"
+                                       data-cy="country">
+                                <div th:if="${#fields.hasErrors('country')}"
+                                     th:errors="*{country}"
                                      class="text-danger"></div>
                             </div>
                         </div>
