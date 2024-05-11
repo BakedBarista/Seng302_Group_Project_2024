@@ -11,28 +11,28 @@
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 <div>
     <div>
-        <form id="addPlantForm" th:action="@{/gardens/{gardenId}/add-plant(gardenId=${gardenId})}" th:object="${plant}"  method="post" enctype="multipart/form-data" novalidate>
+        <form class="container-xl" id="addPlantForm" th:action="@{/gardens/{gardenId}/add-plant(gardenId=${gardenId})}" th:object="${plant}"  method="post" enctype="multipart/form-data" novalidate>
         <!-- Plant Name Field -->
             <label for="name">Plant Name:</label>
-            <input type="text" id="name" name="name" placeholder="Enter Plant Name" th:value="${plant.name}" >
+            <input type="text" class="form-control" id="name" name="name" placeholder="Enter Plant Name" th:value="${plant.name}" >
             <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" style="color: red;"></div>
             <br/>
             <br/>
             <!-- Plant Description Field -->
             <label for="description">Description:</label>
-            <textarea id="description" name="description" placeholder="Enter description" th:text="${plant.description}"></textarea>
+            <textarea id="description" class="form-control" name="description" placeholder="Enter description" th:text="${plant.description}"></textarea>
             <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}" style="color: red;"></div>
             <br/>
             <br/>
             <!-- Plant Count Field -->
             <label for="count">Count:</label>
-            <input type="number" id="count" name="count" placeholder="Enter Count" th:value="${plant.count}" >
+            <input type="number" id="count" class="form-control" name="count" placeholder="Enter Count" th:value="${plant.count}" >
             <div th:if="${#fields.hasErrors('count')}" th:errors="*{count}" style="color: red;"></div>
             <br/>
             <br/>
             <!-- Planting Date Field -->
             <label for="plantedDate">Planting Date:</label>
-            <input type="date" id="plantedDate" name="plantedDate" placeholder="DD/MM/YYYY" th:value="${plant.plantedDate}" >
+            <input type="date" id="plantedDate" class="form-control" name="plantedDate" placeholder="DD/MM/YYYY" th:value="${plant.plantedDate}" >
             <div th:if="${#fields.hasErrors('plantedDate')}" th:errors="*{plantedDate}" style="color: red;"></div>
             <br/>
             <br/>
@@ -45,8 +45,8 @@
                     <span id="plantImageError" class="error" style="display: none"></span>
                 </div>
             </div>
-            <button type="submit">Submit!</button>
-            <a class="button-link" th:href="@{/gardens/{id}(id=${gardenId})}"><button type="button">Cancel</button></a>
+            <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+            <a class="btn btn-outline-secondary btn-sm btn-cancel" th:href="@{/gardens/{id}(id=${gardenId})}">Cancel</a>
         </form>
     </div>
 </div>
