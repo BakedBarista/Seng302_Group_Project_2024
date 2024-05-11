@@ -213,20 +213,20 @@
                         <tr>
                             <td>
                                 <img class="rounded-circle overflow-hidden border border-dark"
-                                     th:src="@{'/users/' + ${friend.user1.id} + '/profile-picture'}"
+                                     th:src="@{'/users/' + ${friend.sender.id} + '/profile-picture'}"
                                      style="width: 40px; height: 40px;" alt="">
-                                <span th:text="${friend.user1.fname}"> </span>
-                                <span th:if="${friend.user1 != null}"
-                                      th:text="${friend.user1.lname}"></span>
+                                <span th:text="${friend.sender.fname}"> </span>
+                                <span th:if="${friend.sender != null}"
+                                      th:text="${friend.sender.lname}"></span>
                             </td>
                             <td>
                                 <form th:action="@{/users/manageFriends/accept}" method="post" class="d-inline">
-                                    <button type="submit" name="acceptUser" th:value="${friend.user1.id}"
+                                    <button type="submit" name="acceptUser" th:value="${friend.sender.id}"
                                             class="btn btn-success btn-sm mr-2">accept
                                     </button>
                                 </form>
                                 <form th:action="@{/users/manageFriends/decline}" method="post" class="d-inline">
-                                    <button type="submit" name="declineUser" th:value="${friend.user1.id}"
+                                    <button type="submit" name="declineUser" th:value="${friend.sender.id}"
                                             class="btn btn-success btn-sm mr-2">decline
                                     </button>
                                 </form>
@@ -257,19 +257,18 @@
                         <tr>
                             <td class="align-middle">
                                 <img class="rounded-circle overflow-hidden border border-dark"
-                                     th:src="@{'/users/' + ${friend.user2.id} + '/profile-picture'}"
+                                     th:src="@{'/users/' + ${friend.receiver.id} + '/profile-picture'}"
                                      style="width: 40px; height: 40px;">
-                                <span th:text="${friend.user2.fname}"> </span>
-                                <span th:if="${friend.user2 != null}"
-                                      th:text="${friend.user2.lname}"></span>
+                                <span th:text="${friend.receiver.fname}"> </span>
+                                <span th:if="${friend.receiver != null}"
+                                      th:text="${friend.receiver.lname}"></span>
                             </td>
                             <td class="align-middle" th:text="${friend.status}"></td>
                             <form th:action="@{/users/manageFriends/cancel}" method="post" class="d-inline">
-                                <input type="hidden" name="userId" th:value="${friend.user2.id}" class="d-inline"/>
+                                <input type="hidden" name="userId" th:value="${friend.receiver.id}" class="d-inline"/>
                                 <td class="align-middle">
                                     <button class="btn btn-warning btn-sm mr-2">Cancel</button>
                                 </td>
-
                         </tr>
                         </tbody>
                     </table>

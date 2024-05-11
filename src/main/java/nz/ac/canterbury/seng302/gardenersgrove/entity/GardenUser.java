@@ -44,13 +44,13 @@ public class GardenUser {
     @Lob
     private byte[] profilePicture;
 
-    // these are a set of friendships in the friends table where the user is user1
-    @OneToMany(mappedBy = "user1")
-    private Set<Friends> friendshipsAsUser1 = new HashSet<>();
+    // these are a set of friendships in the friends table where the user is sender
+    @OneToMany(mappedBy = "sender")
+    private Set<Friends> friendshipsAsSender = new HashSet<>();
 
-    // these are a set of friendships in the friends table where the user is user2
-    @OneToMany(mappedBy = "user2")
-    private Set<Friends> friendshipsAsUser2 = new HashSet<>();
+    // these are a set of friendships in the friends table where the user is receiver
+    @OneToMany(mappedBy = "receiver")
+    private Set<Friends> friendshipsAsReceiver = new HashSet<>();
 
 
     @Column(nullable = true)
@@ -93,8 +93,8 @@ public class GardenUser {
      *
      * @return Set<Friends> both their id and the other users id
      */
-    public Set<Friends> getFriendshipsAsUser2() {
-        return friendshipsAsUser2;
+    public Set<Friends> getFriendshipsAsReceiver() {
+        return friendshipsAsReceiver;
     }
 
     /**
@@ -102,8 +102,8 @@ public class GardenUser {
      *
      * @return Set<Friends> both their id and the other users id
      */
-    public Set<Friends> getFriendshipsAsUser1() {
-        return friendshipsAsUser1;
+    public Set<Friends> getFriendshipsAsSender() {
+        return friendshipsAsSender;
     }
 
 

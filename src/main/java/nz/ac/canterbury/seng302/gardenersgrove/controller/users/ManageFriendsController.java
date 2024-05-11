@@ -83,8 +83,8 @@ public class ManageFriendsController {
             return "redirect:/users/manageFriends";
         }
         List<Friends> iDeclinedFriend = friendService.getSentRequestsDeclined(loggedInUserId);
-        for (Friends user2 : iDeclinedFriend) {
-            if (sentToUser.getId().equals(user2.getUser2().getId())) {
+        for (Friends receiver : iDeclinedFriend) {
+            if (sentToUser.getId().equals(receiver.getReceiver().getId())) {
                 return "redirect:/users/manageFriends";
             }
         }
@@ -124,7 +124,7 @@ public class ManageFriendsController {
 
         List<Friends> sentAndDeclinedList = friendService.getSentRequestsDeclined(loggedInUserId);
         for (Friends request : sentAndDeclinedList) {
-            if (request.getUser1().getId().equals(loggedInUserId) && request.getUser2().getId().equals(acceptUserId)) {
+            if (request.getSender().getId().equals(loggedInUserId) && request.getReceiver().getId().equals(acceptUserId)) {
                 friendService.delete(request);
             }
         }
@@ -169,7 +169,7 @@ public class ManageFriendsController {
         if (loggedInUser != null && receivedFrom != null) {
             List<Friends> friendShip = friendService.getReceivedRequests(loggedInUserId);
             for (Friends user : friendShip) {
-                if (user.getUser1().getId().equals(declineUserId) && user.getUser2().getId().equals(loggedInUserId)) {
+                if (user.getSender().getId().equals(declineUserId) && user.getReceiver().getId().equals(loggedInUserId)) {
                     user.setStatus("declined");
                     friendService.save(user);
                 }
@@ -219,15 +219,15 @@ public class ManageFriendsController {
                 }
 
                 if (!requestReceived.isEmpty()) {
-                    for (Friends user2 : requestReceived) {
-                        if (user.getId().equals(user2.getUser1().getId())) {
+                    for (Friends receiver : requestReceived) {
+                        if (user.getId().equals(receiver.getSender().getId())) {
                             receivedRequestList.add(user);
                             searchResults.remove(user);
                         }
                     }
                 } else if (!declineSent.isEmpty()) {
-                    for (Friends user2 : declineSent) {
-                        if (user.getId().equals(user2.getUser2().getId())) {
+                    for (Friends receiver : declineSent) {
+                        if (user.getId().equals(receiver.getReceiver().getId())) {
                             alreadyFriendsDeclineSent.add(user);
                             searchResults.remove(user);
                         }
