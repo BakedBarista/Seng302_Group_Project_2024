@@ -1,12 +1,12 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity.dto;
 
-import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationConstants.*;
-
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import nz.ac.canterbury.seng302.gardenersgrove.customValidation.AgeRange;
+
+import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationConstants.*;
 
 /**
  * Data transfer object for the edit user form
@@ -18,7 +18,7 @@ public class EditUserDTO {
     @Column(nullable = false)
     private String fname;
 
-    @Pattern(regexp = NAME_REGEX, message = "Last name must only include letters, spaces,hyphens or apostrophes")
+    @Pattern(regexp = NAME_REGEX, message = "Last name must only include letters, spaces, hyphens or apostrophes")
     @Size(min = 0, max = 64, message = "Last Name must be 64 characters long or less.")
     @Column(nullable = true)
     private String lname;
