@@ -27,6 +27,12 @@
                     <span th:text="${garden.country}"></span>
                 </p>
             </div>
+            <form th:action="@{/gardens/{id}(id=${garden.id})}" method="post">
+                <p>
+                    <strong>Make my garden public:</strong>
+                    <input type="checkbox" class="form-check-input" id="isPublic" name="isPublic" th:checked="${garden.isPublic}" onchange="this.form.submit()"/>
+                </p>
+            </form>
             <div class="d-flex">
                 <img th:src="@{/icons/aspect-ratio-stroke-rounded.svg}" alt="" width="20" height="20" />
                 <p class="mx-1"><strong>Size: </strong><span th:text="${garden.size}"></span> m&sup2;</p>
