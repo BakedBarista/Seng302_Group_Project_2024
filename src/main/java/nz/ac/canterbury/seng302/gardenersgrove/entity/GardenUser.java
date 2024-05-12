@@ -65,10 +65,10 @@ public class GardenUser {
     @Column(nullable = true)
     private Instant resetPasswordTokenExpiryInstant;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "integer default 0")
     private int strikeCount = 0;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean accountDisabled = false;
 
     @Column(nullable = true)
