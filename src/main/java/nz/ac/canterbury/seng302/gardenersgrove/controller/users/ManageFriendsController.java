@@ -96,12 +96,12 @@ public class ManageFriendsController {
 
         Friends requestsPending = friendService.getFriendship(loggedInUserId, requestedUserId);
         if (requestsPending != null) {
-            if (requestsPending.getStatus().equals("pending")) {
+            if (requestsPending.getStatus().equals("Pending")) {
                 return "redirect:/users/manageFriends";
             }
         }
 
-        Friends newFriends = new Friends(loggedInUser, sentToUser, "pending");
+        Friends newFriends = new Friends(loggedInUser, sentToUser, "Pending");
         friendService.save(newFriends);
 
         return "redirect:/users/manageFriends";
@@ -170,7 +170,7 @@ public class ManageFriendsController {
             List<Friends> friendShip = friendService.getReceivedRequests(loggedInUserId);
             for (Friends user : friendShip) {
                 if (user.getSender().getId().equals(declineUserId) && user.getReceiver().getId().equals(loggedInUserId)) {
-                    user.setStatus("declined");
+                    user.setStatus("Declined");
                     friendService.save(user);
                 }
             }
@@ -212,7 +212,7 @@ public class ManageFriendsController {
                 Friends alreadyFriends = friendService.getAcceptedFriendship(loggedInUserId, user.getId());
 
                 if (requestPending != null) {
-                    if (Objects.equals(requestPending.getStatus(), "pending")) {
+                    if (Objects.equals(requestPending.getStatus(), "Pending")) {
                         requestPendingList.add(user);
                         searchResults.remove(user);
                     }

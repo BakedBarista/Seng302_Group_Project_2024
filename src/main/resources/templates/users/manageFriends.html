@@ -114,12 +114,12 @@
                 <td>
                     <form th:action="@{/users/manageFriends/accept}" method="post" class="d-inline">
                         <button type="submit" name="acceptUser" th:value="${user.id}"
-                                class="btn btn-success btn-sm mr-2">accept
+                                class="btn btn-success btn-sm mr-2">Accept
                         </button>
                     </form>
                     <form th:action="@{/users/manageFriends/decline}" method="post" class="d-inline">
                         <button type="submit" name="declineUser" th:value="${user.id}"
-                                class="btn btn-success btn-sm mr-2">decline
+                                class="btn btn-success btn-sm mr-2">Decline
                         </button>
                     </form>
                 </td>
@@ -194,7 +194,7 @@
 
             <div class="card h-100 mb-1">
                 <div class="card-body">
-                    <h2>received requests: </h2>
+                    <h2>Received requests: </h2>
 
                     <table class="table">
                         <thead>
@@ -222,12 +222,12 @@
                             <td>
                                 <form th:action="@{/users/manageFriends/accept}" method="post" class="d-inline">
                                     <button type="submit" name="acceptUser" th:value="${friend.sender.id}"
-                                            class="btn btn-success btn-sm mr-2">accept
+                                            class="btn btn-success btn-sm mr-2">Accept
                                     </button>
                                 </form>
                                 <form th:action="@{/users/manageFriends/decline}" method="post" class="d-inline">
                                     <button type="submit" name="declineUser" th:value="${friend.sender.id}"
-                                            class="btn btn-success btn-sm mr-2">decline
+                                            class="btn btn-success btn-sm mr-2">Decline
                                     </button>
                                 </form>
                             </td>
@@ -239,7 +239,7 @@
 
             <div class="card mb-1 h-100">
                 <div class="card-body">
-                    <h2>sent requests: </h2>
+                    <h2>Sent requests: </h2>
                     <table class="table">
                         <thead>
                         <tr>
@@ -267,7 +267,7 @@
                             <form th:action="@{/users/manageFriends/cancel}" method="post" class="d-inline">
                                 <input type="hidden" name="userId" th:value="${friend.receiver.id}" class="d-inline"/>
                                 <td class="align-middle">
-                                    <button class="btn btn-warning btn-sm mr-2">Cancel</button>
+                                    <button class="btn btn-warning btn-sm mr-2" th:if="${friend.status == 'Pending'}">Cancel</button>
                                 </td>
                         </tr>
                         </tbody>

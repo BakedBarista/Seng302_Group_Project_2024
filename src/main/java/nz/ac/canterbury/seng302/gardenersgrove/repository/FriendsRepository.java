@@ -60,7 +60,7 @@ public interface FriendsRepository extends CrudRepository<Friends, Long> {
      * @param user The ID of the user whose sent friend requests are being retrieved
      * @return A list of Requests objects
      */
-    @Query("SELECT u FROM Friends u WHERE u.sender.id = ?1 and u.status = 'pending'")
+    @Query("SELECT u FROM Friends u WHERE u.sender.id = ?1 AND (u.status = 'Pending' OR u.status = 'Declined')")
     List<Friends> getSentRequests(Long user);
 
     /**
@@ -69,7 +69,7 @@ public interface FriendsRepository extends CrudRepository<Friends, Long> {
      * @param user The ID of the user whose pending received friend requests are being retrieved
      * @return A list of Requests objects 
      */
-    @Query("SELECT u FROM Friends u WHERE u.receiver.id = ?1 and u.status = 'pending'")
+    @Query("SELECT u FROM Friends u WHERE u.receiver.id = ?1 and u.status = 'Pending'")
     List<Friends> getReceivedRequests(Long user);
 
     /**
@@ -77,7 +77,7 @@ public interface FriendsRepository extends CrudRepository<Friends, Long> {
      * @param user user that has been declined
      * @return a list of all the users who have declined friend request from the user
      */
-    @Query("SELECT u FROM Friends u WHERE u.sender.id = ?1 and u.status = 'declined'")
+    @Query("SELECT u FROM Friends u WHERE u.sender.id = ?1 and u.status = 'Declined'")
     List<Friends> getSentRequestsDeclined(Long user);
 
     void deleteBySenderIdAndReceiverId(Long senderId, Long receiverId);
