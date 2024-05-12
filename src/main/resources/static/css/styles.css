@@ -2,6 +2,7 @@
 :root {
     --gg-dark: #395C0A;
     --gg-primary: #395C0A;
+    --gg-primary-light: #608530;
     --gg-primary-rgb: 85, 173, 83;
     --gg-secondary: #60799f;
     --gg-secondary-rgb: 96, 121, 159;
@@ -60,8 +61,8 @@ h1, h2, h3, h4, h5, h6 {
     --bs-btn-bg: var(--gg-primary);
     --bs-btn-border-color: var(--gg-primary);
     --bs-btn-hover-color: var(--gg-white);
-    --bs-btn-hover-bg: var(--gg-dark);
-    --bs-btn-hover-border-color: var(--gg-dark);
+    --bs-btn-hover-bg: var(--gg-primary-light);
+    --bs-btn-hover-border-color: var(--gg-primary-light);
     --bs-btn-focus-shadow-rgb: var(--gg-primary-rgb);
     --bs-btn-active-color: var(--gg-white);
     --bs-btn-active-bg: var(--gg-dark);
@@ -75,8 +76,8 @@ h1, h2, h3, h4, h5, h6 {
     --bs-btn-color: var(--gg-primary);
     --bs-btn-border-color: var(--gg-primary);
     --bs-btn-hover-color: #fff;
-    --bs-btn-hover-bg: var(--gg-primary);
-    --bs-btn-hover-border-color: var(--gg-primary);
+    --bs-btn-hover-bg: var(--gg-primary-light);
+    --bs-btn-hover-border-color: var(--gg-primary-light);
     --bs-btn-focus-shadow-rgb: 13, 110, 253;
     --bs-btn-active-color: #fff;
     --bs-btn-active-bg: var(--gg-primary);
@@ -176,7 +177,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .nav-drawer li a:hover {
-    background-color: var(--gg-primary);
+    background-color: var(--gg-primary-light);
 }
 
 .nav-drawer .link-icon {
