@@ -6,16 +6,19 @@ import java.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
+import jakarta.transaction.Transactional;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 
 /**
  * Handles strikes against user accounts and whether they should be disabled.
  */
+@Component
 public class StrikeService {
     private static final int STRIKES_FOR_WARNING = 5;
-    private static final int STRIKES_FOR_DISABLING = 10;
+    private static final int STRIKES_FOR_DISABLING = 6;
     private static final int DISABLE_DURATION_DAYS = 7;
     private static final int SECONDS_IN_DAY = 24 * 60 * 60;
 
@@ -66,6 +69,7 @@ public class StrikeService {
      * Runs every hour.
      */
     @Scheduled(fixedRate = 60 * 60 * 1000)
+    @Transactional
     public void reenableScheduledUsers() {
         logger.debug("re-enabling user accounts");
 

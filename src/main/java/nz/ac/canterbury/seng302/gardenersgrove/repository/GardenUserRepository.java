@@ -88,7 +88,7 @@ public interface GardenUserRepository extends CrudRepository<GardenUser, Long> {
      * @return The number of users affected by this method call
      */
     @Modifying
-    @Query("UPDATE GardenUser u SET u.accountDisabled = false, u.accountDisabledExpiryInstant = null WHERE u.accountDisabledExpiryInstant < ?1")
+    @Query("UPDATE GardenUser u SET u.strikeCount = 0, u.accountDisabled = false, u.accountDisabledExpiryInstant = null WHERE u.accountDisabledExpiryInstant < ?1")
     int reenableScheduledUsers(Instant now);
 }
 
