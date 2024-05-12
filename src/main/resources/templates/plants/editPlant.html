@@ -28,8 +28,9 @@
             <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}" style="color: red;"></div>
             <br/>
             <label for="date"> Date Planted: </label>
-            <input type="date" class="form-control" id="date" placeholder="DD/MM/YYYY" th:value="${plant.plantedDate}" th:name="plantedDate" data-cy="size" autofocus>
+            <input type='date' class="form-control" id="date" placeholder="DD/MM/YYYY" th:value="${plant.plantedDate}" th:name="plantedDate" data-cy="size" autofocus>
             <div th:if="${#fields.hasErrors('plantedDate')}" th:errors="*{plantedDate}" style="color: red;"></div>
+            <div id="dateErrorMessage" style="color: red; display: none;">Date must be in the format DD-MM-YYYY</div>
             <br/>
             <div>
                 <h3>Plant Image:</h3>
@@ -41,7 +42,7 @@
                 </div>
             </div>
             <div>
-                <button type="submit" onclick="validateForm()">Submit!</button><a class="button-link" th:href="@{/gardens/{garden_id}(garden_id=${gardenId})}"><button type="button">Cancel</button></a>
+                <button type="submit" onclick="return validateDate()">Submit!</button><a class="button-link" th:href="@{/gardens/{garden_id}(garden_id=${gardenId})}"><button type="button">Cancel</button></a>
             </div>
         </form>
     </div>
@@ -50,5 +51,5 @@
 </body>
 <script th:src="@{/js/nextFormBox.js}"></script>
 <script th:src="@{/js/imageHandler.js}"></script>
-<script th:src="@{/js/dateValidation.js}" defer></script>
+<script th:src="@{/js/dateValidation.js}"></script>
 </html>
