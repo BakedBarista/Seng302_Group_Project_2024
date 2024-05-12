@@ -19,8 +19,8 @@ import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 public class StrikeService {
     private static final int STRIKES_FOR_WARNING = 5;
     private static final int STRIKES_FOR_DISABLING = 6;
-    private static final int DISABLE_DURATION_DAYS = 7;
-    private static final int SECONDS_IN_DAY = 24 * 60 * 60;
+    private static final long DISABLE_DURATION_DAYS = 7;
+    private static final long SECONDS_IN_DAY = 24 * 60 * 60;
 
     private Logger logger = LoggerFactory.getLogger(StrikeService.class);
 

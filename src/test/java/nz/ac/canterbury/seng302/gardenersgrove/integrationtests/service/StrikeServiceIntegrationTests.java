@@ -29,7 +29,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.StrikeService;
 
 @SpringBootTest
 @ActiveProfiles("integrationTest")
-public class StrikeServiceIntegrationTests {
+class StrikeServiceIntegrationTests {
     @MockBean
     private Clock clock;
     @MockBean

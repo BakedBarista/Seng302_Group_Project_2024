@@ -20,7 +20,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.StrikeService;
 
-public class StrikeServiceTests {
+class StrikeServiceTests {
     private GardenUserService userService;
     private Clock clock;
     private StrikeService strikeService;
