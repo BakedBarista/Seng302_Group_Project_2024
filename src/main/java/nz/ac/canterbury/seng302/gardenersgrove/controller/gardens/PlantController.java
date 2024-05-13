@@ -203,13 +203,17 @@ public class PlantController {
     public ResponseEntity<byte[]> plantImage(@PathVariable("id") Long id) {
         logger.info("GET /plants/" + id + "/plant-image");
 
-        Plant plant = plantService.getPlantById(id).get();
-        if (plant.getPlantImage() == null) {
-            return ResponseEntity.status(302).header(HttpHeaders.LOCATION, "/img/plant.png").build();
+        Optional<Plant> plant = plantService.getPlantById(id);
+        Plant existingPlant = new Plant();
+        if (plant.isPresent()) {
+            existingPlant = plant.get();
         }
+        if (existingPlant.getPlantImage() == null) {
+                return ResponseEntity.status(302).header(HttpHeaders.LOCATION, "/img/plant.png").build();
+            }
+        return ResponseEntity.ok().contentType(MediaType.parseMediaType(existingPlant.getPlantImageContentType()))
+                .body(existingPlant.getPlantImage());
 
-        return ResponseEntity.ok().contentType(MediaType.parseMediaType(plant.getPlantImageContentType()))
-                .body(plant.getPlantImage());
     }
 
     @PostMapping("plants/{id}/plant-image")
