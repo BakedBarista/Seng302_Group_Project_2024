@@ -442,6 +442,9 @@
          assertEquals("redirect:/", result);
      }
 
+     /**
+      * Testing the removeFriend method
+      */
      @Test
      void whenUserRemovesFriend_thenFriendshipIsRemoved() {
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
@@ -454,6 +457,35 @@
          assertEquals("redirect:/users/manageFriends", result);
      }
 
+     /**
+      * Testing the removeFriend method
+      */
+     @Test
+     public void whenDeclinedFriendshipExists_thenUserMovedToAlreadyFriendsDeclineSent() {
+         Long loggedInUserId = 1L;
+         GardenUser user = new GardenUser();
+         user.setId(2L);
+
+         Friends declinedFriendship = new Friends(new GardenUser(), user, "DECLINED");
+         List<Friends> declineSent = new ArrayList<>();
+         declineSent.add(declinedFriendship);
+
+         List<GardenUser> alreadyFriendsDeclineSent = new ArrayList<>();
+         List<GardenUser> searchResults = new ArrayList<>();
+         searchResults.add(user);
+
+         ManageFriendsController controller = new ManageFriendsController(friendService, gardenUserService);
+
+         controller.processUserFriendshipStatus(loggedInUserId, user, new ArrayList<>(), new ArrayList<>(), alreadyFriendsDeclineSent, new ArrayList<>(), searchResults);
+
+         // Assert
+         assertFalse(alreadyFriendsDeclineSent.contains(user), "User should be in the alreadyFriendsDeclineSent list");
+         assertTrue(searchResults.contains(user), "User should be removed from searchResults");
+     }
+
+     /**
+      * Testing the manageFriendsSearch method
+      */
      @Test
      void testManageFriendsSearch() {
          // Setup
@@ -487,6 +519,10 @@
          assertEquals(0, ((List<?>) redirectAttributes.getFlashAttributes().get("requestPending")).size());
          assertEquals(1, ((List<?>) redirectAttributes.getFlashAttributes().get("searchResults")).size()); // Assuming user1 gets moved to requestPending list.
      }
+
+     /**
+      * Testing the manageFriendsSearch method
+      */
      @Test
      void whenFriendshipIsReceived_thenAddedToReceivedRequestList() {
          String searchUser = "example@example.com";
@@ -510,8 +546,12 @@
          List<GardenUser> receivedRequestList = (List<GardenUser>) redirectAttributes.getFlashAttributes().get("requestReceived");
          assertTrue(receivedRequestList.contains(otherUser));
      }
+
+     /**
+      * Testing the manageFriendsSearch method
+      */
      @Test
-     public void whenPendingRequest_thenUserAddedToRequestPendingListAndRemovedFromSearchResults() {
+     void whenPendingRequest_thenUserAddedToRequestPendingListAndRemovedFromSearchResults() {
          RedirectAttributesModelMap redirectAttributes = new RedirectAttributesModelMap();
          GardenUser user = new GardenUser();
          user.setId(2L);
@@ -533,8 +573,11 @@
          assertTrue(searchResults.contains(user));
      }
 
+     /**
+      * Testing the manageFriendsSearch method
+      */
      @Test
-     public void whenAlreadyFriends_thenUserAddedToAlreadyFriendsListAndRemovedFromSearchResults() {
+     void whenAlreadyFriends_thenUserAddedToAlreadyFriendsListAndRemovedFromSearchResults() {
          RedirectAttributesModelMap redirectAttributes = new RedirectAttributesModelMap();
          GardenUser user = new GardenUser();
          user.setId(2L); // Example user ID
@@ -557,7 +600,9 @@
      }
 
 
-
+     /**
+      * Testing the manageFriendsSearch method
+      */
      @Test
      void whenFriendshipIsPending_thenAddedToRequestPendingList() {
          String searchUser = "example@example.com";
