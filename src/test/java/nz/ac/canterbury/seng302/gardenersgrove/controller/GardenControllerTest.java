@@ -16,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
@@ -23,6 +24,10 @@ import java.util.Collections;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 public class GardenControllerTest {
@@ -44,6 +49,8 @@ public class GardenControllerTest {
     @InjectMocks
     private GardenController gardenController;
 
+    private static Authentication authentication;
+
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -51,7 +58,7 @@ public class GardenControllerTest {
         when(mockUser.getId()).thenReturn(1L);
         when(gardenUserService.getCurrentUser()).thenReturn(mockUser);
         when(gardenService.getGardensByOwnerId(1L)).thenReturn(Collections.emptyList());
-
+        authentication = mock(Authentication.class);
     }
 
     @Test
@@ -71,7 +78,8 @@ public class GardenControllerTest {
         Garden invalidGarden = new Garden("","","","","","","",0.0,0.0,"","");
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
-        String result = gardenController.submitForm(invalidGarden, bindingResult, model);
+        when(authentication.getPrincipal()).thenReturn((Long) 1L);
+        String result = gardenController.submitForm(invalidGarden, bindingResult, authentication, model);
         assertEquals("gardens/createGarden", result);
     }
 
@@ -83,9 +91,9 @@ public class GardenControllerTest {
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
         when(gardenService.addGarden(validGarden)).thenReturn(validGarden);
-
+        when(authentication.getPrincipal()).thenReturn((Long) 1L);
         Mockito.when(moderationService.moderateDescription(anyString())).thenReturn(ResponseEntity.ok().build());
-        String result = gardenController.submitForm(validGarden, bindingResult, model);
+        String result = gardenController.submitForm(validGarden, bindingResult, authentication,  model);
         assertEquals("redirect:/gardens/1", result);
     }
 

@@ -83,13 +83,16 @@ public class GardenController {
      */
     @PostMapping("/gardens/create")
     public String submitForm(@Valid @ModelAttribute("garden") Garden garden,
-                             BindingResult bindingResult, Model model) {
+                             BindingResult bindingResult, Authentication authentication, Model model) {
         logger.info("POST /gardens - submit the new garden form");
         if (bindingResult.hasErrors()) {
             model.addAttribute("garden", garden);
             return "gardens/createGarden";
         }
-        GardenUser owner = gardenUserService.getCurrentUser();
+
+        Long userId = (Long) authentication.getPrincipal();
+
+        GardenUser owner = gardenUserService.getUserById(userId);
 
         garden.setOwner(owner);
 

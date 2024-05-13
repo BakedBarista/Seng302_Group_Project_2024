@@ -14,10 +14,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weatherAPI.WeatherAPIService;
-import org.mockito.Mockito;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.client.RestTemplate;
@@ -30,8 +27,6 @@ import static org.mockito.Mockito.*;
 public class U8CreateNewGardenFeature {
 
     private GardenUser user;
-    private static SecurityContextHolder securityContextHolder;
-    private static SecurityContext securityContext;
 
     private static Authentication authentication;
     private static BindingResult bindingResult;
@@ -56,11 +51,6 @@ public class U8CreateNewGardenFeature {
     @BeforeAll
     public static void beforeAll() {
 
-        //chat gpt code 2 lines bellow
-        securityContext = mock(SecurityContext.class);
-
-
-        securityContextHolder = mock(SecurityContextHolder.class);
         bindingResult = mock(BindingResult.class);
         model = mock(Model.class);
         authentication = mock(Authentication.class);
@@ -116,17 +106,16 @@ public class U8CreateNewGardenFeature {
 
     @And("I submit create garden form")
     public void iSubmitCreateGardenForm() {
-        Mockito.when(SecurityContextHolder.getContext()).thenReturn(securityContext);
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        when(userService.getCurrentUser()).thenReturn(user);
+        when(authentication.getPrincipal()).thenReturn((Long) 1L);
         when(gardenUserRepository.findById(1L)).thenReturn(Optional.of(user));
         when(gardenRepository.save(garden)).thenReturn(garden);
-
-        gardenController.submitForm(garden, bindingResult, model);
+        gardenController.submitForm(garden, bindingResult, authentication, model);
     }
 
     @Then("A garden with that information is created")
     public void aGardenWithThatInformationIsCreated() {
+
         assertNotNull(gardenRepository.findByOwnerId(user.getId()));
+        assertNotNull(gardenRepository.findById(garden.getId()));
     }
 }
