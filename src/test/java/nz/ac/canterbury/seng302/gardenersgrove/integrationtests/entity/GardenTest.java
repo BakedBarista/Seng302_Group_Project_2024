@@ -188,9 +188,9 @@ class GardenTest {
         assertEquals(expectedMessage, violation.getMessage());
     }
     @Test
-    void gardenLocation_Null_ReturnNotBlankViolation() {
+    void gardenLocation_Null_ReturnsViolation() {
         garden.setCity(null);
-        String expectedMessage = "City and Country are required";
+        String expectedMessage = "City is required";
         Integer expectedConstraintSetSize = 1;
 
 
@@ -421,15 +421,10 @@ class GardenTest {
     }
 
     @Test
-    void enterEmptyStreetName_whenSubmitted_ReturnsViolation() {
+    void enterEmptyStreetName_whenSubmitted_ReturnsNoViolation() {
         garden.setStreetName(" ");
-        String expectedMessage = "Street Name is required";
-        Integer expectedConstraintSetSize = 1;
 
-        ConstraintViolation<Garden> violation = validator.validate(garden).iterator().next();
-
-        assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
-        assertEquals(expectedMessage, violation.getMessage());
+        assertTrue(validator.validate(garden).isEmpty());
     }
 
     @Test
@@ -444,10 +439,11 @@ class GardenTest {
         assertEquals(expectedMessage, violation.getMessage());
     }
     @Test
-    void enterEmptyCity_whenSubmitted_ReturnsViolation() {
+    void enterEmptyCity_whenSubmitted_ReturnsNoViolation() {
         garden.setCity(" ");
-        String expectedMessage = "City and Country are required";
+        String expectedMessage = "City is required";
         Integer expectedConstraintSetSize = 1;
+
 
         ConstraintViolation<Garden> violation = validator.validate(garden).iterator().next();
 
@@ -455,10 +451,11 @@ class GardenTest {
         assertEquals(expectedMessage, violation.getMessage());
     }
     @Test
-    void enterEmptyCountry_whenSubmitted_ReturnsViolation() {
+    void enterEmptyCountry_whenSubmitted_ReturnsNoViolation() {
         garden.setCountry(" ");
-        String expectedMessage = "City and Country are required";
+        String expectedMessage = "Country is required";
         Integer expectedConstraintSetSize = 1;
+
 
         ConstraintViolation<Garden> violation = validator.validate(garden).iterator().next();
 
@@ -480,20 +477,9 @@ class GardenTest {
     }
 
     @Test
-    void enterEmptySuburb_whenSubmitted_ReturnsViolation() {
+    void enterEmptySuburb_whenSubmitted_ReturnsNoViolation() {
         garden.setSuburb(" ");
-        String expectedMessage = "Suburb is required";
-        Integer expectedConstraintSetSize = 1;
 
-        ConstraintViolation<Garden> violation = validator.validate(garden).iterator().next();
-
-        assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
-        assertEquals(expectedMessage, violation.getMessage());
+        assertTrue(validator.validate(garden).isEmpty());
     }
-
-
-
-
-
-
 }
