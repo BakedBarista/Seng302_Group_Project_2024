@@ -26,6 +26,8 @@ import java.util.Optional;
 
 @Controller
 public class ManageFriendsController {
+
+    private static final String STATUS_PENDING = "Pending";
     private Logger logger = LoggerFactory.getLogger(LoginController.class);
 
     private FriendService friendService;
@@ -95,13 +97,12 @@ public class ManageFriendsController {
         }
 
         Friends requestsPending = friendService.getFriendship(loggedInUserId, requestedUserId);
-        if (requestsPending != null) {
-            if (requestsPending.getStatus().equals("Pending")) {
+        if (requestsPending != null && requestsPending.getStatus().equals(STATUS_PENDING)) {
                 return "redirect:/users/manageFriends";
-            }
+
         }
 
-        Friends newFriends = new Friends(loggedInUser, sentToUser, "Pending");
+        Friends newFriends = new Friends(loggedInUser, sentToUser, STATUS_PENDING);
         friendService.save(newFriends);
 
         return "redirect:/users/manageFriends";
@@ -189,8 +190,8 @@ public class ManageFriendsController {
      */
     @PostMapping("users/manageFriends/search")
     public String manageFriendsSearch(Authentication authentication,
-            @RequestParam(name = "searchUser", required = false) String searchUser,
-            RedirectAttributes rm) {
+                                      @RequestParam(name = "searchUser", required = false) String searchUser,
+                                      RedirectAttributes rm) {
 
         Long loggedInUserId = (Long) authentication.getPrincipal();
         List<GardenUser> searchResults = userService.getUserBySearch(searchUser, loggedInUserId);
@@ -201,47 +202,9 @@ public class ManageFriendsController {
         List<GardenUser> alreadyFriendsDeclineSent = new ArrayList<>();
         List<GardenUser> receivedRequestList = new ArrayList<>();
 
-        // so we dont get index out of range
-        List<GardenUser> copyOfSearchResults = new ArrayList<>(searchResults);
+        processUsers(loggedInUserId, new ArrayList<>(searchResults), alreadyFriendsList, requestPendingList, alreadyFriendsDeclineSent, receivedRequestList, searchResults);
 
-        if (!searchResults.isEmpty()) {
-            for (GardenUser user : copyOfSearchResults) {
-                Friends requestPending = friendService.getSent(loggedInUserId, user.getId());
-                List<Friends> declineSent = friendService.getSentRequestsDeclined(loggedInUserId);
-                List<Friends> requestReceived = friendService.getReceivedRequests(loggedInUserId);
-                Friends alreadyFriends = friendService.getAcceptedFriendship(loggedInUserId, user.getId());
-
-                if (requestPending != null) {
-                    if (Objects.equals(requestPending.getStatus(), "Pending")) {
-                        requestPendingList.add(user);
-                        searchResults.remove(user);
-                    }
-                }
-
-                if (!requestReceived.isEmpty()) {
-                    for (Friends user2 : requestReceived) {
-                        if (user.getId().equals(user2.getUser1().getId())) {
-                            receivedRequestList.add(user);
-                            searchResults.remove(user);
-                        }
-                    }
-                } else if (!declineSent.isEmpty()) {
-                    for (Friends user2 : declineSent) {
-                        if (user.getId().equals(user2.getUser2().getId())) {
-                            alreadyFriendsDeclineSent.add(user);
-                            searchResults.remove(user);
-                        }
-                    }
-                }
-
-                if (alreadyFriends != null) {
-                    alreadyFriendsList.add(user);
-                    searchResults.remove(user);
-                }
-            }
-        }
-
-        if (checkMyself.isPresent()){
+        if (checkMyself.isPresent()) {
             rm.addFlashAttribute("mySelf", checkMyself.get());
         }
 
@@ -253,6 +216,48 @@ public class ManageFriendsController {
 
         return "redirect:/users/manageFriends";
     }
+
+    private void processUsers(Long loggedInUserId, List<GardenUser> users, List<GardenUser> alreadyFriendsList, List<GardenUser> requestPendingList, List<GardenUser> alreadyFriendsDeclineSent, List<GardenUser> receivedRequestList, List<GardenUser> searchResults) {
+        for (GardenUser user : users) {
+            processUserFriendshipStatus(loggedInUserId, user, alreadyFriendsList, requestPendingList, alreadyFriendsDeclineSent, receivedRequestList, searchResults);
+        }
+    }
+
+    private void processUserFriendshipStatus(Long loggedInUserId, GardenUser user, List<GardenUser> alreadyFriendsList, List<GardenUser> requestPendingList, List<GardenUser> alreadyFriendsDeclineSent, List<GardenUser> receivedRequestList, List<GardenUser> searchResults) {
+        Friends requestPending = friendService.getSent(loggedInUserId, user.getId());
+        List<Friends> declineSent = friendService.getSentRequestsDeclined(loggedInUserId);
+        List<Friends> requestReceived = friendService.getReceivedRequests(loggedInUserId);
+        Friends alreadyFriends = friendService.getAcceptedFriendship(loggedInUserId, user.getId());
+
+        if (requestPending != null && requestPending.getStatus().equals(STATUS_PENDING)) {
+            requestPendingList.add(user);
+            searchResults.remove(user);
+        }
+
+        for (Friends user2 : requestReceived) {
+            if (user.getId().equals(user2.getUser1().getId())) {
+                receivedRequestList.add(user);
+                searchResults.remove(user);
+                break;
+            }
+        }
+
+        for (Friends user2 : declineSent) {
+            if (user.getId().equals(user2.getUser2().getId())) {
+                alreadyFriendsDeclineSent.add(user);
+                searchResults.remove(user);
+                break;
+            }
+        }
+
+        if (alreadyFriends != null) {
+            alreadyFriendsList.add(user);
+            searchResults.remove(user);
+        }
+    }
+
+
+
 
     /**
      * Displays the profile of a friend
