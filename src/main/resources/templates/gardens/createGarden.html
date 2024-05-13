@@ -80,6 +80,9 @@
                     <div th:if="${#fields.hasErrors('postCode')}" th:errors="*{postCode}" style="color: red;"></div>
                 </div>
             </div>
+            <div class="col-8">
+                <div th:if="locationError != null" th:text="${locationError}" style="color: red;"></div>
+            </div>
             <input type="hidden" id="lat" th:name="lat" th:value="${garden.lat}">
             <input type="hidden" id="lon" th:name="lon" th:value="${garden.lon}">
             <!-- Garden Size Field -->
