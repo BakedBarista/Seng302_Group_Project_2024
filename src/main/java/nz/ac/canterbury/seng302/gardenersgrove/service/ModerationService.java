@@ -25,7 +25,7 @@ public class ModerationService {
      * @return moderation response in json format
      */
     public ResponseEntity<String> moderateDescription(String description) {
-        logger.info("Moderating description {}", description);
+        logger.info("Moderating description");
 
         String requestBody = "{\"input\": \"" + description + "\"}";
         HttpHeaders headers = new HttpHeaders();
@@ -55,14 +55,16 @@ public class ModerationService {
             return false;
         }
 
-        try {
-            String responseBody = moderateDescription(description).getBody();
-            // note - this may cause problems if OpenAI changes the structure of the content they
-            // return as this doesn't properly parse the json string - could not find anything in java to do this
+        String responseBody = moderateDescription(description).getBody();
+
+        // note - this may cause problems if OpenAI changes the structure of the content they
+        // return as this doesn't properly parse the json string - could not find anything in java to do this
+        if (responseBody != null) {
             String flaggedValue = responseBody.split("\"flagged\": ")[1].split(",")[0];
             return flaggedValue.equals("true");
-        } catch (NullPointerException e) {
-            return false;
         }
+
+        // if no response, return false...
+        return false;
     }
 }
