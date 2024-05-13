@@ -217,13 +217,13 @@ public class ManageFriendsController {
         return "redirect:/users/manageFriends";
     }
 
-    private void processUsers(Long loggedInUserId, List<GardenUser> users, List<GardenUser> alreadyFriendsList, List<GardenUser> requestPendingList, List<GardenUser> alreadyFriendsDeclineSent, List<GardenUser> receivedRequestList, List<GardenUser> searchResults) {
+    void processUsers(Long loggedInUserId, List<GardenUser> users, List<GardenUser> alreadyFriendsList, List<GardenUser> requestPendingList, List<GardenUser> alreadyFriendsDeclineSent, List<GardenUser> receivedRequestList, List<GardenUser> searchResults) {
         for (GardenUser user : users) {
             processUserFriendshipStatus(loggedInUserId, user, alreadyFriendsList, requestPendingList, alreadyFriendsDeclineSent, receivedRequestList, searchResults);
         }
     }
 
-    private void processUserFriendshipStatus(Long loggedInUserId, GardenUser user, List<GardenUser> alreadyFriendsList, List<GardenUser> requestPendingList, List<GardenUser> alreadyFriendsDeclineSent, List<GardenUser> receivedRequestList, List<GardenUser> searchResults) {
+    public void processUserFriendshipStatus(Long loggedInUserId, GardenUser user, List<GardenUser> alreadyFriendsList, List<GardenUser> requestPendingList, List<GardenUser> alreadyFriendsDeclineSent, List<GardenUser> receivedRequestList, List<GardenUser> searchResults) {
         Friends requestPending = friendService.getSent(loggedInUserId, user.getId());
         List<Friends> declineSent = friendService.getSentRequestsDeclined(loggedInUserId);
         List<Friends> requestReceived = friendService.getReceivedRequests(loggedInUserId);
