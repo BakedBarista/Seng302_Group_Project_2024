@@ -434,4 +434,18 @@
          verify(friendService, times(1)).removeFriendship(friends);
          assertEquals("redirect:/users/manageFriends", result);
      }
+
+     @Test
+     public void whenUserRemoveFriend_thenFriendshipIsRemoved() {
+         Friends friends = new Friends(loggedInUser, otherUser, "accepted");
+         friendService.save(friends);
+
+         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+
+         String result = manageFriendsController.removeFriend(authentication, otherUserId);
+         verify(friendService, times(1)).removeFriend(loggedInUserId, otherUserId);
+         assertEquals("redirect:/users/manageFriends", result);
+
+     }
  }
+
