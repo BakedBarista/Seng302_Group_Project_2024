@@ -9,7 +9,7 @@ import org.mockito.MockitoAnnotations;
 public class ModerationServiceTest {
 
     @Mock
-    private ModerationService moderationService;
+    private ModerationService moderationService;;
 
     @BeforeEach
     public void setup() {
