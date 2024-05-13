@@ -42,7 +42,7 @@
                     <img id="preview" th:src="@{/img/plant.png}" alt="Default Plant Image" />
                     <label for="image" class="add-image-button">+</label>
                     <input type="file" id="image" name="image" accept=".png,.jpg,.jpeg,.svg" class="form-control-file" style = "display: none;" onchange="previewImage(event)">
-                    <span id="plantImageError" class="error" style="display: none"></span>
+                    <span id="plantImageError" class="error" style="display: none; color: red"></span>
                 </div>
             </div>
             <button type="submit" class="btn btn-primary btn-sm">Submit</button>
