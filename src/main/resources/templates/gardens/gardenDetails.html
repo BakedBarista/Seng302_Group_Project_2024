@@ -112,9 +112,9 @@
                     <div class="card-header m-0 p-0 bg-transparent rounded-2">
                         <img class="w-100" alt="Plant Picture" style="max-height: 300px;" th:src="@{'/plants/' + ${plant.id} + '/plant-image'}" />
                         <form th:action="@{'/plants/' + ${plant.id} + '/plant-image'}" method="post" enctype="multipart/form-data" class="plantImageForm" th:data-plant-id="${plant.id}">
-                        <label for="image" class="add-image-button">+</label>
-                        <input type="file" id="image" name="image" accept=".png,.jpg,.jpeg,.svg" class="form-control-file image" style = "display: none;">
-                        <span id="error plantImageError" class="error" style="display: none"></span>
+                        <label th:for="${plant.id}" class="add-image-button">+</label>
+                        <input type="file" th:id="${plant.id}" name="image" accept=".png,.jpg,.jpeg,.svg" class="form-control-file image" style = "display: none;">
+                        <span id="plantImageError" class="error plantImageError" style="display: none"></span>
                         </form>
                     </div>
                     <div class="card-body m-0">
@@ -154,11 +154,7 @@
             console.log(plantId);
             const plantImageInput = plantImageForm.querySelector(".image");
             const plantImageError = plantImageForm.querySelector(".plantImageError");
-            plantImageForm.addEventListener("keydown", (ev) => {
-                if (ev.key === "Enter") {
-                    plantImageInput.click();
-                }
-            });
+
 
             plantImageInput.addEventListener("change", (ev) => {
                 const file = plantImageInput.files[0];
