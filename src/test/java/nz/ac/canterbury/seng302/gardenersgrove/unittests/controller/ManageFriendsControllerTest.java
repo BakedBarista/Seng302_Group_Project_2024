@@ -17,10 +17,7 @@
  import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
- import java.util.ArrayList;
- import java.util.Collections;
- import java.util.List;
- import java.util.Optional;
+ import java.util.*;
 
  import static org.junit.jupiter.api.Assertions.assertEquals;
  import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -202,22 +199,24 @@
          assertEquals("redirect:/users/manageFriends", result);
      }
 
-     /**
-      * Testing the exception handling for manageFriendsSearch
-      */
      @Test
-     public void testManageFriendsSearch_WhenServiceThrowsException() {
-         String searchUser = "test@example.com";
+     void testUsersWithPendingRequests() {
+         List<Friends> friendShip = new ArrayList<>();
+         Friends existingRequest = new Friends(otherUser, loggedInUser, "Pending");
+         friendShip.add(existingRequest);
+
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
-         when(gardenUserService.getUserBySearch(anyString(), anyLong())).thenThrow(new RuntimeException("Service exception"));
+         when(friendService.getFriendship(loggedInUserId, otherUserId)).thenReturn(existingRequest);
 
-         RedirectAttributes rm = new RedirectAttributesModelMap();
-         Exception exception = assertThrows(RuntimeException.class, () ->
-                 manageFriendsController.manageFriendsSearch(authentication, searchUser, rm)
-         );
+         String result = manageFriendsController.manageFriendsAccept(authentication, otherUserId);
 
-         assertEquals("Service exception", exception.getMessage());
+         // Ensure the status is set to "accepted" before saving
+         assertEquals("accepted", existingRequest.getStatus());
+
+         verify(friendService).save(existingRequest); // More precise verification
+         assertEquals("redirect:/users/manageFriends", result);
      }
+
 
 
      /**
