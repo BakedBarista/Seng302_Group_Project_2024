@@ -4,7 +4,6 @@
  import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
  import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
  import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
- import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
  import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
  import org.junit.jupiter.api.extension.ExtendWith;
  import org.mockito.junit.jupiter.MockitoExtension;
@@ -123,7 +122,7 @@
       */
      @Test
      public void whenFriendshipPending_thenNoNewFriendRecord() {
-         Friends friendRequest = new Friends(loggedInUser, otherUser, "pending");
+         Friends friendRequest = new Friends(loggedInUser, otherUser, "Pending");
 
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
          when(gardenUserService.getUserById(loggedInUserId)).thenReturn(loggedInUser);
@@ -141,7 +140,7 @@
       */
      @Test
      public void whenLoggedInUserRequestsThemself_thenNoNewFriendRecord() {
-         Friends friendRequest = new Friends(loggedInUser, loggedInUser, "pending");
+         Friends friendRequest = new Friends(loggedInUser, loggedInUser, "Pending");
 
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
          when(gardenUserService.getUserById(loggedInUserId)).thenReturn(loggedInUser);
@@ -159,7 +158,7 @@
      public void whenFriendshipPending_thenFriendAccepted() {
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
 
-         Friends existingRequest = new Friends(loggedInUser, otherUser, "pending");
+         Friends existingRequest = new Friends(loggedInUser, otherUser, "Pending");
          friendService.save(existingRequest);
          when(friendService.getFriendship(loggedInUserId, otherUserId)).thenReturn(existingRequest);
 
@@ -222,7 +221,7 @@
      @Test
      public void whenFriendshipPending_thenFriendDeclined() {
          List<Friends> friendShip = new ArrayList<>();
-         Friends existingRequest = new Friends(otherUser, loggedInUser, "pending");
+         Friends existingRequest = new Friends(otherUser, loggedInUser, "Pending");
          friendShip.add(existingRequest);
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
          when(gardenUserService.getUserById(loggedInUserId)).thenReturn(loggedInUser);
@@ -427,7 +426,7 @@
       */
      @Test
      public void whenUserCancelFriendRequest_thenFriendshipIsRemoved() {
-         Friends friends = new Friends(loggedInUser,otherUser,"pending");
+         Friends friends = new Friends(loggedInUser,otherUser,"Pending");
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
          when(gardenUserService.getUserById(otherUserId)).thenReturn(otherUser);
          when(friendService.getFriendship(loggedInUserId,otherUserId)).thenReturn(friends);

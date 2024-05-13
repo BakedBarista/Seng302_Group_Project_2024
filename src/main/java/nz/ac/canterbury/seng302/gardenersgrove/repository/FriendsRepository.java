@@ -5,10 +5,8 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * GardenFormResult repository accessor
@@ -60,7 +58,7 @@ public interface FriendsRepository extends CrudRepository<Friends, Long> {
      * @param user The ID of the user whose sent friend requests are being retrieved
      * @return A list of Requests objects
      */
-    @Query("SELECT u FROM Friends u WHERE u.user1.id = ?1 and u.status = 'pending'")
+    @Query("SELECT u FROM Friends u WHERE u.user1.id = ?1 and u.status = 'Pending'")
     List<Friends> getSentRequests(Long user);
 
     /**
@@ -69,7 +67,7 @@ public interface FriendsRepository extends CrudRepository<Friends, Long> {
      * @param user The ID of the user whose pending received friend requests are being retrieved
      * @return A list of Requests objects 
      */
-    @Query("SELECT u FROM Friends u WHERE u.user2.id = ?1 and u.status = 'pending'")
+    @Query("SELECT u FROM Friends u WHERE u.user2.id = ?1 and u.status = 'Pending'")
     List<Friends> getReceivedRequests(Long user);
 
     /**

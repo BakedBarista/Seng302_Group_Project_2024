@@ -96,12 +96,12 @@ public class ManageFriendsController {
 
         Friends requestsPending = friendService.getFriendship(loggedInUserId, requestedUserId);
         if (requestsPending != null) {
-            if (requestsPending.getStatus().equals("pending")) {
+            if (requestsPending.getStatus().equals("Pending")) {
                 return "redirect:/users/manageFriends";
             }
         }
 
-        Friends newFriends = new Friends(loggedInUser, sentToUser, "pending");
+        Friends newFriends = new Friends(loggedInUser, sentToUser, "Pending");
         friendService.save(newFriends);
 
         return "redirect:/users/manageFriends";
@@ -212,7 +212,7 @@ public class ManageFriendsController {
                 Friends alreadyFriends = friendService.getAcceptedFriendship(loggedInUserId, user.getId());
 
                 if (requestPending != null) {
-                    if (Objects.equals(requestPending.getStatus(), "pending")) {
+                    if (Objects.equals(requestPending.getStatus(), "Pending")) {
                         requestPendingList.add(user);
                         searchResults.remove(user);
                     }
@@ -295,7 +295,7 @@ public class ManageFriendsController {
     /**
      * Cancel an existing friend request
      * @param authentication object contain user's current authentication details
-     * @id id of the user who received the friend request
+     * @param requestedUser id of the user who received the friend request
      */
     @PostMapping("users/manageFriends/cancel")
     public String cancelSentRequest(Authentication authentication,
