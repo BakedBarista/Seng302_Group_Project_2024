@@ -26,11 +26,11 @@ import java.util.Optional;
 
 @Controller
 public class ManageFriendsController {
-    private Logger logger = LoggerFactory.getLogger(LoginController.class);
+    private Logger logger = LoggerFactory.getLogger(ManageFriendsController.class);
 
     private FriendService friendService;
     private GardenUserService userService;
-    private final String PENDING_STATUS = "Pending";
+    private final static String PENDING = "Pending";
 
     @Autowired
     public ManageFriendsController(FriendService friendService, GardenUserService userService) {
@@ -90,13 +90,11 @@ public class ManageFriendsController {
         }
 
         Friends requestsPending = friendService.getFriendship(loggedInUserId, requestedUserId);
-        if (requestsPending != null) {
-            if (requestsPending.getStatus().equals(PENDING_STATUS)) {
-                return "redirect:/users/manageFriends";
-            }
+        if (requestsPending != null && requestsPending.getStatus().equals(PENDING)) {
+            return "redirect:/users/manageFriends";
         }
 
-        Friends newFriends = new Friends(loggedInUser, sentToUser, PENDING_STATUS);
+        Friends newFriends = new Friends(loggedInUser, sentToUser, PENDING);
         friendService.save(newFriends);
 
         return "redirect:/users/manageFriends";
@@ -196,7 +194,7 @@ public class ManageFriendsController {
         List<GardenUser> alreadyFriendsDeclineSent = new ArrayList<>();
         List<GardenUser> receivedRequestList = new ArrayList<>();
 
-        // so we dont get index out of range
+        // so we don't get index out of range
         List<GardenUser> copyOfSearchResults = new ArrayList<>(searchResults);
 
         if (!searchResults.isEmpty()) {
@@ -206,11 +204,9 @@ public class ManageFriendsController {
                 List<Friends> requestReceived = friendService.getReceivedRequests(loggedInUserId);
                 Friends alreadyFriends = friendService.getAcceptedFriendship(loggedInUserId, user.getId());
 
-                if (requestPending != null) {
-                    if (Objects.equals(requestPending.getStatus(), PENDING_STATUS)) {
-                        requestPendingList.add(user);
-                        searchResults.remove(user);
-                    }
+                if (requestPending != null && Objects.equals(requestPending.getStatus(), PENDING)) {
+                    requestPendingList.add(user);
+                    searchResults.remove(user);
                 }
 
                 if (!requestReceived.isEmpty()) {
@@ -283,7 +279,7 @@ public class ManageFriendsController {
     /**
      * Cancel an existing friend request
      * @param authentication object contain user's current authentication details
-     * @id id of the user who received the friend request
+     * @param requestedUser of the user who received the friend request
      */
     @PostMapping("users/manageFriends/cancel")
     public String cancelSentRequest(Authentication authentication,
