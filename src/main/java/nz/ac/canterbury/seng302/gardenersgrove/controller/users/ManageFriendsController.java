@@ -30,6 +30,7 @@ public class ManageFriendsController {
 
     private FriendService friendService;
     private GardenUserService userService;
+    private final String PENDING_STATUS = "Pending";
 
     @Autowired
     public ManageFriendsController(FriendService friendService, GardenUserService userService) {
@@ -90,12 +91,12 @@ public class ManageFriendsController {
 
         Friends requestsPending = friendService.getFriendship(loggedInUserId, requestedUserId);
         if (requestsPending != null) {
-            if (requestsPending.getStatus().equals("Pending")) {
+            if (requestsPending.getStatus().equals(PENDING_STATUS)) {
                 return "redirect:/users/manageFriends";
             }
         }
 
-        Friends newFriends = new Friends(loggedInUser, sentToUser, "Pending");
+        Friends newFriends = new Friends(loggedInUser, sentToUser, PENDING_STATUS);
         friendService.save(newFriends);
 
         return "redirect:/users/manageFriends";
@@ -206,7 +207,7 @@ public class ManageFriendsController {
                 Friends alreadyFriends = friendService.getAcceptedFriendship(loggedInUserId, user.getId());
 
                 if (requestPending != null) {
-                    if (Objects.equals(requestPending.getStatus(), "Pending")) {
+                    if (Objects.equals(requestPending.getStatus(), PENDING_STATUS)) {
                         requestPendingList.add(user);
                         searchResults.remove(user);
                     }

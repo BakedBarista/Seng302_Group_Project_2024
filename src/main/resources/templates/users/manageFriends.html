@@ -51,7 +51,7 @@
                 <td class="align-middle">
                     <img class="rounded-circle overflow-hidden border border-dark"
                          th:src="@{'/users/' + ${mySelf.id} + '/profile-picture'}" style="width: 40px; height: 40px;"
-                         alt="">
+                         alt="Profile Picture">
                     <span th:text="${mySelf.fname} "></span>
                     <span th:if="${mySelf.lname != null}" th:text="${mySelf.lname}"></span>
                     <span>(me)</span>
@@ -67,7 +67,7 @@
                 <td class="align-middle">
                     <img class="rounded-circle overflow-hidden border border-dark"
                          th:src="@{'/users/' + ${currentFriend.id} + '/profile-picture'}"
-                         style="width: 40px; height: 40px;" alt="">
+                         style="width: 40px; height: 40px;"  alt="Profile Picture">
                     <span th:text="${currentFriend.fname} "></span>
                     <span th:if="${currentFriend.lname != null}" th:text="${currentFriend.lname}"></span>
                 </td>
@@ -81,7 +81,7 @@
                 <td class="align-middle">
                     <img class="rounded-circle overflow-hidden border border-dark"
                          th:src="@{'/users/' + ${currentFriend.id} + '/profile-picture'}"
-                         style="width: 40px; height: 40px;">
+                         style="width: 40px; height: 40px;"  alt="Profile Picture">
                     <span th:text="${currentFriend.fname} "></span>
                     <span th:if="${currentFriend.lname != null}" th:text="${currentFriend.lname}"></span>
                 </td>
@@ -94,7 +94,8 @@
             <tr th:if="${!declineSent.empty}" th:each="user : ${declineSent}">
                 <td class="align-middle">
                     <img class="rounded-circle overflow-hidden border border-dark"
-                         th:src="@{'/users/' + ${user.id} + '/profile-picture'}" style="width: 40px; height: 40px;">
+                         th:src="@{'/users/' + ${user.id} + '/profile-picture'}"
+                         style="width: 40px; height: 40px;"  alt="Profile Picture">
                     <span th:text="${user.fname} "></span>
                     <span th:if="${user.lname != null}" th:text="${user.lname}"></span>
                 </td>
@@ -109,7 +110,8 @@
             <tr th:if="${!requestReceived.empty}" th:each="user : ${requestReceived}">
                 <td class="align-middle">
                     <img class="rounded-circle overflow-hidden border border-dark"
-                         th:src="@{'/users/' + ${user.id} + '/profile-picture'}" style="width: 40px; height: 40px;">
+                         th:src="@{'/users/' + ${user.id} + '/profile-picture'}"
+                         style="width: 40px; height: 40px;"  alt="Profile Picture">
                     <span th:text="${user.fname} "></span>
                     <span th:if="${user.lname != null}" th:text="${user.lname}"></span>
                 </td>
@@ -130,7 +132,8 @@
             <tr th:if="searchResults != null" th:each="friend : ${searchResults}">
                 <td class="align-middle">
                     <img class="rounded-circle overflow-hidden border border-dark"
-                         th:src="@{'/users/' + ${friend.id} + '/profile-picture'}" style="width: 40px; height: 40px;">
+                         th:src="@{'/users/' + ${friend.id} + '/profile-picture'}"
+                         style="width: 40px; height: 40px;"  alt="Profile Picture">
                     <span th:text="${friend.fname} "></span>
                     <span th:if="${friend.lname != null}" th:text="${friend.lname}"></span>
                 </td>
@@ -171,7 +174,7 @@
                         <td class="align-middle">
                             <img class="rounded-circle overflow-hidden border border-dark"
                                  th:src="@{'/users/' + ${friend.id} + '/profile-picture'}"
-                                 style="width: 40px; height: 40px;" alt="">
+                                 style="width: 40px; height: 40px;"  alt="Profile Picture">
                             <span th:text="${friend.fname}"> </span>
                             <span th:if="${friend.lname != null}" th:text="${friend.lname}"></span>
                         </td>
@@ -217,7 +220,7 @@
                             <td>
                                 <img class="rounded-circle overflow-hidden border border-dark"
                                      th:src="@{'/users/' + ${friend.sender.id} + '/profile-picture'}"
-                                     style="width: 40px; height: 40px;" alt="">
+                                     style="width: 40px; height: 40px;" alt="Profile Picture">
                                 <span th:text="${friend.sender.fname}"> </span>
                                 <span th:if="${friend.sender != null}"
                                       th:text="${friend.sender.lname}"></span>
@@ -261,7 +264,7 @@
                             <td class="align-middle">
                                 <img class="rounded-circle overflow-hidden border border-dark"
                                      th:src="@{'/users/' + ${friend.receiver.id} + '/profile-picture'}"
-                                     style="width: 40px; height: 40px;">
+                                     style="width: 40px; height: 40px;"  alt="Profile Picture">
                                 <span th:text="${friend.receiver.fname}"> </span>
                                 <span th:if="${friend.receiver != null}"
                                       th:text="${friend.receiver.lname}"></span>
