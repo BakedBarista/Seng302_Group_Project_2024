@@ -6,7 +6,7 @@ Feature: U8 As Kaia, I want to create a record of my Garden so that I can manage
         And My password is "P@ssw0rd"
 
 
-    Scenario: AC5.1 - Password is updated
+    Scenario: AC2 Create a garden
         Given I am on the create garden form
         When I enter valid name "liam"
         And I enter a valid street number "1"

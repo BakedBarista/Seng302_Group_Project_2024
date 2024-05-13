@@ -6,49 +6,75 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.GardenController;
-import nz.ac.canterbury.seng302.gardenersgrove.controller.users.EditUserController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditPasswordDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.FriendsRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
-import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.service.*;
+import nz.ac.canterbury.seng302.gardenersgrove.service.weatherAPI.WeatherAPIService;
+import org.mockito.Mockito;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 public class U8CreateNewGardenFeature {
 
     private GardenUser user;
+    private static SecurityContextHolder securityContextHolder;
+    private static SecurityContext securityContext;
+
     private static Authentication authentication;
-    private static GardenRepository gardenRepository;
-    private static GardenService gardenService;
     private static BindingResult bindingResult;
     private static Model model;
+    private static GardenRepository gardenRepository;
+    private static GardenService gardenService;
     private Garden garden;
+    private static PlantRepository plantRepository;
+    public static PlantService plantService;
     private static GardenUserService userService;
-    private static GardenUserRepository userRepository;
+    private static GardenUserRepository gardenUserRepository;
+
+    private static WeatherAPIService weatherAPIService;
+    private static  RestTemplate restTemplate;
+    private static FriendService friendService;
+    private static FriendsRepository friendsRepository;
+
+    private static ModerationService moderationService;
+
+    private static GardenController gardenController;
+
     @BeforeAll
     public static void beforeAll() {
-        userService = new GardenUserService(userRepository);
+
+        //chat gpt code 2 lines bellow
+        securityContext = mock(SecurityContext.class);
+
+
+        securityContextHolder = mock(SecurityContextHolder.class);
         bindingResult = mock(BindingResult.class);
         model = mock(Model.class);
         authentication = mock(Authentication.class);
-        userRepository = mock(GardenUserRepository.class);
-
+        friendsRepository = mock(FriendsRepository.class);
+        gardenUserRepository = mock(GardenUserRepository.class);
+        plantRepository = mock(PlantRepository.class);
         gardenRepository = mock(GardenRepository.class);
+        userService = new GardenUserService(gardenUserRepository);
         gardenService = new GardenService(gardenRepository);
-
-        gardenController = new GardenController(gardenRepository, gardenService);
+        friendService = new FriendService(friendsRepository);
+        plantService = new PlantService(plantRepository, gardenRepository);
+        weatherAPIService = new WeatherAPIService(restTemplate, gardenService);
+        moderationService = new ModerationService();
+        gardenController = new GardenController(gardenService, plantService, userService, weatherAPIService, friendService, moderationService);
     }
 
 
@@ -90,14 +116,17 @@ public class U8CreateNewGardenFeature {
 
     @And("I submit create garden form")
     public void iSubmitCreateGardenForm() {
+        Mockito.when(SecurityContextHolder.getContext()).thenReturn(securityContext);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(userService.getCurrentUser()).thenReturn(user);
+        when(gardenUserRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(gardenRepository.save(garden)).thenReturn(garden);
 
-        when(userService.getUserById(1L)).thenReturn(user);
-        GardenController.submitForm(garden, bindingResult, model);
-
+        gardenController.submitForm(garden, bindingResult, model);
     }
 
     @Then("A garden with that information is created")
     public void aGardenWithThatInformationIsCreated() {
-
+        assertNotNull(gardenRepository.findByOwnerId(user.getId()));
     }
 }
