@@ -26,11 +26,10 @@ import java.util.Optional;
 
 @Controller
 public class ManageFriendsController {
+    private final static String PENDING = "Pending"; //Invite 'pending' status
     private Logger logger = LoggerFactory.getLogger(ManageFriendsController.class);
-
     private FriendService friendService;
     private GardenUserService userService;
-    private final static String PENDING = "Pending";
 
     @Autowired
     public ManageFriendsController(FriendService friendService, GardenUserService userService) {
@@ -225,9 +224,7 @@ public class ManageFriendsController {
             }
         }
 
-        if (checkMyself.isPresent()){
-            rm.addFlashAttribute("mySelf", checkMyself.get());
-        }
+        checkMyself.ifPresent(gardenUser -> rm.addFlashAttribute("mySelf", gardenUser));
 
         rm.addFlashAttribute("alreadyFriends", alreadyFriendsList);
         rm.addFlashAttribute("requestPending", requestPendingList);
