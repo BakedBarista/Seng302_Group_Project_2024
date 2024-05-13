@@ -19,8 +19,7 @@
 
  import java.util.*;
 
- import static org.junit.jupiter.api.Assertions.assertEquals;
- import static org.junit.jupiter.api.Assertions.assertThrows;
+ import static org.junit.jupiter.api.Assertions.*;
  import static org.mockito.ArgumentMatchers.any;
  import static org.mockito.ArgumentMatchers.anyList;
  import static org.mockito.ArgumentMatchers.eq;
@@ -40,6 +39,7 @@
 
      @InjectMocks
      private ManageFriendsController manageFriendsController;
+
 
      Long loggedInUserId;
      Long otherUserId;
@@ -199,6 +199,9 @@
          assertEquals("redirect:/users/manageFriends", result);
      }
 
+    /**
+    * Testing the manageFriendsAccept method
+    */
      @Test
      void testUsersWithPendingRequests() {
          List<Friends> friendShip = new ArrayList<>();
@@ -438,6 +441,57 @@
          verify(model, never()).addAttribute(eq("Friend"), any(GardenUser.class));
          assertEquals("redirect:/", result);
      }
+
+     @Test
+     public void whenUserRemovesFriend_thenFriendshipIsRemoved() {
+         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+         Long otherUserId = 2L; // Example ID of the friend to be removed.
+
+         String result = manageFriendsController.removeFriend(authentication, otherUserId);
+
+         // Verifying that the correct method is called with expected parameters.
+         verify(friendService, times(1)).removeFriend(loggedInUserId, otherUserId);
+         assertEquals("redirect:/users/manageFriends", result);
+     }
+
+     @Test
+     public void testManageFriendsSearch() {
+         // Setup
+         Long loggedInUserId = 1L;
+         String searchUser = "test@example.com";
+         GardenUser loggedInUser = new GardenUser();
+         loggedInUser.setId(loggedInUserId);
+
+         GardenUser user1 = new GardenUser();
+         user1.setId(2L);
+
+         List<GardenUser> searchResults = Arrays.asList(user1);
+         RedirectAttributesModelMap redirectAttributes = new RedirectAttributesModelMap();
+
+         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+         when(gardenUserService.getUserBySearch(searchUser, loggedInUserId)).thenReturn(searchResults);
+         when(gardenUserService.checkSearchMyself(searchUser, loggedInUserId)).thenReturn(Optional.empty());
+
+         Friends pendingFriend = new Friends(loggedInUser, user1, "pending");
+         when(friendService.getSent(loggedInUserId, user1.getId())).thenReturn(pendingFriend);
+         when(friendService.getSentRequestsDeclined(loggedInUserId)).thenReturn(Collections.emptyList());
+         when(friendService.getReceivedRequests(loggedInUserId)).thenReturn(Collections.emptyList());
+         when(friendService.getAcceptedFriendship(loggedInUserId, user1.getId())).thenReturn(null);
+
+         // Action
+         String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, redirectAttributes);
+
+         // Assert
+         assertEquals("redirect:/users/manageFriends", result);
+         assertTrue(redirectAttributes.getFlashAttributes().containsKey("requestPending"));
+         assertEquals(0, ((List<?>) redirectAttributes.getFlashAttributes().get("requestPending")).size());
+         assertEquals(1, ((List<?>) redirectAttributes.getFlashAttributes().get("searchResults")).size()); // Assuming user1 gets moved to requestPending list.
+     }
+
+
+
+
+
 
      /**
       * Testing cancelSentRequest method
