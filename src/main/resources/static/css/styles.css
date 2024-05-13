@@ -1,12 +1,12 @@
 /* Colors */
 :root {
-    --gg-dark: #395C0A;
+    --gg-dark: #2C430D;
     --gg-primary: #395C0A;
     --gg-primary-rgb: 85, 173, 83;
     --gg-secondary: #A4AF69;
     --gg-secondary-rgb: 164, 175, 105;
-    --gg-secondary-dark: #0A2B5C;
-    --gg-secondary-light: #98BBEF;
+    --gg-secondary-dark: #8C9D34;
+    --gg-secondary-light: #D3DD9D;
     --gg-pale: #FFE0B5;
 
     --gg-white: #F5F5F5;
@@ -102,6 +102,19 @@ h1, h2, h3, h4, h5, h6 {
     --bs-btn-disabled-border-color: var(--gg-primary);
 }
 
+.btn-outline-secondary {
+    --bs-btn-color: var(--gg-secondary-dark);
+    --bs-btn-border-color: var(--gg-secondary-dark);
+    --bs-btn-hover-color: var(--gg-white);
+    --bs-btn-hover-bg: var(--gg-secondary-dark);
+    --bs-btn-hover-border-color: var(--gg-secondary-dark);
+    --bs-btn-focus-shadow-rgb: var(--gg-secondary-rgb);
+    --bs-btn-active-color: var(--gg-white);
+    --bs-btn-active-bg: var(--gg-secondary-dark);
+    --bs-btn-active-border-color: var(--gg-secondary-dark);
+    --bs-btn-disabled-bg: var(--gg-pale);
+    --bs-btn-disabled-border-color: var(--gg-primary);
+}
 
 /* Form controls */
 .form-control:focus,
@@ -120,7 +133,7 @@ h1, h2, h3, h4, h5, h6 {
     display: flex;
     flex-direction: column;
 
-    background-color: var(--gg-dark);
+    background-color: var(--gg-primary);
     color: var(--gg-white);
     padding: var(--gg-nav-drawer-padding) 0;
 }
