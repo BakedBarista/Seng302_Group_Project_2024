@@ -23,6 +23,7 @@
  import java.util.Optional;
 
  import static org.junit.jupiter.api.Assertions.assertEquals;
+ import static org.junit.jupiter.api.Assertions.assertThrows;
  import static org.mockito.ArgumentMatchers.any;
  import static org.mockito.ArgumentMatchers.anyList;
  import static org.mockito.ArgumentMatchers.eq;
@@ -200,6 +201,24 @@
          verify(friendService, never()).save(any(Friends.class));
          assertEquals("redirect:/users/manageFriends", result);
      }
+
+     /**
+      * Testing the exception handling for manageFriendsSearch
+      */
+     @Test
+     public void testManageFriendsSearch_WhenServiceThrowsException() {
+         String searchUser = "test@example.com";
+         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+         when(gardenUserService.getUserBySearch(anyString(), anyLong())).thenThrow(new RuntimeException("Service exception"));
+
+         RedirectAttributes rm = new RedirectAttributesModelMap();
+         Exception exception = assertThrows(RuntimeException.class, () ->
+                 manageFriendsController.manageFriendsSearch(authentication, searchUser, rm)
+         );
+
+         assertEquals("Service exception", exception.getMessage());
+     }
+
 
      /**
       * Testing the manageFriendsAccept method
