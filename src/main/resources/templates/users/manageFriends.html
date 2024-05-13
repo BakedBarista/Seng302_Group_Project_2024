@@ -99,8 +99,11 @@
                     <span th:if="${user.lname != null}" th:text="${user.lname}"></span>
                 </td>
                 <td></td>
-                <td class="align-middle text-muted">
-                    <strong>Declined</strong>
+                <td class="align-middle">
+                    <form th:action="@{/users/manageFriends/invite}" method="post">
+                        <input type="hidden" name="requestedUser" th:value="${user.id}" class="d-inline"/>
+                        <button type="submit" class="btn btn-success btn-sm mr-2">Invite as Friend</button>
+                    </form>
                 </td>
             </tr>
             <tr th:if="${!requestReceived.empty}" th:each="user : ${requestReceived}">

@@ -32,7 +32,7 @@ public interface FriendsRepository extends CrudRepository<Friends, Long> {
      * @param receiver The ID of the second user
      * @return A Friends object.
      */
-    @Query("SELECT p FROM Friends p WHERE (p.sender.id = ?1 AND p.receiver.id = ?2) or (p.sender.id = ?2 AND p.receiver.id = ?1) ")
+    @Query("SELECT p FROM Friends p WHERE p.friend_id = (SELECT MAX(f.friend_id) FROM Friends f WHERE (f.sender.id = ?1 AND f.receiver.id = ?2) OR (f.sender.id = ?2 AND f.receiver.id = ?1))")
     Friends getRequest(Long sender, Long receiver);
 
     /**
@@ -51,7 +51,7 @@ public interface FriendsRepository extends CrudRepository<Friends, Long> {
      * @param receiver user who received the friend request
      * @return the friendship where sender sent the friend request to receiver
      */
-    @Query("SELECT p FROM Friends p WHERE p.sender.id = ?1 AND p.receiver.id = ?2")
+    @Query("SELECT p FROM Friends p WHERE p.friend_id = (SELECT MAX(f.friend_id) FROM Friends f WHERE f.sender.id = ?1 AND f.receiver.id = ?2)")
     Friends getSent(Long sender, Long receiver);
 
     /**

@@ -82,12 +82,6 @@ public class ManageFriendsController {
         if (requestingMyself) {
             return "redirect:/users/manageFriends";
         }
-        List<Friends> iDeclinedFriend = friendService.getSentRequestsDeclined(loggedInUserId);
-        for (Friends receiver : iDeclinedFriend) {
-            if (sentToUser.getId().equals(receiver.getReceiver().getId())) {
-                return "redirect:/users/manageFriends";
-            }
-        }
 
         Friends alreadyFriends = friendService.getAcceptedFriendship(loggedInUserId, requestedUserId);
         if (alreadyFriends != null) {
@@ -222,13 +216,6 @@ public class ManageFriendsController {
                     for (Friends receiver : requestReceived) {
                         if (user.getId().equals(receiver.getSender().getId())) {
                             receivedRequestList.add(user);
-                            searchResults.remove(user);
-                        }
-                    }
-                } else if (!declineSent.isEmpty()) {
-                    for (Friends receiver : declineSent) {
-                        if (user.getId().equals(receiver.getReceiver().getId())) {
-                            alreadyFriendsDeclineSent.add(user);
                             searchResults.remove(user);
                         }
                     }
