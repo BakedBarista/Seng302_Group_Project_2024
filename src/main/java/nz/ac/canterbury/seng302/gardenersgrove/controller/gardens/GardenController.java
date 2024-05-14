@@ -100,12 +100,12 @@ public class GardenController {
         garden.setOwner(owner);
 
 
-        //Checks description for inappropriate content
-        // if (moderationService.checkIfDescriptionIsFlagged(garden.getDescription())) {
-        //     model.addAttribute("garden", garden);
-        //     model.addAttribute("profanity", "The description does not match the language standards of the app.");
-        //     return "gardens/createGarden";
-        // }
+        // Checks description for inappropriate content
+        if (moderationService.checkIfDescriptionIsFlagged(garden.getDescription())) {
+            model.addAttribute("garden", garden);
+            model.addAttribute("profanity", "The description does not match the language standards of the app.");
+            return "gardens/createGarden";
+        }
 
         Garden savedGarden = gardenService.addGarden(garden);
         return "redirect:/gardens/" + savedGarden.getId();
@@ -150,7 +150,7 @@ public class GardenController {
             if(garden.getLat() != null || garden.getLon() != null){
                 weatherResult = weatherAPIService.getWeatherData(id, garden.getLat(), garden.getLon());
             }else {
-                weatherResult = new ArrayList<>();;
+                weatherResult = new ArrayList<>();
             }
 
             List<Map<String, Object>> weatherPrevious = Collections.emptyList();
