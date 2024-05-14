@@ -234,20 +234,6 @@
          assertEquals("redirect:/users/manageFriends", result);
      }
 
-     @Test
-     public void whenInviteDeclined_thenRequestIsDeleted() {
-         List<Friends> friendship = new ArrayList<>();
-         Friends existingRequest = new Friends(otherUser, loggedInUser, "Declined");
-         friendship.add(existingRequest);
-         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
-         when(friendService.getAcceptedFriendship(loggedInUserId, otherUserId)).thenReturn(null);
-
-         String result = manageFriendsController.manageFriendsDecline(authentication, otherUserId);
-
-         assertNull(friendService.getFriendship(loggedInUserId, otherUserId));
-         assertEquals("redirect:/users/manageFriends", result);
-     }
-
      /**
       * Testing the manageFriendsDecline method
       */
@@ -380,7 +366,36 @@
          RedirectAttributes rm = new RedirectAttributesModelMap();
          String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
          assertEquals("redirect:/users/manageFriends", result);
-         assertEquals(searchResults, rm.getFlashAttributes().get("searchResults"));    }
+         assertEquals(searchResults, rm.getFlashAttributes().get("searchResults"));
+     }
+
+     /**
+      * Testing the manageFriendsSearch method
+      */
+     @Test
+     public void whenFriendRequestReceived_thenUserNotInSearchResults() {
+         String searchUser = otherUser.getFname();
+         List<GardenUser> searchResults = new ArrayList<>();
+         List<Friends> friendsList = new ArrayList<>();
+         GardenUser userWithReceivedRequest = loggedInUser;
+         searchResults.add(userWithReceivedRequest);
+
+
+         Friends friendship = new Friends(loggedInUser, otherUser, "Pending");
+         friendsList.add(friendship);
+         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+         when(gardenUserService.getUserBySearch(searchUser, loggedInUserId)).thenReturn(searchResults);
+
+         when(friendService.getReceivedRequests(loggedInUserId)).thenReturn(friendsList);
+
+
+         RedirectAttributes rm = new RedirectAttributesModelMap();
+         String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
+
+         assertFalse(searchResults.contains(userWithReceivedRequest));
+         assertEquals("redirect:/users/manageFriends", result);
+     }
+
 
      /**
       * Testing the viewFriendProfile method
@@ -466,7 +481,7 @@
      }
 
      @Test
-     public void whenFriendshipExists_NoDeclineOption() {
+     public void whenFriendshipExists_thenNoDeclineOption() {
          Friends friends = new Friends(loggedInUser, otherUser, "accepted");
          friendService.save(friends);
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
