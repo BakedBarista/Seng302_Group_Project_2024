@@ -6,9 +6,9 @@ let locationMatch = false;
  *
  * @param {HTMLElement} containerElement - The container element where the autocomplete feature is added.
  * @param {Function} callback - The callback function to be called when an address is selected.
- * @param {string} apiUrl - The URL of the API to call for suggestions.
+ * @param {{ apiUrl: string, notFoundMessageHtml: string }} options - Additional named options. All of these are required.
  */
-function autocomplete(containerElement, callback, apiUrl) {
+function autocomplete(containerElement, callback, options) {
 
     const MIN_ADDRESS_LENGTH = 3;
     const DEBOUNCE_DELAY = 300;
@@ -87,7 +87,7 @@ function autocomplete(containerElement, callback, apiUrl) {
             currentPromiseReject = reject;
 
             debounceTimer = setTimeout(() => {
-                fetch(`${apiUrl}?currentValue=${currentValue}`)
+                fetch(`${options.apiUrl}?currentValue=${currentValue}`)
                     .then(response => {
                         currentPromiseReject = null;
 
@@ -107,7 +107,7 @@ function autocomplete(containerElement, callback, apiUrl) {
 
             // handles no location match
             const noLocationMatch = document.createElement("div");
-            noLocationMatch.innerHTML = "No matching location found, location-based services may not work (<u class='text-primary'>Use location</u>)";
+            noLocationMatch.innerHTML = options.notFoundMessageHtml;
 
             // create a DIV element that will contain the items (values)
             const autocompleteItemsElement = document.createElement("div");
@@ -283,14 +283,17 @@ function populateAddress(currentItem) {
 
 
 const locationAutocompleteContainer = document.getElementById(
-  'location-autocomplete-container'
+    'location-autocomplete-container'
 );
 if (locationAutocompleteContainer) {
-  autocomplete(
-    locationAutocompleteContainer,
-    populateAddressFields,
-    '/api/location-autocomplete'
-  );
+    autocomplete(
+        locationAutocompleteContainer,
+        populateAddressFields,
+        {
+            apiUrl: '/api/location-autocomplete',
+            notFoundMessageHtml: "No matching location found, location-based services may not work (<u class='text-primary'>Use location</u>)",
+        }
+    );
 }
 
 function addTag(tag) {
@@ -302,9 +305,12 @@ const tagAutocompleteContainer = document.getElementById(
   'tag-autocomplete-container'
 );
 if (tagAutocompleteContainer) {
-  autocomplete(
-    tagAutocompleteContainer,
-    addTag,
-    '/api/tag-autocomplete'
-  );
+    autocomplete(
+        tagAutocompleteContainer,
+        addTag,
+        {
+            apiUrl: '/api/tag-autocomplete',
+            notFoundMessageHtml: 'No matching tag',
+        }
+    );
 }
