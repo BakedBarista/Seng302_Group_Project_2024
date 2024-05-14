@@ -89,25 +89,6 @@ public class GardenUser {
     }
 
     /**
-     * Gets the set of friends where user is user 2
-     *
-     * @return Set<Friends> both their id and the other users id
-     */
-    public Set<Friends> getFriendshipsAsReceiver() {
-        return friendshipsAsReceiver;
-    }
-
-    /**
-     * Gets the set of friends where user is user 1
-     *
-     * @return Set<Friends> both their id and the other users id
-     */
-    public Set<Friends> getFriendshipsAsSender() {
-        return friendshipsAsSender;
-    }
-
-
-    /**
      * Gets the authorities granted to the user
      *
      * @return
