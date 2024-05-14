@@ -10,9 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @DataJpaTest
 @Import(FriendService.class)
@@ -123,6 +126,24 @@ public class FriendsServiceTest {
         Friends relationShip3 = new Friends(testUser3, testUser4, "Pending");
         friendService.save(relationShip3);
         friendService.removeFriend(testUser3.getId(), testUser4.getId());
+        var request = friendService.getFriendship(testUser3.getId(), testUser4.getId());
+        assertNull(request);
+    }
+
+    @Test
+    public void whenInviteAccepted_thenFriendAdded() {
+        Friends relationship = new Friends(testUser3, testUser4, "accepted");
+        friendService.save(relationship);
+        var request = friendService.getAcceptedFriendship(testUser3.getId(), testUser4.getId());
+        assertNotNull(request);
+        assertEquals(relationship.getFriend_id(), request.getFriend_id());
+    }
+
+    @Test
+    public void whenFriendshipDeleted_thenFriendshipDoesNotExist() {
+        Friends relationship = new Friends(testUser3, testUser4, "accepted");
+        friendService.save(relationship);
+        friendService.delete(relationship);
         var request = friendService.getFriendship(testUser3.getId(), testUser4.getId());
         assertNull(request);
     }
