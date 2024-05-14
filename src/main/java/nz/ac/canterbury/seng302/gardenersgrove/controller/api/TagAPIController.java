@@ -18,26 +18,28 @@ public class TagAPIController {
     @GetMapping("/tag-autocomplete")
     public ResponseEntity<Object> searchTags(@RequestParam String currentValue) {
         // TODO: fetch from database
-        
-        List<String> tags = List.of("Hello, world!", "Goodbye, world!");
-        List<String> filteredTags = tags.stream().filter(tag -> tag.toLowerCase().startsWith(currentValue.toLowerCase())).toList();
 
-        SearchTagsResult result = new SearchTagsResult();
-        result.results = filteredTags.stream().map(tag -> {
-            Tag formattedTag = new Tag();
-            formattedTag.formatted = tag;
-            return formattedTag;
-        }).toList();
-        return ResponseEntity.ok(result);
+        List<String> tags = List.of("Hello, world!", "Goodbye, world!");
+        List<String> filteredTags = tags.stream()
+                .filter(tag -> tag.toLowerCase().startsWith(currentValue.toLowerCase())).toList();
+
+        return ResponseEntity.ok(new SearchTagsResult(
+                filteredTags.stream().map(tag -> new Tag(tag)).toList()));
     }
 
     private static class SearchTagsResult {
-        public List<Tag> results;
+        private List<Tag> results;
+
+        public SearchTagsResult(List<Tag> results) {
+            this.results = results;
+        }
     }
 
     private static class Tag {
-        public String formatted;
+        private String formatted;
+
+        public Tag(String formatted) {
+            this.formatted = formatted;
+        }
     }
 }
-
-
