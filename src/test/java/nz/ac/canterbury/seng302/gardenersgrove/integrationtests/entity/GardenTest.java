@@ -439,7 +439,7 @@ class GardenTest {
         assertEquals(expectedMessage, violation.getMessage());
     }
     @Test
-    void enterEmptyCity_whenSubmitted_ReturnsNoViolation() {
+    void enterEmptyCity_whenSubmitted_ReturnsViolation() {
         garden.setCity(" ");
         String expectedMessage = "City is required";
         Integer expectedConstraintSetSize = 1;
@@ -451,7 +451,7 @@ class GardenTest {
         assertEquals(expectedMessage, violation.getMessage());
     }
     @Test
-    void enterEmptyCountry_whenSubmitted_ReturnsNoViolation() {
+    void enterEmptyCountry_whenSubmitted_ReturnsViolation() {
         garden.setCountry(" ");
         String expectedMessage = "Country is required";
         Integer expectedConstraintSetSize = 1;
