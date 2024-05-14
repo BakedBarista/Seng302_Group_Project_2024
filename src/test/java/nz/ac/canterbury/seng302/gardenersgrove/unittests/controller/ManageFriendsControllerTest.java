@@ -23,8 +23,7 @@
  import java.util.List;
  import java.util.Optional;
 
- import static org.junit.jupiter.api.Assertions.assertEquals;
- import static org.junit.jupiter.api.Assertions.assertTrue;
+ import static org.junit.jupiter.api.Assertions.*;
  import static org.mockito.ArgumentMatchers.any;
  import static org.mockito.ArgumentMatchers.anyList;
  import static org.mockito.ArgumentMatchers.eq;
@@ -238,15 +237,15 @@
      @Test
      public void whenInviteDeclined_thenRequestIsDeleted() {
          List<Friends> friendship = new ArrayList<>();
-         Friends existingRequest = new Friends(otherUser, loggedInUser, "Pending");
+         Friends existingRequest = new Friends(otherUser, loggedInUser, "Declined");
          friendship.add(existingRequest);
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
-         String result = manageFriendsController.manageFriendsAccept(authentication, otherUserId);
-         friendService.delete(existingRequest);
+         when(friendService.getAcceptedFriendship(loggedInUserId, otherUserId)).thenReturn(null);
 
-         assertEquals(friendService.getSentRequests(loggedInUserId).size(), 0);
+         String result = manageFriendsController.manageFriendsDecline(authentication, otherUserId);
+
+         assertNull(friendService.getFriendship(loggedInUserId, otherUserId));
          assertEquals("redirect:/users/manageFriends", result);
-
      }
 
      /**
@@ -462,6 +461,19 @@
          String result = manageFriendsController.removeFriend(authentication, otherUserId);
 
          verify(friendService, times(1)).removeFriend(loggedInUserId, otherUserId);
+         assertEquals("redirect:/users/manageFriends", result);
+
+     }
+
+     @Test
+     public void whenFriendshipExists_NoDeclineOption() {
+         Friends friends = new Friends(loggedInUser, otherUser, "accepted");
+         friendService.save(friends);
+         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+         when(friendService.getAcceptedFriendship(loggedInUserId, otherUserId)).thenReturn(friends);
+
+         String result = manageFriendsController.manageFriendsDecline(authentication, otherUserId);
+         assertNotNull(friendService.getAcceptedFriendship(loggedInUserId, otherUserId));
          assertEquals("redirect:/users/manageFriends", result);
 
      }
