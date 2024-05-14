@@ -38,7 +38,7 @@ public class Garden {
     private String name;
 
     @Size(max = 512, message = "Description must be 512 characters or less and contain some text")
-    @Pattern(regexp = "^.*\\p{L}.*|$" , message = "Description must be 512 characters or less and contain some text")
+    @Pattern(regexp = "^(.*\\p{L}.*)?$" , message = "Description must be 512 characters or less and contain some text")
     private String description;
 
     @Pattern(regexp = "^([0-9]+[a-zA-Z]?(\\s?\\-?\\s?[0-9]+[a-zA-Z]?)?)?$", message = "Please enter a valid street number")

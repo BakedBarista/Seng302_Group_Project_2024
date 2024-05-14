@@ -88,19 +88,17 @@ public class GardenController {
                              BindingResult bindingResult, Model model) {
         logger.info("POST /gardens - submit the new garden form");
 
-        if (bindingResult.hasErrors()) {
+        if (bindingResult.hasErrors() || moderationService.checkIfDescriptionIsFlagged(garden.getDescription())) {
+            if (moderationService.checkIfDescriptionIsFlagged(garden.getDescription())) {
+                model.addAttribute("profanity", "The description does not match the language standards of the app.");
+            }
+
             model.addAttribute("garden", garden);
             return "gardens/createGarden";
         }
+
         GardenUser owner = gardenUserService.getCurrentUser();
         garden.setOwner(owner);
-
-        //Checks description for inappropriate content
-        if (moderationService.checkIfDescriptionIsFlagged(garden.getDescription())) {
-            model.addAttribute("garden", garden);
-            model.addAttribute("profanity", "The description does not match the language standards of the app.");
-            return "gardens/createGarden";
-        }
 
         Garden savedGarden = gardenService.addGarden(garden);
         return "redirect:/gardens/" + savedGarden.getId();
@@ -249,19 +247,18 @@ public class GardenController {
                             model.addAttribute("locationError", errorMessage);
                             break;
                         }
+                    }
                 }
-            }
 
-            model.addAttribute("garden", garden);
-            model.addAttribute("id", id);
-            return "gardens/editGarden";
-        }
-        //Checks description for inappropriate content
-        if (moderationService.checkIfDescriptionIsFlagged(garden.getDescription())) {
-            model.addAttribute("garden", garden);
-            model.addAttribute("profanity", "The description does not match the language standards of the app.");
-            return "gardens/editGarden";
-        }
+                if (moderationService.checkIfDescriptionIsFlagged(garden.getDescription())) {
+                    model.addAttribute("profanity", "The description does not match the language standards of the app.");
+                    return "gardens/editGarden";
+                }
+
+                model.addAttribute("garden", garden);
+                model.addAttribute("id", id);
+                return "gardens/editGarden";
+            }
 
         Optional<Garden> existingGarden = gardenService.getGardenById(id);
         if (existingGarden.isPresent()) {
