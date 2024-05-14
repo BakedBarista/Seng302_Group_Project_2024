@@ -292,3 +292,19 @@ if (locationAutocompleteContainer) {
     '/api/location-autocomplete'
   );
 }
+
+function addTag(tag) {
+    // TODO
+    console.log(tag);
+}
+
+const tagAutocompleteContainer = document.getElementById(
+  'tag-autocomplete-container'
+);
+if (tagAutocompleteContainer) {
+  autocomplete(
+    tagAutocompleteContainer,
+    addTag,
+    '/api/tag-autocomplete'
+  );
+}
