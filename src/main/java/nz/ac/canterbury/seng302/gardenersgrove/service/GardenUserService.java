@@ -43,6 +43,10 @@ public class GardenUserService {
      * @return the saved gardenUser object
      */
     public GardenUser addUser(GardenUser gardenUser) {
+        if (gardenUser.getId() == null && gardenUserRepository.findByEmail(gardenUser.getEmail()).isPresent()) {
+            throw new IllegalStateException("User with email " + gardenUser.getEmail() + " already exists");
+        }
+
         return gardenUserRepository.save(gardenUser);
     }
 

@@ -22,9 +22,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -243,7 +246,23 @@ public class GardenController {
                                @Valid @ModelAttribute("garden") Garden garden,
                                BindingResult result,
                                Model model) {
-        if (result.hasErrors()) {
+                                
+            List<String> locationErrorNames = Arrays.asList("city", "country", "suburb", "streetNumber", "streetName", "postCode");
+            if (result.hasErrors()) {
+                for (FieldError error : result.getFieldErrors()) {
+                    if(locationErrorNames.contains(error.getField())){
+                        if(error.getCode().equals("Pattern")){
+                            var errorMessage = "Location name must only include letters, numbers, spaces, dots, hyphens or apostrophes";
+                            model.addAttribute("locationError", errorMessage);
+                            break;
+                        } else {
+                            var errorMessage = "Location cannot be empty";
+                            model.addAttribute("locationError", errorMessage);
+                            break;
+                        }
+                }
+            }
+
             model.addAttribute("garden", garden);
             model.addAttribute("id", id);
             return "gardens/editGarden";

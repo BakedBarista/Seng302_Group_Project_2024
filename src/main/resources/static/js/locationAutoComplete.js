@@ -115,7 +115,8 @@ function addressAutocomplete(containerElement, callback, options) {
                 autocompleteItemsElement.setAttribute("class", "autocomplete-items");
                 inputContainerElement.appendChild(autocompleteItemsElement);
 
-                if (data.results.length !== 0) {
+                const resultsExist = data.results.length !== 0;
+                if (resultsExist) {
                     LOCATION_MATCH = true;
                     /* For each item in the results */
                     data.results.forEach((result, index) => {
@@ -156,33 +157,29 @@ function addressAutocomplete(containerElement, callback, options) {
                     console.log(err);
                 }
             });
-
-
-
     });
 
     /**
-     *
-     */
-    /* Add support for keyboard navigation */
+     * Add support for keyboard navigation
+     * */
     inputElement.addEventListener("keydown", function(e) {
         var autocompleteItemsElement = containerElement.querySelector(".autocomplete-items");
         if (autocompleteItemsElement) {
-            var itemElements = autocompleteItemsElement.getElementsByTagName("div");
-            if (e.keyCode == 40) {
+            const itemElements = autocompleteItemsElement.getElementsByTagName("div");
+            if (e.keyCode === 40) {
                 e.preventDefault();
                 /*If the arrow DOWN key is pressed, increase the focusedItemIndex variable:*/
                 focusedItemIndex = focusedItemIndex !== itemElements.length - 1 ? focusedItemIndex + 1 : 0;
-                /*and and make the current item more visible:*/
+                /*and make the current item more visible:*/
                 setActive(itemElements, focusedItemIndex);
-            } else if (e.keyCode == 38) {
+            } else if (e.keyCode === 38) {
                 e.preventDefault();
 
                 /*If the arrow UP key is pressed, decrease the focusedItemIndex variable:*/
                 focusedItemIndex = focusedItemIndex !== 0 ? focusedItemIndex - 1 : focusedItemIndex = (itemElements.length - 1);
-                /*and and make the current item more visible:*/
+                /*and make the current item more visible:*/
                 setActive(itemElements, focusedItemIndex);
-            } else if (e.keyCode == 13) {
+            } else if (e.keyCode === 13) {
                 /* If the ENTER key is pressed and value as selected, close the list*/
                 e.preventDefault();
                 if (focusedItemIndex > -1) {
@@ -190,7 +187,7 @@ function addressAutocomplete(containerElement, callback, options) {
                 }
             }
         } else {
-            if (e.keyCode == 40) {
+            if (e.keyCode === 40) {
                 /* Open dropdown list again */
                 var event = document.createEvent('Event');
                 event.initEvent('input', true, true);
@@ -252,7 +249,7 @@ function addressAutocomplete(containerElement, callback, options) {
             closeDropDownList();
         } else if (!containerElement.querySelector(".autocomplete-items")) {
             // open dropdown list again
-            var event = document.createEvent('Event');
+            const event = document.createEvent('Event');
             event.initEvent('input', true, true);
             inputElement.dispatchEvent(event);
         }
@@ -274,8 +271,6 @@ function populateAddressFields(selectedAddress) {
     document.getElementById("postCode").value = selectedAddress.postcode || null;
     document.getElementById("lat").value = selectedAddress.lat || null;
     document.getElementById("lon").value = selectedAddress.lon || null;
-
-
 }
 
 /**
@@ -284,12 +279,13 @@ function populateAddressFields(selectedAddress) {
  * @param {Object} currentItem - The current address input
  */
 function populateAddress(currentItem) {
-    document.getElementById("streetNumber").value = currentItem[0] || null;
-    document.getElementById("streetName").value = currentItem[1] + " " + currentItem[2] || null;
-    document.getElementById("suburb").value = currentItem[3] || null;
-    document.getElementById("city").value = currentItem[4] || null;
-    document.getElementById("country").value = currentItem[5] || null;
-    document.getElementById("postCode").value = currentItem[6] || null;
+    document.getElementById("streetNumber").value = currentItem[0] ? currentItem[0] : null;
+    document.getElementById("streetName").value = (currentItem[1] ? currentItem[1] : null)
+        + (currentItem[2] ? " " + currentItem[2] : null);
+    document.getElementById("suburb").value = currentItem[3] ? currentItem[3] : null;
+    document.getElementById("city").value = currentItem[4] ? currentItem[4] : null;
+    document.getElementById("country").value = currentItem[5] ? currentItem[5] : null;
+    document.getElementById("postCode").value = currentItem[6] ? currentItem[6] : null;
 }
 
 
