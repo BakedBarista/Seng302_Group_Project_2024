@@ -16,10 +16,10 @@ public class TagAPIController {
     final Logger logger = LoggerFactory.getLogger(TagAPIController.class);
 
     @GetMapping("/tag-autocomplete")
-    public ResponseEntity<Object> searchTags(@RequestParam String currentValue) {
+    public ResponseEntity<SearchTagsResult> searchTags(@RequestParam String currentValue) {
         // TODO: fetch from database
 
-        List<String> tags = List.of("Hello, world!", "Goodbye, world!");
+        List<String> tags = List.of("Wild", "Berries", "Green");
         List<String> filteredTags = tags.stream()
                 .filter(tag -> tag.toLowerCase().startsWith(currentValue.toLowerCase())).toList();
 
@@ -27,19 +27,27 @@ public class TagAPIController {
                 filteredTags.stream().map(Tag::new).toList()));
     }
 
-    private static class SearchTagsResult {
+    public static class SearchTagsResult {
         private List<Tag> results;
 
         public SearchTagsResult(List<Tag> results) {
             this.results = results;
         }
+
+        public List<Tag> getResults() {
+            return results;
+        }
     }
 
-    private static class Tag {
+    public static class Tag {
         private String formatted;
 
         public Tag(String formatted) {
             this.formatted = formatted;
+        }
+
+        public String getFormatted() {
+            return formatted;
         }
     }
 }
