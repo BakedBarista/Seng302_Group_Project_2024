@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div th:fragment="garden-form">
+        <div class="flex-box justify-content-center">
+            <div class="pt-5 w-75" style="max-width: 1200px">
+                <form action="#" th:action="@{${action}}" th:object="${garden}" method="post">
+                    <div>
+                        <!-- Garden Name Field -->
+                        <div class="col-md-12 form-group"
+                             th:classappend="${#fields.hasErrors('name')} ? 'form-group-error' : ''">
+                            <label for="name" class="required-field"> Garden Name: </label>
+                            <input type="text"
+                                   th:class="form-control"
+                                   id="name"
+                                   placeholder="Garden Name"
+                                   th:name="name"
+                                   th:value="${garden.name}"
+                                   data-cy="name">
+                            <div th:if="${#fields.hasErrors('name')}"
+                                 th:errors="*{name}"
+                                 class="text-danger"></div>
+                        </div>
+                        <!-- Garden Location Field -->
+                        <div class="col-md-12">
+                            <label for="autocomplete-container"> Garden Location: </label>
+                            <div class="autocomplete-container" id="autocomplete-container"></div>
+                        </div>
+                        <div class="col-8">
+                            <div th:if="locationError != null" th:text="${locationError}" style="color: red;"></div>
+                        </div>
+                        <div class="container-fluid justify-content-center" style="margin-left: 30px">
+                            <div class="row">
+                                <!-- Street Number Field -->
+                                <div class="col-xs-12 col-md-3 form-group pb-0 mb-0"
+                                     th:classappend="${#fields.hasErrors('streetNumber')} ? 'form-group-error' : ''">
+                                    <label for="streetNumber">Street Number: </label>
+                                    <input type="text"
+                                           class="form-control"
+                                           id="streetNumber"
+                                           placeholder="1"
+                                           th:name="streetNumber"
+                                           th:value="${garden.streetNumber}"
+                                           data-cy="streetNumber">
+                                    <div th:if="${#fields.hasErrors('streetNumber')}"
+                                         th:errors="*{streetNumber}"
+                                         class="text-danger"></div>
+                                </div>
+                                <!-- Street Name Field -->
+                                <div class="col-xs-12 col-md-7 form-group pb-0 mb-0"
+                                     th:classappend="${#fields.hasErrors('streetName')} ? 'form-group-error' : ''">
+                                    <label for="streetName">Street Name: </label>
+                                    <div class="sname" id="sname"></div>
+                                    <input type="text"
+                                           class="form-control"
+                                           id="streetName"
+                                           placeholder="Main St"
+                                           th:name="streetName"
+                                           th:value="${garden.streetName}"
+                                           data-cy="streetNumber">
+                                    <div th:if="${#fields.hasErrors('streetName')}"
+                                         th:errors="*{streetName}"
+                                         class="text-danger"></div>
+                                </div>
+                            </div>
+                            <div class="col-10 form-group"
+                                 th:classappend="${#fields.hasErrors('suburb')} ? 'form-group-error' : ''">
+                                <label for="suburb">Suburb: </label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="suburb"
+                                       placeholder="Suburb"
+                                       th:name="suburb"
+                                       th:value="${garden.suburb}"
+                                       data-cy="suburb">
+                                <span th:if="${#fields.hasErrors('suburb')}"
+                                     th:errors="*{suburb}"
+                                     class="text-danger">
+                                </span>
+                            </div>
+                            <div class="col-10 form-group"
+                                 th:classappend="${#fields.hasErrors('postCode')} ? 'form-group-error' : ''">
+                                <label for="postCode">Postcode: </label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="postCode"
+                                       placeholder="Post Code"
+                                       th:name="postCode"
+                                       th:value="${garden.postCode}"
+                                       data-cy="postCode">
+                                <div th:if="${#fields.hasErrors('postCode')}"
+                                     th:errors="*{postCode}"
+                                     class="text-danger"></div>
+                            </div>
+                            <div class="col-10 form-group"
+                                 th:classappend="${#fields.hasErrors('city')} ? 'form-group-error' : ''">
+                                <label for="city" class="required-field">City: </label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="city"
+                                       placeholder="City"
+                                       th:name="city"
+                                       th:value="${garden.city}"
+                                       data-cy="city">
+                                <div th:if="${#fields.hasErrors('city')}"
+                                     th:errors="*{city}"
+                                     class="text-danger"></div>
+                            </div>
+                            <div class="col-10 form-group"
+                                 th:classappend="${#fields.hasErrors('country')} ? 'form-group-error' : ''">
+                                <label for="country" class="required-field">Country: </label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="country"
+                                       placeholder="Country"
+                                       th:name="country"
+                                       th:value="${garden.country}"
+                                       data-cy="country">
+                                <div th:if="${#fields.hasErrors('country')}"
+                                     th:errors="*{country}"
+                                     class="text-danger"></div>
+                            </div>
+                        </div>
+                        <input type="hidden"
+                               id="lat"
+                               th:name="lat"
+                               th:value="${garden.lat}">
+                        <input type="hidden"
+                               id="lon"
+                               th:name="lon"
+                               th:value="${garden.lon}">
+                        <!-- Garden Size Field -->
+                        <div class="col-md-12 form-group"
+                             th:classappend="${#fields.hasErrors('size')} ? 'form-group-error' : ''">
+                            <label for="size"> Garden Size (m^2): </label>
+                            <input type="text"
+                                   class="form-control"
+                                   id="size"
+                                   placeholder="Size of Garden"
+                                   th:name="size"
+                                   th:value="${garden.size}"
+                                   data-cy="size">
+                            <div th:if="${#fields.hasErrors('size')}"
+                                 th:errors="*{size}"
+                                 class="text-danger"></div>
+                        </div>
+                        <!-- Garden Description -->
+                        <div class="form-group col-lg-12">
+                            <!-- Adjusted column size from col-md-8 to col-md-6 -->
+                            <nav th:replace="~{fragments/description-box :: description-box-with-char-count}"></nav>
+                        </div>
+                        <div class="col-lg-12">
+                            <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm btn-cancel">Cancel</button>
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script th:src="@{/js/nextFormBox.js}"></script>
+        <script th:src="@{/js/autoComplete.js}"></script>
+        <script th:src="@{/js/toggleSubform.js}"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const currentPath = '/gardens/create';
+                const referrer = document.referrer;
+
+                if (referrer && !referrer.includes(currentPath)) {
+                    sessionStorage.setItem('referrer', referrer);
+                } else if (!sessionStorage.getItem('referrer')) {
+                    sessionStorage.setItem('referrer', '/defaultPath');
+                }
+
+                const cancelButton = document.querySelector('.btn-cancel');
+                cancelButton.addEventListener('click', function() {
+                    window.location.href = sessionStorage.getItem('referrer');
+                });
+            });
+        </script>
+    </div>
+</body>
+</html>

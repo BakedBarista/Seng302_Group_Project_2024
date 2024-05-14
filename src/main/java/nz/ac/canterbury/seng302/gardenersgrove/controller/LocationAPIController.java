@@ -45,11 +45,7 @@ public class LocationAPIController {
                 + "&apiKey=" + location_apiKey;
 
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-
-
-        return response;
-
+        return restTemplate.getForEntity(url, String.class);
     }
 }
 

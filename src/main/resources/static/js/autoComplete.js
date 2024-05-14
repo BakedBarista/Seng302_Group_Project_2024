@@ -114,7 +114,8 @@ function autocomplete(containerElement, callback, apiUrl) {
             autocompleteItemsElement.className = "autocomplete-items";
             inputContainerElement.appendChild(autocompleteItemsElement);
 
-            if (data.results.length !== 0) {
+            const resultsExist = data.results.length !== 0;
+                if (resultsExist) {
                 locationMatch = true;
                 /* For each item in the results */
                 data.results.forEach((result, index) => {
@@ -157,9 +158,8 @@ function autocomplete(containerElement, callback, apiUrl) {
     });
 
     /**
-     *
-     */
-    /* Add support for keyboard navigation */
+     * Add support for keyboard navigation
+     * */
     inputElement.addEventListener("keydown", function(e) {
         const autocompleteItemsElement = containerElement.querySelector(".autocomplete-items");
         if (autocompleteItemsElement) {
@@ -242,7 +242,7 @@ function autocomplete(containerElement, callback, apiUrl) {
             closeDropDownList();
         } else if (!containerElement.querySelector(".autocomplete-items")) {
             // open dropdown list again
-            var event = document.createEvent('Event');
+            const event = document.createEvent('Event');
             event.initEvent('input', true, true);
             inputElement.dispatchEvent(event);
         }
@@ -264,8 +264,6 @@ function populateAddressFields(selectedAddress) {
     document.getElementById("postCode").value = selectedAddress.postcode || null;
     document.getElementById("lat").value = selectedAddress.lat || null;
     document.getElementById("lon").value = selectedAddress.lon || null;
-
-
 }
 
 /**
@@ -274,12 +272,13 @@ function populateAddressFields(selectedAddress) {
  * @param {Object} currentItem - The current address input
  */
 function populateAddress(currentItem) {
-    document.getElementById("streetNumber").value = currentItem[0] || null;
-    document.getElementById("streetName").value = currentItem[1] + " " + currentItem[2] || null;
-    document.getElementById("suburb").value = currentItem[3] || null;
-    document.getElementById("city").value = currentItem[4] || null;
-    document.getElementById("country").value = currentItem[5] || null;
-    document.getElementById("postCode").value = currentItem[6] || null;
+    document.getElementById("streetNumber").value = currentItem[0] ? currentItem[0] : null;
+    document.getElementById("streetName").value = (currentItem[1] ? currentItem[1] : null)
+        + (currentItem[2] ? " " + currentItem[2] : null);
+    document.getElementById("suburb").value = currentItem[3] ? currentItem[3] : null;
+    document.getElementById("city").value = currentItem[4] ? currentItem[4] : null;
+    document.getElementById("country").value = currentItem[5] ? currentItem[5] : null;
+    document.getElementById("postCode").value = currentItem[6] ? currentItem[6] : null;
 }
 
 
