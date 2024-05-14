@@ -36,4 +36,16 @@ public class TagApiControllerTests {
         assertTrue(jsonNode.get("results").get(0).isObject());
         assertTrue(jsonNode.get("results").get(0).get("formatted").isTextual());
     }
+
+    @Test
+    void givenTagDoesntExist_whenSearchTags_thenReturnsEmpty() throws JsonProcessingException {
+        ResponseEntity<SearchTagsResult> response = controller.searchTags("this-tag-doesnt-exist");
+
+        SearchTagsResult body = response.getBody();
+        String json = objectMapper.writeValueAsString(body);
+        JsonNode jsonNode = objectMapper.readTree(json);
+
+        assertTrue(jsonNode.get("results").isArray());
+        assertTrue(jsonNode.get("results").size() == 0);
+    }
 }
