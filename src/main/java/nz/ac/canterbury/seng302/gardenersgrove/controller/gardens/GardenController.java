@@ -92,12 +92,13 @@ public class GardenController {
         if (bindingResult.hasErrors()) {
             for (FieldError error : bindingResult.getFieldErrors()) {
                 if(locationErrorNames.contains(error.getField())){
-                    if(error.getCode().equals("Pattern")){
-                        var errorMessage = "Location name must only include letters, numbers, spaces, dots, hyphens or apostrophes";
-                        model.addAttribute("locationError", errorMessage);
-                        break;
-                    } else {
-                        var errorMessage = "Location cannot be empty";
+                    if(error.getCode() != null){
+                        String errorMessage;
+                        if(error.getCode().equals("Pattern")){
+                            errorMessage = "Location name must only include letters, numbers, spaces, dots, hyphens or apostrophes";
+                        } else {
+                            errorMessage = "Location cannot be empty";
+                        }
                         model.addAttribute("locationError", errorMessage);
                         break;
                     }
