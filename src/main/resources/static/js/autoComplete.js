@@ -6,7 +6,7 @@ let locationMatch = false;
  *
  * @param {HTMLElement} containerElement - The container element where the autocomplete feature is added.
  * @param {Function} callback - The callback function to be called when an address is selected.
- * @param {{ apiUrl: string, notFoundMessageHtml: string }} options - Additional named options. All of these are required.
+ * @param {{ apiUrl: string, notFoundMessageHtml: string, placeholder: string }} options - Additional named options. All of these are required.
  */
 function autocomplete(containerElement, callback, options) {
 
@@ -22,7 +22,7 @@ function autocomplete(containerElement, callback, options) {
     // create input element
     const inputElement = document.createElement("input");
     inputElement.type = "text";
-    inputElement.placeholder = "Start typing address here or fill manually";
+    inputElement.placeholder = options.placeholder;
     inputContainerElement.appendChild(inputElement);
 
     // add input field clear button
@@ -292,6 +292,7 @@ if (locationAutocompleteContainer) {
         {
             apiUrl: '/api/location-autocomplete',
             notFoundMessageHtml: "No matching location found, location-based services may not work (<u class='text-primary'>Use location</u>)",
+            placeholder: "Start typing address here or fill manually",
         }
     );
 }
@@ -311,6 +312,7 @@ if (tagAutocompleteContainer) {
         {
             apiUrl: '/api/tag-autocomplete',
             notFoundMessageHtml: 'No matching tag',
+            placeholder: "Start typing tags here",
         }
     );
 }
