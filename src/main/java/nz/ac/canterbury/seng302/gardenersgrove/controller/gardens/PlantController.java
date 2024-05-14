@@ -38,9 +38,6 @@ public class PlantController {
 
     private final PlantService plantService;
     private final GardenUserService gardenUserService;
-    private static final List<String> allowedExtension = Arrays.asList("jpg", "png","jpeg", "svg");
-    private static final Integer MAX_FILE_SIZE = 10*1024*1024;
-
     private final GardenService gardenService;
 
     @Autowired
@@ -108,7 +105,10 @@ public class PlantController {
         Plant savedPlant = plantService.addPlant(plant, gardenId);
         //Save plant image
         if(file != null && !file.isEmpty() && savedPlant != null) {
+            try{
             plantService.setPlantImage(savedPlant.getId(), file.getContentType(), file.getBytes());
+        } catch (Exception e){
+            System.out.println(e);}
         }
         return "redirect:/gardens/" + gardenId;
     }
@@ -176,7 +176,11 @@ public class PlantController {
             existingPlant.get().setPlantedDate(plant.getPlantedDate());
             Plant savedPlant = plantService.addPlant(existingPlant.get(), gardenId);
             if(file != null && !file.isEmpty() && savedPlant != null) {
-                plantService.setPlantImage(savedPlant.getId(), file.getContentType(), file.getBytes());
+                try {
+                    plantService.setPlantImage(savedPlant.getId(), file.getContentType(), file.getBytes());
+            } catch (Exception e) {
+                    System.out.println(e);
+                }
             }
         }
 
@@ -199,6 +203,12 @@ public class PlantController {
         }
     }
 
+
+    /**
+     * Gets a plant image from database
+     * @param id plant id
+     * @return ResponseEntity as bytes and content type
+     */
     @GetMapping("plants/{id}/plant-image")
     public ResponseEntity<byte[]> plantImage(@PathVariable("id") Long id) {
         logger.info("GET /plants/" + id + "/plant-image");
@@ -216,15 +226,25 @@ public class PlantController {
 
     }
 
+    /**
+     * Saves image to the plant with given id
+     * @param file Image file
+     * @param id Plant id the image is saving to
+     * @param referer The page where the request sent from
+     * @return Redirects to the current page
+     * @throws Exception File exception
+     */
     @PostMapping("plants/{id}/plant-image")
     public String uploadPlantImage(
             @RequestParam("image") MultipartFile file,
             @PathVariable("id") Long id,
-            @RequestHeader(HttpHeaders.REFERER) String referer) throws IOException {
+            @RequestHeader(HttpHeaders.REFERER) String referer) throws Exception {
         logger.info("POST /plants " + id + "/plant-image");
-
-        plantService.setPlantImage(id, file.getContentType(), file.getBytes());
-
+        try {
+            plantService.setPlantImage(id, file.getContentType(), file.getBytes());
+        } catch (Exception e) {
+            System.out.println(e);
+        }
         return "redirect:" + referer;
     }
 }
