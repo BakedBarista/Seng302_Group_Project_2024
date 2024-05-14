@@ -42,8 +42,6 @@ public class FriendsServiceTest {
 
     @BeforeEach
     public void setUp() {
-        friendService = mock(FriendService.class);
-
         testUser1 = new GardenUser("John", "Doe", "jdo123@uclive.ac.nz", "password",null);
         testUser2 = new GardenUser("Jane", "Doe", "jdo456@uclive.ac.nz", "password",null);
         testUser3 = new GardenUser("Jame", "Doe", "jdo457@uclive.ac.nz", "password",null);
