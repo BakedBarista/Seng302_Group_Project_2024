@@ -380,14 +380,11 @@
          GardenUser userWithReceivedRequest = loggedInUser;
          searchResults.add(userWithReceivedRequest);
 
-
          Friends friendship = new Friends(loggedInUser, otherUser, "Pending");
          friendsList.add(friendship);
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
          when(gardenUserService.getUserBySearch(searchUser, loggedInUserId)).thenReturn(searchResults);
-
          when(friendService.getReceivedRequests(loggedInUserId)).thenReturn(friendsList);
-
 
          RedirectAttributes rm = new RedirectAttributesModelMap();
          String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
@@ -395,7 +392,23 @@
          assertFalse(searchResults.contains(userWithReceivedRequest));
          assertEquals("redirect:/users/manageFriends", result);
      }
+     @Test
+     public void whenAlreadyFriends_thenUserNotInSearchResults() {
+         String searchUser = otherUser.getFname();
+         List<GardenUser> searchResults = new ArrayList<>();
+         GardenUser alreadyFriend = loggedInUser;
+         searchResults.add(alreadyFriend);
 
+         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+         when(gardenUserService.getUserBySearch(searchUser, loggedInUserId)).thenReturn(searchResults);
+         when(friendService.getAcceptedFriendship(loggedInUserId, alreadyFriend.getId())).thenReturn(new Friends());
+
+         RedirectAttributes rm = new RedirectAttributesModelMap();
+         String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
+
+         assertFalse(searchResults.contains(alreadyFriend));
+         assertEquals("redirect:/users/manageFriends", result);
+     }
 
      /**
       * Testing the viewFriendProfile method
