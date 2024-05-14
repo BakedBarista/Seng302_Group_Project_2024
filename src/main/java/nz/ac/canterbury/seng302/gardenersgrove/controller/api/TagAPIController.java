@@ -24,7 +24,7 @@ public class TagAPIController {
                 .filter(tag -> tag.toLowerCase().startsWith(currentValue.toLowerCase())).toList();
 
         return ResponseEntity.ok(new SearchTagsResult(
-                filteredTags.stream().map(tag -> new Tag(tag)).toList()));
+                filteredTags.stream().map(Tag::new).toList()));
     }
 
     private static class SearchTagsResult {
