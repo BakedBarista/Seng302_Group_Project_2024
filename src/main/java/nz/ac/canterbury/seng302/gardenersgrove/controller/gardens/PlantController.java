@@ -22,6 +22,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -176,11 +177,18 @@ public class PlantController {
      */
     @PostMapping("/gardens/{gardenId}/plants/{plantId}/edit")
     public String submitEditPlantForm(@PathVariable("gardenId") long gardenId,
-                               @PathVariable("plantId") long plantId, @RequestParam("image") MultipartFile file,
-                               @Valid @ModelAttribute("plant") Plant plant,
+                                      @PathVariable("plantId") long plantId,
+                                      @RequestParam("image") MultipartFile file,
+                                      @RequestParam(value = "dateErrorMessage", required = false) String dateInvalid,
+                                      @Valid @ModelAttribute("plant") Plant plant,
                                BindingResult bindingResult, Model model) {
 
-        logger.info(plant.getPlantedDate());
+        logger.info("\n"+dateInvalid);
+        if (Objects.equals(dateInvalid, "Date Invalid")) {
+            logger.info("\nI get to here too");
+            bindingResult.rejectValue("plantedDate", "plantedDate.formatError", "Date must be in the format DD-MM-YYYY");
+        }
+
         if (!plant.getPlantedDate().isEmpty() && !plant.getPlantedDate().matches("\\d{4}-\\d{2}-\\d{2}")) {
             bindingResult.rejectValue("plantedDate", "plantedDate.formatError", "Date must be in the format DD-MM-YYYY");
         }

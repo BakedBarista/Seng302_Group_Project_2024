@@ -252,6 +252,6 @@ body {
     color: rgba(0, 0, 0, 0.6);
 }
 
-/*input[type='date']:invalid {*/
-/*    border-color: red;*/
-/*}*/
+input[type='date']:invalid {
+    border-color: cornflowerblue;
+}
