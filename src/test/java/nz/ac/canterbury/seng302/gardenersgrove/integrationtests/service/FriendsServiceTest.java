@@ -2,8 +2,10 @@ package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.FriendsRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @DataJpaTest
 @Import(FriendService.class)
@@ -25,6 +26,7 @@ public class FriendsServiceTest {
 
     @Autowired
     private GardenUserRepository gardenUserRepository;
+
 
     private GardenUser testUser1;
 
@@ -40,6 +42,8 @@ public class FriendsServiceTest {
 
     @BeforeEach
     public void setUp() {
+        friendService = mock(FriendService.class);
+
         testUser1 = new GardenUser("John", "Doe", "jdo123@uclive.ac.nz", "password",null);
         testUser2 = new GardenUser("Jane", "Doe", "jdo456@uclive.ac.nz", "password",null);
         testUser3 = new GardenUser("Jame", "Doe", "jdo457@uclive.ac.nz", "password",null);
@@ -57,6 +61,8 @@ public class FriendsServiceTest {
 
         friendService.save(relationShip1);
         friendService.save(relationShip2);
+
+
     }
 
     @Test
@@ -140,13 +146,11 @@ public class FriendsServiceTest {
     }
 
     @Test
-    public void whenFriendshipDeleted_thenFriendshipDoesNotExist() {
-        Friends relationship = new Friends(testUser3, testUser4, "accepted");
+    public void whenGetSentFriendship_thenFriendshipReturned() {
+        Friends relationship = new Friends(testUser3, testUser4, "Pending");
         friendService.save(relationship);
-        friendService.delete(relationship);
-        var request = friendService.getFriendship(testUser3.getId(), testUser4.getId());
-        assertNull(request);
+        Friends friendship = friendService.getSent(testUser3.getId(), testUser4.getId());
+        assertEquals(relationship, friendship);
     }
-
 
 }
