@@ -11,8 +11,15 @@
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 <main class="main-container">
     <div class="card p-5">
-        <h2>Add a Plant</h2>
+        <h2 class="mb-3">Add a Plant</h2>
         <form id="addPlantForm" th:action="@{/gardens/{gardenId}/add-plant(gardenId=${gardenId})}" th:object="${plant}"  method="post" enctype="multipart/form-data" novalidate>
+            <div class="mb-3 d-flex justify-content-center">
+                <div class="position-relative d-inline">
+                    <label for="transUpload" class="position-absolute top-0 end-0" style="cursor: pointer;"><img src="/icons/trans-plus.svg" alt="+" /></label>
+                    <input id="transUpload" class="d-none" type="file" accept="image/jpeg, image/png, image/svg"/>
+                    <img src="/img/default-plant.svg" alt="Plant Picture" class="rounded mx-auto d-block h-auto" style="width: 300px;" />
+                </div>
+            </div>
             <div class="mb-3">
                 <label th:class="'form-label ' + ${#fields.hasErrors('name') ? 'is-invalid' : ''}" for="name">Plant Name:</label>
                 <input th:class="'form-control ' + ${#fields.hasErrors('name') ? 'is-invalid' : ''}" type="text" id="name" name="name" th:value="${plant.name}" >
@@ -33,14 +40,14 @@
                 <input type="date" id="plantedDate" name="plantedDate" th:class="'form-control ' + ${#fields.hasErrors('plantedDate') ? 'is-invalid' : ''}" th:value="${plant.plantedDate}" >
                 <div class="invalid-feedback" th:if="${#fields.hasErrors('plantedDate')}" th:errors="*{plantedDate}"></div>
             </div>
-            <div class="mb-3">
+<!--            <div class="mb-3">-->
 
-<!--                TODO: Put error checking here that shows up for the image-->
-                <label for="formFile" class="form-label">Plant Image:</label>
-                <input class="form-control" onchange="showImage(this)" type="file" id="formFile">
-                <div class="invalid-feedback" th:if="${fileTypeError}" th:text="${fileTypeError}"></div>
-                <div class="invalid-feedback" th:if="${fileSizeError}" th:text="${fileSizeError}"></div>
-            </div>
+<!--&lt;!&ndash;                TODO: Put error checking here that shows up for the image&ndash;&gt;-->
+<!--                <label for="formFile" class="form-label">Plant Image:</label>-->
+<!--                <input class="form-control" onchange="showImage(this)" type="file" id="formFile">-->
+<!--                <div class="invalid-feedback" th:if="${fileTypeError}" th:text="${fileTypeError}"></div>-->
+<!--                <div class="invalid-feedback" th:if="${fileSizeError}" th:text="${fileSizeError}"></div>-->
+<!--            </div>-->
 <!--            <div class="form-group">-->
 <!--                <input id="img-preview" onchange="showImage(this)" type="file" name="image" accept=".png, .jpg, .jpeg, .svg" class="form-control-file">-->
 <!--            </div>-->
