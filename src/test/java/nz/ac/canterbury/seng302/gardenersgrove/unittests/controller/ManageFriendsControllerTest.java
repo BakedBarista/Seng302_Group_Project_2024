@@ -24,6 +24,7 @@
  import java.util.Optional;
 
  import static org.junit.jupiter.api.Assertions.assertEquals;
+ import static org.junit.jupiter.api.Assertions.assertTrue;
  import static org.mockito.ArgumentMatchers.any;
  import static org.mockito.ArgumentMatchers.anyList;
  import static org.mockito.ArgumentMatchers.eq;
@@ -234,6 +235,20 @@
          assertEquals("redirect:/users/manageFriends", result);
      }
 
+     @Test
+     public void whenInviteDeclined_thenRequestIsDeleted() {
+         List<Friends> friendship = new ArrayList<>();
+         Friends existingRequest = new Friends(otherUser, loggedInUser, "Pending");
+         friendship.add(existingRequest);
+         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+         String result = manageFriendsController.manageFriendsAccept(authentication, otherUserId);
+         friendService.delete(existingRequest);
+
+         assertEquals(friendService.getSentRequests(loggedInUserId).size(), 0);
+         assertEquals("redirect:/users/manageFriends", result);
+
+     }
+
      /**
       * Testing the manageFriendsDecline method
       */
@@ -435,14 +450,17 @@
          assertEquals("redirect:/users/manageFriends", result);
      }
 
+     /**
+      * Testing removeFriend method
+      */
      @Test
-     public void whenUserRemoveFriend_thenFriendshipIsRemoved() {
+     public void whenUserRemovesFriend_thenFriendshipIsRemoved() {
          Friends friends = new Friends(loggedInUser, otherUser, "accepted");
          friendService.save(friends);
-
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
 
          String result = manageFriendsController.removeFriend(authentication, otherUserId);
+
          verify(friendService, times(1)).removeFriend(loggedInUserId, otherUserId);
          assertEquals("redirect:/users/manageFriends", result);
 

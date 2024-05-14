@@ -26,7 +26,7 @@ import java.util.Optional;
 
 @Controller
 public class ManageFriendsController {
-    private final static String PENDING = "Pending"; //Invite 'pending' status
+    private static final String PENDING = "Pending"; //Invite 'pending' status
     private Logger logger = LoggerFactory.getLogger(ManageFriendsController.class);
     private FriendService friendService;
     private GardenUserService userService;
