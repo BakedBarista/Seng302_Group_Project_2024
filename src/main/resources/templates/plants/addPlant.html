@@ -14,10 +14,11 @@
         <h2 class="mb-3">Add a Plant</h2>
         <form id="addPlantForm" th:action="@{/gardens/{gardenId}/add-plant(gardenId=${gardenId})}" th:object="${plant}"  method="post" enctype="multipart/form-data" novalidate>
             <div class="mb-3 d-flex justify-content-center">
+                <!--&lt;!&ndash;                TODO: Put error checking here that shows up for the image&ndash;&gt;-->
                 <div class="position-relative d-inline">
                     <label for="transUpload" class="position-absolute top-0 end-0" style="cursor: pointer;"><img src="/icons/trans-plus.svg" alt="+" /></label>
                     <input id="transUpload" class="d-none" type="file" accept="image/jpeg, image/png, image/svg"/>
-                    <img src="/img/default-plant.svg" alt="Plant Picture" class="rounded mx-auto d-block h-auto" style="width: 300px;" />
+                    <img th:src="@{/img/default-plant.svg}" alt="Plant Picture" class="rounded mx-auto d-block h-auto" style="width: 300px;" />
                 </div>
             </div>
             <div class="mb-3">
@@ -42,7 +43,6 @@
             </div>
 <!--            <div class="mb-3">-->
 
-<!--&lt;!&ndash;                TODO: Put error checking here that shows up for the image&ndash;&gt;-->
 <!--                <label for="formFile" class="form-label">Plant Image:</label>-->
 <!--                <input class="form-control" onchange="showImage(this)" type="file" id="formFile">-->
 <!--                <div class="invalid-feedback" th:if="${fileTypeError}" th:text="${fileTypeError}"></div>-->
