@@ -126,4 +126,6 @@ public class FriendsServiceTest {
         var request = friendService.getFriendship(testUser3.getId(), testUser4.getId());
         assertNull(request);
     }
+
+
 }
