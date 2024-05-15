@@ -6,7 +6,8 @@ let locationMatch = false;
  *
  * @param {HTMLElement} containerElement - The container element where the autocomplete feature is added.
  * @param {Function} callback - The callback function to be called when an address is selected.
- * @param {{ apiUrl: string, notFoundMessageHtml: string, placeholder: string }} options - Additional named options. All of these are required.
+ * @param {{ apiUrl: string, notFoundMessageHtml: string, placeholder: string, acceptButton: boolean }} options - Additional named options. All of these are required.
+ * @returns An object with methods that can be used to interact with the autocomplete feature.
  */
 function autocomplete(containerElement, callback, options) {
 
@@ -26,15 +27,24 @@ function autocomplete(containerElement, callback, options) {
     inputContainerElement.appendChild(inputElement);
 
     // add input field clear button
+    const acceptButton = document.createElement("div");
+    acceptButton.className = "accept-button";
+    addAcceptIcon(acceptButton);
+    acceptButton.addEventListener("click", (e) => {
+        e.stopPropagation();
+        acceptFocusedItem();
+    });
+    if (options.acceptButton) {
+        inputContainerElement.appendChild(acceptButton);
+    }
+
+    // add input field clear button
     const clearButton = document.createElement("div");
     clearButton.className = "clear-button";
     addIcon(clearButton);
     clearButton.addEventListener("click", (e) => {
         e.stopPropagation();
-        inputElement.value = '';
-        callback(null);
-        clearButton.classList.remove("visible");
-        closeDropDownList();
+        clear();
     });
     inputContainerElement.appendChild(clearButton);
 
@@ -43,6 +53,9 @@ function autocomplete(containerElement, callback, options) {
 
     /* Save the current request promise reject function. To be able to cancel the promise when a new request comes */
     let currentPromiseReject;
+
+    /* Save the current items from the API response */
+    let currentItems = [];
 
     /* Focused item in the autocomplete list. This variable is used to navigate with buttons */
     let focusedItemIndex;
@@ -70,8 +83,10 @@ function autocomplete(containerElement, callback, options) {
         }
 
         if (currentValue) {
+            acceptButton.classList.add("visible");
             clearButton.classList.add("visible");
         } else {
+            acceptButton.classList.remove("visible");
             clearButton.classList.remove("visible");
         }
 
@@ -103,7 +118,7 @@ function autocomplete(containerElement, callback, options) {
 
         promise.then((data) => {
             // here we get address suggestions
-            let currentItems = data.results;
+            currentItems = data.results;
 
             // handles no location match
             const noLocationMatch = document.createElement("div");
@@ -144,7 +159,6 @@ function autocomplete(containerElement, callback, options) {
 
                     let addressString = inputElement.value.split(/\s|,/ );
                     callback(addressString);
-                    populateAddress(addressString);
                     /* Close the list of autocompleted values: */
                     closeDropDownList();
 
@@ -164,28 +178,28 @@ function autocomplete(containerElement, callback, options) {
         const autocompleteItemsElement = containerElement.querySelector(".autocomplete-items");
         if (autocompleteItemsElement) {
             const itemElements = autocompleteItemsElement.getElementsByTagName("div");
-            if (e.keyCode === 40) {
+            if (e.keyCode === 40) { // Down arrow
                 e.preventDefault();
                 /*If the arrow DOWN key is pressed, increase the focusedItemIndex variable:*/
                 focusedItemIndex = focusedItemIndex !== itemElements.length - 1 ? focusedItemIndex + 1 : 0;
                 /*and make the current item more visible:*/
                 setActive(itemElements, focusedItemIndex);
-            } else if (e.keyCode === 38) {
+            } else if (e.keyCode === 38) { // Up arrow
                 e.preventDefault();
 
                 /*If the arrow UP key is pressed, decrease the focusedItemIndex variable:*/
                 focusedItemIndex = focusedItemIndex !== 0 ? focusedItemIndex - 1 : focusedItemIndex = (itemElements.length - 1);
                 /*and make the current item more visible:*/
                 setActive(itemElements, focusedItemIndex);
-            } else if (e.keyCode === 13) {
-                /* If the ENTER key is pressed and value as selected, close the list*/
+            } else if (e.keyCode === 13) { // Enter key
+                /* If the ENTER key is pressed and value is selected, accept the selection and close the list*/
                 e.preventDefault();
-                if (focusedItemIndex > -1) {
-                    closeDropDownList();
+                if (focusedItemIndex > -1 || options.acceptButton) {
+                    acceptFocusedItem();
                 }
             }
         } else {
-            if (e.keyCode === 40) {
+            if (e.keyCode === 40) { // Down arrow
                 /* Open dropdown list again */
                 const event = document.createEvent('Event');
                 event.initEvent('input', true, true);
@@ -212,6 +226,30 @@ function autocomplete(containerElement, callback, options) {
         items[index].classList.add("autocomplete-active");
     }
 
+    /**
+     * Accepts the focused item in the autocomplete dropdown list
+     */
+    function acceptFocusedItem() {
+        if (currentItems[focusedItemIndex]) {
+            inputElement.value = currentItems[focusedItemIndex].formatted;
+            callback(currentItems[focusedItemIndex]);
+        } else {
+            let addressString = inputElement.value.split(/\s|,/);
+            callback(addressString);
+        }
+        closeDropDownList();
+    }
+
+    /**
+     * Clears the input field and closes the dropdown list
+     */
+    function clear() {
+        inputElement.value = '';
+        acceptButton.classList.remove("visible");
+        clearButton.classList.remove("visible");
+        closeDropDownList();
+    }
+
     // Close the dropdown list
     function closeDropDownList() {
         const autocompleteItemsElement = inputContainerElement.querySelector(".autocomplete-items");
@@ -235,6 +273,21 @@ function autocomplete(containerElement, callback, options) {
         buttonElement.appendChild(svgElement);
     }
 
+    /**
+     * Add an accept icon to the button
+     */
+    function addAcceptIcon(buttonElement) {
+        const svgElement = document.createElementNS("http://www.w3.org/2000/svg", 'svg');
+        svgElement.setAttribute('viewBox', "0 0 24 24");
+        svgElement.setAttribute('height', "24");
+
+        const iconElement = document.createElementNS("http://www.w3.org/2000/svg", 'path');
+        iconElement.setAttribute("d", "M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z");
+        iconElement.setAttribute('fill', 'currentColor');
+        svgElement.appendChild(iconElement);
+        buttonElement.appendChild(svgElement);
+    }
+
     /* Close the autocomplete dropdown when the document is clicked.
       Skip, when a user clicks on the input field */
     document.addEventListener("click", function(e) {
@@ -247,6 +300,9 @@ function autocomplete(containerElement, callback, options) {
             inputElement.dispatchEvent(event);
         }
     });
+
+    // Return an object with the desired methods
+    return { clear };
 }
 
 /**
@@ -298,11 +354,9 @@ if (locationAutocompleteContainer) {
 }
 
 /**
- * Factory function for creating a tag element.
- *
- * @param {string} tag - The text of the tag.
+ * Appends a tag element to the tag container.
  */
-function makeTag(tag) {
+function appendTagElement(tag) {
     const tagElement = document.createElement('span');
     tagElement.className = 'badge badge-md text-bg-secondary';
     tagElement.setAttribute('data-tag', tag);
@@ -316,7 +370,9 @@ function makeTag(tag) {
     closeButton.addEventListener('click', removeTag);
     tagElement.appendChild(closeButton);
 
-    return tagElement;
+    tagContainer.appendChild(tagElement);
+    // Add spaces between tags
+    tagContainer.appendChild(document.createTextNode(' '));
 }
 
 /**
@@ -325,18 +381,14 @@ function makeTag(tag) {
  * @param {{ formatted: string } | string[]} tagEntry - The entry in the autocomplete API response.
  */
 function addTag(tagEntry) {
-    // Clear the autocomplete input field
-    tagAutocompleteContainer.querySelector('input').value = '';
+    tagAutocomplete.clear();
 
     const tag = Array.isArray(tagEntry) ? tagEntry.join('-').toLowerCase() : tagEntry.formatted;
     if (tags.includes(tag)) {
         return;
     }
 
-    const tagElement = makeTag(tag);
-    tagContainer.appendChild(tagElement);
-    // Add spaces between tags
-    tagContainer.appendChild(document.createTextNode(' '));
+    appendTagElement(tag);
 
     tags.push(tag);
     tagInput.value = tags.join(',');
@@ -368,25 +420,22 @@ const tagContainer = document.getElementById('tag-container');
 /**@type {HTMLInputElement | null} */
 const tagInput = document.getElementById('tag-input');
 const tags = tagInput?.value.split(',').filter(t => t !== '') ?? [];
+tags.forEach(appendTagElement);
 
 const tagAutocompleteContainer = document.getElementById(
   'tag-autocomplete-container'
 );
+/**@type {ReturnType<typeof autocomplete> | null} */
+let tagAutocomplete = null;
 if (tagAutocompleteContainer) {
-    autocomplete(
+    tagAutocomplete = autocomplete(
         tagAutocompleteContainer,
         addTag,
         {
             apiUrl: '/api/tag-autocomplete',
             notFoundMessageHtml: 'No matching tag. <u class="text-primary">Create new tag</u>',
             placeholder: "Start typing tags here",
+            acceptButton: true,
         }
     );
-}
-
-for (const tag of tags) {
-    const tagElement = makeTag(tag);
-    tagContainer.appendChild(tagElement);
-    // Add spaces between tags
-    tagContainer.appendChild(document.createTextNode(' '));
 }

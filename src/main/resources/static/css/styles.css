@@ -369,7 +369,8 @@ h1, h2, h3, h4, h5, h6 {
     background-color: rgba(0, 0, 0, 0.1);
 }
 
-.clear-button {
+.clear-button,
+.accept-button {
     color: rgba(0, 0, 0, 0.4);
     cursor: pointer;
 
@@ -382,11 +383,17 @@ h1, h2, h3, h4, h5, h6 {
     align-items: center;
 }
 
-.clear-button.visible {
+.accept-button {
+    right: 35px;
+}
+
+.clear-button.visible,
+.accept-button.visible {
     display: flex;
 }
 
-.clear-button:hover {
+.clear-button:hover,
+.accept-button:hover {
     color: rgba(0, 0, 0, 0.6);
 }
 
