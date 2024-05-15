@@ -9,6 +9,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.ModerationService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weatherAPI.WeatherAPIService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -26,6 +27,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class GardenControllerTest {
+
+    String EXPECTED_MODERATION_ERROR_MESSAGE = "The description does not match the language standards of the app.";
+
     @Mock
     private GardenService gardenService;
 
@@ -161,4 +165,18 @@ public class GardenControllerTest {
         assertEquals("redirect:/gardens/1", result);
     }
 
+    @Test
+    public void testWhenIHaveAGardenErrorAndAProfanityError_ThenTheModelProfanity() {
+        Model model = mock(Model.class);
+        String description = "some really nasty words";
+        Garden invalidGarden = new Garden("","","","","","","",0.0,0.0,"", description);
+        BindingResult bindingResult = mock(BindingResult.class);
+
+        when(bindingResult.hasErrors()).thenReturn(true);
+        when(moderationService.checkIfDescriptionIsFlagged(description)).thenReturn(true);
+        gardenController.submitForm(invalidGarden, bindingResult, model);
+
+        verify(model).addAttribute("profanity", EXPECTED_MODERATION_ERROR_MESSAGE);
+        verify(model).addAttribute("garden", invalidGarden);
+    }
 }

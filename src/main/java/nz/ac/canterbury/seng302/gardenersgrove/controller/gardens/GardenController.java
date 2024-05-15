@@ -88,8 +88,9 @@ public class GardenController {
                              BindingResult bindingResult, Model model) {
         logger.info("POST /gardens - submit the new garden form");
 
-        if (bindingResult.hasErrors() || moderationService.checkIfDescriptionIsFlagged(garden.getDescription())) {
-            if (moderationService.checkIfDescriptionIsFlagged(garden.getDescription())) {
+        boolean descriptionFlagged = moderationService.checkIfDescriptionIsFlagged(garden.getDescription());
+        if (bindingResult.hasErrors() || descriptionFlagged) {
+            if (descriptionFlagged) {
                 model.addAttribute("profanity", "The description does not match the language standards of the app.");
             }
 
