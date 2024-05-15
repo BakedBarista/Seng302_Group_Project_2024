@@ -79,5 +79,15 @@
 <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
 </body>
 <script th:src="@{/js/nextFormBox.js}"></script>
-<script th:src="@{/js/imageHandler.js}"></script>
+<script th:src="@{/js/plantImageErrorChecking.js}"></script>
+<script>
+        //Below code is provided by ChatGPT
+    document.getElementById("addPlantForm").addEventListener("submit", function(event) {
+        if (hasError) {
+            event.preventDefault();
+            return false;
+        }
+        return true;
+    });
+</script>
 </html>
