@@ -30,7 +30,7 @@ public class TagService {
      * @return A list of tags that have ever been used with the given prefix.
      */
     public List<Tag> getTagsByPrefix(String currentValue) {
-        return tagRepository.findByNameStartingWith(currentValue);
+        return tagRepository.findByNameStartingWithIgnoreCase(currentValue);
     }
 
     /**

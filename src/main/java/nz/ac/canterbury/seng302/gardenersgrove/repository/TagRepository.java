@@ -14,7 +14,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
 
 @Repository
 public interface TagRepository extends CrudRepository<Tag, Long> {
-    List<Tag> findByNameStartingWith(String prefix);
+    List<Tag> findByNameStartingWithIgnoreCase(String prefix);
     Optional<Tag> findByName(String name);
     List<Tag> findAll();
 }
