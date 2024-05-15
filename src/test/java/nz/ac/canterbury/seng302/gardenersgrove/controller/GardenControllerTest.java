@@ -182,7 +182,7 @@ public class GardenControllerTest {
 
         when(bindingResult.hasErrors()).thenReturn(true);
         when(moderationService.checkIfDescriptionIsFlagged(description)).thenReturn(true);
-        gardenController.submitForm(invalidGarden, bindingResult, model);
+        gardenController.submitForm(invalidGarden, bindingResult, authentication, model);
 
         verify(model).addAttribute("profanity", EXPECTED_MODERATION_ERROR_MESSAGE);
         verify(model).addAttribute("garden", invalidGarden);
