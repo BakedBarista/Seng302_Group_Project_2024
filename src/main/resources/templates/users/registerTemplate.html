@@ -13,7 +13,7 @@
     <main class="main-container">
         <div class="card p-5">
             <h1>Register</h1>
-            <form th:action="register" method="post" th:object="${registerDTO}">
+            <form th:action="register" method="post" th:object="${registerDTO}" onsubmit="return validateDate()" novalidate>
                 <div class="mb-3">
                     <label for="fname" th:class="'form-label ' + ${#fields.hasErrors('fname') ? 'is-invalid' : ''}">First Name</label>
                     <input id="fname" type="text" th:class="'form-control ' + ${#fields.hasErrors('fname') ? 'is-invalid' : ''}" th:name="fname" th:value="*{fname}">
@@ -43,9 +43,11 @@
                     <div class="invalid-feedback" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"></div>
                 </div>
                 <div class="mb-3">
-                    <label for="DOB" th:class="'form-label ' + ${#fields.hasErrors('DOB') ? 'is-invalid' : ''}">Date of Birth (optional)</label>
-                    <input id="DOB" type="text" th:class="'form-control ' + ${#fields.hasErrors('DOB') ? 'is-invalid' : ''}" th:name="DOB" th:value="*{DOB}">
+                    <label for="datePicker" th:class="'form-label ' + ${#fields.hasErrors('DOB') ? 'is-invalid' : ''}">Date of Birth (optional)</label>
+                    <input id="datePicker" type="date" placeholder="DD/MM/YYYY" th:class="'form-control ' + ${#fields.hasErrors('DOB') ? 'is-invalid' : ''}" th:name="DOB" th:value="*{DOB}">
                     <div class="invalid-feedback" th:if="${#fields.hasErrors('DOB')}" th:errors="*{DOB}"></div>
+                    <!--      dateError is the flag for when the date is not filled in correctly (e.g. 10/mm/2001)      -->
+                    <input type="hidden" name="dateError" id="dateError" value="">
                 </div>
                 <div class="mb-3">
                     <button class="btn btn-primary">Sign Up</button>
@@ -74,6 +76,7 @@
             checkNoLnameState();
         });
     </script>
+    <script th:src="@{/js/dateValidation.js}"></script>
     <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
 </body>
 </html>

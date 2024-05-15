@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.RegisterDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * Controller for registering new users
@@ -71,9 +73,14 @@ public class RegisterController {
     public String submitRegister(
             @Valid @ModelAttribute("registerDTO") RegisterDTO registerDTO,
             BindingResult bindingResult,
+            @RequestParam(value = "dateError", required = false) String dateValidity,
             Model model,
             HttpServletRequest request) {
         logger.info("POST /users/register");
+
+        if (Objects.equals(dateValidity, "dateInvalid")) {
+            bindingResult.rejectValue("DOB", "DOB.formatError", "Date must be in the format DD-MM-YYYY");
+        }
 
         if (userService.getUserByEmail(registerDTO.getEmail()) != null) {
             bindingResult.rejectValue("email", null, "This email address is already in use");

@@ -8,7 +8,8 @@
  * @returns {boolean} to give permission for thymeleaf to continue once these checks have been done
  */
 function validateDate() {
-    let dateInput = document.getElementById('date');
+    let dateInput = document.getElementById('datePicker');
+
     console.log(dateInput);
 
     if (dateInput.validity.badInput) {

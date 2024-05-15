@@ -31,8 +31,8 @@
             <br/>
             <br/>
             <!-- Planting Date Field -->
-            <label for="plantedDate">Planting Date:</label>
-            <input type="date" id="plantedDate" class="form-control" name="plantedDate" placeholder="DD/MM/YYYY" th:value="${plant.plantedDate}" >
+            <label for="datePicker">Planting Date:</label>
+            <input type="date" id="datePicker" class="form-control" name="plantedDate" placeholder="DD/MM/YYYY" th:value="${plant.plantedDate}" >
             <div th:if="${#fields.hasErrors('plantedDate')}" th:errors="*{plantedDate}" style="color: red;"></div>
             <br/>
             <br/>
