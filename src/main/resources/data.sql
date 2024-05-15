@@ -83,7 +83,7 @@ INSERT INTO plant (name, count, description, planted_date, garden_id, plant_imag
 
 -- Garden 6
 INSERT INTO plant (name, count, description, planted_date, garden_id, plant_image_path) VALUES
-                                                                                            ('Quince', 9, 'Orange', '01/03/2024', 6, '/Plant1.jpg'),
+                                                                                            ('Quince', 9, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1112121212121212', '01/03/2024', 6, '/Plant1.jpg'),
                                                                                             ('Ranunculus', 18, 'Red', '10/04/2024', 6, '/Plant2.jpg'),
                                                                                             ('Sage', 11, 'Purple', '22/05/2024', 6, '/Plant3.jpg'),
                                                                                             ('Thistle', 5, 'Purple', '15/06/2024', 6, '/Plant4.jpg'),
