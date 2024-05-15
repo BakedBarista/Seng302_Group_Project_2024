@@ -16,11 +16,26 @@
             <div class="mb-3 d-flex justify-content-center">
                 <!--&lt;!&ndash;                TODO: Put error checking here that shows up for the image&ndash;&gt;-->
                 <div class="position-relative d-inline">
-                    <label for="transUpload" class="position-absolute top-0 end-0" style="cursor: pointer;"><img src="/icons/trans-plus.svg" alt="+" /></label>
-                    <input id="transUpload" class="d-none" type="file" accept="image/jpeg, image/png, image/svg"/>
-                    <img th:src="@{/img/default-plant.svg}" alt="Plant Picture" class="rounded mx-auto d-block h-auto" style="width: 300px;" />
+                    <label for="image" class="position-absolute top-0 end-0" style="cursor: pointer;"><img src="/icons/trans-plus.svg" alt="+" /></label>
+                    <input id="image" name="image" onchange="previewImage" class="d-none" type="file" accept="image/jpeg, image/png, image/svg"/>
+                    <img id="preview" th:src="@{/img/default-plant.svg}" alt="Plant Picture" class="rounded mx-auto d-block h-auto" style="width: 300px;" />
+                    <div id="plantImageError" class="invalid-feedback"></div>
                 </div>
             </div>
+
+<!--            <div>-->
+<!--                <h3>Plant Image:</h3>-->
+<!--                <div class="image-container">-->
+<!--                    <img id="preview" th:src="@{/img/plant.png}" alt="Default Plant Image" />-->
+<!--                    <label for="image" class="add-image-button">+</label>-->
+<!--                    <input type="file" name="image" accept=".png,.jpg,.jpeg,.svg" class="form-control-file" style = "display: none;" onchange="previewImage(event)">-->
+<!--                    <span id="plantImageError" class="error" style="display: none; color: red"></span>-->
+<!--                </div>-->
+<!--            </div>-->
+
+
+
+
             <div class="mb-3">
                 <label th:class="'form-label ' + ${#fields.hasErrors('name') ? 'is-invalid' : ''}" for="name">Plant Name:</label>
                 <input th:class="'form-control ' + ${#fields.hasErrors('name') ? 'is-invalid' : ''}" type="text" id="name" name="name" th:value="${plant.name}" >
@@ -81,7 +96,7 @@
 <script th:src="@{/js/nextFormBox.js}"></script>
 <script th:src="@{/js/plantImageErrorChecking.js}"></script>
 <script>
-        //Below code is provided by ChatGPT
+    //Below code is provided by ChatGPT
     document.getElementById("addPlantForm").addEventListener("submit", function(event) {
         if (hasError) {
             event.preventDefault();
@@ -90,4 +105,5 @@
         return true;
     });
 </script>
+
 </html>
