@@ -151,4 +151,12 @@ public class FriendsServiceTest {
         assertEquals(relationship, friendship);
     }
 
+    @Test
+    public void testDeleteMethod() {
+        Friends relationship = new Friends(testUser3, testUser4, "Pending");
+        friendService.save(relationship);
+        friendService.delete(relationship);
+        assertNull(friendService.getSent(testUser3.getId(), testUser4.getId()));
+    }
+
 }
