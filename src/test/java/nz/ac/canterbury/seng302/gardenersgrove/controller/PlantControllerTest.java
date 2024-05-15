@@ -51,6 +51,9 @@ public class PlantControllerTest {
     @InjectMocks
     private PlantController plantController;
 
+    String dateValidStr = "";
+    String dateInvalidStr = "dateInvalid";
+
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -63,7 +66,7 @@ public class PlantControllerTest {
     }
 
     @Test
-    public void testAddPlantForm_ReturnsToAddPlant() {
+    void testAddPlantForm_ReturnsToAddPlant() {
         long gardenId = 0;
         String expectedReturnPage = "plants/addPlant";
 
@@ -72,7 +75,7 @@ public class PlantControllerTest {
     }
 
     @Test
-    public void testSubmitAddPlantForm_DataIsValid_ReturnToGardenDetailPage() throws Exception {
+    void testSubmitAddPlantForm_DataIsValid_ReturnToGardenDetailPage() throws Exception {
         Plant validPlant = new Plant("Plant", "10", "Yellow", "11/03/2024");
         long gardenId = 0;
         String expectedReturnPage = "redirect:/gardens/" + gardenId;
@@ -84,7 +87,7 @@ public class PlantControllerTest {
     }
 
     @Test
-    public void testSubmitAddPlantForm_DataIsInvalid_ReturnToAddPlantForm() throws Exception {
+    void testSubmitAddPlantForm_DataIsInvalid_ReturnToAddPlantForm() throws Exception {
         Plant invalidPlant = new Plant("#invalid", "10", "Yellow", "11/03/2024");
         long gardenId = 0;
         String expectedReturnPage = "plants/addPlant";
@@ -96,7 +99,7 @@ public class PlantControllerTest {
     }
 
     @Test
-    public void testEditPlantForm_ReturnsToEditPlant() {
+    void testEditPlantForm_ReturnsToEditPlant() {
         Plant plant = new Plant("#invalid", "10", "Yellow", "11/03/2024");
         long gardenId = 0;
         long plantId = 0;
@@ -109,7 +112,7 @@ public class PlantControllerTest {
     }
 
     @Test
-    public void testSubmitEditPlantForm_DataIsValid_ReturnToGardenDetailPage_PlantAddedToRepository() throws Exception {
+    void testSubmitEditPlantForm_DataIsValid_ReturnToGardenDetailPage_PlantAddedToRepository() {
         Plant validPlant = new Plant("Plant", "10", "Yellow", "11/03/2024");
         long gardenId = 0;
         long plantId = 0;
@@ -118,7 +121,7 @@ public class PlantControllerTest {
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
         when(plantService.getPlantById(plantId)).thenReturn(Optional.of(validPlant));
-        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, validPlant, bindingResult, model);
+        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, validPlant, bindingResult, model);
 
         assertEquals(expectedReturnPage, returnPage);
 
@@ -126,7 +129,7 @@ public class PlantControllerTest {
     }
 
     @Test
-    public void testSubmitEditPlantForm_DataIsInvalid_ReturnToEditPlantForm() throws Exception {
+    void testSubmitEditPlantForm_DataIsInvalid_ReturnToEditPlantForm() {
         Plant invalidPlant = new Plant("#invalid", "10", "Yellow", "11/03/2024");
         long gardenId = 0;
         long plantId = 0;
@@ -134,7 +137,46 @@ public class PlantControllerTest {
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
-        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, invalidPlant, bindingResult, model);
+        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, invalidPlant, bindingResult, model);
+
+        assertEquals(expectedReturnPage, returnPage);
+    }
+
+    /**
+     * plantedDate is only passed to the controller if the date is valid, it is otherwise considered empty
+     * So, dateValidation.js flags if the date input is incorrect
+     * Testing that the controller throws an error when dateValidation.js picks up an error, but everything else is valid
+     */
+    @Test
+    void testSubmitEditPlantForm_PlantedDateInvalidFromJS_ReturnToEditPlantForm() {
+        Plant invalidPlant = new Plant("validName", "1", "Yellow", "");
+        long gardenId = 0;
+        long plantId = 0;
+        String expectedReturnPage = "plants/editPlant";
+
+        BindingResult bindingResult = mock(BindingResult.class);
+        when(bindingResult.hasErrors()).thenReturn(true);
+        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateInvalidStr, invalidPlant, bindingResult, model);
+
+        assertEquals(expectedReturnPage, returnPage);
+    }
+
+    /**
+     * plantedDate is only passed to the controller if the date is valid, it is otherwise considered empty
+     * So, dateValidation.js flags if the date input is incorrect
+     * Testing that the controller throws an error when dateValidation.js picks up an error, but everything else is valid
+     */
+    @Test
+    void testSubmitEditPlantForm_PlantedDateValidFromJS_ReturnToGardenDetailPage_PlantAddedToRepository() {
+        Plant validPlant = new Plant("validName", "1", "Yellow", "");
+        long gardenId = 0;
+        long plantId = 0;
+        String expectedReturnPage = "redirect:/gardens/" + gardenId;
+
+        BindingResult bindingResult = mock(BindingResult.class);
+        when(bindingResult.hasErrors()).thenReturn(false);
+        when(plantService.getPlantById(plantId)).thenReturn(Optional.of(validPlant));
+        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, validPlant, bindingResult, model);
 
         assertEquals(expectedReturnPage, returnPage);
     }
@@ -215,7 +257,7 @@ public class PlantControllerTest {
         doThrow(new RuntimeException("Image processing error"))
                 .when(plantService).setPlantImage(anyLong(), anyString(), any(byte[].class));
 
-        String view = plantController.submitEditPlantForm(gardenId, plantId, file, plant, bindingResult, model);
+        String view = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, plant, bindingResult, model);
 
         assertEquals("redirect:/gardens/" + gardenId, view);
     }
