@@ -5,7 +5,7 @@ let locationMatch = false;
  * Initializes an address autocomplete feature on the specified container element.
  *
  * @param {HTMLElement} containerElement - The container element where the autocomplete feature is added.
- * @param {Function} callback - The callback function to be called when an address is selected.
+ * @param {(result: object | string) => void} callback - The callback function to be called when an option is selected. Called with the option object if a match was found, otherwise called with the input value.
  * @param {{ apiUrl: string, notFoundMessageHtml: string, placeholder: string, acceptButton: boolean }} options - Additional named options. All of these are required.
  * @returns An object with methods that can be used to interact with the autocomplete feature.
  */
@@ -156,9 +156,7 @@ function autocomplete(containerElement, callback, options) {
                 noLocationMatch.addEventListener("click", () => {
                     currentItems = inputElement.value;
 
-
-                    let addressString = inputElement.value.split(/\s|,/ );
-                    callback(addressString);
+                    callback(inputElement.value);
                     /* Close the list of autocompleted values: */
                     closeDropDownList();
 
@@ -230,12 +228,12 @@ function autocomplete(containerElement, callback, options) {
      * Accepts the focused item in the autocomplete dropdown list
      */
     function acceptFocusedItem() {
-        if (currentItems[focusedItemIndex]) {
-            inputElement.value = currentItems[focusedItemIndex].formatted;
-            callback(currentItems[focusedItemIndex]);
+        const currentItem = currentItems[focusedItemIndex];
+        if (currentItem) {
+            inputElement.value = currentItem.formatted;
+            callback(currentItem);
         } else {
-            let addressString = inputElement.value.split(/\s|,/);
-            callback(addressString);
+            callback(inputElement.value);
         }
         closeDropDownList();
     }
@@ -308,35 +306,30 @@ function autocomplete(containerElement, callback, options) {
 /**
  * Populates address fields with properties from the selected address in the autocomplete container
  *
- * @param {Object} selectedAddress - The selected address with the address information
+ * @param {object | string} selectedAddress - The selected address with the address information
  */
 function populateAddressFields(selectedAddress) {
-    // Populate address fields with properties from the selectedAddress address
-    document.getElementById("streetNumber").value = selectedAddress.housenumber || null;
-    document.getElementById("streetName").value = selectedAddress.street || null;
-    document.getElementById("suburb").value = selectedAddress.suburb || null;
-    document.getElementById("city").value = selectedAddress.city || null;
-    document.getElementById("country").value = selectedAddress.country || null;
-    document.getElementById("postCode").value = selectedAddress.postcode || null;
-    document.getElementById("lat").value = selectedAddress.lat || null;
-    document.getElementById("lon").value = selectedAddress.lon || null;
+    if (typeof selectedAddress === 'string') {
+        const currentItem = selectedAddress.split(/\s|,/);
+        document.getElementById("streetNumber").value = currentItem[0] ? currentItem[0] : null;
+        document.getElementById("streetName").value = (currentItem[1] ? currentItem[1] : null)
+            + (currentItem[2] ? " " + currentItem[2] : null);
+        document.getElementById("suburb").value = currentItem[3] ? currentItem[3] : null;
+        document.getElementById("city").value = currentItem[4] ? currentItem[4] : null;
+        document.getElementById("country").value = currentItem[5] ? currentItem[5] : null;
+        document.getElementById("postCode").value = currentItem[6] ? currentItem[6] : null;
+    } else {
+        // Populate address fields with properties from the selectedAddress address
+        document.getElementById("streetNumber").value = selectedAddress.housenumber || null;
+        document.getElementById("streetName").value = selectedAddress.street || null;
+        document.getElementById("suburb").value = selectedAddress.suburb || null;
+        document.getElementById("city").value = selectedAddress.city || null;
+        document.getElementById("country").value = selectedAddress.country || null;
+        document.getElementById("postCode").value = selectedAddress.postcode || null;
+        document.getElementById("lat").value = selectedAddress.lat || null;
+        document.getElementById("lon").value = selectedAddress.lon || null;
+    }
 }
-
-/**
- * Populates address fields with item in the input with no location match
- *
- * @param {Object} currentItem - The current address input
- */
-function populateAddress(currentItem) {
-    document.getElementById("streetNumber").value = currentItem[0] ? currentItem[0] : null;
-    document.getElementById("streetName").value = (currentItem[1] ? currentItem[1] : null)
-        + (currentItem[2] ? " " + currentItem[2] : null);
-    document.getElementById("suburb").value = currentItem[3] ? currentItem[3] : null;
-    document.getElementById("city").value = currentItem[4] ? currentItem[4] : null;
-    document.getElementById("country").value = currentItem[5] ? currentItem[5] : null;
-    document.getElementById("postCode").value = currentItem[6] ? currentItem[6] : null;
-}
-
 
 const locationAutocompleteContainer = document.getElementById(
     'location-autocomplete-container'
@@ -378,12 +371,12 @@ function appendTagElement(tag) {
 /**
  * Adds a tag to the list of selected tags.
  *
- * @param {{ formatted: string } | string[]} tagEntry - The entry in the autocomplete API response.
+ * @param {{ formatted: string } | string} tag - The entry in the autocomplete API response.
  */
-function addTag(tagEntry) {
+function addTag(tag) {
     tagAutocomplete.clear();
 
-    const tag = Array.isArray(tagEntry) ? tagEntry.join('-').toLowerCase() : tagEntry.formatted;
+    tag = tag.formatted ?? tag;
     if (tags.includes(tag)) {
         return;
     }
