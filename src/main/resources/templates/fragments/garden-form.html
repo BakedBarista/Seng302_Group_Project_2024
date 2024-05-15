@@ -153,12 +153,6 @@
                             <!-- Adjusted column size from col-md-8 to col-md-6 -->
                             <nav th:replace="~{fragments/description-box :: description-box-with-char-count}"></nav>
                         </div>
-                        <!-- Garden Tags Field -->
-                        <div class="col-md-12">
-                            <label for="tag-autocomplete-container"> Garden Tags: </label>
-                            <div class="mb-3" id="tag-autocomplete-container"></div>
-                        </div>
-                        <div class="col-md-12 mb-4" id="tag-container"></div>
                         <input type="hidden" name="tags" id="tag-input" value="test-tag,test-tag-2">
                         <div class="col-lg-12">
                             <button type="submit" class="btn btn-primary btn-sm">Submit</button>
@@ -171,7 +165,8 @@
         </div>
 
         <script th:src="@{/js/nextFormBox.js}"></script>
-        <script th:src="@{/js/autoComplete.js}"></script>
+        <script th:src="@{/js/autocomplete.js}"></script>
+        <script th:src="@{/js/locationAutocomplete.js}"></script>
         <script th:src="@{/js/toggleSubform.js}"></script>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
