@@ -83,13 +83,13 @@ public class PlantController {
     public String submitAddPlantForm(@PathVariable("gardenId") Long gardenId,
                                       @Valid @ModelAttribute("plant") Plant plant,
                                      BindingResult bindingResult,
+                                     @RequestParam(value = "dateError", required = false) String dateValidity,
                                      @RequestParam("image") MultipartFile file,
                                       Model model) throws Exception {
 
 
-        if (!plant.getPlantedDate().isEmpty() && !plant.getPlantedDate().matches("\\d{4}-\\d{2}-\\d{2}")){
+        if (Objects.equals(dateValidity, "dateInvalid") || (!plant.getPlantedDate().isEmpty() && !plant.getPlantedDate().matches("\\d{4}-\\d{2}-\\d{2}"))) {
             bindingResult.rejectValue("plantedDate", "plantedDate.formatError", "Date must be in the format DD-MM-YYYY");
-
         }
         if(!plant.getPlantedDate().isEmpty()) {
             plant.setPlantedDate(refactorPlantedDate(plant.getPlantedDate()));
@@ -149,7 +149,7 @@ public class PlantController {
      * @param gardenId the id of the garden that the plant belongs to
      * @param plantId the id of the plant being edited
      * @param file the image file
-     * @param dateInvalid a value passed from the html flagging us if the date is not filled correctly
+     * @param dateValidity a value passed from the html flagging us if the date is not filled correctly
      * @param plant the plant entity being edited
      * @param bindingResult binding result which helps display errors
      * @param model representation of results
@@ -159,11 +159,11 @@ public class PlantController {
     public String submitEditPlantForm(@PathVariable("gardenId") long gardenId,
                                       @PathVariable("plantId") long plantId,
                                       @RequestParam("image") MultipartFile file,
-                                      @RequestParam(value = "dateError", required = false) String dateInvalid,
+                                      @RequestParam(value = "dateError", required = false) String dateValidity,
                                       @Valid @ModelAttribute("plant") Plant plant,
                                BindingResult bindingResult, Model model) {
 
-        if (Objects.equals(dateInvalid, "dateInvalid") || (!plant.getPlantedDate().isEmpty() && !plant.getPlantedDate().matches("\\d{4}-\\d{2}-\\d{2}"))) {
+        if (Objects.equals(dateValidity, "dateInvalid") || (!plant.getPlantedDate().isEmpty() && !plant.getPlantedDate().matches("\\d{4}-\\d{2}-\\d{2}"))) {
             bindingResult.rejectValue("plantedDate", "plantedDate.formatError", "Date must be in the format DD-MM-YYYY");
         }
 
