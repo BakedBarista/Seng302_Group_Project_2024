@@ -45,22 +45,20 @@ public class Garden {
     @Column
     private String streetNumber;
 
-    @NotBlank(message = "Street Name is required")
     @Pattern(regexp = GARDEN_REGEX, message = "Please enter a valid street name")
     @Column
     private String streetName;
 
-    @NotBlank(message = "Suburb is required")
     @Pattern(regexp = GARDEN_REGEX, message = "Please enter a valid suburb")
     @Column
     private String suburb;
 
-    @NotBlank(message = "City and Country are required")
+    @NotBlank(message = "City is required")
     @Pattern(regexp = GARDEN_REGEX, message = "Please enter a valid City name")
     @Column(nullable = false)
     private String city;
 
-    @NotBlank(message = "City and Country are required")
+    @NotBlank(message = "Country is required")
     @Pattern(regexp = GARDEN_REGEX, message = "Please enter a valid country name")
     @Column(nullable = false)
     private String country;

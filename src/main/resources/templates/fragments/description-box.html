@@ -2,11 +2,6 @@
 <html lang="en">
     <head th:fragment="headerfiles">
         <meta charset="UTF-8">
-        <style>
-            .error-field {
-                background-color: pink;
-            }
-        </style>
     </head>
     <body>
         <div th:fragment="description-box-with-char-count">
@@ -15,11 +10,12 @@
                    th:name="description" th:value="${garden.description}" data-cy="size" autofocus
                     th:classappend="${#fields.hasErrors('description')} ? 'error-field' : ''">
 
-            <div class = flex-box>
+            <div class = "flex-box">
                 <div th:if="${profanity != null}" style="color: red;"><span th:text="${profanity}"></span></div>
                 <div class = "errorMessage" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
-                <div class = "errorMessage" th:if="${!#fields.hasErrors('description')}"></div>
-                <p class = "numberOfCharactersText" id = "numberOfCharactersText"></p>
+                <div class = "justify-content-end">
+                    <p class = "numberOfCharactersText" id = "numberOfCharactersText"></p>
+                </div>
             </div>
 
             <script>
