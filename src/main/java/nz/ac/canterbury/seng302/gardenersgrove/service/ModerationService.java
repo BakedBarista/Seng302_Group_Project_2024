@@ -40,16 +40,7 @@ public class ModerationService {
         HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
 
         RestTemplate restTemplate = new RestTemplate();
-
-        ProfranityService.loadConfigs();
-
-        if(ProfranityService.badWordsFound(description).isEmpty()){
-            logger.info("No bad words");
-        } else {
-            logger.info("Bad words");
-        }
         
-
         ResponseEntity<String> responseEntity = restTemplate.postForEntity(MODERATION_API_URL, requestEntity, String.class);
 
 

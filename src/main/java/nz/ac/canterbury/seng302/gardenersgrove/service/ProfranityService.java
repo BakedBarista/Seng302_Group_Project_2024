@@ -1,54 +1,42 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+// skeleton code provided by https://gist.github.com/PimDeWitte/c04cc17bc5fa9d7e3aee6670d4105941.
 public class ProfranityService {
     static Map<String, String[]> words = new HashMap<>();
     
     static int largestWordLength = 0;
     
     public static void loadConfigs() {
-        try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(new URL("https://docs.google.com/spreadsheets/d/1hIEi2YG3ydav1E06Bzf2mQbGZ12kh2fe4ISgLg_UBuM/export?format=csv").openConnection().getInputStream()));
-            String line = "";
-            int counter = 0;
-            while((line = reader.readLine()) != null) {
-                counter++;
-                String contentString = "arse\narsehole\nass\nasses\nassface\nassfaces\nasshole\nassholes\nbastard\nbastards\nbeaner\nbellend\nbint\nbitch\nbitches\nbitchy\nblowjob\nblump\nblumpkin\nbollocks\nbollox\nboner\nbukkake\nbullshit\nbunghole\nbuttcheeks\nbutthole\nbuttpirate\nbuttplug\ncarpetmuncher\nchinc\nchink\nchoad\nchode\ncirclejerk\nclit\nclunge\ncock\ncocksucker\ncocksuckers\ncocksucking\ncoochie\ncoochy\ncoon\ncooter\ncornhole\ncum\ncunnie\ncunt\ncunts\ndago\ndic\ndick\ndickhead\ndickheads\ndik\ndike\ndildo\ndoochbag\ndoosh\ndouche\ndouchebag\ndumbass\ndumbasses\ndyke\nfag\nfagget\nfaggit\nfaggot\nfaggots\nfagtard\nfanny\nfeck\nfelch\nfeltch\nfigging\nfingerbang\nfrotting\nfuc\nfuck\nfucked\nfuckedup\nfucker\nfuckers\nfucking\nfuckoff\nfucks\nfuckup\nfudgepacker\nfuk\nfukker\nfukkers\nfuq\ngangbang\ngash\ngoddamn\ngoddamnit\ngokkun\ngooch\ngook\nguido\nheeb\nhonkey\nhooker\njackass\njackasses\njackoff\njap\njerkoff\njigaboo\njiggerboo\njizz\njunglebunny\nkike\nknobbing\nkooch\nkootch\nkraut\nkyke\nlesbo\nlezzie\nmilf\nminge\nmotherfucker\nmotherfuckers\nmotherfucking\nmuff\nmuffdiver\nmuffdiving\nmunging\nmunter\nngga\nniga\nnigga\nnigger\nniggers\nniglet\nnigr\npaki\npanooch\npecker\npeckerhead\npillock\npiss\npissed\npollock\npoon\npoonani\npoonany\npoontang\nporchmonkey\nprick\npunani\npunanny\npunany\npussie\npussies\npussy\nputa\nputo\nquim\nraghead\nruski\nschlong\nscrote\nshag\nshit\nshite\nshithead\nshitheads\nshits\nshittier\nshittiest\nshitting\nshitty\nskank\nskeet\nslag\nslanteye\nslut\nsmartass\nsmartasses\nsmeg\nsnatch\nspic\nspick\nsplooge\nspooge\nteabagging\ntit\ntities\ntits\ntitties\ntitty\ntosser\ntowelhead\ntwat\nvibrator\nwank\nwanker\nwetback\nwhore\nwiseass\nwiseasses\nwop\n";
 
-                String[] content = contentString.split("\n");
-                try {
-                    content = line.split(",");
-                    if(content.length == 0) {
-                        continue;
-                    }
-                    String word = content[0];
-                    String[] ignore_in_combination_with_words = new String[]{};
-                    if(content.length > 1) {
-                        ignore_in_combination_with_words = content[1].split("_");
-                    }
+        String contentString = "arse\narsehole\nass\nasses\nassface\nassfaces\nasshole\nassholes\nbastard\nbastards\nbeaner\nbellend\nbint\nbitch\nbitches\nbitchy\nblowjob\nblump\nblumpkin\nbollocks\nbollox\nboner\nbukkake\nbullshit\nbunghole\nbuttcheeks\nbutthole\nbuttpirate\nbuttplug\ncarpetmuncher\nchinc\nchink\nchoad\nchode\ncirclejerk\nclit\nclunge\ncock\ncocksucker\ncocksuckers\ncocksucking\ncoochie\ncoochy\ncoon\ncooter\ncornhole\ncum\ncunnie\ncunt\ncunts\ndago\ndic\ndick\ndickhead\ndickheads\ndik\ndike\ndildo\ndoochbag\ndoosh\ndouche\ndouchebag\ndumbass\ndumbasses\ndyke\nfag\nfagget\nfaggit\nfaggot\nfaggots\nfagtard\nfanny\nfeck\nfelch\nfeltch\nfigging\nfingerbang\nfrotting\nfuc\nfuck\nfucked\nfuckedup\nfucker\nfuckers\nfucking\nfuckoff\nfucks\nfuckup\nfudgepacker\nfuk\nfukker\nfukkers\nfuq\ngangbang\ngash\ngoddamn\ngoddamnit\ngokkun\ngooch\ngook\nguido\nheeb\nhonkey\nhooker\njackass\njackasses\njackoff\njap\njerkoff\njigaboo\njiggerboo\njizz\njunglebunny\nkike\nknobbing\nkooch\nkootch\nkraut\nkyke\nlesbo\nlezzie\nmilf\nminge\nmotherfucker\nmotherfuckers\nmotherfucking\nmuff\nmuffdiver\nmuffdiving\nmunging\nmunter\nngga\nniga\nnigga\nnigger\nniggers\nniglet\nnigr\npaki\npanooch\npecker\npeckerhead\npillock\npiss\npissed\npollock\npoon\npoonani\npoonany\npoontang\nporchmonkey\nprick\npunani\npunanny\npunany\npussie\npussies\npussy\nputa\nputo\nquim\nraghead\nruski\nschlong\nscrote\nshag\nshit\nshite\nshithead\nshitheads\nshits\nshittier\nshittiest\nshitting\nshitty\nskank\nskeet\nslag\nslanteye\nslut\nsmartass\nsmartasses\nsmeg\nsnatch\nspic\nspick\nsplooge\nspooge\nteabagging\ntit\ntities\ntits\ntitties\ntitty\ntosser\ntowelhead\ntwat\nvibrator\nwank\nwanker\nwetback\nwhore\nwiseass\nwiseasses\nwop\n";
 
-                    if(word.length() > largestWordLength) {
-                        largestWordLength = word.length();
-                    }
-                    words.put(word.replaceAll(" ", ""), ignore_in_combination_with_words);
-
-                } catch(Exception e) {
-                    e.printStackTrace();
+        String[] content = contentString.split("\n");
+        for(String line: content){
+            try {
+                content = line.split(",");
+                if(content.length == 0) {
+                    continue;
+                }
+                String word = content[0];
+                String[] ignore_in_combination_with_words = new String[]{};
+                if(content.length > 1) {
+                    ignore_in_combination_with_words = content[1].split("_");
                 }
 
-            }
-            System.out.println("Loaded " + counter + " words to filter out");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+                if(word.length() > largestWordLength) {
+                    largestWordLength = word.length();
+                }
+                words.put(word.replaceAll(" ", ""), ignore_in_combination_with_words);
 
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+
+        }
     }
 
 
