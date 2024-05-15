@@ -8,6 +8,8 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import nz.ac.canterbury.seng302.gardenersgrove.service.ProfranityService;
+
 import java.util.Arrays;
 
 @Service
@@ -18,6 +20,9 @@ public class ModerationService {
     private String moderationApiKey;
 
     private static final String MODERATION_API_URL = "https://api.openai.com/v1/moderations";
+
+    private static final String PROFANITY_URL = "https://www.purgomalum.com/service/";
+
 
     /**
      * Calls OPENAI Text Moderation API with given description
@@ -35,7 +40,18 @@ public class ModerationService {
         HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
 
         RestTemplate restTemplate = new RestTemplate();
+
+        ProfranityService.loadConfigs();
+
+        if(ProfranityService.badWordsFound(description).isEmpty()){
+            logger.info("No bad words");
+        } else {
+            logger.info("Bad words");
+        }
+        
+
         ResponseEntity<String> responseEntity = restTemplate.postForEntity(MODERATION_API_URL, requestEntity, String.class);
+
 
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
             logger.info("Description moderated");
