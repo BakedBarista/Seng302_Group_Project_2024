@@ -189,12 +189,7 @@ public class PlantController {
                                       @Valid @ModelAttribute("plant") Plant plant,
                                BindingResult bindingResult, Model model) {
 
-
-        if (Objects.equals(dateInvalid, "dateInvalid")) {
-            bindingResult.rejectValue("plantedDate", "plantedDate.formatError", "Date must be in the format DD-MM-YYYY");
-        }
-
-        if (!plant.getPlantedDate().isEmpty() && !plant.getPlantedDate().matches("\\d{4}-\\d{2}-\\d{2}")) {
+        if (Objects.equals(dateInvalid, "dateInvalid") || (!plant.getPlantedDate().isEmpty() && !plant.getPlantedDate().matches("\\d{4}-\\d{2}-\\d{2}"))) {
             bindingResult.rejectValue("plantedDate", "plantedDate.formatError", "Date must be in the format DD-MM-YYYY");
         }
 
