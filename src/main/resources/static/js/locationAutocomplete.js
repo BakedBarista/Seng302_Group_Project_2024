@@ -34,7 +34,7 @@ if (locationAutocompleteContainer) {
         locationAutocompleteContainer,
         populateAddressFields,
         {
-            apiUrl: '/api/location-autocomplete',
+            apiUrl: `${apiBaseUrl}/location-autocomplete`,
             notFoundMessageHtml: "No matching location found, location-based services may not work (<u class='text-primary'>Use location</u>)",
             placeholder: "Start typing address here or fill manually",
         }

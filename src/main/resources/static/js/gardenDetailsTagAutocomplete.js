@@ -7,13 +7,13 @@ if (initialTags.length === 1 && initialTags[0] === '') {
 const tagAutocompleteInstance = tagAutocomplete({
     initialTags,
     setTags: (tags) => {
-        fetch(`/api/gardens/${gardenId}/tags`, {
+        fetch(`${apiBaseUrl}/gardens/${gardenId}/tags`, {
             method: 'PUT',
             headers: {
                 'content-type': 'application/json',
                 [csrfHeader]: csrf,
             },
             body: JSON.stringify(tags),
-        })
+        });
     },
 });
