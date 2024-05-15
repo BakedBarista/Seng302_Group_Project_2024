@@ -104,7 +104,7 @@ public class PlantController {
         }
         Plant savedPlant = plantService.addPlant(plant, gardenId);
         //Save plant image
-        if(file != null && !file.isEmpty() && savedPlant != null) {
+        if(file != null) {
             try{
             plantService.setPlantImage(savedPlant.getId(), file.getContentType(), file.getBytes());
         } catch (Exception e){
@@ -176,7 +176,7 @@ public class PlantController {
             existingPlant.get().setDescription(plant.getDescription());
             existingPlant.get().setPlantedDate(plant.getPlantedDate());
             Plant savedPlant = plantService.addPlant(existingPlant.get(), gardenId);
-            if(file != null && !file.isEmpty() && savedPlant != null) {
+            if(file != null) {
                 try {
                     plantService.setPlantImage(savedPlant.getId(), file.getContentType(), file.getBytes());
             } catch (Exception e) {
