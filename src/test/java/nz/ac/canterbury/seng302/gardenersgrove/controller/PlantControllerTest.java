@@ -40,7 +40,7 @@ public class PlantControllerTest {
     private PlantController plantController;
 
     String dateValidStr = "";
-    String dateInvalidStr = "Date Invalid";
+    String dateInvalidStr = "dateInvalid";
 
     @BeforeEach
     public void setUp() {
