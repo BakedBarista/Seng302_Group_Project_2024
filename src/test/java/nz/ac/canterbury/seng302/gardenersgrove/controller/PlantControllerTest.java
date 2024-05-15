@@ -54,7 +54,7 @@ public class PlantControllerTest {
     }
 
     @Test
-    public void testAddPlantForm_ReturnsToAddPlant() {
+    void testAddPlantForm_ReturnsToAddPlant() {
         long gardenId = 0;
         String expectedReturnPage = "plants/addPlant";
 
@@ -63,7 +63,7 @@ public class PlantControllerTest {
     }
 
     @Test
-    public void testSubmitAddPlantForm_DataIsValid_ReturnToGardenDetailPage() {
+    void testSubmitAddPlantForm_DataIsValid_ReturnToGardenDetailPage() {
         Plant validPlant = new Plant("Plant", "10", "Yellow", "11/03/2024");
         long gardenId = 0;
         String expectedReturnPage = "redirect:/gardens/" + gardenId;
@@ -75,7 +75,7 @@ public class PlantControllerTest {
     }
 
     @Test
-    public void testSubmitAddPlantForm_DataIsInvalid_ReturnToAddPlantForm() {
+    void testSubmitAddPlantForm_DataIsInvalid_ReturnToAddPlantForm() {
         Plant invalidPlant = new Plant("#invalid", "10", "Yellow", "11/03/2024");
         long gardenId = 0;
         String expectedReturnPage = "plants/addPlant";
@@ -87,7 +87,7 @@ public class PlantControllerTest {
     }
 
     @Test
-    public void testEditPlantForm_ReturnsToEditPlant() {
+    void testEditPlantForm_ReturnsToEditPlant() {
         Plant plant = new Plant("#invalid", "10", "Yellow", "11/03/2024");
         long gardenId = 0;
         long plantId = 0;
@@ -100,7 +100,7 @@ public class PlantControllerTest {
     }
 
     @Test
-    public void testSubmitEditPlantForm_DataIsValid_ReturnToGardenDetailPage_PlantAddedToRepository() {
+    void testSubmitEditPlantForm_DataIsValid_ReturnToGardenDetailPage_PlantAddedToRepository() {
         Plant validPlant = new Plant("Plant", "10", "Yellow", "11/03/2024");
         long gardenId = 0;
         long plantId = 0;
@@ -117,7 +117,7 @@ public class PlantControllerTest {
     }
 
     @Test
-    public void testSubmitEditPlantForm_DataIsInvalid_ReturnToEditPlantForm() {
+    void testSubmitEditPlantForm_DataIsInvalid_ReturnToEditPlantForm() {
         Plant invalidPlant = new Plant("#invalid", "10", "Yellow", "11/03/2024");
         long gardenId = 0;
         long plantId = 0;
@@ -136,7 +136,7 @@ public class PlantControllerTest {
      * Testing that the controller throws an error when dateValidation.js picks up an error, but everything else is valid
      */
     @Test
-    public void testSubmitEditPlantForm_PlantedDateInvalidFromJS_ReturnToEditPlantForm() {
+    void testSubmitEditPlantForm_PlantedDateInvalidFromJS_ReturnToEditPlantForm() {
         Plant invalidPlant = new Plant("validName", "1", "Yellow", "");
         long gardenId = 0;
         long plantId = 0;
@@ -155,7 +155,7 @@ public class PlantControllerTest {
      * Testing that the controller throws an error when dateValidation.js picks up an error, but everything else is valid
      */
     @Test
-    public void testSubmitEditPlantForm_PlantedDateValidFromJS_ReturnToGardenDetailPage_PlantAddedToRepository() {
+    void testSubmitEditPlantForm_PlantedDateValidFromJS_ReturnToGardenDetailPage_PlantAddedToRepository() {
         Plant validPlant = new Plant("validName", "1", "Yellow", "");
         long gardenId = 0;
         long plantId = 0;
