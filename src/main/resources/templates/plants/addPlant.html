@@ -53,63 +53,15 @@
 <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
 </body>
 <script th:src="@{/js/nextFormBox.js}"></script>
+<script th:src="@{/js/plantImageErrorChecking.js}"></script>
 <script>
-    (function () {
-        /** @type {HTMLInputElement} */
-        const plantImageInput = document.getElementById(
-            "image"
-        );
-        /** @type {HTMLSpanElement} */
-        const plantImageError = document.getElementById(
-            "plantImageError"
-        );
-
-        const VALID_MIME_TYPES = ["image/png", "image/jpeg", "image/svg+xml"];
-        let hasError = false;
-
-
-        plantImageInput.addEventListener("change", (ev) => {
-            const file = plantImageInput.files[0];
-            hasError = false;
-            if (!file) {
-                return;
-            }
-
-            plantImageError.textContent = "";
-            plantImageError.style.display = "none";
-
-
-            if (!VALID_MIME_TYPES.includes(file.type)) {
-                plantImageError.style.display = "block";
-                plantImageError.textContent =
-                    "Image must be of type png, jpg or svg";
-                hasError = true;
-                return;
-            }
-
-            if (file.size > 10 * 1024 * 1024) {
-                plantImageError.style.display = "block";
-                plantImageError.textContent =
-                    "File size must be less than 10MB";
-                hasError = true;
-                return;
-            }
-            const reader = new FileReader();
-            reader.onload = function () {
-                const preview = document.getElementById("preview");
-                preview.src = reader.result;
-                preview.style.display = "block";
-            };
-            reader.readAsDataURL(file);
-        });
         //Below code is provided by ChatGPT
-        document.getElementById("addPlantForm").addEventListener("submit", function(event) {
-            if (hasError) {
-                event.preventDefault(); // Prevent form submission
-                return false;
-            }
-            return true;
-        });
-    })();
+    document.getElementById("addPlantForm").addEventListener("submit", function(event) {
+        if (hasError) {
+            event.preventDefault();
+            return false;
+        }
+        return true;
+    });
 </script>
 </html>
