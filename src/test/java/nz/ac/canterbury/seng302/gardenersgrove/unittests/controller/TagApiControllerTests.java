@@ -19,7 +19,7 @@ public class TagApiControllerTests {
 
     @BeforeEach
     void setUp() {
-        controller = new TagAPIController();
+        controller = new TagAPIController(null, null);
         objectMapper = new ObjectMapper();
     }
 

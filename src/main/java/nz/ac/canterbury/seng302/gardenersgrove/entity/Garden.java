@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidEuropeanDecimal;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,6 +19,7 @@ import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.Validatio
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -98,6 +100,10 @@ public class Garden {
 
     @Column
     private boolean wateringRecommendation;
+
+    @ManyToMany
+    @JoinTable(name="garden_tags", joinColumns = @JoinColumn(name="garden_id"), inverseJoinColumns = @JoinColumn(name="tag_id"))
+    private Set<Tag> tags;
 
     public Garden() {
     }
@@ -342,12 +348,16 @@ public class Garden {
         this.wateringRecommendation = weatherRecommendation;
     }
 
+    public List<Plant> getPlants() {
+        return plants;
+    }
+
     public void setPlants(List<Plant> plants) {
         this.plants = plants;
     }
 
-    public List<Plant> getPlants() {
-        return plants;
+    public Set<Tag> getTags() {
+        return tags;
     }
 
     /**
@@ -356,6 +366,6 @@ public class Garden {
      * @return a comma separated list of tags
      */
     public String getTagsString() {
-        return "TODO,FIXME";
+        return String.join(",", tags.stream().map(Tag::getName).toList());
     }
 }
