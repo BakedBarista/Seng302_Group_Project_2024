@@ -3,10 +3,13 @@
  import nz.ac.canterbury.seng302.gardenersgrove.controller.users.ManageFriendsController;
  import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
  import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+ import nz.ac.canterbury.seng302.gardenersgrove.repository.FriendsRepository;
  import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
  import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
  import org.junit.jupiter.api.extension.ExtendWith;
+ import org.mockito.Mockito;
  import org.mockito.junit.jupiter.MockitoExtension;
+ import org.springframework.beans.factory.annotation.Autowired;
  import org.springframework.security.core.Authentication;
  import org.junit.jupiter.api.BeforeEach;
  import org.junit.jupiter.api.Test;
@@ -39,6 +42,7 @@
 
      @InjectMocks
      private ManageFriendsController manageFriendsController;
+
 
      Long loggedInUserId;
      Long otherUserId;
@@ -577,5 +581,27 @@
 
          verify(friendService).delete(friendRequest);
      }
+
+     @Test
+     public void testGetAllFriendsElseCondition() {
+         // Arrange
+         Friends friendPair = new Friends(otherUser, loggedInUser, "accepted");
+
+         List<Friends> friendsPairList = Collections.singletonList(friendPair);
+
+         FriendsRepository friendsRepository = Mockito.mock(FriendsRepository.class);
+         when(friendsRepository.getAllFriends(loggedInUserId)).thenReturn(friendsPairList);
+
+         FriendService friendService = new FriendService(friendsRepository);
+
+         // Act
+         List<GardenUser> friendsList = friendService.getAllFriends(loggedInUserId);
+
+         // Assert
+         assertEquals(1, friendsList.size());
+         assertEquals(otherUser, friendsList.get(0));
+     }
+
+
  }
 

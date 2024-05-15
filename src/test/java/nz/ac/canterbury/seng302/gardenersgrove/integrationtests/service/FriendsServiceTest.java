@@ -2,21 +2,18 @@ package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.FriendsRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 @DataJpaTest
 @Import(FriendService.class)
@@ -176,11 +173,15 @@ public class FriendsServiceTest {
     }
 
 
-
-
-
-
-
-
-
 }
+
+
+
+
+
+
+
+
+
+
+
