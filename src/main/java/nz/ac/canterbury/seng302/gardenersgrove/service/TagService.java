@@ -22,6 +22,12 @@ public class TagService {
         this.gardenService = gardenService;
     }
 
+    /**
+     * Gets the tag with the given name.
+     *
+     * @param name The name of the tag.
+     * @return The tag with the given name, or null if no such tag exists.
+     */
     public Tag getTag(String name) {
         Optional<Tag> tag = tagRepository.findByName(name);
         if (tag.isEmpty()) {
@@ -30,6 +36,12 @@ public class TagService {
         return tag.get();
     }
 
+    /**
+     * Gets the tag with the given name, creating it if it does not exist. If a new tag is created, then it is saved before being returned.
+     *
+     * @param name The name of the tag.
+     * @return A tag with the given name.
+     */
     public Tag getOrCreateTag(String name) {
         Tag tag = getTag(name);
         if (tag == null) {
@@ -39,6 +51,12 @@ public class TagService {
         return tag;
     }
 
+    /**
+     * Updates the tags on a garden to match the given list of tag names.
+     *
+     * @param garden The garden to update.
+     * @param tagNames The names of the tags to set on the garden.
+     */
     public void updateGardenTags(Garden garden, Collection<String> tagNames) {
         // Remove tags that are not in the new list
         for (Tag tag : garden.getTags()) {
