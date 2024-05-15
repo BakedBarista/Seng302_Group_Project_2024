@@ -108,7 +108,8 @@ public class PlantController {
             try{
             plantService.setPlantImage(savedPlant.getId(), file.getContentType(), file.getBytes());
         } catch (Exception e){
-            System.out.println(e);}
+                logger.info("Exception {}",e.toString());
+            }
         }
         return "redirect:/gardens/" + gardenId;
     }
@@ -179,7 +180,7 @@ public class PlantController {
                 try {
                     plantService.setPlantImage(savedPlant.getId(), file.getContentType(), file.getBytes());
             } catch (Exception e) {
-                    System.out.println(e);
+                    logger.info("Exception {}",e.toString());
                 }
             }
         }
@@ -243,7 +244,7 @@ public class PlantController {
         try {
             plantService.setPlantImage(id, file.getContentType(), file.getBytes());
         } catch (Exception e) {
-            System.out.println(e);
+            logger.info("Exception {}",e.toString());
         }
         return "redirect:" + referer;
     }
