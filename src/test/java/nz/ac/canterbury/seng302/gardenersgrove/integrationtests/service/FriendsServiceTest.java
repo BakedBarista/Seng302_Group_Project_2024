@@ -152,7 +152,7 @@ public class FriendsServiceTest {
     }
 
     @Test
-    public void testDeleteMethod() {
+    public void whenFriendshipCreated_ThenDeleteFriendship() {
         Friends relationship = new Friends(testUser3, testUser4, "Pending");
         friendService.save(relationship);
         friendService.delete(relationship);
@@ -160,12 +160,27 @@ public class FriendsServiceTest {
     }
 
     @Test
-    public void testRemoveFriendship() {
+    public void whenFriendshipCreated_ThenRemoveFriend() {
         Friends relationship = new Friends(testUser3, testUser4, "Pending");
         friendService.save(relationship);
         friendService.removeFriendship(relationship);
         assertNull(friendService.getSent(testUser3.getId(), testUser4.getId()));
     }
+
+    @Test
+    public void testListSentRequestsDeclined() {
+        Friends relationship = new Friends(testUser3, testUser4, "Declined");
+        friendService.save(relationship);
+        List<Friends> sentRequestsDeclined = friendService.getSentRequestsDeclined(testUser3.getId());
+        assertEquals(relationship, sentRequestsDeclined.get(0));
+    }
+
+
+
+
+
+
+
 
 
 }
