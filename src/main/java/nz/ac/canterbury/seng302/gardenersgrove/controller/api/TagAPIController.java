@@ -19,7 +19,7 @@ public class TagAPIController {
     public ResponseEntity<SearchTagsResult> searchTags(@RequestParam String currentValue) {
         // TODO: fetch from database
 
-        List<String> tags = List.of("Wild", "Berries", "Green");
+        List<String> tags = List.of("wild", "berries", "green");
         List<String> filteredTags = tags.stream()
                 .filter(tag -> tag.toLowerCase().startsWith(currentValue.toLowerCase())).toList();
 

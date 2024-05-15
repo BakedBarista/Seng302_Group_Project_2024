@@ -297,10 +297,77 @@ if (locationAutocompleteContainer) {
     );
 }
 
-function addTag(tag) {
-    // TODO
-    console.log(tag);
+/**
+ * Factory function for creating a tag element.
+ *
+ * @param {string} tag - The text of the tag.
+ */
+function makeTag(tag) {
+    const tagElement = document.createElement('span');
+    tagElement.className = 'badge badge-md text-bg-secondary';
+    tagElement.setAttribute('data-tag', tag);
+
+    const tagText = document.createTextNode(tag + ' ');
+    tagElement.appendChild(tagText);
+
+    const closeButton = document.createElement('button');
+    closeButton.className = 'btn-close';
+    closeButton.ariaLabel = 'remove tag';
+    closeButton.addEventListener('click', removeTag);
+    tagElement.appendChild(closeButton);
+
+    return tagElement;
 }
+
+/**
+ * Adds a tag to the list of selected tags.
+ *
+ * @param {{ formatted: string } | string[]} tagEntry - The entry in the autocomplete API response.
+ */
+function addTag(tagEntry) {
+    // Clear the autocomplete input field
+    tagAutocompleteContainer.querySelector('input').value = '';
+
+    const tag = Array.isArray(tagEntry) ? tagEntry.join('-').toLowerCase() : tagEntry.formatted;
+    if (tags.includes(tag)) {
+        return;
+    }
+
+    const tagElement = makeTag(tag);
+    tagContainer.appendChild(tagElement);
+    // Add spaces between tags
+    tagContainer.appendChild(document.createTextNode(' '));
+
+    tags.push(tag);
+    tagInput.value = tags.join(',');
+}
+
+/**
+ * Removes a tag from the list of selected tags.
+ *
+ * @param {MouseEvent} event - The close button click event.
+ */
+function removeTag(event) {
+    event.preventDefault();
+
+    /**@type {HTMLButtonElement} */
+    const closeButton = event.target;
+    const tagElement = closeButton.parentElement;
+    const tag = tagElement.getAttribute('data-tag');
+
+    tagElement.remove();
+
+    const index = tags.indexOf(tag);
+    if (index >= 0) {
+        tags.splice(index, 1);
+        tagInput.value = tags.join(',');
+    }
+}
+
+const tagContainer = document.getElementById('tag-container');
+/**@type {HTMLInputElement | null} */
+const tagInput = document.getElementById('tag-input');
+const tags = tagInput?.value.split(',').filter(t => t !== '') ?? [];
 
 const tagAutocompleteContainer = document.getElementById(
   'tag-autocomplete-container'
@@ -311,8 +378,15 @@ if (tagAutocompleteContainer) {
         addTag,
         {
             apiUrl: '/api/tag-autocomplete',
-            notFoundMessageHtml: 'No matching tag',
+            notFoundMessageHtml: 'No matching tag. <u class="text-primary">Create new tag</u>',
             placeholder: "Start typing tags here",
         }
     );
+}
+
+for (const tag of tags) {
+    const tagElement = makeTag(tag);
+    tagContainer.appendChild(tagElement);
+    // Add spaces between tags
+    tagContainer.appendChild(document.createTextNode(' '));
 }
