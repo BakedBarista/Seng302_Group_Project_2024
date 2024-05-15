@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -20,6 +21,16 @@ public class TagService {
     public TagService(TagRepository tagRepository, GardenService gardenService) {
         this.tagRepository = tagRepository;
         this.gardenService = gardenService;
+    }
+
+    /**
+     * Gets all tags with the given prefix.
+     *
+     * @param currentValue The prefix to search for.
+     * @return A list of tags that have ever been used with the given prefix.
+     */
+    public List<Tag> getTagsByPrefix(String currentValue) {
+        return tagRepository.findByNameStartingWith(currentValue);
     }
 
     /**

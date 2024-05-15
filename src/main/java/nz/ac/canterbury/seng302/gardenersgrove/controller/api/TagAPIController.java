@@ -57,14 +57,10 @@ public class TagAPIController {
 
     @GetMapping("/tag-autocomplete")
     public ResponseEntity<SearchTagsResult> searchTags(@RequestParam String currentValue) {
-        // TODO: fetch from database
-
-        List<String> tags = List.of("wild", "berries", "green");
-        List<String> filteredTags = tags.stream()
-                .filter(tag -> tag.toLowerCase().startsWith(currentValue.toLowerCase())).toList();
+        List<Tag> tags = tagService.getTagsByPrefix(currentValue);
 
         return ResponseEntity.ok(new SearchTagsResult(
-                filteredTags.stream().map(TagEntry::new).toList()));
+                tags.stream().sorted().map(TagEntry::new).toList()));
     }
 
     public static class SearchTagsResult {
@@ -82,8 +78,8 @@ public class TagAPIController {
     public static class TagEntry {
         private String formatted;
 
-        public TagEntry(String formatted) {
-            this.formatted = formatted;
+        public TagEntry(Tag tag) {
+            this.formatted = tag.getName();
         }
 
         public String getFormatted() {
