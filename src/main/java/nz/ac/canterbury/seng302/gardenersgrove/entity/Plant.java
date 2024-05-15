@@ -41,14 +41,17 @@ public class Plant {
     private Garden garden;
 
     @Column(nullable = true)
-    private String plantImagePath;
+    private String plantImageContentType;
+
+    @Column(nullable = true, columnDefinition = "MEDIUMBLOB")
+    @Lob
+    private byte[] plantImage;
 
     public Plant(String name, String count, String description, String plantedDate) {
         this.name = name;
         this.count = count;
         this.description = description;
         this.plantedDate = plantedDate;
-        this.plantImagePath = "/default.png";
     }
 
     public Plant() {}
@@ -101,9 +104,19 @@ public class Plant {
         return garden;
     }
 
-    public String getPlantImagePath() {return plantImagePath;}
 
-    public void setPlantImagePath(String plantImagePath) { this.plantImagePath = plantImagePath;}
+    public String getPlantImageContentType() {
+        return plantImageContentType;
+    }
+
+    public byte[] getPlantImage() {
+        return plantImage;
+    }
+
+    public void setPlantImage(String contentType, byte[] plantImage) {
+        this.plantImageContentType = contentType;
+        this.plantImage = plantImage;
+    }
 
     @Override
     public String toString() {

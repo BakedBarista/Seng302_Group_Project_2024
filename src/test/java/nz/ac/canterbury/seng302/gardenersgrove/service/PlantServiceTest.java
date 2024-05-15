@@ -23,8 +23,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
 
 @DataJpaTest
 @Import(PlantService.class)
@@ -62,7 +62,7 @@ class PlantServiceTest {
         Mockito.when(plantRepository.save(Mockito.any(Plant.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Plant result = plantService.addPlant(testPlant, gardenId);
-        Assertions.assertEquals(result.getGarden().getId(), gardenId);
+        assertEquals(result.getGarden().getId(), gardenId);
     }
 
     @Test
@@ -73,7 +73,7 @@ class PlantServiceTest {
         Mockito.when(gardenRepository.findById(Mockito.any())).thenReturn(Optional.empty());
 
         Assertions.assertThrows(RuntimeException.class, () -> plantService.addPlant(testPlant, gardenId));
-        Mockito.verify(plantRepository, Mockito.never()).save(Mockito.any(Plant.class));
+        verify(plantRepository, Mockito.never()).save(Mockito.any(Plant.class));
     }
 
     @Test
@@ -82,15 +82,15 @@ class PlantServiceTest {
         Plant testPlant2 = new Plant("Daisy", "3", "Flower", "01/01/2024");
 
         Mockito.when(plantRepository.findAll()).thenReturn(List.of(testPlant1, testPlant2));
-        Assertions.assertEquals(2, plantService.getAllPlants().size());
-        Assertions.assertEquals(testPlant1, plantService.getAllPlants().get(0));
-        Assertions.assertEquals(testPlant2, plantService.getAllPlants().get(1));
+        assertEquals(2, plantService.getAllPlants().size());
+        assertEquals(testPlant1, plantService.getAllPlants().get(0));
+        assertEquals(testPlant2, plantService.getAllPlants().get(1));
     }
 
     @Test
     void GetAllPlants_NoPlantsInDB_ReturnsEmptyList() {
         Mockito.when(plantRepository.findAll()).thenReturn(List.of());
-        Assertions.assertEquals(0, plantService.getAllPlants().size());
+        assertEquals(0, plantService.getAllPlants().size());
     }
 
     @Test
@@ -100,23 +100,23 @@ class PlantServiceTest {
         Long gardenId = 1L;
 
         Mockito.when(plantRepository.findByGardenId(gardenId)).thenReturn(List.of(testPlant1, testPlant2));
-        Assertions.assertEquals(2, plantService.getPlantsByGardenId(gardenId).size());
-        Assertions.assertEquals(testPlant1, plantService.getPlantsByGardenId(gardenId).get(0));
-        Assertions.assertEquals(testPlant2, plantService.getPlantsByGardenId(gardenId).get(1));
+        assertEquals(2, plantService.getPlantsByGardenId(gardenId).size());
+        assertEquals(testPlant1, plantService.getPlantsByGardenId(gardenId).get(0));
+        assertEquals(testPlant2, plantService.getPlantsByGardenId(gardenId).get(1));
     }
 
     @Test
     void GetPlantsByGardenId_NoPlantsInGarden_ReturnsEmptyList() {
         Long gardenId = 1L;
         Mockito.when(plantRepository.findByGardenId(gardenId)).thenReturn(List.of());
-        Assertions.assertEquals(0, plantService.getPlantsByGardenId(gardenId).size());
+        assertEquals(0, plantService.getPlantsByGardenId(gardenId).size());
     }
 
     @Test
     void GetPlantsByGardenId_InvalidGardenId_ReturnsEmptyList() {
         Long gardenId = 1L;
         Mockito.when(plantRepository.findByGardenId(gardenId)).thenReturn(List.of());
-        Assertions.assertEquals(0, plantService.getPlantsByGardenId(gardenId).size());
+        assertEquals(0, plantService.getPlantsByGardenId(gardenId).size());
     }
 
     @Test
@@ -135,21 +135,30 @@ class PlantServiceTest {
 
         Mockito.when(plantRepository.findByGardenId(gardenId1)).thenReturn(List.of(testPlant1, testPlant2));
         Mockito.when(plantRepository.findByGardenId(gardenId2)).thenReturn(List.of(testPlant3));
-        Assertions.assertEquals(2, plantService.getPlantsByGardenId(gardenId1).size());
-        Assertions.assertEquals(testPlant1, plantService.getPlantsByGardenId(gardenId1).get(0));
-        Assertions.assertEquals(testPlant2, plantService.getPlantsByGardenId(gardenId1).get(1));
+        assertEquals(2, plantService.getPlantsByGardenId(gardenId1).size());
+        assertEquals(testPlant1, plantService.getPlantsByGardenId(gardenId1).get(0));
+        assertEquals(testPlant2, plantService.getPlantsByGardenId(gardenId1).get(1));
     }
 
-//    @Test
-//    void GetPlantById_ValidPlantId_ReturnsPlant() {
-//        Plant testPlant = new Plant("Rose", 5, "Flower", "01/01/2024");
-//        Long plantId = 1L;
-//        testPlant.setId(plantId);
-//
-//        Mockito.when(plantRepository.findById(Mockito.any())).thenReturn(Optional.of(testPlant));
-//
-//        Optional<Plant> returnedPlant = plantService.getPlantById(plantId);
-//
-//        Assertions.assertEquals(testPlant, returnedPlant);
-//    }
+    @Test
+    public void setPlantImageWithValidId_imageSaved() {
+        long id = 1L;
+        byte[] imageBytes = {};
+        String contentType = "image/png";
+        Plant plant = new Plant();
+        plant.setId(id);
+        when(plantRepository.findById(id)).thenReturn(Optional.of(plant));
+        plantService.setPlantImage(id, contentType, imageBytes);
+        verify(plantRepository, times(1)).save(plant);
+        assertEquals(contentType, plant.getPlantImageContentType());
+        assertEquals(imageBytes, plant.getPlantImage());
+    }
+
+    @Test
+    public void setPlantImageWithNonExistentId_imageNotSaved() {
+        long id = 1L;
+        when(plantRepository.findById(id)).thenReturn(Optional.empty());
+        plantService.setPlantImage(id, "image/png", new byte[]{});
+        verify(plantRepository, never()).save(any());
+    }
 }

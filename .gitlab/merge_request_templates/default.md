@@ -1,15 +1,15 @@
 # Details
-**Story Number:** [replace]
+**Story Number:** *replace*
 
-**Task Name:** [replace]
+**Task Name:** *replace*
 
-[**SonarQube Link**](https://sonarqube.csse.canterbury.ac.nz/dashboard?id=seng302-2024-team800&branch=branch-name)
+[**SonarQube Link**](https://sonarqube.csse.canterbury.ac.nz/dashboard?id=seng302-2024-team800&branch=branch-name-here)
 
 ### Task Description:
 *Copy the task description here*
 
 ### Relevant AC's:
-*REPLACE [AC1: Given ....]*
+*put the full relevant ac's here*
 
 # Design Decisions
 
@@ -27,6 +27,7 @@
 ### Acceptance Testing
 
 # Review Checklist
+## Code
 ### Coding Standards
 - [ ] All public non-trivial methods have Javadoc
 - [ ] There are useful inline comments, not over documented
@@ -49,3 +50,5 @@
 - [ ] Do any forms behave as expected? 
   - [ ] Do they highlight errors?
   - [ ] When an error occurs the form data remains?
+## Other
+- [ ] (For Developer) Once merged you need to make sure that you test it on the test deployment
