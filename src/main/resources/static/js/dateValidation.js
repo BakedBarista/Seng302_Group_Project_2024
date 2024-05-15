@@ -1,13 +1,20 @@
+/**
+ * Checks if the date field has not been filled out correctly
+ * (e.g. catches the case of 10/mm/2001)
+ *
+ * Changes the value of the dateErrorMessage field so that the
+ * controller can recognise if the date has not been filled correctly
+ *
+ * @returns {boolean} to give permission for thymeleaf to continue once these checks have been done
+ */
 function validateDate() {
     let dateInput = document.getElementById('date');
-    let computedStyle = window.getComputedStyle(dateInput);
-    let borderColor = computedStyle.getPropertyValue('border-color');
+    console.log(dateInput);
 
-    if (borderColor === 'rgb(100, 149, 237)') {
-        console.log("I'm here");
-        document.getElementById('dateErrorMessage').value = "Date Invalid";
+    if (dateInput.validity.badInput) {
+        document.getElementById('dateError').value = "dateInvalid";
     } else {
-        document.getElementById('dateErrorMessage').value = "";
+            document.getElementById('dateError').value = "";
     }
     return true;
 }

@@ -30,7 +30,8 @@
             <label for="date"> Date Planted: </label>
             <input type='date' class="form-control" id="date" placeholder="DD/MM/YYYY" th:value="${plant.plantedDate}" th:name="plantedDate" data-cy="size" autofocus>
             <div th:if="${#fields.hasErrors('plantedDate')}" th:errors="*{plantedDate}" style="color: red;"></div>
-            <input type="hidden" name="dateErrorMessage" id="dateErrorMessage" value="">
+            <!--      dateError is the flag for when the date is not filled in correctly (e.g. 10/mm/2001)      -->
+            <input type="hidden" name="dateError" id="dateError" value="">
             <br/>
             <div>
                 <h3>Plant Image:</h3>

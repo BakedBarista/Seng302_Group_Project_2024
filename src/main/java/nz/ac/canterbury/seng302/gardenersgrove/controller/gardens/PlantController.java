@@ -171,21 +171,26 @@ public class PlantController {
     }
 
     /**
-     * Put a single plant
+     *
+     * @param gardenId the id of the garden that the plant belongs to
+     * @param plantId the id of the plant being edited
+     * @param file the image file
+     * @param dateInvalid a value passed from the html flagging us if the date is not filled correctly
+     * @param plant the plant entity being edited
+     * @param bindingResult binding result which helps display errors
      * @param model representation of results
-     * @return redirect to gardens page
+     * @return redirect to gardens page if data is valid
      */
     @PostMapping("/gardens/{gardenId}/plants/{plantId}/edit")
     public String submitEditPlantForm(@PathVariable("gardenId") long gardenId,
                                       @PathVariable("plantId") long plantId,
                                       @RequestParam("image") MultipartFile file,
-                                      @RequestParam(value = "dateErrorMessage", required = false) String dateInvalid,
+                                      @RequestParam(value = "dateError", required = false) String dateInvalid,
                                       @Valid @ModelAttribute("plant") Plant plant,
                                BindingResult bindingResult, Model model) {
 
-        logger.info("\n"+dateInvalid);
-        if (Objects.equals(dateInvalid, "Date Invalid")) {
-            logger.info("\nI get to here too");
+
+        if (Objects.equals(dateInvalid, "dateInvalid")) {
             bindingResult.rejectValue("plantedDate", "plantedDate.formatError", "Date must be in the format DD-MM-YYYY");
         }
 
