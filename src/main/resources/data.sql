@@ -1,7 +1,7 @@
 INSERT INTO garden_user (fname, lname, email, password, dob) VALUES ('Jane', 'Doe', 'jane.doe@gmail.com', 'password', '01/01/1970');
 
 -- Gardens
-INSERT INTO garden (name, street_Number, street_Name, suburb, city, country, post_Code, lat, lon, size, is_public, owner_id, display_weather_alert, watering_recommendation) VALUES ('Enchanted Oasis', '1','Ilam road','Ilam','Christchurch','New Zealand','8041','0.55','0.55', 1200, true, 1, true, false);
+INSERT INTO garden (name, street_Number, street_Name, suburb, city, country, post_Code, lat, lon, size, is_public, owner_id, display_weather_alert, watering_recommendation) VALUES ('Enchanted Oasis', '1','Ilam road','Ilam','Christchurch','New Zealand','8041', 172.63, -43.5333, 1200, true, 1, true, false);
 INSERT INTO garden (name, street_Number, street_Name, suburb, city, country, post_Code, lat, lon, size, is_public, owner_id, display_weather_alert, watering_recommendation) VALUES ('Zen Harmony', '1','Ilam road','Ilam','Christchurch','New Zealand','8041','0.55','0.55', 800, true, 1, true, false);
 INSERT INTO garden (name, street_Number, street_Name, suburb, city, country, post_Code, lat, lon, size, is_public, owner_id, display_weather_alert, watering_recommendation) VALUES ('Eternal Eden', '2','Ilam road','Ilam','Christchurch','New Zealand','8041','0.55','0.55', 1500, true, 1, true, false);
 INSERT INTO garden (name, street_Number, street_Name, suburb, city, country, post_Code, lat, lon, size, is_public, owner_id, display_weather_alert, watering_recommendation) VALUES ('Whimsical Wonderland', '3','Ilam road','Ilam','Christchurch','New Zealand','8041','0.55','0.55', 1000, true, 1, true, false);
