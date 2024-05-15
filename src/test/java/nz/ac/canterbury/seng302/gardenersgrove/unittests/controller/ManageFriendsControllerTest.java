@@ -550,6 +550,9 @@
          assertEquals("redirect:/users/manageFriends", result);
 
      }
+     /**
+      * Testing the manageFriendsDecline method
+      */
 
      @Test
      public void whenFriendshipExists_thenNoDeclineOption() {
@@ -564,6 +567,9 @@
 
      }
 
+     /**
+      * Testing the manageFriendsAccept method
+      */
      @Test
      public void testManageFriendsAccept() {
          // Arrange
@@ -582,6 +588,9 @@
          verify(friendService).delete(friendRequest);
      }
 
+     /**
+      * Testing the manageFriendsDecline method
+      */
      @Test
      public void testGetAllFriendsElseCondition() {
          // Arrange

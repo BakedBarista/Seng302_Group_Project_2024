@@ -122,6 +122,9 @@ public class FriendsServiceTest {
         assertTrue(request.isEmpty());
     }
 
+    /**
+     * Test to check if a friend is removed from the database
+     */
     @Test
     public void whenRemovedFriend_thenFriendRemoved() {
         Friends relationShip3 = new Friends(testUser3, testUser4, "Pending");
@@ -131,6 +134,9 @@ public class FriendsServiceTest {
         assertNull(request);
     }
 
+    /**
+     * Test to check if a friend is added to the database
+     */
     @Test
     public void whenInviteAccepted_thenFriendAdded() {
         Friends relationship = new Friends(testUser3, testUser4, "accepted");
@@ -140,6 +146,9 @@ public class FriendsServiceTest {
         assertEquals(relationship.getFriend_id(), request.getFriend_id());
     }
 
+    /**
+     * Test to check if a friend is added to the database
+     */
     @Test
     public void whenGetSentFriendship_thenFriendshipReturned() {
         Friends relationship = new Friends(testUser3, testUser4, "Pending");
@@ -148,6 +157,9 @@ public class FriendsServiceTest {
         assertEquals(relationship, friendship);
     }
 
+    /**
+     * Test to check if a friend is added to the database and then deleted
+     */
     @Test
     public void whenFriendshipCreated_ThenDeleteFriendship() {
         Friends relationship = new Friends(testUser3, testUser4, "Pending");
@@ -156,6 +168,9 @@ public class FriendsServiceTest {
         assertNull(friendService.getSent(testUser3.getId(), testUser4.getId()));
     }
 
+    /**
+     * Test to check if a friend is added to the database and then removed
+     */
     @Test
     public void whenFriendshipCreated_ThenRemoveFriend() {
         Friends relationship = new Friends(testUser3, testUser4, "Pending");
@@ -164,6 +179,9 @@ public class FriendsServiceTest {
         assertNull(friendService.getSent(testUser3.getId(), testUser4.getId()));
     }
 
+    /**
+     * Test to check if a friendship is declined an the result is correctly stored
+     */
     @Test
     public void testListSentRequestsDeclined() {
         Friends relationship = new Friends(testUser3, testUser4, "Declined");
