@@ -64,22 +64,20 @@ public class PlantService {
 
     public Optional<Plant> getPlantById(long id) {return plantRepository.findById(id);}
 
-    /**
-     * Gets plant image path from database
-     * @param id the plant's id
-     * @return plantImagePath of the plant object
-     */
-
-    //public String getPlantImage(long id) {return plantRepository.findById(id).get().getPlantImagePath();}
-
 
     /**
-     * Sets plant image path to the plant object
-     * @param id the id of the plant object to save the image path to
-     * @param imagePath the path string to be saved
+     * Sets the image of the plant with given ID.
+     * @param id ID of the plant which image is to be set
+     * @param contentType contentType The content type of the plant image
+     * @param plantImage The byte array representing the plant image
      */
+    public void setPlantImage(long id, String contentType, byte[] plantImage) {
+        var plant = plantRepository.findById(id);
+        if (plant.isEmpty()) {
+            return;
+        }
 
-    public void setPlantImage(Plant plant) {
-        plantRepository.save(plant);
+        plant.get().setPlantImage(contentType, plantImage);
+        plantRepository.save(plant.get());
     }
 }
