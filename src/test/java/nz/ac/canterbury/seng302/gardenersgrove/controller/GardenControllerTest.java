@@ -166,7 +166,7 @@ public class GardenControllerTest {
     }
 
     @Test
-    public void testWhenIHaveAGardenErrorAndAProfanityError_ThenTheModelProfanity() {
+    public void testWhenImMakingAGarden_AndIHaveAGardenErrorAndAProfanityError_ThenTheModelHasProfanityError() {
         Model model = mock(Model.class);
         String description = "some really nasty words";
         Garden invalidGarden = new Garden("","","","","","","",0.0,0.0,"", description);
@@ -175,6 +175,22 @@ public class GardenControllerTest {
         when(bindingResult.hasErrors()).thenReturn(true);
         when(moderationService.checkIfDescriptionIsFlagged(description)).thenReturn(true);
         gardenController.submitForm(invalidGarden, bindingResult, model);
+
+        verify(model).addAttribute("profanity", EXPECTED_MODERATION_ERROR_MESSAGE);
+        verify(model).addAttribute("garden", invalidGarden);
+    }
+
+    @Test
+    public void testWhenImEditingAGarden_AndIHaveAGardenErrorAndAProfanityError_ThenTheModelHasProfanityError() {
+        Model model = mock(Model.class);
+        long id = 0;
+        String description = "some really nasty words";
+        Garden invalidGarden = new Garden("","","","","","","",0.0,0.0,"", description);
+        BindingResult bindingResult = mock(BindingResult.class);
+
+        when(bindingResult.hasErrors()).thenReturn(true);
+        when(moderationService.checkIfDescriptionIsFlagged(description)).thenReturn(true);
+        gardenController.updateGarden(id, invalidGarden, bindingResult, model);
 
         verify(model).addAttribute("profanity", EXPECTED_MODERATION_ERROR_MESSAGE);
         verify(model).addAttribute("garden", invalidGarden);
