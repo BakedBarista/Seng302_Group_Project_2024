@@ -559,5 +559,23 @@
          assertEquals("redirect:/users/manageFriends", result);
 
      }
+
+     @Test
+     public void testManageFriendsAccept() {
+         // Arrange
+
+         Authentication authentication = mock(Authentication.class);
+         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+
+         Friends friendRequest = new Friends(loggedInUser, otherUser, "Pending");
+         when(friendService.getFriendship(loggedInUserId, otherUserId)).thenReturn(friendRequest);
+
+         List<Friends> sentAndDeclinedList = Collections.singletonList(friendRequest);
+         when(friendService.getSentRequestsDeclined(loggedInUserId)).thenReturn(sentAndDeclinedList);
+
+         manageFriendsController.manageFriendsAccept(authentication, otherUserId);
+
+         verify(friendService).delete(friendRequest);
+     }
  }
 
