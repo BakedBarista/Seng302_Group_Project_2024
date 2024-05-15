@@ -31,10 +31,10 @@ public class FriendService {
         List<Friends> friendsPairList = friendsRepository.getAllFriends(user);
         List<GardenUser> friendsList = new ArrayList<>();
         for (Friends friend : friendsPairList) {
-            if (friend.getUser1().getId().equals(user)) {
-                friendsList.add(friend.getUser2());
+            if (friend.getSender().getId().equals(user)) {
+                friendsList.add(friend.getReceiver());
             } else {
-                friendsList.add(friend.getUser1());
+                friendsList.add(friend.getSender());
             }
         }
         return friendsList;
@@ -61,34 +61,34 @@ public class FriendService {
     /**
      * Retrieves a friendship between two users
      *
-     * @param user1 The ID of the first user
-     * @param user2 The ID of the second user
+     * @param sender The ID of the first user
+     * @param receiver The ID of the second user
      * @return A Friends object 
      */
-    public Friends getFriendship(Long user1, Long user2) {
-        return friendsRepository.getRequest(user1, user2);
+    public Friends getFriendship(Long sender, Long receiver) {
+        return friendsRepository.getRequest(sender, receiver);
     }
 
     /**
      * Retrieves a Friend object if they are confirmed friends
      *
-     * @param user1 user who sent the original friend request
-     * @param user2 user who received the original friend request
+     * @param sender user who sent the original friend request
+     * @param receiver user who received the original friend request
      * @return The friend object if the friendship between the users is "accepted"
      */
-    public Friends getAcceptedFriendship(Long user1, Long user2) {
-        return friendsRepository.getAcceptedFriendship(user1, user2);
+    public Friends getAcceptedFriendship(Long sender, Long receiver) {
+        return friendsRepository.getAcceptedFriendship(sender, receiver);
     }
 
     /**
-     * Retrieves the Friend object where user1 sent a request to user2
+     * Retrieves the Friend object where sender sent a request to receiver
      *
-     * @param user1 user who sent the original request
-     * @param user2 user who received the original request
-     * @return the Friend object where user 1 sent a request to user2
+     * @param sender user who sent the original request
+     * @param receiver user who received the original request
+     * @return the Friend object where user 1 sent a request to receiver
      */
-    public Friends getSent(Long user1, Long user2) {
-        return friendsRepository.getSent(user1, user2);
+    public Friends getSent(Long sender, Long receiver) {
+        return friendsRepository.getSent(sender, receiver);
     }
 
      /**
@@ -122,14 +122,14 @@ public class FriendService {
     }
 
     /**
-     * Removes the friendship where user1 and user2 are involved. Covers both cases depending on who sent the request
+     * Removes the friendship where sender and receiver are involved. Covers both cases depending on who sent the request
      *
-     * @param user1Id user who sent the original request
-     * @param user2Id user who received the original request
+     * @param senderId user who sent the original request
+     * @param receiverId user who received the original request
      */
-    public void removeFriend(Long user1Id, Long user2Id) {
-        friendsRepository.deleteByUser1IdAndUser2Id(user1Id, user2Id);
-        friendsRepository.deleteByUser1IdAndUser2Id(user2Id, user1Id);
+    public void removeFriend(Long senderId, Long receiverId) {
+        friendsRepository.deleteBySenderIdAndReceiverId(senderId, receiverId);
+        friendsRepository.deleteBySenderIdAndReceiverId(receiverId, senderId);
 
     }
 

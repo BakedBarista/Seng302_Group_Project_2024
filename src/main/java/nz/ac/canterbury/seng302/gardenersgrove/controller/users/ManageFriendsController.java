@@ -26,10 +26,8 @@ import java.util.Optional;
 
 @Controller
 public class ManageFriendsController {
-
-    private static final String STATUS_PENDING = "Pending";
-    private Logger logger = LoggerFactory.getLogger(LoginController.class);
-
+    private static final String PENDING = "Pending"; //Invite 'pending' status
+    private Logger logger = LoggerFactory.getLogger(ManageFriendsController.class);
     private FriendService friendService;
     private GardenUserService userService;
 
@@ -84,12 +82,6 @@ public class ManageFriendsController {
         if (requestingMyself) {
             return "redirect:/users/manageFriends";
         }
-        List<Friends> iDeclinedFriend = friendService.getSentRequestsDeclined(loggedInUserId);
-        for (Friends user2 : iDeclinedFriend) {
-            if (sentToUser.getId().equals(user2.getUser2().getId())) {
-                return "redirect:/users/manageFriends";
-            }
-        }
 
         Friends alreadyFriends = friendService.getAcceptedFriendship(loggedInUserId, requestedUserId);
         if (alreadyFriends != null) {
@@ -97,12 +89,11 @@ public class ManageFriendsController {
         }
 
         Friends requestsPending = friendService.getFriendship(loggedInUserId, requestedUserId);
-        if (requestsPending != null && requestsPending.getStatus().equals(STATUS_PENDING)) {
-                return "redirect:/users/manageFriends";
-
+        if (requestsPending != null && requestsPending.getStatus().equals(PENDING)) {
+            return "redirect:/users/manageFriends";
         }
 
-        Friends newFriends = new Friends(loggedInUser, sentToUser, STATUS_PENDING);
+        Friends newFriends = new Friends(loggedInUser, sentToUser, PENDING);
         friendService.save(newFriends);
 
         return "redirect:/users/manageFriends";
@@ -125,7 +116,7 @@ public class ManageFriendsController {
 
         List<Friends> sentAndDeclinedList = friendService.getSentRequestsDeclined(loggedInUserId);
         for (Friends request : sentAndDeclinedList) {
-            if (request.getUser1().getId().equals(loggedInUserId) && request.getUser2().getId().equals(acceptUserId)) {
+            if (request.getSender().getId().equals(loggedInUserId) && request.getReceiver().getId().equals(acceptUserId)) {
                 friendService.delete(request);
             }
         }
@@ -170,8 +161,8 @@ public class ManageFriendsController {
         if (loggedInUser != null && receivedFrom != null) {
             List<Friends> friendShip = friendService.getReceivedRequests(loggedInUserId);
             for (Friends user : friendShip) {
-                if (user.getUser1().getId().equals(declineUserId) && user.getUser2().getId().equals(loggedInUserId)) {
-                    user.setStatus("declined");
+                if (user.getSender().getId().equals(declineUserId) && user.getReceiver().getId().equals(loggedInUserId)) {
+                    user.setStatus("Declined");
                     friendService.save(user);
                 }
             }
@@ -202,11 +193,38 @@ public class ManageFriendsController {
         List<GardenUser> alreadyFriendsDeclineSent = new ArrayList<>();
         List<GardenUser> receivedRequestList = new ArrayList<>();
 
-        processUsers(loggedInUserId, new ArrayList<>(searchResults), alreadyFriendsList, requestPendingList, alreadyFriendsDeclineSent, receivedRequestList, searchResults);
+        // so we don't get index out of range
+        List<GardenUser> copyOfSearchResults = new ArrayList<>(searchResults);
 
-        if (checkMyself.isPresent()) {
-            rm.addFlashAttribute("mySelf", checkMyself.get());
+        if (!searchResults.isEmpty()) {
+            for (GardenUser user : copyOfSearchResults) {
+                Friends requestPending = friendService.getSent(loggedInUserId, user.getId());
+                List<Friends> declineSent = friendService.getSentRequestsDeclined(loggedInUserId);
+                List<Friends> requestReceived = friendService.getReceivedRequests(loggedInUserId);
+                Friends alreadyFriends = friendService.getAcceptedFriendship(loggedInUserId, user.getId());
+
+                if (requestPending != null && Objects.equals(requestPending.getStatus(), PENDING)) {
+                    requestPendingList.add(user);
+                    searchResults.remove(user);
+                }
+
+                if (!requestReceived.isEmpty()) {
+                    for (Friends receiver : requestReceived) {
+                        if (user.getId().equals(receiver.getSender().getId())) {
+                            receivedRequestList.add(user);
+                            searchResults.remove(user);
+                        }
+                    }
+                }
+
+                if (alreadyFriends != null) {
+                    alreadyFriendsList.add(user);
+                    searchResults.remove(user);
+                }
+            }
         }
+
+        checkMyself.ifPresent(gardenUser -> rm.addFlashAttribute("mySelf", gardenUser));
 
         rm.addFlashAttribute("alreadyFriends", alreadyFriendsList);
         rm.addFlashAttribute("requestPending", requestPendingList);
@@ -216,48 +234,6 @@ public class ManageFriendsController {
 
         return "redirect:/users/manageFriends";
     }
-
-    void processUsers(Long loggedInUserId, List<GardenUser> users, List<GardenUser> alreadyFriendsList, List<GardenUser> requestPendingList, List<GardenUser> alreadyFriendsDeclineSent, List<GardenUser> receivedRequestList, List<GardenUser> searchResults) {
-        for (GardenUser user : users) {
-            processUserFriendshipStatus(loggedInUserId, user, alreadyFriendsList, requestPendingList, alreadyFriendsDeclineSent, receivedRequestList, searchResults);
-        }
-    }
-
-    public void processUserFriendshipStatus(Long loggedInUserId, GardenUser user, List<GardenUser> alreadyFriendsList, List<GardenUser> requestPendingList, List<GardenUser> alreadyFriendsDeclineSent, List<GardenUser> receivedRequestList, List<GardenUser> searchResults) {
-        Friends requestPending = friendService.getSent(loggedInUserId, user.getId());
-        List<Friends> declineSent = friendService.getSentRequestsDeclined(loggedInUserId);
-        List<Friends> requestReceived = friendService.getReceivedRequests(loggedInUserId);
-        Friends alreadyFriends = friendService.getAcceptedFriendship(loggedInUserId, user.getId());
-
-        if (requestPending != null && requestPending.getStatus().equals(STATUS_PENDING)) {
-            requestPendingList.add(user);
-            searchResults.remove(user);
-        }
-
-        for (Friends user2 : requestReceived) {
-            if (user.getId().equals(user2.getUser1().getId())) {
-                receivedRequestList.add(user);
-                searchResults.remove(user);
-                break;
-            }
-        }
-
-        for (Friends user2 : declineSent) {
-            if (user.getId().equals(user2.getUser2().getId())) {
-                alreadyFriendsDeclineSent.add(user);
-                searchResults.remove(user);
-                break;
-            }
-        }
-
-        if (alreadyFriends != null) {
-            alreadyFriendsList.add(user);
-            searchResults.remove(user);
-        }
-    }
-
-
-
 
     /**
      * Displays the profile of a friend
@@ -300,7 +276,7 @@ public class ManageFriendsController {
     /**
      * Cancel an existing friend request
      * @param authentication object contain user's current authentication details
-     * @param requestedUser id of the user who received the friend request
+     * @param requestedUser of the user who received the friend request
      */
     @PostMapping("users/manageFriends/cancel")
     public String cancelSentRequest(Authentication authentication,
