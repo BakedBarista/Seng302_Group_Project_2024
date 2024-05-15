@@ -345,7 +345,17 @@ public class Garden {
     public void setPlants(List<Plant> plants) {
         this.plants = plants;
     }
+
     public List<Plant> getPlants() {
         return plants;
+    }
+
+    /**
+     * Returns a string with the tags of the garden
+     *
+     * @return a comma separated list of tags
+     */
+    public String getTagsString() {
+        return "TODO,FIXME";
     }
 }

@@ -18,3 +18,18 @@ window.addEventListener("load", () => {
     }
 
 });
+
+/**
+ * Gets the content of a meta tag
+ *
+ * @param {string} name The name of the meta tag
+ * @returns The content of the meta tag
+ */
+function getMeta(name) {
+    /**@type {HTMLMetaElement} */
+    const metaElement = document.querySelector(`meta[name="${name}"]`);
+    return metaElement?.content;
+}
+
+const csrf = getMeta('_csrf');
+const csrfHeader = getMeta('_csrf_header');

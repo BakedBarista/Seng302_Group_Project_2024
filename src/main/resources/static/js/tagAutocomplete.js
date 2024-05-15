@@ -21,6 +21,10 @@ function tagAutocomplete(options) {
         acceptButton: true,
     });
 
+    for (const tag of tags) {
+        appendTagElement(tag);
+    }
+
     /**
      * Appends a tag element to the tag container.
      */

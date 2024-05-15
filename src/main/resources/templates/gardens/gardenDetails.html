@@ -4,6 +4,9 @@
     <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
     <title>Garden Details</title>
     <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
+
+    <meta name="_gardenId" th:content="${garden.id}" />
+    <meta name="_tags" th:content="${garden.tagsString}" />
 </head>
 
 <body>
@@ -98,7 +101,6 @@
                 <div class="mb-3" id="tag-autocomplete-container"></div>
             </div>
             <div class="col-md-12 mb-4" id="tag-container"></div>
-            <div th:data-garden-id="${garden.id}"></div>
             <script th:src="@{/js/autocomplete.js}"></script>
             <script th:src="@{/js/tagAutocomplete.js}"></script>
             <script th:src="@{/js/gardenDetailsTagAutocomplete.js}"></script>
