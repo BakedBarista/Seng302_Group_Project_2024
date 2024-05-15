@@ -2,8 +2,6 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.api;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,8 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.TagRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
 
 @RestController
 @RequestMapping("/api")
@@ -28,9 +26,11 @@ public class TagAPIController {
     final Logger logger = LoggerFactory.getLogger(TagAPIController.class);
 
     private GardenService gardenService;
+    private TagService tagService;
 
-    public TagAPIController(GardenService gardenService, TagRepository tagRepository) {
+    public TagAPIController(GardenService gardenService, TagService tagService) {
         this.gardenService = gardenService;
+        this.tagService = tagService;
     }
 
     @PutMapping("/gardens/{gardenId}/tags")
@@ -50,18 +50,7 @@ public class TagAPIController {
             return ResponseEntity.status(403).build();
         }
 
-        // Remove tags that are not in the new list
-        for (Tag tag : garden.getTags()) {
-            if (!tags.stream().anyMatch(t -> t.equals(tag.getName()))) {
-                garden.getTags().remove(tag);
-            }
-        }
-        // Add new tags
-        for (String tagName : tags) {
-            Tag tag = new Tag(tagName);
-            garden.getTags().add(tag);
-        }
-        gardenService.addGarden(garden);
+        tagService.updateGardenTags(garden, tags);
 
         return ResponseEntity.ok().build();
     }

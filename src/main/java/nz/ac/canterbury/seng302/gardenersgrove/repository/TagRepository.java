@@ -14,6 +14,6 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
 
 @Repository
 public interface TagRepository extends CrudRepository<Tag, Long> {
-    Optional<Tag> findById(long id);
+    Optional<Tag> findByName(String name);
     List<Tag> findAll();
 }

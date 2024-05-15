@@ -16,10 +16,12 @@ import org.slf4j.LoggerFactory;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationConstants.*;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 /**
@@ -366,6 +368,6 @@ public class Garden {
      * @return a comma separated list of tags
      */
     public String getTagsString() {
-        return String.join(",", tags.stream().map(Tag::getName).toList());
+        return String.join(",", tags.stream().sorted().map(Tag::getName).toList());
     }
 }
