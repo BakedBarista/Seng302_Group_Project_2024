@@ -75,7 +75,7 @@ public class PlantControllerTest {
     }
 
     @Test
-    void testSubmitAddPlantForm_DataIsValid_ReturnToGardenDetailPage() {
+    void testSubmitAddPlantForm_DataIsValid_ReturnToGardenDetailPage() throws Exception {
         Plant validPlant = new Plant("Plant", "10", "Yellow", "11/03/2024");
         long gardenId = 0;
         String expectedReturnPage = "redirect:/gardens/" + gardenId;
@@ -87,7 +87,7 @@ public class PlantControllerTest {
     }
 
     @Test
-    void testSubmitAddPlantForm_DataIsInvalid_ReturnToAddPlantForm() {
+    void testSubmitAddPlantForm_DataIsInvalid_ReturnToAddPlantForm() throws Exception {
         Plant invalidPlant = new Plant("#invalid", "10", "Yellow", "11/03/2024");
         long gardenId = 0;
         String expectedReturnPage = "plants/addPlant";
@@ -257,7 +257,7 @@ public class PlantControllerTest {
         doThrow(new RuntimeException("Image processing error"))
                 .when(plantService).setPlantImage(anyLong(), anyString(), any(byte[].class));
 
-        String view = plantController.submitEditPlantForm(gardenId, plantId, file, plant, bindingResult, model);
+        String view = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, plant, bindingResult, model);
 
         assertEquals("redirect:/gardens/" + gardenId, view);
     }
