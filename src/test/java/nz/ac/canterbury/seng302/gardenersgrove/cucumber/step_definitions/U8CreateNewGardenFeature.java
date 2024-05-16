@@ -45,13 +45,17 @@ public class U8CreateNewGardenFeature {
     private static FriendsRepository friendsRepository;
 
     private static ModerationService moderationService;
+    private static ModerationService mockedModerationService;
+
 
     private static GardenController gardenController;
 
+    private static Garden gardenMock;
     @BeforeAll
     public static void beforeAll() {
-
+        System.out.println("test");
         bindingResult = mock(BindingResult.class);
+        gardenMock = mock(Garden.class);
         model = mock(Model.class);
         authentication = mock(Authentication.class);
         friendsRepository = mock(FriendsRepository.class);
@@ -64,6 +68,7 @@ public class U8CreateNewGardenFeature {
         plantService = new PlantService(plantRepository, gardenRepository);
         weatherAPIService = new WeatherAPIService(restTemplate, gardenService);
         moderationService = new ModerationService();
+        mockedModerationService = mock(ModerationService.class);
         gardenController = new GardenController(gardenService, plantService, userService, weatherAPIService, friendService, moderationService);
     }
 
@@ -107,8 +112,12 @@ public class U8CreateNewGardenFeature {
     @And("I submit create garden form")
     public void iSubmitCreateGardenForm() {
         when(authentication.getPrincipal()).thenReturn((Long) 1L);
+
+        when(mockedModerationService.checkIfDescriptionIsFlagged("")).thenReturn(false);
+
         when(gardenUserRepository.findById(1L)).thenReturn(Optional.of(user));
         when(gardenRepository.save(garden)).thenReturn(garden);
+
         gardenController.submitForm(garden, bindingResult, authentication, model);
     }
 

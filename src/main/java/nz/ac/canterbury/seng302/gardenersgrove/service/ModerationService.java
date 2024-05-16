@@ -51,7 +51,7 @@ public class ModerationService {
      * @return
      */
     public boolean checkIfDescriptionIsFlagged(String description) {
-        if (description.isEmpty()) {
+        if (description == null || description.isEmpty()) {
             return false;
         }
 
