@@ -467,6 +467,50 @@
          assertEquals("redirect:/users/manageFriends", result);
      }
 
+     @Test
+     public void whenDeclineSentNotEmpty_thenUsersRemovedFromSearchResults() {
+         String searchUser = otherUser.getFname();
+         List<GardenUser> searchResults = new ArrayList<>();
+         List<Friends> friendsList = new ArrayList<>();
+         searchResults.add(otherUser);
+
+         Friends friendship = new Friends(loggedInUser, otherUser, "Declined");
+         friendsList.add(friendship);
+         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+         when(gardenUserService.getUserBySearch(searchUser, loggedInUserId)).thenReturn(searchResults);
+         when(friendService.getSentRequestsDeclined(loggedInUserId)).thenReturn(friendsList);
+
+         RedirectAttributes rm = new RedirectAttributesModelMap();
+         String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
+
+         List<Friends> declineSentList = (List<Friends>) rm.getFlashAttributes().get("declineSent");
+         assertTrue(declineSentList.contains(otherUser));
+         assertFalse(searchResults.contains(otherUser));
+         assertEquals("redirect:/users/manageFriends", result);
+     }
+
+     @Test
+     void whenStatusIsPending_thenShownAsPending() {
+         String searchUser = otherUser.getFname();
+         List<GardenUser> searchResults = new ArrayList<>();
+         List<Friends> friendsList = new ArrayList<>();
+         searchResults.add(otherUser);
+
+         Friends friendship = new Friends(loggedInUser, otherUser, "Pending");
+         friendsList.add(friendship);
+         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+         when(gardenUserService.getUserBySearch(searchUser, loggedInUserId)).thenReturn(searchResults);
+         when(friendService.getSent(loggedInUserId, otherUserId)).thenReturn(friendship);
+
+         RedirectAttributes rm = new RedirectAttributesModelMap();
+         String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
+
+         List<Friends> requestPendingList = (List<Friends>) rm.getFlashAttributes().get("requestPending");
+         assertTrue(requestPendingList.contains(otherUser));
+         assertFalse(searchResults.contains(otherUser));
+         assertEquals("redirect:/users/manageFriends", result);
+     }
+
      /**
       * Testing the viewFriendProfile method
       */
@@ -562,5 +606,7 @@
          assertEquals("redirect:/users/manageFriends", result);
 
      }
+
+
  }
 
