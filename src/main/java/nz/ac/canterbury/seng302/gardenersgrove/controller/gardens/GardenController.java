@@ -88,6 +88,30 @@ public class GardenController {
             return "gardens/createGarden";
         }
         boolean descriptionFlagged = moderationService.checkIfDescriptionIsFlagged(garden.getDescription());
+        List<String> locationErrorNames = Arrays.asList("city", "country", "suburb", "streetNumber", "streetName", "postCode");
+        if (bindingResult.hasErrors() || descriptionFlagged) {
+            if (descriptionFlagged) {
+                model.addAttribute("profanity", "The description does not match the language standards of the app.");
+            }
+            for (FieldError error : bindingResult.getFieldErrors()) {
+                if(locationErrorNames.contains(error.getField())){
+                    var errorCode = error.getCode();
+                    if(errorCode != null){
+                        String errorMessage;
+                        if(errorCode.equals("Pattern")){
+                            errorMessage = "Location name must only include letters, numbers, spaces, dots, hyphens or apostrophes";
+                        } else {
+                            errorMessage = "Location cannot be empty";
+                        }
+                        model.addAttribute("locationError", errorMessage);
+                        break;
+                    }
+                }
+            }
+        }
+
+
+
         if (bindingResult.hasErrors() || descriptionFlagged) {
             if (descriptionFlagged) {
                 model.addAttribute("profanity", "The description does not match the language standards of the app.");
@@ -281,8 +305,6 @@ public class GardenController {
 
     /**
      * gets all public gardens
-     * @param page page number
-     * @param size size of page
      * @param model representation of results
      * @return publicGardens page
      */
