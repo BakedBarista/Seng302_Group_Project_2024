@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
@@ -20,6 +21,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 
 import java.util.Collections;
+import java.util.Optional;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
@@ -64,6 +66,8 @@ public class GardenControllerMVCTests {
         moderationService = mock(ModerationService.class);
         gardenController = new GardenController(gardenService, plantService, gardenUserService, weatherAPIService, friendService, moderationService);
 
+        Garden mockGarden1 = new Garden();
+        Mockito.when(gardenService.getGardenById(1)).thenReturn(Optional.of(mockGarden1));       
         // Setting up lenient behavior to avoid unnecessary stubbing exceptions
         lenient().when(owner.getId()).thenReturn(1L);
         lenient().when(gardenUserService.getCurrentUser()).thenReturn(owner);
@@ -89,5 +93,21 @@ public class GardenControllerMVCTests {
                 .andExpect(view().name("gardens/publicGardens"))
                 .andExpect(model().attributeExists("gardenPage"))
                 .andExpect(model().attribute("gardenPage", expectedGardens));
+    }
+
+    @Test
+    public void testCreateGardens() throws Exception {
+        // Setup our mocked service
+        int page = 0;
+        int size = 10;
+
+        Page<Garden> expectedGardens = new PageImpl<>(Collections.emptyList(), PageRequest.of(page, size), 0);
+        given(gardenService.getPageForPublicGardens(PageRequest.of(page, size))).willReturn(expectedGardens);
+        // Perform the GET request
+
+        mockMvc.perform(get("/gardens/1")
+                        .param("page", String.valueOf(page))
+                        .param("size", String.valueOf(size)))
+                .andExpect(status().isOk());
     }
 }
