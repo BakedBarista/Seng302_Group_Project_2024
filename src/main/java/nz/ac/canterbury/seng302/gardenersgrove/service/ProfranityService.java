@@ -28,7 +28,6 @@ public class ProfranityService {
     public static void loadConfigs() {
         Resource resource = new ClassPathResource("static/badWordList.txt");
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()))){
-            logger.info("{}",reader);
             String line = "";
             while((line = reader.readLine()) != null) {
                 String[] content = null;

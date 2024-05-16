@@ -1,6 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unittests.service;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
-import org.springframework.util.Assert;
 
-import nz.ac.canterbury.seng302.gardenersgrove.service.ModerationService;
+
+
 import nz.ac.canterbury.seng302.gardenersgrove.service.ProfranityService;
 
 public class ProfranityServiceTest {
