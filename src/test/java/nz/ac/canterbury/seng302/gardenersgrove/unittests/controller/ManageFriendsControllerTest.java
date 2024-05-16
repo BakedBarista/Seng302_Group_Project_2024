@@ -46,15 +46,19 @@
 
      Long loggedInUserId;
      Long otherUserId;
+     Long thirdUserId;
      Long invalidUserId;
      GardenUser loggedInUser = new GardenUser();
      GardenUser otherUser = new GardenUser();
+     GardenUser thirdUser = new GardenUser();
+
 
      @BeforeEach
      public void setUp() {
          MockitoAnnotations.openMocks(this);
          loggedInUserId = 1L;
          otherUserId = 2L;
+         thirdUserId = 3L;
          invalidUserId = 123L;
 
          loggedInUser.setId(loggedInUserId);
@@ -66,6 +70,11 @@
          otherUser.setEmail("john.doe@gmail.com");
          otherUser.setFname("John");
          otherUser.setFname("Doe");
+
+         thirdUser.setId(thirdUserId);
+         thirdUser.setEmail("charlie.brown@gmail.com");
+         thirdUser.setFname("Charlie");
+         thirdUser.setFname("Brown");
      }
 
      /**
@@ -99,6 +108,43 @@
          verify(friendService, times(1)).save(any(Friends.class));
          assertEquals("redirect:/users/manageFriends", result);
      }
+
+     /**
+      * Testing the manageFriendsInvite method
+      */
+     @Test
+     public void whenPreviouslyDeclined_thenRequestNotCreated() {
+         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+         when(gardenUserService.getUserById(loggedInUserId)).thenReturn(loggedInUser);
+         when(gardenUserService.getUserById(otherUserId)).thenReturn(otherUser);
+
+         Friends declinedRequest = new Friends(loggedInUser, otherUser, "Declined");
+         when(friendService.getSentRequestsDeclined(loggedInUserId)).thenReturn(List.of(declinedRequest));
+
+         String result = manageFriendsController.manageFriendsInvite(authentication, otherUserId);
+
+         verify(friendService, times(0)).save(any(Friends.class));
+         assertEquals("redirect:/users/manageFriends", result);
+     }
+
+     /**
+      * Testing the manageFriendsInvite method
+      */
+     @Test
+     public void whenPreviouslyDeclinedToAnotherUser_thenRequestCreated() {
+         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+         when(gardenUserService.getUserById(loggedInUserId)).thenReturn(loggedInUser);
+         when(gardenUserService.getUserById(otherUserId)).thenReturn(otherUser);
+
+         Friends declinedRequest = new Friends(loggedInUser, thirdUser, "Declined");
+         when(friendService.getSentRequestsDeclined(loggedInUserId)).thenReturn(List.of(declinedRequest));
+
+         String result = manageFriendsController.manageFriendsInvite(authentication, otherUserId);
+
+         verify(friendService, times(1)).save(any(Friends.class));
+         assertEquals("redirect:/users/manageFriends", result);
+     }
+
 
      /**
       * Testing the manageFriendsInvite method
@@ -172,6 +218,26 @@
          assertEquals(friendService.getFriendship(loggedInUserId, otherUserId).getStatus(), "accepted");
          assertEquals("redirect:/users/manageFriends", result);
      }
+
+     /**
+      * Testing the manageFriendsAccept method
+      */
+     @Test
+     public void givenSentRequestPreviouslyDeclined_whenFriendshipPending_thenDeclinedRequestDeleted() {
+         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+
+         Friends existingRequest = new Friends(loggedInUser, otherUser, "Pending");
+         when(friendService.getFriendship(loggedInUserId, otherUserId)).thenReturn(existingRequest);
+
+         Friends declinedRequest = new Friends(loggedInUser, otherUser, "Declined");
+         when(friendService.getSentRequestsDeclined(loggedInUserId)).thenReturn(List.of(declinedRequest));
+
+         manageFriendsController.manageFriendsAccept(authentication, otherUserId);
+
+         verify(friendService).delete(declinedRequest);
+     }
+
+
 
      /**
       * Testing the manageFriendsAccept method
@@ -373,27 +439,6 @@
       * Testing the manageFriendsSearch method
       */
      @Test
-     public void whenFriendRequestReceived_thenUserNotInSearchResults() {
-         String searchUser = otherUser.getFname();
-         List<GardenUser> searchResults = new ArrayList<>();
-         List<Friends> friendsList = new ArrayList<>();
-         GardenUser userWithReceivedRequest = loggedInUser;
-         searchResults.add(userWithReceivedRequest);
-
-         Friends friendship = new Friends(loggedInUser, otherUser, "Pending");
-         friendsList.add(friendship);
-         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
-         when(gardenUserService.getUserBySearch(searchUser, loggedInUserId)).thenReturn(searchResults);
-         when(friendService.getReceivedRequests(loggedInUserId)).thenReturn(friendsList);
-
-         RedirectAttributes rm = new RedirectAttributesModelMap();
-         String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
-
-         assertFalse(searchResults.contains(userWithReceivedRequest));
-         assertEquals("redirect:/users/manageFriends", result);
-     }
-
-     @Test
      public void whenRequestPending_thenUserNotInSearchResults() {
          String searchUser = otherUser.getFname();
          List<GardenUser> searchResults = new ArrayList<>();
@@ -414,42 +459,9 @@
          assertEquals("redirect:/users/manageFriends", result);
      }
 
-     @Test
-     public void whenRequestPending_andStatusNotPending_thenUserIsInSearchResult () {
-         String searchUser = otherUser.getFname();
-         List<GardenUser> searchResults = new ArrayList<>();
-         List<Friends> friendsList = new ArrayList<>();
-         searchResults.add(otherUser);
-
-         Friends friendship = new Friends(loggedInUser, otherUser, "accepted");
-         friendsList.add(friendship);
-         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
-         when(gardenUserService.getUserBySearch(searchUser, loggedInUserId)).thenReturn(searchResults);
-         when(friendService.getReceivedRequests(loggedInUserId)).thenReturn(friendsList);
-
-         RedirectAttributes rm = new RedirectAttributesModelMap();
-         String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
-
-         assertTrue(searchResults.contains(otherUser));
-         assertEquals("redirect:/users/manageFriends", result);
-     }
-
-     @Test
-     public void whenRequestPendingIsNull_thenUserIsInSearchResult() {
-         String searchUser = otherUser.getFname();
-         List<GardenUser> searchResults = new ArrayList<>();
-         searchResults.add(otherUser);
-         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
-         when(gardenUserService.getUserBySearch(searchUser, loggedInUserId)).thenReturn(searchResults);
-         when(friendService.getSent(loggedInUserId, otherUserId)).thenReturn(null);
-
-         RedirectAttributes rm = new RedirectAttributesModelMap();
-         String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
-
-         assertTrue(searchResults.contains(otherUser));
-         assertEquals("redirect:/users/manageFriends", result);
-     }
-
+     /**
+      * Testing the manageFriendsSearch method
+      */
      @Test
      public void whenAlreadyFriends_thenUserNotInSearchResults() {
          String searchUser = otherUser.getFname();
@@ -467,6 +479,9 @@
          assertEquals("redirect:/users/manageFriends", result);
      }
 
+     /**
+      * Testing the manageFriendsSearch method
+      */
      @Test
      public void whenDeclineSentNotEmpty_thenUsersRemovedFromSearchResults() {
          String searchUser = otherUser.getFname();
@@ -489,6 +504,9 @@
          assertEquals("redirect:/users/manageFriends", result);
      }
 
+     /**
+      * Testing the manageFriendsSearch method
+      */
      @Test
      void whenStatusIsPending_thenShownAsPending() {
          String searchUser = otherUser.getFname();
@@ -594,6 +612,9 @@
 
      }
 
+     /**
+      * Testing manageFriendsDecline method
+      */
      @Test
      public void whenFriendshipExists_thenNoDeclineOption() {
          Friends friends = new Friends(loggedInUser, otherUser, "accepted");

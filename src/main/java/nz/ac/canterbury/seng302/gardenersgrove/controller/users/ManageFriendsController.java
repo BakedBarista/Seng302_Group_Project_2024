@@ -78,7 +78,6 @@ public class ManageFriendsController {
         GardenUser sentToUser = userService.getUserById(requestedUserId);
         
         boolean requestingMyself = loggedInUserId.equals(requestedUserId);
-
         if (requestingMyself) {
             return "redirect:/users/manageFriends";
         }
