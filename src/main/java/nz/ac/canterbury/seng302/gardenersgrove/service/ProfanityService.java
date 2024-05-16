@@ -30,7 +30,7 @@ public class ProfanityService {
             while((line = reader.readLine()) != null) {
                 String[] content = null;
                 try {
-                    content = line.split("'\n'");
+                    content = line.split("\\n");
                     for (String a: content) {
                         logger.info("{}", a);
                     }
