@@ -8,8 +8,6 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import nz.ac.canterbury.seng302.gardenersgrove.service.ProfranityService;
-
 import java.util.Arrays;
 
 @Service
@@ -20,8 +18,6 @@ public class ModerationService {
     private String moderationApiKey;
 
     private static final String MODERATION_API_URL = "https://api.openai.com/v1/moderations";
-
-    private static final String PROFANITY_URL = "https://www.purgomalum.com/service/";
 
 
     /**

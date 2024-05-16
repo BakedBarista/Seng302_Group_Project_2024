@@ -4,12 +4,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
 // skeleton code provided by https://gist.github.com/PimDeWitte/c04cc17bc5fa9d7e3aee6670d4105941.
+@Service
 public class ProfranityService {
     static Map<String, String[]> words = new HashMap<>();
-    
+    static Logger logger = LoggerFactory.getLogger(ProfranityService.class);
+
     static int largestWordLength = 0;
     
+    public ProfranityService(){
+    }
+
     public static void loadConfigs() {
 
         String contentString = "arse\narsehole\nass\nasses\nassface\nassfaces\nasshole\nassholes\nbastard\nbastards\nbeaner\nbellend\nbint\nbitch\nbitches\nbitchy\nblowjob\nblump\nblumpkin\nbollocks\nbollox\nboner\nbukkake\nbullshit\nbunghole\nbuttcheeks\nbutthole\nbuttpirate\nbuttplug\ncarpetmuncher\nchinc\nchink\nchoad\nchode\ncirclejerk\nclit\nclunge\ncock\ncocksucker\ncocksuckers\ncocksucking\ncoochie\ncoochy\ncoon\ncooter\ncornhole\ncum\ncunnie\ncunt\ncunts\ndago\ndic\ndick\ndickhead\ndickheads\ndik\ndike\ndildo\ndoochbag\ndoosh\ndouche\ndouchebag\ndumbass\ndumbasses\ndyke\nfag\nfagget\nfaggit\nfaggot\nfaggots\nfagtard\nfanny\nfeck\nfelch\nfeltch\nfigging\nfingerbang\nfrotting\nfuc\nfuck\nfucked\nfuckedup\nfucker\nfuckers\nfucking\nfuckoff\nfucks\nfuckup\nfudgepacker\nfuk\nfukker\nfukkers\nfuq\ngangbang\ngash\ngoddamn\ngoddamnit\ngokkun\ngooch\ngook\nguido\nheeb\nhonkey\nhooker\njackass\njackasses\njackoff\njap\njerkoff\njigaboo\njiggerboo\njizz\njunglebunny\nkike\nknobbing\nkooch\nkootch\nkraut\nkyke\nlesbo\nlezzie\nmilf\nminge\nmotherfucker\nmotherfuckers\nmotherfucking\nmuff\nmuffdiver\nmuffdiving\nmunging\nmunter\nngga\nniga\nnigga\nnigger\nniggers\nniglet\nnigr\npaki\npanooch\npecker\npeckerhead\npillock\npiss\npissed\npollock\npoon\npoonani\npoonany\npoontang\nporchmonkey\nprick\npunani\npunanny\npunany\npussie\npussies\npussy\nputa\nputo\nquim\nraghead\nruski\nschlong\nscrote\nshag\nshit\nshite\nshithead\nshitheads\nshits\nshittier\nshittiest\nshitting\nshitty\nskank\nskeet\nslag\nslanteye\nslut\nsmartass\nsmartasses\nsmeg\nsnatch\nspic\nspick\nsplooge\nspooge\nteabagging\ntit\ntities\ntits\ntitties\ntitty\ntosser\ntowelhead\ntwat\nvibrator\nwank\nwanker\nwetback\nwhore\nwiseass\nwiseasses\nwop\n";
@@ -22,18 +31,18 @@ public class ProfranityService {
                     continue;
                 }
                 String word = content[0];
-                String[] ignore_in_combination_with_words = new String[]{};
+                String[] ignoreInCombinationWithWords = new String[]{};
                 if(content.length > 1) {
-                    ignore_in_combination_with_words = content[1].split("_");
+                    ignoreInCombinationWithWords = content[1].split("_");
                 }
 
                 if(word.length() > largestWordLength) {
                     largestWordLength = word.length();
                 }
-                words.put(word.replaceAll(" ", ""), ignore_in_combination_with_words);
+                words.put(word.replace(" ", ""), ignoreInCombinationWithWords);
 
             } catch(Exception e) {
-                e.printStackTrace();
+                logger.info("{}", e.toString());
             }
 
         }
@@ -53,15 +62,15 @@ public class ProfranityService {
 
         // don't forget to remove leetspeak, probably want to move this to its own function and use regex if you want to use this 
         
-        input = input.replaceAll("1","i");
-        input = input.replaceAll("!","i");
-        input = input.replaceAll("3","e");
-        input = input.replaceAll("4","a");
-        input = input.replaceAll("@","a");
-        input = input.replaceAll("5","s");
-        input = input.replaceAll("7","t");
-        input = input.replaceAll("0","o");
-        input = input.replaceAll("9","g");
+        input = input.replace("1","i");
+        input = input.replace("!","i");
+        input = input.replace("3","e");
+        input = input.replace("4","a");
+        input = input.replace("@","a");
+        input = input.replace("5","s");
+        input = input.replace("7","t");
+        input = input.replace("0","o");
+        input = input.replace("9","g");
         
 
         ArrayList<String> badWords = new ArrayList<>();
@@ -95,13 +104,5 @@ public class ProfranityService {
         }
         return badWords;
 
-    }
-
-    public static String filterText(String input, String username) {
-        ArrayList<String> badWords = badWordsFound(input);
-        if(badWords.size() > 0) {
-            return "This message was blocked because a bad word was found. If you believe this word should not be blocked, please message support.";
-        }
-        return input;
     }
 }
