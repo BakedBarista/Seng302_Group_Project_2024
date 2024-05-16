@@ -24,7 +24,7 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class PlantControllerTest {
@@ -132,6 +132,26 @@ public class PlantControllerTest {
         String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, invalidPlant, bindingResult, model);
 
         assertEquals(expectedReturnPage, returnPage);
+    }
+
+    @Test
+    void testSubmitPlantForm_NoImageUploaded_PlantImageIsSetToNull() {
+        long gardenId = 1L;
+        byte[] image = {};
+        String contentType = "image/png";
+        String name = "plant.png";
+        String originalFilename = "plant.png";
+
+        MultipartFile file = new MockMultipartFile(name,originalFilename,contentType,image);
+        Plant plant = new Plant();
+        BindingResult bindingResult = mock(BindingResult.class);
+
+        plant.setPlantedDate("10/10/2024");
+        when(bindingResult.hasErrors()).thenReturn(false);
+        plantController.submitAddPlantForm(gardenId, plant, bindingResult, file, model);
+
+        assertNull(plant.getPlantImage());
+        assertEquals(plant.getPlantImageContentType(), "null");
     }
 
     @Test
