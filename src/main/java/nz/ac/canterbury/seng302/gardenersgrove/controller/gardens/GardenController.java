@@ -11,6 +11,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.ModerationService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.ProfranityService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weatherAPI.WeatherAPIService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,6 +87,11 @@ public class GardenController {
     public String submitForm(@Valid @ModelAttribute("garden") Garden garden,
                              BindingResult bindingResult, Model model) {
         logger.info("POST /gardens - submit the new garden form");
+
+        ProfranityService.loadConfigs();
+        if(ProfranityService.badWordsFound(garden.getDescription()) != null) {
+            logger.info("Bad Word Found");
+        }
 
         boolean descriptionFlagged = moderationService.checkIfDescriptionIsFlagged(garden.getDescription());
         if (bindingResult.hasErrors() || descriptionFlagged) {
