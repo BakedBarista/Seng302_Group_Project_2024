@@ -110,7 +110,7 @@ public class PlantController {
         if (savedPlant != null) {
             try {
                 plantService.setPlantImage(savedPlant.getId(), file.getContentType(), file.getBytes());
-                logger.info("Saved new plant '{}' to Garden ID: {}", plant.getName(), gardenId);
+                logger.info("Saved new plant to Garden ID: {}", gardenId);
             } catch (IOException e) {
                 logger.error("Something went wrong saving the user's plant image: ", e);
             }
