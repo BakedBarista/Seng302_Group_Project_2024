@@ -22,9 +22,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static nz.ac.canterbury.seng302.gardenersgrove.entity.Friends.Status.*;
+
 @Controller
 public class ManageFriendsController {
-    private static final String PENDING = "Pending"; //Invite 'pending' status
     private Logger logger = LoggerFactory.getLogger(ManageFriendsController.class);
     private FriendService friendService;
     private GardenUserService userService;
@@ -133,7 +134,7 @@ public class ManageFriendsController {
         Friends friendShip = friendService.getFriendship(loggedInUserId, acceptUserId);
 
         if (friendShip != null) {
-            friendShip.setStatus("accepted");
+            friendShip.setStatus(ACCEPTED);
             friendService.save(friendShip);
         }
 
@@ -166,7 +167,7 @@ public class ManageFriendsController {
             List<Friends> friendShip = friendService.getReceivedRequests(loggedInUserId);
             for (Friends user : friendShip) {
                 if (user.getSender().getId().equals(declineUserId) && user.getReceiver().getId().equals(loggedInUserId)) {
-                    user.setStatus("Declined");
+                    user.setStatus(DECLINED);
                     friendService.save(user);
                 }
             }
@@ -203,7 +204,7 @@ public class ManageFriendsController {
         for (GardenUser user : copyOfSearchResults) {
             Friends existingRequest = friendService.getSent(loggedInUserId, user.getId());
             if (existingRequest != null) {
-                if (existingRequest.getStatus().equals("accepted")) {
+                if (existingRequest.getStatus().equals(ACCEPTED)) {
                     alreadyFriendsList.add(user);
                     searchResults.remove(user);
                 } else if (existingRequest.getReceiver().getId().equals(loggedInUserId)) {
@@ -212,7 +213,7 @@ public class ManageFriendsController {
                 } else if (existingRequest.getStatus().equals(PENDING)) {
                     requestPendingList.add(user);
                     searchResults.remove(user);
-                } else if (existingRequest.getStatus().equals("Declined")) {
+                } else if (existingRequest.getStatus().equals(DECLINED)) {
                     alreadyFriendsDeclineSent.add(user);
                     searchResults.remove(user);
                 }

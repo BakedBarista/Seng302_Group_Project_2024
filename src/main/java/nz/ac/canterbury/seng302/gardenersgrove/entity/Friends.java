@@ -21,7 +21,8 @@ public class Friends {
     private GardenUser receiver;
     
     @Column(nullable = false)
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
     /**
      * Creates a new FormResult object
@@ -29,7 +30,7 @@ public class Friends {
      * @param receiver user to be added as friend to sender
      * @param status pending accepted or denied
      */
-    public Friends(GardenUser sender, GardenUser receiver, String status) {
+    public Friends(GardenUser sender, GardenUser receiver, Status status) {
         this.sender = sender;
         this.receiver = receiver;
         this.status = status;
@@ -50,11 +51,9 @@ public class Friends {
         return receiver;
     }
 
-    public String getStatus() {
-        return status;
-    }
+    public Status getStatus() { return status; }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
@@ -64,6 +63,12 @@ public class Friends {
         return "friends {" +
                 "sender=" + sender +
                 ", receiver='" + receiver + '\'';
+    }
+
+    public enum Status {
+        PENDING,
+        ACCEPTED,
+        DECLINED,
     }
 }
 
