@@ -6,6 +6,10 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import nz.ac.canterbury.seng302.gardenersgrove.customValidation.AgeRange;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationConstants.*;
 
 /**
@@ -96,15 +100,17 @@ public class RegisterDTO {
         this.confirmPassword = confirmPassword;
     }
 
-    public String getDOB() {
-        return DOB;
-    }
+    public String getDOB() { return DOB; }
 
     public void setDOB(String DOB) {
         if (DOB == null || DOB.isEmpty()) {
             this.DOB = null;
         } else {
             this.DOB = DOB;
+//            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
+//            Date date = inputFormat.parse(DOB);
+//            SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy");
+//            this.DOB = outputFormat.format(date);
         }
     }
 }
