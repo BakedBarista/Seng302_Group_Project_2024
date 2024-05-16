@@ -24,6 +24,7 @@ import java.util.Collections;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension .class)
@@ -51,7 +52,8 @@ public class GardenControllerMVCTests {
 
     @Mock
     private ModerationService moderationService;
-
+    
+    private static Garden mockGarden;
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -63,6 +65,8 @@ public class GardenControllerMVCTests {
         plantService = mock(PlantService.class);
         moderationService = mock(ModerationService.class);
         gardenController = new GardenController(gardenService, plantService, gardenUserService, weatherAPIService, friendService, moderationService);
+
+        mockGarden = new Garden();
 
         // Setting up lenient behavior to avoid unnecessary stubbing exceptions
         lenient().when(owner.getId()).thenReturn(1L);
@@ -89,5 +93,15 @@ public class GardenControllerMVCTests {
                 .andExpect(view().name("gardens/publicGardens"))
                 .andExpect(model().attributeExists("gardenPage"))
                 .andExpect(model().attribute("gardenPage", expectedGardens));
+    }
+
+    @Test
+    public void testLocationErrorGardens() throws Exception {
+
+        // Perform the GET request
+        mockMvc.perform(post("/gardens/create").flashAttr("garden", mockGarden))
+                .andExpect(status().isOk())
+                .andExpect(view().name("gardens/createGarden"))
+                .andExpect(model().attribute("locationError", "Location cannot be empty"));
     }
 }
