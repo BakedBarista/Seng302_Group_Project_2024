@@ -9,8 +9,6 @@ import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 
-import java.util.*;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -200,39 +198,22 @@ public class ManageFriendsController {
         List<GardenUser> receivedRequestList = new ArrayList<>();
 
         // so we don't get index out of range
-        List<GardenUser> copyOfSearchResults = new ArrayList<>(searchResults);
+        List<GardenUser> copyOfSearchResults = List.copyOf(searchResults);
 
-        if (!searchResults.isEmpty()) {
-            for (GardenUser user : copyOfSearchResults) {
-                Friends requestPending = friendService.getSent(loggedInUserId, user.getId());
-                List<Friends> declineSent = friendService.getSentRequestsDeclined(loggedInUserId);
-                List<Friends> requestReceived = friendService.getReceivedRequests(loggedInUserId);
-                Friends alreadyFriends = friendService.getAcceptedFriendship(loggedInUserId, user.getId());
-
-                if (requestPending != null && Objects.equals(requestPending.getStatus(), PENDING)) {
+        for (GardenUser user : copyOfSearchResults) {
+            Friends existingRequest = friendService.getSent(loggedInUserId, user.getId());
+            if (existingRequest != null) {
+                if (existingRequest.getStatus().equals("accepted")) {
+                    alreadyFriendsList.add(user);
+                    searchResults.remove(user);
+                } else if (existingRequest.getReceiver().getId().equals(loggedInUserId)) {
+                    receivedRequestList.add(user);
+                    searchResults.remove(user);
+                } else if (existingRequest.getStatus().equals(PENDING)) {
                     requestPendingList.add(user);
                     searchResults.remove(user);
-                }
-
-                if (!requestReceived.isEmpty()) {
-                    for (Friends receiver : requestReceived) {
-                        if (user.getId().equals(receiver.getSender().getId())) {
-                            receivedRequestList.add(user);
-                            searchResults.remove(user);
-                        }
-                    }
-                } else if (!declineSent.isEmpty()) {
-                    for (Friends receiver : declineSent) {
-                        if (user.getId().equals(receiver.getReceiver().getId())) {
-                            alreadyFriendsDeclineSent.add(user);
-                            searchResults.remove(user);
-                        }
-                    }
-                }
-
-
-                if (alreadyFriends != null) {
-                    alreadyFriendsList.add(user);
+                } else if (existingRequest.getStatus().equals("Declined")) {
+                    alreadyFriendsDeclineSent.add(user);
                     searchResults.remove(user);
                 }
             }

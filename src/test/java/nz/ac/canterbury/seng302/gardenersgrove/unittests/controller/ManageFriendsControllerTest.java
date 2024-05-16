@@ -4,7 +4,6 @@
  import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
  import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
  import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
- import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
  import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
  import org.junit.jupiter.api.extension.ExtendWith;
  import org.mockito.junit.jupiter.MockitoExtension;
@@ -21,7 +20,6 @@
  import java.util.ArrayList;
  import java.util.Collections;
  import java.util.List;
- import java.util.Optional;
 
  import static org.junit.jupiter.api.Assertions.*;
  import static org.mockito.ArgumentMatchers.any;
@@ -439,6 +437,30 @@
       * Testing the manageFriendsSearch method
       */
      @Test
+     public void whenRequestReceived_thenUserNotInSearchResults() {
+         String searchUser = otherUser.getFname();
+         List<GardenUser> searchResults = new ArrayList<>();
+         List<Friends> friendsList = new ArrayList<>();
+         GardenUser userWithPendingRequest = otherUser;
+         searchResults.add(userWithPendingRequest);
+
+         Friends friendship = new Friends(otherUser, loggedInUser, "Pending");
+         friendsList.add(friendship);
+         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+         when(gardenUserService.getUserBySearch(searchUser, loggedInUserId)).thenReturn(searchResults);
+         when(friendService.getSent(loggedInUserId, otherUserId)).thenReturn(friendship);
+
+         RedirectAttributes rm = new RedirectAttributesModelMap();
+         String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
+
+         assertFalse(searchResults.contains(userWithPendingRequest));
+         assertEquals("redirect:/users/manageFriends", result);
+     }
+
+     /**
+      * Testing the manageFriendsSearch method
+      */
+     @Test
      public void whenRequestPending_thenUserNotInSearchResults() {
          String searchUser = otherUser.getFname();
          List<GardenUser> searchResults = new ArrayList<>();
@@ -450,7 +472,7 @@
          friendsList.add(friendship);
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
          when(gardenUserService.getUserBySearch(searchUser, loggedInUserId)).thenReturn(searchResults);
-         when(friendService.getReceivedRequests(loggedInUserId)).thenReturn(friendsList);
+         when(friendService.getSent(loggedInUserId, otherUserId)).thenReturn(friendship);
 
          RedirectAttributes rm = new RedirectAttributesModelMap();
          String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
@@ -466,11 +488,12 @@
      public void whenAlreadyFriends_thenUserNotInSearchResults() {
          String searchUser = otherUser.getFname();
          List<GardenUser> searchResults = new ArrayList<>();
-         searchResults.add(loggedInUser);
+         searchResults.add(otherUser);
 
+         Friends friendship = new Friends(loggedInUser, otherUser, "accepted");
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
          when(gardenUserService.getUserBySearch(searchUser, loggedInUserId)).thenReturn(searchResults);
-         when(friendService.getAcceptedFriendship(loggedInUserId, loggedInUserId)).thenReturn(new Friends());
+         when(friendService.getSent(loggedInUserId, otherUserId)).thenReturn(friendship);
 
          RedirectAttributes rm = new RedirectAttributesModelMap();
          String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
@@ -483,7 +506,7 @@
       * Testing the manageFriendsSearch method
       */
      @Test
-     public void whenDeclineSentNotEmpty_thenUsersRemovedFromSearchResults() {
+     public void whenDeclined_thenUsersRemovedFromSearchResults() {
          String searchUser = otherUser.getFname();
          List<GardenUser> searchResults = new ArrayList<>();
          List<Friends> friendsList = new ArrayList<>();
@@ -493,7 +516,7 @@
          friendsList.add(friendship);
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
          when(gardenUserService.getUserBySearch(searchUser, loggedInUserId)).thenReturn(searchResults);
-         when(friendService.getSentRequestsDeclined(loggedInUserId)).thenReturn(friendsList);
+         when(friendService.getSent(loggedInUserId, otherUserId)).thenReturn(friendship);
 
          RedirectAttributes rm = new RedirectAttributesModelMap();
          String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
@@ -508,7 +531,7 @@
       * Testing the manageFriendsSearch method
       */
      @Test
-     void whenStatusIsPending_thenShownAsPending() {
+     void whenPending_thenShownAsPending() {
          String searchUser = otherUser.getFname();
          List<GardenUser> searchResults = new ArrayList<>();
          List<Friends> friendsList = new ArrayList<>();
