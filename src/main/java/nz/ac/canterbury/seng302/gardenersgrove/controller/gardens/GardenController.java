@@ -22,8 +22,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -85,19 +88,18 @@ public class GardenController {
                              BindingResult bindingResult, Model model) {
         logger.info("POST /gardens - submit the new garden form");
 
-        if (bindingResult.hasErrors()) {
+        boolean descriptionFlagged = moderationService.checkIfDescriptionIsFlagged(garden.getDescription());
+        if (bindingResult.hasErrors() || descriptionFlagged) {
+            if (descriptionFlagged) {
+                model.addAttribute("profanity", "The description does not match the language standards of the app.");
+            }
+
             model.addAttribute("garden", garden);
             return "gardens/createGarden";
         }
+
         GardenUser owner = gardenUserService.getCurrentUser();
         garden.setOwner(owner);
-
-        //Checks description for inappropriate content
-        if (moderationService.checkIfDescriptionIsFlagged(garden.getDescription())) {
-            model.addAttribute("garden", garden);
-            model.addAttribute("profanity", "The description does not match the language standards of the app.");
-            return "gardens/createGarden";
-        }
 
         Garden savedGarden = gardenService.addGarden(garden);
         return "redirect:/gardens/" + savedGarden.getId();
@@ -232,15 +234,30 @@ public class GardenController {
                                @Valid @ModelAttribute("garden") Garden garden,
                                BindingResult result,
                                Model model) {
-        if (result.hasErrors()) {
+        List<String> locationErrorNames = Arrays.asList("city", "country", "suburb", "streetNumber", "streetName", "postCode");
+        boolean descriptionFlagged = moderationService.checkIfDescriptionIsFlagged(garden.getDescription());
+
+        if (result.hasErrors() || descriptionFlagged) {
+            if (descriptionFlagged) {
+                model.addAttribute("profanity", "The description does not match the language standards of the app.");
+            }
+
+            for (FieldError error : result.getFieldErrors()) {
+                if(locationErrorNames.contains(error.getField())){
+                    if(error.getCode().equals("Pattern")){
+                        var errorMessage = "Location name must only include letters, numbers, spaces, dots, hyphens or apostrophes";
+                        model.addAttribute("locationError", errorMessage);
+                        break;
+                    } else {
+                        var errorMessage = "Location cannot be empty";
+                        model.addAttribute("locationError", errorMessage);
+                        break;
+                    }
+                }
+            }
+
             model.addAttribute("garden", garden);
             model.addAttribute("id", id);
-            return "gardens/editGarden";
-        }
-        //Checks description for inappropriate content
-        if (moderationService.checkIfDescriptionIsFlagged(garden.getDescription())) {
-            model.addAttribute("garden", garden);
-            model.addAttribute("profanity", "The description does not match the language standards of the app.");
             return "gardens/editGarden";
         }
 

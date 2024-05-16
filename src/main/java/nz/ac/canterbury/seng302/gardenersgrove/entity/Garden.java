@@ -38,29 +38,27 @@ public class Garden {
     private String name;
 
     @Size(max = 512, message = "Description must be 512 characters or less and contain some text")
-    @Pattern(regexp = "^.*\\p{L}.*|$" , message = "Description must be 512 characters or less and contain some text")
+    @Pattern(regexp = "^(.*\\p{L}.*)?$" , message = "Description must be 512 characters or less and contain some text")
     private String description;
 
     @Pattern(regexp = "^([0-9]+[a-zA-Z]?(\\s?\\-?\\s?[0-9]+[a-zA-Z]?)?)?$", message = "Please enter a valid street number")
     @Column
     private String streetNumber;
 
-    @NotBlank(message = "Street Name is required")
     @Pattern(regexp = GARDEN_REGEX, message = "Please enter a valid street name")
     @Column
     private String streetName;
 
-    @NotBlank(message = "Suburb is required")
     @Pattern(regexp = GARDEN_REGEX, message = "Please enter a valid suburb")
     @Column
     private String suburb;
 
-    @NotBlank(message = "City and Country are required")
+    @NotBlank(message = "City is required")
     @Pattern(regexp = GARDEN_REGEX, message = "Please enter a valid City name")
     @Column(nullable = false)
     private String city;
 
-    @NotBlank(message = "City and Country are required")
+    @NotBlank(message = "Country is required")
     @Pattern(regexp = GARDEN_REGEX, message = "Please enter a valid country name")
     @Column(nullable = false)
     private String country;

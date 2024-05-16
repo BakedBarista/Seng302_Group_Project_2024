@@ -1,12 +1,13 @@
 /* Colors */
 :root {
-    --gg-dark: #395C0A;
+    --gg-dark: #2C430D;
     --gg-primary: #395C0A;
+    --gg-primary-light: #608530;
     --gg-primary-rgb: 85, 173, 83;
     --gg-secondary: #A4AF69;
     --gg-secondary-rgb: 164, 175, 105;
-    --gg-secondary-dark: #0A2B5C;
-    --gg-secondary-light: #98BBEF;
+    --gg-secondary-dark: #8C9D34;
+    --gg-secondary-light: #D3DD9D;
     --gg-pale: #FFE0B5;
 
     --gg-white: #F5F5F5;
@@ -30,6 +31,12 @@ body {
     background-color: var(--gg-white);
 }
 
+/* Colours the required astrix for required forms */
+.required-field::after {
+    content: "*";
+    color: red;
+    font-family: bold, serif;
+}
 
 /* Global typography */
 body {
@@ -60,8 +67,8 @@ h1, h2, h3, h4, h5, h6 {
     --bs-btn-bg: var(--gg-primary);
     --bs-btn-border-color: var(--gg-primary);
     --bs-btn-hover-color: var(--gg-white);
-    --bs-btn-hover-bg: var(--gg-dark);
-    --bs-btn-hover-border-color: var(--gg-dark);
+    --bs-btn-hover-bg: var(--gg-primary-light);
+    --bs-btn-hover-border-color: var(--gg-primary-light);
     --bs-btn-focus-shadow-rgb: var(--gg-primary-rgb);
     --bs-btn-active-color: var(--gg-white);
     --bs-btn-active-bg: var(--gg-dark);
@@ -75,8 +82,8 @@ h1, h2, h3, h4, h5, h6 {
     --bs-btn-color: var(--gg-primary);
     --bs-btn-border-color: var(--gg-primary);
     --bs-btn-hover-color: #fff;
-    --bs-btn-hover-bg: var(--gg-primary);
-    --bs-btn-hover-border-color: var(--gg-primary);
+    --bs-btn-hover-bg: var(--gg-primary-light);
+    --bs-btn-hover-border-color: var(--gg-primary-light);
     --bs-btn-focus-shadow-rgb: 13, 110, 253;
     --bs-btn-active-color: #fff;
     --bs-btn-active-bg: var(--gg-primary);
@@ -102,6 +109,19 @@ h1, h2, h3, h4, h5, h6 {
     --bs-btn-disabled-border-color: var(--gg-primary);
 }
 
+.btn-outline-secondary {
+    --bs-btn-color: var(--gg-secondary-dark);
+    --bs-btn-border-color: var(--gg-secondary-dark);
+    --bs-btn-hover-color: var(--gg-white);
+    --bs-btn-hover-bg: var(--gg-secondary-dark);
+    --bs-btn-hover-border-color: var(--gg-secondary-dark);
+    --bs-btn-focus-shadow-rgb: var(--gg-secondary-rgb);
+    --bs-btn-active-color: var(--gg-white);
+    --bs-btn-active-bg: var(--gg-secondary-dark);
+    --bs-btn-active-border-color: var(--gg-secondary-dark);
+    --bs-btn-disabled-bg: var(--gg-pale);
+    --bs-btn-disabled-border-color: var(--gg-primary);
+}
 
 /* Form controls */
 .form-control:focus,
@@ -110,7 +130,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 
-/* Navbar and drawer */
+/* Navbar and drawer specifics */
 :root {
     --gg-nav-drawer-width: 300px;
     --gg-nav-drawer-padding: 28px;
@@ -120,7 +140,7 @@ h1, h2, h3, h4, h5, h6 {
     display: flex;
     flex-direction: column;
 
-    background-color: var(--gg-dark);
+    background-color: var(--gg-primary);
     color: var(--gg-white);
     padding: var(--gg-nav-drawer-padding) 0;
 }
@@ -143,6 +163,7 @@ h1, h2, h3, h4, h5, h6 {
 .nav-drawer a {
     color: var(--gg-white);
     font-weight: 600;
+    text-decoration: none;
 }
 
 .nav-drawer h5 {
@@ -165,7 +186,7 @@ h1, h2, h3, h4, h5, h6 {
     margin: 0;
     padding: 0;
 }
-    
+
 .nav-drawer li a {
     height: 50px;
 
@@ -176,7 +197,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .nav-drawer li a:hover {
-    background-color: var(--gg-secondary);
+    background-color: var(--gg-primary-light);
 }
 
 .nav-drawer .link-icon {
@@ -212,45 +233,6 @@ h1, h2, h3, h4, h5, h6 {
     margin-top: 0;
 }
 
-.form-group {
-    display: block;
-    margin: 16px 0;
-}
-
-.form-group input {
-    display: block;
-    margin: 8px 0;
-}
-
-.form-group-error input {
-    background: pink;
-    outline: 1px solid red;
-}
-
-.form-group input[type="file"] {
-    display: none;
-}
-
-.form-group input {
-    padding: 8px;
-    margin-bottom: 10px;
-}
-
-.form-group.link-text {
-    color: blue;
-    text-decoration: underline;
-}
-
-.form-checkbox {
-    display: block;
-    margin: 16px 0;
-}
-
-.error {
-    display: block;
-    color: red;
-}
-
 .profile-picture-large {
     border-radius: 999px;
     box-shadow: #333 0 0 8px -3px;
@@ -273,20 +255,18 @@ h1, h2, h3, h4, h5, h6 {
     border: 1px solid red;
 }
 
-a {
-    text-decoration: none;
-}
-
 .image-container {
     position: relative;
+    width: 100px;
+    height: 100px;
     display: inline-block;
     justify-content: center;
 }
 
 .image-container img {
-    max-width: 100px;
-    max-height: 100px;
-    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .add-image-button {
@@ -311,7 +291,7 @@ a {
 
 .required-field::after {
     content: "*";
-    color: red;
+    color: black;
     font-family: bold, serif;
 }
 
