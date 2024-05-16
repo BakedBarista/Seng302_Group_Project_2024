@@ -41,14 +41,17 @@ public class GardenController {
     private final GardenUserService gardenUserService;
     private final FriendService friendService;
 
+    private final ProfanityService profanityService;
+
     @Autowired
-    public GardenController(GardenService gardenService, PlantService plantService, GardenUserService gardenUserService, WeatherAPIService weatherAPIService, FriendService friendService, ModerationService moderationService) {
+    public GardenController(GardenService gardenService, PlantService plantService, GardenUserService gardenUserService, WeatherAPIService weatherAPIService, FriendService friendService, ModerationService moderationService, ProfanityService profanityService) {
         this.gardenService = gardenService;
         this.plantService = plantService;
         this.gardenUserService = gardenUserService;
         this.weatherAPIService = weatherAPIService;
         this.friendService = friendService;
         this.moderationService = moderationService;
+        this.profanityService = profanityService;
     }
 
     /**
@@ -78,13 +81,12 @@ public class GardenController {
     public String submitForm(@Valid @ModelAttribute("garden") Garden garden,
                              BindingResult bindingResult, Model model) {
         logger.info("POST /gardens - submit the new garden form");
-        ProfanityService.loadConfigs();
-        ArrayList<String> badwords = ProfanityService.badWordsFound(garden.getDescription());
-        logger.info("{}",badwords);
-        if(!badwords.isEmpty()) {
-            logger.info("Bad Word Found");
-        }
 
+        if(!profanityService.badWordsFound(garden.getDescription()).isEmpty()){
+            model.addAttribute("profanity", "The description does not match the language standards of the app.");
+            model.addAttribute("garden", garden);
+            return "gardens/createGarden";
+        }
         boolean descriptionFlagged = moderationService.checkIfDescriptionIsFlagged(garden.getDescription());
         if (bindingResult.hasErrors() || descriptionFlagged) {
             if (descriptionFlagged) {

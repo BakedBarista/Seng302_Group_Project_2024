@@ -52,6 +52,8 @@ public class GardenControllerMVCTests {
     @Mock
     private ModerationService moderationService;
 
+    @Mock ProfanityService profanityService;
+
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -62,7 +64,8 @@ public class GardenControllerMVCTests {
         gardenService = mock(GardenService.class);
         plantService = mock(PlantService.class);
         moderationService = mock(ModerationService.class);
-        gardenController = new GardenController(gardenService, plantService, gardenUserService, weatherAPIService, friendService, moderationService);
+        profanityService = mock(ProfanityService.class);
+        gardenController = new GardenController(gardenService, plantService, gardenUserService, weatherAPIService, friendService, moderationService, profanityService);
 
         // Setting up lenient behavior to avoid unnecessary stubbing exceptions
         lenient().when(owner.getId()).thenReturn(1L);
