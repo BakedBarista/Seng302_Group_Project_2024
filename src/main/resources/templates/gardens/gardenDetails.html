@@ -10,10 +10,10 @@
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 <main class="mx-5 py-5">
     <div class="row">
-        <div class="col w-50">
+        <div class="col-xl-6 col-12">
             <div class="d-flex">
                 <h1 class="pb-4 pe-5" th:text="${garden.name}">GARDEN NAME</h1>
-                <div>
+                <div class="ms-auto me-3">
                     <a class="btn btn-primary mt-1"
                        th:href="@{/gardens/{id}/edit(id=${garden.id})}">
                         <img th:src="@{/icons/edit-white.svg}"
@@ -22,7 +22,7 @@
                              height="20" />Edit</a>
                 </div>
             </div>
-            <div class="col-xl-6 col-12">
+            <div>
                 <!--<h3>Info:</h3>-->
                 <div class="d-flex">
                     <img th:src="@{/icons/location-04-stroke-rounded.svg}" alt="" width="30" height="30" />
@@ -41,12 +41,14 @@
                     <p class="mx-1 mt-1 fw-bold">Size: </p><span class="mt-1"><span th:text="${garden.size}"></span> m&sup2;</span>
                 </div>
                 <div class="d-flex">
-                    <!--                <img th:src="@{/icons/book-02-stroke-rounded.svg}" alt="" width="20" height="20" />-->
-                    <p class="mx-1 my-0"><strong>Description: </strong><span th:text="${garden.description}"></span></p>
+                    <!--<img th:src="@{/icons/book-02-stroke-rounded.svg}" alt="" width="20" height="20" />-->
+                    <strong>Description: </strong>
+                    <p class="flex-wrap" style="max-width: 200px" th:text="${garden.description}"></p>
                 </div>
             </div>
         </div>
         <div class="col-xl-6 col-12">
+            <div class="mt-4 d-md-none"></div>
             <h2>Weather:</h2>
             <div th:if="${displayRecommendation}" class="alert alert-warning alert-dismissible fade show d-flex" role="alert">
                 <div>
