@@ -17,25 +17,11 @@
                 <!--&lt;!&ndash;                TODO: Put error checking here that shows up for the image&ndash;&gt;-->
                 <div class="position-relative d-inline">
                     <label for="image" class="position-absolute top-0 end-0" style="cursor: pointer;"><img src="/icons/trans-plus.svg" alt="+" /></label>
-                    <input id="image" name="image" onchange="previewImage" class="d-none" type="file" accept="image/jpeg, image/png, image/svg"/>
-                    <img id="preview" th:src="@{/img/default-plant.svg}" alt="Plant Picture" class="rounded mx-auto d-block h-auto" style="width: 300px;" />
-                    <div id="plantImageError" class="invalid-feedback"></div>
+                    <input id="image" name="image" class="d-none" type="file" accept=".png,.jpg,.jpeg,.svg"/>
+                    <img id="preview" onchange="previewImage(e)" th:src="@{/img/default-plant.svg}" alt="Plant Picture" class="rounded mx-auto d-block h-auto" style="width: 300px;" />
+                    <span id="plantImageError" class="invalid-feedback text-center"></span>
                 </div>
             </div>
-
-<!--            <div>-->
-<!--                <h3>Plant Image:</h3>-->
-<!--                <div class="image-container">-->
-<!--                    <img id="preview" th:src="@{/img/plant.png}" alt="Default Plant Image" />-->
-<!--                    <label for="image" class="add-image-button">+</label>-->
-<!--                    <input type="file" name="image" accept=".png,.jpg,.jpeg,.svg" class="form-control-file" style = "display: none;" onchange="previewImage(event)">-->
-<!--                    <span id="plantImageError" class="error" style="display: none; color: red"></span>-->
-<!--                </div>-->
-<!--            </div>-->
-
-
-
-
             <div class="mb-3">
                 <label th:class="'form-label ' + ${#fields.hasErrors('name') ? 'is-invalid' : ''}" for="name">Plant Name:</label>
                 <input th:class="'form-control ' + ${#fields.hasErrors('name') ? 'is-invalid' : ''}" type="text" id="name" name="name" th:value="${plant.name}" >
@@ -56,16 +42,6 @@
                 <input type="date" id="plantedDate" name="plantedDate" th:class="'form-control ' + ${#fields.hasErrors('plantedDate') ? 'is-invalid' : ''}" th:value="${plant.plantedDate}" >
                 <div class="invalid-feedback" th:if="${#fields.hasErrors('plantedDate')}" th:errors="*{plantedDate}"></div>
             </div>
-<!--            <div class="mb-3">-->
-
-<!--                <label for="formFile" class="form-label">Plant Image:</label>-->
-<!--                <input class="form-control" onchange="showImage(this)" type="file" id="formFile">-->
-<!--                <div class="invalid-feedback" th:if="${fileTypeError}" th:text="${fileTypeError}"></div>-->
-<!--                <div class="invalid-feedback" th:if="${fileSizeError}" th:text="${fileSizeError}"></div>-->
-<!--            </div>-->
-<!--            <div class="form-group">-->
-<!--                <input id="img-preview" onchange="showImage(this)" type="file" name="image" accept=".png, .jpg, .jpeg, .svg" class="form-control-file">-->
-<!--            </div>-->
             <div class="alert alert-danger" th:if="${fileTypeError}">
                 <div th:text="${fileTypeError}" style="color: red"></div>
             </div>
@@ -73,17 +49,6 @@
             <div class="alert alert-danger" th:if="${fileSizeError}">
                 <div th:text="${fileSizeError}" style="color: red"></div>
             </div>
-
-<!--            TODO: IDK What we are gonna do we this section here-->
-<!--            <div>-->
-<!--                <h3>Plant Image:</h3>-->
-<!--                <div class="image-container">-->
-<!--                    <img th:src="@{${plant.plantImagePath}}" />-->
-<!--                    <img th:unless="${plant.plantImagePath}" src="/default.png" alt="Default Plant Image" />-->
-<!--                    <label for="image" class="add-image-button">+</label>-->
-<!--                    <input type="file" id="image" name="image" accept=".png,.jpg,.jpeg,.svg" class="form-control-file" style = "display: none;">-->
-<!--                </div>-->
-<!--            </div>-->
             <div>
                 <button class="btn btn-primary" type="submit">Submit!</button>
                 <a type="button" class="btn btn-outline-secondary" th:href="@{/gardens/{id}(id=${gardenId})}">Cancel</a>
@@ -95,15 +60,4 @@
 </body>
 <script th:src="@{/js/nextFormBox.js}"></script>
 <script th:src="@{/js/plantImageErrorChecking.js}"></script>
-<script>
-    //Below code is provided by ChatGPT
-    document.getElementById("addPlantForm").addEventListener("submit", function(event) {
-        if (hasError) {
-            event.preventDefault();
-            return false;
-        }
-        return true;
-    });
-</script>
-
 </html>
