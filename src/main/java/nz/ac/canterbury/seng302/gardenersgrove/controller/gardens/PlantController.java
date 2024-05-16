@@ -7,14 +7,12 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -25,7 +23,6 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -83,33 +80,38 @@ public class PlantController {
                                       @Valid @ModelAttribute("plant") Plant plant,
                                      BindingResult bindingResult,
                                      @RequestParam("image") MultipartFile file,
-                                      Model model) throws Exception {
+                                      Model model) {
 
 
+        logger.info("POST /gardens/{}/add-plant - Request made", gardenId);
         if (!plant.getPlantedDate().isEmpty() && !plant.getPlantedDate().matches("\\d{4}-\\d{2}-\\d{2}")){
             bindingResult.rejectValue("plantedDate", "plantedDate.formatError", "Date must be in the format DD-MM-YYYY");
-
         }
-        if(!plant.getPlantedDate().isEmpty()) {
+
+        if (!plant.getPlantedDate().isEmpty()) {
             plant.setPlantedDate(refactorPlantedDate(plant.getPlantedDate()));
         }
 
-        logger.info(plant.getPlantedDate());
-        logger.info("POST /gardens/${gardenId}/add-plant - submit the new plant form");
-        if(bindingResult.hasErrors()) {
+        // Makes sure the image is null when nothing uploaded
+        if (file.isEmpty()) {
+            logger.info("No image chosen for plant, using default image.");
+            plant.setPlantImage("null", null);
+        }
+
+        if (bindingResult.hasErrors()) {
             model.addAttribute("plant", plant);
             model.addAttribute("gardenId", gardenId);
-            logger.info("Error In Form");
+            logger.error("Validation error in Plant Form.");
             return "plants/addPlant";
         }
-        Plant savedPlant = plantService.addPlant(plant, gardenId);
-        //Save plant image
-        if(file != null) {
-            try{
+
+        // Save the new plant and image
+        try {
+            Plant savedPlant = plantService.addPlant(plant, gardenId);
             plantService.setPlantImage(savedPlant.getId(), file.getContentType(), file.getBytes());
-        } catch (Exception e){
-                logger.info("Exception {}",e.toString());
-            }
+            logger.info("Saved new plant '{}' to Garden ID: {}", plant.getName(), gardenId);
+        } catch (IOException e) {
+            logger.error("Something went wrong saving the user's plant image: ", e);
         }
         return "redirect:/gardens/" + gardenId;
     }
@@ -216,12 +218,19 @@ public class PlantController {
 
         Optional<Plant> plant = plantService.getPlantById(id);
         Plant existingPlant = new Plant();
+
         if (plant.isPresent()) {
             existingPlant = plant.get();
         }
-        if (existingPlant.getPlantImage() == null) {
-                return ResponseEntity.status(302).header(HttpHeaders.LOCATION, "/img/plant.png").build();
-            }
+
+        // Return the default image if nothing specified
+        if (existingPlant.getPlantImage() == null || existingPlant.getPlantImage().length == 0) {
+            logger.info("Returning default plant image");
+            return ResponseEntity.status(302).header(HttpHeaders.LOCATION, "/img/default-plant.svg").build();
+        }
+
+        // Return the saved image from DB
+        logger.info("Returning the plants saved image from DB");
         return ResponseEntity.ok().contentType(MediaType.parseMediaType(existingPlant.getPlantImageContentType()))
                 .body(existingPlant.getPlantImage());
 
