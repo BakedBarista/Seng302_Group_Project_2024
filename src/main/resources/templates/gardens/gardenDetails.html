@@ -40,10 +40,10 @@
                     <img th:src="@{/icons/aspect-ratio-stroke-rounded.svg}" alt="" width="30" height="30" />
                     <p class="mx-1 mt-1 fw-bold">Size: </p><span class="mt-1"><span th:text="${garden.size}"></span> m&sup2;</span>
                 </div>
-                <div class="d-flex">
+                <strong>Description: </strong>
+                <div class="overflow-auto">
                     <!--<img th:src="@{/icons/book-02-stroke-rounded.svg}" alt="" width="20" height="20" />-->
-                    <strong>Description: </strong>
-                    <p class="flex-wrap" style="max-width: 200px" th:text="${garden.description}"></p>
+                    <p th:text="${garden.description}"></p>
                 </div>
             </div>
         </div>
