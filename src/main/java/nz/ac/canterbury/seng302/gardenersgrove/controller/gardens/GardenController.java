@@ -88,6 +88,26 @@ public class GardenController {
                              BindingResult bindingResult, Model model) {
         logger.info("POST /gardens - submit the new garden form");
 
+        List<String> locationErrorNames = Arrays.asList("city", "country", "suburb", "streetNumber", "streetName", "postCode");
+        if (bindingResult.hasErrors()) {
+            for (FieldError error : bindingResult.getFieldErrors()) {
+                if(locationErrorNames.contains(error.getField())){
+                    var errorCode = error.getCode();
+                    if(errorCode != null){
+                        String errorMessage;
+                        if(errorCode.equals("Pattern")){
+                            errorMessage = "Location name must only include letters, numbers, spaces, dots, hyphens or apostrophes";
+                        } else {
+                            errorMessage = "Location cannot be empty";
+                        }
+                        model.addAttribute("locationError", errorMessage);
+                        break;
+                    }
+                }
+            }
+        }
+
+        
         boolean descriptionFlagged = moderationService.checkIfDescriptionIsFlagged(garden.getDescription());
         if (bindingResult.hasErrors() || descriptionFlagged) {
             if (descriptionFlagged) {
