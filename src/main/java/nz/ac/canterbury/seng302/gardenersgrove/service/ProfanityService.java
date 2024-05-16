@@ -16,23 +16,24 @@ import org.springframework.stereotype.Service;
 
 // skeleton code provided by https://gist.github.com/PimDeWitte/c04cc17bc5fa9d7e3aee6670d4105941.
 @Service
-public class ProfranityService {
+public class ProfanityService {
     static Map<String, String[]> words = new HashMap<>();
-    static Logger logger = LoggerFactory.getLogger(ProfranityService.class);
+    static Logger logger = LoggerFactory.getLogger(ProfanityService.class);
 
     static int largestWordLength = 0;
-    
-    public ProfranityService(){
-    }
 
     public static void loadConfigs() {
         Resource resource = new ClassPathResource("static/badWordList.txt");
+        logger.info("{}",resource);
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()))){
             String line = "";
             while((line = reader.readLine()) != null) {
                 String[] content = null;
                 try {
-                    content = line.split(",");
+                    content = line.split("'\n'");
+                    for (String a: content) {
+                        logger.info("{}", a);
+                    }
                     if(content.length == 0) {
                         continue;
                     }
@@ -52,8 +53,9 @@ public class ProfranityService {
                 }
 
             }
+            logger.info("{}",words);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.info("{}",e);
         }
     }
 
@@ -109,7 +111,7 @@ public class ProfranityService {
 
 
         for(String s: badWords) {
-            System.out.println(s + " qualified as a bad word in a username");
+            System.out.println(s + " qualified as a bad word");
         }
         return badWords;
 
