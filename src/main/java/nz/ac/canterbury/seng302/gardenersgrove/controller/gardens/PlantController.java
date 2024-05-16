@@ -106,12 +106,16 @@ public class PlantController {
         }
 
         // Save the new plant and image
-        try {
-            Plant savedPlant = plantService.addPlant(plant, gardenId);
-            plantService.setPlantImage(savedPlant.getId(), file.getContentType(), file.getBytes());
-            logger.info("Saved new plant '{}' to Garden ID: {}", plant.getName(), gardenId);
-        } catch (IOException e) {
-            logger.error("Something went wrong saving the user's plant image: ", e);
+        Plant savedPlant = plantService.addPlant(plant, gardenId);
+        if (savedPlant != null) {
+            try {
+                plantService.setPlantImage(savedPlant.getId(), file.getContentType(), file.getBytes());
+                logger.info("Saved new plant '{}' to Garden ID: {}", plant.getName(), gardenId);
+            } catch (IOException e) {
+                logger.error("Something went wrong saving the user's plant image: ", e);
+            }
+        } else {
+            logger.error("Failed to save new plant to garden ID: {}", gardenId);
         }
         return "redirect:/gardens/" + gardenId;
     }
