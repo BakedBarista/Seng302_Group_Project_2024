@@ -92,9 +92,10 @@ public class GardenController {
         if (bindingResult.hasErrors()) {
             for (FieldError error : bindingResult.getFieldErrors()) {
                 if(locationErrorNames.contains(error.getField())){
-                    if(error.getCode() != null){
+                    var errorCode = error.getCode();
+                    if(errorCode != null){
                         String errorMessage;
-                        if(error.getCode().equals("Pattern")){
+                        if(errorCode.equals("Pattern")){
                             errorMessage = "Location name must only include letters, numbers, spaces, dots, hyphens or apostrophes";
                         } else {
                             errorMessage = "Location cannot be empty";
