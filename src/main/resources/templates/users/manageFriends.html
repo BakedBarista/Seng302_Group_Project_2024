@@ -270,7 +270,7 @@
                             <form th:action="@{/users/manageFriends/cancel}" method="post" class="d-inline">
                                 <input type="hidden" name="userId" th:value="${friend.receiver.id}" class="d-inline"/>
                                 <td class="align-middle">
-                                    <button class="btn btn-warning btn-sm mr-2" th:if="${friend.status == 'Pending'}">Cancel</button>
+                                    <button class="btn btn-warning btn-sm mr-2" th:if="${friend.status.name() == 'PENDING'}">Cancel</button>
                                 </td>
                         </tr>
                         </tbody>
