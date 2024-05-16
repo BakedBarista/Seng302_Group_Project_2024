@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng302.gardenersgrove.controller.api;
+package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 
 import org.slf4j.Logger;
