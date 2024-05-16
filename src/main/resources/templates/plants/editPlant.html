@@ -28,8 +28,10 @@
             <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}" style="color: red;"></div>
             <br/>
             <label for="date"> Date Planted: </label>
-            <input type="date" class="form-control" id="date" placeholder="DD/MM/YYYY" th:value="${plant.plantedDate}" th:name="plantedDate" data-cy="size" autofocus>
+            <input type='date' class="form-control" id="date" placeholder="DD/MM/YYYY" th:value="${plant.plantedDate}" th:name="plantedDate" data-cy="size" autofocus>
             <div th:if="${#fields.hasErrors('plantedDate')}" th:errors="*{plantedDate}" style="color: red;"></div>
+            <!--      dateError is the flag for when the date is not filled in correctly (e.g. 10/mm/2001)      -->
+            <input type="hidden" name="dateError" id="dateError" value="">
             <br/>
             <div>
                 <h3>Plant Image:</h3>
@@ -41,7 +43,7 @@
                 </div>
             </div>
             <div>
-                <button class="btn btn-primary btn-sm"type="submit">Submit</button><a class="btn btn-outline-secondary btn-sm btn-cancel" th:href="@{/gardens/{garden_id}(garden_id=${gardenId})}">Cancel</a>
+                <button class="btn btn-primary btn-sm" type="submit" onclick="return validateDate()">Submit</button><a class="btn btn-outline-secondary btn-sm btn-cancel" th:href="@{/gardens/{garden_id}(garden_id=${gardenId})}">Cancel</a>
             </div>
         </form>
     </div>
@@ -49,6 +51,7 @@
 <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
 </body>
 <script th:src="@{/js/nextFormBox.js}"></script>
+<script th:src="@{/js/dateValidation.js}"></script>
 <script th:src="@{/js/plantImageErrorChecking.js}"></script>
 <script>
     document.getElementById("editPlantForm").addEventListener("submit", function(event) {
