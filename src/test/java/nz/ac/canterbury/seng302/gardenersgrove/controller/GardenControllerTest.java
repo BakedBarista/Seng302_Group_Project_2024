@@ -4,6 +4,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.GardenController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weatherAPI.WeatherAPIService;
 import org.junit.jupiter.api.Assertions;
@@ -56,10 +57,14 @@ public class GardenControllerTest {
 
     private static Authentication authentication;
 
+    private static GardenRepository gardenRepository;
+    private static Garden mockGarden;
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
+        gardenRepository = mock(GardenRepository.class);
         GardenUser mockUser = mock(GardenUser.class);
+        mockGarden = mock(Garden.class);
         when(mockUser.getId()).thenReturn(1L);
         when(gardenUserService.getCurrentUser()).thenReturn(mockUser);
         when(gardenService.getGardensByOwnerId(1L)).thenReturn(Collections.emptyList());
@@ -185,11 +190,16 @@ public class GardenControllerTest {
         Model model = mock(Model.class);
         String description = "some really nasty words";
         Garden invalidGarden = new Garden("","","","","","","",0.0,0.0,"", description);
+        gardenService.addGarden(invalidGarden);
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
+
+        when(gardenRepository.save(invalidGarden)).thenReturn(invalidGarden);
+        when(gardenUserService.getUserById(1L)).thenReturn(new GardenUser());
         when(profanityService.badWordsFound(anyString())).thenReturn(new ArrayList<>());
         when(moderationService.checkIfDescriptionIsFlagged(description)).thenReturn(true);
-
+        when(authentication.getPrincipal()).thenReturn((Long) 1L);
+        when(gardenService.addGarden(any())).thenReturn(invalidGarden);
         gardenController.submitForm(invalidGarden, bindingResult, authentication, model);
 
         verify(model).addAttribute("profanity", EXPECTED_MODERATION_ERROR_MESSAGE);

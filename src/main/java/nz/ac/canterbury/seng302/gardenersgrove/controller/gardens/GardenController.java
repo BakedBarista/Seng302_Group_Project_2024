@@ -112,6 +112,8 @@ public class GardenController {
                     }
                 }
             }
+            model.addAttribute("garden", garden);
+            return "gardens/createGarden";
         }
 
       
