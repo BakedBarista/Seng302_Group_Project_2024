@@ -87,7 +87,9 @@ public class GardenController {
             profanityFlagged = moderationService.checkIfDescriptionIsFlagged(garden.getDescription());
         }
         if (bindingResult.hasErrors() || profanityFlagged) {
-            model.addAttribute("profanity", "The description does not match the language standards of the app.");
+            if(profanityFlagged) {
+                model.addAttribute("profanity", "The description does not match the language standards of the app.");
+            }
             for (FieldError error : bindingResult.getFieldErrors()) {
                 if(locationErrorNames.contains(error.getField())){
                     var errorCode = error.getCode();
