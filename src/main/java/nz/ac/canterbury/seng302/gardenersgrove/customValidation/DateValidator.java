@@ -14,11 +14,9 @@ public class DateValidator implements ConstraintValidator<ValidDate, String> {
     private static final List<Integer> THIRTY_DAY_MONTHS = List.of(4, 6, 9, 11);
     private static final List<Integer> THIRTY_ONE_DAY_MONTHS = List.of(1, 3, 5, 7, 8, 10, 12);
 
-    private static final String DATE_PATTERN = "^\\d{4}-\\d{2}-\\d{2}$";
+    private static final String DATE_PATTERN_THYMELEAF = "^\\d{4}-\\d{2}-\\d{2}$";
 
-    @Override
-    public void initialize(ValidDate constraintAnnotation) {
-    }
+    private static final String DATE_PATTERN_STORED = "^\\d{2}/\\d{2}/\\d{4}$";
 
     @Override
     public boolean isValid(String dateField, ConstraintValidatorContext context) {
@@ -26,15 +24,22 @@ public class DateValidator implements ConstraintValidator<ValidDate, String> {
             return true;
         }
 
-        if (!Pattern.matches(DATE_PATTERN, dateField)) {
+        int day;
+        int month;
+        int year;
+        if (Pattern.matches(DATE_PATTERN_THYMELEAF, dateField)) {
+            String[] fields = dateField.split("-");
+            day = Integer.parseInt(fields[2], 10);
+            month = Integer.parseInt(fields[1], 10);
+            year = Integer.parseInt(fields[0], 10);
+        } else if (Pattern.matches(DATE_PATTERN_STORED, dateField)) {
+            String[] fields = dateField.split("/");
+            day = Integer.parseInt(fields[0], 10);
+            month = Integer.parseInt(fields[1], 10);
+            year = Integer.parseInt(fields[2], 10);
+        } else {
             return false;
         }
-
-        String[] fields = dateField.split("-");
-        int day = Integer.parseInt(fields[1], 10);
-        int month = Integer.parseInt(fields[2], 10);
-        int year = Integer.parseInt(fields[0], 10);
-
 
         boolean dayValid = day > 0 && day <= 31;
         boolean monthValid = month > 0 && month <= 12;

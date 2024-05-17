@@ -88,6 +88,7 @@ public class PlantController {
         if(!plant.getPlantedDate().isEmpty()) {
             plant.setPlantedDate(refactorPlantedDate(plant.getPlantedDate()));
         }
+
         logger.info("POST /gardens/${gardenId}/add-plant - submit the new plant form");
         if(bindingResult.hasErrors()) {
             model.addAttribute("plant", plant);
@@ -96,7 +97,7 @@ public class PlantController {
             return "plants/addPlant";
         }
         Plant savedPlant = plantService.addPlant(plant, gardenId);
-        //Save plant image
+//        Save plant image
         if(file != null) {
             try{
             plantService.setPlantImage(savedPlant.getId(), file.getContentType(), file.getBytes());
