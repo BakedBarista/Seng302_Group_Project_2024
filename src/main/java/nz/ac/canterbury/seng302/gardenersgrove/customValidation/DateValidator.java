@@ -60,7 +60,7 @@ public class DateValidator implements ConstraintValidator<ValidDate, String> {
      * @param year to be checked for leap year
      * @return true if leap year
      */
-    public boolean isLeapYear(int year) {
+    private boolean isLeapYear(int year) {
         return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
     }
 }
