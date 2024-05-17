@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.entity;
+package nz.ac.canterbury.seng302.gardenersgrove.unittests.entity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -21,6 +21,12 @@ public class TagTest {
         tag1Copy = new Tag("tag1");
         tag1AllCaps = new Tag("TAG1");
         tag2 = new Tag("tag2");
+    }
+
+    @Test
+    void whenDefaultConstructorCalled_thenNameIsNull() {
+        Tag tag = new Tag();
+        assertEquals(null, tag.getName());
     }
 
     @Test
