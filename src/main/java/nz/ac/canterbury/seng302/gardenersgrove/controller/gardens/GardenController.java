@@ -83,33 +83,13 @@ public class GardenController {
     public String submitForm(@Valid @ModelAttribute("garden") Garden garden,
                              BindingResult bindingResult, Model model) {
         logger.info("POST /gardens - submit the new garden form");
-        List<String> locationErrorNames = Arrays.asList("city", "country", "suburb", "streetNumber", "streetName", "postCode");
-        boolean profanityFlagged = !profanityService.badWordsFound(garden.getDescription()).isEmpty();
-        if (!profanityFlagged) {
-            profanityFlagged = moderationService.checkIfDescriptionIsFlagged(garden.getDescription());
-        }
-        if (bindingResult.hasErrors() || profanityFlagged) {
-            if (profanityFlagged) {
-                model.addAttribute("profanity", "The description does not match the language standards of the app.");
-            }
-            for (FieldError error : bindingResult.getFieldErrors()) {
-                if (locationErrorNames.contains(error.getField())) {
-                    var errorCode = error.getCode();
-                    if (errorCode != null) {
-                        String errorMessage;
-                        if (errorCode.equals("Pattern")) {
-                            errorMessage = "Location name must only include letters, numbers, spaces, dots, hyphens or apostrophes";
-                        } else {
-                            errorMessage = "Location cannot be empty";
-                        }
-                        model.addAttribute("locationError", errorMessage);
-                        break;
-                    }
-                }
-            }
+
+        model = checkGardenError(model,bindingResult,garden);
+        if (bindingResult.hasErrors() || model.containsAttribute("profanity")) {
             model.addAttribute("garden", garden);
             return "gardens/createGarden";
         }
+
 
 
         GardenUser owner = gardenUserService.getCurrentUser();
@@ -255,8 +235,8 @@ public class GardenController {
                                BindingResult result,
                                Model model) {
 
-        checkGardenError(model,result,garden);
-        if (result.hasErrors()) {
+        model = checkGardenError(model,result,garden);
+        if (result.hasErrors() || model.containsAttribute("profanity")) {
             model.addAttribute("garden", garden);
             model.addAttribute("id", id);
             return "gardens/editGarden";
@@ -370,7 +350,7 @@ public class GardenController {
         return "gardens/publicGardens";
     }
 
-    private void checkGardenError(Model model, BindingResult bindingResult, Garden garden) {
+    private Model checkGardenError(Model model, BindingResult bindingResult, Garden garden) {
         List<String> locationErrorNames = Arrays.asList("city", "country", "suburb", "streetNumber", "streetName", "postCode");
         boolean profanityFlagged = !profanityService.badWordsFound(garden.getDescription()).isEmpty();
         if (!profanityFlagged) {
@@ -396,6 +376,7 @@ public class GardenController {
                 }
             }
         }
+        return model;
     }
 }
 
