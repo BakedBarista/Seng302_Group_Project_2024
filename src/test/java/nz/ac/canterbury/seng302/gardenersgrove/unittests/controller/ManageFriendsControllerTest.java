@@ -372,7 +372,7 @@
       * Testing the manageFriendsSearch method
       */
      @Test
-      void whenFriendRequestReceived_thenUserNotInSearchResults() {
+      void  whenRequestPending_thenUserNotInSearchResults_andIsPending(){
          String searchUser = otherUser.getFname();
          List<GardenUser> searchResults = new ArrayList<>();
          List<Friends> friendsList = new ArrayList<>();
@@ -393,7 +393,7 @@
      }
 
      @Test
-      void whenRequestPending_thenUserNotInSearchResults() {
+      void whenRequestPending_thenUserNotInSearchResults_andInPending() {
          String searchUser = otherUser.getFname();
          List<GardenUser> searchResults = new ArrayList<>();
          List<Friends> friendsList = new ArrayList<>();
@@ -450,7 +450,7 @@
      }
 
      @Test
-      void whenAlreadyFriends_thenUserNotInSearchResults() {
+      void whenAlreadyFriends_thenUserNotInSearchResults_andFriendRequestNotSent() {
          String searchUser = otherUser.getFname();
          List<GardenUser> searchResults = new ArrayList<>();
          searchResults.add(loggedInUser);
@@ -470,7 +470,7 @@
       * Testing the viewFriendProfile method
       */
      @Test
-      void whenUserIsFriend_thenShowProfile() {
+      void whenUserIsFriend_andUserViewsProfile_thenShowProfile() {
          Model model = mock(Model.class);
 
          Friends newFriends = new Friends(loggedInUser, otherUser, "accepted");
@@ -490,7 +490,7 @@
       * Testing the viewFriendProfile method
       */
      @Test
-      void whenUserIsNotFriend_thenRedirectHome() {
+      void whenUserIsNotFriend_andUserTriesToSeeProfile_thenRedirectHome() {
          Model model = mock(Model.class);
 
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
@@ -506,7 +506,7 @@
       * Testing the viewFriendProfile method
       */
      @Test
-      void whenUserIsInvalid_thenRedirectHome() {
+      void whenUserIsInvalid_andUserTriesToViewProfile_thenRedirectHome() {
          Model model = mock(Model.class);
 
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
@@ -571,8 +571,7 @@
       * Testing the manageFriendsAccept method
       */
      @Test
-      void testManageFriendsAccept() {
-         // Arrange
+      void whenUserHasAFriend_andTriesToRemoveFriend_ThenFriendIsRemoved() {
 
          Authentication authentication = mock(Authentication.class);
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
@@ -592,7 +591,7 @@
       * Testing the manageFriendsDecline method
       */
      @Test
-      void testGetAllFriendsElseCondition() {
+      void whenUserHasFriends_WhenTheyTryToGetFriends_thenListIsReturned() {
          // Arrange
          Friends friendPair = new Friends(otherUser, loggedInUser, "accepted");
 

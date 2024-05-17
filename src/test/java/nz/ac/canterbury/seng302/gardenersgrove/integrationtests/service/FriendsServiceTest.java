@@ -126,7 +126,7 @@ public class FriendsServiceTest {
      * Test to check if a friend is removed from the database
      */
     @Test
-     void whenRemovedFriend_thenFriendRemoved() {
+     void whenRequestSent_thenFriendIsRemoved_thenFriendRemoved() {
         Friends relationShip3 = new Friends(testUser3, testUser4, "Pending");
         friendService.save(relationShip3);
         friendService.removeFriend(testUser3.getId(), testUser4.getId());
@@ -138,7 +138,7 @@ public class FriendsServiceTest {
      * Test to check if a friend is added to the database
      */
     @Test
-    public void whenInviteAccepted_thenFriendAdded() {
+    void whenRequestSent_andInviteAccepted_thenFriendAdded() {
         Friends relationship = new Friends(testUser3, testUser4, "accepted");
         friendService.save(relationship);
         var request = friendService.getAcceptedFriendship(testUser3.getId(), testUser4.getId());
@@ -150,7 +150,7 @@ public class FriendsServiceTest {
      * Test to check if a friend is added to the database
      */
     @Test
-    public void whenGetSentFriendship_thenFriendshipReturned() {
+    void whenGetSentFriendship_andFriendIsAccepted_thenFriendshipReturned() {
         Friends relationship = new Friends(testUser3, testUser4, "Pending");
         friendService.save(relationship);
         Friends friendship = friendService.getSent(testUser3.getId(), testUser4.getId());
@@ -161,7 +161,7 @@ public class FriendsServiceTest {
      * Test to check if a friend is added to the database and then deleted
      */
     @Test
-     void whenFriendshipCreated_ThenDeleteFriendship() {
+     void whenFriendshipCreated_andFriendshipIsDeleted_thenFriendshipDoesntExist() {
         Friends relationship = new Friends(testUser3, testUser4, "Pending");
         friendService.save(relationship);
         friendService.delete(relationship);
@@ -172,7 +172,7 @@ public class FriendsServiceTest {
      * Test to check if a friend is added to the database and then removed
      */
     @Test
-     void whenFriendshipCreated_ThenRemoveFriend() {
+     void whenFriendshipCreated_andFriendIsRemoved_thenFriendIsNoLongerAFriend() {
         Friends relationship = new Friends(testUser3, testUser4, "Pending");
         friendService.save(relationship);
         friendService.removeFriendship(relationship);
@@ -183,7 +183,7 @@ public class FriendsServiceTest {
      * Test to check if a friendship is declined an the result is correctly stored
      */
     @Test
-     void testListSentRequestsDeclined() {
+     void whenRequestIsSent_andRecipientDeclines_thenDatabaseIsUpdated() {
         Friends relationship = new Friends(testUser3, testUser4, "Declined");
         friendService.save(relationship);
         List<Friends> sentRequestsDeclined = friendService.getSentRequestsDeclined(testUser3.getId());
