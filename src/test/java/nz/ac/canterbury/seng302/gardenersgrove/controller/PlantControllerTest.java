@@ -82,7 +82,7 @@ public class PlantControllerTest {
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
-        String returnPage = plantController.submitAddPlantForm(gardenId, validPlant, bindingResult, dateValidStr, file, model);
+        String returnPage = plantController.submitAddPlantForm(gardenId, validPlant, bindingResult, file, model);
         assertEquals(expectedReturnPage, returnPage);
     }
 
@@ -94,7 +94,7 @@ public class PlantControllerTest {
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
-        String returnPage = plantController.submitAddPlantForm(gardenId, invalidPlant, bindingResult, dateInvalidStr, file,  model);
+        String returnPage = plantController.submitAddPlantForm(gardenId, invalidPlant, bindingResult, file,  model);
         assertEquals(expectedReturnPage, returnPage);
     }
 
@@ -234,7 +234,7 @@ public class PlantControllerTest {
         doThrow(new RuntimeException("Image processing error"))
                 .when(plantService).setPlantImage(anyLong(), anyString(), any(byte[].class));
 
-        String view = plantController.submitAddPlantForm(gardenId, plant, bindingResult, dateValidStr, file, model);
+        String view = plantController.submitAddPlantForm(gardenId, plant, bindingResult, file, model);
 
         assertEquals("redirect:/gardens/" + gardenId, view);
     }
