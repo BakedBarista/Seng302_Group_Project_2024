@@ -372,7 +372,7 @@
       * Testing the manageFriendsSearch method
       */
      @Test
-     public void whenFriendRequestReceived_thenUserNotInSearchResults() {
+      void whenFriendRequestReceived_thenUserNotInSearchResults() {
          String searchUser = otherUser.getFname();
          List<GardenUser> searchResults = new ArrayList<>();
          List<Friends> friendsList = new ArrayList<>();
@@ -393,7 +393,7 @@
      }
 
      @Test
-     public void whenRequestPending_thenUserNotInSearchResults() {
+      void whenRequestPending_thenUserNotInSearchResults() {
          String searchUser = otherUser.getFname();
          List<GardenUser> searchResults = new ArrayList<>();
          List<Friends> friendsList = new ArrayList<>();
@@ -414,7 +414,7 @@
      }
 
      @Test
-     public void whenRequestPending_andStatusNotPending_thenUserIsInSearchResult () {
+      void whenRequestPending_andStatusNotPending_thenUserIsInSearchResult () {
          String searchUser = otherUser.getFname();
          List<GardenUser> searchResults = new ArrayList<>();
          List<Friends> friendsList = new ArrayList<>();
@@ -434,7 +434,7 @@
      }
 
      @Test
-     public void whenRequestPendingIsNull_thenUserIsInSearchResult() {
+      void whenRequestPendingIsNull_thenUserIsInSearchResult() {
          String searchUser = otherUser.getFname();
          List<GardenUser> searchResults = new ArrayList<>();
          searchResults.add(otherUser);
@@ -450,7 +450,7 @@
      }
 
      @Test
-     public void whenAlreadyFriends_thenUserNotInSearchResults() {
+      void whenAlreadyFriends_thenUserNotInSearchResults() {
          String searchUser = otherUser.getFname();
          List<GardenUser> searchResults = new ArrayList<>();
          searchResults.add(loggedInUser);
@@ -470,7 +470,7 @@
       * Testing the viewFriendProfile method
       */
      @Test
-     public void whenUserIsFriend_thenShowProfile() {
+      void whenUserIsFriend_thenShowProfile() {
          Model model = mock(Model.class);
 
          Friends newFriends = new Friends(loggedInUser, otherUser, "accepted");
@@ -490,7 +490,7 @@
       * Testing the viewFriendProfile method
       */
      @Test
-     public void whenUserIsNotFriend_thenRedirectHome() {
+      void whenUserIsNotFriend_thenRedirectHome() {
          Model model = mock(Model.class);
 
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
@@ -506,7 +506,7 @@
       * Testing the viewFriendProfile method
       */
      @Test
-     public void whenUserIsInvalid_thenRedirectHome() {
+      void whenUserIsInvalid_thenRedirectHome() {
          Model model = mock(Model.class);
 
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
@@ -539,7 +539,7 @@
       * Testing removeFriend method
       */
      @Test
-     public void whenUserRemovesFriend_thenFriendshipIsRemoved() {
+      void whenUserRemovesFriend_thenFriendshipIsRemoved() {
          Friends friends = new Friends(loggedInUser, otherUser, "accepted");
          friendService.save(friends);
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
@@ -555,7 +555,7 @@
       */
 
      @Test
-     public void whenFriendshipExists_thenNoDeclineOption() {
+      void whenFriendshipExists_thenNoDeclineOption() {
          Friends friends = new Friends(loggedInUser, otherUser, "accepted");
          friendService.save(friends);
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
@@ -571,7 +571,7 @@
       * Testing the manageFriendsAccept method
       */
      @Test
-     public void testManageFriendsAccept() {
+      void testManageFriendsAccept() {
          // Arrange
 
          Authentication authentication = mock(Authentication.class);
@@ -592,7 +592,7 @@
       * Testing the manageFriendsDecline method
       */
      @Test
-     public void testGetAllFriendsElseCondition() {
+      void testGetAllFriendsElseCondition() {
          // Arrange
          Friends friendPair = new Friends(otherUser, loggedInUser, "accepted");
 

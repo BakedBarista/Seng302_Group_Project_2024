@@ -126,7 +126,7 @@ public class FriendsServiceTest {
      * Test to check if a friend is removed from the database
      */
     @Test
-    public void whenRemovedFriend_thenFriendRemoved() {
+     void whenRemovedFriend_thenFriendRemoved() {
         Friends relationShip3 = new Friends(testUser3, testUser4, "Pending");
         friendService.save(relationShip3);
         friendService.removeFriend(testUser3.getId(), testUser4.getId());
@@ -161,7 +161,7 @@ public class FriendsServiceTest {
      * Test to check if a friend is added to the database and then deleted
      */
     @Test
-    public void whenFriendshipCreated_ThenDeleteFriendship() {
+     void whenFriendshipCreated_ThenDeleteFriendship() {
         Friends relationship = new Friends(testUser3, testUser4, "Pending");
         friendService.save(relationship);
         friendService.delete(relationship);
@@ -172,7 +172,7 @@ public class FriendsServiceTest {
      * Test to check if a friend is added to the database and then removed
      */
     @Test
-    public void whenFriendshipCreated_ThenRemoveFriend() {
+     void whenFriendshipCreated_ThenRemoveFriend() {
         Friends relationship = new Friends(testUser3, testUser4, "Pending");
         friendService.save(relationship);
         friendService.removeFriendship(relationship);
@@ -183,7 +183,7 @@ public class FriendsServiceTest {
      * Test to check if a friendship is declined an the result is correctly stored
      */
     @Test
-    public void testListSentRequestsDeclined() {
+     void testListSentRequestsDeclined() {
         Friends relationship = new Friends(testUser3, testUser4, "Declined");
         friendService.save(relationship);
         List<Friends> sentRequestsDeclined = friendService.getSentRequestsDeclined(testUser3.getId());
