@@ -23,18 +23,18 @@ INSERT INTO garden (name, street_Number, street_Name, suburb, city, country, pos
 INSERT INTO garden (name, street_Number, street_Name, suburb, city, country, post_Code, lat, lon, size, is_public, owner_id, display_weather_alert, watering_recommendation) VALUES ('Free for all Garden', '19','Ilam road','Ilam','Christchurch','New Zealand','8041',-43.5320,172.6366, 850, true, 1, true, false);
 
 -- Garden 1
-INSERT INTO plant (name, count, description, planted_date, garden_id, plant_image_path) VALUES
-                                                                                            ('Tomato', 15, 'Red', '01/03/2024', 1, '/tomato.jpg'),
-                                                                                            ('Cucumber', 8, 'Yellow', '10/04/2024', 1, '/cucumber.jpg'),
-                                                                                            ('Potato', 5, 'Purple', '22/05/2024', 1, '/potato.jpg'),
-                                                                                            ('Cabbage', 12, 'Pink', '15/06/2024', 1, '/cabbage.jpg'),
-                                                                                            ('Lettuce', 18, 'White', '05/07/2024', 1, '/lettuce.jpg'),
-                                                                                            ('Onion', 7, 'Orange', '18/08/2024', 1, '/onion.jpg'),
-                                                                                            ('Spring Onion', 20, 'Blue', '09/09/2024', 1, '/springonion.jpg'),
-                                                                                            ('Asparagus', 3, 'Green', '30/10/2024', 1, '/asparagus.jpg'),
-                                                                                            ('Pumpkin', 10, 'Purple', '12/11/2024', 1, '/pumpkin.jpg'),
-                                                                                            ('Carrot', 14, 'Red', '05/12/2024', 1, '/carrot.jpg');
-INSERT INTO plant (name, count, description, planted_date, garden_id, plant_image_path) VALUES
+INSERT INTO plant (name, count, description, planted_date, garden_id, plant_image) VALUES
+                                                                                            ('Tomato', 15, 'Red', '01/03/2024', 1, 'static/img/TestImages/tomato.jpg'),
+                                                                                            ('Cucumber', 8, 'Yellow', '10/04/2024', 1, 'static/img/TestImages/tomato.jpg'),
+                                                                                            ('Potato', 5, 'Purple', '22/05/2024', 1, 'static/img/TestImages/tomato.jpg'),
+                                                                                            ('Cabbage', 12, 'Pink', '15/06/2024', 1, 'static/img/TestImages/tomato.jpg'),
+                                                                                            ('Lettuce', 18, 'White', '05/07/2024', 1, 'static/img/TestImages/tomato.jpg'),
+                                                                                            ('Onion', 7, 'Orange', '18/08/2024', 1, 'static/img/TestImages/tomato.jpg'),
+                                                                                            ('Spring Onion', 20, 'Blue', '09/09/2024', 1, 'static/img/TestImages/tomato.jpg'),
+                                                                                            ('Asparagus', 3, 'Green', '30/10/2024', 1, 'static/img/TestImages/tomato.jpg'),
+                                                                                            ('Pumpkin', 10, 'Purple', '12/11/2024', 1, 'static/img/TestImages/tomato.jpg'),
+                                                                                            ('Carrot', 14, 'Red', '05/12/2024', 1, 'static/img/TestImages/tomato.jpg');
+INSERT INTO plant (name, count, description, planted_date, garden_id, plant_image) VALUES
                                                                                             ('Tomato', 15, 'Red', '01/03/2024', 2, '/tomato.jpg'),
                                                                                             ('Cucumber', 8, 'Yellow', '10/04/2024', 2, '/cucumber.jpg'),
                                                                                             ('Potato', 5, 'Purple', '22/05/2024', 2, '/potato.jpg'),
@@ -45,7 +45,7 @@ INSERT INTO plant (name, count, description, planted_date, garden_id, plant_imag
                                                                                             ('Asparagus', 3, 'Green', '30/10/2024', 2, '/asparagus.jpg'),
                                                                                             ('Pumpkin', 10, 'Purple', '12/11/2024', 2, '/pumpkin.jpg'),
                                                                                             ('Carrot', 14, 'Red', '05/12/2024', 2, '/carrot.jpg');
-INSERT INTO plant (name, count, description, planted_date, garden_id, plant_image_path) VALUES
+INSERT INTO plant (name, count, description, planted_date, garden_id, plant_image) VALUES
                                                                                             ('Tomato', 15, 'Red', '01/03/2024', 3, '/tomato.jpg'),
                                                                                             ('Cucumber', 8, 'Yellow', '10/04/2024', 3, '/cucumber.jpg'),
                                                                                             ('Potato', 5, 'Purple', '22/05/2024', 3, '/potato.jpg'),
@@ -56,7 +56,7 @@ INSERT INTO plant (name, count, description, planted_date, garden_id, plant_imag
                                                                                             ('Asparagus', 3, 'Green', '30/10/2024', 3, '/asparagus.jpg'),
                                                                                             ('Pumpkin', 10, 'Purple', '12/11/2024', 3, '/pumpkin.jpg'),
                                                                                             ('Carrot', 14, 'Red', '05/12/2024', 3, '/carrot.jpg');
-INSERT INTO plant (name, count, description, planted_date, garden_id, plant_image_path) VALUES
+INSERT INTO plant (name, count, description, planted_date, garden_id, plant_image) VALUES
                                                                                             ('Tomato', 15, 'Red', '01/03/2024', 4, '/tomato.jpg'),
                                                                                             ('Cucumber', 8, 'Yellow', '10/04/2024', 4, '/cucumber.jpg'),
                                                                                             ('Potato', 5, 'Purple', '22/05/2024', 4, '/potato.jpg'),
@@ -67,7 +67,7 @@ INSERT INTO plant (name, count, description, planted_date, garden_id, plant_imag
                                                                                             ('Asparagus', 3, 'Green', '30/10/2024', 4, '/asparagus.jpg'),
                                                                                             ('Pumpkin', 10, 'Purple', '12/11/2024', 4, '/pumpkin.jpg'),
                                                                                             ('Carrot', 14, 'Red', '05/12/2024', 4, '/carrot.jpg');
-INSERT INTO plant (name, count, description, planted_date, garden_id, plant_image_path) VALUES
+INSERT INTO plant (name, count, description, planted_date, garden_id, plant_image) VALUES
                                                                                             ('Tomato', 15, 'Red', '01/03/2024', 5, '/tomato.jpg'),
                                                                                             ('Cucumber', 8, 'Yellow', '10/04/2024', 5, '/cucumber.jpg'),
                                                                                             ('Potato', 5, 'Purple', '22/05/2024', 5, '/potato.jpg'),
@@ -78,7 +78,7 @@ INSERT INTO plant (name, count, description, planted_date, garden_id, plant_imag
                                                                                             ('Asparagus', 3, 'Green', '30/10/2024', 5, '/asparagus.jpg'),
                                                                                             ('Pumpkin', 10, 'Purple', '12/11/2024', 5, '/pumpkin.jpg'),
                                                                                             ('Carrot', 14, 'Red', '05/12/2024', 5, '/carrot.jpg');
-INSERT INTO plant (name, count, description, planted_date, garden_id, plant_image_path) VALUES
+INSERT INTO plant (name, count, description, planted_date, garden_id, plant_image) VALUES
                                                                                             ('Tomato', 15, 'Red', '01/03/2024', 6, '/tomato.jpg'),
                                                                                             ('Cucumber', 8, 'Yellow', '10/04/2024', 6, '/cucumber.jpg'),
                                                                                             ('Potato', 5, 'Purple', '22/05/2024', 6, '/potato.jpg'),
@@ -89,7 +89,7 @@ INSERT INTO plant (name, count, description, planted_date, garden_id, plant_imag
                                                                                             ('Asparagus', 3, 'Green', '30/10/2024', 6, '/asparagus.jpg'),
                                                                                             ('Pumpkin', 10, 'Purple', '12/11/2024', 6, '/pumpkin.jpg'),
                                                                                             ('Carrot', 14, 'Red', '05/12/2024', 6, '/carrot.jpg');
-INSERT INTO plant (name, count, description, planted_date, garden_id, plant_image_path) VALUES
+INSERT INTO plant (name, count, description, planted_date, garden_id, plant_image) VALUES
                                                                                             ('Tomato', 15, 'Red', '01/03/2024', 7, '/tomato.jpg'),
                                                                                             ('Cucumber', 8, 'Yellow', '10/04/2024', 7, '/cucumber.jpg'),
                                                                                             ('Potato', 5, 'Purple', '22/05/2024', 7, '/potato.jpg'),
@@ -100,7 +100,7 @@ INSERT INTO plant (name, count, description, planted_date, garden_id, plant_imag
                                                                                             ('Asparagus', 3, 'Green', '30/10/2024', 7, '/asparagus.jpg'),
                                                                                             ('Pumpkin', 10, 'Purple', '12/11/2024', 7, '/pumpkin.jpg'),
                                                                                             ('Carrot', 14, 'Red', '05/12/2024', 7, '/carrot.jpg');
-INSERT INTO plant (name, count, description, planted_date, garden_id, plant_image_path) VALUES
+INSERT INTO plant (name, count, description, planted_date, garden_id, plant_image) VALUES
                                                                                             ('Tomato', 15, 'Red', '01/03/2024', 8, '/tomato.jpg'),
                                                                                             ('Cucumber', 8, 'Yellow', '10/04/2024', 8, '/cucumber.jpg'),
                                                                                             ('Potato', 5, 'Purple', '22/05/2024', 8, '/potato.jpg'),
@@ -111,7 +111,7 @@ INSERT INTO plant (name, count, description, planted_date, garden_id, plant_imag
                                                                                             ('Asparagus', 3, 'Green', '30/10/2024', 8, '/asparagus.jpg'),
                                                                                             ('Pumpkin', 10, 'Purple', '12/11/2024', 8, '/pumpkin.jpg'),
                                                                                             ('Carrot', 14, 'Red', '05/12/2024', 8, '/carrot.jpg');
-INSERT INTO plant (name, count, description, planted_date, garden_id, plant_image_path) VALUES
+INSERT INTO plant (name, count, description, planted_date, garden_id, plant_image) VALUES
                                                                                             ('Tomato', 15, 'Red', '01/03/2024', 9, '/tomato.jpg'),
                                                                                             ('Cucumber', 8, 'Yellow', '10/04/2024', 9, '/cucumber.jpg'),
                                                                                             ('Potato', 5, 'Purple', '22/05/2024', 9, '/potato.jpg'),
@@ -122,7 +122,7 @@ INSERT INTO plant (name, count, description, planted_date, garden_id, plant_imag
                                                                                             ('Asparagus', 3, 'Green', '30/10/2024', 9, '/asparagus.jpg'),
                                                                                             ('Pumpkin', 10, 'Purple', '12/11/2024', 9, '/pumpkin.jpg'),
                                                                                             ('Carrot', 14, 'Orange', '05/12/2024', 9, '/carrot.jpg');
-INSERT INTO plant (name, count, description, planted_date, garden_id, plant_image_path) VALUES
+INSERT INTO plant (name, count, description, planted_date, garden_id, plant_image) VALUES
                                                                                             ('Tomato', 15, 'Red', '01/03/2024', 10, '/tomato.jpg'),
                                                                                             ('Cucumber', 8, 'Yellow', '10/04/2024', 10, '/cucumber.jpg'),
                                                                                             ('Potato', 5, 'Purple', '22/05/2024', 10, '/potato.jpg'),
