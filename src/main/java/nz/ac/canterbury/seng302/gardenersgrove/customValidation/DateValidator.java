@@ -3,9 +3,6 @@ package nz.ac.canterbury.seng302.gardenersgrove.customValidation;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -49,9 +46,22 @@ public class DateValidator implements ConstraintValidator<ValidDate, String> {
             return false;
         } else if (day == 30 && !(THIRTY_ONE_DAY_MONTHS.contains(month) || THIRTY_DAY_MONTHS.contains(month))) {
             return false;
+        } else if (day == 29 && month == 2 && !isLeapYear(year)) {
+            // 29th of feb on a leap year case
+            return false;
         }
 
         return dayValid && monthValid && yearValid;
+    }
+
+    /**
+     * check if given year is a leap year
+     * note: asked chatGPT for this
+     * @param year to be checked for leap year
+     * @return true if leap year
+     */
+    public boolean isLeapYear(int year) {
+        return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
     }
 }
 
