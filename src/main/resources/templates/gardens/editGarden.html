@@ -10,4 +10,6 @@
         <div th:replace="~{fragments/garden-form :: garden-form(action='/gardens/' + ${id} + '/edit')}"></div>
         <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
     </body>
+    <script th:src="@{/js/nextFormBox.js}"></script>
+    <script th:src="@{/js/locationAutoComplete.js}"></script>
 </html>
