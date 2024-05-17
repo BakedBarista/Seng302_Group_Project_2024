@@ -46,7 +46,7 @@ public class U8CreateNewGardenFeature {
 
     private static ModerationService moderationService;
     private static ModerationService mockedModerationService;
-
+    private static ProfanityService profanityService;
 
     private static GardenController gardenController;
 
@@ -62,6 +62,7 @@ public class U8CreateNewGardenFeature {
         gardenUserRepository = mock(GardenUserRepository.class);
         plantRepository = mock(PlantRepository.class);
         gardenRepository = mock(GardenRepository.class);
+        profanityService = mock(ProfanityService.class);
         userService = new GardenUserService(gardenUserRepository);
         gardenService = new GardenService(gardenRepository);
         friendService = new FriendService(friendsRepository);
@@ -69,7 +70,7 @@ public class U8CreateNewGardenFeature {
         weatherAPIService = new WeatherAPIService(restTemplate, gardenService);
         moderationService = new ModerationService();
         mockedModerationService = mock(ModerationService.class);
-        gardenController = new GardenController(gardenService, plantService, userService, weatherAPIService, friendService, moderationService);
+        gardenController = new GardenController(gardenService, plantService, userService, weatherAPIService, friendService, moderationService, profanityService);
     }
 
 
