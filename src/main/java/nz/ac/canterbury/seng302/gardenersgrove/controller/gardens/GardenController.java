@@ -82,15 +82,16 @@ public class GardenController {
                              BindingResult bindingResult, Model model) {
         logger.info("POST /gardens - submit the new garden form");
 
-        if(!profanityService.badWordsFound(garden.getDescription()).isEmpty()){
-            model.addAttribute("profanity", "The description does not match the language standards of the app.");
-            model.addAttribute("garden", garden);
-            return "gardens/createGarden";
-        }
-        boolean descriptionFlagged = moderationService.checkIfDescriptionIsFlagged(garden.getDescription());
+       
+        boolean profranityFlagged = !profanityService.badWordsFound(garden.getDescription()).isEmpty();
+        System.out.print("tester");
         List<String> locationErrorNames = Arrays.asList("city", "country", "suburb", "streetNumber", "streetName", "postCode");
-        if (bindingResult.hasErrors() || descriptionFlagged) {
-            if (descriptionFlagged) {
+        System.out.print("testing");
+        System.out.print(profranityFlagged);
+        boolean descriptionFlagged = moderationService.checkIfDescriptionIsFlagged(garden.getDescription());
+        System.out.print("test");
+        if (bindingResult.hasErrors() || profranityFlagged) {
+            if (profranityFlagged || descriptionFlagged) {
                 model.addAttribute("profanity", "The description does not match the language standards of the app.");
             }
             for (FieldError error : bindingResult.getFieldErrors()) {
@@ -108,18 +109,13 @@ public class GardenController {
                     }
                 }
             }
-        }
-
-
-
-        if (bindingResult.hasErrors() || descriptionFlagged) {
-            if (descriptionFlagged) {
-                model.addAttribute("profanity", "The description does not match the language standards of the app.");
-            }
-
             model.addAttribute("garden", garden);
             return "gardens/createGarden";
         }
+
+
+        
+        
 
         GardenUser owner = gardenUserService.getCurrentUser();
         garden.setOwner(owner);

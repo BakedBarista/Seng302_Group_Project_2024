@@ -176,6 +176,7 @@ public class GardenControllerTest {
         when(bindingResult.hasErrors()).thenReturn(true);
         when(profanityService.badWordsFound(anyString())).thenReturn(new ArrayList<>());
         when(moderationService.checkIfDescriptionIsFlagged(description)).thenReturn(true);
+
         gardenController.submitForm(invalidGarden, bindingResult, model);
 
         verify(model).addAttribute("profanity", EXPECTED_MODERATION_ERROR_MESSAGE);
