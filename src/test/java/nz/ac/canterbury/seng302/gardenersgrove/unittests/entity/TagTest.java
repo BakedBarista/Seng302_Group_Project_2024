@@ -55,4 +55,20 @@ public class TagTest {
         assertFalse(tag1.equals(tag2));
         assertFalse(tag2.equals(tag1));
     }
+
+    @Test
+    void whenComparingToNull_thenReturnsFalse() {
+        assertFalse(tag1.equals(null));
+    }
+
+    @SuppressWarnings("unlikely-arg-type")
+    @Test
+    void whenComparingToAnotherClass_thenReturnsFalse() {
+        assertFalse(tag1.equals("tag1"));
+    }
+
+    @Test
+    void whenHashCodeCalled_thenReturnsNameHashCode() {
+        assertEquals("tag1".hashCode(), tag1.hashCode());
+    }
 }

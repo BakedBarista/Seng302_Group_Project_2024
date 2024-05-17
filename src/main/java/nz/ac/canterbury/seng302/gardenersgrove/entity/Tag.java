@@ -48,6 +48,21 @@ public class Tag implements Comparable<Tag> {
 
     @Override
     public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (other == null) {
+            return false;
+        }
+        if (this.getClass() != other.getClass()) {
+            return false;
+        }
+
         return this.compareTo((Tag) other) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
     }
 }
