@@ -68,7 +68,7 @@ public class TagService {
      * @param garden The garden to update.
      * @param tagNames The names of the tags to set on the garden.
      */
-    public void updateGardenTags(Garden garden, Collection<String> tagNames) {
+    public void updateGardenTags(Garden garden, List<String> tagNames) {
         // Remove tags that are not in the new list
         for (Tag tag : garden.getTags()) {
             if (!tagNames.stream().anyMatch(t -> t.equals(tag.getName()))) {
