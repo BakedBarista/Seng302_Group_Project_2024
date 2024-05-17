@@ -11,8 +11,8 @@ import java.util.regex.Pattern;
 
 public class DateValidator implements ConstraintValidator<ValidDate, String> {
 
-    private final List<Integer> THIRTY_DAY_MONTHS = List.of(4, 6, 9, 11);
-    private final List<Integer> THIRTY_ONE_DAY_MONTHS = List.of(1, 3, 5, 7, 8, 10, 12);
+    private static final List<Integer> THIRTY_DAY_MONTHS = List.of(4, 6, 9, 11);
+    private static final List<Integer> THIRTY_ONE_DAY_MONTHS = List.of(1, 3, 5, 7, 8, 10, 12);
 
     private static final String DATE_PATTERN = "^\\d{4}-\\d{2}-\\d{2}$";
 

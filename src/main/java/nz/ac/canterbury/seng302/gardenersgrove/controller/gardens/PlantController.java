@@ -151,13 +151,9 @@ public class PlantController {
     public String submitEditPlantForm(@PathVariable("gardenId") long gardenId,
                                       @PathVariable("plantId") long plantId,
                                       @RequestParam("image") MultipartFile file,
-                                      @RequestParam(value = "dateError", required = false) String dateInvalid,
                                       @Valid @ModelAttribute("plant") Plant plant,
                                       BindingResult bindingResult,
                                       Model model) {
-        if(!plant.getPlantedDate().isEmpty()) {
-            plant.setPlantedDate(refactorPlantedDate(plant.getPlantedDate()));
-        }
         if (bindingResult.hasErrors()) {
             model.addAttribute("plant", plant);
             model.addAttribute("gardenId", gardenId);
@@ -170,7 +166,7 @@ public class PlantController {
             existingPlant.get().setName(plant.getName());
             existingPlant.get().setCount(plant.getCount());
             existingPlant.get().setDescription(plant.getDescription());
-            existingPlant.get().setPlantedDate(plant.getPlantedDate());
+            existingPlant.get().setPlantedDate(refactorPlantedDate(plant.getPlantedDate()));
             Plant savedPlant = plantService.addPlant(existingPlant.get(), gardenId);
             if(file != null) {
                 try {
