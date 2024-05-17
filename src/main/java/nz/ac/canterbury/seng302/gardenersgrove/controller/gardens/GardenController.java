@@ -56,6 +56,7 @@ public class GardenController {
 
     /**
      * Gets form to be displayed
+     *
      * @param model representation of name, location and size
      * @return gardenFormTemplate
      */
@@ -72,9 +73,10 @@ public class GardenController {
 
     /**
      * Submits form to be displayed
-     * @param garden   garden details
+     *
+     * @param garden        garden details
      * @param bindingResult binding result
-     * @param model representation of results
+     * @param model         representation of results
      * @return gardenForm
      */
     @PostMapping("/gardens/create")
@@ -87,15 +89,15 @@ public class GardenController {
             profanityFlagged = moderationService.checkIfDescriptionIsFlagged(garden.getDescription());
         }
         if (bindingResult.hasErrors() || profanityFlagged) {
-            if(profanityFlagged) {
+            if (profanityFlagged) {
                 model.addAttribute("profanity", "The description does not match the language standards of the app.");
             }
             for (FieldError error : bindingResult.getFieldErrors()) {
-                if(locationErrorNames.contains(error.getField())){
+                if (locationErrorNames.contains(error.getField())) {
                     var errorCode = error.getCode();
-                    if(errorCode != null){
+                    if (errorCode != null) {
                         String errorMessage;
-                        if(errorCode.equals("Pattern")){
+                        if (errorCode.equals("Pattern")) {
                             errorMessage = "Location name must only include letters, numbers, spaces, dots, hyphens or apostrophes";
                         } else {
                             errorMessage = "Location cannot be empty";
@@ -110,9 +112,6 @@ public class GardenController {
         }
 
 
-        
-        
-
         GardenUser owner = gardenUserService.getCurrentUser();
         garden.setOwner(owner);
 
@@ -122,6 +121,7 @@ public class GardenController {
 
     /**
      * Gets all garden details
+     *
      * @param model representation of results
      * @return viewGardenTemplate
      */
@@ -129,7 +129,7 @@ public class GardenController {
     public String responses(Model model) {
         logger.info("Get /gardens - display all gardens");
         GardenUser currentUser = gardenUserService.getCurrentUser();
-        if(currentUser != null) {
+        if (currentUser != null) {
             List<Garden> userGardens = gardenService.getGardensByOwnerId(currentUser.getId());
             model.addAttribute("gardens", userGardens);
         }
@@ -140,6 +140,7 @@ public class GardenController {
 
     /**
      * Gets the id of garden
+     *
      * @param model representation of results
      * @return gardenDetails page
      */
@@ -149,7 +150,7 @@ public class GardenController {
 
         logger.info("Get /gardens/id - display garden detail");
         Optional<Garden> gardenOpt = gardenService.getGardenById(id);
-        if(gardenOpt.isPresent()) {
+        if (gardenOpt.isPresent()) {
             Garden garden = gardenOpt.get();
             model.addAttribute("garden", garden);
             model.addAttribute("owner", garden.getOwner());
@@ -182,6 +183,7 @@ public class GardenController {
 
     /**
      * Hides the weather alert for a specific garden for the remainder of the day
+     *
      * @param id the ID of the garden to hide alerts for
      * @return redirects back to the detail page
      */
@@ -201,7 +203,8 @@ public class GardenController {
 
     /**
      * Updates the public status of the garden
-     * @param id garden id
+     *
+     * @param id       garden id
      * @param isPublic public status
      * @return redirect to gardens
      */
@@ -221,6 +224,7 @@ public class GardenController {
 
     /**
      * Updates the Garden
+     *
      * @param id garden id
      * @return redirect to gardens
      */
@@ -238,10 +242,11 @@ public class GardenController {
 
     /**
      * Update garden details
-     * @param id garden id
+     *
+     * @param id     garden id
      * @param garden garden details
      * @param result binding result
-     * @param model representation of results
+     * @param model  representation of results
      * @return redirect to gardens
      */
     @PostMapping("/gardens/{id}/edit")
@@ -249,35 +254,14 @@ public class GardenController {
                                @Valid @ModelAttribute("garden") Garden garden,
                                BindingResult result,
                                Model model) {
-        List<String> locationErrorNames = Arrays.asList("city", "country", "suburb", "streetNumber", "streetName", "postCode");
-        boolean profanityFlagged = !profanityService.badWordsFound(garden.getDescription()).isEmpty();
-        if (!profanityFlagged) {
-            profanityFlagged = moderationService.checkIfDescriptionIsFlagged(garden.getDescription());
-        }
-        if (result.hasErrors() || profanityFlagged) {
-            if(profanityFlagged) {
-                model.addAttribute("profanity", "The description does not match the language standards of the app.");
-            }
-            for (FieldError error : result.getFieldErrors()) {
-                if(locationErrorNames.contains(error.getField())){
-                    var errorCode = error.getCode();
-                    if(errorCode != null){
-                        String errorMessage;
-                        if(errorCode.equals("Pattern")){
-                            errorMessage = "Location name must only include letters, numbers, spaces, dots, hyphens or apostrophes";
-                        } else {
-                            errorMessage = "Location cannot be empty";
-                        }
-                        model.addAttribute("locationError", errorMessage);
-                        break;
-                    }
-                }
-            }
 
+        checkGardenError(model,result,garden);
+        if (result.hasErrors()) {
             model.addAttribute("garden", garden);
             model.addAttribute("id", id);
             return "gardens/editGarden";
         }
+
 
         Optional<Garden> existingGarden = gardenService.getGardenById(id);
         if (existingGarden.isPresent()) {
@@ -300,6 +284,7 @@ public class GardenController {
 
     /**
      * gets all public gardens
+     *
      * @param model representation of results
      * @return publicGardens page
      */
@@ -337,25 +322,26 @@ public class GardenController {
 
     /**
      * Gets the id of garden
+     *
      * @param model representation of results
      * @return viewFriendGardens page
      */
     @GetMapping("/viewFriendGardens/{id}")
     public String viewFriendGardens(
-        Authentication authentication,
-        @PathVariable() Long id,
-        Model model) {
-            Long loggedInUserId = (Long) authentication.getPrincipal();
-            Friends isFriend = friendService.getFriendship(loggedInUserId, id);
-            GardenUser owner = gardenUserService.getUserById(id);
+            Authentication authentication,
+            @PathVariable() Long id,
+            Model model) {
+        Long loggedInUserId = (Long) authentication.getPrincipal();
+        Friends isFriend = friendService.getFriendship(loggedInUserId, id);
+        GardenUser owner = gardenUserService.getUserById(id);
 
-           List<Garden> privateGardens = gardenService.getPrivateGardensByOwnerId(owner);
-           List<Garden> publicGardens = gardenService.getPublicGardensByOwnerId(owner);
-           if (isFriend != null) {
-               model.addAttribute("privateGardens", privateGardens);
-           }
+        List<Garden> privateGardens = gardenService.getPrivateGardensByOwnerId(owner);
+        List<Garden> publicGardens = gardenService.getPublicGardensByOwnerId(owner);
+        if (isFriend != null) {
+            model.addAttribute("privateGardens", privateGardens);
+        }
 
-           model.addAttribute("publicGardens", publicGardens);
+        model.addAttribute("publicGardens", publicGardens);
 
         return "gardens/friendGardens";
     }
@@ -364,13 +350,14 @@ public class GardenController {
     /**
      * send the user to public gardens with a subset of gardens matching
      * their given search
+     *
      * @param search string that user is searching
-     * @param model representation of results
+     * @param model  representation of results
      * @return public garden page
      */
     @PostMapping("/gardens/public/search")
-    public String searchPublicGardens(@RequestParam (defaultValue = "0") int page,
-                                      @RequestParam (defaultValue = "10") int size,
+    public String searchPublicGardens(@RequestParam(defaultValue = "0") int page,
+                                      @RequestParam(defaultValue = "10") int size,
                                       @RequestParam(name = "search", required = false, defaultValue = "") String search,
                                       Model model) {
         logger.info("Search: " + search);
@@ -383,6 +370,33 @@ public class GardenController {
         return "gardens/publicGardens";
     }
 
+    private void checkGardenError(Model model, BindingResult bindingResult, Garden garden) {
+        List<String> locationErrorNames = Arrays.asList("city", "country", "suburb", "streetNumber", "streetName", "postCode");
+        boolean profanityFlagged = !profanityService.badWordsFound(garden.getDescription()).isEmpty();
+        if (!profanityFlagged) {
+            profanityFlagged = moderationService.checkIfDescriptionIsFlagged(garden.getDescription());
+        }
+        if (bindingResult.hasErrors() || profanityFlagged) {
+            if (profanityFlagged) {
+                model.addAttribute("profanity", "The description does not match the language standards of the app.");
+            }
+            for (FieldError error : bindingResult.getFieldErrors()) {
+                if (locationErrorNames.contains(error.getField())) {
+                    var errorCode = error.getCode();
+                    if (errorCode != null) {
+                        String errorMessage;
+                        if (errorCode.equals("Pattern")) {
+                            errorMessage = "Location name must only include letters, numbers, spaces, dots, hyphens or apostrophes";
+                        } else {
+                            errorMessage = "Location cannot be empty";
+                        }
+                        model.addAttribute("locationError", errorMessage);
+                        break;
+                    }
+                }
+            }
+        }
+    }
 }
 
 
