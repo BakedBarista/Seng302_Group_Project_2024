@@ -15,6 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class TagAPIController {
     final Logger logger = LoggerFactory.getLogger(TagAPIController.class);
 
+    /**
+     * Searches for existing tags that start with the given string. Intended for use
+     * with the autocomplete feature.
+     *
+     * @param currentValue The string to search for.
+     * @return A list of tags that start with the given string.
+     */
     @GetMapping("/tag-autocomplete")
     public ResponseEntity<SearchTagsResult> searchTags(@RequestParam String currentValue) {
         // TODO: fetch from database
