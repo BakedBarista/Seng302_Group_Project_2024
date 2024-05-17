@@ -28,6 +28,7 @@ plantImageInput.addEventListener("change", (ev) => {
         plantImageError.textContent =
             "Image must be of type png, jpg or svg";
         hasError = true;
+        plantImageInput.value = null;
         return;
     }
 
@@ -36,6 +37,7 @@ plantImageInput.addEventListener("change", (ev) => {
         plantImageError.textContent =
             "File size must be less than 10MB";
         hasError = true;
+        plantImageInput.value = null;
         return;
     }
     const reader = new FileReader();

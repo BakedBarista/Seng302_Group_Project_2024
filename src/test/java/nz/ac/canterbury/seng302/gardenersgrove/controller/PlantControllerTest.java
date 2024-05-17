@@ -11,27 +11,21 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class PlantControllerTest {
     @Mock
@@ -82,6 +76,7 @@ public class PlantControllerTest {
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
+//        doNothing().when(plantService).setPlantImage(anyLong(), anyString(), any(byte[].class));
         String returnPage = plantController.submitAddPlantForm(gardenId, validPlant, bindingResult, file, model);
         assertEquals(expectedReturnPage, returnPage);
     }
@@ -182,17 +177,46 @@ public class PlantControllerTest {
     }
 
     @Test
-    void whenPlantImageExists_returnPlantImage() {
+    void testSubmitPlantForm_NoImageUploaded_PlantImageIsSetToNull() {
+        long gardenId = 1L;
         byte[] image = {};
-        String contentType = "image/jpg";
-        Plant plant = new Plant();
-        plant.setPlantImage(contentType,image);
-        when(plantService.getPlantById(1L)).thenReturn(Optional.of(plant));
+        String contentType = "image/png";
+        String name = "plant.png";
+        String originalFilename = "plant.png";
 
-        ResponseEntity<byte[]> response = plantController.plantImage(1L);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(contentType, response.getHeaders().getContentType().toString());
-        assertEquals(image, response.getBody());
+        MultipartFile file = new MockMultipartFile(name,originalFilename,contentType,image);
+        Plant plant = new Plant();
+        BindingResult bindingResult = mock(BindingResult.class);
+
+        plant.setPlantedDate("10/10/2024");
+        when(bindingResult.hasErrors()).thenReturn(false);
+        plantController.submitAddPlantForm(gardenId, plant, bindingResult, file, model);
+
+        assertNull(plant.getPlantImage());
+        assertNull(plant.getPlantImageContentType());
+    }
+
+    @Test
+    void whenPlantImageExists_returnPlantImage() {
+        String imagePath = "static/img/plant.png";
+        try (InputStream inputStream = PlantControllerTest.class.getClassLoader().getResourceAsStream(imagePath)) {
+            if (inputStream == null) {
+                throw new IOException("Image not found: " + imagePath);
+            }
+            byte[] image = inputStream.readAllBytes();
+            String contentType = "image/png";
+            Plant plant = new Plant();
+            plant.setPlantImage(contentType,image);
+            when(plantService.getPlantById(1L)).thenReturn(Optional.of(plant));
+
+            ResponseEntity<byte[]> response = plantController.plantImage(1L);
+            assertEquals(HttpStatus.OK, response.getStatusCode());
+            assertEquals(contentType, response.getHeaders().getContentType().toString());
+            assertEquals(image, response.getBody());
+
+        } catch (IOException e) {
+            System.out.println("Error with resource file " + e.getMessage());
+        }
     }
 
     @Test
@@ -201,7 +225,7 @@ public class PlantControllerTest {
         when(plantService.getPlantById(1L)).thenReturn(Optional.of(plant));
         ResponseEntity<byte[]> response = plantController.plantImage(1L);
         assertEquals(HttpStatus.FOUND, response.getStatusCode());
-        assertEquals("/img/plant.png", response.getHeaders().getFirst(HttpHeaders.LOCATION));
+        assertEquals("/img/default-plant.svg", response.getHeaders().getFirst(HttpHeaders.LOCATION));
     }
 
     @Test
@@ -225,6 +249,7 @@ public class PlantControllerTest {
     void testSubmitAddPlantFormWithImage() throws Exception {
         Long gardenId = 1L;
         Plant plant = new Plant();
+        plant.setId(1L);
         plant.setPlantedDate("2023-05-14");
         BindingResult bindingResult = mock(BindingResult.class);
 
