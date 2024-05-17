@@ -85,10 +85,6 @@ public class PlantController {
                                      BindingResult bindingResult,
                                      @RequestParam("image") MultipartFile file,
                                      Model model) {
-        if(!plant.getPlantedDate().isEmpty()) {
-            plant.setPlantedDate(refactorPlantedDate(plant.getPlantedDate()));
-        }
-
         logger.info("POST /gardens/${gardenId}/add-plant - submit the new plant form");
         if(bindingResult.hasErrors()) {
             model.addAttribute("plant", plant);
@@ -96,8 +92,12 @@ public class PlantController {
             logger.info("Error In Form");
             return "plants/addPlant";
         }
+
+        if(!plant.getPlantedDate().isEmpty()) {
+            plant.setPlantedDate(refactorPlantedDate(plant.getPlantedDate()));
+        }
         Plant savedPlant = plantService.addPlant(plant, gardenId);
-//        Save plant image
+        //Save plant image
         if(file != null) {
             try{
             plantService.setPlantImage(savedPlant.getId(), file.getContentType(), file.getBytes());
@@ -142,7 +142,6 @@ public class PlantController {
      * @param gardenId the id of the garden that the plant belongs to
      * @param plantId the id of the plant being edited
      * @param file the image file
-     * @param dateInvalid a value passed from the html flagging us if the date is not filled correctly
      * @param plant the plant entity being edited
      * @param bindingResult binding result which helps display errors
      * @param model representation of results
@@ -162,12 +161,16 @@ public class PlantController {
             return "plants/editPlant";
         }
 
+        if(!plant.getPlantedDate().isEmpty()) {
+            plant.setPlantedDate(refactorPlantedDate(plant.getPlantedDate()));
+        }
+
         Optional<Plant> existingPlant = plantService.getPlantById(plantId);
         if (existingPlant.isPresent()){
             existingPlant.get().setName(plant.getName());
             existingPlant.get().setCount(plant.getCount());
             existingPlant.get().setDescription(plant.getDescription());
-            existingPlant.get().setPlantedDate(refactorPlantedDate(plant.getPlantedDate()));
+            existingPlant.get().setPlantedDate(plant.getPlantedDate());
             Plant savedPlant = plantService.addPlant(existingPlant.get(), gardenId);
             if(file != null) {
                 try {
