@@ -81,19 +81,13 @@ public class GardenController {
     public String submitForm(@Valid @ModelAttribute("garden") Garden garden,
                              BindingResult bindingResult, Model model) {
         logger.info("POST /gardens - submit the new garden form");
-
-       
-        boolean profranityFlagged = !profanityService.badWordsFound(garden.getDescription()).isEmpty();
-        System.out.print("tester");
         List<String> locationErrorNames = Arrays.asList("city", "country", "suburb", "streetNumber", "streetName", "postCode");
-        System.out.print("testing");
-        System.out.print(profranityFlagged);
-        boolean descriptionFlagged = moderationService.checkIfDescriptionIsFlagged(garden.getDescription());
-        System.out.print("test");
-        if (bindingResult.hasErrors() || profranityFlagged) {
-            if (profranityFlagged || descriptionFlagged) {
-                model.addAttribute("profanity", "The description does not match the language standards of the app.");
-            }
+        boolean profanityFlagged = !profanityService.badWordsFound(garden.getDescription()).isEmpty();
+        if (!profanityFlagged) {
+            profanityFlagged = moderationService.checkIfDescriptionIsFlagged(garden.getDescription());
+        }
+        if (bindingResult.hasErrors() || profanityFlagged) {
+            model.addAttribute("profanity", "The description does not match the language standards of the app.");
             for (FieldError error : bindingResult.getFieldErrors()) {
                 if(locationErrorNames.contains(error.getField())){
                     var errorCode = error.getCode();
