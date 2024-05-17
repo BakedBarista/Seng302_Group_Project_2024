@@ -4,7 +4,7 @@
             <div class="position-relative d-inline">
                 <label for="image" class="position-absolute top-0 end-0" style="cursor: pointer;"><img src="/icons/trans-plus.svg" alt="+" /></label>
                 <input id="image" name="image" class="d-none" type="file" accept=".png,.jpg,.jpeg,.svg"/>
-                <img id="preview" onchange="previewImage(e)" th:src="${imgSrc}" alt="Plant Picture" class="rounded mx-auto d-block h-auto" style="width: 300px;" />
+                <img id="preview" th:src="${imgSrc}" alt="Plant Picture" class="rounded mx-auto d-block h-auto" style="width: 300px;" />
                 <span id="plantImageError" class="invalid-feedback text-center"></span>
             </div>
         </div>
