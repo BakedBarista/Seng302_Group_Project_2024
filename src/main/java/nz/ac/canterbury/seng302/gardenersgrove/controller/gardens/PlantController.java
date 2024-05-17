@@ -81,21 +81,13 @@ public class PlantController {
      */
     @PostMapping("/gardens/{gardenId}/add-plant")
     public String submitAddPlantForm(@PathVariable("gardenId") Long gardenId,
-                                      @Valid @ModelAttribute("plant") Plant plant,
+                                     @Valid @ModelAttribute("plant") Plant plant,
                                      BindingResult bindingResult,
                                      @RequestParam("image") MultipartFile file,
-                                      Model model) throws Exception {
-
-
-        if (!plant.getPlantedDate().isEmpty() && !plant.getPlantedDate().matches("\\d{4}-\\d{2}-\\d{2}")){
-            bindingResult.rejectValue("plantedDate", "plantedDate.formatError", "Date must be in the format DD-MM-YYYY");
-
-        }
+                                     Model model) {
         if(!plant.getPlantedDate().isEmpty()) {
             plant.setPlantedDate(refactorPlantedDate(plant.getPlantedDate()));
         }
-
-        logger.info(plant.getPlantedDate());
         logger.info("POST /gardens/${gardenId}/add-plant - submit the new plant form");
         if(bindingResult.hasErrors()) {
             model.addAttribute("plant", plant);
@@ -161,12 +153,8 @@ public class PlantController {
                                       @RequestParam("image") MultipartFile file,
                                       @RequestParam(value = "dateError", required = false) String dateInvalid,
                                       @Valid @ModelAttribute("plant") Plant plant,
-                               BindingResult bindingResult, Model model) {
-
-        if (Objects.equals(dateInvalid, "dateInvalid") || (!plant.getPlantedDate().isEmpty() && !plant.getPlantedDate().matches("\\d{4}-\\d{2}-\\d{2}"))) {
-            bindingResult.rejectValue("plantedDate", "plantedDate.formatError", "Date must be in the format DD-MM-YYYY");
-        }
-
+                                      BindingResult bindingResult,
+                                      Model model) {
         if(!plant.getPlantedDate().isEmpty()) {
             plant.setPlantedDate(refactorPlantedDate(plant.getPlantedDate()));
         }
