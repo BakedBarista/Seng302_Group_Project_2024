@@ -193,7 +193,7 @@ public class PlantControllerTest {
         plantController.submitAddPlantForm(gardenId, plant, bindingResult, file, model);
 
         assertNull(plant.getPlantImage());
-        assertEquals(plant.getPlantImageContentType(), "null");
+        assertNull(plant.getPlantImageContentType());
     }
 
     @Test
