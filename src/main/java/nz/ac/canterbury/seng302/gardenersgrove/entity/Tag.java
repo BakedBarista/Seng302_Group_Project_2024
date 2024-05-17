@@ -49,4 +49,9 @@ public class Tag implements Comparable<Tag> {
         }
         return result;
     }
+
+    @Override
+    public boolean equals(Object other) {
+        return this.compareTo((Tag) other) == 0;
+    }
 }

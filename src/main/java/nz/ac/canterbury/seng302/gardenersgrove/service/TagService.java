@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
