@@ -4,10 +4,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.GardenController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.ModerationService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weatherAPI.WeatherAPIService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -44,6 +42,9 @@ public class GardenControllerTest {
 
     @Mock
     private GardenUserService gardenUserService;
+
+    @Mock
+    private ProfanityService profanityService;
 
     @InjectMocks
     private GardenController gardenController;
@@ -75,6 +76,7 @@ public class GardenControllerTest {
         Garden invalidGarden = new Garden("","","","","","","",0.0,0.0,"","");
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
+        when(profanityService.badWordsFound(anyString())).thenReturn(new ArrayList<>());
         String result = gardenController.submitForm(invalidGarden, bindingResult, model);
         assertEquals("gardens/createGarden", result);
     }
@@ -87,7 +89,7 @@ public class GardenControllerTest {
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
         when(gardenService.addGarden(validGarden)).thenReturn(validGarden);
-
+        when(profanityService.badWordsFound(anyString())).thenReturn(new ArrayList<>());
         Mockito.when(moderationService.moderateDescription(anyString())).thenReturn(ResponseEntity.ok().build());
         String result = gardenController.submitForm(validGarden, bindingResult, model);
         assertEquals("redirect:/gardens/1", result);
@@ -171,9 +173,10 @@ public class GardenControllerTest {
         String description = "some really nasty words";
         Garden invalidGarden = new Garden("","","","","","","",0.0,0.0,"", description);
         BindingResult bindingResult = mock(BindingResult.class);
-
         when(bindingResult.hasErrors()).thenReturn(true);
+        when(profanityService.badWordsFound(anyString())).thenReturn(new ArrayList<>());
         when(moderationService.checkIfDescriptionIsFlagged(description)).thenReturn(true);
+
         gardenController.submitForm(invalidGarden, bindingResult, model);
 
         verify(model).addAttribute("profanity", EXPECTED_MODERATION_ERROR_MESSAGE);

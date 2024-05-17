@@ -52,7 +52,10 @@ public class GardenControllerMVCTests {
 
     @Mock
     private ModerationService moderationService;
-    
+
+    @Mock ProfanityService profanityService;
+
+
     private static Garden emptyGarden;
     private static Garden patternGarden;
     @BeforeEach
@@ -65,7 +68,8 @@ public class GardenControllerMVCTests {
         gardenService = mock(GardenService.class);
         plantService = mock(PlantService.class);
         moderationService = mock(ModerationService.class);
-        gardenController = new GardenController(gardenService, plantService, gardenUserService, weatherAPIService, friendService, moderationService);
+        profanityService = mock(ProfanityService.class);
+        gardenController = new GardenController(gardenService, plantService, gardenUserService, weatherAPIService, friendService, moderationService, profanityService);
 
         emptyGarden = new Garden();
         patternGarden = new Garden();
