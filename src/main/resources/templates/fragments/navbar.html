@@ -43,17 +43,18 @@
           </a>
         </li>
         <li>
-          <a th:href="@{/users/manageFriends}">
-            <img class="link-icon" th:src="@{/icons/user-multiple-02-stroke-rounded-white.svg}" width="24" height="24" aria-hidden alt="Friends" />
-            Friends
-          </a>
-        </li>
-        <li>
           <a th:href="@{/gardens/create}">
             <img class="link-icon" th:src="@{/icons/create-garden.svg}" width="24" height="24" aria-hidden alt="createGarden" />
             Create Garden
           </a>
         </li>
+        <li>
+          <a th:href="@{/users/manageFriends}">
+            <img class="link-icon" th:src="@{/icons/user-multiple-02-stroke-rounded-white.svg}" width="24" height="24" aria-hidden alt="Friends" />
+            Friends
+          </a>
+        </li>
+    
       </ul>
       <ul th:if="${isAuthenticated}" class="pt-3">
         <li>
