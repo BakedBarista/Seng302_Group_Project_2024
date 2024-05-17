@@ -96,7 +96,7 @@ public class PlantController {
         // Makes sure the image is null when nothing uploaded
         if (file.isEmpty()) {
             logger.info("No image chosen for plant, using default image.");
-            plant.setPlantImage("null", null);
+            plant.setPlantImage(null, null);
         }
 
         if (bindingResult.hasErrors()) {
@@ -173,9 +173,10 @@ public class PlantController {
             bindingResult.rejectValue("plantedDate", "plantedDate.formatError", "Date must be in the format DD-MM-YYYY");
         }
 
-        if(!plant.getPlantedDate().isEmpty()) {
+        if (!plant.getPlantedDate().isEmpty()) {
             plant.setPlantedDate(refactorPlantedDate(plant.getPlantedDate()));
         }
+
         if (bindingResult.hasErrors()) {
             model.addAttribute("plant", plant);
             model.addAttribute("gardenId", gardenId);
@@ -189,8 +190,10 @@ public class PlantController {
             existingPlant.get().setCount(plant.getCount());
             existingPlant.get().setDescription(plant.getDescription());
             existingPlant.get().setPlantedDate(plant.getPlantedDate());
+
             Plant savedPlant = plantService.addPlant(existingPlant.get(), gardenId);
-            if(file != null) {
+
+            if (file != null) {
                 try {
                     plantService.setPlantImage(savedPlant.getId(), file.getContentType(), file.getBytes());
             } catch (Exception e) {
