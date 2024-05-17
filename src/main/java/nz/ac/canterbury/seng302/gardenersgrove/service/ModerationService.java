@@ -19,6 +19,7 @@ public class ModerationService {
 
     private static final String MODERATION_API_URL = "https://api.openai.com/v1/moderations";
 
+
     /**
      * Calls OPENAI Text Moderation API with given description
      * @param description garden description
@@ -35,7 +36,9 @@ public class ModerationService {
         HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
 
         RestTemplate restTemplate = new RestTemplate();
+        
         ResponseEntity<String> responseEntity = restTemplate.postForEntity(MODERATION_API_URL, requestEntity, String.class);
+
 
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
             logger.info("Description moderated");
