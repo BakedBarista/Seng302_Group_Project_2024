@@ -24,9 +24,12 @@
             <div class="invalid-feedback" th:if="${#fields.hasErrors('count')}" th:errors="*{count}"></div>
         </div>
         <div class="mb-3">
-            <label for="plantedDate" th:class="'form-label ' + ${#fields.hasErrors('plantedDate') ? 'is-invalid' : ''}">Planting Date:</label>
-            <input type="date" id="plantedDate" name="plantedDate" th:class="'form-control ' + ${#fields.hasErrors('plantedDate') ? 'is-invalid' : ''}" th:value="${plant.plantedDate}" >
+            <label for="date" th:class="'form-label ' + ${#fields.hasErrors('plantedDate') ? 'is-invalid' : ''}"> Date Planted: </label>
+            <input type='date' th:class="'form-control ' + ${#fields.hasErrors('plantedDate') ? 'is-invalid' : ''}" id="date" placeholder="DD/MM/YYYY" th:value="${plant.plantedDate}" th:name="plantedDate" data-cy="size" autofocus>
             <div class="invalid-feedback" th:if="${#fields.hasErrors('plantedDate')}" th:errors="*{plantedDate}"></div>
+
+            <!--      dateError is the flag for when the date is not filled in correctly (e.g. 10/mm/2001)      -->
+            <input type="hidden" name="dateError" id="dateError" value="">
         </div>
         <div class="alert alert-danger" th:if="${fileTypeError}">
             <div th:text="${fileTypeError}" style="color: red"></div>
@@ -36,7 +39,7 @@
             <div th:text="${fileSizeError}" style="color: red"></div>
         </div>
         <div>
-            <button class="btn btn-primary" type="submit">Submit!</button>
+            <button class="btn btn-primary" type="submit" onclick="return validateDate()">Submit!</button>
             <a type="button" class="btn btn-outline-secondary" th:href="@{/gardens/{id}(id=${gardenId})}">Cancel</a>
         </div>
     </form>
