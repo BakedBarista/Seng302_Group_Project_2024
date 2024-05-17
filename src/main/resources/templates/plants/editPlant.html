@@ -17,8 +17,8 @@
                    th:name="name" th:value="${plant.name}" data-cy="name" autofocus>
             <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" style="color: red;"></div>
             <br/>
-            <label for="count"> Count: </label>
-            <input type="number" class="form-control" id="count" th:placeholder="Count"
+            <label for="count" th:class="'form-label ' + ${#fields.hasErrors('count') ? 'is-invalid' : ''}"> Count: </label>
+            <input th:class="'form-control ' + ${#fields.hasErrors('count') ? 'is-invalid' : ''}" type="text" class="form-control" id="count" th:placeholder="Count"
                    th:name="count" th:value="${plant.count}" data-cy="count" autofocus>
             <div th:if="${#fields.hasErrors('count')}" th:errors="*{count}" style="color: red;"></div>
             <br/>
