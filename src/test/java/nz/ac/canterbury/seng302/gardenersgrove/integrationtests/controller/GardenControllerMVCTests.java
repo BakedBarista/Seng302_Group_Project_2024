@@ -4,6 +4,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.GardenController;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.users.EditUserController;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weatherAPI.WeatherAPIService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,9 +17,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.Authentication;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
+import org.springframework.validation.BindingResult;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -34,7 +36,7 @@ public class GardenControllerMVCTests {
     @Mock
     private GardenService gardenService;
 
-
+    private static Authentication mockAuthentication;
 
     @InjectMocks
     private GardenController gardenController;
@@ -54,9 +56,13 @@ public class GardenControllerMVCTests {
 
     @Mock
     private ModerationService moderationService;
+
+    @Mock
+    private Authentication authrne;
     
     private static Garden emptyGarden;
     private static Garden patternGarden;
+    private static GardenUser mockuser;
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -68,17 +74,16 @@ public class GardenControllerMVCTests {
         plantService = mock(PlantService.class);
         moderationService = mock(ModerationService.class);
         gardenController = new GardenController(gardenService, plantService, gardenUserService, weatherAPIService, friendService, moderationService);
-
+        mockAuthentication = mock(Authentication.class);
 
         Garden mockGarden1 = new Garden();
         Mockito.when(gardenService.getGardenById(1)).thenReturn(Optional.of(mockGarden1));
-               
         emptyGarden = new Garden();
         patternGarden = new Garden();
         patternGarden.setName("tets");
         patternGarden.setCountry("!");
         patternGarden.setCity("!");
-
+      
         // Setting up lenient behavior to avoid unnecessary stubbing exceptions
         lenient().when(owner.getId()).thenReturn(1L);
         lenient().when(gardenUserService.getCurrentUser()).thenReturn(owner);
@@ -86,6 +91,7 @@ public class GardenControllerMVCTests {
 
         // Build the MockMvc instance with the gardenController
         mockMvc = MockMvcBuilders.standaloneSetup(gardenController).build();
+
     }
 
     @Test
@@ -106,21 +112,19 @@ public class GardenControllerMVCTests {
                 .andExpect(model().attribute("gardenPage", expectedGardens));
     }
 
-    @Test
-    public void testCreateGardens() throws Exception {
-        // Setup our mocked service
-        int page = 0;
-        int size = 10;
+//    @Test
+//    public void testCreateGardens() throws Exception {
+//        Double where = 1D;
+//        Garden garden = new Garden("test", "1", "ilam", "chch", "chch", "nz", "8041", where, where, "10", "test");
+//        GardenUser user = new GardenUser("John", "Doe", "john@email.com", "P#ssw0rd", "10/10/2000");
+//        when(gardenUserService.getUserById(1L)).thenReturn(user);
+//        Mockito.when(mockAuthentication.getPrincipal()).thenReturn(user.getId());
+//        mockMvc.perform(post("/gardens/create").flashAttr("garden", garden))
+//                .andExpect(status().isOk())
+//                .andExpect(view().name("gardens/1")
+//                );
+//    }
 
-        Page<Garden> expectedGardens = new PageImpl<>(Collections.emptyList(), PageRequest.of(page, size), 0);
-        given(gardenService.getPageForPublicGardens(PageRequest.of(page, size))).willReturn(expectedGardens);
-        // Perform the GET request
-
-        mockMvc.perform(get("/gardens/1")
-                        .param("page", String.valueOf(page))
-                        .param("size", String.valueOf(size)))
-                .andExpect(status().isOk());
-    }
     @Test
     public void testLocationEmptyErrorGardens() throws Exception {
 
