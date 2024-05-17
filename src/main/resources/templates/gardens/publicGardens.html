@@ -18,7 +18,7 @@
                    aria-label="Search Public Gardens" aria-describedby="button-addon" name="search" th:value="${previousSearch}">
             <div class="input-group-append">
                 <button class="btn btn-outline-secondary" type="submit" id="button-addon">
-                    <i class="bi bi-search"></i>
+                    <img th:src="@{/icons/search-icon.svg}" alt="" width="20" height="25" />
                 </button>
             </div>
         </form>
@@ -40,7 +40,7 @@
 
     <div class="row">
         <th:block th:each="garden : ${gardenPage.content}">
-            <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+            <div class="col-lg-2 col-md-3 col-sm-4 mb-4">
                 <a th:href="@{/gardens/{id}(id=${garden.id})}" class="text-decoration-none text-dark">
                     <div class="card h-100 card-hover">
                         <!-- Plant images grid -->
@@ -55,9 +55,7 @@
                                     <div class="col" th:class="${#lists.size(garden.getPlants()) == 1 ? 'col-12' :
                                               #lists.size(garden.getPlants()) == 2 ? 'col-6' :
                                               'col-6 col-sm-4 col-lg-6'}" th:if="${iterStat.index < 4}">
-                                        <img th:if="${plant.plantImagePath != null}" th:src="@{${plant.plantImagePath}}" class="img-fluid plant-img" th:alt="${plant.name}">
-                                        <img th:unless="${plant.plantImagePath != null}" src="/img/defaultgarden.jpg" class="img-fluid plant-img" alt="Default Image">
-                                    </div>
+                                        <img class="img-fluid plant-img" th:alt="${plant.name}" th:src="@{'/plants/' + ${plant.id} + '/plant-image'}" />                                    </div>
                                 </th:block>
                             </div>
                         </div>
@@ -78,12 +76,16 @@
         <ul class="pagination justify-content-center">
             <!-- First page link -->
             <li class="page-item" th:classappend="${gardenPage.isFirst() ? 'disabled' : ''}">
-                <a class="page-link" th:href="@{/gardens/public(page=0, size=${gardenPage.size})}">First</a>
+                <a class="page-link" th:href="@{/gardens/public(page=0, size=${gardenPage.size})}">
+                    <img th:src="@{/icons/first-page-icon.svg}" alt="" width="20" height="25" />
+                </a>
             </li>
 
             <!-- Previous page link -->
             <li class="page-item" th:classappend="${gardenPage.hasPrevious() ? '' : 'disabled'}">
-                <a class="page-link" th:href="@{/gardens/public(page=${gardenPage.number - 1}, size=${gardenPage.size})}">Previous</a>
+                <a class="page-link" th:href="@{/gardens/public(page=${gardenPage.number - 1}, size=${gardenPage.size})}">
+                    <img th:src="@{/icons/prev-icon.svg}" alt="" width="20" height="25" />
+                </a>
             </li>
 
             <!-- Dynamic page links: showing current page and 2 pages in both directions if they exist -->
@@ -95,12 +97,16 @@
 
             <!-- Next page link -->
             <li class="page-item" th:classappend="${gardenPage.hasNext() ? '' : 'disabled'}">
-                <a class="page-link" th:href="@{/gardens/public(page=${gardenPage.number + 1}, size=${gardenPage.size})}">Next</a>
+                <a class="page-link" th:href="@{/gardens/public(page=${gardenPage.number + 1}, size=${gardenPage.size})}">
+                    <img th:src="@{/icons/arrow-right-04-stroke-rounded.svg}" alt="" width="20" height="25" />
+                </a>
             </li>
 
             <!-- Last page link -->
             <li class="page-item" th:classappend="${gardenPage.isLast() ? 'disabled' : ''}">
-                <a class="page-link" th:href="@{/gardens/public(page=${gardenPage.totalPages - 1}, size=${gardenPage.size})}">Last</a>
+                <a class="page-link" th:href="@{/gardens/public(page=${gardenPage.totalPages - 1}, size=${gardenPage.size})}">
+                    <img th:src="@{/icons/arrow-right-05-stroke-rounded.svg}" alt="" width="20" height="25" />
+                </a>
             </li>
         </ul>
     </nav>
