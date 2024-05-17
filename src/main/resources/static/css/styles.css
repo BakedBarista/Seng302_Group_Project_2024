@@ -409,3 +409,13 @@ h1, h2, h3, h4, h5, h6 {
     width: 100px;
     text-align: right;
 }
+
+.pagination .page-item.active .page-link {
+    background-color: var(--gg-primary-light);
+    border-color: var(--gg-primary-light);
+}
+
+/*.active {*/
+/*    font-weight: bold;*/
+/*    color: var(--gg-primary-light);*/
+/*}*/
