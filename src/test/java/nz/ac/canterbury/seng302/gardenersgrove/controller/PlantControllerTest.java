@@ -126,8 +126,8 @@ public class PlantControllerTest {
     }
 
     @Test
-    public void testSubmitEditPlantForm_DataIsInvalid_ReturnToEditPlantForm() throws Exception {
-        Plant invalidPlant = new Plant("#invalid", "10", "Yellow", "11/03/2024");
+    public void testSubmitEditPlantForm_CountIsInvalid_ReturnToEditPlantForm() throws Exception {
+        Plant invalidPlant = new Plant("Lotus", "abc", "Yellow", "11/03/2024");
         long gardenId = 0;
         long plantId = 0;
         String expectedReturnPage = "plants/editPlant";
@@ -136,6 +136,22 @@ public class PlantControllerTest {
         when(bindingResult.hasErrors()).thenReturn(true);
         String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, invalidPlant, bindingResult, model);
 
+        verify(plantService, times(0)).addPlant(invalidPlant, gardenId);
+        assertEquals(expectedReturnPage, returnPage);
+    }
+
+    @Test
+    public void testSubmitEditPlantForm_NameIsInvalid_ReturnToEditPlantForm() throws Exception {
+        Plant invalidPlant = new Plant("#invalid", "abc", "Yellow", "11/03/2024");
+        long gardenId = 0;
+        long plantId = 0;
+        String expectedReturnPage = "plants/editPlant";
+
+        BindingResult bindingResult = mock(BindingResult.class);
+        when(bindingResult.hasErrors()).thenReturn(true);
+        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, invalidPlant, bindingResult, model);
+
+        verify(plantService, times(0)).addPlant(invalidPlant, gardenId);
         assertEquals(expectedReturnPage, returnPage);
     }
 
