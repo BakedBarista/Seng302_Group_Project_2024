@@ -250,21 +250,24 @@ public class GardenController {
                                BindingResult result,
                                Model model) {
         List<String> locationErrorNames = Arrays.asList("city", "country", "suburb", "streetNumber", "streetName", "postCode");
-        boolean descriptionFlagged = moderationService.checkIfDescriptionIsFlagged(garden.getDescription());
-
-        if (result.hasErrors() || descriptionFlagged) {
-            if (descriptionFlagged) {
+        boolean profanityFlagged = !profanityService.badWordsFound(garden.getDescription()).isEmpty();
+        if (!profanityFlagged) {
+            profanityFlagged = moderationService.checkIfDescriptionIsFlagged(garden.getDescription());
+        }
+        if (result.hasErrors() || profanityFlagged) {
+            if(profanityFlagged) {
                 model.addAttribute("profanity", "The description does not match the language standards of the app.");
             }
-
             for (FieldError error : result.getFieldErrors()) {
                 if(locationErrorNames.contains(error.getField())){
-                    if(error.getCode().equals("Pattern")){
-                        var errorMessage = "Location name must only include letters, numbers, spaces, dots, hyphens or apostrophes";
-                        model.addAttribute("locationError", errorMessage);
-                        break;
-                    } else {
-                        var errorMessage = "Location cannot be empty";
+                    var errorCode = error.getCode();
+                    if(errorCode != null){
+                        String errorMessage;
+                        if(errorCode.equals("Pattern")){
+                            errorMessage = "Location name must only include letters, numbers, spaces, dots, hyphens or apostrophes";
+                        } else {
+                            errorMessage = "Location cannot be empty";
+                        }
                         model.addAttribute("locationError", errorMessage);
                         break;
                     }
@@ -379,6 +382,7 @@ public class GardenController {
         model.addAttribute("previousSearch", search);
         return "gardens/publicGardens";
     }
+
 }
 
 
