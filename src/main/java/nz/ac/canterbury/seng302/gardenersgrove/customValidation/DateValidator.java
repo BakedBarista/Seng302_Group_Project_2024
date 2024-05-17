@@ -6,6 +6,9 @@ import jakarta.validation.ConstraintValidatorContext;
 import java.util.List;
 import java.util.regex.Pattern;
 
+/**
+ * Deals with validating dates
+ */
 public class DateValidator implements ConstraintValidator<ValidDate, String> {
 
     private static final List<Integer> THIRTY_DAY_MONTHS = List.of(4, 6, 9, 11);
@@ -15,22 +18,32 @@ public class DateValidator implements ConstraintValidator<ValidDate, String> {
 
     private static final String DATE_PATTERN_STORED = "^\\d{2}/\\d{2}/\\d{4}$";
 
+    /**
+     * validate a given date string as long as it is not empty.
+     * This deals with making sure each value of the date is within its correct bound
+     * and deals with issues like 30/30/2002 or 29th of feb on a non-leap year
+     *
+     * @param date object to validate
+     * @param context context in which the constraint is evaluated
+     *
+     * @return true if date is valid
+     */
     @Override
-    public boolean isValid(String dateField, ConstraintValidatorContext context) {
-        if (dateField == null || dateField.isEmpty()) {
+    public boolean isValid(String date, ConstraintValidatorContext context) {
+        if (date == null || date.isEmpty()) {
             return true;
         }
 
         int day;
         int month;
         int year;
-        if (Pattern.matches(DATE_PATTERN_THYMELEAF, dateField)) {
-            String[] fields = dateField.split("-");
+        if (Pattern.matches(DATE_PATTERN_THYMELEAF, date)) {
+            String[] fields = date.split("-");
             day = Integer.parseInt(fields[2], 10);
             month = Integer.parseInt(fields[1], 10);
             year = Integer.parseInt(fields[0], 10);
-        } else if (Pattern.matches(DATE_PATTERN_STORED, dateField)) {
-            String[] fields = dateField.split("/");
+        } else if (Pattern.matches(DATE_PATTERN_STORED, date)) {
+            String[] fields = date.split("/");
             day = Integer.parseInt(fields[0], 10);
             month = Integer.parseInt(fields[1], 10);
             year = Integer.parseInt(fields[2], 10);
