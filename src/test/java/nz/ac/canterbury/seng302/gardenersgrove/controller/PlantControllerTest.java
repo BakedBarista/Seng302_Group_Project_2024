@@ -109,7 +109,7 @@ public class PlantControllerTest {
     }
 
     @Test
-    public void testSubmitEditPlantForm_DataIsValid_ReturnToGardenDetailPage_PlantAddedToRepository() throws Exception {
+    public void givenOnSubmitEditPlantForm_whenDataIsValid_thenReturnToEditPlantForm() throws Exception {
         Plant validPlant = new Plant("Plant", "10", "Yellow", "11/03/2024");
         long gardenId = 0;
         long plantId = 0;
@@ -126,7 +126,7 @@ public class PlantControllerTest {
     }
 
     @Test
-    public void testSubmitEditPlantForm_CountIsInvalid_ReturnToEditPlantForm() throws Exception {
+    public void gvenOnSubmitEditPlantForm_whenCountIsInvalid_thenReturnToEditPlantForm() throws Exception {
         Plant invalidPlant = new Plant("Lotus", "abc", "Yellow", "11/03/2024");
         long gardenId = 0;
         long plantId = 0;
