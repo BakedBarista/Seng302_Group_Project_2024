@@ -48,15 +48,4 @@
 </div>
 <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
 </body>
-<script th:src="@{/js/nextFormBox.js}"></script>
-<script th:src="@{/js/plantImageErrorChecking.js}"></script>
-<script>
-    document.getElementById("editPlantForm").addEventListener("submit", function(event) {
-        if (hasError) {
-            event.preventDefault(); // Prevent form submission
-            return false;
-        }
-        return true;
-    });
-</script>
 </html>

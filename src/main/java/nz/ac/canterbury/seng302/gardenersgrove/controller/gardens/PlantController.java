@@ -7,14 +7,12 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -25,8 +23,8 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -83,33 +81,42 @@ public class PlantController {
                                       @Valid @ModelAttribute("plant") Plant plant,
                                      BindingResult bindingResult,
                                      @RequestParam("image") MultipartFile file,
-                                      Model model) throws Exception {
+                                      Model model) {
 
 
+        logger.info("POST /gardens/{}/add-plant - Request made", gardenId);
         if (!plant.getPlantedDate().isEmpty() && !plant.getPlantedDate().matches("\\d{4}-\\d{2}-\\d{2}")){
             bindingResult.rejectValue("plantedDate", "plantedDate.formatError", "Date must be in the format DD-MM-YYYY");
-
         }
-        if(!plant.getPlantedDate().isEmpty()) {
+
+        if (!plant.getPlantedDate().isEmpty()) {
             plant.setPlantedDate(refactorPlantedDate(plant.getPlantedDate()));
         }
 
-        logger.info(plant.getPlantedDate());
-        logger.info("POST /gardens/${gardenId}/add-plant - submit the new plant form");
-        if(bindingResult.hasErrors()) {
+        // Makes sure the image is null when nothing uploaded
+        if (file.isEmpty()) {
+            logger.info("No image chosen for plant, using default image.");
+            plant.setPlantImage(null, null);
+        }
+
+        if (bindingResult.hasErrors()) {
             model.addAttribute("plant", plant);
             model.addAttribute("gardenId", gardenId);
-            logger.info("Error In Form");
+            logger.error("Validation error in Plant Form.");
             return "plants/addPlant";
         }
+
+        // Save the new plant and image
         Plant savedPlant = plantService.addPlant(plant, gardenId);
-        //Save plant image
-        if(file != null) {
-            try{
-            plantService.setPlantImage(savedPlant.getId(), file.getContentType(), file.getBytes());
-        } catch (Exception e){
-                logger.info("Exception {}",e.toString());
+        if (savedPlant != null) {
+            try {
+                plantService.setPlantImage(savedPlant.getId(), file.getContentType(), file.getBytes());
+                logger.info("Saved new plant to Garden ID: {}", gardenId);
+            } catch (IOException e) {
+                logger.error("Something went wrong saving the user's plant image: ", e);
             }
+        } else {
+            logger.error("Failed to save new plant to garden ID: {}", gardenId);
         }
         return "redirect:/gardens/" + gardenId;
     }
@@ -144,24 +151,32 @@ public class PlantController {
     }
 
     /**
-     * Put a single plant
+     *
+     * @param gardenId the id of the garden that the plant belongs to
+     * @param plantId the id of the plant being edited
+     * @param file the image file
+     * @param dateInvalid a value passed from the html flagging us if the date is not filled correctly
+     * @param plant the plant entity being edited
+     * @param bindingResult binding result which helps display errors
      * @param model representation of results
-     * @return redirect to gardens page
+     * @return redirect to gardens page if data is valid
      */
     @PostMapping("/gardens/{gardenId}/plants/{plantId}/edit")
     public String submitEditPlantForm(@PathVariable("gardenId") long gardenId,
-                               @PathVariable("plantId") long plantId, @RequestParam("image") MultipartFile file,
-                               @Valid @ModelAttribute("plant") Plant plant,
-                               BindingResult bindingResult, Model model) throws Exception{
+                                      @PathVariable("plantId") long plantId,
+                                      @RequestParam("image") MultipartFile file,
+                                      @RequestParam(value = "dateError", required = false) String dateInvalid,
+                                      @Valid @ModelAttribute("plant") Plant plant,
+                               BindingResult bindingResult, Model model) {
 
-        logger.info(plant.getPlantedDate());
-        if (!plant.getPlantedDate().isEmpty() && !plant.getPlantedDate().matches("\\d{4}-\\d{2}-\\d{2}")) {
-            bindingResult.rejectValue("plantedDate", "plantedDate.formatError", "Date must be in the format YYYY-MM-DD");
+        if (Objects.equals(dateInvalid, "dateInvalid") || (!plant.getPlantedDate().isEmpty() && !plant.getPlantedDate().matches("\\d{4}-\\d{2}-\\d{2}"))) {
+            bindingResult.rejectValue("plantedDate", "plantedDate.formatError", "Date must be in the format DD-MM-YYYY");
         }
 
-        if(!plant.getPlantedDate().isEmpty()) {
+        if (!plant.getPlantedDate().isEmpty()) {
             plant.setPlantedDate(refactorPlantedDate(plant.getPlantedDate()));
         }
+
         if (bindingResult.hasErrors()) {
             model.addAttribute("plant", plant);
             model.addAttribute("gardenId", gardenId);
@@ -175,8 +190,10 @@ public class PlantController {
             existingPlant.get().setCount(plant.getCount());
             existingPlant.get().setDescription(plant.getDescription());
             existingPlant.get().setPlantedDate(plant.getPlantedDate());
+
             Plant savedPlant = plantService.addPlant(existingPlant.get(), gardenId);
-            if(file != null) {
+
+            if (file != null) {
                 try {
                     plantService.setPlantImage(savedPlant.getId(), file.getContentType(), file.getBytes());
             } catch (Exception e) {
@@ -216,12 +233,19 @@ public class PlantController {
 
         Optional<Plant> plant = plantService.getPlantById(id);
         Plant existingPlant = new Plant();
+
         if (plant.isPresent()) {
             existingPlant = plant.get();
         }
-        if (existingPlant.getPlantImage() == null) {
-                return ResponseEntity.status(302).header(HttpHeaders.LOCATION, "/img/plant.png").build();
-            }
+
+        // Return the default image if nothing specified
+        if (existingPlant.getPlantImage() == null || existingPlant.getPlantImage().length == 0) {
+            logger.info("Returning default plant image");
+            return ResponseEntity.status(302).header(HttpHeaders.LOCATION, "/img/default-plant.svg").build();
+        }
+
+        // Return the saved image from DB
+        logger.info("Returning the plants saved image from DB");
         return ResponseEntity.ok().contentType(MediaType.parseMediaType(existingPlant.getPlantImageContentType()))
                 .body(existingPlant.getPlantImage());
 
