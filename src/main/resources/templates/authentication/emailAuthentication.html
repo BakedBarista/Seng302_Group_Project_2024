@@ -30,23 +30,22 @@
         <br>
     </span>
     <form id = "authenticationForm" th:action="@{/users/user/{userId}/authenticate-email (userId=${userId})}" method="post">
-        <label for="authenticationToken"> Authentication Code: </label>
         <div class = "groupElements">
-            <input type="text" pattern="\d*" maxlength="6" class="form-control" id="authenticationToken" placeholder="type your six digit code here..."
-                   th:name="authenticationToken" data-cy="size" autofocus>
+            <input class="hidden-input" pattern="\d*" type="text" value=" " id="authenticationToken"
+                   th:name="authenticationToken"/>
         </div>
     </form>
+    <label for="token"> Authentication Code: </label>
+    <div id ="token" class="inputs d-flex flex-row justify-content-center mt-2" style="height: 70px">
+        <input class="m-2 text-center form-control rounded" type="text" id="first" maxlength="1" />
+        <input class="m-2 text-center form-control rounded" type="text" id="second" maxlength="1" />
+        <input class="m-2 text-center form-control rounded" type="text" id="third" maxlength="1" />
+        <input class="m-2 text-center form-control rounded" type="text" id="fourth" maxlength="1" />
+        <input class="m-2 text-center form-control rounded" type="text" id="fifth" maxlength="1" />
+        <input class="m-2 text-center form-control rounded" type="text" id="sixth" maxlength="1" />
+    </div>
 </main>
-<script>
-    const authenticationBox = document.getElementById("authenticationToken");
-    const form = document.getElementById("authenticationForm");
+<script th:src="@{/js/authenticationToken.js}"></script>
 
-    authenticationBox.addEventListener("input", function () {
-        const value = authenticationBox.value;
-        if (value.length === 6) {
-            form.submit();
-        }
-    })
-</script>
 </body>
 </html>
