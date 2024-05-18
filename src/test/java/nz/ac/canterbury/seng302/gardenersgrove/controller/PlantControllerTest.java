@@ -107,7 +107,7 @@ public class PlantControllerTest {
     }
 
     @Test
-    void testSubmitEditPlantForm_DataIsValid_ReturnToGardenDetailPage_PlantAddedToRepository() {
+    public void givenOnSubmitEditPlantForm_whenDataIsValid_thenReturnToEditPlantForm() throws Exception {
         Plant validPlant = new Plant("Plant", "10", "Yellow", "11/03/2024");
         long gardenId = 0;
         long plantId = 0;
@@ -124,8 +124,8 @@ public class PlantControllerTest {
     }
 
     @Test
-    void testSubmitEditPlantForm_DataIsInvalid_ReturnToEditPlantForm() {
-        Plant invalidPlant = new Plant("#invalid", "10", "Yellow", "11/03/2024");
+    public void gvenOnSubmitEditPlantForm_whenCountIsInvalid_thenReturnToEditPlantForm() throws Exception {
+        Plant invalidPlant = new Plant("Lotus", "abc", "Yellow", "11/03/2024");
         long gardenId = 0;
         long plantId = 0;
         String expectedReturnPage = "plants/editPlant";
@@ -173,6 +173,22 @@ public class PlantControllerTest {
         when(plantService.getPlantById(plantId)).thenReturn(Optional.of(validPlant));
         String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, validPlant, bindingResult, model);
 
+        verify(plantService, times(1)).addPlant(validPlant, gardenId);
+        assertEquals(expectedReturnPage, returnPage);
+    }
+
+    @Test
+    public void testSubmitEditPlantForm_NameIsInvalid_ReturnToEditPlantForm() throws Exception {
+        Plant invalidPlant = new Plant("#invalid", "abc", "Yellow", "11/03/2024");
+        long gardenId = 0;
+        long plantId = 0;
+        String expectedReturnPage = "plants/editPlant";
+
+        BindingResult bindingResult = mock(BindingResult.class);
+        when(bindingResult.hasErrors()).thenReturn(true);
+        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, invalidPlant, bindingResult, model);
+
+        verify(plantService, times(0)).addPlant(invalidPlant, gardenId);
         assertEquals(expectedReturnPage, returnPage);
     }
 
