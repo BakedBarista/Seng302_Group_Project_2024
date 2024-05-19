@@ -82,7 +82,7 @@ public class PlantControllerTest {
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
-        String returnPage = plantController.submitAddPlantForm(gardenId, validPlant, bindingResult, dateValidStr, file, model);
+        String returnPage = plantController.submitAddPlantForm(gardenId, validPlant, bindingResult, file, model);
         assertEquals(expectedReturnPage, returnPage);
     }
 
@@ -94,7 +94,7 @@ public class PlantControllerTest {
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
-        String returnPage = plantController.submitAddPlantForm(gardenId, invalidPlant, bindingResult, dateInvalidStr, file,  model);
+        String returnPage = plantController.submitAddPlantForm(gardenId, invalidPlant, bindingResult, file,  model);
         assertEquals(expectedReturnPage, returnPage);
     }
 
@@ -121,7 +121,7 @@ public class PlantControllerTest {
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
         when(plantService.getPlantById(plantId)).thenReturn(Optional.of(validPlant));
-        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, validPlant, bindingResult, model);
+        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, validPlant, bindingResult, model);
 
         assertEquals(expectedReturnPage, returnPage);
 
@@ -137,7 +137,7 @@ public class PlantControllerTest {
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
-        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, invalidPlant, bindingResult, model);
+        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, invalidPlant, bindingResult, model);
 
         assertEquals(expectedReturnPage, returnPage);
     }
@@ -156,7 +156,7 @@ public class PlantControllerTest {
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
-        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateInvalidStr, invalidPlant, bindingResult, model);
+        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, invalidPlant, bindingResult, model);
 
         assertEquals(expectedReturnPage, returnPage);
     }
@@ -176,7 +176,7 @@ public class PlantControllerTest {
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
         when(plantService.getPlantById(plantId)).thenReturn(Optional.of(validPlant));
-        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, validPlant, bindingResult, model);
+        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, validPlant, bindingResult, model);
 
         assertEquals(expectedReturnPage, returnPage);
     }
@@ -234,7 +234,7 @@ public class PlantControllerTest {
         doThrow(new RuntimeException("Image processing error"))
                 .when(plantService).setPlantImage(anyLong(), anyString(), any(byte[].class));
 
-        String view = plantController.submitAddPlantForm(gardenId, plant, bindingResult, dateValidStr, file, model);
+        String view = plantController.submitAddPlantForm(gardenId, plant, bindingResult, file, model);
 
         assertEquals("redirect:/gardens/" + gardenId, view);
     }
@@ -257,7 +257,7 @@ public class PlantControllerTest {
         doThrow(new RuntimeException("Image processing error"))
                 .when(plantService).setPlantImage(anyLong(), anyString(), any(byte[].class));
 
-        String view = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, plant, bindingResult, model);
+        String view = plantController.submitEditPlantForm(gardenId, plantId, file, plant, bindingResult, model);
 
         assertEquals("redirect:/gardens/" + gardenId, view);
     }
