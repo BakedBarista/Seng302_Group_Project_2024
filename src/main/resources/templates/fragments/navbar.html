@@ -17,12 +17,14 @@
     <section class="collapse flex-grow-1 d-md-flex flex-column" id="navDrawer">
       <ul th:if="${!isAuthenticated}" class="main-list">
         <li>
+          <!--          th:classappend="${#httpServletRequest.requestURI.startsWith('/users/login')} ? 'nav-link-active'"-->
           <a th:href="@{/users/login}">
             <img class="link-icon" th:src="@{/icons/login.svg}" width="24" height="24" aria-hidden alt="Sign In" />
            Sign In
           </a>
         </li>
         <li>
+<!--          th:classappend="${#httpServletRequest.requestURI.startsWith('/users/register')} ? 'nav-link-active'"-->
           <a th:href="@{/users/register}">
             <img class="link-icon" th:src="@{/icons/register.svg}" width="24" height="24" aria-hidden alt="Register" />
            Register
@@ -31,24 +33,28 @@
       </ul>
       <ul th:if="${isAuthenticated}" class="main-list">
         <li>
+<!--          th:classappend="${#httpServletRequest.requestURI.startsWith('/')} ? 'nav-link-active'"-->
           <a th:href="@{/}">
             <img class="link-icon" th:src="@{/icons/home-01-stroke-rounded-white.svg}" width="24" height="24" aria-hidden alt="Home" />
             Home
           </a>
         </li>
         <li>
+<!--          th:classappend="${#httpServletRequest.requestURI.startsWith('/gardens')} ? 'nav-link-active'"-->
           <a th:href="@{/gardens}">
             <img class="link-icon" th:src="@{/icons/natural-food-stroke-rounded-white.svg}" width="24" height="24" aria-hidden alt="Gardens" />
             My Gardens
           </a>
         </li>
         <li>
+<!--          th:classappend="${#httpServletRequest.requestURI.startsWith('/gardens/public')} ? 'nav-link-active'"-->
           <a th:href="@{/gardens/public}">
-            <img class="link-icon" th:src="@{/icons/natural-food-stroke-rounded-white.svg}" width="24" height="24" aria-hidden alt="Browse Public Gardens" />
+            <img class="link-icon" th:src="@{/icons/public-garden-icon.svg}" width="24" height="24" aria-hidden alt="Browse Public Gardens" />
             Browse Gardens
           </a>
         </li>
         <li>
+<!--          th:classappend="${#httpServletRequest.requestURI.startsWith('/users/manageFriends')} ? 'nav-link-active'"-->
           <a th:href="@{/users/manageFriends}">
             <img class="link-icon" th:src="@{/icons/user-multiple-02-stroke-rounded-white.svg}" width="24" height="24" aria-hidden alt="Friends" />
             Friends
@@ -66,6 +72,7 @@
       <section class="collapse" id="profileOptions">
         <ul class="pt-3">
           <li>
+<!--            th:classappend="${#httpServletRequest.requestURI.startsWith('/users/user')} ? 'nav-link-active'"-->
             <a th:href="@{/users/user}">
               <img class="link-icon" th:src="@{/icons/task-02-stroke-rounded-white.svg}" width="24" height="24" aria-hidden alt="Profile" />
               My Profile
