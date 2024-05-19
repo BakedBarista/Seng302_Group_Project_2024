@@ -84,14 +84,22 @@ public class PlantController {
                                      @Valid @ModelAttribute("plant") Plant plant,
                                      BindingResult bindingResult,
                                      @RequestParam("image") MultipartFile file,
+                                     @RequestParam("dateError") String dateValidity,
                                      Model model) {
         logger.info("POST /gardens/${gardenId}/add-plant - submit the new plant form");
+
+        if (Objects.equals(dateValidity, "dateInvalid")) {
+            bindingResult.rejectValue("plantedDate", "plantedDate.formatError", "Date must be in the format DD-MM-YYYY");
+        }
+
         if(bindingResult.hasErrors()) {
             model.addAttribute("plant", plant);
             model.addAttribute("gardenId", gardenId);
             logger.info("Error In Form");
             return "plants/addPlant";
         }
+
+
 
         if(!plant.getPlantedDate().isEmpty()) {
             plant.setPlantedDate(refactorPlantedDate(plant.getPlantedDate()));
@@ -151,9 +159,15 @@ public class PlantController {
     public String submitEditPlantForm(@PathVariable("gardenId") long gardenId,
                                       @PathVariable("plantId") long plantId,
                                       @RequestParam("image") MultipartFile file,
+                                      @RequestParam("dateError") String dateValidity,
                                       @Valid @ModelAttribute("plant") Plant plant,
                                       BindingResult bindingResult,
                                       Model model) {
+
+        if (Objects.equals(dateValidity, "dateInvalid")) {
+            bindingResult.rejectValue("plantedDate", "plantedDate.formatError", "Date must be in the format DD-MM-YYYY");
+        }
+
         if (bindingResult.hasErrors()) {
             model.addAttribute("plant", plant);
             model.addAttribute("gardenId", gardenId);

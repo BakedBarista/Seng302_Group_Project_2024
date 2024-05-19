@@ -82,7 +82,7 @@ public class PlantControllerTest {
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
-        String returnPage = plantController.submitAddPlantForm(gardenId, validPlant, bindingResult, file, model);
+        String returnPage = plantController.submitAddPlantForm(gardenId, validPlant, bindingResult, file, dateValidStr, model);
         assertEquals(expectedReturnPage, returnPage);
     }
 
@@ -94,7 +94,46 @@ public class PlantControllerTest {
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
-        String returnPage = plantController.submitAddPlantForm(gardenId, invalidPlant, bindingResult, file,  model);
+        String returnPage = plantController.submitAddPlantForm(gardenId, invalidPlant, bindingResult, file, dateValidStr, model);
+        assertEquals(expectedReturnPage, returnPage);
+    }
+
+    /**
+     * plantedDate is only passed to the controller if the date is valid, it is otherwise considered empty
+     * So, dateValidation.js flags if the date input is incorrect
+     * Testing that the controller throws an error when dateValidation.js picks up an error, but everything else is valid
+     */
+    @Test
+    void testSubmitAddPlantForm_PlantedDateInvalidFromJS_ReturnToAddPlantForm() {
+        Plant invalidPlant = new Plant("validName", "1", "Yellow", "");
+        long gardenId = 0;
+        long plantId = 0;
+        String expectedReturnPage = "plants/editPlant";
+
+        BindingResult bindingResult = mock(BindingResult.class);
+        when(bindingResult.hasErrors()).thenReturn(true);
+        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateInvalidStr, invalidPlant, bindingResult, model);
+
+        assertEquals(expectedReturnPage, returnPage);
+    }
+
+    /**
+     * plantedDate is only passed to the controller if the date is valid, it is otherwise considered empty
+     * So, dateValidation.js flags if the date input is incorrect
+     * Testing that the controller throws an error when dateValidation.js picks up an error, but everything else is valid
+     */
+    @Test
+    void testSubmitAddPlantForm_PlantedDateValidFromJS_ReturnToGardenDetailPage_PlantAddedToRepository() {
+        Plant validPlant = new Plant("validName", "1", "Yellow", "");
+        long gardenId = 0;
+        long plantId = 0;
+        String expectedReturnPage = "redirect:/gardens/" + gardenId;
+
+        BindingResult bindingResult = mock(BindingResult.class);
+        when(bindingResult.hasErrors()).thenReturn(false);
+        when(plantService.getPlantById(plantId)).thenReturn(Optional.of(validPlant));
+        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, validPlant, bindingResult, model);
+
         assertEquals(expectedReturnPage, returnPage);
     }
 
@@ -121,7 +160,7 @@ public class PlantControllerTest {
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
         when(plantService.getPlantById(plantId)).thenReturn(Optional.of(validPlant));
-        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, validPlant, bindingResult, model);
+        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, validPlant, bindingResult, model);
 
         assertEquals(expectedReturnPage, returnPage);
 
@@ -137,7 +176,7 @@ public class PlantControllerTest {
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
-        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, invalidPlant, bindingResult, model);
+        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, invalidPlant, bindingResult, model);
 
         assertEquals(expectedReturnPage, returnPage);
     }
@@ -156,7 +195,7 @@ public class PlantControllerTest {
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
-        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, invalidPlant, bindingResult, model);
+        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateInvalidStr, invalidPlant, bindingResult, model);
 
         assertEquals(expectedReturnPage, returnPage);
     }
@@ -176,7 +215,7 @@ public class PlantControllerTest {
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
         when(plantService.getPlantById(plantId)).thenReturn(Optional.of(validPlant));
-        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, validPlant, bindingResult, model);
+        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, validPlant, bindingResult, model);
 
         assertEquals(expectedReturnPage, returnPage);
     }
@@ -234,7 +273,7 @@ public class PlantControllerTest {
         doThrow(new RuntimeException("Image processing error"))
                 .when(plantService).setPlantImage(anyLong(), anyString(), any(byte[].class));
 
-        String view = plantController.submitAddPlantForm(gardenId, plant, bindingResult, file, model);
+        String view = plantController.submitAddPlantForm(gardenId, plant, bindingResult, file, dateValidStr, model);
 
         assertEquals("redirect:/gardens/" + gardenId, view);
     }
@@ -257,7 +296,7 @@ public class PlantControllerTest {
         doThrow(new RuntimeException("Image processing error"))
                 .when(plantService).setPlantImage(anyLong(), anyString(), any(byte[].class));
 
-        String view = plantController.submitEditPlantForm(gardenId, plantId, file, plant, bindingResult, model);
+        String view = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, plant, bindingResult, model);
 
         assertEquals("redirect:/gardens/" + gardenId, view);
     }
