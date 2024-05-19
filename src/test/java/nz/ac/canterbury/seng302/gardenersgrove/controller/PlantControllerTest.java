@@ -244,7 +244,7 @@ public class PlantControllerTest {
 
         plant.setPlantedDate("10/10/2024");
         when(bindingResult.hasErrors()).thenReturn(false);
-        plantController.submitAddPlantForm(gardenId, plant, bindingResult, file, model);
+        plantController.submitAddPlantForm(gardenId, plant, bindingResult, file, dateValidStr, model);
 
         assertNull(plant.getPlantImage());
         assertNull(plant.getPlantImageContentType());
