@@ -137,7 +137,7 @@ public class FriendsServiceTest {
     }
 
     @Test
-    public void whenInviteAccepted_thenFriendAdded() {
+    void whenInviteAccepted_thenFriendAdded() {
         Friends relationship = new Friends(testUser3, testUser4, ACCEPTED);
         friendService.save(relationship);
         var request = friendService.getAcceptedFriendship(testUser3.getId(), testUser4.getId());
@@ -146,7 +146,7 @@ public class FriendsServiceTest {
     }
 
     @Test
-    public void whenGetSentFriendship_thenFriendshipReturned() {
+    void whenGetSentFriendship_thenFriendshipReturned() {
         Friends relationship = new Friends(testUser3, testUser4, PENDING);
         friendService.save(relationship);
         Friends friendship = friendService.getSent(testUser3.getId(), testUser4.getId());

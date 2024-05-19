@@ -80,7 +80,7 @@
       * Testing the manageFriends GET method
       */
      @Test
-     public void testManageFriends() {
+     void testManageFriends() {
          Model model = mock(Model.class);
          String result = manageFriendsController.manageFriends(authentication, model);
 
@@ -96,7 +96,7 @@
       * Testing the manageFriendsInvite method
       */
      @Test
-     public void whenNotFriends_thenNewFriendshipMadeWithPending() {
+     void whenNotFriends_thenNewFriendshipMadeWithPending() {
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
          when(gardenUserService.getUserById(loggedInUserId)).thenReturn(loggedInUser);
          when(gardenUserService.getUserById(otherUserId)).thenReturn(otherUser);
@@ -112,7 +112,7 @@
       * Testing the manageFriendsInvite method
       */
      @Test
-     public void whenPreviouslyDeclined_thenRequestNotCreated() {
+     void whenPreviouslyDeclined_thenRequestNotCreated() {
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
          when(gardenUserService.getUserById(loggedInUserId)).thenReturn(loggedInUser);
          when(gardenUserService.getUserById(otherUserId)).thenReturn(otherUser);
@@ -130,7 +130,7 @@
       * Testing the manageFriendsInvite method
       */
      @Test
-     public void whenPreviouslyDeclinedToAnotherUser_thenRequestCreated() {
+     void whenPreviouslyDeclinedToAnotherUser_thenRequestCreated() {
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
          when(gardenUserService.getUserById(loggedInUserId)).thenReturn(loggedInUser);
          when(gardenUserService.getUserById(otherUserId)).thenReturn(otherUser);
@@ -149,7 +149,7 @@
       * Testing the manageFriendsInvite method
       */
      @Test
-     public void whenAlreadyFriends_thenNoNewFriendRecord() {
+     void whenAlreadyFriends_thenNoNewFriendRecord() {
          Friends existingFriends = new Friends(loggedInUser, otherUser, ACCEPTED);
 
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
@@ -167,7 +167,7 @@
       * Testing the manageFriendsInvite method
       */
      @Test
-     public void whenFriendshipPending_thenNoNewFriendRecord() {
+     void whenFriendshipPending_thenNoNewFriendRecord() {
          Friends friendRequest = new Friends(loggedInUser, otherUser, PENDING);
 
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
@@ -185,7 +185,7 @@
       * Testing the manageFriendsInvite method
       */
      @Test
-     public void whenLoggedInUserRequestsThemself_thenNoNewFriendRecord() {
+     void whenLoggedInUserRequestsThemself_thenNoNewFriendRecord() {
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
          when(gardenUserService.getUserById(loggedInUserId)).thenReturn(loggedInUser);
 
@@ -199,7 +199,7 @@
       * Testing the manageFriendsAccept method
       */
      @Test
-     public void whenFriendshipPending_thenFriendAccepted() {
+     void whenFriendshipPending_thenFriendAccepted() {
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
 
          Friends existingRequest = new Friends(loggedInUser, otherUser, PENDING);
@@ -214,7 +214,7 @@
          // Had to trim the newFriends object because it had a newline and was failing the test
          verify(friendService, times(3)).save(existingRequest);
          verify(friendService).getFriendship(loggedInUser.getId(), otherUser.getId());
-         assertEquals(friendService.getFriendship(loggedInUserId, otherUserId).getStatus(), ACCEPTED);
+         assertEquals(ACCEPTED, friendService.getFriendship(loggedInUserId, otherUserId).getStatus());
          assertEquals("redirect:/users/manageFriends", result);
      }
 
@@ -222,7 +222,7 @@
       * Testing the manageFriendsAccept method
       */
      @Test
-     public void givenSentRequestPreviouslyDeclined_whenFriendshipPending_thenDeclinedRequestDeleted() {
+     void givenSentRequestPreviouslyDeclined_whenFriendshipPending_thenDeclinedRequestDeleted() {
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
 
          Friends existingRequest = new Friends(loggedInUser, otherUser, PENDING);
@@ -242,7 +242,7 @@
       * Testing the manageFriendsAccept method
       */
      @Test
-     public void whenNoFriendshipPending_thenDoesNotAcceptFriend() {
+     void whenNoFriendshipPending_thenDoesNotAcceptFriend() {
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
          when(friendService.getFriendship(loggedInUserId, otherUserId)).thenReturn(null);
 
@@ -256,7 +256,7 @@
       * Testing the manageFriendsAccept method
       */
      @Test
-     public void whenOtherUserDoesNotExist_thenDoesNotAcceptFriend() {
+     void whenOtherUserDoesNotExist_thenDoesNotAcceptFriend() {
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
 
          String result = manageFriendsController.manageFriendsAccept(authentication, invalidUserId);
@@ -269,7 +269,7 @@
       * Testing the manageFriendsAccept method
       */
      @Test
-     public void whenAlreadyFriends_thenDoesNotAcceptFriend() {
+     void whenAlreadyFriends_thenDoesNotAcceptFriend() {
          Friends newFriends = new Friends(loggedInUser, otherUser, ACCEPTED);
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
          when(friendService.getAcceptedFriendship(loggedInUserId, otherUserId)).thenReturn(newFriends);
@@ -283,7 +283,7 @@
       * Testing the manageFriendsDecline method
       */
      @Test
-     public void whenFriendshipPending_thenFriendDeclined() {
+     void whenFriendshipPending_thenFriendDeclined() {
          List<Friends> friendShip = new ArrayList<>();
          Friends existingRequest = new Friends(otherUser, loggedInUser, PENDING);
          friendShip.add(existingRequest);
@@ -303,7 +303,7 @@
       * Testing the manageFriendsDecline method
       */
      @Test
-     public void whenNoFriendshipPending_thenDoesNotDeclineFriend() {
+     void whenNoFriendshipPending_thenDoesNotDeclineFriend() {
          List<Friends> friendShip = new ArrayList<>();
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
          when(gardenUserService.getUserById(loggedInUserId)).thenReturn(loggedInUser);
@@ -320,7 +320,7 @@
       * Testing the manageFriendsDecline method
       */
      @Test
-     public void whenOtherUserDoesNotExist_thenDoesNotDeclineFriend() {
+     void whenOtherUserDoesNotExist_thenDoesNotDeclineFriend() {
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
          when(gardenUserService.getUserById(loggedInUserId)).thenReturn(loggedInUser);
          when(gardenUserService.getUserById(invalidUserId)).thenReturn(null);
@@ -336,7 +336,7 @@
       * Testing the manageFriendsDecline method
       */
      @Test
-     public void whenAlreadyFriends_thenDoesNotDeclineFriend() {
+     void whenAlreadyFriends_thenDoesNotDeclineFriend() {
          Friends newFriends = new Friends(loggedInUser, otherUser, ACCEPTED);
 
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
@@ -352,7 +352,7 @@
       * Testing the manageFriendsSearch method
       */
      @Test
-     public void whenSearchWithEmail_andUserExists_thenSearchResultsNotEmpty() {
+     void whenSearchWithEmail_andUserExists_thenSearchResultsNotEmpty() {
          String searchUser = "john.doe@gmail.com";
          List<GardenUser> searchResults = Collections.singletonList(new GardenUser());
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
@@ -367,7 +367,7 @@
       * Testing the manageFriendsSearch method
       */
      @Test
-     public void whenSearchWithEmail_andUserDoesNotExist_thenSearchResultsEmpty() {
+     void whenSearchWithEmail_andUserDoesNotExist_thenSearchResultsEmpty() {
          String searchUser = "jane.doe@gmail.com";
          List<GardenUser> searchResults = Collections.emptyList();
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
@@ -381,7 +381,7 @@
       * Testing the manageFriendsSearch method
       */
      @Test
-     public void whenSearchWithName_andUserExists_thenSearchResultsNotEmpty() {
+     void whenSearchWithName_andUserExists_thenSearchResultsNotEmpty() {
          String searchUser = "john doe";
          List<GardenUser> searchResults = Collections.singletonList(new GardenUser());
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
@@ -395,7 +395,7 @@
       * Testing the manageFriendsSearch method
       */
      @Test
-     public void whenSearchWithName_andUserDoesNotExist_thenSearchResultsEmpty() {
+     void whenSearchWithName_andUserDoesNotExist_thenSearchResultsEmpty() {
          String searchUser = "jane doe";
          List<GardenUser> searchResults = Collections.emptyList();
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
@@ -409,7 +409,7 @@
       * Testing the manageFriendsSearch method
       */
      @Test
-     public void whenSearchLoggedInUsersName_thenSearchResultsEmpty() {
+     void whenSearchLoggedInUsersName_thenSearchResultsEmpty() {
          String searchUser = "current user";
          List<GardenUser> searchResults = Collections.emptyList();
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
@@ -423,7 +423,7 @@
       * Testing the manageFriendsSearch method
       */
      @Test
-     public void whenSearchLoggedInUsersEmail_thenSearchResultsEmpty() {
+     void whenSearchLoggedInUsersEmail_thenSearchResultsEmpty() {
          String searchUser = "logged.in@gmail.com";
          List<GardenUser> searchResults = Collections.emptyList();
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
@@ -438,7 +438,7 @@
       * Testing the manageFriendsSearch method
       */
      @Test
-     public void whenRequestReceived_thenUserNotInSearchResults() {
+     void whenRequestReceived_thenUserNotInSearchResults() {
          String searchUser = otherUser.getFname();
          List<GardenUser> searchResults = new ArrayList<>();
          List<Friends> friendsList = new ArrayList<>();
@@ -462,7 +462,7 @@
       * Testing the manageFriendsSearch method
       */
      @Test
-     public void whenRequestPending_thenUserNotInSearchResults() {
+     void whenRequestPending_thenUserNotInSearchResults() {
          String searchUser = otherUser.getFname();
          List<GardenUser> searchResults = new ArrayList<>();
          List<Friends> friendsList = new ArrayList<>();
@@ -486,7 +486,7 @@
       * Testing the manageFriendsSearch method
       */
      @Test
-     public void whenAlreadyFriends_thenUserNotInSearchResults() {
+     void whenAlreadyFriends_thenUserNotInSearchResults() {
          String searchUser = otherUser.getFname();
          List<GardenUser> searchResults = new ArrayList<>();
          searchResults.add(otherUser);
@@ -507,7 +507,7 @@
       * Testing the manageFriendsSearch method
       */
      @Test
-     public void whenDeclined_thenUsersRemovedFromSearchResults() {
+     void whenDeclined_thenUsersRemovedFromSearchResults() {
          String searchUser = otherUser.getFname();
          List<GardenUser> searchResults = new ArrayList<>();
          List<Friends> friendsList = new ArrayList<>();
@@ -557,7 +557,7 @@
       * Testing the viewFriendProfile method
       */
      @Test
-     public void whenUserIsFriend_thenShowProfile() {
+     void whenUserIsFriend_thenShowProfile() {
          Model model = mock(Model.class);
 
          Friends newFriends = new Friends(loggedInUser, otherUser, ACCEPTED);
@@ -577,7 +577,7 @@
       * Testing the viewFriendProfile method
       */
      @Test
-     public void whenUserIsNotFriend_thenRedirectHome() {
+     void whenUserIsNotFriend_thenRedirectHome() {
          Model model = mock(Model.class);
 
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
@@ -593,7 +593,7 @@
       * Testing the viewFriendProfile method
       */
      @Test
-     public void whenUserIsInvalid_thenRedirectHome() {
+     void whenUserIsInvalid_thenRedirectHome() {
          Model model = mock(Model.class);
 
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
@@ -609,7 +609,7 @@
       * Testing cancelSentRequest method
       */
      @Test
-     public void whenUserCancelFriendRequest_thenFriendshipIsRemoved() {
+     void whenUserCancelFriendRequest_thenFriendshipIsRemoved() {
          Friends friends = new Friends(loggedInUser,otherUser,PENDING);
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
          when(gardenUserService.getUserById(otherUserId)).thenReturn(otherUser);
@@ -624,7 +624,7 @@
       * Testing removeFriend method
       */
      @Test
-     public void whenUserRemovesFriend_thenFriendshipIsRemoved() {
+     void whenUserRemovesFriend_thenFriendshipIsRemoved() {
          Friends friends = new Friends(loggedInUser, otherUser, ACCEPTED);
          friendService.save(friends);
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
@@ -640,7 +640,7 @@
       * Testing manageFriendsDecline method
       */
      @Test
-     public void whenFriendshipExists_thenNoDeclineOption() {
+     void whenFriendshipExists_thenNoDeclineOption() {
          Friends friends = new Friends(loggedInUser, otherUser, ACCEPTED);
          friendService.save(friends);
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
