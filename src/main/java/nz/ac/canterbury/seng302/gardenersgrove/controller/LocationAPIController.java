@@ -30,7 +30,7 @@ public class LocationAPIController {
      * @param currentValue The value where the location data is requested
      * @return location information in json format
      */
-    @GetMapping("/get_location")
+    @GetMapping("/location-autocomplete")
     public ResponseEntity<String> getLocationData(@RequestParam String currentValue) {
         try {
             Thread.sleep(300);

@@ -11,27 +11,21 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class PlantControllerTest {
     @Mock
@@ -151,7 +145,7 @@ public class PlantControllerTest {
     }
 
     @Test
-    void testSubmitEditPlantForm_DataIsValid_ReturnToGardenDetailPage_PlantAddedToRepository() {
+    public void givenOnSubmitEditPlantForm_whenDataIsValid_thenReturnToEditPlantForm() throws Exception {
         Plant validPlant = new Plant("Plant", "10", "Yellow", "11/03/2024");
         long gardenId = 0;
         long plantId = 0;
@@ -168,8 +162,8 @@ public class PlantControllerTest {
     }
 
     @Test
-    void testSubmitEditPlantForm_DataIsInvalid_ReturnToEditPlantForm() {
-        Plant invalidPlant = new Plant("#invalid", "10", "Yellow", "11/03/2024");
+    public void gvenOnSubmitEditPlantForm_whenCountIsInvalid_thenReturnToEditPlantForm() throws Exception {
+        Plant invalidPlant = new Plant("Lotus", "abc", "Yellow", "11/03/2024");
         long gardenId = 0;
         long plantId = 0;
         String expectedReturnPage = "plants/editPlant";
@@ -217,21 +211,66 @@ public class PlantControllerTest {
         when(plantService.getPlantById(plantId)).thenReturn(Optional.of(validPlant));
         String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, validPlant, bindingResult, model);
 
+        verify(plantService, times(1)).addPlant(validPlant, gardenId);
         assertEquals(expectedReturnPage, returnPage);
     }
 
     @Test
-    void whenPlantImageExists_returnPlantImage() {
-        byte[] image = {};
-        String contentType = "image/jpg";
-        Plant plant = new Plant();
-        plant.setPlantImage(contentType,image);
-        when(plantService.getPlantById(1L)).thenReturn(Optional.of(plant));
+    public void testSubmitEditPlantForm_NameIsInvalid_ReturnToEditPlantForm() throws Exception {
+        Plant invalidPlant = new Plant("#invalid", "abc", "Yellow", "11/03/2024");
+        long gardenId = 0;
+        long plantId = 0;
+        String expectedReturnPage = "plants/editPlant";
 
-        ResponseEntity<byte[]> response = plantController.plantImage(1L);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(contentType, response.getHeaders().getContentType().toString());
-        assertEquals(image, response.getBody());
+        BindingResult bindingResult = mock(BindingResult.class);
+        when(bindingResult.hasErrors()).thenReturn(true);
+        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, invalidPlant, bindingResult, model);
+
+        verify(plantService, times(0)).addPlant(invalidPlant, gardenId);
+        assertEquals(expectedReturnPage, returnPage);
+    }
+
+    @Test
+    void testSubmitPlantForm_NoImageUploaded_PlantImageIsSetToNull() {
+        long gardenId = 1L;
+        byte[] image = {};
+        String contentType = "image/png";
+        String name = "plant.png";
+        String originalFilename = "plant.png";
+
+        MultipartFile file = new MockMultipartFile(name,originalFilename,contentType,image);
+        Plant plant = new Plant();
+        BindingResult bindingResult = mock(BindingResult.class);
+
+        plant.setPlantedDate("10/10/2024");
+        when(bindingResult.hasErrors()).thenReturn(false);
+        plantController.submitAddPlantForm(gardenId, plant, bindingResult, file, model);
+
+        assertNull(plant.getPlantImage());
+        assertNull(plant.getPlantImageContentType());
+    }
+
+    @Test
+    void whenPlantImageExists_returnPlantImage() {
+        String imagePath = "static/img/plant.png";
+        try (InputStream inputStream = PlantControllerTest.class.getClassLoader().getResourceAsStream(imagePath)) {
+            if (inputStream == null) {
+                throw new IOException("Image not found: " + imagePath);
+            }
+            byte[] image = inputStream.readAllBytes();
+            String contentType = "image/png";
+            Plant plant = new Plant();
+            plant.setPlantImage(contentType,image);
+            when(plantService.getPlantById(1L)).thenReturn(Optional.of(plant));
+
+            ResponseEntity<byte[]> response = plantController.plantImage(1L);
+            assertEquals(HttpStatus.OK, response.getStatusCode());
+            assertEquals(contentType, response.getHeaders().getContentType().toString());
+            assertEquals(image, response.getBody());
+
+        } catch (IOException e) {
+            System.out.println("Error with resource file " + e.getMessage());
+        }
     }
 
     @Test
@@ -240,7 +279,7 @@ public class PlantControllerTest {
         when(plantService.getPlantById(1L)).thenReturn(Optional.of(plant));
         ResponseEntity<byte[]> response = plantController.plantImage(1L);
         assertEquals(HttpStatus.FOUND, response.getStatusCode());
-        assertEquals("/img/plant.png", response.getHeaders().getFirst(HttpHeaders.LOCATION));
+        assertEquals("/img/default-plant.svg", response.getHeaders().getFirst(HttpHeaders.LOCATION));
     }
 
     @Test
@@ -264,6 +303,7 @@ public class PlantControllerTest {
     void testSubmitAddPlantFormWithImage() throws Exception {
         Long gardenId = 1L;
         Plant plant = new Plant();
+        plant.setId(1L);
         plant.setPlantedDate("2023-05-14");
         BindingResult bindingResult = mock(BindingResult.class);
 

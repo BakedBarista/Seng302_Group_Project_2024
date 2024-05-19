@@ -2,17 +2,23 @@ package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.FriendsRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import static nz.ac.canterbury.seng302.gardenersgrove.entity.Friends.Status.ACCEPTED;
+import static nz.ac.canterbury.seng302.gardenersgrove.entity.Friends.Status.PENDING;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @DataJpaTest
 @Import(FriendService.class)
@@ -22,6 +28,7 @@ public class FriendsServiceTest {
 
     @Autowired
     private GardenUserRepository gardenUserRepository;
+
 
     private GardenUser testUser1;
 
@@ -49,11 +56,13 @@ public class FriendsServiceTest {
         testUser4 = gardenUserRepository.save(testUser4);
         testUser5 = gardenUserRepository.save(testUser5);
         
-        Friends relationShip1 = new Friends(testUser1, testUser2, "accepted");
-        Friends relationShip2 = new Friends(testUser1, testUser3, "accepted");
+        Friends relationShip1 = new Friends(testUser1, testUser2, ACCEPTED);
+        Friends relationShip2 = new Friends(testUser1, testUser3, ACCEPTED);
 
         friendService.save(relationShip1);
         friendService.save(relationShip2);
+
+
     }
 
     @Test
@@ -65,7 +74,7 @@ public class FriendsServiceTest {
 
     @Test
     public void whenGetFriendCalled_thenReturnsFriend() {
-        Friends relationShip3 = new Friends(testUser2, testUser3, "pending");
+        Friends relationShip3 = new Friends(testUser2, testUser3, PENDING);
         friendService.save(relationShip3);
         var request = friendService.getFriendship(testUser2.getId(), testUser3.getId());
         assertEquals(request, relationShip3);
@@ -79,7 +88,7 @@ public class FriendsServiceTest {
 
     @Test
     public void whenGetFriendCalledInvaildId_thenReturnsEmpty() {
-        Friends relationShip3 = new Friends(testUser2, testUser4, "pending");
+        Friends relationShip3 = new Friends(testUser2, testUser4, PENDING);
         friendService.save(relationShip3);
         long invaildId = -1;
         var request = friendService.getFriendship(testUser2.getId(), invaildId);
@@ -88,7 +97,7 @@ public class FriendsServiceTest {
     
     @Test
     public void whenGetFriendSentCalled_thenReturnsSentRequests() {
-        Friends relationShip3 = new Friends(testUser3, testUser4, "pending");
+        Friends relationShip3 = new Friends(testUser3, testUser4, PENDING);
         friendService.save(relationShip3);
         var request = friendService.getSentRequests(testUser3.getId());
         assertEquals(relationShip3, request.get(0));
@@ -96,7 +105,7 @@ public class FriendsServiceTest {
 
     @Test
     public void whenGetFriendSentCalledNull_thenReturnsNull() {
-        Friends relationShip3 = new Friends(testUser3, testUser4, "pending");
+        Friends relationShip3 = new Friends(testUser3, testUser4, PENDING);
         friendService.save(relationShip3);
         var request = friendService.getSentRequests(testUser4.getId());
         assertTrue(request.isEmpty());
@@ -104,7 +113,7 @@ public class FriendsServiceTest {
 
     @Test
     public void whenGetFriendRecivedCalled_thenReturnsRecivedRequests() {
-        Friends relationShip3 = new Friends(testUser1, testUser5, "pending");
+        Friends relationShip3 = new Friends(testUser1, testUser5, PENDING);
         friendService.save(relationShip3);
         var request = friendService.getReceivedRequests(testUser5.getId());
         assertEquals(relationShip3, request.get(0));
@@ -112,7 +121,7 @@ public class FriendsServiceTest {
 
     @Test
     public void whenGetFriendRecivedCalledNull_thenReturnsNull() {
-        Friends relationShip3 = new Friends(testUser3, testUser4, "pending");
+        Friends relationShip3 = new Friends(testUser3, testUser4, PENDING);
         friendService.save(relationShip3);
         var request = friendService.getReceivedRequests(testUser3.getId());
         assertTrue(request.isEmpty());
@@ -120,10 +129,28 @@ public class FriendsServiceTest {
 
     @Test
     public void whenRemovedFriend_thenFriendRemoved() {
-        Friends relationShip3 = new Friends(testUser3, testUser4, "pending");
+        Friends relationShip3 = new Friends(testUser3, testUser4, PENDING);
         friendService.save(relationShip3);
         friendService.removeFriend(testUser3.getId(), testUser4.getId());
         var request = friendService.getFriendship(testUser3.getId(), testUser4.getId());
         assertNull(request);
     }
+
+    @Test
+    void whenInviteAccepted_thenFriendAdded() {
+        Friends relationship = new Friends(testUser3, testUser4, ACCEPTED);
+        friendService.save(relationship);
+        var request = friendService.getAcceptedFriendship(testUser3.getId(), testUser4.getId());
+        assertNotNull(request);
+        assertEquals(relationship.getFriend_id(), request.getFriend_id());
+    }
+
+    @Test
+    void whenGetSentFriendship_thenFriendshipReturned() {
+        Friends relationship = new Friends(testUser3, testUser4, PENDING);
+        friendService.save(relationship);
+        Friends friendship = friendService.getSent(testUser3.getId(), testUser4.getId());
+        assertEquals(relationship, friendship);
+    }
+
 }
