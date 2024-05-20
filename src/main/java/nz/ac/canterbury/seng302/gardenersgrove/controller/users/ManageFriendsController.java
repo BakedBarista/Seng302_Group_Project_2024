@@ -186,8 +186,8 @@ public class ManageFriendsController {
      */
     @PostMapping("users/manageFriends/search")
     public String manageFriendsSearch(Authentication authentication,
-            @RequestParam(name = "searchUser", required = false) String searchUser,
-            RedirectAttributes rm) {
+                                      @RequestParam(name = "searchUser", required = false) String searchUser,
+                                      RedirectAttributes rm) {
 
         Long loggedInUserId = (Long) authentication.getPrincipal();
         List<GardenUser> searchResults = userService.getUserBySearch(searchUser, loggedInUserId);
