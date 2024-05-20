@@ -27,6 +27,21 @@ document.addEventListener("DOMContentLoaded", function() {
                     form.submit();
                 }
             });
+
+            //When copy and pasting token code
+            //GPT helped
+            input.addEventListener('paste', function(event) {
+                const copiedTokenString = (event.clipboardData || window.clipboardData).getData('text');
+                if (copiedTokenString.length === inputs.length) {
+                    copiedTokenString.split('').forEach((char, i) => {
+                        inputs[i].value = char;
+                    });
+                    token.setAttribute("value", getInputValue());
+                    form.submit();
+                }
+                event.preventDefault();
+            });
+
             //Deleting an input
             input.addEventListener('keydown', function(event) {
                 if (event.key === "Backspace" && input.value.length === 0) {
@@ -41,16 +56,16 @@ document.addEventListener("DOMContentLoaded", function() {
         /**
          * Checks if all fields are filled
          *
-         * @returns {this is Element[]}
+         * @returns {boolean} true if all input fields has input with maximum length
          */
         function inputsFilled() {
             return Array.from(inputs).every(input => input.value.length === input.maxLength);
         }
 
         /**
-         * Takes the concatenated value of all input fields
+         * Concatenates value of all input fields
          *
-         * @returns {string} The concatenated value of all input fields
+         * @returns {string} the concatenated value of all input fields
          */
         function getInputValue() {
             return Array.from(inputs).map(input => input.value).join('');
