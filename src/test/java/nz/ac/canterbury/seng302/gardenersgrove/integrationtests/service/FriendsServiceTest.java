@@ -13,8 +13,7 @@ import org.springframework.context.annotation.Import;
 
 import java.util.List;
 
-import static nz.ac.canterbury.seng302.gardenersgrove.entity.Friends.Status.ACCEPTED;
-import static nz.ac.canterbury.seng302.gardenersgrove.entity.Friends.Status.PENDING;
+import static nz.ac.canterbury.seng302.gardenersgrove.entity.Friends.Status.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
@@ -164,7 +163,7 @@ public class FriendsServiceTest {
      */
     @Test
      void whenFriendshipCreated_andFriendshipIsDeleted_thenFriendshipDoesntExist() {
-        Friends relationship = new Friends(testUser3, testUser4, "Pending");
+        Friends relationship = new Friends(testUser3, testUser4, PENDING);
         friendService.save(relationship);
         friendService.delete(relationship);
         assertNull(friendService.getSent(testUser3.getId(), testUser4.getId()));
@@ -175,7 +174,7 @@ public class FriendsServiceTest {
      */
     @Test
      void whenFriendshipCreated_andFriendIsRemoved_thenFriendIsNoLongerAFriend() {
-        Friends relationship = new Friends(testUser3, testUser4, "Pending");
+        Friends relationship = new Friends(testUser3, testUser4, PENDING);
         friendService.save(relationship);
         friendService.removeFriendship(relationship);
         assertNull(friendService.getSent(testUser3.getId(), testUser4.getId()));
@@ -186,7 +185,7 @@ public class FriendsServiceTest {
      */
     @Test
      void whenRequestIsSent_andRecipientDeclines_thenDatabaseIsUpdated() {
-        Friends relationship = new Friends(testUser3, testUser4, "Declined");
+        Friends relationship = new Friends(testUser3, testUser4, DECLINED);
         friendService.save(relationship);
         List<Friends> sentRequestsDeclined = friendService.getSentRequestsDeclined(testUser3.getId());
         assertEquals(relationship, sentRequestsDeclined.get(0));

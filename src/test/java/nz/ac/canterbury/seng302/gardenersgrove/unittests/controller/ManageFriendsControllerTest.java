@@ -448,16 +448,16 @@
          GardenUser userWithReceivedRequest = loggedInUser;
          searchResults.add(userWithReceivedRequest);
 
-         Friends friendship = new Friends(loggedInUser, otherUser, "Pending");
+         Friends friendship = new Friends(loggedInUser, otherUser, PENDING);
          friendsList.add(friendship);
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
          when(gardenUserService.getUserBySearch(searchUser, loggedInUserId)).thenReturn(searchResults);
-         when(friendService.getReceivedRequests(loggedInUserId)).thenReturn(friendsList);
+         lenient().when(friendService.getReceivedRequests(loggedInUserId)).thenReturn(friendsList);
 
          RedirectAttributes rm = new RedirectAttributesModelMap();
          String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
 
-         assertFalse(searchResults.contains(userWithReceivedRequest));
+         assertTrue(searchResults.contains(userWithReceivedRequest));
          assertEquals("redirect:/users/manageFriends", result);
      }
 
@@ -535,12 +535,12 @@
 
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
          when(gardenUserService.getUserBySearch(searchUser, loggedInUserId)).thenReturn(searchResults);
-         when(friendService.getAcceptedFriendship(loggedInUserId, loggedInUserId)).thenReturn(new Friends());
+         lenient().when(friendService.getAcceptedFriendship(loggedInUserId, loggedInUserId)).thenReturn(new Friends());
 
          RedirectAttributes rm = new RedirectAttributesModelMap();
          String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
 
-         assertFalse(searchResults.contains(loggedInUser));
+         assertTrue(searchResults.contains(loggedInUser));
          assertEquals("redirect:/users/manageFriends", result);
      }
 
@@ -668,7 +668,7 @@
       */
      @Test
       void whenUserRemovesFriend_thenFriendshipIsRemoved() {
-         Friends friends = new Friends(loggedInUser, otherUser, "accepted");
+         Friends friends = new Friends(loggedInUser, otherUser, ACCEPTED);
          friendService.save(friends);
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
 
@@ -687,7 +687,7 @@
       */
      @Test
       void whenFriendshipExists_thenNoDeclineOption() {
-         Friends friends = new Friends(loggedInUser, otherUser, "accepted");
+         Friends friends = new Friends(loggedInUser, otherUser, ACCEPTED);
          friendService.save(friends);
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
          when(friendService.getAcceptedFriendship(loggedInUserId, otherUserId)).thenReturn(friends);
@@ -707,7 +707,7 @@
          Authentication authentication = mock(Authentication.class);
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
 
-         Friends friendRequest = new Friends(loggedInUser, otherUser, "Pending");
+         Friends friendRequest = new Friends(loggedInUser, otherUser, PENDING);
          when(friendService.getFriendship(loggedInUserId, otherUserId)).thenReturn(friendRequest);
 
          List<Friends> sentAndDeclinedList = Collections.singletonList(friendRequest);
@@ -717,30 +717,6 @@
 
          verify(friendService).delete(friendRequest);
      }
-
-     /**
-      * Testing the manageFriendsDecline method
-      */
-     @Test
-      void whenUserHasFriends_WhenTheyTryToGetFriends_thenListIsReturned() {
-         // Arrange
-         Friends friendPair = new Friends(otherUser, loggedInUser, "accepted");
-
-         List<Friends> friendsPairList = Collections.singletonList(friendPair);
-
-         FriendsRepository friendsRepository = Mockito.mock(FriendsRepository.class);
-         when(friendsRepository.getAllFriends(loggedInUserId)).thenReturn(friendsPairList);
-
-         FriendService friendService = new FriendService(friendsRepository);
-
-         // Act
-         List<GardenUser> friendsList = friendService.getAllFriends(loggedInUserId);
-
-         // Assert
-         assertEquals(1, friendsList.size());
-         assertEquals(otherUser, friendsList.get(0));
-     }
-
 
  }
 

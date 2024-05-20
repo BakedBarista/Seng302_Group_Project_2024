@@ -1,4 +1,5 @@
 package nz.ac.canterbury.seng302.gardenersgrove.cucumber.step_definitions;
+import static nz.ac.canterbury.seng302.gardenersgrove.entity.Friends.Status.PENDING;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.mock;
 
@@ -61,7 +62,7 @@ public class U18CancelRequestFeature {
         GardenUser friend = new GardenUser(fName, lName, "john.doe@gmail.com", "password", "");
 
         if(user != null) {
-            Friends friendRequest = new Friends(user, friend, "pending");
+            Friends friendRequest = new Friends(user, friend, PENDING);
             friendService.save(friendRequest);
         } else {
             throw new IllegalArgumentException("No user found with username");
