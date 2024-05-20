@@ -1,7 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -66,32 +65,33 @@ public class ProfanityService {
      * @param input The input string to be checked
      * @return A list of bad words found
      */
-     
+
     public ArrayList<String> badWordsFound(String input) {
         if(input == null) {
             return new ArrayList<>();
         }
         input = replaceLeetSpeak(input);
         ArrayList<String> badWords = new ArrayList<>();
-        input = input.toLowerCase().replaceAll("[^a-zA-Z]", "");
+        String[] tokens = input.split("\\s+|\\p{Punct}");
 
         // iterate over each letter in the word
-        for(int start = 0; start < input.length(); start++) {
-            // from each letter, keep going to find bad words until either the end of the sentence is reached, or the max word length is reached. 
-            for(int offset = 1; offset < (input.length()+1 - start) && offset < largestWordLength; offset++)  {
-                String wordToCheck = input.substring(start, start + offset);
-                if(words.containsKey(wordToCheck)) {
-                    // for example, if you want to say the word bass, that should be possible.
-                    String[] ignoreCheck = words.get(wordToCheck);
-                    boolean ignore = false;
-                    for(int s = 0; s < ignoreCheck.length; s++ ) {
-                        if(input.contains(ignoreCheck[s])) {
-                            ignore = true;
-                            break;
+        for (String token : tokens) {
+            for (int start = 0; start < token.length(); start++) {
+                for (int offset = 1; offset <= token.length() - start && offset <= largestWordLength; offset++) {
+                    String wordToCheck = token.substring(start, start + offset);
+                    //Avoid false positive
+                    if (words.containsKey(wordToCheck)) {
+                        String[] ignoreCheck = words.get(wordToCheck);
+                        boolean ignore = false;
+                        for (String ignoreWord : ignoreCheck) {
+                            if (input.contains(ignoreWord)) {
+                                ignore = true;
+                                break;
+                            }
                         }
-                    }
-                    if(!ignore) {
-                        badWords.add(wordToCheck);
+                        if (!ignore && isStandaloneWord(input, start, start + offset)) {
+                            badWords.add(wordToCheck);
+                        }
                     }
                 }
             }
@@ -103,6 +103,13 @@ public class ProfanityService {
         }
         return badWords;
 
+    }
+
+    //Helper function to check if a word is standalone by checking before start and after end of the word
+    private boolean isStandaloneWord(String input, int start, int end) {
+        boolean isStartValid = start == 0 || !Character.isLetterOrDigit(input.charAt(start - 1));
+        boolean isEndValid = end == input.length() || !Character.isLetterOrDigit(input.charAt(end));
+        return isStartValid && isEndValid;
     }
 
     private String replaceLeetSpeak(String input) {
