@@ -27,8 +27,8 @@
                    th:name="description" th:value="${plant.description}" data-cy="size" autofocus>
             <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}" style="color: red;"></div>
             <br/>
-            <label for="date"> Date Planted: </label>
-            <input type="date" class="form-control" id="date" placeholder="DD/MM/YYYY" th:value="${plant.plantedDate}" th:name="plantedDate" data-cy="size" autofocus>
+            <label for="plantedDate"> Date Planted: </label>
+            <input type="date" class="form-control" id="plantedDate" placeholder="DD/MM/YYYY" th:value="${plant.plantedDate}" name="plantedDate" data-cy="size" autofocus>
             <div th:if="${#fields.hasErrors('plantedDate')}" th:errors="*{plantedDate}" style="color: red;"></div>
             <br/>
             <div>
