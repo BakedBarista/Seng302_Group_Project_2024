@@ -100,11 +100,8 @@
                     <span th:if="${user.lname != null}" th:text="${user.lname}"></span>
                 </td>
                 <td></td>
-                <td class="align-middle">
-                    <form th:action="@{/users/manageFriends/invite}" method="post">
-                        <input type="hidden" name="requestedUser" th:value="${user.id}" class="d-inline"/>
-                        <button type="submit" class="btn btn-success btn-sm mr-2">Invite as Friend</button>
-                    </form>
+                <td class="align-middle text-muted">
+                    <strong>Declined</strong>
                 </td>
             </tr>
             <tr th:if="${!requestReceived.empty}" th:each="user : ${requestReceived}">
@@ -273,8 +270,9 @@
                             <form th:action="@{/users/manageFriends/cancel}" method="post" class="d-inline">
                                 <input type="hidden" name="userId" th:value="${friend.receiver.id}" class="d-inline"/>
                                 <td class="align-middle">
-                                    <button class="btn btn-warning btn-sm mr-2" th:if="${friend.status == 'Pending'}">Cancel</button>
+                                    <button class="btn btn-warning btn-sm mr-2" th:if="${friend.status.name() == 'PENDING'}">Cancel</button>
                                 </td>
+                            </form>
                         </tr>
                         </tbody>
                     </table>

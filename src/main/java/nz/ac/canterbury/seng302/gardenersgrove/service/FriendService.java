@@ -4,12 +4,13 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.FriendsRepository;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static nz.ac.canterbury.seng302.gardenersgrove.entity.Friends.Status.*;
 
 /**
  * Service class for Friends
@@ -28,7 +29,7 @@ public class FriendService {
      * @return A list of GardenUser objects
      */
     public List<GardenUser> getAllFriends(Long user) { 
-        List<Friends> friendsPairList = friendsRepository.getAllFriends(user);
+        List<Friends> friendsPairList = friendsRepository.getAllFriendshipsWithStatus(user, ACCEPTED);
         List<GardenUser> friendsList = new ArrayList<>();
         for (Friends friend : friendsPairList) {
             if (friend.getSender().getId().equals(user)) {
@@ -66,7 +67,7 @@ public class FriendService {
      * @return A Friends object 
      */
     public Friends getFriendship(Long sender, Long receiver) {
-        return friendsRepository.getRequest(sender, receiver);
+        return friendsRepository.getFriendshipBetweenUsers(sender, receiver);
     }
 
     /**
@@ -74,10 +75,10 @@ public class FriendService {
      *
      * @param sender user who sent the original friend request
      * @param receiver user who received the original friend request
-     * @return The friend object if the friendship between the users is "accepted"
+     * @return The friend object if the friendship between the users is ACCEPTED
      */
     public Friends getAcceptedFriendship(Long sender, Long receiver) {
-        return friendsRepository.getAcceptedFriendship(sender, receiver);
+        return friendsRepository.getFriendshipBetweenUsersWithStatus(sender, receiver, ACCEPTED);
     }
 
     /**
@@ -88,7 +89,7 @@ public class FriendService {
      * @return the Friend object where user 1 sent a request to receiver
      */
     public Friends getSent(Long sender, Long receiver) {
-        return friendsRepository.getSent(sender, receiver);
+        return friendsRepository.getAllFriendshipsBetweenUsers(sender, receiver);
     }
 
      /**
@@ -98,7 +99,7 @@ public class FriendService {
      * @return A list of Requests objects
      */
     public List<Friends> getSentRequests(Long user) {
-        return friendsRepository.getSentRequests(user);
+        return friendsRepository.getFriendshipsFromUserWhereStatusIsNot(user, ACCEPTED);
     }
 
     /**
@@ -108,7 +109,7 @@ public class FriendService {
      * @return A list of Requests objects 
      */
     public List<Friends> getReceivedRequests(Long user) {
-        return friendsRepository.getReceivedRequests(user);
+        return friendsRepository.getFriendshipsToUserWithStatus(user, PENDING);
     }
 
     /**
@@ -118,7 +119,7 @@ public class FriendService {
      * @return A list of the users who declined friend requests from the given user
      */
     public List<Friends> getSentRequestsDeclined(Long user) {
-        return friendsRepository.getSentRequestsDeclined(user);
+        return friendsRepository.getFriendshipsFromUserWithStatus(user, DECLINED);
     }
 
     /**

@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
-    <title>Add a New Plant</title>
+    <title>Add Plant</title>
 
     <!-- This needs to be here for Bootstrap and general CSS imports -->
     <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
@@ -34,6 +34,8 @@
             <label for="plantedDate">Planting Date:</label>
             <input type="date" id="plantedDate" class="form-control" name="plantedDate" placeholder="DD/MM/YYYY" th:value="${plant.plantedDate}" >
             <div th:if="${#fields.hasErrors('plantedDate')}" th:errors="*{plantedDate}" style="color: red;"></div>
+            <!--      dateError is the flag for when the date is not filled in correctly (e.g. 10/mm/2001)      -->
+            <input type="hidden" name="dateError" id="dateError" value="">
             <br/>
             <br/>
             <div>
@@ -45,13 +47,14 @@
                     <span id="plantImageError" class="error" style="display: none; color: red"></span>
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+            <button class="btn btn-primary btn-sm" type="submit" onclick="return validateDate()">Submit</button>
             <a class="btn btn-outline-secondary btn-sm btn-cancel" th:href="@{/gardens/{id}(id=${gardenId})}">Cancel</a>
         </form>
     </div>
 </div>
 <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
 </body>
+<script th:src="@{/js/dateValidation.js}"></script>
 <script th:src="@{/js/nextFormBox.js}"></script>
 <script th:src="@{/js/plantImageErrorChecking.js}"></script>
 <script>
