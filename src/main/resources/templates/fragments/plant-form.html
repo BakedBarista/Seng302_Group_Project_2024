@@ -9,7 +9,7 @@
             </div>
         </div>
         <div class="mb-3">
-            <label th:class="'form-label ' + ${#fields.hasErrors('name') ? 'is-invalid' : ''}" for="name">Plant Name:</label>
+            <label th:class="'required-field form-label ' + ${#fields.hasErrors('name') ? 'is-invalid' : ''}" for="name">Plant Name:</label>
             <input th:class="'form-control ' + ${#fields.hasErrors('name') ? 'is-invalid' : ''}" type="text" id="name" name="name" th:value="${plant.name}" >
             <div class="invalid-feedback" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
         </div>
@@ -24,12 +24,12 @@
             <div class="invalid-feedback" th:if="${#fields.hasErrors('count')}" th:errors="*{count}"></div>
         </div>
         <div class="mb-3">
-            <label for="date" th:class="'form-label ' + ${#fields.hasErrors('plantedDate') ? 'is-invalid' : ''}"> Date Planted: </label>
-            <input type='date' th:class="'form-control ' + ${#fields.hasErrors('plantedDate') ? 'is-invalid' : ''}" id="date" placeholder="DD/MM/YYYY" th:value="${plant.plantedDate}" th:name="plantedDate" data-cy="size" autofocus>
+            <label for="plantedDate" th:class="'form-label ' + ${#fields.hasErrors('plantedDate') ? 'is-invalid' : ''}">Planting Date: </label>
+            <input type='date' id="plantedDate" th:class="'form-control ' + ${#fields.hasErrors('plantedDate') ? 'is-invalid' : ''}" placeholder="DD/MM/YYYY" th:name="plantedDate" th:value="${semiCompletedDate != '' ? semiCompletedDate : plant.plantedDate}">
             <div class="invalid-feedback" th:if="${#fields.hasErrors('plantedDate')}" th:errors="*{plantedDate}"></div>
 
             <!--      dateError is the flag for when the date is not filled in correctly (e.g. 10/mm/2001)      -->
-            <input type="hidden" name="dateError" id="dateError" value="">
+            <input type="hidden" name="dateError" id="dateError" value="" />
         </div>
         <div class="alert alert-danger" th:if="${fileTypeError}">
             <div th:text="${fileTypeError}" style="color: red"></div>
