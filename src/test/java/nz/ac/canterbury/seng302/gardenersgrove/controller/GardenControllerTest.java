@@ -7,13 +7,9 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weatherAPI.WeatherAPIService;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
@@ -26,6 +22,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -250,6 +247,25 @@ public class GardenControllerTest {
 
     }
 
+    @Test
+    void testSubmitForm_WithProfanity() {
+        Model model = mock(Model.class);
+        Garden garden = new Garden();
+        garden.setDescription("badword");
 
+        BindingResult bindingResult = mock(BindingResult.class);
+        when(bindingResult.hasErrors()).thenReturn(true);
 
+        when(profanityService.badWordsFound("badword")).thenReturn(new ArrayList<>(List.of("profanity")));
+
+        String result = gardenController.submitForm(garden, bindingResult, authentication, model);
+
+        ArgumentCaptor<String> stringCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
+        verify(model, times(1)).addAttribute(stringCaptor.capture(), messageCaptor.capture());
+
+        assertEquals("gardens/createGarden", result);
+        assertTrue(stringCaptor.getAllValues().contains("profanity"));
+        assertTrue(messageCaptor.getAllValues().contains(EXPECTED_MODERATION_ERROR_MESSAGE));
+    }
 }
