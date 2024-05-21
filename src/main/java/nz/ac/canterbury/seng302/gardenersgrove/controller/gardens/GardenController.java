@@ -21,6 +21,13 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -79,7 +86,7 @@ public class GardenController {
      */
     @PostMapping("/gardens/create")
     public String submitForm(@Valid @ModelAttribute("garden") Garden garden,
-                             BindingResult bindingResult, Model model) {
+                             BindingResult bindingResult, Authentication authentication, Model model) {
         logger.info("POST /gardens - submit the new garden form");
         List<String> locationErrorNames = Arrays.asList("city", "country", "suburb", "streetNumber", "streetName", "postCode");
         boolean profanityFlagged = !profanityService.badWordsFound(garden.getDescription()).isEmpty();
@@ -109,12 +116,14 @@ public class GardenController {
             return "gardens/createGarden";
         }
 
+      
 
-        
-        
+        Long userId = (Long) authentication.getPrincipal();
 
-        GardenUser owner = gardenUserService.getCurrentUser();
+        GardenUser owner = gardenUserService.getUserById(userId);
+        
         garden.setOwner(owner);
+
 
         Garden savedGarden = gardenService.addGarden(garden);
         return "redirect:/gardens/" + savedGarden.getId();
@@ -154,8 +163,14 @@ public class GardenController {
             model.addAttribute("garden", garden);
             model.addAttribute("owner", garden.getOwner());
             model.addAttribute("plants", plantService.getPlantsByGardenId(id));
+            List<List<Map<String, Object>>> weatherResult;
 
-            List<List<Map<String, Object>>> weatherResult = weatherAPIService.getWeatherData(id, garden.getLat(), garden.getLon());
+            if(garden.getLat() != null || garden.getLon() != null){
+                weatherResult = weatherAPIService.getWeatherData(id, garden.getLat(), garden.getLon());
+            }else {
+                weatherResult = new ArrayList<>();
+            }
+
             List<Map<String, Object>> weatherPrevious = Collections.emptyList();
             List<Map<String, Object>> weatherForecast = Collections.emptyList();
             boolean displayWeatherAlert = false;
