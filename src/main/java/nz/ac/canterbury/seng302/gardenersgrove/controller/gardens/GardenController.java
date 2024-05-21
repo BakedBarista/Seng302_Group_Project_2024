@@ -89,7 +89,7 @@ public class GardenController {
                              BindingResult bindingResult, Authentication authentication, Model model) {
         logger.info("POST /gardens - submit the new garden form");
 
-        model = checkGardenError(model,bindingResult,garden);
+        checkGardenError(model,bindingResult,garden);
         if (bindingResult.hasErrors() || model.containsAttribute("profanity")) {
             model.addAttribute("garden", garden);
             return "gardens/createGarden";
@@ -242,7 +242,7 @@ public class GardenController {
                                BindingResult result,
                                Model model) {
 
-        model = checkGardenError(model,result,garden);
+        checkGardenError(model,result,garden);
         if (result.hasErrors() || model.containsAttribute("profanity")) {
             model.addAttribute("garden", garden);
             model.addAttribute("id", id);
@@ -353,7 +353,13 @@ public class GardenController {
         return "gardens/publicGardens";
     }
 
-    private Model checkGardenError(Model model, BindingResult bindingResult, Garden garden) {
+    /**
+     * Helper method to check garden errors
+     * @param model model to add error attributes
+     * @param bindingResult to get location error
+     * @param garden garden object
+     */
+    public void checkGardenError(Model model, BindingResult bindingResult, Garden garden) {
         List<String> locationErrorNames = Arrays.asList("city", "country", "suburb", "streetNumber", "streetName", "postCode");
         boolean profanityFlagged = !profanityService.badWordsFound(garden.getDescription()).isEmpty();
         if (!profanityFlagged) {
@@ -379,7 +385,6 @@ public class GardenController {
                 }
             }
         }
-        return model;
     }
 }
 

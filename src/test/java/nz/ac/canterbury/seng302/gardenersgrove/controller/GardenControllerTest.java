@@ -250,42 +250,73 @@ public class GardenControllerTest {
     }
 
     @Test
-    void testSubmitForm_WithProfanity() {
+    void testCheckGardenError_WithProfanity() {
         Model model = mock(Model.class);
+        BindingResult bindingResult = mock(BindingResult.class);
         Garden garden = new Garden();
+        ArrayList<String> profanity = new ArrayList<>();
+        profanity.add("badword");
         garden.setDescription("badword");
 
-        BindingResult bindingResult = mock(BindingResult.class);
-        when(bindingResult.hasErrors()).thenReturn(true);
+        when(bindingResult.hasErrors()).thenReturn(false);
+        when(profanityService.badWordsFound("badword")).thenReturn(profanity);
+        when(moderationService.checkIfDescriptionIsFlagged(anyString())).thenReturn(false);
 
-        when(profanityService.badWordsFound("badword")).thenReturn(new ArrayList<>(List.of("profanity")));
+        gardenController.checkGardenError(model, bindingResult, garden);
 
-        String result = gardenController.submitForm(garden, bindingResult, authentication, model);
-
-        ArgumentCaptor<String> stringCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
-        verify(model, times(1)).addAttribute(stringCaptor.capture(), messageCaptor.capture());
-
-        assertEquals("gardens/createGarden", result);
-        assertTrue(stringCaptor.getAllValues().contains("profanity"));
-        assertTrue(messageCaptor.getAllValues().contains(EXPECTED_MODERATION_ERROR_MESSAGE));
+        verify(model).addAttribute("profanity", "The description does not match the language standards of the app.");
+        verify(model, never()).addAttribute(eq("locationError"), anyString());
     }
 
     @Test
-    public void testSubmitForm_WithLocationError() {
+    void testCheckGardenError_WithModerationFlagged() {
         Model model = mock(Model.class);
+        BindingResult bindingResult = mock(BindingResult.class);
+        Garden garden = new Garden();
+        garden.setDescription("suspicious description");
+
+        when(bindingResult.hasErrors()).thenReturn(false);
+        when(profanityService.badWordsFound("suspicious description")).thenReturn(new ArrayList<>());
+        when(moderationService.checkIfDescriptionIsFlagged("suspicious description")).thenReturn(true);
+
+        gardenController.checkGardenError(model, bindingResult, garden);
+
+        verify(model).addAttribute("profanity", "The description does not match the language standards of the app.");
+        verify(model, never()).addAttribute(eq("locationError"), anyString());
+    }
+
+    @Test
+    void testCheckGardenError_NoErrors() {
+        Model model = mock(Model.class);
+        BindingResult bindingResult = mock(BindingResult.class);
         Garden garden = new Garden();
         garden.setDescription("good description");
-        BindingResult bindingResult = mock(BindingResult.class);
 
-        FieldError fieldError = new FieldError("garden", "city", "Pattern");
-        when(bindingResult.hasErrors()).thenReturn(true);
-        when(bindingResult.getFieldErrors()).thenReturn(List.of(fieldError));
+        when(bindingResult.hasErrors()).thenReturn(false);
         when(profanityService.badWordsFound("good description")).thenReturn(new ArrayList<>());
         when(moderationService.checkIfDescriptionIsFlagged("good description")).thenReturn(false);
 
-        String result = gardenController.submitForm(garden, bindingResult, authentication, model);
-        verify(model).addAttribute(eq("garden"), eq(garden));
-        assertEquals("gardens/createGarden", result);
+        gardenController.checkGardenError(model, bindingResult, garden);
+
+        verify(model, never()).addAttribute(eq("profanity"), anyString());
+        verify(model, never()).addAttribute(eq("locationError"), anyString());
+    }
+
+    @Test
+    void testCheckGardenError_WithLocationError() {
+        Model model = mock(Model.class);
+        BindingResult bindingResult = mock(BindingResult.class);
+        Garden garden = new Garden();
+
+        FieldError fieldError = new FieldError("garden", "city", null,false, new String[]{"Pattern"},null,null);
+        when(bindingResult.hasErrors()).thenReturn(true);
+        when(bindingResult.getFieldErrors()).thenReturn(List.of(fieldError));
+        when(profanityService.badWordsFound(anyString())).thenReturn(new ArrayList<>());
+        when(moderationService.checkIfDescriptionIsFlagged(anyString())).thenReturn(false);
+
+        gardenController.checkGardenError(model, bindingResult, garden);
+
+        verify(model).addAttribute("locationError", "Location name must only include letters, numbers, spaces, dots, hyphens or apostrophes");
+        verify(model, never()).addAttribute(eq("profanity"), anyString());
     }
 }
