@@ -12,7 +12,13 @@
         <main class="main-container" style = "margin-top: 10%;">
             <div class="card p-5">
                 <h1>My Profile</h1>
-                <div th:insert="~{fragments/edit-profile-picture.html}"></div>
+                <img
+                    class="profile-picture-large"
+                    th:src="@{'/users/' + ${userId} + '/profile-picture'}"
+                    width="100"
+                    height="100"
+                    alt="profile picture"
+                />
                 <h3>First Name</h3>
                 <p>[[${fname}]]</p>
                 <h3>Last Name</h3>
