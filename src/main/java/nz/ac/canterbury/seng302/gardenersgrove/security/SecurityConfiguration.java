@@ -106,7 +106,12 @@ public class SecurityConfiguration {
 
     }
 
+    /**
+     * Gets the base path of the application if one is specified, e.g. "/test"
+     * @return the base path of the application, or an empty string if none is specified
+     */
     private String getBasePath() {
+        // https://stackoverflow.com/a/53896961/10530876
         return ServletUriComponentsBuilder.fromCurrentContextPath().build().getPath();
     }
 }
