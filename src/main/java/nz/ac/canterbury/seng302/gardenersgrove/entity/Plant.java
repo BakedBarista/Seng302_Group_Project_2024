@@ -70,7 +70,7 @@ public class Plant {
         this.description = plantDTO.getDescription();
 
         LocalDate localDate = null;
-        if (!Objects.equals(plantDTO.getPlantedDate(), "")) {
+        if (plantDTO.getPlantedDate() != null && !plantDTO.getPlantedDate().isEmpty()) {
             localDate = LocalDate.parse(plantDTO.getPlantedDate());
         }
         this.plantedDate = localDate;

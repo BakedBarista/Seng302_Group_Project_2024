@@ -34,7 +34,6 @@ public class GardenUser {
     @Column(nullable = false)
     private String password;
 
-
     @Column(nullable = true)
     private LocalDate DOB;
 

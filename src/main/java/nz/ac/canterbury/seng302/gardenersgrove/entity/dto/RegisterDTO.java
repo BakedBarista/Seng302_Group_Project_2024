@@ -7,8 +7,6 @@ import jakarta.validation.constraints.Size;
 import nz.ac.canterbury.seng302.gardenersgrove.customValidation.AgeRange;
 import nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidDate;
 
-import java.time.LocalDate;
-
 import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationConstants.*;
 
 /**
@@ -36,10 +34,10 @@ public class RegisterDTO {
 
     private String confirmPassword;
 
-    @ValidDate
+    @ValidDate()
     @AgeRange(minAge = USER_MIN_AGE, message = "You must be 13 years or older to create an account")
     @AgeRange(maxAge = USER_MAX_AGE, message = "The maximum age allowed is 120 years")
-    private LocalDate DOB;
+    private String DOB;
 
     public String getFname() {
         return fname;
@@ -99,9 +97,9 @@ public class RegisterDTO {
         this.confirmPassword = confirmPassword;
     }
 
-    public LocalDate getDOB() { return DOB; }
+    public String getDOB() { return DOB; }
 
-    public void setDOB(LocalDate DOB) {
+    public void setDOB(String DOB) {
         this.DOB = DOB;
     }
 }

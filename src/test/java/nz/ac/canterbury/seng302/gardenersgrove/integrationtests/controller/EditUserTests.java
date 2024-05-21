@@ -47,7 +47,7 @@ class EditUserControllerTest {
         editUser.setLname("Dough");
         editUser.setNoLname(false);
         editUser.setEmail("jane@email.com");
-        editUser.setDOB(LocalDate.of(1998, 1, 1));
+        editUser.setDOB("1970-01-01");
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
@@ -69,7 +69,7 @@ class EditUserControllerTest {
         editUser.setLname("Dough");
         editUser.setNoLname(false);
         editUser.setEmail("jane@email.com");
-        editUser.setDOB(LocalDate.of(1998, 1, 1));
+        editUser.setDOB("1970-01-01");
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
@@ -92,7 +92,7 @@ class EditUserControllerTest {
         editUser.setLname("Dough");
         editUser.setNoLname(false);
         editUser.setEmail("jane@email.com");
-        editUser.setDOB(LocalDate.of(1998, 1, 1));
+        editUser.setDOB("1970-01-01");
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
@@ -103,7 +103,7 @@ class EditUserControllerTest {
         assertEquals("Jane", user.getFname());
         assertEquals("Dough", user.getLname());
         assertEquals("jane@email.com", user.getEmail());
-        assertEquals(LocalDate.of(1998, 1, 1), user.getDOB());
+        assertEquals(LocalDate.of(1970, 1, 1), user.getDOB());
     }
 
     @Test
@@ -117,7 +117,7 @@ class EditUserControllerTest {
         editUser.setLname( "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
         editUser.setNoLname(false);
         editUser.setEmail("jane@email.com");
-        editUser.setDOB(LocalDate.of(1998, 1, 1));
+        editUser.setDOB("1970-01-01");
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);

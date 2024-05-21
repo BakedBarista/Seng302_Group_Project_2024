@@ -1,6 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +63,9 @@ public class EditUserController {
         editUserDTO.setFname(user.getFname());
         editUserDTO.setLname(user.getLname());
         editUserDTO.setEmail(user.getEmail());
-        editUserDTO.setDOB(user.getDOB());
+        if (user.getDOB() != null) {
+            editUserDTO.setDOB(user.getDOB().format(DateTimeFormatter.ISO_LOCAL_DATE));
+        }
         model.addAttribute("editUserDTO", editUserDTO);
 
         return "users/editTemplate";
@@ -83,7 +87,8 @@ public class EditUserController {
     public String submitUser(
             @Valid @ModelAttribute("user") EditUserDTO editUserDTO,
             BindingResult bindingResult,
-            Authentication authentication, Model model) {
+            Authentication authentication,
+            Model model) {
         logger.info("POST /users/edit");
 
         Long userId = (Long) authentication.getPrincipal();
@@ -104,7 +109,11 @@ public class EditUserController {
         user.setFname(editUserDTO.getFname());
         user.setLname(editUserDTO.getLname());
         user.setEmail(editUserDTO.getEmail());
-        user.setDOB(editUserDTO.getDOB());
+        if (editUserDTO.getDOB() != null && !editUserDTO.getDOB().isEmpty()) {
+            user.setDOB(LocalDate.parse(editUserDTO.getDOB()));
+        } else {
+            user.setDOB(null);
+        }
         userService.addUser(user);
 
         return "redirect:/users/user";

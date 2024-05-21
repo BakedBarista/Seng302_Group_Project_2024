@@ -88,8 +88,12 @@ public class RegisterController {
             return "users/registerTemplate";
         }
 
+        LocalDate dob = null;
+        if (registerDTO.getDOB() != null && !registerDTO.getDOB().isEmpty()) {
+            dob = LocalDate.parse(registerDTO.getDOB());
+        }
         GardenUser user = new GardenUser(registerDTO.getFname(), registerDTO.getLname(), registerDTO.getEmail(),
-                registerDTO.getPassword(), registerDTO.getDOB());
+                registerDTO.getPassword(), dob);
 
         String token = tokenService.createEmailToken();
         tokenService.addEmailTokenAndTimeToUser(user, token);
