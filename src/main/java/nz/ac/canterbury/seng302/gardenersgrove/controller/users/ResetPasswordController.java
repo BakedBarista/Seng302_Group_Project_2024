@@ -67,6 +67,7 @@ public class ResetPasswordController {
             for (FieldError errors : bindingResult.getFieldErrors()) {
                 logger.info("Validation error in email field: {}", errors.getDefaultMessage());
                 model.addAttribute("incorrectEmail", errors.getDefaultMessage());
+                model.addAttribute("email", email);
             }
             return "users/resetPassword";
         }
@@ -86,8 +87,6 @@ public class ResetPasswordController {
                     "\nThis link will expire after 10 minutes, you do not need to take action if this is not you.";
             emailSenderService.sendEmail(user, subject, body);
         }
-
-
 
         return "users/resetPasswordConfirmation";
     }

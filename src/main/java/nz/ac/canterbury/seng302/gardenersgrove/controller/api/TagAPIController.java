@@ -33,6 +33,14 @@ public class TagAPIController {
         this.tagService = tagService;
     }
 
+    /**
+     * Sets the tags for a garden.
+     *
+     * @param gardenId The ID of the garden.
+     * @param tags The tags to set.
+     * @param authentication The authentication object.
+     * @return A response entity indicating the result of the operation.
+     */
     @PutMapping("/gardens/{gardenId}/tags")
     public ResponseEntity<Object> setGardenTags(
             @PathVariable Long gardenId,
@@ -55,6 +63,13 @@ public class TagAPIController {
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * Searches for existing tags that start with the given string. Intended for use
+     * with the autocomplete feature.
+     *
+     * @param currentValue The string to search for.
+     * @return A list of tags that start with the given string.
+     */
     @GetMapping("/tag-autocomplete")
     public ResponseEntity<SearchTagsResult> searchTags(@RequestParam String currentValue) {
         List<Tag> tags = tagService.getTagsByPrefix(currentValue);
