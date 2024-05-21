@@ -9,22 +9,24 @@
     </head>
     <body>
         <nav th:replace="~{fragments/navbar :: navbar}"></nav>
-        <main class="main-container">
-            <h1>My Profile</h1>
-            <div th:insert="~{fragments/edit-profile-picture.html}"></div>
-            <h3>First Name</h3>
-            <p>[[${fname}]]</p>
-            <h3>Last Name</h3>
-            <p th:if="${lname != null}">[[${lname}]]</p>
-            <p th:if="${lname == null}">&mdash;</p>
-            <h3>Email</h3>
-            <p>[[${email}]]</p>
-            <h3>Date of Birth</h3>
-            <p th:if="${dob != null}">[[${dob}]]</p>
-            <p th:if="${dob == null}">&mdash;</p>
-            <p>
-                <a th:href="@{/users/edit}">Edit</a>
-            </p>
+        <main class="main-container" style = "margin-top: 10%;">
+            <div class="card p-5">
+                <h1>My Profile</h1>
+                <div th:insert="~{fragments/edit-profile-picture.html}"></div>
+                <h3>First Name</h3>
+                <p>[[${fname}]]</p>
+                <h3>Last Name</h3>
+                <p th:if="${lname != null}">[[${lname}]]</p>
+                <p th:if="${lname == null}">&mdash;</p>
+                <h3>Email</h3>
+                <p>[[${email}]]</p>
+                <h3>Date of Birth</h3>
+                <p th:if="${dob != null}">[[${dob}]]</p>
+                <p th:if="${dob == null}">&mdash;</p>
+                <p>
+                    <a th:href="@{/users/edit}">Edit</a>
+                </p>
+            </div>
         </main>
         <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
     </body>
