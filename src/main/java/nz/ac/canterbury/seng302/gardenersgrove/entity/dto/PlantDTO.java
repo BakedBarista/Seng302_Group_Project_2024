@@ -13,11 +13,11 @@ import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.Validatio
 
 
 /**
- * Entity class for Plants
+ * DTO for plants
  */
 
 @Entity
-public class Plant {
+public class PlantDTO {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,7 +37,8 @@ public class Plant {
     private String description;
 
     @Column()
-    private LocalDate plantedDate;
+    @ValidDate()
+    private String plantedDate;
 
     @ManyToOne
     @JoinColumn
@@ -50,14 +51,15 @@ public class Plant {
     @Lob
     private byte[] plantImage;
 
-    public Plant(String name, String count, String description, LocalDate plantedDate) {
+    public PlantDTO(String name, String count, String description, String plantedDate) {
         this.name = name;
         this.count = count;
         this.description = description;
         this.plantedDate = plantedDate;
     }
 
-    public Plant() {}
+    public PlantDTO() {
+    }
 
     public Long getId() {
         return id;
@@ -91,11 +93,11 @@ public class Plant {
         this.description = description;
     }
 
-    public LocalDate getPlantedDate() {
+    public String getPlantedDate() {
         return plantedDate;
     }
 
-    public void setPlantedDate(LocalDate plantedDate) {
+    public void setPlantedDate(String plantedDate) {
         this.plantedDate = plantedDate;
     }
 

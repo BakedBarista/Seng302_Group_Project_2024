@@ -132,7 +132,7 @@
                         </div>
                         <div class="d-flex">
                             <img th:src="@{/icons/calendar-03-stroke-rounded.svg}" alt="" width="20" height="20" />
-                            <p class="mx-1" th:text="${plant.plantedDate}">Planted Date</p>
+                            <p class="mx-1" th:if="${plant.plantedDate != null}" th:text="${plant.plantedDate.format(NZ_FORMAT_DATE)}">Planted Date</p>
                         </div>
                     </div>
 

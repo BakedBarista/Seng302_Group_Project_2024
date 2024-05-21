@@ -1,4 +1,4 @@
-INSERT INTO garden_user (fname, lname, email, password, dob) VALUES ('Jane', 'Doe', 'jane.doe@gmail.com', 'password', '01/01/1970');
+INSERT INTO garden_user (fname, lname, email, password, dob) VALUES ('Jane', 'Doe', 'jane.doe@gmail.com', 'password', null);
 
 -- Gardens
 INSERT INTO garden (name, street_Number, street_Name, suburb, city, country, post_Code, lat, lon, size, is_public, owner_id, display_weather_alert, watering_recommendation) VALUES ('Enchanted Oasis', '1','Ilam road','Ilam','Christchurch','New Zealand','8041','0.55','0.55', 1200, true, 1, true, false);
@@ -14,15 +14,15 @@ INSERT INTO garden (name, street_Number, street_Name, suburb, city, country, pos
 
 -- Garden 1
 INSERT INTO plant (name, count, description, planted_date, garden_id) VALUES
-                                                                                            ('Rose', 15, 'Red', '01/03/2024', 1),
-                                                                                            ('Sunflower', 8, 'Yellow', '10/04/2024', 1),
-                                                                                            ('Lavender', 5, 'Purple', '22/05/2024', 1),
-                                                                                            ('Tulip', 12, 'Pink', '15/06/2024', 1),
-                                                                                            ('Daisy', 18, 'White', '05/07/2024', 1),
-                                                                                            ('Lily', 7, 'Orange', '18/08/2024', 1),
-                                                                                            ('Hydrangea', 20, 'Blue', '09/09/2024', 1),
-                                                                                            ('Cactus', 3, 'Green', '30/10/2024', 1),
-                                                                                            ('Orchid', 10, 'Purple', '12/11/2024', 1),
-                                                                                            ('Maple', 14, 'Red', '05/12/2024', 1);
+                                                                                            ('Rose', 15, 'Red', null, 1),
+                                                                                            ('Sunflower', 8, 'Yellow', null, 1),
+                                                                                            ('Lavender', 5, 'Purple', null, 1),
+                                                                                            ('Tulip', 12, 'Pink', null, 1),
+                                                                                            ('Daisy', 18, 'White', null, 1),
+                                                                                            ('Lily', 7, 'Orange', null, 1),
+                                                                                            ('Hydrangea', 20, 'Blue', null, 1),
+                                                                                            ('Cactus', 3, 'Green', null, 1),
+                                                                                            ('Orchid', 10, 'Purple', null, 1),
+                                                                                            ('Maple', 14, 'Red', null, 1);
 
 

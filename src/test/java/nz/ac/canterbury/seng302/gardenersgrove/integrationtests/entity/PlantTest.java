@@ -3,13 +3,15 @@ package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.entity;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
-import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.PlantController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 
+import nz.ac.canterbury.seng302.gardenersgrove.customValidation.DateTimeFormats;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,7 +27,7 @@ class PlantTest {
 
     @BeforeEach
     void makeGarden() {
-        plant = new Plant("Plant", "1", "Yellow", "09/09/2023");
+        plant = new Plant("Plant", "1", "Yellow", LocalDate.of(1970, 1, 1));
     }
 
     @Test
@@ -239,19 +241,16 @@ class PlantTest {
 
     @Test
     void SetPlantedDate_DDMMYYYY_ReturnsEmptyConstraintViolationList() {
-        plant.setPlantedDate("18/02/2023");
+        plant.setPlantedDate(LocalDate.of(2003, 1, 1));
 
         assertTrue(validator.validate(plant).isEmpty());
     }
 
     @Test
     void SetPlantedDate_YYYYDDMM_ReturnPatternViolation() {
-        plant.setPlantedDate("2023-02-18");
-        String expectedFormat = "18/02/2023";
+        plant.setPlantedDate(LocalDate.of(2003, 1, 1));
+        Integer expectedConstraintSetSize = 1;
 
-        String correctFormat = PlantController.refactorPlantedDate(plant.getPlantedDate());
-
-        Assertions.assertEquals(correctFormat, expectedFormat);
+        assertEquals(expectedConstraintSetSize, validator.validate(plant).size());
     }
-
 }

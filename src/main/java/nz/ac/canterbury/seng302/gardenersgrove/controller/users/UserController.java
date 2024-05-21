@@ -1,8 +1,5 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-
 
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
 import org.slf4j.Logger;
@@ -20,6 +17,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+
+import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.DateTimeFormats.NZ_FORMAT_DATE;
 
 @Controller
 public class UserController {
@@ -53,9 +52,7 @@ public class UserController {
         model.addAttribute("email", user.getEmail());
 
         if (user.getDOB() != null) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/M/yyyy");
-            LocalDate dob = LocalDate.parse(user.getDOB(), formatter);
-            String dobString = dob.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            String dobString = user.getDOB().format(NZ_FORMAT_DATE);
             model.addAttribute("dob", dobString);
         }
 

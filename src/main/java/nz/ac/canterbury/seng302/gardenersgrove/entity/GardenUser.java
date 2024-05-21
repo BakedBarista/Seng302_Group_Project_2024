@@ -6,6 +6,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -35,7 +36,7 @@ public class GardenUser {
 
 
     @Column(nullable = true)
-    private String DOB;
+    private LocalDate DOB;
 
     @Column(nullable = true)
     private String profilePictureContentType;
@@ -88,7 +89,7 @@ public class GardenUser {
      * @param password password of user 
      * @param DOB date of birth of use 
      */
-    public GardenUser(String fname, String lname, String email, String password, String DOB) {
+    public GardenUser(String fname, String lname, String email, String password, LocalDate DOB) {
         this.fname = fname;
         this.lname = lname;
         this.email = email;
@@ -187,7 +188,7 @@ public class GardenUser {
      *
      * @param DOB the user's date of birth
      */
-    public void setDOB(String DOB) {
+    public void setDOB(LocalDate DOB) {
         this.DOB = DOB;
     }
 
@@ -196,7 +197,7 @@ public class GardenUser {
      *
      * @return user's date of birth
      */
-    public String getDOB() {
+    public LocalDate getDOB() {
         return DOB;
     }
 
