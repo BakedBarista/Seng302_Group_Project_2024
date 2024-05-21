@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,6 +33,7 @@ import static org.mockito.Mockito.*;
 public class GardenControllerTest {
 
     String EXPECTED_MODERATION_ERROR_MESSAGE = "The description does not match the language standards of the app.";
+    String LOCATION_ERROR_MESSAGE = "Location name must only include letters, numbers, spaces, dots, hyphens or apostrophes";
 
     @Mock
     private GardenService gardenService;
@@ -267,5 +269,23 @@ public class GardenControllerTest {
         assertEquals("gardens/createGarden", result);
         assertTrue(stringCaptor.getAllValues().contains("profanity"));
         assertTrue(messageCaptor.getAllValues().contains(EXPECTED_MODERATION_ERROR_MESSAGE));
+    }
+
+    @Test
+    public void testSubmitForm_WithLocationError() {
+        Model model = mock(Model.class);
+        Garden garden = new Garden();
+        garden.setDescription("good description");
+        BindingResult bindingResult = mock(BindingResult.class);
+
+        FieldError fieldError = new FieldError("garden", "city", "Pattern");
+        when(bindingResult.hasErrors()).thenReturn(true);
+        when(bindingResult.getFieldErrors()).thenReturn(List.of(fieldError));
+        when(profanityService.badWordsFound("good description")).thenReturn(new ArrayList<>());
+        when(moderationService.checkIfDescriptionIsFlagged("good description")).thenReturn(false);
+
+        String result = gardenController.submitForm(garden, bindingResult, authentication, model);
+        verify(model).addAttribute(eq("garden"), eq(garden));
+        assertEquals("gardens/createGarden", result);
     }
 }
