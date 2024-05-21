@@ -1,7 +1,5 @@
 package nz.ac.canterbury.seng302.gardenersgrove.security;
 
-import java.util.Enumeration;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -13,6 +11,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 /**
  * Custom Security Configuration
@@ -84,11 +83,7 @@ public class SecurityConfiguration {
         http.exceptionHandling(exceptionHandling -> exceptionHandling
                 .authenticationEntryPoint((request, response, authException) -> 
                 {
-                    Enumeration<String> headerNames = request.getHeaderNames();
-                    while (headerNames.hasMoreElements()) {
-                        String header = headerNames.nextElement();
-                        System.out.println(header + ": " + request.getHeader(header));
-                    }
+                    System.out.println(getBaseUrl());
 
                     response.sendRedirect("/users/login");
                 })
@@ -105,5 +100,9 @@ public class SecurityConfiguration {
                         .deleteCookies("JSESSIONID"));
         return http.build();
 
+    }
+
+    private String getBaseUrl() {
+        return ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
     }
 }
