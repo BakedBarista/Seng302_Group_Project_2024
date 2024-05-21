@@ -106,7 +106,7 @@ public class ProfanityService {
     }
 
     //Helper function to check if a word is standalone by checking before start and after end of the word
-    private boolean isStandaloneWord(String input, int start, int end) {
+    public boolean isStandaloneWord(String input, int start, int end) {
         boolean isStartValid = start == 0 || !Character.isLetterOrDigit(input.charAt(start - 1));
         boolean isEndValid = end == input.length() || !Character.isLetterOrDigit(input.charAt(end));
         return isStartValid && isEndValid;
