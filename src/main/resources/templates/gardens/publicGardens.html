@@ -22,6 +22,27 @@
                 </button>
             </div>
         </form>
+
+        <!-- <form class="input-group w-100" action="#" th:action="@{/gardens/public/search-tags}" method="post" id="searchForm">
+            <input type="text" class="form-control" placeholder="Search by tag" id="searchField"
+                   aria-label="Search by tag" aria-describedby="button-addon" name="search">
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="submit" id="button-addon">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+        </form> -->
+        <div class="col-xl-6 col-12 mt-4">
+            <h2>Tags</h2>
+            <div class="col-md-12">
+                <label for="tag-autocomplete-container">Add tag</label>
+                <div class="mb-3" id="tag-autocomplete-container"></div>
+            </div>
+            <div class="col-md-12 mb-4" id="tag-container"></div>
+            <script th:src="@{/js/autocomplete.js}"></script>
+            <script th:src="@{/js/tagAutocomplete.js}"></script>
+            <script th:src="@{/js/gardenDetailsTagAutocomplete.js}"></script>
+        </div>
     </div>
 
     <div th:if="${gardenPage.empty}">
@@ -55,8 +76,7 @@
                                     <div class="col" th:class="${#lists.size(garden.getPlants()) == 1 ? 'col-12' :
                                               #lists.size(garden.getPlants()) == 2 ? 'col-6' :
                                               'col-6 col-sm-4 col-lg-6'}" th:if="${iterStat.index < 4}">
-                                        <img th:if="${plant.plantImagePath != null}" th:src="@{${plant.plantImagePath}}" class="img-fluid plant-img" th:alt="${plant.name}">
-                                        <img th:unless="${plant.plantImagePath != null}" src="/img/defaultgarden.jpg" class="img-fluid plant-img" alt="Default Image">
+                                        <img th:src="@{'/plants/' + ${plant.id} + '/plant-image'}" alt="Default Plant Image"class="img-fluid plant-img" th:alt="${plant.name}">
                                     </div>
                                 </th:block>
                             </div>

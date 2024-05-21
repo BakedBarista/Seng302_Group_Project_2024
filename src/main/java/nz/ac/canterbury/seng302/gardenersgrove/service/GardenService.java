@@ -95,5 +95,8 @@ public class GardenService {
         return gardenRepository.findUserPrivateGarden(user);
     }
 
+    public Page<Garden> getGardensMatchingTags(List<String> tagId, Pageable pageable){
+        return gardenRepository.findByTagNames(tagId, pageable);
+    }
 }
 

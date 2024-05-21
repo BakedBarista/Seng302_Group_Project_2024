@@ -43,8 +43,10 @@ public class GardenController {
 
     private final ProfanityService profanityService;
 
+    private final TagService tagService;
+
     @Autowired
-    public GardenController(GardenService gardenService, PlantService plantService, GardenUserService gardenUserService, WeatherAPIService weatherAPIService, FriendService friendService, ModerationService moderationService, ProfanityService profanityService) {
+    public GardenController(TagService tagService, GardenService gardenService, PlantService plantService, GardenUserService gardenUserService, WeatherAPIService weatherAPIService, FriendService friendService, ModerationService moderationService, ProfanityService profanityService) {
         this.gardenService = gardenService;
         this.plantService = plantService;
         this.gardenUserService = gardenUserService;
@@ -52,6 +54,7 @@ public class GardenController {
         this.friendService = friendService;
         this.moderationService = moderationService;
         this.profanityService = profanityService;
+        this.tagService = tagService;
     }
 
     /**
@@ -374,8 +377,31 @@ public class GardenController {
         Pageable pageable = PageRequest.of(page, size);
         Page<Garden> gardenPage = gardenService.findPageThatContainsQuery(search, pageable);
         model.addAttribute("gardenPage", gardenPage);
-        List<Garden> gardens = gardenService.findAllThatContainQuery(search);
-        model.addAttribute("gardens", gardens);
+        model.addAttribute("previousSearch", search);
+        return "gardens/publicGardens";
+    }
+
+
+    /**
+     * send the user to public gardens with a subset of gardens matching
+     * their given search by tag
+     * @param search string that user is searching
+     * @param model representation of results
+     * @return public garden page
+     */
+    @PostMapping("/gardens/public/search-tags")
+    public String searchTagPublicGardens(@RequestParam (defaultValue = "0") int page,
+                                      @RequestParam (defaultValue = "10") int size,
+                                      @RequestParam(name = "search", required = false, defaultValue = "") String search,
+                                      Model model) {
+        logger.info("Search: " + search);
+        Pageable pageable = PageRequest.of(page, size);
+        List<String> tags = new ArrayList<>();
+        tags.add(search);
+        Page<Garden> taggedGardens = gardenService.getGardensMatchingTags(tags, pageable);
+        logger.info("" + taggedGardens);
+
+        model.addAttribute("gardenPage", taggedGardens);
         model.addAttribute("previousSearch", search);
         return "gardens/publicGardens";
     }

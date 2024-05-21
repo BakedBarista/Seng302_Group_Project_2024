@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.repository;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.domain.Page;
@@ -42,4 +43,6 @@ public interface GardenRepository extends CrudRepository<Garden, Long> {
     @Query("SELECT g From Garden g WHERE g.owner = ?1 AND not g.isPublic")
     List<Garden> findUserPrivateGarden(GardenUser owner);
     
+    @Query("SELECT DISTINCT g FROM Garden g JOIN g.tags t WHERE t.name IN :tagNames")
+    Page<Garden> findByTagNames(List<String> tagNames, Pageable pageable);
 }
