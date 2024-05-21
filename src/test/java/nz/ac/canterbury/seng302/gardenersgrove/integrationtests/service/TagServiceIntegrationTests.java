@@ -21,7 +21,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.repository.TagRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
 
 @SpringBootTest
-public class TagServiceIntegrationTests {
+class TagServiceIntegrationTests {
     @Autowired
     private TagService tagService;
 

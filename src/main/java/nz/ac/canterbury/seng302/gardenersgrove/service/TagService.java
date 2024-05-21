@@ -70,7 +70,7 @@ public class TagService {
     public void updateGardenTags(Garden garden, List<String> tagNames) {
         // Remove tags that are not in the new list
         for (Tag tag : garden.getTags()) {
-            if (!tagNames.stream().anyMatch(t -> t.equals(tag.getName()))) {
+            if (tagNames.stream().noneMatch(t -> t.equals(tag.getName()))) {
                 garden.getTags().remove(tag);
             }
         }

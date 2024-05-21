@@ -30,7 +30,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
 
-public class TagAPIControllerTests {
+class TagAPIControllerTests {
     private GardenService gardenService;
     private TagService tagService;
     private Authentication authentication;
