@@ -110,6 +110,18 @@ public class U8CreateNewGardenFeature {
         garden.setCountry(country);
     }
 
+    @And("I enter a valid lat {string}")
+    public void iEnterAValidLat(String lat) {
+        Double doubleLat = Double.parseDouble(lat);
+        garden.setLat(doubleLat);
+    }
+
+    @And("I enter a valid lon {string}")
+    public void iEnterAValidLon(String lon) {
+        Double doubleLon = Double.parseDouble(lon);
+        garden.setLat(doubleLon);
+    }
+
     @And("I submit create garden form")
     public void iSubmitCreateGardenForm() {
         when(authentication.getPrincipal()).thenReturn((Long) 1L);
