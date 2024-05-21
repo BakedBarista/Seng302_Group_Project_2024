@@ -1,10 +1,11 @@
-package nz.ac.canterbury.seng302.gardenersgrove.entity;
+package nz.ac.canterbury.seng302.gardenersgrove.entity.dto;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidDate;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 
 import java.time.LocalDate;
 

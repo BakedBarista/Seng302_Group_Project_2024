@@ -12,6 +12,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
+import java.time.LocalDate;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -36,7 +38,7 @@ class EditUserControllerTest {
 
     @Test
     void whenValidEditProfile_redirectToProfilePage() {
-        GardenUser user = new GardenUser("John", "Doe", "john@email.com", "P#ssw0rd", "10/10/2000");
+        GardenUser user = new GardenUser("John", "Doe", "john@email.com", "P#ssw0rd", LocalDate.of(2000, 10, 10));
         when(userService.getUserById(userId)).thenReturn(user); // Mock userService.getUserById(userId)
         when(authentication.getPrincipal()).thenReturn(userId);
 
@@ -45,7 +47,7 @@ class EditUserControllerTest {
         editUser.setLname("Dough");
         editUser.setNoLname(false);
         editUser.setEmail("jane@email.com");
-        editUser.setDOB("01/01/1998");
+        editUser.setDOB(LocalDate.of(1998, 1, 1));
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
@@ -58,7 +60,7 @@ class EditUserControllerTest {
 
     @Test
     void whenInvalidEditProfile_redirectToEditPage() {
-        GardenUser user = new GardenUser("John", "Doe", "john@email.com", "P#ssw0rd", "10/10/2000");
+        GardenUser user = new GardenUser("John", "Doe", "john@email.com", "P#ssw0rd", LocalDate.of(2000, 10, 10));
         when(userService.getUserById(userId)).thenReturn(user);
         when(authentication.getPrincipal()).thenReturn(userId);
 
@@ -67,7 +69,7 @@ class EditUserControllerTest {
         editUser.setLname("Dough");
         editUser.setNoLname(false);
         editUser.setEmail("jane@email.com");
-        editUser.setDOB("01/01/1998");
+        editUser.setDOB(LocalDate.of(1998, 1, 1));
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
@@ -81,7 +83,7 @@ class EditUserControllerTest {
     @Test
     void whenValidEditProfile_submitUser() {
         GardenUser user = new GardenUser("John", "Doe", "john@email.com",
-                 "P#ssw0rd", "10/10/2000");
+                 "P#ssw0rd", LocalDate.of(2000, 10, 10));
         when(userService.getUserById(userId)).thenReturn(user);
         when(authentication.getPrincipal()).thenReturn(userId);
 
@@ -90,7 +92,7 @@ class EditUserControllerTest {
         editUser.setLname("Dough");
         editUser.setNoLname(false);
         editUser.setEmail("jane@email.com");
-        editUser.setDOB("01/01/1998");
+        editUser.setDOB(LocalDate.of(1998, 1, 1));
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
@@ -101,12 +103,12 @@ class EditUserControllerTest {
         assertEquals("Jane", user.getFname());
         assertEquals("Dough", user.getLname());
         assertEquals("jane@email.com", user.getEmail());
-        assertEquals("01/01/1998", user.getDOB());
+        assertEquals(LocalDate.of(1998, 1, 1), user.getDOB());
     }
 
     @Test
     void whenNameTooLong_doNotSaveToDB() {
-        GardenUser user = new GardenUser("John", "Doe", "john@email.com", "P#ssw0rd", "10/10/2000");
+        GardenUser user = new GardenUser("John", "Doe", "john@email.com", "P#ssw0rd", LocalDate.of(2000, 10, 10));
         when(userService.getUserById(userId)).thenReturn(user);
         when(authentication.getPrincipal()).thenReturn(userId);
 
@@ -115,7 +117,7 @@ class EditUserControllerTest {
         editUser.setLname( "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
         editUser.setNoLname(false);
         editUser.setEmail("jane@email.com");
-        editUser.setDOB("01/01/1998");
+        editUser.setDOB(LocalDate.of(1998, 1, 1));
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
@@ -130,7 +132,7 @@ class EditUserControllerTest {
 
     @Test
     void whenPasswordChanged_sendEmail() {
-        GardenUser user = new GardenUser("John", "Doe", "john@email.com", "P#ssw0rd", "10/10/2000");
+        GardenUser user = new GardenUser("John", "Doe", "john@email.com", "P#ssw0rd", LocalDate.of(2000, 10, 10));
         when(userService.getUserById(userId)).thenReturn(user);
         when(authentication.getPrincipal()).thenReturn(userId);
 

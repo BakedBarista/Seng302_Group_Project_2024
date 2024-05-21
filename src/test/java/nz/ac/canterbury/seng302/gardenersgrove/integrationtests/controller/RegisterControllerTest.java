@@ -17,6 +17,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
 import org.springframework.validation.BindingResult;
 
+import java.time.LocalDate;
+
 @SpringBootTest
 public class RegisterControllerTest {
 
@@ -46,7 +48,7 @@ public class RegisterControllerTest {
         String lastName = "doe";
         String email = "john.doe@mail.com";
         String password = "TESTPassword123!";
-        String dob = "01/01/2000";
+        LocalDate dob = LocalDate.of(1998, 1, 1);
         String token = "token";
         user = new GardenUser(firstName, lastName, email, password, dob);
         user.setEmailValidationToken(token);

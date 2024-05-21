@@ -14,19 +14,19 @@ public class ValidationConstantsTest {
         String lname = "Innogen";
         String email = "test@uclive.ac.nz";
         String password = "Pa$$w0rd";
-        String dob = "10/12/2004";
+//        String dob = "10/12/2004";
 
         boolean firstNameResult = fname.matches(ValidationConstants.NAME_REGEX);
         boolean lastNameResult = lname.matches(ValidationConstants.NAME_REGEX);
 
         boolean emailResult = email.matches(ValidationConstants.EMAIL_REGEX);
-        boolean dateResult = dob.matches(ValidationConstants.DATE_REGEX);
+//        boolean dateResult = dob.matches(ValidationConstants.DATE_REGEX);
         boolean passwordResult = password.matches(ValidationConstants.PASSWORD_REGEX);
 
         assertTrue(firstNameResult);
         assertTrue(lastNameResult);
         assertTrue(emailResult);
-        assertTrue(dateResult);
+//        assertTrue(dateResult);
         assertTrue(passwordResult);
     }
 

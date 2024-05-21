@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.PlantController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
@@ -70,25 +71,25 @@ public class PlantControllerTest {
 
     @Test
     void testSubmitAddPlantForm_DataIsValid_ReturnToGardenDetailPage() throws Exception {
-        Plant validPlant = new Plant("Plant", "10", "Yellow", "11/03/2024");
+        PlantDTO validPlantDTO = new PlantDTO("Plant", "10", "Yellow", "2024-11-03");
         long gardenId = 0;
         String expectedReturnPage = "redirect:/gardens/" + gardenId;
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
-        String returnPage = plantController.submitAddPlantForm(gardenId, validPlant, bindingResult, file, dateValidStr, model);
+        String returnPage = plantController.submitAddPlantForm(gardenId, validPlantDTO, bindingResult, file, dateValidStr, model);
         assertEquals(expectedReturnPage, returnPage);
     }
 
     @Test
     void testSubmitAddPlantForm_DataIsInvalid_ReturnToAddPlantForm() throws Exception {
-        Plant invalidPlant = new Plant("#invalid", "10", "Yellow", "11/03/2024");
+        PlantDTO invalidPlantDTO = new PlantDTO("#invalid", "10", "Yellow", "2024-11-03");
         long gardenId = 0;
         String expectedReturnPage = "plants/addPlant";
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
-        String returnPage = plantController.submitAddPlantForm(gardenId, invalidPlant, bindingResult, file, dateValidStr, model);
+        String returnPage = plantController.submitAddPlantForm(gardenId, invalidPlantDTO, bindingResult, file, dateValidStr, model);
         assertEquals(expectedReturnPage, returnPage);
     }
 
@@ -99,14 +100,14 @@ public class PlantControllerTest {
      */
     @Test
     void testSubmitAddPlantForm_PlantedDateInvalidFromJS_ReturnToAddPlantForm() {
-        Plant invalidPlant = new Plant("validName", "1", "Yellow", "");
+        PlantDTO invalidPlantDTO = new PlantDTO("validName", "1", "Yellow", "");
         long gardenId = 0;
         long plantId = 0;
         String expectedReturnPage = "plants/editPlant";
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
-        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateInvalidStr, invalidPlant, bindingResult, model);
+        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateInvalidStr, invalidPlantDTO, bindingResult, model);
 
         assertEquals(expectedReturnPage, returnPage);
     }
@@ -118,27 +119,27 @@ public class PlantControllerTest {
      */
     @Test
     void testSubmitAddPlantForm_PlantedDateValidFromJS_ReturnToGardenDetailPage_PlantAddedToRepository() {
-        Plant validPlant = new Plant("validName", "1", "Yellow", "");
+        PlantDTO validPlantDTO = new PlantDTO("validName", "1", "Yellow", "");
         long gardenId = 0;
         long plantId = 0;
         String expectedReturnPage = "redirect:/gardens/" + gardenId;
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
-        when(plantService.getPlantById(plantId)).thenReturn(Optional.of(validPlant));
-        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, validPlant, bindingResult, model);
+        when(plantService.getPlantById(plantId)).thenReturn(Optional.of(new Plant(validPlantDTO)));
+        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, validPlantDTO, bindingResult, model);
 
         assertEquals(expectedReturnPage, returnPage);
     }
 
     @Test
     void testEditPlantForm_ReturnsToEditPlant() {
-        Plant plant = new Plant("#invalid", "10", "Yellow", "11/03/2024");
+        PlantDTO plantDTO = new PlantDTO("#invalid", "10", "Yellow", "2024-11-03");
         long gardenId = 0;
         long plantId = 0;
         String expectedReturnPage = "plants/editPlant";
 
-        when(plantService.getPlantById(plantId)).thenReturn(Optional.of(plant));
+        when(plantService.getPlantById(plantId)).thenReturn(Optional.of(new Plant(plantDTO)));
 
         String returnPage = plantController.editPlantForm(gardenId, plantId, model);
         assertEquals(expectedReturnPage, returnPage);
@@ -146,24 +147,25 @@ public class PlantControllerTest {
 
     @Test
     public void givenOnSubmitEditPlantForm_whenDataIsValid_thenReturnToEditPlantForm() throws Exception {
-        Plant validPlant = new Plant("Plant", "10", "Yellow", "11/03/2024");
+        PlantDTO validPlantDTO = new PlantDTO("Plant", "10", "Yellow", "2024-11-03");
         long gardenId = 0;
         long plantId = 0;
         String expectedReturnPage = "redirect:/gardens/" + gardenId;
+        Plant plant = new Plant(validPlantDTO);
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
-        when(plantService.getPlantById(plantId)).thenReturn(Optional.of(validPlant));
-        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, validPlant, bindingResult, model);
+        when(plantService.getPlantById(plantId)).thenReturn(Optional.of(plant));
+        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, validPlantDTO, bindingResult, model);
 
         assertEquals(expectedReturnPage, returnPage);
 
-        verify(plantService, times(1)).addPlant(validPlant, gardenId);
+        verify(plantService, times(1)).addPlant(plant, gardenId);
     }
 
     @Test
     public void gvenOnSubmitEditPlantForm_whenCountIsInvalid_thenReturnToEditPlantForm() throws Exception {
-        Plant invalidPlant = new Plant("Lotus", "abc", "Yellow", "11/03/2024");
+        PlantDTO invalidPlant = new PlantDTO("Lotus", "abc", "Yellow", "11/03/2024");
         long gardenId = 0;
         long plantId = 0;
         String expectedReturnPage = "plants/editPlant";
@@ -182,7 +184,7 @@ public class PlantControllerTest {
      */
     @Test
     void testSubmitEditPlantForm_PlantedDateInvalidFromJS_ReturnToEditPlantForm() {
-        Plant invalidPlant = new Plant("validName", "1", "Yellow", "");
+        PlantDTO invalidPlant = new PlantDTO("validName", "1", "Yellow", "");
         long gardenId = 0;
         long plantId = 0;
         String expectedReturnPage = "plants/editPlant";
@@ -201,32 +203,34 @@ public class PlantControllerTest {
      */
     @Test
     void testSubmitEditPlantForm_PlantedDateValidFromJS_ReturnToGardenDetailPage_PlantAddedToRepository() {
-        Plant validPlant = new Plant("validName", "1", "Yellow", "");
+        PlantDTO validPlantDTO = new PlantDTO("validName", "1", "Yellow", "");
         long gardenId = 0;
         long plantId = 0;
         String expectedReturnPage = "redirect:/gardens/" + gardenId;
+        Plant plant = new Plant(validPlantDTO);
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
-        when(plantService.getPlantById(plantId)).thenReturn(Optional.of(validPlant));
-        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, validPlant, bindingResult, model);
+        when(plantService.getPlantById(plantId)).thenReturn(Optional.of(plant));
+        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, validPlantDTO, bindingResult, model);
 
-        verify(plantService, times(1)).addPlant(validPlant, gardenId);
+        verify(plantService, times(1)).addPlant(plant, gardenId);
         assertEquals(expectedReturnPage, returnPage);
     }
 
     @Test
     public void testSubmitEditPlantForm_NameIsInvalid_ReturnToEditPlantForm() throws Exception {
-        Plant invalidPlant = new Plant("#invalid", "abc", "Yellow", "11/03/2024");
+        PlantDTO invalidPlantDTO = new PlantDTO("#invalid", "abc", "Yellow", "2024-11-03");
         long gardenId = 0;
         long plantId = 0;
         String expectedReturnPage = "plants/editPlant";
+        Plant plant = new Plant(invalidPlantDTO);
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
-        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, invalidPlant, bindingResult, model);
+        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, invalidPlantDTO, bindingResult, model);
 
-        verify(plantService, times(0)).addPlant(invalidPlant, gardenId);
+        verify(plantService, times(0)).addPlant(plant, gardenId);
         assertEquals(expectedReturnPage, returnPage);
     }
 
@@ -239,10 +243,10 @@ public class PlantControllerTest {
         String originalFilename = "plant.png";
 
         MultipartFile file = new MockMultipartFile(name,originalFilename,contentType,image);
-        Plant plant = new Plant();
+        PlantDTO plant = new PlantDTO();
         BindingResult bindingResult = mock(BindingResult.class);
 
-        plant.setPlantedDate("10/10/2024");
+        plant.setPlantedDate("2024-11-03");
         when(bindingResult.hasErrors()).thenReturn(false);
         plantController.submitAddPlantForm(gardenId, plant, bindingResult, file, dateValidStr, model);
 
@@ -302,10 +306,12 @@ public class PlantControllerTest {
     @Test
     void testSubmitAddPlantFormWithImage() throws Exception {
         Long gardenId = 1L;
-        Plant plant = new Plant();
-        plant.setId(1L);
-        plant.setPlantedDate("2023-05-14");
+        PlantDTO plantDTO = new PlantDTO();
+        plantDTO.setPlantedDate("2023-05-14");
         BindingResult bindingResult = mock(BindingResult.class);
+
+        Plant plant = new Plant(plantDTO);
+        plant.setId(gardenId);
 
         when(bindingResult.hasErrors()).thenReturn(false);
         when(plantService.addPlant(any(Plant.class), eq(gardenId))).thenReturn(plant);
@@ -313,16 +319,16 @@ public class PlantControllerTest {
         doThrow(new RuntimeException("Image processing error"))
                 .when(plantService).setPlantImage(anyLong(), anyString(), any(byte[].class));
 
-        String view = plantController.submitAddPlantForm(gardenId, plant, bindingResult, file, dateValidStr, model);
+        String view = plantController.submitAddPlantForm(gardenId, plantDTO, bindingResult, file, dateValidStr, model);
 
         assertEquals("redirect:/gardens/" + gardenId, view);
     }
 
     @Test
     void testSubmitEditPlantFormWithImage() throws Exception {
-        Long gardenId = 1L;
-        Long plantId = 1L;
-        Plant plant = new Plant("Plant", "10", "Yellow", "11/03/2024");
+        long gardenId = 1L;
+        long plantId = 1L;
+        PlantDTO plantDTO = new PlantDTO("Plant", "10", "Yellow", "2024-11-03");
         BindingResult bindingResult = mock(BindingResult.class);
         Optional<Plant> existingPlant = Optional.of(new Plant());
         existingPlant.get().setId(plantId);
@@ -336,7 +342,7 @@ public class PlantControllerTest {
         doThrow(new RuntimeException("Image processing error"))
                 .when(plantService).setPlantImage(anyLong(), anyString(), any(byte[].class));
 
-        String view = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, plant, bindingResult, model);
+        String view = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, plantDTO, bindingResult, model);
 
         assertEquals("redirect:/gardens/" + gardenId, view);
     }

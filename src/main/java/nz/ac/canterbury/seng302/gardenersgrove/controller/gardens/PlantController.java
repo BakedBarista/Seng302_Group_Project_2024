@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.PlantDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
@@ -103,13 +103,7 @@ public class PlantController {
         }
 
         // Save the new plant and image
-        Plant plant = new Plant(
-                plantDTO.getName(),
-                plantDTO.getCount(),
-                plantDTO.getDescription(),
-                LocalDate.parse(plantDTO.getPlantedDate())
-        );
-
+        Plant plant = new Plant(plantDTO);
         Plant savedPlant = plantService.addPlant(plant, gardenId);
         if (savedPlant != null) {
             try {
@@ -180,7 +174,11 @@ public class PlantController {
             existingPlant.get().setName(plant.getName());
             existingPlant.get().setCount(plant.getCount());
             existingPlant.get().setDescription(plant.getDescription());
-            existingPlant.get().setPlantedDate(LocalDate.parse(plant.getPlantedDate()));
+            if (!plant.getPlantedDate().isEmpty()) {
+                existingPlant.get().setPlantedDate(LocalDate.parse(plant.getPlantedDate()));
+            } else {
+                existingPlant.get().setPlantedDate(null);
+            }
 
             Plant savedPlant = plantService.addPlant(existingPlant.get(), gardenId);
 
