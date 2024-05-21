@@ -13,25 +13,26 @@ public class Friends {
     private Long friend_id;
 
     @ManyToOne
-    @JoinColumn(name = "user1")
-    private GardenUser user1;
+    @JoinColumn(name = "sender")
+    private GardenUser sender;
 
     @ManyToOne
-    @JoinColumn(name = "user2")
-    private GardenUser user2;
+    @JoinColumn(name = "receiver")
+    private GardenUser receiver;
     
     @Column(nullable = false)
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
     /**
      * Creates a new FormResult object
-     * @param user1 first user to be added as a friend
-     * @param user2 user to be added as friend to user1
+     * @param sender first user to be added as a friend
+     * @param receiver user to be added as friend to sender
      * @param status pending accepted or denied
      */
-    public Friends(GardenUser user1, GardenUser user2, String status) {
-        this.user1 = user1;
-        this.user2 = user2;
+    public Friends(GardenUser sender, GardenUser receiver, Status status) {
+        this.sender = sender;
+        this.receiver = receiver;
         this.status = status;
     }
 
@@ -42,19 +43,17 @@ public class Friends {
         return friend_id;
     }
 
-    public GardenUser getUser1() {
-        return user1;
+    public GardenUser getSender() {
+        return sender;
     }
 
-    public GardenUser getUser2() {
-        return user2;
+    public GardenUser getReceiver() {
+        return receiver;
     }
 
-    public String getStatus() {
-        return status;
-    }
+    public Status getStatus() { return status; }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
@@ -62,8 +61,14 @@ public class Friends {
     @Override
     public String toString() {
         return "friends {" +
-                "user1=" + user1 +
-                ", user2='" + user2 + '\'';
+                "sender=" + sender +
+                ", receiver='" + receiver + '\'';
+    }
+
+    public enum Status {
+        PENDING,
+        ACCEPTED,
+        DECLINED,
     }
 }
 
