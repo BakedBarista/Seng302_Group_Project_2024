@@ -24,6 +24,7 @@ import java.util.Collections;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension .class)
@@ -52,6 +53,11 @@ public class GardenControllerMVCTests {
     @Mock
     private ModerationService moderationService;
 
+    @Mock ProfanityService profanityService;
+
+
+    private static Garden emptyGarden;
+    private static Garden patternGarden;
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -62,8 +68,14 @@ public class GardenControllerMVCTests {
         gardenService = mock(GardenService.class);
         plantService = mock(PlantService.class);
         moderationService = mock(ModerationService.class);
-        gardenController = new GardenController(gardenService, plantService, gardenUserService, weatherAPIService, friendService, moderationService);
+        profanityService = mock(ProfanityService.class);
+        gardenController = new GardenController(gardenService, plantService, gardenUserService, weatherAPIService, friendService, moderationService, profanityService);
 
+        emptyGarden = new Garden();
+        patternGarden = new Garden();
+        patternGarden.setName("tets");
+        patternGarden.setCountry("!");
+        patternGarden.setCity("!");
         // Setting up lenient behavior to avoid unnecessary stubbing exceptions
         lenient().when(owner.getId()).thenReturn(1L);
         lenient().when(gardenUserService.getCurrentUser()).thenReturn(owner);
@@ -89,5 +101,25 @@ public class GardenControllerMVCTests {
                 .andExpect(view().name("gardens/publicGardens"))
                 .andExpect(model().attributeExists("gardenPage"))
                 .andExpect(model().attribute("gardenPage", expectedGardens));
+    }
+
+    @Test
+    public void testLocationEmptyErrorGardens() throws Exception {
+
+        // Perform the GET request
+        mockMvc.perform(post("/gardens/create").flashAttr("garden", emptyGarden))
+                .andExpect(status().isOk())
+                .andExpect(view().name("gardens/createGarden"))
+                .andExpect(model().attribute("locationError", "Location cannot be empty"));
+    }
+
+    @Test
+    public void testLocationPatternErrorGardens() throws Exception {
+
+        // Perform the GET request
+        mockMvc.perform(post("/gardens/create").flashAttr("garden", patternGarden))
+                .andExpect(status().isOk())
+                .andExpect(view().name("gardens/createGarden"))
+                .andExpect(model().attribute("locationError", "Location name must only include letters, numbers, spaces, dots, hyphens or apostrophes"));
     }
 }
