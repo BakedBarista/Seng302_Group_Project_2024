@@ -235,4 +235,21 @@ public class GardenControllerTest {
         assertEquals("gardens/gardenDetails", result);
         verify(model).addAttribute("garden", garden);
     }
+
+    @Test
+    public void testGardenDetail_WithNullLatLon() {
+        Model model = mock(Model.class);
+        Garden garden = new Garden("Test Garden","1","test","test suburb","test city","test country","1234",null,null,"100","test description");
+        when(gardenService.getGardenById(1L)).thenReturn(Optional.of(garden));
+
+        String result = gardenController.gardenDetail(1L, model);
+
+        assertEquals("gardens/gardenDetails", result);
+        verify(model).addAttribute("garden", garden);
+        verify(weatherAPIService, never()).getWeatherData(anyLong(), anyDouble(), anyDouble());
+
+    }
+
+
+
 }
