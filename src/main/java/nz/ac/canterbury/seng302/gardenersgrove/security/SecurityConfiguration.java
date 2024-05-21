@@ -1,5 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.security;
 
+import java.util.Enumeration;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -79,10 +81,18 @@ public class SecurityConfiguration {
         });
 
         // Instead of returning 403, redirect to "/users/login"
-        // FIXME: Redirects to localhost on prod instance
-        // http.exceptionHandling(exceptionHandling -> exceptionHandling
-        //         .authenticationEntryPoint((request, response, authException) -> response.sendRedirect("/users/login"))
-        //         .accessDeniedHandler((request, response, exception) -> response.sendRedirect("/users/login")));
+        http.exceptionHandling(exceptionHandling -> exceptionHandling
+                .authenticationEntryPoint((request, response, authException) -> 
+                {
+                    Enumeration<String> headerNames = request.getHeaderNames();
+                    while (headerNames.hasMoreElements()) {
+                        String header = headerNames.nextElement();
+                        System.out.println(header + ": " + request.getHeader(header));
+                    }
+
+                    response.sendRedirect("/users/login");
+                })
+                .accessDeniedHandler((request, response, exception) -> response.sendRedirect("/users/login")));
 
         // Define logging out, a POST "/users/logout" endpoint now exists under the hood,
         // redirect to "/users/login", invalidate session and remove cookie
