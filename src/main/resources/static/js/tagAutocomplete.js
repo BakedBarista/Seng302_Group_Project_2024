@@ -11,7 +11,6 @@ function tagAutocomplete(options) {
         'tag-autocomplete-container'
     );
     const tagContainer = document.getElementById('tag-container');
-    /**@type {HTMLInputElement | null} */
 
     const tagAutocomplete = autocomplete(tagAutocompleteContainer, addTag, {
         apiUrl: `${apiBaseUrl}/tag-autocomplete`,
