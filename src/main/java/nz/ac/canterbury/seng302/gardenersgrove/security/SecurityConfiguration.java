@@ -83,11 +83,15 @@ public class SecurityConfiguration {
         http.exceptionHandling(exceptionHandling -> exceptionHandling
                 .authenticationEntryPoint((request, response, authException) -> 
                 {
-                    System.out.println(getBaseUrl());
-
-                    response.sendRedirect("/users/login");
+                    response.setStatus(302);
+                    response.addHeader("Location", getBasePath() + "/users/login");
+                    response.flushBuffer();
                 })
-                .accessDeniedHandler((request, response, exception) -> response.sendRedirect("/users/login")));
+                .accessDeniedHandler((request, response, exception) -> {
+                    response.setStatus(302);
+                    response.addHeader("Location", getBasePath() + "/users/login");
+                    response.flushBuffer();
+                }));
 
         // Define logging out, a POST "/users/logout" endpoint now exists under the hood,
         // redirect to "/users/login", invalidate session and remove cookie
@@ -102,7 +106,7 @@ public class SecurityConfiguration {
 
     }
 
-    private String getBaseUrl() {
-        return ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+    private String getBasePath() {
+        return ServletUriComponentsBuilder.fromCurrentContextPath().build().getPath();
     }
 }
