@@ -21,6 +21,8 @@ import org.springframework.validation.BindingResult;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -220,5 +222,17 @@ public class GardenControllerTest {
 
         verify(model).addAttribute("profanity", EXPECTED_MODERATION_ERROR_MESSAGE);
         verify(model).addAttribute("garden", invalidGarden);
+    }
+
+    @Test
+    public void testGetGardenId() {
+        Model model = mock(Model.class);
+        Garden garden = new Garden("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"100","test description");
+        when(gardenService.getGardenById(1)).thenReturn(Optional.of(garden));
+        List<List<Map<String, Object>>> weatherResult = new ArrayList<>();
+        when(weatherAPIService.getWeatherData(1, 0.0, 0.0)).thenReturn(weatherResult);
+        String result = gardenController.gardenDetail(1L, model);
+        assertEquals("gardens/gardenDetails", result);
+        verify(model).addAttribute("garden", garden);
     }
 }
