@@ -5,10 +5,8 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * GardenFormResult repository accessor
@@ -22,8 +20,8 @@ public interface FriendsRepository extends CrudRepository<Friends, Long> {
      * @param user The ID of the user whose friends we want
      * @return A list of Friends od thta user
      */
-    @Query("SELECT u FROM Friends u WHERE (u.user1.id = ?1 or u.user2.id = ?1) and u.status='accepted'")
-    List<Friends> getAllFriends(Long user);
+    @Query("SELECT u FROM Friends u WHERE (u.sender.id = ?1 or u.receiver.id = ?1) and u.status=?2")
+    List<Friends> getAllFriendshipsWithStatus(Long user, Friends.Status status);
 
     /**
      * Retrieves a friend request between two users
@@ -32,27 +30,27 @@ public interface FriendsRepository extends CrudRepository<Friends, Long> {
      * @param user2 The ID of the second user
      * @return A Friends object.
      */
-    @Query("SELECT p FROM Friends p WHERE (p.user1.id = ?1 AND p.user2.id = ?2) or (p.user1.id = ?2 AND p.user2.id = ?1) ")
-    Friends getRequest(Long user1, Long user2);
+    @Query("SELECT p FROM Friends p WHERE p.friend_id = (SELECT MAX(f.friend_id) FROM Friends f WHERE (f.sender.id = ?1 AND f.receiver.id = ?2) OR (f.sender.id = ?2 AND f.receiver.id = ?1))")
+    Friends getFriendshipBetweenUsers(Long user1, Long user2);
 
     /**
      * Retrieves a Friend object if they are confirmed friends
      *
      * @param user1 user who sent the original friend request
      * @param user2 user who received the original friend request
-     * @return The friend object if the friendship between the users is "accepted"
+     * @return The friend object if the friendship between the users is ACCEPTED
      */
-    @Query("SELECT p FROM Friends p WHERE ((p.user1.id = ?1 AND p.user2.id = ?2) or (p.user1.id = ?2 AND p.user2.id = ?1)) and p.status = 'accepted'")
-    Friends getAcceptedFriendship(Long user1, Long user2);
+    @Query("SELECT p FROM Friends p WHERE ((p.sender.id = ?1 AND p.receiver.id = ?2) or (p.sender.id = ?2 AND p.receiver.id = ?1)) and p.status = ?3")
+    Friends getFriendshipBetweenUsersWithStatus(Long user1, Long user2, Friends.Status status);
 
     /**
      *
-     * @param user1 user who sent the friend request
-     * @param user2 user who received the friend request
-     * @return the friendship where user1 sent the friend request to user2
+     * @param sender user who sent the friend request
+     * @param receiver user who received the friend request
+     * @return the friendship where sender sent the friend request to receiver
      */
-    @Query("SELECT p FROM Friends p WHERE p.user1.id = ?1 AND p.user2.id = ?2")
-    Friends getSent(Long user1, Long user2);
+    @Query("SELECT p FROM Friends p WHERE p.friend_id = (SELECT MAX(f.friend_id) FROM Friends f WHERE f.sender.id = ?1 AND f.receiver.id = ?2)")
+    Friends getAllFriendshipsBetweenUsers(Long sender, Long receiver);
 
     /**
      * Retrieves all sent friend requests by a user
@@ -60,8 +58,8 @@ public interface FriendsRepository extends CrudRepository<Friends, Long> {
      * @param user The ID of the user whose sent friend requests are being retrieved
      * @return A list of Requests objects
      */
-    @Query("SELECT u FROM Friends u WHERE u.user1.id = ?1 and u.status = 'pending'")
-    List<Friends> getSentRequests(Long user);
+    @Query("SELECT u FROM Friends u WHERE u.sender.id = ?1 AND u.status != ?2")
+    List<Friends> getFriendshipsFromUserWhereStatusIsNot(Long sender, Friends.Status status);
 
     /**
      * Retrieves all pending friend requests received by a user
@@ -69,17 +67,17 @@ public interface FriendsRepository extends CrudRepository<Friends, Long> {
      * @param user The ID of the user whose pending received friend requests are being retrieved
      * @return A list of Requests objects 
      */
-    @Query("SELECT u FROM Friends u WHERE u.user2.id = ?1 and u.status = 'pending'")
-    List<Friends> getReceivedRequests(Long user);
+    @Query("SELECT u FROM Friends u WHERE u.receiver.id = ?1 and u.status = ?2")
+    List<Friends> getFriendshipsToUserWithStatus(Long receiver, Friends.Status status);
 
     /**
      *
      * @param user user that has been declined
      * @return a list of all the users who have declined friend request from the user
      */
-    @Query("SELECT u FROM Friends u WHERE u.user1.id = ?1 and u.status = 'declined'")
-    List<Friends> getSentRequestsDeclined(Long user);
+    @Query("SELECT u FROM Friends u WHERE u.sender.id = ?1 and u.status = ?2")
+    List<Friends> getFriendshipsFromUserWithStatus(Long sender, Friends.Status status);
 
-    void deleteByUser1IdAndUser2Id(Long user1Id, Long user2Id);
+    void deleteBySenderIdAndReceiverId(Long senderId, Long receiverId);
 }
 
