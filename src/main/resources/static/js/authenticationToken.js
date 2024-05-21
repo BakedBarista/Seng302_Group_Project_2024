@@ -11,7 +11,12 @@ document.addEventListener("DOMContentLoaded", function() {
         let token = document.getElementById("authenticationToken");
 
         inputs.forEach((input, index) => {
-            input.addEventListener('input', function() {
+            input.addEventListener('input', (e) => {
+                // Stops more than one value per box
+                if (input.value.length > input.maxLength) {
+                    input.value = input.value.slice(0, 1);
+                }
+
                 //Move to the next box if input added
                 if (input.value.length >= input.maxLength) {
                     const nextInput = inputs[index + 1];
@@ -30,8 +35,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
             //When copy and pasting token code
             //GPT helped
-            input.addEventListener('paste', function(event) {
-                const copiedTokenString = (event.clipboardData || window.clipboardData).getData('text');
+            input.addEventListener('paste', (e) => {
+                const copiedTokenString = (e.clipboardData || window.clipboardData).getData('text');
                 if (copiedTokenString.length === inputs.length) {
                     copiedTokenString.split('').forEach((char, i) => {
                         inputs[i].value = char;
@@ -39,12 +44,12 @@ document.addEventListener("DOMContentLoaded", function() {
                     token.setAttribute("value", getInputValue());
                     form.submit();
                 }
-                event.preventDefault();
+                e.preventDefault();
             });
 
             //Deleting an input
-            input.addEventListener('keydown', function(event) {
-                if (event.key === "Backspace" && input.value.length === 0) {
+            input.addEventListener('keydown', (e) => {
+                if (e.key === "Backspace" && input.value.length === 0) {
                     const previousInput = inputs[index - 1];
                     if (previousInput) {
                         previousInput.focus();

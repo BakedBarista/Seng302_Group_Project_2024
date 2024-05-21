@@ -11,38 +11,52 @@
             display: flex;
             align-items: center;
         }
+
+        /* Code from https://www.w3schools.com/howto/howto_css_hide_arrow_number.asp */
+        /*Hides the number buttons on the number input */
+        /* Chrome, Safari, Edge, Opera */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Firefox */
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        .mfaInput {
+            width: 60px;
+            height: 60px;
+        }
     </style>
 </head>
 <body>
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 <main class="main-container">
-    <h1>Authenticate Email</h1>
-    <h6>We emailed you an authentication code!</h6>
-    <br>
-    <span th:if="${tokenExpired == true}">
-        Signup code invalid... please make a new account
-        <br>
-        <br>
-    </span>
-    <span th:if="${tokenIncorrect == true}">
-        Signup code incorrect... please try again
-        <br>
-        <br>
-    </span>
-    <form id = "authenticationForm" th:action="@{/users/user/{userId}/authenticate-email (userId=${userId})}" method="post">
-        <div class = "groupElements">
-            <input class="hidden-input" pattern="\d*" type="text" value=" " id="authenticationToken"
-                   th:name="authenticationToken"/>
+    <div class="card p-5">
+        <h1>Authenticate Email</h1>
+        <p>We have sent an email to <span th:text="${hiddenEmail}">Hidden Email</span></p>
+        <form id = "authenticationForm" th:action="@{/users/user/{userId}/authenticate-email (userId=${userId})}" method="post">
+            <div class = "groupElements">
+                <input class="hidden-input" pattern="\d*" type="text" value=" " id="authenticationToken"
+                       th:name="authenticationToken"/>
+            </div>
+        </form>
+        <label for="token"> Authentication Code: </label>
+        <div>
+            <div id ="token" class="inputs d-flex flex-row justify-content-center mt-2 mb-3" style="height: 70px">
+                <input  class="mfaInput m-1 text-center form-control rounded" type="number" id="first" min="0" max="9" maxlength="1" autofocus />
+                <input  class="mfaInput m-1 text-center form-control rounded" type="number" id="second" min="0" max="9"  maxlength="1" />
+                <input  class="mfaInput m-1 text-center form-control rounded" type="number" id="third" min="0" max="9" maxlength="1" />
+                <input class="mfaInput m-1 text-center form-control rounded" type="number" id="fourth" min="0" max="9" maxlength="1" />
+                <input class="mfaInput m-1 text-center form-control rounded" type="number" id="fifth" min="0" max="9" maxlength="1" />
+                <input class="mfaInput m-1 text-center form-control rounded" type="number" id="sixth" min="0" max="9" maxlength="1" />
+            </div>
+            <span style="color: red;" class="is-invalid" th:if="${tokenExpired == true}">Signup code invalid. Please create a new account</span>
+            <span style="color: red;" th:if="${tokenIncorrect == true}">Signup code incorrect. Please try again.</span>
         </div>
-    </form>
-    <label for="token"> Authentication Code: </label>
-    <div id ="token" class="inputs d-flex flex-row justify-content-center mt-2" style="height: 70px">
-        <input class="m-2 text-center form-control rounded" type="text" id="first" maxlength="1" autofocus/>
-        <input class="m-2 text-center form-control rounded" type="text" id="second" maxlength="1" />
-        <input class="m-2 text-center form-control rounded" type="text" id="third" maxlength="1" />
-        <input class="m-2 text-center form-control rounded" type="text" id="fourth" maxlength="1" />
-        <input class="m-2 text-center form-control rounded" type="text" id="fifth" maxlength="1" />
-        <input class="m-2 text-center form-control rounded" type="text" id="sixth" maxlength="1" />
     </div>
 </main>
 <script th:src="@{/js/authenticationToken.js}"></script>
