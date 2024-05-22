@@ -34,7 +34,7 @@ public class EditUserDTO {
     @ValidDate()
     @AgeRange(minAge = USER_MIN_AGE, message = "You must be 13 years or older to create an account")
     @AgeRange(maxAge = USER_MAX_AGE, message = "The maximum age allowed is 120 years")
-    private String DOB;
+    private String dateOfBirth;
 
     public String getFname() {
         return fname;
@@ -78,11 +78,11 @@ public class EditUserDTO {
         this.email = email;
     }
 
-    public String getDOB() {
-        return DOB;
+    public String getDateOfBirth() {
+        return dateOfBirth;
     }
 
-    public void setDOB(String DOB) {
-        this.DOB = DOB;
+    public void setDateOfBirth(String dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
     }
 }

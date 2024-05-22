@@ -64,7 +64,7 @@ public class EditUserController {
         editUserDTO.setLname(user.getLname());
         editUserDTO.setEmail(user.getEmail());
         if (user.getDOB() != null) {
-            editUserDTO.setDOB(user.getDOB().format(DateTimeFormatter.ISO_LOCAL_DATE));
+            editUserDTO.setDateOfBirth(user.getDOB().format(DateTimeFormatter.ISO_LOCAL_DATE));
         }
         model.addAttribute("editUserDTO", editUserDTO);
 
@@ -102,15 +102,16 @@ public class EditUserController {
         }
 
         if (bindingResult.hasErrors()) {
-            model.addAttribute("user", user);
+            model.addAttribute("userId", userId);
+            model.addAttribute("editUserDTO", editUserDTO);
             return "users/editTemplate";
         }
 
         user.setFname(editUserDTO.getFname());
         user.setLname(editUserDTO.getLname());
         user.setEmail(editUserDTO.getEmail());
-        if (editUserDTO.getDOB() != null && !editUserDTO.getDOB().isEmpty()) {
-            user.setDOB(LocalDate.parse(editUserDTO.getDOB()));
+        if (editUserDTO.getDateOfBirth() != null && !editUserDTO.getDateOfBirth().isEmpty()) {
+            user.setDOB(LocalDate.parse(editUserDTO.getDateOfBirth()));
         } else {
             user.setDOB(null);
         }
