@@ -16,7 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class AuthenticationController {
 
-    private Logger logger = LoggerFactory.getLogger(LoginController.class);
+    private Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
 
     @Autowired
     private GardenUserService userService;
@@ -56,7 +56,7 @@ public class AuthenticationController {
                                               @ModelAttribute("authenticationToken") String authenticationToken,
                                               RedirectAttributes redirectAttributes,
                                               Model model) {
-        logger.info("authenticating token {} for user {}", authenticationToken, userId);
+        logger.info("Authenticating token for user {}", userId);
 
         // check if token matches token in DB
         GardenUser user = userService.getUserById(userId);
