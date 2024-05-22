@@ -91,17 +91,24 @@ public class AuthenticationController {
     }
 
     /**
-     * Converts the given email to *xxx*@gmail.com, hiding all characters but the first and last
-     * at the beginning
+     * Converts the given email to *xxx*@gmail.com, hiding all characters but the first and last, replacing the rest
+     * with stars.
      * @param email the email string to hide
      * @return a string with the hidden email
      */
     private String hideEmail(String email) {
         String startOfEmail = email.split("@")[0];
-        String endOfEmail = email.split("@")[1];
+        String endOfEmail = "@" + email.split("@")[1];
         char firstChar = startOfEmail.charAt(0);
-        char lastChar = startOfEmail.charAt(startOfEmail.length() - 1);
-        String middle = "*".repeat(startOfEmail.length() - 2);
-        return firstChar + middle + lastChar + "@" + endOfEmail;
+
+        if (startOfEmail.length() == 1) {
+            return startOfEmail + endOfEmail;
+        } else if (startOfEmail.length() == 2) {
+            return firstChar + "*" + endOfEmail;
+        } else {
+            char lastChar = startOfEmail.charAt(startOfEmail.length() - 1);
+            String middle = "*".repeat(startOfEmail.length() - 2);
+            return firstChar + middle + lastChar + endOfEmail;
+        }
     }
 }
