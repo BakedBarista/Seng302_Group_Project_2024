@@ -6,11 +6,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
-import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.ModerationService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weatherAPI.WeatherAPIService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,11 +22,13 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -50,14 +48,17 @@ public class GardenController {
     private final GardenUserService gardenUserService;
     private final FriendService friendService;
 
+    private final ProfanityService profanityService;
+
     @Autowired
-    public GardenController(GardenService gardenService, PlantService plantService, GardenUserService gardenUserService, WeatherAPIService weatherAPIService, FriendService friendService, ModerationService moderationService) {
+    public GardenController(GardenService gardenService, PlantService plantService, GardenUserService gardenUserService, WeatherAPIService weatherAPIService, FriendService friendService, ModerationService moderationService, ProfanityService profanityService) {
         this.gardenService = gardenService;
         this.plantService = plantService;
         this.gardenUserService = gardenUserService;
         this.weatherAPIService = weatherAPIService;
         this.friendService = friendService;
         this.moderationService = moderationService;
+        this.profanityService = profanityService;
     }
 
     /**
@@ -85,11 +86,17 @@ public class GardenController {
      */
     @PostMapping("/gardens/create")
     public String submitForm(@Valid @ModelAttribute("garden") Garden garden,
-                             BindingResult bindingResult, Model model) {
+                             BindingResult bindingResult, Authentication authentication, Model model) {
         logger.info("POST /gardens - submit the new garden form");
-
         List<String> locationErrorNames = Arrays.asList("city", "country", "suburb", "streetNumber", "streetName", "postCode");
-        if (bindingResult.hasErrors()) {
+        boolean profanityFlagged = !profanityService.badWordsFound(garden.getDescription()).isEmpty();
+        if (!profanityFlagged) {
+            profanityFlagged = moderationService.checkIfDescriptionIsFlagged(garden.getDescription());
+        }
+        if (bindingResult.hasErrors() || profanityFlagged) {
+            if(profanityFlagged) {
+                model.addAttribute("profanity", "The description does not match the language standards of the app.");
+            }
             for (FieldError error : bindingResult.getFieldErrors()) {
                 if(locationErrorNames.contains(error.getField())){
                     var errorCode = error.getCode();
@@ -105,21 +112,18 @@ public class GardenController {
                     }
                 }
             }
-        }
-
-        
-        boolean descriptionFlagged = moderationService.checkIfDescriptionIsFlagged(garden.getDescription());
-        if (bindingResult.hasErrors() || descriptionFlagged) {
-            if (descriptionFlagged) {
-                model.addAttribute("profanity", "The description does not match the language standards of the app.");
-            }
-
             model.addAttribute("garden", garden);
             return "gardens/createGarden";
         }
 
-        GardenUser owner = gardenUserService.getCurrentUser();
+      
+
+        Long userId = (Long) authentication.getPrincipal();
+
+        GardenUser owner = gardenUserService.getUserById(userId);
+        
         garden.setOwner(owner);
+
 
         Garden savedGarden = gardenService.addGarden(garden);
         return "redirect:/gardens/" + savedGarden.getId();
@@ -159,8 +163,14 @@ public class GardenController {
             model.addAttribute("garden", garden);
             model.addAttribute("owner", garden.getOwner());
             model.addAttribute("plants", plantService.getPlantsByGardenId(id));
+            List<List<Map<String, Object>>> weatherResult;
 
-            List<List<Map<String, Object>>> weatherResult = weatherAPIService.getWeatherData(id, garden.getLat(), garden.getLon());
+            if(garden.getLat() != null || garden.getLon() != null){
+                weatherResult = weatherAPIService.getWeatherData(id, garden.getLat(), garden.getLon());
+            }else {
+                weatherResult = new ArrayList<>();
+            }
+
             List<Map<String, Object>> weatherPrevious = Collections.emptyList();
             List<Map<String, Object>> weatherForecast = Collections.emptyList();
             boolean displayWeatherAlert = false;
@@ -302,8 +312,6 @@ public class GardenController {
 
     /**
      * gets all public gardens
-     * @param page page number
-     * @param size size of page
      * @param model representation of results
      * @return publicGardens page
      */

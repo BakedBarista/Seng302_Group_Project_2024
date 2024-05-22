@@ -46,6 +46,9 @@
           <a th:href="@{/gardens/public}">
             <img class="link-icon" th:src="@{/icons/public-garden-icon.svg}" width="24" height="24" aria-hidden alt="Browse Public Gardens" />
             Browse Gardens
+          <a th:href="@{/gardens/create}">
+            <img class="link-icon" th:src="@{/icons/create-garden.svg}" width="24" height="24" aria-hidden alt="createGarden" />
+            Create Garden
           </a>
         </li>
         <li>
@@ -54,6 +57,7 @@
             Friends
           </a>
         </li>
+    
       </ul>
       <ul th:if="${isAuthenticated}" class="pt-3">
         <li>

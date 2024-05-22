@@ -2,66 +2,22 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
-    <title>Add a New Plant</title>
+    <title>Add Plant</title>
 
     <!-- This needs to be here for Bootstrap and general CSS imports -->
     <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
 </head>
 <body>
-<nav th:replace="~{fragments/navbar :: navbar}"></nav>
-<div>
-    <div>
-        <form class="container-xl" id="addPlantForm" th:action="@{/gardens/{gardenId}/add-plant(gardenId=${gardenId})}" th:object="${plant}"  method="post" enctype="multipart/form-data" novalidate>
-        <!-- Plant Name Field -->
-            <label for="name">Plant Name:</label>
-            <input type="text" class="form-control" id="name" name="name" placeholder="Enter Plant Name" th:value="${plant.name}" >
-            <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" style="color: red;"></div>
-            <br/>
-            <br/>
-            <!-- Plant Description Field -->
-            <label for="description">Description:</label>
-            <textarea id="description" class="form-control" name="description" placeholder="Enter description" th:text="${plant.description}"></textarea>
-            <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}" style="color: red;"></div>
-            <br/>
-            <br/>
-            <!-- Plant Count Field -->
-            <label for="count">Count:</label>
-            <input type="number" id="count" class="form-control" name="count" placeholder="Enter Count" th:value="${plant.count}" >
-            <div th:if="${#fields.hasErrors('count')}" th:errors="*{count}" style="color: red;"></div>
-            <br/>
-            <br/>
-            <!-- Planting Date Field -->
-            <label for="plantedDate">Planting Date:</label>
-            <input type="date" id="plantedDate" class="form-control" name="plantedDate" placeholder="DD/MM/YYYY" th:value="${plant.plantedDate}" >
-            <div th:if="${#fields.hasErrors('plantedDate')}" th:errors="*{plantedDate}" style="color: red;"></div>
-            <br/>
-            <br/>
-            <div>
-                <h3>Plant Image:</h3>
-                <div class="image-container">
-                    <img id="preview" th:src="@{/img/plant.png}" alt="Default Plant Image" />
-                    <label for="image" class="add-image-button">+</label>
-                    <input type="file" id="image" name="image" accept=".png,.jpg,.jpeg,.svg" class="form-control-file" style = "display: none;" onchange="previewImage(event)">
-                    <span id="plantImageError" class="error" style="display: none; color: red"></span>
-                </div>
-            </div>
-            <button type="submit" class="btn btn-primary btn-sm">Submit</button>
-            <a class="btn btn-outline-secondary btn-sm btn-cancel" th:href="@{/gardens/{id}(id=${gardenId})}">Cancel</a>
-        </form>
-    </div>
-</div>
-<th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+    <main class="main-container">
+        <div class="card p-5">
+            <h2 class="mb-3">Add Plant</h2>
+            <div th:replace="~{fragments/plant-form.html :: plant-form(action='/gardens/' + ${gardenId} + '/add-plant', imgSrc='/img/default-plant.svg')}"></div>
+        </div>
+    </main>
+    <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
 </body>
 <script th:src="@{/js/nextFormBox.js}"></script>
 <script th:src="@{/js/plantImageErrorChecking.js}"></script>
-<script>
-        //Below code is provided by ChatGPT
-    document.getElementById("addPlantForm").addEventListener("submit", function(event) {
-        if (hasError) {
-            event.preventDefault();
-            return false;
-        }
-        return true;
-    });
-</script>
+<script th:src="@{/js/dateValidation.js}"></script>
 </html>
