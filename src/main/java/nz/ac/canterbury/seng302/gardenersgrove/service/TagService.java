@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
@@ -69,7 +70,7 @@ public class TagService {
      */
     public void updateGardenTags(Garden garden, List<String> tagNames) {
         // Remove tags that are not in the new list
-        for (Tag tag : garden.getTags()) {
+        for (Tag tag : List.copyOf(garden.getTags())) {
             if (tagNames.stream().noneMatch(t -> t.equals(tag.getName()))) {
                 garden.getTags().remove(tag);
             }
