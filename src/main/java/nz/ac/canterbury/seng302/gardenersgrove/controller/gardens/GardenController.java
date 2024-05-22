@@ -6,11 +6,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
-import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.ModerationService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weatherAPI.WeatherAPIService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,12 +18,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -47,14 +41,17 @@ public class GardenController {
     private final GardenUserService gardenUserService;
     private final FriendService friendService;
 
+    private final ProfanityService profanityService;
+
     @Autowired
-    public GardenController(GardenService gardenService, PlantService plantService, GardenUserService gardenUserService, WeatherAPIService weatherAPIService, FriendService friendService, ModerationService moderationService) {
+    public GardenController(GardenService gardenService, PlantService plantService, GardenUserService gardenUserService, WeatherAPIService weatherAPIService, FriendService friendService, ModerationService moderationService, ProfanityService profanityService) {
         this.gardenService = gardenService;
         this.plantService = plantService;
         this.gardenUserService = gardenUserService;
         this.weatherAPIService = weatherAPIService;
         this.friendService = friendService;
         this.moderationService = moderationService;
+        this.profanityService = profanityService;
     }
 
     /**
@@ -84,20 +81,40 @@ public class GardenController {
     public String submitForm(@Valid @ModelAttribute("garden") Garden garden,
                              BindingResult bindingResult, Model model) {
         logger.info("POST /gardens - submit the new garden form");
-
-        if (bindingResult.hasErrors()) {
+        List<String> locationErrorNames = Arrays.asList("city", "country", "suburb", "streetNumber", "streetName", "postCode");
+        boolean profanityFlagged = !profanityService.badWordsFound(garden.getDescription()).isEmpty();
+        if (!profanityFlagged) {
+            profanityFlagged = moderationService.checkIfDescriptionIsFlagged(garden.getDescription());
+        }
+        if (bindingResult.hasErrors() || profanityFlagged) {
+            if(profanityFlagged) {
+                model.addAttribute("profanity", "The description does not match the language standards of the app.");
+            }
+            for (FieldError error : bindingResult.getFieldErrors()) {
+                if(locationErrorNames.contains(error.getField())){
+                    var errorCode = error.getCode();
+                    if(errorCode != null){
+                        String errorMessage;
+                        if(errorCode.equals("Pattern")){
+                            errorMessage = "Location name must only include letters, numbers, spaces, dots, hyphens or apostrophes";
+                        } else {
+                            errorMessage = "Location cannot be empty";
+                        }
+                        model.addAttribute("locationError", errorMessage);
+                        break;
+                    }
+                }
+            }
             model.addAttribute("garden", garden);
             return "gardens/createGarden";
         }
+
+
+        
+        
+
         GardenUser owner = gardenUserService.getCurrentUser();
         garden.setOwner(owner);
-
-        //Checks description for inappropriate content
-        if (moderationService.checkIfDescriptionIsFlagged(garden.getDescription())) {
-            model.addAttribute("garden", garden);
-            model.addAttribute("profanity", "The description does not match the language standards of the app.");
-            return "gardens/createGarden";
-        }
 
         Garden savedGarden = gardenService.addGarden(garden);
         return "redirect:/gardens/" + savedGarden.getId();
@@ -232,15 +249,30 @@ public class GardenController {
                                @Valid @ModelAttribute("garden") Garden garden,
                                BindingResult result,
                                Model model) {
-        if (result.hasErrors()) {
+        List<String> locationErrorNames = Arrays.asList("city", "country", "suburb", "streetNumber", "streetName", "postCode");
+        boolean descriptionFlagged = moderationService.checkIfDescriptionIsFlagged(garden.getDescription());
+
+        if (result.hasErrors() || descriptionFlagged) {
+            if (descriptionFlagged) {
+                model.addAttribute("profanity", "The description does not match the language standards of the app.");
+            }
+
+            for (FieldError error : result.getFieldErrors()) {
+                if(locationErrorNames.contains(error.getField())){
+                    if(error.getCode().equals("Pattern")){
+                        var errorMessage = "Location name must only include letters, numbers, spaces, dots, hyphens or apostrophes";
+                        model.addAttribute("locationError", errorMessage);
+                        break;
+                    } else {
+                        var errorMessage = "Location cannot be empty";
+                        model.addAttribute("locationError", errorMessage);
+                        break;
+                    }
+                }
+            }
+
             model.addAttribute("garden", garden);
             model.addAttribute("id", id);
-            return "gardens/editGarden";
-        }
-        //Checks description for inappropriate content
-        if (moderationService.checkIfDescriptionIsFlagged(garden.getDescription())) {
-            model.addAttribute("garden", garden);
-            model.addAttribute("profanity", "The description does not match the language standards of the app.");
             return "gardens/editGarden";
         }
 
@@ -265,8 +297,6 @@ public class GardenController {
 
     /**
      * gets all public gardens
-     * @param page page number
-     * @param size size of page
      * @param model representation of results
      * @return publicGardens page
      */

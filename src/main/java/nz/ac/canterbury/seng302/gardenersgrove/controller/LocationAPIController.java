@@ -30,7 +30,7 @@ public class LocationAPIController {
      * @param currentValue The value where the location data is requested
      * @return location information in json format
      */
-    @GetMapping("/get_location")
+    @GetMapping("/location-autocomplete")
     public ResponseEntity<String> getLocationData(@RequestParam String currentValue) {
         try {
             Thread.sleep(300);
@@ -45,11 +45,7 @@ public class LocationAPIController {
                 + "&apiKey=" + location_apiKey;
 
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-
-
-        return response;
-
+        return restTemplate.getForEntity(url, String.class);
     }
 }
 

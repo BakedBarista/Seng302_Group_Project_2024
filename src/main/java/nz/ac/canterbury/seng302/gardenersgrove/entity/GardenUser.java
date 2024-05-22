@@ -44,13 +44,13 @@ public class GardenUser {
     @Lob
     private byte[] profilePicture;
 
-    // these are a set of friendships in the friends table where the user is user1
-    @OneToMany(mappedBy = "user1")
-    private Set<Friends> friendshipsAsUser1 = new HashSet<>();
+    // these are a set of friendships in the friends table where the user is sender
+    @OneToMany(mappedBy = "sender")
+    private Set<Friends> friendshipsAsSender = new HashSet<>();
 
-    // these are a set of friendships in the friends table where the user is user2
-    @OneToMany(mappedBy = "user2")
-    private Set<Friends> friendshipsAsUser2 = new HashSet<>();
+    // these are a set of friendships in the friends table where the user is receiver
+    @OneToMany(mappedBy = "receiver")
+    private Set<Friends> friendshipsAsReceiver = new HashSet<>();
 
 
     @Column(nullable = true)
@@ -64,6 +64,15 @@ public class GardenUser {
 
     @Column(nullable = true)
     private Instant resetPasswordTokenExpiryInstant;
+
+    @Column(nullable = false, columnDefinition = "integer default 0")
+    private int strikeCount = 0;
+
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean accountDisabled = false;
+
+    @Column(nullable = true)
+    private Instant accountDisabledExpiryInstant;
 
     /**
      * JPA required no-args constructor
@@ -87,25 +96,6 @@ public class GardenUser {
 
         this.setPassword(password);
     }
-
-    /**
-     * Gets the set of friends where user is user 2
-     *
-     * @return Set<Friends> both their id and the other users id
-     */
-    public Set<Friends> getFriendshipsAsUser2() {
-        return friendshipsAsUser2;
-    }
-
-    /**
-     * Gets the set of friends where user is user 1
-     *
-     * @return Set<Friends> both their id and the other users id
-     */
-    public Set<Friends> getFriendshipsAsUser1() {
-        return friendshipsAsUser1;
-    }
-
 
     /**
      * Gets the authorities granted to the user
@@ -326,7 +316,68 @@ public class GardenUser {
         return this.resetPasswordTokenExpiryInstant;
     }
 
+    /**
+     * Sets the id of the user. This method only intended for use in tests.
+     * 
+     * @param id the id of the user
+     */
     public void setId(long id) {
         this.id = id;
+    }
+
+    /**
+     * Gets the strike count of the user
+     *
+     * @return the number of strikes the user has accumulated
+     */
+    public int getStrikeCount() {
+        return strikeCount;
+    }
+
+    /**
+     * Sets the strike count of the user
+     * 
+     * @param strikeCount the number of strikes the user has accumulated
+     */
+    public void setStrikeCount(int strikeCount) {
+        this.strikeCount = strikeCount;
+    }
+
+    /**
+     * Checks if the user's account is disabled
+     *
+     * @return true if the account is disabled, otherwise false
+     */
+    public boolean isAccountDisabled() {
+        return accountDisabled;
+    }
+
+    /**
+     * Sets the accountDisabled status of the user
+     *
+     * @param accountDisabled true if the account is disabled, otherwise false
+     */
+    public void setAccountDisabled(boolean accountDisabled) {
+        this.accountDisabled = accountDisabled;
+    }
+
+    /**
+     * Gets the time at which the user's account will be re-enabled, if there is one
+     * 
+     * @return the time at which the user's account will be re-enabled
+     */
+    public Instant getAccountDisabledExpiryInstant() {
+        return accountDisabledExpiryInstant;
+    }
+
+    /**
+     * Sets the time at which the user's account will be re-enabled, or null if the
+     * account should not be automatically re-enabled
+     *
+     * @param accountDisabledExpiryInstant the time at which the user's account will
+     *                                     be re-enabled
+     */
+    public void setAccountDisabledExpiryInstant(Instant accountDisabledExpiryInstant) {
+        this.accountDisabledExpiryInstant = accountDisabledExpiryInstant;
     }
 }

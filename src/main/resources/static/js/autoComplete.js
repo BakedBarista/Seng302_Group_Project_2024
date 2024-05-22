@@ -1,12 +1,14 @@
-let LOCATION_MATCH = false;
+"use strict";
+
+let locationMatch = false;
 /**
  * Initializes an address autocomplete feature on the specified container element.
  *
  * @param {HTMLElement} containerElement - The container element where the autocomplete feature is added.
  * @param {Function} callback - The callback function to be called when an address is selected.
- * @param {Object} options - Additional options for customising the autocomplete feature (currently unused).
+ * @param {{ apiUrl: string, notFoundMessageHtml: string, placeholder: string }} options - Additional named options. All of these are required.
  */
-function addressAutocomplete(containerElement, callback, options) {
+function autocomplete(containerElement, callback, options) {
 
     const MIN_ADDRESS_LENGTH = 3;
     const DEBOUNCE_DELAY = 300;
@@ -14,18 +16,18 @@ function addressAutocomplete(containerElement, callback, options) {
 
     // create container for input element
     const inputContainerElement = document.createElement("div");
-    inputContainerElement.setAttribute("class", "input-container");
+    inputContainerElement.className = "input-container";
     containerElement.appendChild(inputContainerElement);
 
     // create input element
     const inputElement = document.createElement("input");
-    inputElement.setAttribute("type", "text");
-    inputElement.setAttribute("placeholder", "Start typing address here or fill manually");
+    inputElement.type = "text";
+    inputElement.placeholder = options.placeholder;
     inputContainerElement.appendChild(inputElement);
 
     // add input field clear button
     const clearButton = document.createElement("div");
-    clearButton.classList.add("clear-button");
+    clearButton.className = "clear-button";
     addIcon(clearButton);
     clearButton.addEventListener("click", (e) => {
         e.stopPropagation();
@@ -36,7 +38,7 @@ function addressAutocomplete(containerElement, callback, options) {
     });
     inputContainerElement.appendChild(clearButton);
 
-    /* We will call the API with a timeout to prevent unneccessary API activity.*/
+    /* We will call the API with a timeout to prevent unnecessary API activity.*/
     let currentTimeout;
 
     /* Save the current request promise reject function. To be able to cancel the promise when a new request comes */
@@ -63,7 +65,7 @@ function addressAutocomplete(containerElement, callback, options) {
         // Cancel previous request promise
         if (currentPromiseReject) {
             currentPromiseReject({
-                canceled: true
+                cancelled: true
             });
         }
 
@@ -85,7 +87,7 @@ function addressAutocomplete(containerElement, callback, options) {
             currentPromiseReject = reject;
 
             debounceTimer = setTimeout(() => {
-                fetch(`/api/get_location?currentValue=${currentValue}`)
+                fetch(`${options.apiUrl}?currentValue=${currentValue}`)
                     .then(response => {
                         currentPromiseReject = null;
 
@@ -99,90 +101,83 @@ function addressAutocomplete(containerElement, callback, options) {
             }, DEBOUNCE_DELAY);
         });
 
-            promise.then((data) => {
+        promise.then((data) => {
+            // here we get address suggestions
+            let currentItems = data.results;
 
-                // here we get address suggestions
-                let currentItems = data.results;
+            // handles no location match
+            const noLocationMatch = document.createElement("div");
+            noLocationMatch.innerHTML = options.notFoundMessageHtml;
 
-                /*
-                Handles no location match
-                 */
-                const noLocationMatch = document.createElement("div");
-                noLocationMatch.innerHTML = "No matching location found, location-based services may not work (<u style='color: blue;'>Use location</u>)";
+            // create a DIV element that will contain the items (values)
+            const autocompleteItemsElement = document.createElement("div");
+            autocompleteItemsElement.className = "autocomplete-items";
+            inputContainerElement.appendChild(autocompleteItemsElement);
 
-                /*create a DIV element that will contain the items (values):*/
-                const autocompleteItemsElement = document.createElement("div");
-                autocompleteItemsElement.setAttribute("class", "autocomplete-items");
-                inputContainerElement.appendChild(autocompleteItemsElement);
-
-                if (data.results.length !== 0) {
-                    LOCATION_MATCH = true;
-                    /* For each item in the results */
-                    data.results.forEach((result, index) => {
-                        /* Create a DIV element for each element: */
-                        const itemElement = document.createElement("div");
-                        /* Set formatted address as item value */
-                        itemElement.innerHTML = result.formatted;
-                        autocompleteItemsElement.appendChild(itemElement);
-
-                        /* Set the value for the autocomplete text field and notify: */
-                        itemElement.addEventListener("click", function (e) {
-                            inputElement.value = currentItems[index].formatted;
-                            callback(currentItems[index]);
-                            /* Close the list of autocompleted values: */
-                            closeDropDownList();
-                        });
-                    });
-                } else {
-                    autocompleteItemsElement.appendChild(noLocationMatch);
+            const resultsExist = data.results.length !== 0;
+                if (resultsExist) {
+                locationMatch = true;
+                /* For each item in the results */
+                data.results.forEach((result, index) => {
+                    /* Create a DIV element for each element: */
                     const itemElement = document.createElement("div");
+                    /* Set formatted address as item value */
+                    itemElement.innerHTML = result.formatted;
+                    autocompleteItemsElement.appendChild(itemElement);
 
                     /* Set the value for the autocomplete text field and notify: */
-                    noLocationMatch.addEventListener("click", function (e) {
-                        currentItems = inputElement.value;
-
-
-                        let addressString = inputElement.value.split(/\s|,/ );
-                        callback(addressString);
-                        console.log(addressString[0], addressString[1]);
-                        populateAddress(addressString);
+                    itemElement.addEventListener("click", () => {
+                        inputElement.value = currentItems[index].formatted;
+                        callback(currentItems[index]);
                         /* Close the list of autocompleted values: */
                         closeDropDownList();
-
                     });
-                }
-            }, (err) => {
-                if (!err.canceled) {
-                    console.log(err);
-                }
-            });
+                });
+            } else {
+                autocompleteItemsElement.appendChild(noLocationMatch);
+                const itemElement = document.createElement("div");
+
+                /* Set the value for the autocomplete text field and notify: */
+                noLocationMatch.addEventListener("click", () => {
+                    currentItems = inputElement.value;
 
 
+                    let addressString = inputElement.value.split(/\s|,/ );
+                    callback(addressString);
+                    populateAddress(addressString);
+                    /* Close the list of autocompleted values: */
+                    closeDropDownList();
 
+                });
+            }
+        }, (err) => {
+            if (!err.cancelled) {
+                console.log(err);
+            }
+        });
     });
 
     /**
-     *
-     */
-    /* Add support for keyboard navigation */
+     * Add support for keyboard navigation
+     * */
     inputElement.addEventListener("keydown", function(e) {
-        var autocompleteItemsElement = containerElement.querySelector(".autocomplete-items");
+        const autocompleteItemsElement = containerElement.querySelector(".autocomplete-items");
         if (autocompleteItemsElement) {
-            var itemElements = autocompleteItemsElement.getElementsByTagName("div");
-            if (e.keyCode == 40) {
+            const itemElements = autocompleteItemsElement.getElementsByTagName("div");
+            if (e.keyCode === 40) {
                 e.preventDefault();
                 /*If the arrow DOWN key is pressed, increase the focusedItemIndex variable:*/
                 focusedItemIndex = focusedItemIndex !== itemElements.length - 1 ? focusedItemIndex + 1 : 0;
-                /*and and make the current item more visible:*/
+                /*and make the current item more visible:*/
                 setActive(itemElements, focusedItemIndex);
-            } else if (e.keyCode == 38) {
+            } else if (e.keyCode === 38) {
                 e.preventDefault();
 
                 /*If the arrow UP key is pressed, decrease the focusedItemIndex variable:*/
                 focusedItemIndex = focusedItemIndex !== 0 ? focusedItemIndex - 1 : focusedItemIndex = (itemElements.length - 1);
-                /*and and make the current item more visible:*/
+                /*and make the current item more visible:*/
                 setActive(itemElements, focusedItemIndex);
-            } else if (e.keyCode == 13) {
+            } else if (e.keyCode === 13) {
                 /* If the ENTER key is pressed and value as selected, close the list*/
                 e.preventDefault();
                 if (focusedItemIndex > -1) {
@@ -190,9 +185,9 @@ function addressAutocomplete(containerElement, callback, options) {
                 }
             }
         } else {
-            if (e.keyCode == 40) {
+            if (e.keyCode === 40) {
                 /* Open dropdown list again */
-                var event = document.createEvent('Event');
+                const event = document.createEvent('Event');
                 event.initEvent('input', true, true);
                 inputElement.dispatchEvent(event);
             }
@@ -209,16 +204,12 @@ function addressAutocomplete(containerElement, callback, options) {
     function setActive(items, index) {
         if (!items || !items.length) return false;
 
-        for (var i = 0; i < items.length; i++) {
+        for (let i = 0; i < items.length; i++) {
             items[i].classList.remove("autocomplete-active");
         }
 
         /* Add class "autocomplete-active" to the active element*/
         items[index].classList.add("autocomplete-active");
-
-        // Change input value and notify
-        inputElement.value = currentItems[index].formatted;
-        callback(currentItems[index]);
     }
 
     // Close the dropdown list
@@ -230,7 +221,6 @@ function addressAutocomplete(containerElement, callback, options) {
 
         focusedItemIndex = -1;
     }
-
 
     // Add an icon to the button
     function addIcon(buttonElement) {
@@ -252,7 +242,7 @@ function addressAutocomplete(containerElement, callback, options) {
             closeDropDownList();
         } else if (!containerElement.querySelector(".autocomplete-items")) {
             // open dropdown list again
-            var event = document.createEvent('Event');
+            const event = document.createEvent('Event');
             event.initEvent('input', true, true);
             inputElement.dispatchEvent(event);
         }
@@ -274,8 +264,6 @@ function populateAddressFields(selectedAddress) {
     document.getElementById("postCode").value = selectedAddress.postcode || null;
     document.getElementById("lat").value = selectedAddress.lat || null;
     document.getElementById("lon").value = selectedAddress.lon || null;
-
-
 }
 
 /**
@@ -284,18 +272,47 @@ function populateAddressFields(selectedAddress) {
  * @param {Object} currentItem - The current address input
  */
 function populateAddress(currentItem) {
-    document.getElementById("streetNumber").value = currentItem[0] || null;
-    document.getElementById("streetName").value = currentItem[1] + " " + currentItem[2] || null;
-    document.getElementById("suburb").value = currentItem[3] || null;
-    document.getElementById("city").value = currentItem[4] || null;
-    document.getElementById("country").value = currentItem[5] || null;
-    document.getElementById("postCode").value = currentItem[6] || null;
+    document.getElementById("streetNumber").value = currentItem[0] ? currentItem[0] : null;
+    document.getElementById("streetName").value = (currentItem[1] ? currentItem[1] : null)
+        + (currentItem[2] ? " " + currentItem[2] : null);
+    document.getElementById("suburb").value = currentItem[3] ? currentItem[3] : null;
+    document.getElementById("city").value = currentItem[4] ? currentItem[4] : null;
+    document.getElementById("country").value = currentItem[5] ? currentItem[5] : null;
+    document.getElementById("postCode").value = currentItem[6] ? currentItem[6] : null;
 }
 
 
-addressAutocomplete(document.getElementById("autocomplete-container"),
-    populateAddressFields,
-    (data) => {
-    console.log("Selected option: ");
-    console.log(data);
-});
+const locationAutocompleteContainer = document.getElementById(
+    'location-autocomplete-container'
+);
+if (locationAutocompleteContainer) {
+    autocomplete(
+        locationAutocompleteContainer,
+        populateAddressFields,
+        {
+            apiUrl: '/api/location-autocomplete',
+            notFoundMessageHtml: "No matching location found, location-based services may not work (<u class='text-primary'>Use location</u>)",
+            placeholder: "Start typing address here or fill manually",
+        }
+    );
+}
+
+function addTag(tag) {
+    // TODO
+    console.log(tag);
+}
+
+const tagAutocompleteContainer = document.getElementById(
+  'tag-autocomplete-container'
+);
+if (tagAutocompleteContainer) {
+    autocomplete(
+        tagAutocompleteContainer,
+        addTag,
+        {
+            apiUrl: '/api/tag-autocomplete',
+            notFoundMessageHtml: 'No matching tag',
+            placeholder: "Start typing tags here",
+        }
+    );
+}
