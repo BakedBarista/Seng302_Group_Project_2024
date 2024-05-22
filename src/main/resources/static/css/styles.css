@@ -36,13 +36,6 @@ body {
     background-color: var(--gg-white);
 }
 
-/* Colours the required astrix for required forms */
-.required-field::after {
-    content: "*";
-    color: red;
-    font-family: bold, serif;
-}
-
 /* Global typography */
 body {
     font-family: "Open Sans", sans-serif;
@@ -295,7 +288,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .required-field::after {
-    content: "*";
+    content: " *";
     color: black;
     font-family: bold, serif;
 }
