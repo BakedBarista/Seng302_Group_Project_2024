@@ -229,19 +229,12 @@
 </body>
 <script>
     (function () {
-        console.log("Function happened");
         const VALID_MIME_TYPES = ["image/png", "image/jpeg", "image/svg+xml"];
-
         const plantImageForms = document.querySelectorAll(".plantImageForm");
         const plantImageFormsSmall = document.querySelectorAll(".plantImageFormSmall");
 
-        plantImageForms.forEach(function(plantImageForm) {
-            const plantImageInput = plantImageForm.querySelector(".image");
-            const plantImageError = plantImageForm.querySelector(".plantImageError");
-
-
-            plantImageInput.addEventListener("change", (ev) => {
-                console.log("Listener noticed");
+        function handleInputImageChange(plantImageInput, plantImageError, form) {
+            plantImageInput.addEventListener("change", (e) => {
                 const file = plantImageInput.files[0];
                 if (!file) {
                     return;
@@ -249,48 +242,30 @@
 
                 if (!VALID_MIME_TYPES.includes(file.type)) {
                     plantImageError.style.display = "block";
-                    plantImageError.textContent =
-                        "Image must be of type png, jpg or svg";
+                    plantImageError.textContent = "Image must be of type png, jpg or svg";
                     return;
                 }
 
                 if (file.size > 10 * 1024 * 1024) {
                     plantImageError.style.display = "block";
-                    plantImageError.textContent =
-                        "File size must be less than 10MB";
+                    plantImageError.textContent = "File size must be less than 10MB";
                     return;
                 }
-                plantImageForm.submit();
+
+                form.submit();
             });
+        }
+
+        plantImageForms.forEach(function(plantImageForm) {
+            const plantImageInput = plantImageForm.querySelector(".image");
+            const plantImageError = plantImageForm.querySelector(".plantImageError");
+            handleImageInputChange(plantImageInput, plantImageError, plantImageForm);
         });
 
         plantImageFormsSmall.forEach((form) => {
             const plantImageInput = form.querySelector(".imageSmall");
             const plantImageError = form.querySelector(".plantImageErrorSmall");
-
-
-            plantImageInput.addEventListener("change", (ev) => {
-                console.log("Listener noticed");
-                const file = plantImageInput.files[0];
-                if (!file) {
-                    return;
-                }
-
-                if (!VALID_MIME_TYPES.includes(file.type)) {
-                    plantImageError.style.display = "block";
-                    plantImageError.textContent =
-                        "Image must be of type png, jpg or svg";
-                    return;
-                }
-
-                if (file.size > 10 * 1024 * 1024) {
-                    plantImageError.style.display = "block";
-                    plantImageError.textContent =
-                        "File size must be less than 10MB";
-                    return;
-                }
-                form.submit();
-            });
+            handleImageInputChange(plantImageInput, plantImageError, form);
         });
     })();
 </script>
