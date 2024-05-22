@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
+    <title>Access Denied</title>
+    <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
+</head>
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<h1>Access Denied</h1>
+<p>You do not have permission to access this page.</p>
+<a th:href="@{/}">Go to Home</a>
+<th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
+</body>
+</html>

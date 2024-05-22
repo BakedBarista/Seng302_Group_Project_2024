@@ -60,6 +60,10 @@ public class PlantController {
         model.addAttribute("plant", new Plant("","","",""));
 
         GardenUser owner = gardenUserService.getCurrentUser();
+        Optional<Garden> garden = gardenService.getGardenById(gardenId);
+        if (garden.get().getOwner().getId() != owner.getId()) {
+            return "/accessDenied";
+        }
         List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
         model.addAttribute("gardens", gardens);
         return "plants/addPlant";
@@ -136,7 +140,8 @@ public class PlantController {
                             Model model) {
         logger.info("/garden/{}/plant/{}/edit", gardenId, plantId);
         Optional<Plant> plant = plantService.getPlantById(plantId);
-
+        GardenUser owner = gardenUserService.getCurrentUser();
+        Optional<Garden> garden = gardenService.getGardenById(gardenId);
         if (plant.isPresent()) {
             Plant plantOpt = plant.get();
             if (plantOpt.getPlantedDate() != null && !plantOpt.getPlantedDate().isEmpty()) {
@@ -145,7 +150,9 @@ public class PlantController {
                 plantOpt.setPlantedDate(databaseDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
             }
         }
-        GardenUser owner = gardenUserService.getCurrentUser();
+        if (garden.get().getOwner().getId() != owner.getId()) {
+            return "/accessDenied";
+        }
         List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
         model.addAttribute("gardens", gardens);
         model.addAttribute("gardenId", gardenId);
