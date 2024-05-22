@@ -8,7 +8,7 @@
 
 <body>
 <div th:replace="~{fragments/navbar :: navbar}"></div>
-<main class="mx-5 py-5">
+<main class="mx-4 py-5">
     <div class="row">
         <div class="col-xl-6 col-12">
             <div class="d-flex">
@@ -118,29 +118,18 @@
         <div class="flex">
             <div class="row gap-2 justify-content-center">
                 <!-- small plant card -->
-                <div th:each="plant: ${plants}" class="card mb-3 d-md-none" style="max-width: 540px;">
+                <div th:each="plant: ${plants}" class="card mb-3 d-lg-none" style="max-width: 540px;">
                     <div class="row g-0">
-                        <div class="col-4 pt-2">
+                        <div class="col-4 py-2">
                             <div class="position-relative d-inline">
-<!--                                <form class="plantImageFormSmall" th:action="@{'/plants/' + ${plant.id} + '/plant-image'}" method="post" enctype="multipart/form-data" novalidate>-->
-<!--                                    <label th:for="${plant.id}" class="position-absolute top-0 end-0" style="cursor: pointer;"><img src="/icons/trans-plus.svg" alt="+" /></label>-->
-<!--                                    <input th:id="${plant.id}" name="smallImage" class="d-none imageSmall" type="file" accept=".png,.jpg,.jpeg,.svg"/>-->
-<!--                                    <img th:src="@{'/plants/' + ${plant.id} + '/plant-image'}" alt="Plant Picture" class="w-100 rounded mx-auto d-block h-auto" style="max-width: 300px; max-height: 300px;" />-->
-<!--                                    <span  class="plantImageErrorSmall invalid-feedback text-center position-absolute bottom-0 start-0"></span>-->
-<!--                                </form>-->
-
                                 <form class="plantImageFormSmall" th:action="@{'/plants/' + ${plant.id} + '/plant-image'}" method="post" enctype="multipart/form-data" novalidate>
-                                    <label th:for="${plant.id} + 'Small'" class="position-absolute top-0 end-0" style="cursor: pointer;"><img src="/icons/trans-plus.svg" alt="+" /></label>
+                                    <label th:for="${plant.id} + 'Small'" class="position-absolute top-0 end-0" style="cursor: pointer;"><img th:src="@{/icons/trans-plus.svg}" alt="+" width="26px" height="26px"/></label>
                                     <input th:id="${plant.id} + 'Small'" name="image" class="imageSmall d-none" type="file" accept=".png,.jpg,.jpeg,.svg"/>
                                     <img th:src="@{'/plants/' + ${plant.id} + '/plant-image'}" alt="Plant Picture" class="w-100 rounded mx-auto d-block h-auto" style="max-width: 300px; max-height: 300px;" />
                                     <span id="plantImageErrorSmall" class="plantImageErrorSmall invalid-feedback text-center position-absolute bottom-0 start-0"></span>
                                 </form>
                             </div>
-                            <div class="d-md-none pt-2">
-<!--                                <a class = "d-flex text-reset"-->
-<!--                                   th:href="@{/gardens/{gardenId}/plants/{plantId}/edit(gardenId=${garden.id}, plantId=${plant.id})}">-->
-<!--                                    <img class="mx-1" th:src="@{/icons/edit.svg}" alt="edit" width="20" height="20" />-->
-<!--                                </a>-->
+                            <div class="pt-2">
                                 <p class="fw-bold mb-2 text-decoration-underline">
                                     Details
                                 </p>
@@ -157,13 +146,13 @@
                                              alt=""
                                              width="20"
                                              height="20" />
-                                        <p><span class="mx-1" th:text="${plant.count}">Plant Count</span> planted</p>
+                                        <p class="mb-0"><span class="mx-1" th:text="${plant.count}">Plant Count</span> planted</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-8">
-                            <div class="card-body">
+                            <div class="card-body pt-2">
                                 <div class="d-flex">
                                     <div class="fw-bold mb-1">
                                         <span class="fw-bold" style="font-size: 16pt;" th:text="${plant.name}">Plant Name</span>
@@ -174,16 +163,11 @@
                                         </a>
                                     </div>
                                 </div>
-<!--                                <h2>-->
-<!--                                    <span class="fw-bold" th:text="${plant.name}" style="font-weight: bold;">-->
-<!--                                        Plant Name-->
-<!--                                    </span>-->
-<!--                                </h2>-->
                                 <p class="fw-bold mb-1">
                                     Description:
                                 </p>
                                 <div class="overflow-y-scroll" style="min-height: 144px; max-height: 200px">
-                                    <p class="" th:text="${plant.description}"><!--Plant Description goes here--></p>
+                                    <p class="m-0" th:text="${plant.description}"><!--Plant Description goes here--></p>
                                 </div>
                             </div>
                         </div>
@@ -192,19 +176,19 @@
 
                 <!-- big plant card -->
                 <div th:each="plant : ${plants}"
-                     class="card shadow-sm rounded-2 p-0 m-0 col-xxl-3 col-lg-3 col-md-4 col-sm-6 col-12 d-sm-none d-md-block"
-                     style="max-width : 300px">
+                     class="card shadow-sm rounded-2 p-0 m-0 col-xxl-3 col-xl-3 col-lg-6 col-12 d-none d-lg-block"
+                     style="max-width: 300px;">
                     <div class="card-header m-0 p-0 bg-transparent rounded-2" style="max-height: 300px;">
                         <div class="position-relative d-inline">
                             <form class="plantImageForm" th:action="@{'/plants/' + ${plant.id} + '/plant-image'}" method="post" enctype="multipart/form-data" novalidate>
-                                <label th:for="${plant.id}" class="position-absolute top-0 end-0" style="cursor: pointer;"><img src="/icons/trans-plus.svg" alt="+" /></label>
+                                <label th:for="${plant.id}" class="position-absolute top-0 end-0" style="cursor: pointer;"><img th:src="@{/icons/trans-plus.svg}" alt="+" /></label>
                                 <input th:id="${plant.id}" name="image" class="image d-none" type="file" accept=".png,.jpg,.jpeg,.svg"/>
                                 <img th:src="@{'/plants/' + ${plant.id} + '/plant-image'}" alt="Plant Picture" class="w-100 rounded mx-auto d-block h-auto" style="max-width: 300px; max-height: 300px;" />
                                 <span id="plantImageError" class="plantImageError invalid-feedback text-center position-absolute bottom-0 start-0"></span>
                             </form>
                         </div>
                     </div>
-                    <div class="card-body m-0">
+                    <div class="card-body m-0 p-3">
                         <div class="d-flex">
                             <div class="fw-bold mb-1">
                                 <span class="fw-bold" style="font-size: 14pt;" th:text="${plant.name}">Plant Name</span>
@@ -219,19 +203,19 @@
                             <img class="my-0 py-0 pt-1" th:src="@{/icons/calendar-03-stroke-rounded.svg}" alt="" width="22" height="22" />
                             <p class="ms-1 my-0" th:text="${plant.plantedDate}">Planted Date</p>
                         </div>
-                        <div class="d-flex mb-1">
+                        <div class="d-flex mb-0">
                             <img class="my-0 py-0 pt-1" th:src="@{/icons/natural-food-stroke-rounded.svg}" alt="" width="22" height="22" />
                             <p class="ms-1 my-1">
                                 <span th:text="${plant.count}">Plant Count</span>
                                 planted
                             </p>
                         </div>
-                        <p class="fw-bold mb-1">
+                        <p class="fw-bold mb-0">
                             Description:
                         </p>
-                        <div class="d-flex">
+                        <div class="d-flex" style="height: 45px;">
                             <div class="overflow-auto" style="max-height: 50px">
-                                <p class="" th:text="${plant.description}"><!--Plant Description goes here--></p>
+                                <p class="m-0" th:text="${plant.description}"><!--Plant Description goes here--></p>
                             </div>
                         </div>
                     </div>
