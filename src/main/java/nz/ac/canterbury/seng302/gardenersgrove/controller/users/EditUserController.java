@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,6 +89,7 @@ public class EditUserController {
             @Valid @ModelAttribute("user") EditUserDTO editUserDTO,
             BindingResult bindingResult,
             Authentication authentication,
+            @RequestParam(value = "dateError", required = false) String dateValidity,
             Model model) {
         logger.info("POST /users/edit");
 
@@ -95,6 +97,10 @@ public class EditUserController {
 
         GardenUser user = userService.getUserById(userId);
         String currentEmail = user.getEmail();
+
+        if (Objects.equals(dateValidity, "dateInvalid")) {
+            bindingResult.rejectValue("dateOfBirth", "dateOfBirth.formatError", "Date must be in the format DD-MM-YYYY");
+        }
 
         if (!editUserDTO.getEmail().equalsIgnoreCase(currentEmail)
                 && userService.getUserByEmail(editUserDTO.getEmail()) != null) {
