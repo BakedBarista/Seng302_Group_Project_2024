@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.gardens;
 
 
+import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
@@ -11,6 +12,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.weatherAPI.WeatherAPIServ
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +23,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -31,7 +38,6 @@ import java.util.stream.Collectors;
 @Controller
 public class GardenController {
     Logger logger = LoggerFactory.getLogger(GardenController.class);
-
     private final GardenService gardenService;
     private final PlantService plantService;
     private final WeatherAPIService weatherAPIService;
@@ -378,6 +384,42 @@ public class GardenController {
         model.addAttribute("gardens", gardens);
         model.addAttribute("previousSearch", search);
         return "gardens/publicGardens";
+    }
+
+    /**
+     * Create test data
+     * @throws IOException When problem reading file.
+     */
+    @PostConstruct
+    public void dummyGardens() throws IOException {
+        logger.info("Adding test data");
+        GardenUser user = new GardenUser("John","Doe","john.doe@gmail.com","password","01/01/2000");
+        gardenUserService.addUser(user);
+        Garden garden = new Garden("Garden1","1","Ilam Road","Ilam","Christchurch","New Zealand","8041",1.005,2.005,"100","Test Garden");
+        garden.setPublic(true);
+        garden.setOwner(user);
+        gardenService.addGarden(garden);
+        Plant plant = new Plant("Tomato","1","Red","23/05/2024");
+        Plant savedPlant = plantService.addPlant(plant,garden.getId());
+        ArrayList<Plant> plants = new ArrayList<>();
+        plants.add(savedPlant);
+        garden.setPlants(plants);
+        logger.info("Garden " + garden.getId() + " saved");
+        logger.info("Saved Plant: " + savedPlant);
+        logger.info("Plants {}", garden.getPlants());
+        try {
+            logger.info("reading file");
+            ClassPathResource imgFile = new ClassPathResource("static/img/TestImages/tomato.jpg");
+            String mimeType = Files.probeContentType(imgFile.getFile().toPath());
+            byte[] image = Files.readAllBytes(imgFile.getFile().toPath());
+            savedPlant.setPlantImage(mimeType, image);
+            logger.info("Saved Plant: " + savedPlant.getPlantImage().length);
+            logger.info("Saved Plant image type " + savedPlant.getPlantImageContentType());
+            logger.info("Saved Plant image content " + savedPlant.getPlantImage().toString());
+        } catch (IOException e) {
+            logger.info("Failed to read image {}", e.getMessage());
+        }
+
     }
 }
 
