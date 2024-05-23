@@ -175,7 +175,6 @@ public class PlantController {
             existingPlant.get().setCount(plant.getCount());
             existingPlant.get().setDescription(plant.getDescription());
 
-            logger.info(plant.getPlantedDate());
             if (plant.getPlantedDate() != null && !plant.getPlantedDate().isEmpty()) {
                 existingPlant.get().setPlantedDate(LocalDate.parse(plant.getPlantedDate()));
             } else {
