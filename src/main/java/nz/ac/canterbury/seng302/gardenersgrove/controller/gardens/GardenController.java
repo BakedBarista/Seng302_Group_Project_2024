@@ -405,15 +405,15 @@ public class GardenController {
         plants.add(savedPlant);
         garden.setPlants(plants);
         logger.info("Garden " + garden.getId() + " saved");
-        logger.info("Saved Plant: " + savedPlant);
+        logger.info("Saved Plant: " + savedPlant.getId());
         logger.info("Plants {}", garden.getPlants());
         try {
             logger.info("reading file");
             ClassPathResource imgFile = new ClassPathResource("static/img/TestImages/tomato.jpg");
             String mimeType = Files.probeContentType(imgFile.getFile().toPath());
             byte[] image = Files.readAllBytes(imgFile.getFile().toPath());
-            savedPlant.setPlantImage(mimeType, image);
-            logger.info("Saved Plant: " + savedPlant.getPlantImage().length);
+            savedPlant.setPlantImage(mimeType,image);
+            plantService.setPlantImage(savedPlant.getId(), mimeType, image);
             logger.info("Saved Plant image type " + savedPlant.getPlantImageContentType());
             logger.info("Saved Plant image content " + savedPlant.getPlantImage().toString());
         } catch (IOException e) {
