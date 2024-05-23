@@ -390,32 +390,69 @@ public class GardenController {
      * Create test data
      * @throws IOException When problem reading file.
      */
+    //With help of chatGPT for creating multiple gardens and plants
     @PostConstruct
     public void dummyGardens() throws IOException {
-        logger.info("Adding test data");
-        GardenUser user = new GardenUser("John","Doe","john.doe@gmail.com","password","01/01/2000");
-        gardenUserService.addUser(user);
-        Garden garden = new Garden("Garden1","1","Ilam Road","Ilam","Christchurch","New Zealand","8041",1.005,2.005,"100","Test Garden");
-        garden.setPublic(true);
-        garden.setOwner(user);
-        gardenService.addGarden(garden);
-        Plant plant = new Plant("Tomato","1","Red","23/05/2024");
-        Plant savedPlant = plantService.addPlant(plant,garden.getId());
-        ArrayList<Plant> plants = new ArrayList<>();
-        plants.add(savedPlant);
-        garden.setPlants(plants);
         try {
-            logger.info("reading file");
-            ClassPathResource imgFile = new ClassPathResource("static/img/TestImages/tomato.jpg");
-            String mimeType = Files.probeContentType(imgFile.getFile().toPath());
-            byte[] image = Files.readAllBytes(imgFile.getFile().toPath());
-            savedPlant.setPlantImage(mimeType,image);
-            plantService.setPlantImage(savedPlant.getId(), mimeType, image);
-        } catch (IOException e) {
-            logger.info("Failed to read image {}", e.getMessage());
-        }
+            logger.info("Adding test data");
 
+            // Create user
+            GardenUser user = new GardenUser("Jane", "Doe", "jane.doe@gmail.com", "password", "01/01/1970");
+            gardenUserService.addUser(user);
+
+            // Garden names
+            List<String> gardenNames = Arrays.asList(
+                    "Gardeners Paradise", "My Parents Garden", "Home Number 1", "GreenFingers", "Dirt Pile",
+                    "Potato Heaven", "Needs Weeding", "My Work in Progress", "Freshly Built", "Greener Pastures",
+                    "Grassy Grove", "Husbands Project", "Rainy Garden", "Tomato Garden", "Berries",
+                    "Roots", "Need a professional", "Growers Garden", "Community Garden", "Free for all Garden"
+            );
+
+            // Plant details
+            List<String[]> plantsDetails = Arrays.asList(
+                    new String[]{"Tomato", "Red"}, new String[]{"Cucumber", "Yellow"}, new String[]{"Potato", "Purple"},
+                    new String[]{"Cabbage", "Pink"}, new String[]{"Lettuce", "White"}, new String[]{"Onion", "Orange"},
+                    new String[]{"Spring Onion", "Blue"}, new String[]{"Asparagus", "Green"}, new String[]{"Pumpkin", "Purple"},
+                    new String[]{"Carrot", "Red"}
+            );
+
+            for (int i = 0; i < gardenNames.size(); i++) {
+                String gardenName = gardenNames.get(i);
+                String streetNumber = Integer.toString(i + 1);
+                Garden garden = new Garden(gardenName, streetNumber, "Ilam Road", "Ilam", "Christchurch", "New Zealand", "8041", -43.5320, 172.6366, (String.valueOf(1000 + (i * 50))), "Test Garden");
+                garden.setOwner(user);
+                garden.setPublic(true);
+                gardenService.addGarden(garden);
+
+                List<Plant> plants = new ArrayList<>();
+                for (int j = 0; j < plantsDetails.size(); j++) {
+                    String[] plantDetail = plantsDetails.get(j);
+                    Plant plant = new Plant(plantDetail[0], Integer.toString(15), plantDetail[1], "01/03/2024");
+                    Plant savedPlant = plantService.addPlant(plant, garden.getId());
+
+                    // Add plant image
+                    try {
+                        String imageName = plant.getName().replaceAll("\\s+","");
+                        ClassPathResource imgFile = new ClassPathResource("static/img/TestImages/" + imageName + ".jpg");
+                        String mimeType = Files.probeContentType(imgFile.getFile().toPath());
+                        byte[] image = Files.readAllBytes(imgFile.getFile().toPath());
+                        savedPlant.setPlantImage(mimeType, image);
+                        plantService.setPlantImage(savedPlant.getId(), mimeType, image);
+                    } catch (IOException e) {
+                        logger.info("Failed to read image for plant {}", plantDetail[0], e);
+                    }
+
+                    plants.add(savedPlant);
+                }
+
+                garden.setPlants(plants);
+                gardenService.addGarden(garden); // Assuming you have a method to update garden with plants
+            }
+        } catch (Exception e) {
+            logger.info("Failed to add garden", e);
+        }
     }
+
 }
 
 
