@@ -237,7 +237,6 @@ public class PlantController {
         if (plant.isPresent()) {
             existingPlant = plant.get();
         }
-        logger.info("plant {}, size {}", existingPlant.getPlantImage()==null,existingPlant.getPlantImage().length);
         // Return the default image if nothing specified
         if (existingPlant.getPlantImage() == null || existingPlant.getPlantImage().length == 0) {
             logger.info("Returning default plant image");
