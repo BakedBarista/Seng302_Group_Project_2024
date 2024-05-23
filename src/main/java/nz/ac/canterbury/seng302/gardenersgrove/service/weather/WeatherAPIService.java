@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -89,6 +90,11 @@ public class WeatherAPIService {
             // Get forecast weather
             WeatherAPIForecastResponse forecastResponse = getForecastWeatherFromAPI(lat, lng);
 
+            if (forecastResponse.getForecast() == null || historyResponses.isEmpty()) {
+                logger.error("No data was returned from the weather API");
+                return null;
+            }
+
             return saveWeather(lat, lng, garden, forecastResponse, historyResponses);
         }
     }
@@ -129,6 +135,7 @@ public class WeatherAPIService {
      * @param lng the longitude of the location
      * @return a {@link WeatherAPICurrentResponse} representing the parsed JSON values from the API.
      */
+    @Cacheable(value = "weatherCache", key = "#lat + ',' + #lng")
     public WeatherAPICurrentResponse getCurrentWeatherFromAPI(double lat, double lng) {
         WeatherAPICurrentResponse currentWeather = new WeatherAPICurrentResponse();
         String locationQuery = "&q=" + lat + "," + lng;
@@ -192,7 +199,7 @@ public class WeatherAPIService {
     private WeatherAPIForecastResponse getForecastWeatherFromAPI(double lat, double lng) {
         WeatherAPIForecastResponse forecastWeather = new WeatherAPIForecastResponse();
         String locationQuery = "&q=" + lat + "," + lng + "&days=3";
-        String apiForecastUrlitk = "https://api.weatherapi.com/v1/forecast.json?key=";
+        String apiForecastUrl = "https://api.weatherapi.com/v1/forecast.json?key=";
         String url = apiForecastUrl + API_KEY + locationQuery;
 
         try {
@@ -225,9 +232,9 @@ public class WeatherAPIService {
             return result.getBody();
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode().value() == 400) {
-                logger.error("Bad request sent to weather API, something is wrong with the lat and lng provided.", e);
+                logger.error("Bad request sent to weather API, something is wrong with the lat and lng provided.");
             } else if (e.getStatusCode().value() == 403) {
-                logger.error("Authentication issue with weather API, check API key.", e);
+                logger.error("Authentication issue with weather API, check API key.");
             } else {
                 logger.error("An unknown error occurred with the weather API.", e);
             }
