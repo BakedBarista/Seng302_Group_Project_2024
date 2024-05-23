@@ -397,7 +397,7 @@ public class GardenController {
             logger.info("Adding test data");
 
             // Create user
-            GardenUser user = new GardenUser("Jane", "Doe", "jane.doe@gmail.com", "password", "01/01/1970");
+            GardenUser user = new GardenUser("Jan", "Doe", "jan.doe@gmail.com", "password", "01/01/1970");
             gardenUserService.addUser(user);
 
             // Garden names
@@ -439,17 +439,17 @@ public class GardenController {
                         savedPlant.setPlantImage(mimeType, image);
                         plantService.setPlantImage(savedPlant.getId(), mimeType, image);
                     } catch (IOException e) {
-                        logger.info("Failed to read image for plant {}", plantDetail[0], e);
+                        logger.info("Failed to read image for plant");
                     }
 
                     plants.add(savedPlant);
                 }
 
                 garden.setPlants(plants);
-                gardenService.addGarden(garden); // Assuming you have a method to update garden with plants
+                gardenService.addGarden(garden);
             }
         } catch (Exception e) {
-            logger.info("Failed to add garden", e);
+            logger.info("Failed to add garden");
         }
     }
 
