@@ -4,6 +4,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.GardenController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weatherAPI.WeatherAPIService;
 import org.junit.jupiter.api.Assertions;
@@ -14,14 +15,21 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 public class GardenControllerTest {
@@ -49,14 +57,20 @@ public class GardenControllerTest {
     @InjectMocks
     private GardenController gardenController;
 
+    private static Authentication authentication;
+
+    private static GardenRepository gardenRepository;
+    private static Garden mockGarden;
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
+        gardenRepository = mock(GardenRepository.class);
         GardenUser mockUser = mock(GardenUser.class);
+        mockGarden = mock(Garden.class);
         when(mockUser.getId()).thenReturn(1L);
         when(gardenUserService.getCurrentUser()).thenReturn(mockUser);
         when(gardenService.getGardensByOwnerId(1L)).thenReturn(Collections.emptyList());
-
+        authentication = mock(Authentication.class);
     }
 
     @Test
@@ -76,8 +90,11 @@ public class GardenControllerTest {
         Garden invalidGarden = new Garden("","","","","","","",0.0,0.0,"","");
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
+
+        when(authentication.getPrincipal()).thenReturn((Long) 1L);
         when(profanityService.badWordsFound(anyString())).thenReturn(new ArrayList<>());
-        String result = gardenController.submitForm(invalidGarden, bindingResult, model);
+        String result = gardenController.submitForm(invalidGarden, bindingResult, authentication, model);
+
         assertEquals("gardens/createGarden", result);
     }
 
@@ -89,9 +106,12 @@ public class GardenControllerTest {
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
         when(gardenService.addGarden(validGarden)).thenReturn(validGarden);
+
+        when(authentication.getPrincipal()).thenReturn((Long) 1L);
         when(profanityService.badWordsFound(anyString())).thenReturn(new ArrayList<>());
+
         Mockito.when(moderationService.moderateDescription(anyString())).thenReturn(ResponseEntity.ok().build());
-        String result = gardenController.submitForm(validGarden, bindingResult, model);
+        String result = gardenController.submitForm(validGarden, bindingResult, authentication,  model);
         assertEquals("redirect:/gardens/1", result);
     }
 
@@ -172,12 +192,17 @@ public class GardenControllerTest {
         Model model = mock(Model.class);
         String description = "some really nasty words";
         Garden invalidGarden = new Garden("","","","","","","",0.0,0.0,"", description);
+        gardenService.addGarden(invalidGarden);
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
+
+        when(gardenRepository.save(invalidGarden)).thenReturn(invalidGarden);
+        when(gardenUserService.getUserById(1L)).thenReturn(new GardenUser());
         when(profanityService.badWordsFound(anyString())).thenReturn(new ArrayList<>());
         when(moderationService.checkIfDescriptionIsFlagged(description)).thenReturn(true);
-
-        gardenController.submitForm(invalidGarden, bindingResult, model);
+        when(authentication.getPrincipal()).thenReturn((Long) 1L);
+        when(gardenService.addGarden(any())).thenReturn(invalidGarden);
+        gardenController.submitForm(invalidGarden, bindingResult, authentication, model);
 
         verify(model).addAttribute("profanity", EXPECTED_MODERATION_ERROR_MESSAGE);
         verify(model).addAttribute("garden", invalidGarden);
@@ -198,4 +223,33 @@ public class GardenControllerTest {
         verify(model).addAttribute("profanity", EXPECTED_MODERATION_ERROR_MESSAGE);
         verify(model).addAttribute("garden", invalidGarden);
     }
+
+    @Test
+    public void testGetGardenId() {
+        Model model = mock(Model.class);
+        Garden garden = new Garden("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"100","test description");
+        when(gardenService.getGardenById(1)).thenReturn(Optional.of(garden));
+        List<List<Map<String, Object>>> weatherResult = new ArrayList<>();
+        when(weatherAPIService.getWeatherData(1, 0.0, 0.0)).thenReturn(weatherResult);
+        String result = gardenController.gardenDetail(1L, model);
+        assertEquals("gardens/gardenDetails", result);
+        verify(model).addAttribute("garden", garden);
+    }
+
+    @Test
+    public void testGardenDetail_WithNullLatLon() {
+        Model model = mock(Model.class);
+        Garden garden = new Garden("Test Garden","1","test","test suburb","test city","test country","1234",null,null,"100","test description");
+        when(gardenService.getGardenById(1L)).thenReturn(Optional.of(garden));
+
+        String result = gardenController.gardenDetail(1L, model);
+
+        assertEquals("gardens/gardenDetails", result);
+        verify(model).addAttribute("garden", garden);
+        verify(weatherAPIService, never()).getWeatherData(anyLong(), anyDouble(), anyDouble());
+
+    }
+
+
+
 }

@@ -1,12 +1,15 @@
-let LOCATION_MATCH = false;
+"use strict";
+
+let locationMatch = false;
 /**
  * Initializes an address autocomplete feature on the specified container element.
  *
  * @param {HTMLElement} containerElement - The container element where the autocomplete feature is added.
- * @param {Function} callback - The callback function to be called when an address is selected.
- * @param {Object} options - Additional options for customising the autocomplete feature (currently unused).
+ * @param {(result: object | string) => void} callback - The callback function to be called when an option is selected. Called with the option object if a match was found, otherwise called with the input value.
+ * @param {{ apiUrl: string, notFoundMessageHtml: string, placeholder: string, acceptButton: boolean }} options - Additional named options. All of these are required.
+ * @returns An object with methods that can be used to interact with the autocomplete feature.
  */
-function addressAutocomplete(containerElement, callback, options) {
+function autocomplete(containerElement, callback, options) {
 
     const MIN_ADDRESS_LENGTH = 3;
     const DEBOUNCE_DELAY = 300;
@@ -14,33 +17,45 @@ function addressAutocomplete(containerElement, callback, options) {
 
     // create container for input element
     const inputContainerElement = document.createElement("div");
-    inputContainerElement.setAttribute("class", "input-container");
+    inputContainerElement.className = "input-container";
     containerElement.appendChild(inputContainerElement);
 
     // create input element
     const inputElement = document.createElement("input");
-    inputElement.setAttribute("type", "text");
-    inputElement.setAttribute("placeholder", "Start typing address here or fill manually");
+    inputElement.type = "text";
+    inputElement.placeholder = options.placeholder;
     inputContainerElement.appendChild(inputElement);
 
     // add input field clear button
+    const acceptButton = document.createElement("div");
+    acceptButton.className = "accept-button";
+    addAcceptIcon(acceptButton);
+    acceptButton.addEventListener("click", (e) => {
+        e.stopPropagation();
+        acceptFocusedItem();
+    });
+    if (options.acceptButton) {
+        inputContainerElement.appendChild(acceptButton);
+    }
+
+    // add input field clear button
     const clearButton = document.createElement("div");
-    clearButton.classList.add("clear-button");
+    clearButton.className = "clear-button";
     addIcon(clearButton);
     clearButton.addEventListener("click", (e) => {
         e.stopPropagation();
-        inputElement.value = '';
-        callback(null);
-        clearButton.classList.remove("visible");
-        closeDropDownList();
+        clear();
     });
     inputContainerElement.appendChild(clearButton);
 
-    /* We will call the API with a timeout to prevent unneccessary API activity.*/
+    /* We will call the API with a timeout to prevent unnecessary API activity.*/
     let currentTimeout;
 
     /* Save the current request promise reject function. To be able to cancel the promise when a new request comes */
     let currentPromiseReject;
+
+    /* Save the current items from the API response */
+    let currentItems = [];
 
     /* Focused item in the autocomplete list. This variable is used to navigate with buttons */
     let focusedItemIndex;
@@ -63,13 +78,15 @@ function addressAutocomplete(containerElement, callback, options) {
         // Cancel previous request promise
         if (currentPromiseReject) {
             currentPromiseReject({
-                canceled: true
+                cancelled: true
             });
         }
 
         if (currentValue) {
+            acceptButton.classList.add("visible");
             clearButton.classList.add("visible");
         } else {
+            acceptButton.classList.remove("visible");
             clearButton.classList.remove("visible");
         }
 
@@ -85,7 +102,7 @@ function addressAutocomplete(containerElement, callback, options) {
             currentPromiseReject = reject;
 
             debounceTimer = setTimeout(() => {
-                fetch(`/api/get_location?currentValue=${currentValue}`)
+                fetch(`${options.apiUrl}?currentValue=${currentValue}`)
                     .then(response => {
                         currentPromiseReject = null;
 
@@ -99,97 +116,90 @@ function addressAutocomplete(containerElement, callback, options) {
             }, DEBOUNCE_DELAY);
         });
 
-            promise.then((data) => {
+        promise.then((data) => {
+            // here we get address suggestions
+            currentItems = data.results;
 
-                // here we get address suggestions
-                let currentItems = data.results;
+            // handles no location match
+            const noLocationMatch = document.createElement("div");
+            noLocationMatch.innerHTML = options.notFoundMessageHtml;
 
-                /*
-                Handles no location match
-                 */
-                const noLocationMatch = document.createElement("div");
-                noLocationMatch.innerHTML = "No matching location found, location-based services may not work (<u style='color: blue;'>Use location</u>)";
+            // create a DIV element that will contain the items (values)
+            const autocompleteItemsElement = document.createElement("div");
+            autocompleteItemsElement.className = "autocomplete-items";
+            inputContainerElement.appendChild(autocompleteItemsElement);
 
-                /*create a DIV element that will contain the items (values):*/
-                const autocompleteItemsElement = document.createElement("div");
-                autocompleteItemsElement.setAttribute("class", "autocomplete-items");
-                inputContainerElement.appendChild(autocompleteItemsElement);
-
-                const resultsExist = data.results.length !== 0;
+            const resultsExist = data.results.length !== 0;
                 if (resultsExist) {
-                    LOCATION_MATCH = true;
-                    /* For each item in the results */
-                    data.results.forEach((result, index) => {
-                        /* Create a DIV element for each element: */
-                        const itemElement = document.createElement("div");
-                        /* Set formatted address as item value */
-                        itemElement.innerHTML = result.formatted;
-                        autocompleteItemsElement.appendChild(itemElement);
-
-                        /* Set the value for the autocomplete text field and notify: */
-                        itemElement.addEventListener("click", function (e) {
-                            inputElement.value = currentItems[index].formatted;
-                            callback(currentItems[index]);
-                            /* Close the list of autocompleted values: */
-                            closeDropDownList();
-                        });
-                    });
-                } else {
-                    autocompleteItemsElement.appendChild(noLocationMatch);
+                locationMatch = true;
+                /* For each item in the results */
+                data.results.forEach((result, index) => {
+                    /* Create a DIV element for each element: */
                     const itemElement = document.createElement("div");
+                    /* Set formatted address as item value */
+                    itemElement.innerHTML = result.formatted;
+                    autocompleteItemsElement.appendChild(itemElement);
 
                     /* Set the value for the autocomplete text field and notify: */
-                    noLocationMatch.addEventListener("click", function (e) {
-                        currentItems = inputElement.value;
-
-
-                        let addressString = inputElement.value.split(/\s|,/ );
-                        callback(addressString);
-                        console.log(addressString[0], addressString[1]);
-                        populateAddress(addressString);
+                    itemElement.addEventListener("click", () => {
+                        inputElement.value = currentItems[index].formatted;
+                        callback(currentItems[index]);
                         /* Close the list of autocompleted values: */
                         closeDropDownList();
-
                     });
-                }
-            }, (err) => {
-                if (!err.canceled) {
-                    console.log(err);
-                }
-            });
+                });
+            } else {
+                autocompleteItemsElement.appendChild(noLocationMatch);
+                const itemElement = document.createElement("div");
+
+                /* Set the value for the autocomplete text field and notify: */
+                noLocationMatch.addEventListener("click", () => {
+                    currentItems = inputElement.value;
+
+                    callback(inputElement.value);
+                    /* Close the list of autocompleted values: */
+                    closeDropDownList();
+
+                });
+            }
+        }, (err) => {
+            if (!err.cancelled) {
+                console.log(err);
+            }
+        });
     });
 
     /**
      * Add support for keyboard navigation
      * */
     inputElement.addEventListener("keydown", function(e) {
-        var autocompleteItemsElement = containerElement.querySelector(".autocomplete-items");
+        const autocompleteItemsElement = containerElement.querySelector(".autocomplete-items");
         if (autocompleteItemsElement) {
             const itemElements = autocompleteItemsElement.getElementsByTagName("div");
-            if (e.keyCode === 40) {
+            if (e.keyCode === 40) { // Down arrow
                 e.preventDefault();
                 /*If the arrow DOWN key is pressed, increase the focusedItemIndex variable:*/
                 focusedItemIndex = focusedItemIndex !== itemElements.length - 1 ? focusedItemIndex + 1 : 0;
                 /*and make the current item more visible:*/
                 setActive(itemElements, focusedItemIndex);
-            } else if (e.keyCode === 38) {
+            } else if (e.keyCode === 38) { // Up arrow
                 e.preventDefault();
 
                 /*If the arrow UP key is pressed, decrease the focusedItemIndex variable:*/
                 focusedItemIndex = focusedItemIndex !== 0 ? focusedItemIndex - 1 : focusedItemIndex = (itemElements.length - 1);
                 /*and make the current item more visible:*/
                 setActive(itemElements, focusedItemIndex);
-            } else if (e.keyCode === 13) {
-                /* If the ENTER key is pressed and value as selected, close the list*/
+            } else if (e.keyCode === 13) { // Enter key
+                /* If the ENTER key is pressed and value is selected, accept the selection and close the list*/
                 e.preventDefault();
-                if (focusedItemIndex > -1) {
-                    closeDropDownList();
+                if (focusedItemIndex > -1 || options.acceptButton) {
+                    acceptFocusedItem();
                 }
             }
         } else {
-            if (e.keyCode === 40) {
+            if (e.keyCode === 40) { // Down arrow
                 /* Open dropdown list again */
-                var event = document.createEvent('Event');
+                const event = document.createEvent('Event');
                 event.initEvent('input', true, true);
                 inputElement.dispatchEvent(event);
             }
@@ -206,16 +216,36 @@ function addressAutocomplete(containerElement, callback, options) {
     function setActive(items, index) {
         if (!items || !items.length) return false;
 
-        for (var i = 0; i < items.length; i++) {
+        for (let i = 0; i < items.length; i++) {
             items[i].classList.remove("autocomplete-active");
         }
 
         /* Add class "autocomplete-active" to the active element*/
         items[index].classList.add("autocomplete-active");
+    }
 
-        // Change input value and notify
-        inputElement.value = currentItems[index].formatted;
-        callback(currentItems[index]);
+    /**
+     * Accepts the focused item in the autocomplete dropdown list
+     */
+    function acceptFocusedItem() {
+        const currentItem = currentItems[focusedItemIndex];
+        if (currentItem) {
+            inputElement.value = currentItem.formatted;
+            callback(currentItem);
+        } else {
+            callback(inputElement.value);
+        }
+        closeDropDownList();
+    }
+
+    /**
+     * Clears the input field and closes the dropdown list
+     */
+    function clear() {
+        inputElement.value = '';
+        acceptButton.classList.remove("visible");
+        clearButton.classList.remove("visible");
+        closeDropDownList();
     }
 
     // Close the dropdown list
@@ -228,7 +258,6 @@ function addressAutocomplete(containerElement, callback, options) {
         focusedItemIndex = -1;
     }
 
-
     // Add an icon to the button
     function addIcon(buttonElement) {
         const svgElement = document.createElementNS("http://www.w3.org/2000/svg", 'svg');
@@ -237,6 +266,21 @@ function addressAutocomplete(containerElement, callback, options) {
 
         const iconElement = document.createElementNS("http://www.w3.org/2000/svg", 'path');
         iconElement.setAttribute("d", "M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z");
+        iconElement.setAttribute('fill', 'currentColor');
+        svgElement.appendChild(iconElement);
+        buttonElement.appendChild(svgElement);
+    }
+
+    /**
+     * Add an accept icon to the button
+     */
+    function addAcceptIcon(buttonElement) {
+        const svgElement = document.createElementNS("http://www.w3.org/2000/svg", 'svg');
+        svgElement.setAttribute('viewBox', "0 0 24 24");
+        svgElement.setAttribute('height', "24");
+
+        const iconElement = document.createElementNS("http://www.w3.org/2000/svg", 'path');
+        iconElement.setAttribute("d", "M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z");
         iconElement.setAttribute('fill', 'currentColor');
         svgElement.appendChild(iconElement);
         buttonElement.appendChild(svgElement);
@@ -254,44 +298,7 @@ function addressAutocomplete(containerElement, callback, options) {
             inputElement.dispatchEvent(event);
         }
     });
+
+    // Return an object with the desired methods
+    return { clear };
 }
-
-/**
- * Populates address fields with properties from the selected address in the autocomplete container
- *
- * @param {Object} selectedAddress - The selected address with the address information
- */
-function populateAddressFields(selectedAddress) {
-    // Populate address fields with properties from the selectedAddress address
-    document.getElementById("streetNumber").value = selectedAddress.housenumber || null;
-    document.getElementById("streetName").value = selectedAddress.street || null;
-    document.getElementById("suburb").value = selectedAddress.suburb || null;
-    document.getElementById("city").value = selectedAddress.city || null;
-    document.getElementById("country").value = selectedAddress.country || null;
-    document.getElementById("postCode").value = selectedAddress.postcode || null;
-    document.getElementById("lat").value = selectedAddress.lat || null;
-    document.getElementById("lon").value = selectedAddress.lon || null;
-}
-
-/**
- * Populates address fields with item in the input with no location match
- *
- * @param {Object} currentItem - The current address input
- */
-function populateAddress(currentItem) {
-    document.getElementById("streetNumber").value = currentItem[0] ? currentItem[0] : null;
-    document.getElementById("streetName").value = (currentItem[1] ? currentItem[1] : null)
-        + (currentItem[2] ? " " + currentItem[2] : null);
-    document.getElementById("suburb").value = currentItem[3] ? currentItem[3] : null;
-    document.getElementById("city").value = currentItem[4] ? currentItem[4] : null;
-    document.getElementById("country").value = currentItem[5] ? currentItem[5] : null;
-    document.getElementById("postCode").value = currentItem[6] ? currentItem[6] : null;
-}
-
-
-addressAutocomplete(document.getElementById("autocomplete-container"),
-    populateAddressFields,
-    (data) => {
-    console.log("Selected option: ");
-    console.log(data);
-});

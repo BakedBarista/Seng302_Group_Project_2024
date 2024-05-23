@@ -29,8 +29,8 @@
                     </div>
                     <!-- Garden Location Field -->
                     <div class="col-md-12">
-                        <label for="autocomplete-container"> Garden Location: </label>
-                        <div class="autocomplete-container" id="autocomplete-container"></div>
+                        <label for="location-autocomplete-container"> Garden Location: </label>
+                        <div class="autocomplete-container" id="location-autocomplete-container"></div>
                     </div>
                     <div class="col-8">
                         <div th:if="locationError != null" th:text="${locationError}" style="color: red;"></div>
@@ -177,13 +177,14 @@
         </div>
     </div>
 
-    <script th:src="@{/js/nextFormBox.js}"></script>
-    <script th:src="@{/js/locationAutoComplete.js}"></script>
-    <script th:src="@{/js/toggleSubform.js}"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const currentPath = '/gardens/create';
-            const referrer = document.referrer;
+        <script th:src="@{/js/nextFormBox.js}"></script>
+        <script th:src="@{/js/autocomplete.js}"></script>
+        <script th:src="@{/js/locationAutocomplete.js}"></script>
+        <script th:src="@{/js/toggleSubform.js}"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const currentPath = '/gardens/create';
+                const referrer = document.referrer;
 
             if (referrer && !referrer.includes(currentPath)) {
                 sessionStorage.setItem('referrer', referrer);
