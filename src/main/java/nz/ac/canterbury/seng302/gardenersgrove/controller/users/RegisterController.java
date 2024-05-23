@@ -74,7 +74,11 @@ public class RegisterController {
         logger.info("POST /users/register");
 
         if (Objects.equals(dateValidity, "dateInvalid")) {
-            bindingResult.rejectValue("dateOfBirth", "DOB.formatError", "Date must be in the format DD-MM-YYYY");
+            bindingResult.rejectValue(
+                    "dateOfBirth",
+                    "dateOfBirth.formatError",
+                    "Date is not in valid format, DD/MM/YYYY, or does not represent a real date"
+            );
         }
 
         if (userService.getUserByEmail(registerDTO.getEmail()) != null) {

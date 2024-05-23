@@ -100,7 +100,11 @@ public class EditUserController {
         String currentEmail = user.getEmail();
 
         if (Objects.equals(dateValidity, "dateInvalid")) {
-            bindingResult.rejectValue("dateOfBirth", "dateOfBirth.formatError", "Date must be in the format DD-MM-YYYY");
+            bindingResult.rejectValue(
+                    "dateOfBirth",
+                    "dateOfBirth.formatError",
+                    "Date is not in valid format, DD/MM/YYYY, or does not represent a real date"
+            );
         }
 
         if (!editUserDTO.getEmail().equalsIgnoreCase(currentEmail)

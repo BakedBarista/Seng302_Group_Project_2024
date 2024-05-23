@@ -86,7 +86,11 @@ public class PlantController {
         logger.info("POST /gardens/${gardenId}/add-plant - submit the new plant form");
 
         if (Objects.equals(dateValidity, "dateInvalid")) {
-            bindingResult.rejectValue("plantedDate", "plantedDate.formatError", "Date must be in the format DD-MM-YYYY");
+            bindingResult.rejectValue(
+                    "plantedDate",
+                    "plantedDate.formatError",
+                    "Date is not in valid format, DD/MM/YYYY, or does not represent a real date"
+            );
         }
 
         // Makes sure the image is null when nothing uploaded
@@ -159,7 +163,11 @@ public class PlantController {
                                       Model model) {
 
         if (Objects.equals(dateValidity, "dateInvalid")) {
-            bindingResult.rejectValue("plantedDate", "plantedDate.formatError", "Date must be in the format DD-MM-YYYY");
+            bindingResult.rejectValue(
+                    "plantedDate",
+                    "plantedDate.formatError",
+                    "Date is not in valid format, DD/MM/YYYY, or does not represent a real date"
+            );
         }
 
         if (bindingResult.hasErrors()) {
