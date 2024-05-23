@@ -390,21 +390,24 @@ public class GardenController {
      * @return public garden page
      */
     @PostMapping("/gardens/public/search-tags")
-    public String searchTagPublicGardens(@RequestParam (defaultValue = "0") int page,
-                                      @RequestParam (defaultValue = "10") int size,
-                                      @RequestParam(name = "search", required = false, defaultValue = "") String search,
-                                      Model model) {
-        logger.info("Search: " + search);
+    public String searchTagPublicGardens(@RequestParam(defaultValue = "0") int page,
+                                         @RequestParam(defaultValue = "10") int size,
+                                         @RequestParam(name = "tags", required = false) List<String> tags,
+                                         Model model) {
+        logger.info("Tags: " + tags);
         Pageable pageable = PageRequest.of(page, size);
-        List<String> tags = new ArrayList<>();
-        tags.add(search);
         Page<Garden> taggedGardens = gardenService.getGardensMatchingTags(tags, pageable);
         logger.info("" + taggedGardens);
 
         model.addAttribute("gardenPage", taggedGardens);
-        model.addAttribute("previousSearch", search);
+        model.addAttribute("previousTags", tags); // Pass the tags back to the view
         return "gardens/publicGardens";
     }
+
+
+
+
+
 }
 
 
