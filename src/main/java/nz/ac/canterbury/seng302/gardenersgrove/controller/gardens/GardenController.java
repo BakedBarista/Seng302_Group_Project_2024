@@ -424,10 +424,12 @@ public class GardenController {
 
             // Plant details
             List<String[]> plantsDetails = Arrays.asList(
-                    new String[]{"Tomato", "Red"}, new String[]{"Cucumber", "Yellow"}, new String[]{"Potato", "Purple"},
-                    new String[]{"Cabbage", "Pink"}, new String[]{"Lettuce", "White"}, new String[]{"Onion", "Orange"},
-                    new String[]{"Spring Onion", "Blue"}, new String[]{"Asparagus", "Green"}, new String[]{"Pumpkin", "Purple"},
-                    new String[]{"Carrot", "Red"}
+                    new String[][]{
+                            {"Tomato", "Red"}, {"Cucumber", "Yellow"}, {"Potato", "Purple"},
+                            {"Cabbage", "Pink"}, {"Lettuce", "White"}, {"Onion", "Orange"},
+                            {"Spring Onion", "Blue"}, {"Asparagus", "Green"}, {"Pumpkin", "Purple"},
+                            {"Carrot", "Red"}
+                    }
             );
 
             for (int i = 0; i < gardenNames.size(); i++) {
