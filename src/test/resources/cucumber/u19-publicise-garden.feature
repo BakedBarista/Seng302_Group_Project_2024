@@ -5,17 +5,36 @@ Feature: As Inaya, I want to be able to make my garden public so that others can
     And My password is "P@ssw0rd"
 
 
-  Scenario: AC7 Description contains profanity
-      Given I enter a new description
-      When Description contains profanity
-      Then Error message "The description does not match the language standards of the app." is shown
+  Scenario Outline: AC7 Description contains profanity
+    Given I enter a new description "<description>"
+    When Description contains profanity
+    Then Error message "The description does not match the language standards of the app." is shown
 
-  Scenario: AC7.1 Description contains no profanity
-      Given I enter a new description
-      When Description not contain profanity
-      Then Description is added
+    Examples:
+      | description |
+      | shit        |
+      | fuck        |
+      | @ss         |
+      | sh!t        |
 
-  Scenario: AC7.2 Description contains combination of good and bad word
-    Given I enter a new description
+  Scenario Outline: AC7.1 Description contains no profanity
+    Given I enter a new description "<description>"
+    When Description not contain profanity
+    Then Description is added
+
+    Examples:
+      | description      |
+      | beautiful garden |
+      | lovely tomatoes  |
+
+  Scenario Outline: AC7.2 Description contains combination of good and bad words
+    Given I enter a new description "<description>"
     When Description contains both profanity and good words
     Then Error message "The description does not match the language standards of the app." is shown
+
+    Examples:
+      | description                |
+      | beautiful garden shit      |
+      | lovely tomatoes fuck       |
+      | amazing @ss plants         |
+      | sh!t with lovely flowers   |

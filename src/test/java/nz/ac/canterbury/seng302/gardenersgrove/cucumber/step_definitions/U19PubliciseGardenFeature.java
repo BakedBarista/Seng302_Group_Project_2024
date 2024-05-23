@@ -11,6 +11,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weatherAPI.WeatherAPIService;
+import org.mockito.ArgumentCaptor;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,8 +22,8 @@ import static org.mockito.Mockito.*;
 
 public class U19PubliciseGardenFeature {
     private GardenController gardenController;
-    private ProfanityService profanityService;
-    private ModerationService moderationService;
+    private static ProfanityService profanityService;
+    private static ModerationService moderationService;
     private FriendService friendService;
     private WeatherAPIService weatherAPIService;
     private PlantService plantService;
@@ -35,11 +36,14 @@ public class U19PubliciseGardenFeature {
     private static BindingResult bindingResult;
     private Garden garden;
     private static Authentication authentication;
+    private String errorMessage;
 
     @BeforeAll
     public static void beforeAll() {
         gardenUserRepository = mock(GardenUserRepository.class);
         gardenRepository = mock(GardenRepository.class);
+        profanityService = mock(ProfanityService.class);
+        moderationService = mock(ModerationService.class);
         bindingResult = mock(BindingResult.class);
         model = mock(Model.class);
         authentication = mock(Authentication.class);
@@ -47,53 +51,62 @@ public class U19PubliciseGardenFeature {
         gardenService = new GardenService(gardenRepository);
     }
 
-    @Given("I enter a new description")
-    public void i_enter_a_new_description() {
-        profanityService = mock(ProfanityService.class);
-        moderationService = mock(ModerationService.class);
-        gardenController = new GardenController(gardenService,plantService,gardenUserService,weatherAPIService,friendService,moderationService,profanityService);
+    @Given("I enter a new description {string}")
+    public void i_enter_a_new_description(String description) {
+        model = mock(Model.class);
         garden = new Garden();
+        garden.setDescription(description);
+        bindingResult = mock(BindingResult.class);
+        when(bindingResult.hasErrors()).thenReturn(false);
+        gardenService = mock(GardenService.class);
+        gardenController = new GardenController(gardenService,plantService,gardenUserService,weatherAPIService,friendService,moderationService,profanityService);
     }
 
     @When("Description contains profanity")
     public void description_contains_profanity() {
         ArrayList<String> profanity = new ArrayList<>();
-        profanity.add("badword");
-        garden.setDescription("badword");
-        when(profanityService.badWordsFound("badword")).thenReturn(profanity);
-        when(moderationService.checkIfDescriptionIsFlagged("badword")).thenReturn(false);
+        profanity.add(garden.getDescription());
+        when(profanityService.badWordsFound(garden.getDescription())).thenReturn(profanity);
+        when(moderationService.checkIfDescriptionIsFlagged(garden.getDescription())).thenReturn(false);
 
         gardenController.checkGardenError(model, bindingResult, garden);
-    }
 
-    @Then("Error message {string} is shown")
-    public void error_message_is_shown(String expectedMessage) {
-        verify(model).addAttribute("profanity", expectedMessage);
+        ArgumentCaptor<String> stringCaptor = ArgumentCaptor.forClass(String.class);
+        verify(model).addAttribute(eq("profanity"), stringCaptor.capture());
+        errorMessage = stringCaptor.getValue();
     }
 
     @When("Description not contain profanity")
-    public void description_does_not_contain_profanity() {
-        garden.setDescription("good description");
-        when(profanityService.badWordsFound("good description")).thenReturn(new ArrayList<>());
-        when(moderationService.checkIfDescriptionIsFlagged("good description")).thenReturn(false);
+    public void description_not_contain_profanity() {
+        when(profanityService.badWordsFound(garden.getDescription())).thenReturn(new ArrayList<>());
+        when(moderationService.checkIfDescriptionIsFlagged(garden.getDescription())).thenReturn(false);
 
         gardenController.checkGardenError(model, bindingResult, garden);
     }
 
     @Then("Description is added")
     public void description_is_added() {
-        gardenService.addGarden(garden);
-        Assertions.assertEquals(garden.getDescription(), "good description");
+        verify(model, never()).addAttribute(eq("profanity"), anyString());
+        verify(model, never()).addAttribute(eq("locationError"), anyString());
     }
 
     @When("Description contains both profanity and good words")
     public void description_contains_both_profanity_and_good_words() {
         ArrayList<String> profanity = new ArrayList<>();
-        profanity.add("badword");
-        garden.setDescription("good badword");
-        when(profanityService.badWordsFound("good badword")).thenReturn(profanity);
-        when(moderationService.checkIfDescriptionIsFlagged("good badword")).thenReturn(false);
+        profanity.add("shit");
+        when(profanityService.badWordsFound(garden.getDescription())).thenReturn(profanity);
+        when(moderationService.checkIfDescriptionIsFlagged(garden.getDescription())).thenReturn(false);
 
-        verify(model,times(1)).addAttribute("profanity", "The description does not match the language standards of the app.");
+        gardenController.checkGardenError(model, bindingResult, garden);
+
+        ArgumentCaptor<String> stringCaptor = ArgumentCaptor.forClass(String.class);
+        verify(model).addAttribute(eq("profanity"), stringCaptor.capture());
+        errorMessage = stringCaptor.getValue();
     }
+
+    @Then("Error message {string} is shown")
+    public void error_message_is_shown(String expectedMessage) {
+        Assertions.assertEquals(expectedMessage, errorMessage);
+    }
+
 }
