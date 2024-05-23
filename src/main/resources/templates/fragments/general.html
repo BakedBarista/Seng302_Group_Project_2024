@@ -4,6 +4,12 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" />
+
+        <!-- CSRF token for scripts -->
+        <meta name="_csrf" th:content="${_csrf.token}" />
+        <meta name="_csrfHeader" th:content="${_csrf.headerName}" />
+        <meta name="_apiBaseUrl" th:content="@{/api}" />
+
         <!-- Google Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
