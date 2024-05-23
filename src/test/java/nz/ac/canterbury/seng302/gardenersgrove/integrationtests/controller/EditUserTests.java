@@ -25,6 +25,7 @@ class EditUserControllerTest {
     private GardenUserService userService;
     private EmailSenderService emailSenderService;
 
+    private String dateValidStr = "";
     private Long userId = 1L;
 
     @BeforeEach
@@ -47,13 +48,13 @@ class EditUserControllerTest {
         editUser.setLname("Dough");
         editUser.setNoLname(false);
         editUser.setEmail("jane@email.com");
-        editUser.setDOB("1970-01-01");
+        editUser.setDateOfBirth("1970-01-01");
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
 
         //Edit user details
-        String result = controller.submitUser(editUser, bindingResult, authentication, model);
+        String result = controller.submitUser(editUser, bindingResult, authentication, dateValidStr, model);
 
         assertEquals("redirect:/users/user", result); // Verify that the returned view name is correct
     }
@@ -69,13 +70,13 @@ class EditUserControllerTest {
         editUser.setLname("Dough");
         editUser.setNoLname(false);
         editUser.setEmail("jane@email.com");
-        editUser.setDOB("1970-01-01");
+        editUser.setDateOfBirth("1970-01-01");
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
 
         //Edit user details
-        String result = controller.submitUser(editUser, bindingResult, authentication, model);
+        String result = controller.submitUser(editUser, bindingResult, authentication, dateValidStr, model);
 
         assertEquals("users/editTemplate", result);
     }
@@ -92,13 +93,13 @@ class EditUserControllerTest {
         editUser.setLname("Dough");
         editUser.setNoLname(false);
         editUser.setEmail("jane@email.com");
-        editUser.setDOB("1970-01-01");
+        editUser.setDateOfBirth("1970-01-01");
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
 
         //Edit user details
-        controller.submitUser(editUser, bindingResult, authentication, model);
+        controller.submitUser(editUser, bindingResult, authentication, dateValidStr, model);
 
         assertEquals("Jane", user.getFname());
         assertEquals("Dough", user.getLname());
@@ -117,12 +118,12 @@ class EditUserControllerTest {
         editUser.setLname( "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
         editUser.setNoLname(false);
         editUser.setEmail("jane@email.com");
-        editUser.setDOB("1970-01-01");
+        editUser.setDateOfBirth("1970-01-01");
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
 
-        String result = controller.submitUser(editUser, bindingResult, authentication, model);
+        String result = controller.submitUser(editUser, bindingResult, authentication, dateValidStr, model);
 
         assertEquals("users/editTemplate", result);
         assertEquals("John", user.getFname()); //Checks if first name didn't change because it is not valid
