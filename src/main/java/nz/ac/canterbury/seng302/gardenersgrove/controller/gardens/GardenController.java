@@ -404,9 +404,6 @@ public class GardenController {
         ArrayList<Plant> plants = new ArrayList<>();
         plants.add(savedPlant);
         garden.setPlants(plants);
-        logger.info("Garden " + garden.getId() + " saved");
-        logger.info("Saved Plant: " + savedPlant.getId());
-        logger.info("Plants {}", garden.getPlants());
         try {
             logger.info("reading file");
             ClassPathResource imgFile = new ClassPathResource("static/img/TestImages/tomato.jpg");
@@ -414,8 +411,6 @@ public class GardenController {
             byte[] image = Files.readAllBytes(imgFile.getFile().toPath());
             savedPlant.setPlantImage(mimeType,image);
             plantService.setPlantImage(savedPlant.getId(), mimeType, image);
-            logger.info("Saved Plant image type " + savedPlant.getPlantImageContentType());
-            logger.info("Saved Plant image content " + savedPlant.getPlantImage().toString());
         } catch (IOException e) {
             logger.info("Failed to read image {}", e.getMessage());
         }
