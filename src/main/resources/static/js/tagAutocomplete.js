@@ -35,8 +35,10 @@ function tagAutocomplete(options) {
 
         if (tag.length > 25) {
             tagsError.textContent = "A tag cannot exceed 25 characters"
+            tagAutocomplete.focus();
         } else if (!regex.test(tag)) {
             tagsError.textContent = "The tag name must only contain alphanumeric characters, spaces, -, _, ', or "
+            tagAutocomplete.focus();
         } else {
             tagsError.textContent ="";
             appendTagElement(tag)
@@ -47,6 +49,8 @@ function tagAutocomplete(options) {
      * Appends a tag element to the tag container.
      */
     function appendTagElement(tag) {
+        tagAutocomplete.clear();
+
         const tagText = document.createTextNode(tag + ' ');
 
         const tagElement = document.createElement('span');
@@ -71,8 +75,6 @@ function tagAutocomplete(options) {
      * @param {{ formatted: string } | string} tag - The entry in the autocomplete API response.
      */
     function addTag(tag) {
-        tagAutocomplete.clear();
-
         tag = tag.formatted ?? tag;
         if (tags.includes(tag)) {
             return;

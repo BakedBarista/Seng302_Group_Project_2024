@@ -248,6 +248,14 @@ function autocomplete(containerElement, callback, options) {
         closeDropDownList();
     }
 
+    /**
+     * Sets focus on an element and closes the dropdown list
+     */
+    function focus() {
+        inputElement.focus();
+        closeDropDownList();
+    }
+
     // Close the dropdown list
     function closeDropDownList() {
         const autocompleteItemsElement = inputContainerElement.querySelector(".autocomplete-items");
@@ -300,5 +308,5 @@ function autocomplete(containerElement, callback, options) {
     });
 
     // Return an object with the desired methods
-    return { clear };
+    return { clear, focus };
 }
