@@ -26,7 +26,7 @@ public class ApplicationController {
     private GardenService gardenService;
     private GardenUserService gardenUserService;
 
-    public ApplicationController(GardenService gardenService, GardenUserService gardenUserService) {
+    @Autowired
         this.gardenService = gardenService;
         this.gardenUserService = gardenUserService;
     }
