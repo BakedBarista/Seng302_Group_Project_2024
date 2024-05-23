@@ -6,8 +6,12 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.ForecastWeather;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.WeatherData;
+import nz.ac.canterbury.seng302.gardenersgrove.model.weather.WeatherAPICurrentResponse;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
-import nz.ac.canterbury.seng302.gardenersgrove.service.weatherAPI.WeatherAPIService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.weather.WeatherAPIService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -148,8 +152,9 @@ public class GardenController {
     }
 
     /**
-     * Gets the id of garden
+     * Gets the details page for a garden based on its ID
      * @param model representation of results
+     * @param id the ID of the garden wanted
      * @return gardenDetails page
      */
     @GetMapping("/gardens/{id}")
@@ -157,42 +162,55 @@ public class GardenController {
                                Model model) {
 
         logger.info("Get /gardens/id - display garden detail");
+
         Optional<Garden> gardenOpt = gardenService.getGardenById(id);
         if(gardenOpt.isPresent()) {
             Garden garden = gardenOpt.get();
             model.addAttribute("garden", garden);
             model.addAttribute("owner", garden.getOwner());
             model.addAttribute("plants", plantService.getPlantsByGardenId(id));
-            List<List<Map<String, Object>>> weatherResult;
 
-            if(garden.getLat() != null || garden.getLon() != null){
-                weatherResult = weatherAPIService.getWeatherData(id, garden.getLat(), garden.getLon());
-            }else {
-                weatherResult = new ArrayList<>();
-            }
-
-            List<Map<String, Object>> weatherPrevious = Collections.emptyList();
-            List<Map<String, Object>> weatherForecast = Collections.emptyList();
+            logger.info("Getting weather information for Garden: {}", id);
+            Double lat = garden.getLat();
+            Double lng = garden.getLon();
+            WeatherAPICurrentResponse currentResponse = new WeatherAPICurrentResponse();
+            List<ForecastWeather> forecastWeather = new ArrayList<>();
+            boolean wateringRecommendation = false;
             boolean displayWeatherAlert = false;
+            boolean displayWeather = false;
 
-            if (!weatherResult.isEmpty()) {
-                weatherPrevious = weatherResult.get(0);
-                weatherForecast = weatherResult.get(1);
-                displayWeatherAlert = garden.getDisplayWeatherAlert();
+            if (lat == null || lng == null) {
+                logger.info("Garden ID: {} has no Lat and Lng, no weather will be displayed.", id);
+            } else {
+                GardenWeather gardenWeather = weatherAPIService.getWeatherData(id, lat, lng);
+
+                // Check that the weather returned isn't null
+                 if (gardenWeather == null) {
+                     logger.error("Garden weather was returned as null, can't display");
+                 } else {
+                     // Extracts all the needed weather data
+                     currentResponse = weatherAPIService.getCurrentWeatherFromAPI(lat, lng);
+                     forecastWeather = gardenWeather.getForecastWeather();
+
+                     wateringRecommendation = weatherAPIService.getWateringRecommendation(gardenWeather, currentResponse);
+                     displayWeatherAlert = garden.getDisplayWeatherAlert();
+                     displayWeather = true;
+                 }
             }
 
-            model.addAttribute("weatherPrevious", weatherPrevious);
-            model.addAttribute("weatherForecast", weatherForecast);
-            model.addAttribute("displayWeather", !weatherResult.isEmpty());
-            model.addAttribute("displayRecommendation", displayWeatherAlert);
-            model.addAttribute("wateringRecommendation", garden.getWateringRecommendation());
-        }
+            model.addAttribute("forecastWeather", forecastWeather);
+            model.addAttribute("currentWeather", currentResponse);
+            model.addAttribute("wateringRecommendation", wateringRecommendation);
+            model.addAttribute("displayWeatherAlert", displayWeatherAlert);
+            model.addAttribute("displayWeather", displayWeather);
 
-        GardenUser currentUser = gardenUserService.getCurrentUser();
-        List<Garden> gardens = gardenService.getGardensByOwnerId(currentUser.getId());
-        model.addAttribute("currentUser", currentUser);
-        model.addAttribute("gardens", gardens);
-        return "gardens/gardenDetails";
+            GardenUser currentUser = gardenUserService.getCurrentUser();
+            List<Garden> gardens = gardenService.getGardensByOwnerId(currentUser.getId());
+            model.addAttribute("currentUser", currentUser);
+            model.addAttribute("gardens", gardens);
+            return "gardens/gardenDetails";
+        }
+        return "error/404";
     }
 
     /**
@@ -304,7 +322,7 @@ public class GardenController {
             existingGarden.get().setDescription(garden.getDescription());
             existingGarden.get().setLon(garden.getLon());
             existingGarden.get().setLat(garden.getLat());
-            existingGarden.get().setWeatherForecast(Collections.emptyList());
+//            existingGarden.get().setWeatherForecast(Collections.emptyList());
             gardenService.addGarden(existingGarden.get());
         }
         return "redirect:/gardens/" + id;
