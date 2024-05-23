@@ -25,14 +25,34 @@ function tagAutocomplete(options) {
     }
 
     /**
+     * Validates tag input before adding the tag element
+     *
+     * @param {{ formatted: string } | string} tag - The entry in the autocomplete API response
+     */
+    function validateTag(tag) {
+        const tagsError = document.getElementById("gardenTagsError");
+        const regex = new RegExp("\^[a-zA-Z0-9\\s\\-_']+$");
+
+        if (tag.length > 25) {
+            tagsError.textContent = "A tag cannot exceed 25 characters"
+        } else if (!regex.test(tag)) {
+            tagsError.textContent = "The tag name must only contain alphanumeric characters, spaces, -, _, ', or "
+        } else {
+            tagsError.textContent ="";
+            appendTagElement(tag)
+        }
+    }
+
+    /**
      * Appends a tag element to the tag container.
      */
     function appendTagElement(tag) {
+        const tagText = document.createTextNode(tag + ' ');
+
         const tagElement = document.createElement('span');
         tagElement.className = 'badge badge-md text-bg-secondary';
         tagElement.setAttribute('data-tag', tag);
 
-        const tagText = document.createTextNode(tag + ' ');
         tagElement.appendChild(tagText);
 
         const closeButton = document.createElement('button');
@@ -42,7 +62,6 @@ function tagAutocomplete(options) {
         tagElement.appendChild(closeButton);
 
         tagContainer.appendChild(tagElement);
-        // Add spaces between tags
         tagContainer.appendChild(document.createTextNode(' '));
     }
 
@@ -59,7 +78,7 @@ function tagAutocomplete(options) {
             return;
         }
 
-        appendTagElement(tag);
+        validateTag(tag);
 
         tags.push(tag);
         options.setTags(tags);
