@@ -7,8 +7,6 @@ import jakarta.validation.constraints.Size;
 import nz.ac.canterbury.seng302.gardenersgrove.customValidation.AgeRange;
 import nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidDate;
 
-import java.time.LocalDate;
-
 import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationConstants.*;
 
 /**
