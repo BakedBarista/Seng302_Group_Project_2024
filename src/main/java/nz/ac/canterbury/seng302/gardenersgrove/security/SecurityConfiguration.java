@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 /**
  * Custom Security Configuration
@@ -79,10 +80,18 @@ public class SecurityConfiguration {
         });
 
         // Instead of returning 403, redirect to "/users/login"
-        // FIXME: Redirects to localhost on prod instance
-        // http.exceptionHandling(exceptionHandling -> exceptionHandling
-        //         .authenticationEntryPoint((request, response, authException) -> response.sendRedirect("/users/login"))
-        //         .accessDeniedHandler((request, response, exception) -> response.sendRedirect("/users/login")));
+        http.exceptionHandling(exceptionHandling -> exceptionHandling
+                .authenticationEntryPoint((request, response, authException) -> 
+                {
+                    response.setStatus(302);
+                    response.addHeader("Location", getBasePath() + "/users/login");
+                    response.flushBuffer();
+                })
+                .accessDeniedHandler((request, response, exception) -> {
+                    response.setStatus(302);
+                    response.addHeader("Location", getBasePath() + "/users/login");
+                    response.flushBuffer();
+                }));
 
         // Define logging out, a POST "/users/logout" endpoint now exists under the hood,
         // redirect to "/users/login", invalidate session and remove cookie
@@ -95,5 +104,14 @@ public class SecurityConfiguration {
                         .deleteCookies("JSESSIONID"));
         return http.build();
 
+    }
+
+    /**
+     * Gets the base path of the application if one is specified, e.g. "/test"
+     * @return the base path of the application, or an empty string if none is specified
+     */
+    private String getBasePath() {
+        // https://stackoverflow.com/a/53896961/10530876
+        return ServletUriComponentsBuilder.fromCurrentContextPath().build().getPath();
     }
 }

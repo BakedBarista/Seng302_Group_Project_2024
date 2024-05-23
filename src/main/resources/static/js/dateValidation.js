@@ -10,12 +10,10 @@
 function validateDate() {
     let dateInput = document.getElementById('datePicker');
 
-    console.log(dateInput);
-
     if (dateInput.validity.badInput) {
         document.getElementById('dateError').value = "dateInvalid";
     } else {
-            document.getElementById('dateError').value = "";
+        document.getElementById('dateError').value = "";
     }
     return true;
 }

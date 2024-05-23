@@ -2,23 +2,19 @@ package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.FriendsRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import static nz.ac.canterbury.seng302.gardenersgrove.entity.Friends.Status.ACCEPTED;
-import static nz.ac.canterbury.seng302.gardenersgrove.entity.Friends.Status.PENDING;
+import static nz.ac.canterbury.seng302.gardenersgrove.entity.Friends.Status.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 @DataJpaTest
 @Import(FriendService.class)
@@ -127,6 +123,9 @@ public class FriendsServiceTest {
         assertTrue(request.isEmpty());
     }
 
+    /**
+     * Test to check if a friend is removed from the database
+     */
     @Test
     public void whenRemovedFriend_thenFriendRemoved() {
         Friends relationShip3 = new Friends(testUser3, testUser4, PENDING);
@@ -136,6 +135,9 @@ public class FriendsServiceTest {
         assertNull(request);
     }
 
+    /**
+     * Test to check if a friend is added to the database
+     */
     @Test
     void whenInviteAccepted_thenFriendAdded() {
         Friends relationship = new Friends(testUser3, testUser4, ACCEPTED);
@@ -145,6 +147,9 @@ public class FriendsServiceTest {
         assertEquals(relationship.getFriend_id(), request.getFriend_id());
     }
 
+    /**
+     * Test to check if a friend is added to the database
+     */
     @Test
     void whenGetSentFriendship_thenFriendshipReturned() {
         Friends relationship = new Friends(testUser3, testUser4, PENDING);
@@ -153,4 +158,49 @@ public class FriendsServiceTest {
         assertEquals(relationship, friendship);
     }
 
+    /**
+     * Test to check if a friend is added to the database and then deleted
+     */
+    @Test
+     void whenFriendshipCreated_andFriendshipIsDeleted_thenFriendshipDoesntExist() {
+        Friends relationship = new Friends(testUser3, testUser4, PENDING);
+        friendService.save(relationship);
+        friendService.delete(relationship);
+        assertNull(friendService.getSent(testUser3.getId(), testUser4.getId()));
+    }
+
+    /**
+     * Test to check if a friend is added to the database and then removed
+     */
+    @Test
+     void whenFriendshipCreated_andFriendIsRemoved_thenFriendIsNoLongerAFriend() {
+        Friends relationship = new Friends(testUser3, testUser4, PENDING);
+        friendService.save(relationship);
+        friendService.removeFriendship(relationship);
+        assertNull(friendService.getSent(testUser3.getId(), testUser4.getId()));
+    }
+
+    /**
+     * Test to check if a friendship is declined an the result is correctly stored
+     */
+    @Test
+     void whenRequestIsSent_andRecipientDeclines_thenDatabaseIsUpdated() {
+        Friends relationship = new Friends(testUser3, testUser4, DECLINED);
+        friendService.save(relationship);
+        List<Friends> sentRequestsDeclined = friendService.getSentRequestsDeclined(testUser3.getId());
+        assertEquals(relationship, sentRequestsDeclined.get(0));
+    }
+
+
 }
+
+
+
+
+
+
+
+
+
+
+

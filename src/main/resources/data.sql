@@ -25,4 +25,25 @@ INSERT INTO plant (name, count, description, planted_date, garden_id) VALUES
                                                                                             ('Orchid', 10, 'Purple', null, 1),
                                                                                             ('Maple', 14, 'Red', null, 1);
 
+-- Tags
+INSERT INTO tag (name) VALUES
+    ('Enchanting'),
+    ('Eternal'),
+    ('Hard-to-find'),
+    ('Harmonious'),
+    ('Moist'),
+    ('Water feature'),
+    ('Whimsical'),
+    ('Zen');
 
+INSERT INTO garden_tags (garden_id, tag_id) VALUES
+    (1, 'Enchanting'),
+    (1, 'Moist'),
+    (1, 'Water feature'),
+    (2, 'Harmonious'),
+    (2, 'Zen'),
+    (3, 'Eternal'),
+    (3, 'Moist'),
+    (3, 'Water feature'),
+    (4, 'Whimsical'),
+    (5, 'Hard-to-find');
