@@ -53,10 +53,10 @@
             </div>
             <div class="d-flex flex-row" >
                 <div th:if="${!displayWeather}">Location not found, please update your location to see the weather.</div>
-                <div class="card mx-1 shadow-sm" th:if="${displayWeather}" th:each="daysWeather: ${weatherForecast}" style="width: 250px;">
+                <div class="card mx-1 shadow-sm" th:if="${displayWeather}" th:each="daysWeather: ${forecastWeather}" style="width: 250px;">
                    <div class="border-0 m-0 p-0">
                        <div class="text-center">
-                           <img th:src="@{'/icons/weatherIcons/' + ${daysWeather.iconUrl}}" alt="Sunny" width="50" height="50">
+                           <img th:src="@{'/icons/weatherIcons/' + ${daysWeather.icon}}" alt="Sunny" width="50" height="50">
                            <p class="m-0" style="font-size: 16pt;"><strong th:text="${daysWeather.conditions}">Conditions</strong></p>
                            <p style="font-size: 10pt; color: #1E1E1E70;" th:text="${daysWeather.date}">Date</p>
                        </div>
@@ -74,7 +74,7 @@
                             <div class="col border-start m-0 p-2">
                                 <img th:src="@{/icons/humidity.svg}" alt="" width="24" height="24">
                                 <p class="m-0" style="font-size: 10pt; color: #1E1E1E70;">Humidity</p>
-                                <p class="m-0"><span th:text="${daysWeather.avgHumidity}"></span>%</p>
+                                <p class="m-0"><span th:text="${daysWeather.humidity}"></span>%</p>
                             </div>
                         </div>
                         <div class="row border-1 m-0 p-0">
