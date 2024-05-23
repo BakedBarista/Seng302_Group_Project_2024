@@ -73,7 +73,7 @@ public class RegisterController {
         logger.info("POST /users/register");
 
         if (Objects.equals(dateValidity, "dateInvalid")) {
-            bindingResult.rejectValue("DOB", "DOB.formatError", "Date must be in the format DD-MM-YYYY");
+            bindingResult.rejectValue("dateOfBirth", "DOB.formatError", "Date must be in the format DD-MM-YYYY");
         }
 
         if (userService.getUserByEmail(registerDTO.getEmail()) != null) {
@@ -89,8 +89,8 @@ public class RegisterController {
         }
 
         LocalDate dob = null;
-        if (registerDTO.getDOB() != null && !registerDTO.getDOB().isEmpty()) {
-            dob = LocalDate.parse(registerDTO.getDOB());
+        if (registerDTO.getDateOfBirth() != null && !registerDTO.getDateOfBirth().isEmpty()) {
+            dob = LocalDate.parse(registerDTO.getDateOfBirth());
         }
         GardenUser user = new GardenUser(registerDTO.getFname(), registerDTO.getLname(), registerDTO.getEmail(),
                 registerDTO.getPassword(), dob);
