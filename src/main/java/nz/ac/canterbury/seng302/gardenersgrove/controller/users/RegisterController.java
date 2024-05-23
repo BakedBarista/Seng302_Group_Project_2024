@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.Objects;
 
 import org.slf4j.Logger;
@@ -90,7 +91,12 @@ public class RegisterController {
 
         LocalDate dob = null;
         if (registerDTO.getDateOfBirth() != null && !registerDTO.getDateOfBirth().isEmpty()) {
-            dob = LocalDate.parse(registerDTO.getDateOfBirth());
+            try {
+                dob = LocalDate.parse(registerDTO.getDateOfBirth());
+            } catch (DateTimeParseException e) {
+                // shouldn't happen because of validation
+                logger.info("cannot parse invalid date format");
+            }
         }
         GardenUser user = new GardenUser(registerDTO.getFname(), registerDTO.getLname(), registerDTO.getEmail(),
                 registerDTO.getPassword(), dob);

@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Objects;
 
 import org.slf4j.Logger;
@@ -117,7 +118,12 @@ public class EditUserController {
         user.setLname(editUserDTO.getLname());
         user.setEmail(editUserDTO.getEmail());
         if (editUserDTO.getDateOfBirth() != null && !editUserDTO.getDateOfBirth().isEmpty()) {
-            user.setDOB(LocalDate.parse(editUserDTO.getDateOfBirth()));
+            try {
+                user.setDOB(LocalDate.parse(editUserDTO.getDateOfBirth()));
+            } catch (DateTimeParseException e) {
+                // shouldn't happen because of validation
+                logger.info("cannot parse invalid date format");
+            }
         } else {
             user.setDOB(null);
         }

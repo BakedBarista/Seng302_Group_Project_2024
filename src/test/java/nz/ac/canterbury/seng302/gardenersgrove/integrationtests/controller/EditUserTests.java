@@ -6,6 +6,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditPasswordDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.Authentication;
@@ -128,7 +129,6 @@ class EditUserControllerTest {
         assertEquals("users/editTemplate", result);
         assertEquals("John", user.getFname()); //Checks if first name didn't change because it is not valid
         assertEquals("Doe", user.getLname()); //Checks if last name didn't change because it is not valid
-
     }
 
     @Test
@@ -149,5 +149,79 @@ class EditUserControllerTest {
 
         assertTrue(user.checkPassword("N3wP@ssw0rd"));
         verify(emailSenderService).sendEmail(eq(user), eq("Password Changed"), any());
+    }
+
+    @Test
+    void givenIChangeDateOfBirthToNull_ThenIDoNotHaveADateOfBirth() {
+        GardenUser user = new GardenUser("John", "Doe", "john@email.com",
+                "P#ssw0rd", LocalDate.of(2000, 10, 10));
+
+        EditUserDTO editUser = new EditUserDTO();
+        editUser.setFname("Jane");
+        editUser.setLname("Doe");
+        editUser.setNoLname(false);
+        editUser.setEmail("john@email.com");
+        editUser.setDateOfBirth("");
+
+        when(userService.getUserById(userId)).thenReturn(user);
+        when(authentication.getPrincipal()).thenReturn(userId);
+
+        BindingResult bindingResult = mock(BindingResult.class);
+        when(bindingResult.hasErrors()).thenReturn(false);
+
+        controller.submitUser(editUser, bindingResult, authentication, dateValidStr, model);
+
+        Assertions.assertNull(user.getDOB());
+    }
+
+    @Test
+    void givenIEditToANewValidDateOfBirth_ThenIHaveALocalDateOfTheGivenDate() {
+        GardenUser user = new GardenUser("John", "Doe", "john@email.com",
+                "P#ssw0rd", LocalDate.of(2000, 10, 10));
+
+        EditUserDTO editUser = new EditUserDTO();
+        editUser.setFname("John");
+        editUser.setLname("Doe");
+        editUser.setNoLname(false);
+        editUser.setEmail("john@email.com");
+        editUser.setDateOfBirth("");
+        String dobString = "1998-01-01";
+        editUser.setDateOfBirth(dobString);
+
+        when(userService.getUserById(userId)).thenReturn(user);
+        when(authentication.getPrincipal()).thenReturn(userId);
+
+        BindingResult bindingResult = mock(BindingResult.class);
+        when(bindingResult.hasErrors()).thenReturn(false);
+
+        controller.submitUser(editUser, bindingResult, authentication, dateValidStr, model);
+
+        Assertions.assertEquals(LocalDate.parse(dobString), user.getDOB());
+    }
+
+    @Test
+    void givenIEditToANewInvalidDateOfBirth_ThenMyDateOfBirthIsNotChanged() {
+        LocalDate originalDOB = LocalDate.of(2000, 10, 10);
+        GardenUser user = new GardenUser("John", "Doe", "john@email.com",
+                "P#ssw0rd", originalDOB);
+
+        EditUserDTO editUser = new EditUserDTO();
+        editUser.setFname("John");
+        editUser.setLname("Doe");
+        editUser.setNoLname(false);
+        editUser.setEmail("john@email.com");
+        editUser.setDateOfBirth("");
+        String dobString = "10/10/2010";
+        editUser.setDateOfBirth(dobString);
+
+        when(userService.getUserById(userId)).thenReturn(user);
+        when(authentication.getPrincipal()).thenReturn(userId);
+
+        BindingResult bindingResult = mock(BindingResult.class);
+        when(bindingResult.hasErrors()).thenReturn(false);
+
+        controller.submitUser(editUser, bindingResult, authentication, dateValidStr, model);
+
+        Assertions.assertEquals(originalDOB, user.getDOB());
     }
 }
