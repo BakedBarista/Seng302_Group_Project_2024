@@ -15,12 +15,12 @@
             <h1>Register</h1>
             <form th:action="register" method="post" th:object="${registerDTO}">
                 <div class="mb-3">
-                    <label for="fname" th:class="'form-label ' + ${#fields.hasErrors('fname') ? 'is-invalid' : ''}">First Name</label>
+                    <label for="fname" th:class="'required-field form-label ' + ${#fields.hasErrors('fname') ? 'is-invalid' : ''}">First Name</label>
                     <input id="fname" type="text" th:class="'form-control ' + ${#fields.hasErrors('fname') ? 'is-invalid' : ''}" th:name="fname" th:value="*{fname}">
                     <div class="invalid-feedback" th:if="${#fields.hasErrors('fname')}" th:errors="*{fname}"></div>
                 </div>
                 <div class="mb-3">
-                    <label for="lname" th:class="'form-label ' + ${#fields.hasErrors('lname') ? 'is-invalid' : ''}">Last Name</label>
+                    <label id="lnameLabel" for="lname" th:class="'required-field form-label ' + ${#fields.hasErrors('lname') ? 'is-invalid' : ''}">Last Name</label>
                     <input type="text" th:class="'form-control ' + ${#fields.hasErrors('lname') ? 'is-invalid' : ''}" th:name="lname" th:value="*{lname}" id="lname">
                     <div class="invalid-feedback" th:if="${#fields.hasErrors('lname')}" th:errors="*{lname}"></div>
                 </div>
@@ -28,22 +28,22 @@
                     <input type="checkbox" class="form-check-input" th:name="noLname" th:value="*{noLname}" th:checked="*{noLname}" id="noLname"> I have no surname
                 </label>
                 <div class="mb-3">
-                    <label for="email" th:class="'form-input ' + ${#fields.hasErrors('email') ? 'is-invalid' : ''}">Email</label>
+                    <label for="email" th:class="'required-field form-input ' + ${#fields.hasErrors('email') ? 'is-invalid' : ''}">Email</label>
                     <input id="email" type="text" th:class="'form-control ' + ${#fields.hasErrors('email') ? 'is-invalid' : ''}" th:name="email" th:value="*{email}" inputmode="email">
                     <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
                 </div>
                 <div class="mb-3">
-                    <label for="password" th:class="'form-label ' + ${#fields.hasErrors('password') ? 'is-invalid' : ''}">Password</label>
+                    <label for="password" th:class="'required-field form-label ' + ${#fields.hasErrors('password') ? 'is-invalid' : ''}">Password</label>
                     <input id="password" type="password" th:class="'form-control ' + ${#fields.hasErrors('password') ? 'is-invalid' : ''}" th:name="password">
                     <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
                 </div>
                 <div class="mb-3">
-                    <label for="confirmPassword" th:class="'form-label ' + ${#fields.hasErrors('confirmPassword') ? 'is-invalid' : ''}">Confirm Password</label>
+                    <label for="confirmPassword" th:class="' form-label ' + ${#fields.hasErrors('confirmPassword') ? 'is-invalid' : ''}">Confirm Password</label>
                     <input id="confirmPassword" type="password" th:class="'form-control ' + ${#fields.hasErrors('confirmPassword') ? 'is-invalid' : ''}" th:name="confirmPassword">
                     <div class="invalid-feedback" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"></div>
                 </div>
                 <div class="mb-3">
-                    <label for="DOB" th:class="'form-label ' + ${#fields.hasErrors('DOB') ? 'is-invalid' : ''}">Date of Birth (optional)</label>
+                    <label for="DOB" th:class="'form-label ' + ${#fields.hasErrors('DOB') ? 'is-invalid' : ''}">Date of Birth</label>
                     <input id="DOB" type="text" th:class="'form-control ' + ${#fields.hasErrors('DOB') ? 'is-invalid' : ''}" th:name="DOB" th:value="*{DOB}">
                     <div class="invalid-feedback" th:if="${#fields.hasErrors('DOB')}" th:errors="*{DOB}"></div>
                 </div>
@@ -58,10 +58,17 @@
         document.addEventListener('DOMContentLoaded', (event) => {
             const noLname = document.getElementById('noLname');
             const lname = document.getElementById('lname');
+            const lnameLabel = document.getElementById('lnameLabel');
     
             // Function to check the initial state of noLname
             function checkNoLnameState() {
                 lname.disabled = noLname.checked;
+                if (noLname.checked) {
+                    lname.value = '';
+                    lnameLabel.classList.remove('required-field');
+                } else {
+                    lnameLabel.classList.add('required-field');
+                }
             }
     
             // Event listener for changes in noLname
