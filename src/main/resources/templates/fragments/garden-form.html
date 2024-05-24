@@ -168,12 +168,6 @@
                         <!-- Adjusted column size from col-md-8 to col-md-6 -->
                         <nav th:replace="~{fragments/description-box :: description-box-with-char-count}"></nav>
                     </div>
-                    <!-- Garden Tags Field -->
-                    <!-- TODO: add tags here -->
-                    <!-- <div class="col-md-12">
-                        <label for="tag-autocomplete-container"> Garden Tags: </label>
-                        <div class="autocomplete-container" id="tag-autocomplete-container"></div>
-                    </div> -->
                     <div class="col-lg-12">
                         <button type="submit" class="btn btn-primary btn-sm">Submit</button>
                         <button type="button" class="btn btn-outline-secondary btn-sm btn-cancel">Cancel</button>
@@ -183,13 +177,14 @@
         </div>
     </div>
 
-    <script th:src="@{/js/nextFormBox.js}"></script>
-    <script th:src="@{/js/autoComplete.js}"></script>
-    <script th:src="@{/js/toggleSubform.js}"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const currentPath = '/gardens/create';
-            const referrer = document.referrer;
+        <script th:src="@{/js/nextFormBox.js}"></script>
+        <script th:src="@{/js/autocomplete.js}"></script>
+        <script th:src="@{/js/locationAutocomplete.js}"></script>
+        <script th:src="@{/js/toggleSubform.js}"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const currentPath = '/gardens/create';
+                const referrer = document.referrer;
 
             if (referrer && !referrer.includes(currentPath)) {
                 sessionStorage.setItem('referrer', referrer);
