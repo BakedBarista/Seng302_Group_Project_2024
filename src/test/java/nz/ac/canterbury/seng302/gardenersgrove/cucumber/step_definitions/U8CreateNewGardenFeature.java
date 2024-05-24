@@ -13,6 +13,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
+import nz.ac.canterbury.seng302.gardenersgrove.service.weather.GardenWeatherService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weather.WeatherAPIService;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
@@ -49,6 +50,7 @@ public class U8CreateNewGardenFeature {
     private static ProfanityService profanityService;
 
     private static GardenController gardenController;
+    private static GardenWeatherService gardenWeatherService;
 
     private static Garden gardenMock;
     @BeforeAll
@@ -67,7 +69,7 @@ public class U8CreateNewGardenFeature {
         gardenService = new GardenService(gardenRepository);
         friendService = new FriendService(friendsRepository);
         plantService = new PlantService(plantRepository, gardenRepository);
-        weatherAPIService = new WeatherAPIService(restTemplate, gardenService);
+        weatherAPIService = new WeatherAPIService(restTemplate, gardenService, gardenWeatherService);
         moderationService = new ModerationService();
         mockedModerationService = mock(ModerationService.class);
         gardenController = new GardenController(gardenService, plantService, userService, weatherAPIService, friendService, moderationService, profanityService);

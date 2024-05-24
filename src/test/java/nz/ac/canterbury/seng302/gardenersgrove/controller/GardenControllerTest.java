@@ -4,6 +4,8 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.GardenController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.WeatherData;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weather.WeatherAPIService;
@@ -229,7 +231,7 @@ public class GardenControllerTest {
         Model model = mock(Model.class);
         Garden garden = new Garden("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"100","test description");
         when(gardenService.getGardenById(1)).thenReturn(Optional.of(garden));
-        List<List<Map<String, Object>>> weatherResult = new ArrayList<>();
+        GardenWeather weatherResult = new GardenWeather();
         when(weatherAPIService.getWeatherData(1, 0.0, 0.0)).thenReturn(weatherResult);
         String result = gardenController.gardenDetail(1L, model);
         assertEquals("gardens/gardenDetails", result);

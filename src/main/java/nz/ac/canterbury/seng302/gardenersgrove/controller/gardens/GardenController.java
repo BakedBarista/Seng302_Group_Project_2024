@@ -322,7 +322,6 @@ public class GardenController {
             existingGarden.get().setDescription(garden.getDescription());
             existingGarden.get().setLon(garden.getLon());
             existingGarden.get().setLat(garden.getLat());
-//            existingGarden.get().setWeatherForecast(Collections.emptyList());
             gardenService.addGarden(existingGarden.get());
         }
         return "redirect:/gardens/" + id;
