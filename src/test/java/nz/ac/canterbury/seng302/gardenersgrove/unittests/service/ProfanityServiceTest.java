@@ -57,14 +57,14 @@ public class ProfanityServiceTest {
     }
 
     @Test
-    public void testIsStandaloneWord_Standalone() {
+    void testIsStandaloneWord_Standalone() {
         String input = "badword in a sentence.";
         boolean result = profanityService.isStandaloneWord(input, 0, 7);
         assertTrue(result);
     }
 
     @Test
-    public void testIsStandaloneWord_NotStandalone() {
+    void testIsStandaloneWord_NotStandalone() {
         String input = "badwordin a sentence.";
         boolean result = profanityService.isStandaloneWord(input, 0, 7);
         assertFalse(result);

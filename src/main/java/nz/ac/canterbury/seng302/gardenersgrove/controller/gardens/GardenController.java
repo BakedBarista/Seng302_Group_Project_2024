@@ -30,12 +30,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -55,6 +51,7 @@ public class GardenController {
     private final FriendService friendService;
 
     private final ProfanityService profanityService;
+    private final String PROFANITY = "profanity";
 
     @Autowired
     public GardenController(GardenService gardenService, PlantService plantService, GardenUserService gardenUserService, WeatherAPIService weatherAPIService, FriendService friendService, ModerationService moderationService, ProfanityService profanityService) {
@@ -96,7 +93,7 @@ public class GardenController {
         logger.info("POST /gardens - submit the new garden form");
 
         checkGardenError(model,bindingResult,garden);
-        if (bindingResult.hasErrors() || model.containsAttribute("profanity")) {
+        if (bindingResult.hasErrors() || model.containsAttribute(PROFANITY)) {
             model.addAttribute("garden", garden);
             return "gardens/createGarden";
         }
@@ -250,7 +247,7 @@ public class GardenController {
                                Model model) {
 
         checkGardenError(model,result,garden);
-        if (result.hasErrors() || model.containsAttribute("profanity")) {
+        if (result.hasErrors() || model.containsAttribute(PROFANITY)) {
             model.addAttribute("garden", garden);
             model.addAttribute("id", id);
             return "gardens/editGarden";
@@ -374,7 +371,7 @@ public class GardenController {
         }
         if (bindingResult.hasErrors() || profanityFlagged) {
             if (profanityFlagged) {
-                model.addAttribute("profanity", "The description does not match the language standards of the app.");
+                model.addAttribute(PROFANITY, "The description does not match the language standards of the app.");
             }
             for (FieldError error : bindingResult.getFieldErrors()) {
                 if (locationErrorNames.contains(error.getField())) {
@@ -445,7 +442,7 @@ public class GardenController {
                     // Add plant image
                     try {
                         String imageName = plant.getName().replaceAll("\\s+","");
-                        ClassPathResource imgFile = new ClassPathResource("static/img/TestImages/" + imageName + ".jpg");
+                        ClassPathResource imgFile = new ClassPathResource("static/img/testImages/" + imageName + ".jpg");
                         String mimeType = Files.probeContentType(imgFile.getFile().toPath());
                         byte[] image = Files.readAllBytes(imgFile.getFile().toPath());
                         savedPlant.setPlantImage(mimeType, image);
