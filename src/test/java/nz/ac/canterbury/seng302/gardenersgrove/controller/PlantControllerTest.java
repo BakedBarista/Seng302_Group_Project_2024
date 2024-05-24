@@ -74,6 +74,16 @@ public class PlantControllerTest {
         assertEquals(expectedReturnPage, returnPage);
     }
 
+    @Test
+    void testAddPlantForm_GardenNotPresent_ReturnsAccessDenied() {
+        long gardenId = 0;
+        String expectedReturnPage = "/accessDenied";
+
+        when(gardenService.getGardenById(gardenId)).thenReturn(Optional.empty());
+        String returnPage = plantController.addPlantForm(gardenId, model);
+        assertEquals(expectedReturnPage, returnPage);
+    }
+
 
     @Test
     void testSubmitAddPlantForm_DataIsValid_ReturnToGardenDetailPage() throws Exception {
