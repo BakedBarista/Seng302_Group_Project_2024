@@ -14,7 +14,7 @@
 <main class="py-5">
     <div class="mx-5">
         <div class="row">
-            <div class="card col-xl-6 col-12">
+            <div class="card col-xl-6 col-12 p-3">
                 <div class="d-flex">
                     <h1 class="pb-4 pe-5" th:text="${garden.name}">GARDEN NAME</h1>
                     <div class="ms-auto">
@@ -61,7 +61,7 @@
                     <script th:src="@{/js/gardenDetailsTagAutocomplete.js}"></script>
                 </div>
             </div>
-            <div class="card col-xl-6 col-12">
+            <div class="card col-xl-6 col-12 p-3">
                 <div class="mt-4 d-md-none"></div>
                 <h2>Weather:</h2>
                 <div th:if="${displayRecommendation}" class="alert alert-warning alert-dismissible fade show d-flex" role="alert">
