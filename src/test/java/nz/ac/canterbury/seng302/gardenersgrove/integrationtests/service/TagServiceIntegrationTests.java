@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.verify;
 
 import java.util.List;
 
@@ -124,4 +125,19 @@ class TagServiceIntegrationTests {
         assertTrue(garden.getTags().contains(redTag));
         assertTrue(garden.getTags().contains(blueTag));
     }
+
+    @Test
+    void givenTagNameTooLOng_whenGetOrCreateTag_thenTagNotCreated() {
+        String longTag = "Amazing wonderful peaceful garden";
+
+        assertNull(tagService.getOrCreateTag(longTag));
+    }
+
+    @Test
+    void givenTagHasInvalidCharacters_whenGetOrCreateTag_thenTagNotCreated() {
+        String invalidCharTag = "Cool!";
+
+        assertNull(tagService.getOrCreateTag(invalidCharTag));
+    }
+
 }
