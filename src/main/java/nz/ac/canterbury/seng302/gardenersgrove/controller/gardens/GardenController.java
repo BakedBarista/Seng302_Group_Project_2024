@@ -403,8 +403,8 @@ public class GardenController {
     /**
      * Create test data
      * @throws IOException When problem reading file.
+     * ChatGPT help with processing sql queries to arraylist
      */
-    //With help of chatGPT for creating multiple gardens and plants
     @PostConstruct
     public void dummyGardens() throws IOException {
         try {
@@ -443,7 +443,9 @@ public class GardenController {
                 List<Plant> plants = new ArrayList<>();
                 for (int j = 0; j < plantsDetails.size(); j++) {
                     String[] plantDetail = plantsDetails.get(j);
-                    Plant plant = new Plant(plantDetail[0], Integer.toString(15), plantDetail[1], "01/03/2024");
+                    String plantName = plantDetail[0];
+                    String plantDescription = plantDetail[1];
+                    Plant plant = new Plant(plantName, "15", plantDescription, "01/03/2024");
                     Plant savedPlant = plantService.addPlant(plant, garden.getId());
 
                     // Add plant image
