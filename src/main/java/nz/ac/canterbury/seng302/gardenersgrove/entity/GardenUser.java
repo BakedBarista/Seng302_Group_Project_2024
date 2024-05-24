@@ -13,7 +13,7 @@ import java.util.Set;
 
 
 /**
- * Entity class reflecting an entry of fname, lname, email, password and date of birth(DOB)
+ * Entity class reflecting an entry of fname, lname, email, password and date of birth
  * Note the @link{Entity} annotation required for declaring this as a persistence entity
  */
 @Entity
@@ -35,7 +35,7 @@ public class GardenUser {
     private String password;
 
     @Column(nullable = true)
-    private LocalDate DOB;
+    private LocalDate dateOfBirth;
 
     @Column(nullable = true)
     private String profilePictureContentType;
@@ -86,13 +86,13 @@ public class GardenUser {
      * @param lname last name of user 
      * @param email email of user 
      * @param password password of user 
-     * @param DOB date of birth of use 
+     * @param dateOfBirth date of birth of use
      */
-    public GardenUser(String fname, String lname, String email, String password, LocalDate DOB) {
+    public GardenUser(String fname, String lname, String email, String password, LocalDate dateOfBirth) {
         this.fname = fname;
         this.lname = lname;
         this.email = email;
-        this.DOB = DOB;
+        this.dateOfBirth = dateOfBirth;
 
         this.setPassword(password);
     }
@@ -185,10 +185,10 @@ public class GardenUser {
     /**
      * Setter for the user's date of birth
      *
-     * @param DOB the user's date of birth
+     * @param dateOfBirth the user's date of birth
      */
-    public void setDOB(LocalDate DOB) {
-        this.DOB = DOB;
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
     }
 
     /**
@@ -196,8 +196,8 @@ public class GardenUser {
      *
      * @return user's date of birth
      */
-    public LocalDate getDOB() {
-        return DOB;
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
     }
 
     /**

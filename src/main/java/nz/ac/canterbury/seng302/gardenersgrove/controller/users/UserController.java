@@ -51,9 +51,9 @@ public class UserController {
         model.addAttribute("lname", user.getLname());
         model.addAttribute("email", user.getEmail());
 
-        if (user.getDOB() != null) {
-            String dobString = user.getDOB().format(NZ_FORMAT_DATE);
-            model.addAttribute("dob", dobString);
+        if (user.getDateOfBirth() != null) {
+            String dobString = user.getDateOfBirth().format(NZ_FORMAT_DATE);
+            model.addAttribute("dateOfBirth", dobString);
         }
 
         return "users/user";

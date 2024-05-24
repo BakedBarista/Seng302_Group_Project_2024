@@ -1,4 +1,4 @@
-INSERT INTO garden_user (fname, lname, email, password, dob) VALUES ('Jane', 'Doe', 'jane.doe@gmail.com', 'password', null);
+INSERT INTO garden_user (fname, lname, email, password, date_of_birth) VALUES ('Jane', 'Doe', 'jane.doe@gmail.com', 'password', null);
 
 -- Gardens
 INSERT INTO garden (name, street_Number, street_Name, suburb, city, country, post_Code, lat, lon, size, is_public, owner_id, display_weather_alert, watering_recommendation) VALUES ('Enchanted Oasis', '1','Ilam road','Ilam','Christchurch','New Zealand','8041','0.55','0.55', 1200, true, 1, true, false);

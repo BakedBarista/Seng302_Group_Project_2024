@@ -30,7 +30,7 @@ public class UserServiceTest {
         Assertions.assertEquals(gardenUser.getFname(), "fname");
         Assertions.assertEquals(gardenUser.getLname(), "lname");
         Assertions.assertEquals(gardenUser.getEmail(), "email");
-        Assertions.assertEquals(gardenUser.getDOB(), LocalDate.of(1970, 1, 1));
+        Assertions.assertEquals(gardenUser.getDateOfBirth(), LocalDate.of(1970, 1, 1));
     }
 
     /**

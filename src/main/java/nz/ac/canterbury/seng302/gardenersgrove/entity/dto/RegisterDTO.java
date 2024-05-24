@@ -99,7 +99,7 @@ public class RegisterDTO {
 
     public String getDateOfBirth() { return dateOfBirth; }
 
-    public void setDateOfBirth(String DOB) {
-        this.dateOfBirth = DOB;
+    public void setDateOfBirth(String dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
     }
 }

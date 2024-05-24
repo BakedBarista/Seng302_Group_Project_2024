@@ -105,7 +105,7 @@ class EditUserControllerTest {
         assertEquals("Jane", user.getFname());
         assertEquals("Dough", user.getLname());
         assertEquals("jane@email.com", user.getEmail());
-        assertEquals(LocalDate.of(1970, 1, 1), user.getDOB());
+        assertEquals(LocalDate.of(1970, 1, 1), user.getDateOfBirth());
     }
 
     @Test
@@ -171,7 +171,7 @@ class EditUserControllerTest {
 
         controller.submitUser(editUser, bindingResult, authentication, dateValidStr, model);
 
-        Assertions.assertNull(user.getDOB());
+        Assertions.assertNull(user.getDateOfBirth());
     }
 
     @Test
@@ -196,7 +196,7 @@ class EditUserControllerTest {
 
         controller.submitUser(editUser, bindingResult, authentication, dateValidStr, model);
 
-        Assertions.assertEquals(LocalDate.parse(dobString), user.getDOB());
+        Assertions.assertEquals(LocalDate.parse(dobString), user.getDateOfBirth());
     }
 
     @Test
@@ -222,6 +222,6 @@ class EditUserControllerTest {
 
         controller.submitUser(editUser, bindingResult, authentication, dateValidStr, model);
 
-        Assertions.assertEquals(originalDOB, user.getDOB());
+        Assertions.assertEquals(originalDOB, user.getDateOfBirth());
     }
 }

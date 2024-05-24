@@ -57,7 +57,7 @@ public class RegisterControllerTest {
         registerController.submitRegister(registerDTO, bindingResult, null);
 
         GardenUser user = gardenUserService.getUserByEmail(registerDTO.getEmail());
-        Assertions.assertNull(user.getDOB());
+        Assertions.assertNull(user.getDateOfBirth());
     }
 
     @Test
@@ -80,7 +80,7 @@ public class RegisterControllerTest {
         registerController.submitRegister(registerDTO, bindingResult, null);
 
         GardenUser user = gardenUserService.getUserByEmail(registerDTO.getEmail());
-        Assertions.assertEquals(LocalDate.parse(dobString), user.getDOB());
+        Assertions.assertEquals(LocalDate.parse(dobString), user.getDateOfBirth());
     }
 
     @Test

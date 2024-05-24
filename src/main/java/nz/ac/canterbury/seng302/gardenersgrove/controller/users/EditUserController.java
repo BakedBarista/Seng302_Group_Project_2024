@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -65,8 +64,8 @@ public class EditUserController {
         editUserDTO.setFname(user.getFname());
         editUserDTO.setLname(user.getLname());
         editUserDTO.setEmail(user.getEmail());
-        if (user.getDOB() != null) {
-            editUserDTO.setDateOfBirth(user.getDOB().format(DateTimeFormatter.ISO_LOCAL_DATE));
+        if (user.getDateOfBirth() != null) {
+            editUserDTO.setDateOfBirth(user.getDateOfBirth().format(DateTimeFormatter.ISO_LOCAL_DATE));
         }
         model.addAttribute("editUserDTO", editUserDTO);
 
@@ -123,13 +122,13 @@ public class EditUserController {
         user.setEmail(editUserDTO.getEmail());
         if (editUserDTO.getDateOfBirth() != null && !editUserDTO.getDateOfBirth().isEmpty()) {
             try {
-                user.setDOB(LocalDate.parse(editUserDTO.getDateOfBirth()));
+                user.setDateOfBirth(LocalDate.parse(editUserDTO.getDateOfBirth()));
             } catch (DateTimeParseException e) {
                 // shouldn't happen because of validation
                 logger.info("cannot parse invalid date format");
             }
         } else {
-            user.setDOB(null);
+            user.setDateOfBirth(null);
         }
         userService.addUser(user);
 
