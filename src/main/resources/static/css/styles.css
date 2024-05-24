@@ -2,8 +2,8 @@
 :root {
     --gg-dark: #2C430D;
     --gg-primary: #395C0A;
+    --gg-primary-rgb: 57, 92, 10;
     --gg-primary-light: #608530;
-    --gg-primary-rgb: 85, 173, 83;
     --gg-secondary: #A4AF69;
     --gg-secondary-rgb: 164, 175, 105;
     --gg-secondary-dark: #8C9D34;
@@ -18,6 +18,11 @@
     --gg-heading-font: "DM Serif Display", serif;
     --gg-body-font: "Open Sans", sans-serif;
 
+
+    --bs-primary: var(--gg-primary);
+    --bs-primary-rgb: var(--gg-primary-rgb);
+    --bs-secondary: var(--gg-secondary);
+    --bs-secondary-rgb: var(--gg-secondary-rgb);
 
     --bs-light: var(--gg-white);
     --bs-light-rgb: var(--gg-white-rgb);
@@ -322,10 +327,6 @@ h1, h2, h3, h4, h5, h6 {
     height: 100%;
 }
 
-.autocomplete-container {
-    margin-bottom: 20px;
-}
-
 .input-container {
     display: flex;
     position: relative;
@@ -369,7 +370,8 @@ h1, h2, h3, h4, h5, h6 {
     background-color: rgba(0, 0, 0, 0.1);
 }
 
-.clear-button {
+.clear-button,
+.accept-button {
     color: rgba(0, 0, 0, 0.4);
     cursor: pointer;
 
@@ -382,11 +384,17 @@ h1, h2, h3, h4, h5, h6 {
     align-items: center;
 }
 
-.clear-button.visible {
+.accept-button {
+    right: 35px;
+}
+
+.clear-button.visible,
+.accept-button.visible {
     display: flex;
 }
 
-.clear-button:hover {
+.clear-button:hover,
+.accept-button:hover {
     color: rgba(0, 0, 0, 0.6);
 }
 
@@ -412,4 +420,20 @@ h1, h2, h3, h4, h5, h6 {
 .pagination .page-item.active .page-link {
     background-color: var(--gg-primary-light);
     border-color: var(--gg-primary-light);
+}
+
+/* Custom badge styling (used for tags) */
+.badge-md {
+    font-size: 1em;
+}
+
+.badge .btn-close {
+    padding: 0;
+    vertical-align: middle;
+
+    /* HACK: Normally btn-close is dark on light, but we want light on dark */
+    filter: invert();
+
+    --bs-btn-close-opacity: 0.75;
+    --bs-btn-close-hover-opacity: 1.0;
 }
