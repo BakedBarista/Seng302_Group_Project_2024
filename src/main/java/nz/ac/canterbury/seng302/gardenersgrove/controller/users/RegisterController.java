@@ -1,12 +1,10 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -81,6 +79,13 @@ public class RegisterController {
 
         if (!registerDTO.getPassword().equals(registerDTO.getConfirmPassword())) {
             bindingResult.rejectValue("confirmPassword", null, "Passwords do not match");
+        }
+
+        if (registerDTO.isNoLname()) {
+            registerDTO.setLname(null);
+        }
+        if ((registerDTO.getLname() == null || registerDTO.getLname().isEmpty()) && !registerDTO.isNoLname()) {
+            bindingResult.rejectValue("lname", null, "Last name cannot be empty");
         }
 
         if (bindingResult.hasErrors()) {
