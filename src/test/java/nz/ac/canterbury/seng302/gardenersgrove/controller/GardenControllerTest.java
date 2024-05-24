@@ -163,6 +163,14 @@ public class GardenControllerTest {
     }
 
     @Test
+    public void testGetGarden_GardenNotPresent_ReturnsAccessDenied() {
+        Model model = mock(Model.class);
+        when(gardenService.getGardenById(0L)).thenReturn(Optional.empty());
+        String result = gardenController.getGarden(0L, model);
+        assertEquals("/accessDenied", result);
+    }
+
+    @Test
     public void setUpdateStatusTrueQueryDatabaseReturnTrue() {
         when(gardenService.getGardenById(1L)).thenReturn(Optional.of(new Garden()));
         when(gardenService.addGarden(any())).thenReturn(new Garden());
