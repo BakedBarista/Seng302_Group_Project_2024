@@ -11,4 +11,7 @@ public class ValidationConstants {
     public static final String NAME_REGEX = "^[\\p{L}\\s'-]*$";
 
     public static final String GARDEN_REGEX = "^[\\p{L}0-9 .,'-]*$";
+
+    public static final String TAG_REGEX = "^[a-zA-Z0-9\\s\\-_']+$";
+    public static final int TAG_MAX_LEN = 25;
 }
