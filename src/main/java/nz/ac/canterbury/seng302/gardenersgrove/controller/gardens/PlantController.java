@@ -61,7 +61,7 @@ public class PlantController {
 
         GardenUser owner = gardenUserService.getCurrentUser();
         Optional<Garden> garden = gardenService.getGardenById(gardenId);
-        if (!garden.isPresent() || garden.get().getOwner().getId().equals( owner.getId())) {
+        if (!garden.isPresent() || !garden.get().getOwner().getId().equals(owner.getId())) {
             return "/accessDenied";
         }
 
@@ -152,7 +152,7 @@ public class PlantController {
                 plantOpt.setPlantedDate(databaseDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
             }
         }
-        if (!garden.isPresent() || garden.get().getOwner().getId().equals( owner.getId())) {
+        if (!garden.isPresent() || !garden.get().getOwner().getId().equals(owner.getId())) {
             return "/accessDenied";
         }
         List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
