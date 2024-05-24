@@ -64,7 +64,7 @@ public class GardenServiceIntegrationTests {
         List<Garden> gardens = gardenService.getPublicGardens();
 
         Long currentId = gardens.get(0).getId();
-        for (Garden garden : gardens.subList(1, gardens.size() - 1)) {
+        for (Garden garden : gardens.subList(1, gardens.size())) {
             Assertions.assertTrue(currentId > garden.getId());
             currentId = garden.getId();
         }
