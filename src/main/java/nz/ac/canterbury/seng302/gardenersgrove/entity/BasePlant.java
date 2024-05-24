@@ -30,13 +30,6 @@ public abstract class BasePlant {
     @JoinColumn
     protected Garden garden;
 
-    @Column(nullable = true)
-    protected String plantImageContentType;
-
-    @Column(nullable = true, columnDefinition = "MEDIUMBLOB")
-    @Lob
-    protected byte[] plantImage;
-
     // Getters and setters
 
     public String getName() {
@@ -69,18 +62,5 @@ public abstract class BasePlant {
 
     public void setGarden(Garden garden) {
         this.garden = garden;
-    }
-
-    public String getPlantImageContentType() {
-        return plantImageContentType;
-    }
-
-    public byte[] getPlantImage() {
-        return plantImage;
-    }
-
-    public void setPlantImage(String contentType, byte[] plantImage) {
-        this.plantImageContentType = contentType;
-        this.plantImage = plantImage;
     }
 }

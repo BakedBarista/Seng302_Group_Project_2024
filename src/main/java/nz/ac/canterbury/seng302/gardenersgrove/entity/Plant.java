@@ -18,6 +18,13 @@ public class Plant extends BasePlant {
     @Column()
     protected LocalDate plantedDate;
 
+    @Column(nullable = true)
+    protected String plantImageContentType;
+
+    @Column(nullable = true, columnDefinition = "MEDIUMBLOB")
+    @Lob
+    protected byte[] plantImage;
+
     public Plant(String name, String count, String description, LocalDate plantedDate) {
         this.name = name;
         this.count = count;
@@ -53,6 +60,19 @@ public class Plant extends BasePlant {
 
     public void setPlantedDate(LocalDate plantedDate) {
         this.plantedDate = plantedDate;
+    }
+
+    public String getPlantImageContentType() {
+        return plantImageContentType;
+    }
+
+    public byte[] getPlantImage() {
+        return plantImage;
+    }
+
+    public void setPlantImage(String contentType, byte[] plantImage) {
+        this.plantImageContentType = contentType;
+        this.plantImage = plantImage;
     }
 
     @Override

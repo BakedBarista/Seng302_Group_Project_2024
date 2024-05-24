@@ -93,12 +93,6 @@ public class PlantController {
             );
         }
 
-        // Makes sure the image is null when nothing uploaded
-        if (file.isEmpty()) {
-            logger.info("No image chosen for plant, using default image.");
-            plantDTO.setPlantImage(null, null);
-        }
-
         if (bindingResult.hasErrors()) {
             model.addAttribute("plant", plantDTO);
             model.addAttribute("gardenId", gardenId);
