@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.PlantController;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
@@ -8,6 +9,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -56,6 +58,10 @@ public class PlantControllerTest {
         when(gardenUserService.getCurrentUser()).thenReturn(mockUser);
         when(gardenService.getGardensByOwnerId(1L)).thenReturn(Collections.emptyList());
 
+        Garden mockGarden = new Garden();
+        mockGarden.setOwner(mockUser);
+        when(gardenService.getGardenById(0L)).thenReturn(Optional.of(mockGarden));
+
         model = mock(Model.class);
     }
 
@@ -67,6 +73,7 @@ public class PlantControllerTest {
         String returnPage = plantController.addPlantForm(gardenId, model);
         assertEquals(expectedReturnPage, returnPage);
     }
+
 
     @Test
     void testSubmitAddPlantForm_DataIsValid_ReturnToGardenDetailPage() throws Exception {
@@ -134,14 +141,27 @@ public class PlantControllerTest {
     @Test
     void testEditPlantForm_ReturnsToEditPlant() {
         Plant plant = new Plant("#invalid", "10", "Yellow", "11/03/2024");
-        long gardenId = 0;
-        long plantId = 0;
+        long gardenId = 1L;
+        long plantId = 1L;
         String expectedReturnPage = "plants/editPlant";
 
+        GardenUser owner = new GardenUser();
+        owner.setId(1L);
+
+        Garden garden = new Garden("Test Garden", "1", "test", "test suburb", "test city", "test country", "1234", 0.0, 0.0, "100", "test description");
+        garden.setOwner(owner);
+
         when(plantService.getPlantById(plantId)).thenReturn(Optional.of(plant));
+        when(gardenService.getGardenById(gardenId)).thenReturn(Optional.of(garden));
+        when(gardenUserService.getCurrentUser()).thenReturn(owner);
+        when(gardenService.getGardensByOwnerId(owner.getId())).thenReturn(Collections.singletonList(garden));
 
         String returnPage = plantController.editPlantForm(gardenId, plantId, model);
         assertEquals(expectedReturnPage, returnPage);
+        verify(model).addAttribute("gardens", Collections.singletonList(garden));
+        verify(model).addAttribute("gardenId", gardenId);
+        verify(model).addAttribute("plantId", plantId);
+        verify(model).addAttribute("plant", plant);
     }
 
     @Test

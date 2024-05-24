@@ -122,12 +122,20 @@ public class GardenControllerTest {
     @Test
     public void testGetGarden() {
         Model model = mock(Model.class);
-        Garden garden = new Garden("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"100","test description");
-        when(gardenService.getGardenById(1)).thenReturn(Optional.of(garden));
+        GardenUser owner = new GardenUser();
+        owner.setId(1L);
+        Garden garden = new Garden("Test Garden", "1", "test", "test suburb", "test city", "test country", "1234", 0.0, 0.0, "100", "test description");
+        garden.setOwner(owner);
 
-        String result = gardenController.getGarden(1, model);
+        when(gardenService.getGardenById(1L)).thenReturn(Optional.of(garden));
+        when(gardenUserService.getCurrentUser()).thenReturn(owner);
+        when(gardenService.getGardensByOwnerId(owner.getId())).thenReturn(Collections.singletonList(garden));
+
+        String result = gardenController.getGarden(1L, model);
+
         assertEquals("gardens/editGarden", result);
         verify(model).addAttribute("garden", garden);
+        verify(model).addAttribute("gardens", Collections.singletonList(garden));
     }
 
     @Test

@@ -61,15 +61,17 @@ public class PlantController {
 
         GardenUser owner = gardenUserService.getCurrentUser();
         Optional<Garden> garden = gardenService.getGardenById(gardenId);
-        if (garden.get().getOwner().getId() != owner.getId()) {
+        if (!garden.isPresent() || garden.get().getOwner().getId() != owner.getId()) {
             return "/accessDenied";
         }
+
         List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
         model.addAttribute("gardens", gardens);
         return "plants/addPlant";
     }
 
-                             
+
+
     /**
      * check for validity of data and return user to
      * garden details page if data is valid with newly submitted plant entity
