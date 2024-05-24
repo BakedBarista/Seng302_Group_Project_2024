@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.slf4j.Logger;
@@ -82,6 +83,7 @@ public class EditUserController {
     @PostMapping("/users/edit")
     public String submitUser(
             @Valid @ModelAttribute("user") EditUserDTO editUserDTO,
+            @RequestParam("image") MultipartFile file,
             BindingResult bindingResult,
             Authentication authentication, Model model) {
         logger.info("POST /users/edit");
@@ -100,6 +102,12 @@ public class EditUserController {
             model.addAttribute("user", user);
             return "users/editTemplate";
         }
+
+        try {
+            editProfilePicture(userId, file);
+        } catch(IOException e){
+            logger.info("error adding picture: ", e);
+        };
 
         user.setFname(editUserDTO.getFname());
         user.setLname(editUserDTO.getLname());
@@ -172,25 +180,14 @@ public class EditUserController {
 
     /**
      * Handles the submission of profile picture edits
-     *
-     * @param authentication authentication object representing the current user
-     * @param file           the MultipartFile containing the new profile picture
-     * @param referer        the referer header value
-     * @return A redirect URL
+     * @param userId id of the user to update picture
+     * @param file the MultipartFile containing the new profile picture
      * @throws IOException
      */
-    @PostMapping("/users/profile-picture")
-    public String editProfilePicture(
-            Authentication authentication,
-            @RequestParam("file") MultipartFile file,
-            @RequestHeader(HttpHeaders.REFERER) String referer) throws IOException {
+    
+    public void editProfilePicture(Long userId, MultipartFile file) throws IOException{
         logger.info("POST /users/profile-picture");
-
-        Long userId = (Long) authentication.getPrincipal();
-
         userService.setProfilePicture(userId, file.getContentType(), file.getBytes());
-
-        return "redirect:" + referer;
     }
 
 }
