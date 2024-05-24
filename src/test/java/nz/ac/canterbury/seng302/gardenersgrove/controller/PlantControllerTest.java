@@ -84,6 +84,25 @@ public class PlantControllerTest {
         assertEquals(expectedReturnPage, returnPage);
     }
 
+    @Test
+    void testAddPlantForm_UserNotOwner_ReturnsAccessDenied() {
+        long gardenId = 0;
+        String expectedReturnPage = "/accessDenied";
+
+        GardenUser owner = new GardenUser();
+        owner.setId(1L);
+
+        Garden garden = new Garden("Test Garden", "1", "test", "test suburb", "test city", "test country", "1234", 0.0, 0.0, "100", "test description");
+        garden.setOwner(owner);
+
+        when(gardenService.getGardenById(gardenId) ).thenReturn(Optional.of(garden));
+        when(gardenUserService.getCurrentUser()).thenReturn(new GardenUser());
+
+        String returnPage = plantController.addPlantForm(gardenId, model);
+        assertEquals(expectedReturnPage, returnPage);
+
+    }
+
 
     @Test
     void testSubmitAddPlantForm_DataIsValid_ReturnToGardenDetailPage() throws Exception {

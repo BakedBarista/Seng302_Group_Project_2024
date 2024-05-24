@@ -163,7 +163,7 @@ public class GardenControllerTest {
     }
 
     @Test
-    public void testGetGarden_GardenNotPresent_ReturnsAccessDenied() {
+    void testGetGarden_GardenNotPresent_ReturnsAccessDenied() {
         Model model = mock(Model.class);
         when(gardenService.getGardenById(0L)).thenReturn(Optional.empty());
         String result = gardenController.getGarden(0L, model);
