@@ -93,7 +93,7 @@
          verify(model).addAttribute(eq("sentRequests"), anyList());
          verify(model).addAttribute(eq("receivedRequests"), anyList());
 
-         assertEquals("users/manageFriends", result);
+         assertEquals("users/manage-friends", result);
      }
 
      /**
@@ -109,7 +109,7 @@
          String result = manageFriendsController.manageFriendsInvite(authentication, otherUserId);
 
          verify(friendService, times(1)).save(any(Friends.class));
-         assertEquals("redirect:/users/manageFriends", result);
+         assertEquals("redirect:/users/manage-friends", result);
      }
 
      /**
@@ -127,7 +127,7 @@
          String result = manageFriendsController.manageFriendsInvite(authentication, otherUserId);
 
          verify(friendService, times(0)).save(any(Friends.class));
-         assertEquals("redirect:/users/manageFriends", result);
+         assertEquals("redirect:/users/manage-friends", result);
      }
 
      /**
@@ -145,7 +145,7 @@
          String result = manageFriendsController.manageFriendsInvite(authentication, otherUserId);
 
          verify(friendService, times(1)).save(any(Friends.class));
-         assertEquals("redirect:/users/manageFriends", result);
+         assertEquals("redirect:/users/manage-friends", result);
      }
 
 
@@ -164,7 +164,7 @@
          String result = manageFriendsController.manageFriendsInvite(authentication, otherUserId);
 
          verify(friendService, never()).save(any(Friends.class));
-         assertEquals("redirect:/users/manageFriends", result);
+         assertEquals("redirect:/users/manage-friends", result);
      }
 
      /**
@@ -182,7 +182,7 @@
          String result = manageFriendsController.manageFriendsInvite(authentication, otherUserId);
 
          verify(friendService, never()).save(any(Friends.class));
-         assertEquals("redirect:/users/manageFriends", result);
+         assertEquals("redirect:/users/manage-friends", result);
      }
 
      /**
@@ -196,7 +196,7 @@
          String result = manageFriendsController.manageFriendsInvite(authentication, loggedInUserId);
 
          verify(friendService, never()).save(any(Friends.class));
-         assertEquals("redirect:/users/manageFriends", result);
+         assertEquals("redirect:/users/manage-friends", result);
      }
 
      /**
@@ -219,7 +219,7 @@
          verify(friendService, times(3)).save(existingRequest);
          verify(friendService).getFriendship(loggedInUser.getId(), otherUser.getId());
          assertEquals(ACCEPTED, friendService.getFriendship(loggedInUserId, otherUserId).getStatus());
-         assertEquals("redirect:/users/manageFriends", result);
+         assertEquals("redirect:/users/manage-friends", result);
      }
 
      /**
@@ -253,7 +253,7 @@
          String result = manageFriendsController.manageFriendsAccept(authentication, otherUserId);
 
          verify(friendService, never()).save(any(Friends.class));
-         assertEquals("redirect:/users/manageFriends", result);
+         assertEquals("redirect:/users/manage-friends", result);
      }
 
      /**
@@ -266,7 +266,7 @@
          String result = manageFriendsController.manageFriendsAccept(authentication, invalidUserId);
 
          verify(friendService, never()).save(any(Friends.class));
-         assertEquals("redirect:/users/manageFriends", result);
+         assertEquals("redirect:/users/manage-friends", result);
      }
 
      /**
@@ -280,7 +280,7 @@
 
          String result = manageFriendsController.manageFriendsAccept(authentication, otherUserId);
          verify(friendService, never()).save(any(Friends.class));
-         assertEquals("redirect:/users/manageFriends", result);
+         assertEquals("redirect:/users/manage-friends", result);
      }
 
      /**
@@ -299,7 +299,7 @@
 
          verify(friendService).save(any(Friends.class));
          assertEquals(DECLINED, existingRequest.getStatus());
-         assertEquals("redirect:/users/manageFriends", result);
+         assertEquals("redirect:/users/manage-friends", result);
      }
 
      /**
@@ -316,7 +316,7 @@
          String result = manageFriendsController.manageFriendsDecline(authentication, otherUserId);
 
          verify(friendService, never()).save(any(Friends.class));
-         assertEquals("redirect:/users/manageFriends", result);
+         assertEquals("redirect:/users/manage-friends", result);
      }
 
      /**
@@ -331,7 +331,7 @@
          String result = manageFriendsController.manageFriendsDecline(authentication, invalidUserId);
 
          verify(friendService, never()).save(any(Friends.class));
-         assertEquals("redirect:/users/manageFriends", result);
+         assertEquals("redirect:/users/manage-friends", result);
      }
 
 
@@ -348,7 +348,7 @@
          String result = manageFriendsController.manageFriendsAccept(authentication, otherUserId);
 
          verify(friendService, never()).save(any(Friends.class));
-         assertEquals("redirect:/users/manageFriends", result);
+         assertEquals("redirect:/users/manage-friends", result);
      }
 
      /**
@@ -362,7 +362,7 @@
          when(gardenUserService.getUserBySearch(searchUser, loggedInUserId)).thenReturn(searchResults);
          RedirectAttributes rm = new RedirectAttributesModelMap();
          String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
-         assertEquals("redirect:/users/manageFriends", result);
+         assertEquals("redirect:/users/manage-friends", result);
          assertEquals(searchResults, rm.getFlashAttributes().get("searchResults"));
      }
 
@@ -377,7 +377,7 @@
          when(gardenUserService.getUserBySearch(searchUser, loggedInUserId)).thenReturn(searchResults);
          RedirectAttributes rm = new RedirectAttributesModelMap();
          String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
-         assertEquals("redirect:/users/manageFriends", result);
+         assertEquals("redirect:/users/manage-friends", result);
          assertEquals(searchResults, rm.getFlashAttributes().get("searchResults"));    }
 
      /**
@@ -391,7 +391,7 @@
          when(gardenUserService.getUserBySearch(searchUser, loggedInUserId)).thenReturn(searchResults);
          RedirectAttributes rm = new RedirectAttributesModelMap();
          String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
-         assertEquals("redirect:/users/manageFriends", result);
+         assertEquals("redirect:/users/manage-friends", result);
          assertEquals(searchResults, rm.getFlashAttributes().get("searchResults"));    }
 
      /**
@@ -405,7 +405,7 @@
          when(gardenUserService.getUserBySearch(searchUser, loggedInUserId)).thenReturn(searchResults);
          RedirectAttributes rm = new RedirectAttributesModelMap();
          String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
-         assertEquals("redirect:/users/manageFriends", result);
+         assertEquals("redirect:/users/manage-friends", result);
          assertEquals(searchResults, rm.getFlashAttributes().get("searchResults"));    }
 
      /**
@@ -419,7 +419,7 @@
          when(gardenUserService.getUserBySearch(searchUser, loggedInUserId)).thenReturn(searchResults);
          RedirectAttributes rm = new RedirectAttributesModelMap();
          String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
-         assertEquals("redirect:/users/manageFriends", result);
+         assertEquals("redirect:/users/manage-friends", result);
          assertEquals(searchResults, rm.getFlashAttributes().get("searchResults"));    }
 
      /**
@@ -433,7 +433,7 @@
          when(gardenUserService.getUserBySearch(searchUser, loggedInUserId)).thenReturn(searchResults);
          RedirectAttributes rm = new RedirectAttributesModelMap();
          String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
-         assertEquals("redirect:/users/manageFriends", result);
+         assertEquals("redirect:/users/manage-friends", result);
          assertEquals(searchResults, rm.getFlashAttributes().get("searchResults"));
      }
 
@@ -458,7 +458,7 @@
          String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
 
          assertTrue(searchResults.contains(userWithReceivedRequest));
-         assertEquals("redirect:/users/manageFriends", result);
+         assertEquals("redirect:/users/manage-friends", result);
      }
 
      @Test
@@ -479,7 +479,7 @@
          String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
 
          assertFalse(searchResults.contains(userWithPendingRequest));
-         assertEquals("redirect:/users/manageFriends", result);
+         assertEquals("redirect:/users/manage-friends", result);
      }
 
      /**
@@ -503,7 +503,7 @@
          String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
 
          assertFalse(searchResults.contains(userWithPendingRequest));
-         assertEquals("redirect:/users/manageFriends", result);
+         assertEquals("redirect:/users/manage-friends", result);
      }
 
      /**
@@ -524,7 +524,7 @@
          String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
 
          assertTrue(searchResults.contains(otherUser));
-         assertEquals("redirect:/users/manageFriends", result);
+         assertEquals("redirect:/users/manage-friends", result);
      }
 
      @Test
@@ -541,7 +541,7 @@
          String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
 
          assertTrue(searchResults.contains(loggedInUser));
-         assertEquals("redirect:/users/manageFriends", result);
+         assertEquals("redirect:/users/manage-friends", result);
      }
 
      /**
@@ -566,7 +566,7 @@
          List<Friends> declineSentList = (List<Friends>) rm.getFlashAttributes().get("declineSent");
          assertTrue(declineSentList.contains(otherUser));
          assertFalse(searchResults.contains(otherUser));
-         assertEquals("redirect:/users/manageFriends", result);
+         assertEquals("redirect:/users/manage-friends", result);
      }
 
      /**
@@ -591,7 +591,7 @@
          List<Friends> requestPendingList = (List<Friends>) rm.getFlashAttributes().get("requestPending");
          assertTrue(requestPendingList.contains(otherUser));
          assertFalse(searchResults.contains(otherUser));
-         assertEquals("redirect:/users/manageFriends", result);
+         assertEquals("redirect:/users/manage-friends", result);
      }
 
      /**
@@ -660,7 +660,7 @@
          String result = manageFriendsController.cancelSentRequest(authentication, otherUserId);
 
          verify(friendService, times(1)).removeFriendship(friends);
-         assertEquals("redirect:/users/manageFriends", result);
+         assertEquals("redirect:/users/manage-friends", result);
      }
 
      /**
@@ -675,7 +675,7 @@
          String result = manageFriendsController.removeFriend(authentication, otherUserId);
 
          verify(friendService, times(1)).removeFriend(loggedInUserId, otherUserId);
-         assertEquals("redirect:/users/manageFriends", result);
+         assertEquals("redirect:/users/manage-friends", result);
 
      }
      /**
@@ -694,7 +694,7 @@
 
          String result = manageFriendsController.manageFriendsDecline(authentication, otherUserId);
          assertNotNull(friendService.getAcceptedFriendship(loggedInUserId, otherUserId));
-         assertEquals("redirect:/users/manageFriends", result);
+         assertEquals("redirect:/users/manage-friends", result);
 
      }
 

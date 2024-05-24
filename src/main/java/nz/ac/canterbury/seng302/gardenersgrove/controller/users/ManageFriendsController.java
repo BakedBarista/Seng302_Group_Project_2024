@@ -42,10 +42,10 @@ public class ManageFriendsController {
      * @param model Thymeleaf model
      * @return login page view
      */
-    @GetMapping("users/manageFriends")
+    @GetMapping("users/manage-friends")
     public String manageFriends(Authentication authentication,
             Model model) {
-        logger.info("users/manageFriends");
+        logger.info("users/manage-friends");
 
         Long loggedInUserId = (Long) authentication.getPrincipal();
         List<GardenUser> allUsers = userService.getUser();
@@ -57,7 +57,7 @@ public class ManageFriendsController {
         model.addAttribute("allUsers", allUsers);
         model.addAttribute("sentRequests", sentRequests);
         model.addAttribute("receivedRequests", receivedRequests);
-        return "users/manageFriends";
+        return "users/manage-friends";
     }
 
     /**
@@ -66,9 +66,9 @@ public class ManageFriendsController {
      * @param authentication An Authentication object representing the current
      *                       user's authentication details
      * @param requestedUserId  The ID of the user to whom the invitation is sent
-     * @return A redirection to the "/users/manageFriends"
+     * @return A redirection to the "/users/manage-friends"
      */
-    @PostMapping("users/manageFriends/invite")
+    @PostMapping("users/manage-friends/invite")
     public String manageFriendsInvite(Authentication authentication,
             @RequestParam(name = "requestedUser", required = false) Long requestedUserId) {
 
@@ -78,30 +78,30 @@ public class ManageFriendsController {
         
         boolean requestingMyself = loggedInUserId.equals(requestedUserId);
         if (requestingMyself) {
-            return "redirect:/users/manageFriends";
+            return "redirect:/users/manage-friends";
         }
 
         List<Friends> iDeclinedFriend = friendService.getSentRequestsDeclined(loggedInUserId);
         for (Friends receiver : iDeclinedFriend) {
             if (sentToUser.getId().equals(receiver.getReceiver().getId())) {
-                return "redirect:/users/manageFriends";
+                return "redirect:/users/manage-friends";
             }
         }
 
         Friends alreadyFriends = friendService.getAcceptedFriendship(loggedInUserId, requestedUserId);
         if (alreadyFriends != null) {
-            return "redirect:/users/manageFriends";
+            return "redirect:/users/manage-friends";
         }
 
         Friends requestsPending = friendService.getFriendship(loggedInUserId, requestedUserId);
         if (requestsPending != null && requestsPending.getStatus().equals(PENDING)) {
-            return "redirect:/users/manageFriends";
+            return "redirect:/users/manage-friends";
         }
 
         Friends newFriends = new Friends(loggedInUser, sentToUser, PENDING);
         friendService.save(newFriends);
 
-        return "redirect:/users/manageFriends";
+        return "redirect:/users/manage-friends";
     }
 
     /**
@@ -111,9 +111,9 @@ public class ManageFriendsController {
      *                       user's authentication details
      * @param acceptUserId     The ID of the user whose friend request is being
      *                       accepted
-     * @return A redirection to the "/users/manageFriends"
+     * @return A redirection to the "/users/manage-friends"
      */
-    @PostMapping("users/manageFriends/accept")
+    @PostMapping("users/manage-friends/accept")
     public String manageFriendsAccept(Authentication authentication,
             @RequestParam(name = "acceptUser", required = false) Long acceptUserId) {
 
@@ -128,7 +128,7 @@ public class ManageFriendsController {
 
         Friends alreadyFriends = friendService.getAcceptedFriendship(loggedInUserId, acceptUserId);
         if (alreadyFriends != null) {
-            return "redirect:/users/manageFriends";
+            return "redirect:/users/manage-friends";
         }
 
         Friends friendShip = friendService.getFriendship(loggedInUserId, acceptUserId);
@@ -138,7 +138,7 @@ public class ManageFriendsController {
             friendService.save(friendShip);
         }
 
-        return "redirect:/users/manageFriends";
+        return "redirect:/users/manage-friends";
     }
 
     /**
@@ -148,9 +148,9 @@ public class ManageFriendsController {
      *                       user's authentication details
      * @param declineUserId    The ID of the user whose friend request is being
      *                       declined
-     * @return A redirection to the "/users/manageFriends"
+     * @return A redirection to the "/users/manage-friends"
      */
-    @PostMapping("users/manageFriends/decline")
+    @PostMapping("users/manage-friends/decline")
     public String manageFriendsDecline(Authentication authentication,
             @RequestParam(name = "declineUser", required = false) Long declineUserId) {
 
@@ -160,7 +160,7 @@ public class ManageFriendsController {
 
         Friends alreadyFriends = friendService.getAcceptedFriendship(loggedInUserId, declineUserId);
         if (alreadyFriends != null) {
-            return "redirect:/users/manageFriends";
+            return "redirect:/users/manage-friends";
         }
 
         if (loggedInUser != null && receivedFrom != null) {
@@ -172,7 +172,7 @@ public class ManageFriendsController {
                 }
             }
         }
-        return "redirect:/users/manageFriends";
+        return "redirect:/users/manage-friends";
     }
 
     /**
@@ -182,9 +182,9 @@ public class ManageFriendsController {
      *                       user's authentication details
      * @param searchUser     The username to search for
      * @param rm             RedirectAttributes used to add flash attributes to
-     * @return A redirection to the "/users/manageFriends" .
+     * @return A redirection to the "/users/manage-friends" .
      */
-    @PostMapping("users/manageFriends/search")
+    @PostMapping("users/manage-friends/search")
     public String manageFriendsSearch(Authentication authentication,
                                       @RequestParam(name = "searchUser", required = false) String searchUser,
                                       RedirectAttributes rm) {
@@ -228,7 +228,7 @@ public class ManageFriendsController {
         rm.addFlashAttribute("requestReceived", receivedRequestList);
         rm.addFlashAttribute("searchResults", searchResults);
 
-        return "redirect:/users/manageFriends";
+        return "redirect:/users/manage-friends";
     }
 
     /**
@@ -260,13 +260,13 @@ public class ManageFriendsController {
      * Removes a friend from the user's friend list
      * @param authentication An Authentication object representing the current user's authentication details
      * @param friendId The ID of the friend to be removed
-     * @return A redirection to the "/users/manageFriends"
+     * @return A redirection to the "/users/manage-friends"
      */
-    @PostMapping("users/manageFriends/remove")
+    @PostMapping("users/manage-friends/remove")
     public String removeFriend(Authentication authentication, @RequestParam(name = "friendId") Long friendId) {
         Long loggedInUserId = (Long) authentication.getPrincipal();
         friendService.removeFriend(loggedInUserId, friendId);
-        return "redirect:/users/manageFriends";
+        return "redirect:/users/manage-friends";
     }
 
     /**
@@ -274,7 +274,7 @@ public class ManageFriendsController {
      * @param authentication object contain user's current authentication details
      * @param requestedUser of the user who received the friend request
      */
-    @PostMapping("users/manageFriends/cancel")
+    @PostMapping("users/manage-friends/cancel")
     public String cancelSentRequest(Authentication authentication,
                                     @RequestParam(name = "userId", required = false) Long requestedUser) {
         Long loggedInUserId = (Long) authentication.getPrincipal();
@@ -282,6 +282,6 @@ public class ManageFriendsController {
         Friends friendship = friendService.getFriendship(loggedInUserId,requestedUser);
         friendService.removeFriendship(friendship);
 
-        return "redirect:/users/manageFriends";
+        return "redirect:/users/manage-friends";
     }
 }

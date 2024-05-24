@@ -20,7 +20,7 @@
     <div class="d-flex mt-2 mb-2">
         <button id="showSearchFormBtn" class="btn btn-primary">Add Friend</button>
 
-        <form id="searchForm" th:action="@{/users/manageFriends/search}" method="post" class="form-inline d-none">
+        <form id="searchForm" th:action="@{/users/manage-friends/search}" method="post" class="form-inline d-none">
             <div class="d-flex">
                 <input type="search" name="searchUser" class="form-control" aria-label="Search" placeholder="Search"/>
                 <button class="btn btn-outline-success" type="submit">Search</button>
@@ -114,12 +114,12 @@
                 </td>
                 <td></td>
                 <td>
-                    <form th:action="@{/users/manageFriends/accept}" method="post" class="d-inline">
+                    <form th:action="@{/users/manage-friends/accept}" method="post" class="d-inline">
                         <button type="submit" name="acceptUser" th:value="${user.id}"
                                 class="btn btn-success btn-sm mr-2">Accept
                         </button>
                     </form>
-                    <form th:action="@{/users/manageFriends/decline}" method="post" class="d-inline">
+                    <form th:action="@{/users/manage-friends/decline}" method="post" class="d-inline">
                         <button type="submit" name="declineUser" th:value="${user.id}"
                                 class="btn btn-success btn-sm mr-2">Decline
                         </button>
@@ -136,7 +136,7 @@
                 </td>
                 <td></td>
                 <td class="align-middle">
-                    <form th:action="@{/users/manageFriends/invite}" method="post">
+                    <form th:action="@{/users/manage-friends/invite}" method="post">
                         <input type="hidden" name="requestedUser" th:value="${friend.id}" class="d-inline"/>
                         <button type="submit" class="btn btn-success btn-sm mr-2">Invite as Friend</button>
                     </form>
@@ -182,7 +182,7 @@
                             <a th:href="@{/users/friendProfile/{id}(id=${friend.id})}">View profile</a>
                         </td>
                         <td class="align-middle">
-                            <form th:action="@{/users/manageFriends/remove}" method="post">
+                            <form th:action="@{/users/manage-friends/remove}" method="post">
                                 <input type="hidden" name="friendId" th:value="${friend.id}"/>
                                 <button type="submit" class="btn btn-primary remove-friend-btn">Remove Friend</button>
                             </form>
@@ -223,12 +223,12 @@
                                       th:text="${friend.sender.lname}"></span>
                             </td>
                             <td>
-                                <form th:action="@{/users/manageFriends/accept}" method="post" class="d-inline">
+                                <form th:action="@{/users/manage-friends/accept}" method="post" class="d-inline">
                                     <button type="submit" name="acceptUser" th:value="${friend.sender.id}"
                                             class="btn btn-success btn-sm mr-2">Accept
                                     </button>
                                 </form>
-                                <form th:action="@{/users/manageFriends/decline}" method="post" class="d-inline">
+                                <form th:action="@{/users/manage-friends/decline}" method="post" class="d-inline">
                                     <button type="submit" name="declineUser" th:value="${friend.sender.id}"
                                             class="btn btn-success btn-sm mr-2">Decline
                                     </button>
@@ -267,7 +267,7 @@
                                       th:text="${friend.receiver.lname}"></span>
                             </td>
                             <td class="align-middle" th:text="${friend.status}"></td>
-                            <form th:action="@{/users/manageFriends/cancel}" method="post" class="d-inline">
+                            <form th:action="@{/users/manage-friends/cancel}" method="post" class="d-inline">
                                 <input type="hidden" name="userId" th:value="${friend.receiver.id}" class="d-inline"/>
                                 <td class="align-middle">
                                     <button class="btn btn-warning btn-sm mr-2" th:if="${friend.status.name() == 'PENDING'}">Cancel</button>
