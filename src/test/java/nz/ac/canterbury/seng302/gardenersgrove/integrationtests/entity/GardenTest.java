@@ -4,12 +4,16 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.Arrays;
+import java.util.List;
 
 class GardenTest {
 
@@ -24,6 +28,13 @@ class GardenTest {
     @BeforeEach
     void makeGarden() {
         garden = new Garden("Garden","1","Ilam Road","Ilam","Christchurch","New Zealand","8041",0.24,3.66,"100","big");
+    }
+
+    /**
+     * Helper method to create a list of tags
+     */
+    private List<Tag> tags(String... names) {
+        return Arrays.stream(names).map(Tag::new).toList();
     }
 
     @Test
@@ -481,5 +492,11 @@ class GardenTest {
         garden.setSuburb(" ");
 
         assertTrue(validator.validate(garden).isEmpty());
+    }
+
+    @Test
+    void whenGetTagsStringCalled_thenReturnsCommaSeparatedString() {
+        garden.getTags().addAll(tags("tag1", "tag2"));
+        assertEquals("tag1,tag2", garden.getTagsString());
     }
 }

@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.PlantController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
@@ -14,6 +15,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -24,7 +26,8 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
 public class PlantControllerTest {
@@ -252,6 +255,7 @@ public class PlantControllerTest {
 
     @Test
     void whenPlantImageExists_returnPlantImage() {
+        HttpServletRequest mockRequest = new MockHttpServletRequest();
         String imagePath = "static/img/plant.png";
         try (InputStream inputStream = PlantControllerTest.class.getClassLoader().getResourceAsStream(imagePath)) {
             if (inputStream == null) {
@@ -263,7 +267,7 @@ public class PlantControllerTest {
             plant.setPlantImage(contentType,image);
             when(plantService.getPlantById(1L)).thenReturn(Optional.of(plant));
 
-            ResponseEntity<byte[]> response = plantController.plantImage(1L);
+            ResponseEntity<byte[]> response = plantController.plantImage(1L, mockRequest);
             assertEquals(HttpStatus.OK, response.getStatusCode());
             assertEquals(contentType, response.getHeaders().getContentType().toString());
             assertEquals(image, response.getBody());
@@ -275,9 +279,10 @@ public class PlantControllerTest {
 
     @Test
     void whenPlantImageNotExist_returnDefaultImage() {
+        HttpServletRequest mockRequest = new MockHttpServletRequest();
         Plant plant = new Plant();
         when(plantService.getPlantById(1L)).thenReturn(Optional.of(plant));
-        ResponseEntity<byte[]> response = plantController.plantImage(1L);
+        ResponseEntity<byte[]> response = plantController.plantImage(1L, mockRequest);
         assertEquals(HttpStatus.FOUND, response.getStatusCode());
         assertEquals("/img/default-plant.svg", response.getHeaders().getFirst(HttpHeaders.LOCATION));
     }

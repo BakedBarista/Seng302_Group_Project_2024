@@ -25,7 +25,7 @@
         </div>
         <div class="mb-3">
             <label for="plantedDate" th:class="'form-label ' + ${#fields.hasErrors('plantedDate') ? 'is-invalid' : ''}">Planting Date: </label>
-            <input type='date' id="plantedDate" th:class="'form-control ' + ${#fields.hasErrors('plantedDate') ? 'is-invalid' : ''}" placeholder="DD/MM/YYYY" th:name="plantedDate" th:value="${semiCompletedDate != '' ? semiCompletedDate : plant.plantedDate}">
+            <input type='date' id="plantedDate" th:class="'form-control ' + ${#fields.hasErrors('plantedDate') ? 'is-invalid' : ''}" placeholder="DD/MM/YYYY" th:name="plantedDate" th:value="${plant.plantedDate}">
             <div class="invalid-feedback" th:if="${#fields.hasErrors('plantedDate')}" th:errors="*{plantedDate}"></div>
 
             <!--      dateError is the flag for when the date is not filled in correctly (e.g. 10/mm/2001)      -->
