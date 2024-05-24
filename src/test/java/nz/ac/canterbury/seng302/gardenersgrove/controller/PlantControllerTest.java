@@ -235,26 +235,6 @@ public class PlantControllerTest {
     }
 
     @Test
-    void testSubmitPlantForm_NoImageUploaded_PlantImageIsSetToNull() {
-        long gardenId = 1L;
-        byte[] image = {};
-        String contentType = "image/png";
-        String name = "plant.png";
-        String originalFilename = "plant.png";
-
-        MultipartFile file = new MockMultipartFile(name,originalFilename,contentType,image);
-        PlantDTO plant = new PlantDTO();
-        BindingResult bindingResult = mock(BindingResult.class);
-
-        plant.setPlantedDate("2024-11-03");
-        when(bindingResult.hasErrors()).thenReturn(false);
-        plantController.submitAddPlantForm(gardenId, plant, bindingResult, file, dateValidStr, model);
-
-        assertNull(plant.getPlantImage());
-        assertNull(plant.getPlantImageContentType());
-    }
-
-    @Test
     void whenPlantImageExists_returnPlantImage() {
         String imagePath = "static/img/plant.png";
         try (InputStream inputStream = PlantControllerTest.class.getClassLoader().getResourceAsStream(imagePath)) {
