@@ -137,7 +137,7 @@
                         <div class="col-4 py-2">
                             <div class="d-inline">
                                 <form class="plantImageFormSmall position-relative" th:action="@{'/plants/' + ${plant.id} + '/plant-image'}" method="post" enctype="multipart/form-data" novalidate>
-                                    <label th:for="${plant.id} + 'Small'" class="position-absolute top-0 end-0" style="cursor: pointer;"><img th:src="@{/icons/trans-plus.svg}" alt="+" width="26px" height="26px"/></label>
+                                    <label th:for="${plant.id} + 'Small'" class="position-absolute top-0 end-0 mt-1 me-1" style="cursor: pointer;"><img th:src="@{/icons/trans-plus.svg}" alt="+" width="26px" height="26px"/></label>
                                     <input th:id="${plant.id} + 'Small'" name="image" class="imageSmall d-none" type="file" accept=".png,.jpg,.jpeg,.svg"/>
                                     <img th:src="@{'/plants/' + ${plant.id} + '/plant-image'}" alt="Plant Picture" class="w-100 rounded mx-auto d-block h-auto" style="max-width: 300px; max-height: 300px;" />
                                     <span id="plantImageErrorSmall" class="plantImageErrorSmall invalid-feedback text-center position-absolute bottom-0 end-0"></span>
@@ -195,7 +195,7 @@
                     <div class="card-header m-0 p-0 bg-transparent rounded-2" style="max-height: 300px;">
                         <div class="d-inline">
                             <form class="plantImageForm" th:action="@{'/plants/' + ${plant.id} + '/plant-image'}" method="post" enctype="multipart/form-data" novalidate>
-                                <label th:for="${plant.id}" class="position-absolute top-0 end-0" style="cursor: pointer;"><img th:src="@{/icons/trans-plus.svg}" alt="+" /></label>
+                                <label th:for="${plant.id}" class="position-absolute top-0 end-0 mt-1 me-1" style="cursor: pointer;"><img th:src="@{/icons/trans-plus.svg}" alt="+" /></label>
                                 <input th:id="${plant.id}" name="image" class="image d-none" type="file" accept=".png,.jpg,.jpeg,.svg"/>
                                 <img th:src="@{'/plants/' + ${plant.id} + '/plant-image'}" alt="Plant Picture" class="w-100 rounded mx-auto d-block" style="width: 300px; height: 300px;" />
                                 <span id="plantImageError" class="plantImageError invalid-feedback text-center position-absolute bottom-0 start-0"></span>
