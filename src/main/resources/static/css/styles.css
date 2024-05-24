@@ -317,8 +317,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 .plant-img {
     width: 100%;
-    height: auto;
-    object-fit: cover;
+    height: 100%;
+    background-position: center;
+    background-size: cover;
+}
+
+.img-row {
+    width: 100%;
+    height: 100%;
 }
 
 .input-container {
@@ -409,6 +415,11 @@ h1, h2, h3, h4, h5, h6 {
 .numberOfCharactersText {
     width: 100px;
     text-align: right;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--gg-primary-light);
+    border-color: var(--gg-primary-light);
 }
 
 /* Custom badge styling (used for tags) */
