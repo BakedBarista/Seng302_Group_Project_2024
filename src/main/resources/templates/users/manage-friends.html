@@ -15,189 +15,81 @@
 <body>
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 
-<div class="container">
+<div class="container mx-4">
 
-    <div class="d-flex mt-2 mb-2">
-        <button id="showSearchFormBtn" class="btn btn-primary">Add Friend</button>
-
-        <form id="searchForm" th:action="@{/users/manage-friends/search}" method="post" class="form-inline d-none">
-            <div class="d-flex">
-                <input type="search" name="searchUser" class="form-control" aria-label="Search" placeholder="Search"/>
-                <button class="btn btn-outline-success" type="submit">Search</button>
-            </div>
-        </form>
+    <div class="p-4">
+        <h1>Friends</h1>
     </div>
 
-    <div class="col-md-6 col-sm-10" th:if="${searchResults != null}">
-        <table class="table">
-            <thead>
-            <tr>
-                <th>Search Results</th>
-                <th></th>
-                <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td th:if="${searchResults.empty and mySelf == null and requestPending.empty and declineSent.empty and requestReceived.empty and alreadyFriends.empty}"
-                    class="text-danger">
-                    <strong>
-                        There is nobody with that name or email in Gardener’s Grove
-                    </strong>
-                </td>
-            </tr>
+    <ul class="nav nav-tabs col-lg-11" id="friendTabs" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="friends-tab" data-toggle="tab" href="#friends" role="tab"
+               aria-controls="friends" aria-selected="true">My Friends</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="requests-tab" data-toggle="tab" href="#requests" role="tab" aria-controls="requests"
+               aria-selected="false">Requests</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="addFriend-tab" data-toggle="tab" href="#addFriend" role="tab"
+               aria-controls="addFriend" aria-selected="false">Add Friend</a>
+        </li>
+    </ul>
 
-            <tr th:if="${mySelf != null}">
-                <td class="align-middle">
-                    <img class="rounded-circle overflow-hidden border border-dark"
-                         th:src="@{'/users/' + ${mySelf.id} + '/profile-picture'}" style="width: 40px; height: 40px;"
-                         alt="Profile Picture">
-                    <span th:text="${mySelf.fname} "></span>
-                    <span th:if="${mySelf.lname != null}" th:text="${mySelf.lname}"></span>
-                    <span>(me)</span>
-                </td>
-                <td class="align-middle">
-                    <span th:text="${mySelf.email}"></span>
-                </td>
-                <td>
-                    <a href="http://localhost:8080/users/user" class="btn btn-primary btn-sm mr-2">View Profile</a>
-                </td>
-            </tr>
-            <tr th:if="${!alreadyFriends.empty}" th:each="currentFriend : ${alreadyFriends}">
-                <td class="align-middle">
-                    <img class="rounded-circle overflow-hidden border border-dark"
-                         th:src="@{'/users/' + ${currentFriend.id} + '/profile-picture'}"
-                         style="width: 40px; height: 40px;"  alt="Profile Picture">
-                    <span th:text="${currentFriend.fname} "></span>
-                    <span th:if="${currentFriend.lname != null}" th:text="${currentFriend.lname}"></span>
-                </td>
-                <td>
-                </td>
-                <td class="align-middle text-success">
-                    <strong>Already Friends!</strong>
-                </td>
-            </tr>
-            <tr th:if="${!requestPending.empty}" th:each="currentFriend : ${requestPending}">
-                <td class="align-middle">
-                    <img class="rounded-circle overflow-hidden border border-dark"
-                         th:src="@{'/users/' + ${currentFriend.id} + '/profile-picture'}"
-                         style="width: 40px; height: 40px;"  alt="Profile Picture">
-                    <span th:text="${currentFriend.fname} "></span>
-                    <span th:if="${currentFriend.lname != null}" th:text="${currentFriend.lname}"></span>
-                </td>
-                <td>
-                </td>
-                <td class="align-middle text-muted">
-                    <strong>Pending...</strong>
-                </td>
-            </tr>
-            <tr th:if="${!declineSent.empty}" th:each="user : ${declineSent}">
-                <td class="align-middle">
-                    <img class="rounded-circle overflow-hidden border border-dark"
-                         th:src="@{'/users/' + ${user.id} + '/profile-picture'}"
-                         style="width: 40px; height: 40px;"  alt="Profile Picture">
-                    <span th:text="${user.fname} "></span>
-                    <span th:if="${user.lname != null}" th:text="${user.lname}"></span>
-                </td>
-                <td></td>
-                <td class="align-middle text-muted">
-                    <strong>Declined</strong>
-                </td>
-            </tr>
-            <tr th:if="${!requestReceived.empty}" th:each="user : ${requestReceived}">
-                <td class="align-middle">
-                    <img class="rounded-circle overflow-hidden border border-dark"
-                         th:src="@{'/users/' + ${user.id} + '/profile-picture'}"
-                         style="width: 40px; height: 40px;"  alt="Profile Picture">
-                    <span th:text="${user.fname} "></span>
-                    <span th:if="${user.lname != null}" th:text="${user.lname}"></span>
-                </td>
-                <td></td>
-                <td>
-                    <form th:action="@{/users/manage-friends/accept}" method="post" class="d-inline">
-                        <button type="submit" name="acceptUser" th:value="${user.id}"
-                                class="btn btn-success btn-sm mr-2">Accept
-                        </button>
-                    </form>
-                    <form th:action="@{/users/manage-friends/decline}" method="post" class="d-inline">
-                        <button type="submit" name="declineUser" th:value="${user.id}"
-                                class="btn btn-success btn-sm mr-2">Decline
-                        </button>
-                    </form>
-                </td>
-            </tr>
-            <tr th:if="searchResults != null" th:each="friend : ${searchResults}">
-                <td class="align-middle">
-                    <img class="rounded-circle overflow-hidden border border-dark"
-                         th:src="@{'/users/' + ${friend.id} + '/profile-picture'}"
-                         style="width: 40px; height: 40px;"  alt="Profile Picture">
-                    <span th:text="${friend.fname} "></span>
-                    <span th:if="${friend.lname != null}" th:text="${friend.lname}"></span>
-                </td>
-                <td></td>
-                <td class="align-middle">
-                    <form th:action="@{/users/manage-friends/invite}" method="post">
-                        <input type="hidden" name="requestedUser" th:value="${friend.id}" class="d-inline"/>
-                        <button type="submit" class="btn btn-success btn-sm mr-2">Invite as Friend</button>
-                    </form>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <div class="row justify-content-between">
-        <div class="card col-md-7 col-sm-10">
-            <div class="card-body h-100">
-                <h2>My Friends: </h2>
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th scope="col">Name</th>
-                        <th scope="col">Link</th>
-                        <th scope="col">Profile</th>
-                        <th scope="col"></th>
-                    </tr>
-                    </thead>
-                    <tbody th:if="${friends.empty}">
-                    <tr>
-                        <td colspan="2">No friends found.</td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    </tbody>
-                    <tbody th:each="friend : ${friends}">
-                    <tr>
-                        <td class="align-middle">
-                            <img class="rounded-circle overflow-hidden border border-dark"
-                                 th:src="@{'/users/' + ${friend.id} + '/profile-picture'}"
-                                 style="width: 40px; height: 40px;"  alt="Profile Picture">
-                            <span th:text="${friend.fname}"> </span>
-                            <span th:if="${friend.lname != null}" th:text="${friend.lname}"></span>
-                        </td>
-                        <td class="align-middle">
-                            <a th:href="@{/viewFriendGardens/{id}(id=${friend.id})}">View gardens</a>
-                        </td>
-                        <td class="align-middle">
-                            <a th:href="@{/users/friend-profile/{id}(id=${friend.id})}">View profile</a>
-                        </td>
-                        <td class="align-middle">
-                            <form th:action="@{/users/manage-friends/remove}" method="post">
-                                <input type="hidden" name="friendId" th:value="${friend.id}"/>
-                                <button type="submit" class="btn btn-primary remove-friend-btn">Remove Friend</button>
-                            </form>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+    <div class="tab-content col-lg-11">
+        <div class="tab-pane fade show active" id="friends" role="tabpanel" aria-labelledby="friends-tab">
+            <div class="card my-2">
+                <div class="card-body">
+                    <h2>My Friends: </h2>
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Link</th>
+                            <th scope="col">Profile</th>
+                            <th scope="col"></th>
+                        </tr>
+                        </thead>
+                        <tbody th:if="${friends.empty}">
+                        <tr>
+                            <td colspan="2">No friends found.</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        </tbody>
+                        <tbody th:each="friend : ${friends}">
+                        <tr>
+                            <td class="align-middle">
+                                <img class="rounded-circle overflow-hidden border border-dark"
+                                     th:src="@{'/users/' + ${friend.id} + '/profile-picture'}"
+                                     style="width: 40px; height: 40px;" alt="Profile Picture">
+                                <span th:text="${friend.fname}"> </span>
+                                <span th:if="${friend.lname != null}" th:text="${friend.lname}"></span>
+                            </td>
+                            <td class="align-middle">
+                                <a th:href="@{/viewFriendGardens/{id}(id=${friend.id})}">View gardens</a>
+                            </td>
+                            <td class="align-middle">
+                                <a th:href="@{/users/friend-profile/{id}(id=${friend.id})}">View profile</a>
+                            </td>
+                            <td class="align-middle">
+                                <form th:action="@{/users/manage-friends/remove}" method="post">
+                                    <input type="hidden" name="friendId" th:value="${friend.id}"/>
+                                    <button type="submit" class="btn btn-primary remove-friend-btn">Remove Friend
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
-        <div class="col-sm-10 col-md-5">
-
-            <div class="card h-100 mb-1">
+        <div class="tab-pane fade" id="requests" role="tabpanel" aria-labelledby="requests-tab">
+            <div class="card m-2">
                 <div class="card-body">
-                    <h2>Received Requests: </h2>
+                    <h2>Received: </h2>
 
                     <table class="table">
                         <thead>
@@ -240,9 +132,9 @@
                 </div>
             </div>
 
-            <div class="card mb-1 h-100">
+            <div class="card m-2">
                 <div class="card-body">
-                    <h2>Sent Requests: </h2>
+                    <h2>Sent: </h2>
                     <table class="table">
                         <thead>
                         <tr>
@@ -261,7 +153,7 @@
                             <td class="align-middle">
                                 <img class="rounded-circle overflow-hidden border border-dark"
                                      th:src="@{'/users/' + ${friend.receiver.id} + '/profile-picture'}"
-                                     style="width: 40px; height: 40px;"  alt="Profile Picture">
+                                     style="width: 40px; height: 40px;" alt="Profile Picture">
                                 <span th:text="${friend.receiver.fname}"> </span>
                                 <span th:if="${friend.receiver != null}"
                                       th:text="${friend.receiver.lname}"></span>
@@ -270,7 +162,9 @@
                             <form th:action="@{/users/manage-friends/cancel}" method="post" class="d-inline">
                                 <input type="hidden" name="userId" th:value="${friend.receiver.id}" class="d-inline"/>
                                 <td class="align-middle">
-                                    <button class="btn btn-warning btn-sm mr-2" th:if="${friend.status.name() == 'PENDING'}">Cancel</button>
+                                    <button class="btn btn-warning btn-sm mr-2"
+                                            th:if="${friend.status.name() == 'PENDING'}">Cancel
+                                    </button>
                                 </td>
                             </form>
                         </tr>
@@ -278,7 +172,141 @@
                     </table>
                 </div>
             </div>
+        </div>
 
+        <div class="tab-pane fade" id="addFriend" role="tabpanel" aria-labelledby="addFriend-tab">
+            <div class="search-results">
+                <form id="searchForm" th:action="@{/users/manage-friends/search}" method="post"
+                      class="form-inline my-2">
+                    <div class="d-flex col-lg-8">
+                        <input type="search" name="searchUser" class="form-control p-2" aria-label="Search"
+                               placeholder="Search"/>
+                        <button class="btn btn-outline-secondary p-2" type="submit">
+                            <img th:src="@{/icons/search-icon.svg}" alt="" width="25" height="25"/>
+                        </button>
+                    </div>
+                </form>
+
+                <div class="col-lg-8" th:if="${searchResults != null}">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Search Results</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td th:if="${searchResults.empty and mySelf == null and requestPending.empty and declineSent.empty and requestReceived.empty and alreadyFriends.empty}"
+                                class="text-danger">
+                                <strong>
+                                    There is nobody with that name or email in Gardener’s Grove
+                                </strong>
+                            </td>
+                        </tr>
+
+                        <tr th:if="${mySelf != null}">
+                            <td class="align-middle">
+                                <img class="rounded-circle overflow-hidden border border-dark"
+                                     th:src="@{'/users/' + ${mySelf.id} + '/profile-picture'}"
+                                     style="width: 40px; height: 40px;"
+                                     alt="Profile Picture">
+                                <span th:text="${mySelf.fname} "></span>
+                                <span th:if="${mySelf.lname != null}" th:text="${mySelf.lname}"></span>
+                                <span>(me)</span>
+                            </td>
+                            <td class="align-middle">
+                                <span th:text="${mySelf.email}"></span>
+                            </td>
+                            <td>
+                                <a href="http://localhost:8080/users/user" class="btn btn-primary btn-sm mr-2">View
+                                    Profile</a>
+                            </td>
+                        </tr>
+                        <tr th:if="${!alreadyFriends.empty}" th:each="currentFriend : ${alreadyFriends}">
+                            <td class="align-middle">
+                                <img class="rounded-circle overflow-hidden border border-dark"
+                                     th:src="@{'/users/' + ${currentFriend.id} + '/profile-picture'}"
+                                     style="width: 40px; height: 40px;" alt="Profile Picture">
+                                <span th:text="${currentFriend.fname} "></span>
+                                <span th:if="${currentFriend.lname != null}" th:text="${currentFriend.lname}"></span>
+                            </td>
+                            <td>
+                            </td>
+                            <td class="align-middle text-success">
+                                <strong>Already Friends!</strong>
+                            </td>
+                        </tr>
+                        <tr th:if="${!requestPending.empty}" th:each="currentFriend : ${requestPending}">
+                            <td class="align-middle">
+                                <img class="rounded-circle overflow-hidden border border-dark"
+                                     th:src="@{'/users/' + ${currentFriend.id} + '/profile-picture'}"
+                                     style="width: 40px; height: 40px;" alt="Profile Picture">
+                                <span th:text="${currentFriend.fname} "></span>
+                                <span th:if="${currentFriend.lname != null}" th:text="${currentFriend.lname}"></span>
+                            </td>
+                            <td>
+                            </td>
+                            <td class="align-middle text-muted">
+                                <strong>Pending...</strong>
+                            </td>
+                        </tr>
+                        <tr th:if="${!declineSent.empty}" th:each="user : ${declineSent}">
+                            <td class="align-middle">
+                                <img class="rounded-circle overflow-hidden border border-dark"
+                                     th:src="@{'/users/' + ${user.id} + '/profile-picture'}"
+                                     style="width: 40px; height: 40px;" alt="Profile Picture">
+                                <span th:text="${user.fname} "></span>
+                                <span th:if="${user.lname != null}" th:text="${user.lname}"></span>
+                            </td>
+                            <td></td>
+                            <td class="align-middle text-muted">
+                                <strong>Declined</strong>
+                            </td>
+                        </tr>
+                        <tr th:if="${!requestReceived.empty}" th:each="user : ${requestReceived}">
+                            <td class="align-middle">
+                                <img class="rounded-circle overflow-hidden border border-dark"
+                                     th:src="@{'/users/' + ${user.id} + '/profile-picture'}"
+                                     style="width: 40px; height: 40px;" alt="Profile Picture">
+                                <span th:text="${user.fname} "></span>
+                                <span th:if="${user.lname != null}" th:text="${user.lname}"></span>
+                            </td>
+                            <td></td>
+                            <td>
+                                <form th:action="@{/users/manage-friends/accept}" method="post" class="d-inline">
+                                    <button type="submit" name="acceptUser" th:value="${user.id}"
+                                            class="btn btn-success btn-sm mr-2">Accept
+                                    </button>
+                                </form>
+                                <form th:action="@{/users/manage-friends/decline}" method="post" class="d-inline">
+                                    <button type="submit" name="declineUser" th:value="${user.id}"
+                                            class="btn btn-success btn-sm mr-2">Decline
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr th:if="searchResults != null" th:each="friend : ${searchResults}">
+                            <td class="align-middle">
+                                <img class="rounded-circle overflow-hidden border border-dark"
+                                     th:src="@{'/users/' + ${friend.id} + '/profile-picture'}"
+                                     style="width: 40px; height: 40px;" alt="Profile Picture">
+                                <span th:text="${friend.fname} "></span>
+                                <span th:if="${friend.lname != null}" th:text="${friend.lname}"></span>
+                            </td>
+                            <td></td>
+                            <td class="align-middle">
+                                <form th:action="@{/users/manage-friends/invite}" method="post">
+                                    <input type="hidden" name="requestedUser" th:value="${friend.id}" class="d-inline"/>
+                                    <button type="submit" class="btn btn-success btn-sm mr-2">Invite as Friend</button>
+                                </form>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -321,21 +349,47 @@
             formToSubmit.submit();
         });
 
-        let searchFormBtn = document.getElementById('showSearchFormBtn');
-        let searchForm = document.getElementById('searchForm');
-
-        searchFormBtn.addEventListener('click', function () {
-            searchForm.classList.toggle('d-none');
-        });
-
-        // Ensure modal hides when clicking cancel
         confirmModal.find('.btn-secondary').on('click', function () {
             confirmModal.modal('hide');
         });
     });
-
-
 </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const triggerTabList = document.querySelectorAll('#friendTabs a')
+        triggerTabList.forEach(function (triggerEl) {
+            const tabTrigger = new bootstrap.Tab(triggerEl)
+
+            triggerEl.addEventListener('click', function (event) {
+                event.preventDefault()
+                tabTrigger.show()
+            })
+        })
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const addFriendTab = document.getElementById('addFriend-tab');
+        const searchForm = document.getElementById('searchForm');
+
+        if (addFriendTab && searchForm) {
+            const clickAddFriendTab = function () {
+                addFriendTab.click();
+            };
+
+            searchForm.addEventListener('submit', function () {
+                sessionStorage.setItem('searchSubmitted', 'true');
+            });
+
+            const searchSubmitted = sessionStorage.getItem('searchSubmitted');
+            if (searchSubmitted) {
+                sessionStorage.removeItem('searchSubmitted');
+                clickAddFriendTab();
+            }
+        }
+    });
+</script>
+
 
 
 </body>

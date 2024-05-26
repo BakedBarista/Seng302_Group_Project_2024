@@ -437,3 +437,13 @@ h1, h2, h3, h4, h5, h6 {
     --bs-btn-close-opacity: 0.75;
     --bs-btn-close-hover-opacity: 1.0;
 }
+
+/* Navbar */
+#friendTabs .nav-link {
+    color: var(--gg-primary);
+}
+
+#friendTabs .nav-link.active {
+    background-color: var(--gg-secondary-dark);
+    color: var(--gg-white);
+}
