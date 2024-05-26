@@ -23,6 +23,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import java.util.Arrays;
@@ -33,6 +34,8 @@ import java.util.Optional;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.stream.Collectors;
+
+import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.DateTimeFormats.NZ_FORMAT_DATE;
 
 
 /**
@@ -143,6 +146,7 @@ public class GardenController {
             Garden garden = gardenOpt.get();
             model.addAttribute("garden", garden);
             model.addAttribute("owner", garden.getOwner());
+            model.addAttribute("NZ_FORMAT_DATE", NZ_FORMAT_DATE);
             model.addAttribute("plants", plantService.getPlantsByGardenId(id));
             List<List<Map<String, Object>>> weatherResult;
 
@@ -402,7 +406,7 @@ public class GardenController {
             logger.info("Adding test data");
 
             // Create user
-            GardenUser user = new GardenUser("Jan", "Doe", "jan.doe@gmail.com", "password", "01/01/1970");
+            GardenUser user = new GardenUser("Jan", "Doe", "jan.doe@gmail.com", "password", LocalDate.of(1970, 1, 1));
             gardenUserService.addUser(user);
 
             // Garden names
@@ -436,7 +440,7 @@ public class GardenController {
                     String[] plantDetail = plantsDetails.get(j);
                     String plantName = plantDetail[0];
                     String plantDescription = plantDetail[1];
-                    Plant plant = new Plant(plantName, "15", plantDescription, "01/03/2024");
+                    Plant plant = new Plant(plantName, "15", plantDescription, LocalDate.of(2024, 3, 1));
                     Plant savedPlant = plantService.addPlant(plant, garden.getId());
 
                     // Add plant image

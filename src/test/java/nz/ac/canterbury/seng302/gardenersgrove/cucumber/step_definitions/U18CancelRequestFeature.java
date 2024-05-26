@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.mock;
 
 
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -59,7 +60,7 @@ public class U18CancelRequestFeature {
     public void i_send_a_friend_request_to(String fName, String lName) {
          user = U2LogInFeature.user;
 
-        GardenUser friend = new GardenUser(fName, lName, "john.doe@gmail.com", "password", "");
+        GardenUser friend = new GardenUser(fName, lName, "john.doe@gmail.com", "password", LocalDate.of(1999, 1, 1));
 
         if(user != null) {
             Friends friendRequest = new Friends(user, friend, PENDING);

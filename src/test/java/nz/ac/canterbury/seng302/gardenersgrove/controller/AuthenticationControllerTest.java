@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.Instant;
+import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -37,7 +38,7 @@ public class AuthenticationControllerTest {
     public void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        user = new GardenUser("John", "Doe", "john.doe@gmail.com", "password", "01/01/2001");
+        user = new GardenUser("John", "Doe", "john.doe@gmail.com", "password", LocalDate.of(1970, 1, 1));
     }
 
     @Test
@@ -159,7 +160,7 @@ public class AuthenticationControllerTest {
 
     @Test
     void testWhenUserWithOneCharEmailGivesCorrectToken_UserItAuthenticated() {
-        GardenUser specialUser = new GardenUser("John", "Doe", "j@gmail.com", "password", "01/01/2001");
+        GardenUser specialUser = new GardenUser("John", "Doe", "j@gmail.com", "password", LocalDate.of(2001, 1, 1));
         long userId = 1;
         String expectedPage = "redirect:/users/login";
         String token = "000000";
@@ -176,7 +177,7 @@ public class AuthenticationControllerTest {
 
     @Test
     void testWhenUserWithTwoCharEmailGivesCorrectToken_UserItAuthenticated() {
-        GardenUser specialUser = new GardenUser("John", "Doe", "j@gmail.com", "password", "01/01/2001");
+        GardenUser specialUser = new GardenUser("John", "Doe", "j@gmail.com", "password", LocalDate.of(2001, 1, 1));
         long userId = 1;
         String expectedPage = "redirect:/users/login";
         String token = "000000";
