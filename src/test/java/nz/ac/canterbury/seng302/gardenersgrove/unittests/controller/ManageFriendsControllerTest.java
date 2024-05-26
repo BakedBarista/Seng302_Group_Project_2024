@@ -611,7 +611,7 @@
          String result = manageFriendsController.viewFriendProfile(authentication, otherUserId, model);
 
          verify(model).addAttribute(eq("Friend"), any(GardenUser.class));
-         assertEquals("users/friendProfile", result);
+         assertEquals("users/friend-profile", result);
      }
 
      /**

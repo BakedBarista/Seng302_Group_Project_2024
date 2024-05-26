@@ -57,7 +57,7 @@ public class ManageFriendsController {
         model.addAttribute("allUsers", allUsers);
         model.addAttribute("sentRequests", sentRequests);
         model.addAttribute("receivedRequests", receivedRequests);
-        return "users/manage-friends";
+        return "manageFriends";
     }
 
     /**
@@ -240,7 +240,7 @@ public class ManageFriendsController {
      * @param model          Thymeleaf model
      * @return The name of the view template for displaying the friend's profile.
      */
-    @GetMapping("users/friendProfile/{id}")
+    @GetMapping("users/friend-profile/{id}")
     public String viewFriendProfile(Authentication authentication,
             @PathVariable() Long id,
             Model model) {
@@ -253,7 +253,7 @@ public class ManageFriendsController {
         }
 
         model.addAttribute("Friend", friend);
-        return "users/friendProfile";
+        return "users/friend-profile";
     }
 
     /**
