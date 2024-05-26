@@ -420,6 +420,7 @@ h1, h2, h3, h4, h5, h6 {
 .hidden-input {
     position: absolute;
     left: -9999px;
+}
 
 .pagination .page-item.active .page-link {
     background-color: var(--gg-primary-light);

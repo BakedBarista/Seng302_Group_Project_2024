@@ -160,7 +160,7 @@ public class AuthenticationControllerTest {
 
     @Test
     void testWhenUserWithOneCharEmailGivesCorrectToken_UserItAuthenticated() {
-        GardenUser specialUser = new GardenUser("John", "Doe", "j@gmail.com", "password", "01/01/2001");
+        GardenUser specialUser = new GardenUser("John", "Doe", "j@gmail.com", "password", LocalDate.of(2001, 1, 1));
         long userId = 1;
         String expectedPage = "redirect:/users/login";
         String token = "000000";
@@ -177,7 +177,7 @@ public class AuthenticationControllerTest {
 
     @Test
     void testWhenUserWithTwoCharEmailGivesCorrectToken_UserItAuthenticated() {
-        GardenUser specialUser = new GardenUser("John", "Doe", "j@gmail.com", "password", "01/01/2001");
+        GardenUser specialUser = new GardenUser("John", "Doe", "j@gmail.com", "password", LocalDate.of(2001, 1, 1));
         long userId = 1;
         String expectedPage = "redirect:/users/login";
         String token = "000000";
