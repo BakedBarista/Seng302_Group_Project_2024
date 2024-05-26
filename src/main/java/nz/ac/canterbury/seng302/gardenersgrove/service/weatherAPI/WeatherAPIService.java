@@ -225,7 +225,7 @@ public class WeatherAPIService {
      */
     private List<Map<String, Object>> getForecastWeatherFromAPI(double lat, double lng) {
         ArrayList<Map<String, Object>> forecastWeather = new ArrayList<>();
-        String locationQuery = "&q=" + lat + "," + lng + "&days=4";
+        String locationQuery = "&q=" + lat + "," + lng + "&days=3";
         String url = WEATHER_API_URL + API_KEY + locationQuery;
 
         logger.info("Requesting the future forecast for Lat: {} Lng: {}", lat, lng);
