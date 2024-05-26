@@ -74,7 +74,7 @@ public class AuthenticationControllerTest {
     }
 
     @Test
-    public void testWhenUserGivesCorrectToken_UserIsTakenToLoginPage() {
+    void testWhenUserGivesCorrectToken_UserIsTakenToLoginPage() {
         long userId = 1;
         String expectedPage = "redirect:/users/login";
         String token = "000000";
