@@ -57,7 +57,7 @@ public class ManageFriendsController {
         model.addAttribute("allUsers", allUsers);
         model.addAttribute("sentRequests", sentRequests);
         model.addAttribute("receivedRequests", receivedRequests);
-        return "manageFriends";
+        return "users/manage-friends";
     }
 
     /**
