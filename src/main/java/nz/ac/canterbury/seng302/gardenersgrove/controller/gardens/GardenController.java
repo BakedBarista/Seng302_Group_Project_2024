@@ -443,6 +443,7 @@ public class GardenController {
                     try {
                         String imageName = plant.getName().replaceAll("\\s+","");
                         ClassPathResource imgFile = new ClassPathResource("static/img/testImages/" + imageName + ".jpg");
+                        logger.info("Loading image from {}",imgFile.getPath());
                         String mimeType = Files.probeContentType(imgFile.getFile().toPath());
                         byte[] image = Files.readAllBytes(imgFile.getFile().toPath());
                         savedPlant.setPlantImage(mimeType, image);
