@@ -28,7 +28,7 @@
                     <input type="checkbox" class="form-check-input" th:name="noLname" th:value="*{noLname}" th:checked="*{noLname}" id="noLname"> I have no surname
                 </label>
                 <div class="mb-3">
-                    <label for="email" th:class="'required-field form-input ' + ${#fields.hasErrors('email') ? 'is-invalid' : ''}">Email</label>
+                    <label for="email" th:class="'required-field form-label ' + ${#fields.hasErrors('email') ? 'is-invalid' : ''}">Email</label>
                     <input id="email" type="text" th:class="'form-control ' + ${#fields.hasErrors('email') ? 'is-invalid' : ''}" th:name="email" th:value="*{email}" inputmode="email">
                     <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
                 </div>
@@ -38,7 +38,7 @@
                     <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
                 </div>
                 <div class="mb-3">
-                    <label for="confirmPassword" th:class="' form-label ' + ${#fields.hasErrors('confirmPassword') ? 'is-invalid' : ''}">Confirm Password</label>
+                    <label for="confirmPassword" th:class="'required-field form-label ' + ${#fields.hasErrors('confirmPassword') ? 'is-invalid' : ''}">Confirm Password</label>
                     <input id="confirmPassword" type="password" th:class="'form-control ' + ${#fields.hasErrors('confirmPassword') ? 'is-invalid' : ''}" th:name="confirmPassword">
                     <div class="invalid-feedback" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"></div>
                 </div>
