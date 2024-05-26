@@ -8,13 +8,12 @@
  * @returns {boolean} to give permission for thymeleaf to continue once these checks have been done
  */
 function validateDate() {
-    let dateInput = document.getElementById('date');
-    console.log(dateInput);
+    let dateInput = document.getElementById('plantedDate');
 
     if (dateInput.validity.badInput) {
         document.getElementById('dateError').value = "dateInvalid";
     } else {
-            document.getElementById('dateError').value = "";
+        document.getElementById('dateError').value = "";
     }
     return true;
 }

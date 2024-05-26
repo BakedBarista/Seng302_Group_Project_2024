@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.gardens;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
@@ -78,14 +79,14 @@ public class PlantController {
      */
     @PostMapping("/gardens/{gardenId}/add-plant")
     public String submitAddPlantForm(@PathVariable("gardenId") Long gardenId,
-                                      @Valid @ModelAttribute("plant") Plant plant,
+                                     @Valid @ModelAttribute("plant") Plant plant,
                                      BindingResult bindingResult,
                                      @RequestParam("image") MultipartFile file,
-                                      Model model) {
+                                     @RequestParam("dateError") String dateValidity,
+                                     Model model) {
+        logger.info("POST /gardens/${gardenId}/add-plant - submit the new plant form");
 
-
-        logger.info("POST /gardens/{}/add-plant - Request made", gardenId);
-        if (!plant.getPlantedDate().isEmpty() && !plant.getPlantedDate().matches("\\d{4}-\\d{2}-\\d{2}")){
+        if (Objects.equals(dateValidity, "dateInvalid")) {
             bindingResult.rejectValue("plantedDate", "plantedDate.formatError", "Date must be in the format DD-MM-YYYY");
         }
 
@@ -104,6 +105,10 @@ public class PlantController {
             model.addAttribute("gardenId", gardenId);
             logger.error("Validation error in Plant Form.");
             return "plants/addPlant";
+        }
+
+        if(!plant.getPlantedDate().isEmpty()) {
+            plant.setPlantedDate(refactorPlantedDate(plant.getPlantedDate()));
         }
 
         // Save the new plant and image
@@ -136,9 +141,11 @@ public class PlantController {
         if (plant.isPresent()) {
             Plant plantOpt = plant.get();
             if (plantOpt.getPlantedDate() != null && !plantOpt.getPlantedDate().isEmpty()) {
+                logger.info("Plant date: {}", plantOpt.getPlantedDate());
                 DateTimeFormatter htmlDateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                 LocalDate databaseDate = LocalDate.parse(plantOpt.getPlantedDate(), htmlDateFormat);
                 plantOpt.setPlantedDate(databaseDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
+                logger.info("Plant date is now: {}", plantOpt.getPlantedDate());
             }
         }
         GardenUser owner = gardenUserService.getCurrentUser();
@@ -155,7 +162,6 @@ public class PlantController {
      * @param gardenId the id of the garden that the plant belongs to
      * @param plantId the id of the plant being edited
      * @param file the image file
-     * @param dateInvalid a value passed from the html flagging us if the date is not filled correctly
      * @param plant the plant entity being edited
      * @param bindingResult binding result which helps display errors
      * @param model representation of results
@@ -165,11 +171,12 @@ public class PlantController {
     public String submitEditPlantForm(@PathVariable("gardenId") long gardenId,
                                       @PathVariable("plantId") long plantId,
                                       @RequestParam("image") MultipartFile file,
-                                      @RequestParam(value = "dateError", required = false) String dateInvalid,
+                                      @RequestParam("dateError") String dateValidity,
                                       @Valid @ModelAttribute("plant") Plant plant,
-                               BindingResult bindingResult, Model model) {
+                                      BindingResult bindingResult,
+                                      Model model) {
 
-        if (Objects.equals(dateInvalid, "dateInvalid") || (!plant.getPlantedDate().isEmpty() && !plant.getPlantedDate().matches("\\d{4}-\\d{2}-\\d{2}"))) {
+        if (Objects.equals(dateValidity, "dateInvalid")) {
             bindingResult.rejectValue("plantedDate", "plantedDate.formatError", "Date must be in the format DD-MM-YYYY");
         }
 
@@ -182,6 +189,10 @@ public class PlantController {
             model.addAttribute("gardenId", gardenId);
             model.addAttribute("plantId", plantId);
             return "plants/editPlant";
+        }
+
+        if(!plant.getPlantedDate().isEmpty()) {
+            plant.setPlantedDate(refactorPlantedDate(plant.getPlantedDate()));
         }
 
         Optional<Plant> existingPlant = plantService.getPlantById(plantId);
@@ -228,7 +239,7 @@ public class PlantController {
      * @return ResponseEntity as bytes and content type
      */
     @GetMapping("plants/{id}/plant-image")
-    public ResponseEntity<byte[]> plantImage(@PathVariable("id") Long id) {
+    public ResponseEntity<byte[]> plantImage(@PathVariable("id") Long id, HttpServletRequest request) {
         logger.info("GET /plants/" + id + "/plant-image");
 
         Optional<Plant> plant = plantService.getPlantById(id);
@@ -237,11 +248,10 @@ public class PlantController {
         if (plant.isPresent()) {
             existingPlant = plant.get();
         }
-
         // Return the default image if nothing specified
         if (existingPlant.getPlantImage() == null || existingPlant.getPlantImage().length == 0) {
             logger.info("Returning default plant image");
-            return ResponseEntity.status(302).header(HttpHeaders.LOCATION, "/img/default-plant.svg").build();
+            return ResponseEntity.status(302).header(HttpHeaders.LOCATION, request.getContextPath() + "/img/default-plant.svg").build();
         }
 
         // Return the saved image from DB
