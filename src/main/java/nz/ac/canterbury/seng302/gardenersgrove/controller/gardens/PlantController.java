@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.gardens;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
@@ -71,7 +72,7 @@ public class PlantController {
      * garden details page if data is valid with newly submitted plant entity
      * - else keep them on the add plant form with data persistent and error messages displayed
      * @param gardenId the id of the garden the plant is being added to
-     * @param plantDTO the plant dto being checked
+     * @param plantDTO the plant dto being checaked
      * @param bindingResult binding result
      * @param model representation of results
      * @return redirect to gardens page
@@ -203,7 +204,7 @@ public class PlantController {
      * @return ResponseEntity as bytes and content type
      */
     @GetMapping("plants/{id}/plant-image")
-    public ResponseEntity<byte[]> plantImage(@PathVariable("id") Long id) {
+    public ResponseEntity<byte[]> plantImage(@PathVariable("id") Long id, HttpServletRequest request) {
         logger.info("GET /plants/" + id + "/plant-image");
 
         Optional<Plant> plant = plantService.getPlantById(id);
@@ -215,7 +216,7 @@ public class PlantController {
         // Return the default image if nothing specified
         if (existingPlant.getPlantImage() == null || existingPlant.getPlantImage().length == 0) {
             logger.info("Returning default plant image");
-            return ResponseEntity.status(302).header(HttpHeaders.LOCATION, "/img/default-plant.svg").build();
+            return ResponseEntity.status(302).header(HttpHeaders.LOCATION, request.getContextPath() + "/img/default-plant.svg").build();
         }
 
         // Return the saved image from DB

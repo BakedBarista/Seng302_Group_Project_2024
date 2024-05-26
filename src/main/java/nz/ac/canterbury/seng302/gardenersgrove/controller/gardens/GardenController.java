@@ -31,12 +31,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
 import java.util.stream.Collectors;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.DateTimeFormats.NZ_FORMAT_DATE;
@@ -58,6 +54,7 @@ public class GardenController {
     private final FriendService friendService;
 
     private final ProfanityService profanityService;
+    private final String PROFANITY = "profanity";
 
     @Autowired
     public GardenController(GardenService gardenService, PlantService plantService, GardenUserService gardenUserService, WeatherAPIService weatherAPIService, FriendService friendService, ModerationService moderationService, ProfanityService profanityService) {
@@ -97,30 +94,9 @@ public class GardenController {
     public String submitForm(@Valid @ModelAttribute("garden") Garden garden,
                              BindingResult bindingResult, Authentication authentication, Model model) {
         logger.info("POST /gardens - submit the new garden form");
-        List<String> locationErrorNames = Arrays.asList("city", "country", "suburb", "streetNumber", "streetName", "postCode");
-        boolean profanityFlagged = !profanityService.badWordsFound(garden.getDescription()).isEmpty();
-        if (!profanityFlagged) {
-            profanityFlagged = moderationService.checkIfDescriptionIsFlagged(garden.getDescription());
-        }
-        if (bindingResult.hasErrors() || profanityFlagged) {
-            if(profanityFlagged) {
-                model.addAttribute("profanity", "The description does not match the language standards of the app.");
-            }
-            for (FieldError error : bindingResult.getFieldErrors()) {
-                if(locationErrorNames.contains(error.getField())){
-                    var errorCode = error.getCode();
-                    if(errorCode != null){
-                        String errorMessage;
-                        if(errorCode.equals("Pattern")){
-                            errorMessage = "Location name must only include letters, numbers, spaces, dots, hyphens or apostrophes";
-                        } else {
-                            errorMessage = "Location cannot be empty";
-                        }
-                        model.addAttribute("locationError", errorMessage);
-                        break;
-                    }
-                }
-            }
+
+        checkGardenError(model,bindingResult,garden);
+        if (bindingResult.hasErrors() || model.containsAttribute(PROFANITY)) {
             model.addAttribute("garden", garden);
             return "gardens/createGarden";
         }
@@ -273,28 +249,9 @@ public class GardenController {
                                @Valid @ModelAttribute("garden") Garden garden,
                                BindingResult result,
                                Model model) {
-        List<String> locationErrorNames = Arrays.asList("city", "country", "suburb", "streetNumber", "streetName", "postCode");
-        boolean descriptionFlagged = moderationService.checkIfDescriptionIsFlagged(garden.getDescription());
 
-        if (result.hasErrors() || descriptionFlagged) {
-            if (descriptionFlagged) {
-                model.addAttribute("profanity", "The description does not match the language standards of the app.");
-            }
-
-            for (FieldError error : result.getFieldErrors()) {
-                if(locationErrorNames.contains(error.getField())){
-                    if(error.getCode().equals("Pattern")){
-                        var errorMessage = "Location name must only include letters, numbers, spaces, dots, hyphens or apostrophes";
-                        model.addAttribute("locationError", errorMessage);
-                        break;
-                    } else {
-                        var errorMessage = "Location cannot be empty";
-                        model.addAttribute("locationError", errorMessage);
-                        break;
-                    }
-                }
-            }
-
+        checkGardenError(model,result,garden);
+        if (result.hasErrors() || model.containsAttribute(PROFANITY)) {
             model.addAttribute("garden", garden);
             model.addAttribute("id", id);
             return "gardens/editGarden";
@@ -390,8 +347,8 @@ public class GardenController {
      * @return public garden page
      */
     @PostMapping("/gardens/public/search")
-    public String searchPublicGardens(@RequestParam (defaultValue = "0") int page,
-                                      @RequestParam (defaultValue = "10") int size,
+    public String searchPublicGardens(@RequestParam(defaultValue = "0") int page,
+                                      @RequestParam(defaultValue = "10") int size,
                                       @RequestParam(name = "search", required = false, defaultValue = "") String search,
                                       Model model) {
         logger.info("Search: " + search);
@@ -402,6 +359,40 @@ public class GardenController {
         model.addAttribute("gardens", gardens);
         model.addAttribute("previousSearch", search);
         return "gardens/publicGardens";
+    }
+
+    /**
+     * Helper method to check garden errors
+     * @param model model to add error attributes
+     * @param bindingResult to get location error
+     * @param garden garden object
+     */
+    public void checkGardenError(Model model, BindingResult bindingResult, Garden garden) {
+        List<String> locationErrorNames = Arrays.asList("city", "country", "suburb", "streetNumber", "streetName", "postCode");
+        boolean profanityFlagged = !profanityService.badWordsFound(garden.getDescription()).isEmpty();
+        if (!profanityFlagged) {
+            profanityFlagged = moderationService.checkIfDescriptionIsFlagged(garden.getDescription());
+        }
+        if (bindingResult.hasErrors() || profanityFlagged) {
+            if (profanityFlagged) {
+                model.addAttribute(PROFANITY, "The description does not match the language standards of the app.");
+            }
+            for (FieldError error : bindingResult.getFieldErrors()) {
+                if (locationErrorNames.contains(error.getField())) {
+                    var errorCode = error.getCode();
+                    if (errorCode != null) {
+                        String errorMessage;
+                        if (errorCode.equals("Pattern")) {
+                            errorMessage = "Location name must only include letters, numbers, spaces, dots, hyphens or apostrophes";
+                        } else {
+                            errorMessage = "Location cannot be empty";
+                        }
+                        model.addAttribute("locationError", errorMessage);
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -455,7 +446,7 @@ public class GardenController {
                     // Add plant image
                     try {
                         String imageName = plant.getName().replaceAll("\\s+","");
-                        ClassPathResource imgFile = new ClassPathResource("static/img/TestImages/" + imageName + ".jpg");
+                        ClassPathResource imgFile = new ClassPathResource("static/img/testImages/" + imageName + ".jpg");
                         String mimeType = Files.probeContentType(imgFile.getFile().toPath());
                         byte[] image = Files.readAllBytes(imgFile.getFile().toPath());
                         savedPlant.setPlantImage(mimeType, image);
