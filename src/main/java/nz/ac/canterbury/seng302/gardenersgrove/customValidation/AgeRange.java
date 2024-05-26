@@ -56,7 +56,7 @@ public @interface AgeRange {
 
             LocalDate dob;
             try {
-                dob = LocalDate.parse(value, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                dob = LocalDate.parse(value, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
             } catch (DateTimeParseException e) {
                 return true;
             }
