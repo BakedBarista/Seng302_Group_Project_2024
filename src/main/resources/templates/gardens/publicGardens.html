@@ -16,6 +16,7 @@
         <form class="input-group w-100" action="#" th:action="@{/gardens/public/search}" method="post" id="searchForm">
             <input type="text" class="form-control" placeholder="Search Public Gardens" id="searchField"
                    aria-label="Search Public Gardens" aria-describedby="button-addon" name="search" th:value="${previousSearch}">
+            <input type="hidden" name="tags" id="tagsInput" th:value="${previousTags != null ? #strings.arrayJoin(previousTags.toArray(), ',') : ''}">
             <div class="input-group-append">
                 <button class="btn btn-outline-secondary" type="submit" id="button-addon">
                     <i class="bi bi-search"></i>
@@ -30,17 +31,11 @@
         </div>
 
         <div class="mt-3" id="tagsContainer"></div>
-
-        <form id="tagsForm" th:action="@{/gardens/public/search-tags}" method="post">
-            <input type="hidden" name="tags" id="tagsInput" th:value="${previousTags != null ? #strings.arrayJoin(previousTags.toArray(), ',') : ''}">
-        </form>
     </div>
-
-
 
     <div th:if="${gardenPage.empty}">
         No gardens match your search...
-        <a href="#" role="button" onclick="clearSearch()">
+        <a href="#" role="button" onclick="clearSearch(); event.preventDefault();">
             Reset search
         </a>
     </div>
@@ -141,7 +136,8 @@
 
     function updateTagsAndSearch() {
         displayTags();
-        document.getElementById('tagsForm').submit();
+        document.getElementById('tagsInput').value = tags.join(',');
+        document.getElementById('searchForm').submit();
     }
 
     function displayTags() {
@@ -152,32 +148,23 @@
             tagSpan.textContent = tag + ' ';
             var removeBtn = document.createElement('button');
             removeBtn.textContent = 'Remove';
+            removeBtn.className = 'btn btn-link';
             removeBtn.onclick = function() { removeTag(index); };
             tagSpan.appendChild(removeBtn);
             tagsContainer.appendChild(tagSpan);
         });
-        document.getElementById('tagsInput').value = tags.join(',');
     }
 
     document.addEventListener('DOMContentLoaded', function() {
         displayTags();
-    });
-
-    document.addEventListener('DOMContentLoaded', function() {
-        displayTags(); // Display tags on initial load
     });
 
     function clearSearch() {
-        tags = [];
-        displayTags();
         document.getElementById('searchField').value = '';
-        document.getElementById('searchForm').submit();
+        tags = [];
+        updateTagsAndSearch();
     }
+
 </script>
-
-
-
-
-
 </body>
 </html>

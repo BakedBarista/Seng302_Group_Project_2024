@@ -113,8 +113,8 @@ public class GardenController {
         }
 
 
-        
-        
+
+
 
         GardenUser owner = gardenUserService.getCurrentUser();
         garden.setOwner(owner);
@@ -369,17 +369,20 @@ public class GardenController {
      * @return public garden page
      */
     @PostMapping("/gardens/public/search")
-    public String searchPublicGardens(@RequestParam (defaultValue = "0") int page,
-                                      @RequestParam (defaultValue = "10") int size,
+    public String searchPublicGardens(@RequestParam(defaultValue = "0") int page,
+                                      @RequestParam(defaultValue = "10") int size,
                                       @RequestParam(name = "search", required = false, defaultValue = "") String search,
+                                      @RequestParam(name = "tags", required = false) List<String> tags,
                                       Model model) {
-        logger.info("Search: " + search);
+        logger.info("Search: " + search + ", Tags: " + tags);
         Pageable pageable = PageRequest.of(page, size);
-        Page<Garden> gardenPage = gardenService.findPageThatContainsQuery(search, pageable);
+        Page<Garden> gardenPage = gardenService.findGardensBySearchAndTags(search, tags, pageable);
         model.addAttribute("gardenPage", gardenPage);
         model.addAttribute("previousSearch", search);
+        model.addAttribute("previousTags", tags);
         return "gardens/publicGardens";
     }
+
 
 
     /**
