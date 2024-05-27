@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
-import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -29,6 +28,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditPasswordDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+
 
 /**
  * Controller for editing an existing user
@@ -74,13 +74,7 @@ public class EditUserController {
     }
 
     /**
-     * Handles the submission of user edits
-     *
-     * @param fname          user's current first name
-     * @param lname          user's current last name
-     * @param noLname        True if the user has no last name
-     * @param email          user's current email
-     * @param dob            user's current date of birth
+     * Handles the submission of user edit
      * @param authentication authentication object representing the current user
      * @param model          the Thymeleaf model
      * @return The view name for the edit user template or a redirect URL
@@ -90,7 +84,9 @@ public class EditUserController {
             @Valid @ModelAttribute("user") EditUserDTO editUserDTO,
             @RequestParam("image") MultipartFile file,
             BindingResult bindingResult,
-            Authentication authentication, Model model) throws IOException {
+            Authentication authentication,
+            @RequestParam(value = "dateError", required = false) String dateValidity,
+            Model model) throws IOException {
         logger.info("POST /users/edit");
 
         Long userId = (Long) authentication.getPrincipal();
@@ -158,9 +154,6 @@ public class EditUserController {
     /**
      * Handles submission of password edits
      *
-     * @param oldPassword     user's current password
-     * @param newPassword     user's new password
-     * @param confirmPassword confirmation of the new password
      * @param model           Thymeleaf model
      * @return edit user template
      */

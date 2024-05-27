@@ -42,6 +42,8 @@ class EditUserControllerTest {
     private MultipartFile file;
     private Long userId = 1L;
 
+    private String dateValidStr = "";
+
     @BeforeEach
     void setUp() {
         gardenUserRepository = mock(GardenUserRepository.class);
@@ -55,7 +57,7 @@ class EditUserControllerTest {
 
     @Test
     void whenValidEditProfile_redirectToProfilePage() throws IOException {
-        GardenUser user = new GardenUser("John", "Doe", "john@email.com", "P#ssw0rd", "10/10/2000");
+        GardenUser user = new GardenUser("John", "Doe", "john@email.com", "P#ssw0rd", LocalDate.of(2000, 10, 10));
         when(userService.getUserById(userId)).thenReturn(user); // Mock userService.getUserById(userId)
         when(authentication.getPrincipal()).thenReturn(userId);
 
@@ -70,14 +72,14 @@ class EditUserControllerTest {
         when(bindingResult.hasErrors()).thenReturn(false);
 
         //Edit user details
-        String result = controller.submitUser(editUser, file, bindingResult, authentication, model);
+        String result = controller.submitUser(editUser, file, bindingResult, authentication, dateValidStr, model);
 
         assertEquals("redirect:/users/user", result); // Verify that the returned view name is correct
     }
 
     @Test
     void whenInvalidEditProfile_redirectToEditPage() throws IOException {
-        GardenUser user = new GardenUser("John", "Doe", "john@email.com", "P#ssw0rd", "10/10/2000");
+        GardenUser user = new GardenUser("John", "Doe", "john@email.com", "P#ssw0rd", LocalDate.of(2000, 10, 10));
         when(userService.getUserById(userId)).thenReturn(user);
         when(authentication.getPrincipal()).thenReturn(userId);
 
@@ -92,7 +94,7 @@ class EditUserControllerTest {
         when(bindingResult.hasErrors()).thenReturn(true);
 
         //Edit user details
-        String result = controller.submitUser(editUser,file,  bindingResult, authentication, model);
+        String result = controller.submitUser(editUser,file,  bindingResult, authentication,dateValidStr,  model);
 
         assertEquals("users/editTemplate", result);
     }
@@ -115,7 +117,7 @@ class EditUserControllerTest {
         when(bindingResult.hasErrors()).thenReturn(false);
 
         //Edit user details
-        controller.submitUser(editUser,file, bindingResult, authentication, model);
+        controller.submitUser(editUser,file, bindingResult, authentication, dateValidStr, model);
 
         assertEquals("Jane", user.getFname());
         assertEquals("Dough", user.getLname());
@@ -125,7 +127,7 @@ class EditUserControllerTest {
 
     @Test
     void whenNameTooLong_doNotSaveToDB() throws IOException {
-        GardenUser user = new GardenUser("John", "Doe", "john@email.com", "P#ssw0rd", "10/10/2000");
+        GardenUser user = new GardenUser("John", "Doe", "john@email.com", "P#ssw0rd", LocalDate.of(2000, 10, 10));
         when(userService.getUserById(userId)).thenReturn(user);
         when(authentication.getPrincipal()).thenReturn(userId);
 
@@ -139,7 +141,7 @@ class EditUserControllerTest {
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
 
-        String result = controller.submitUser(editUser,file, bindingResult, authentication, model);
+        String result = controller.submitUser(editUser,file, bindingResult, authentication, dateValidStr, model);
 
         assertEquals("users/editTemplate", result);
         assertEquals("John", user.getFname()); //Checks if first name didn't change because it is not valid
@@ -171,7 +173,7 @@ class EditUserControllerTest {
         Long userId = 1L;
         MockMultipartFile file = new MockMultipartFile("file", "filename.txt", "text/plain",
                 "Some file content".getBytes());
-        GardenUser user = new GardenUser("John", "Doe", "john@email.com", "P#ssw0rd", "10/10/2000");
+        GardenUser user = new GardenUser("John", "Doe", "john@email.com", "P#ssw0rd", LocalDate.of(2000, 10, 10));
 
         MockMultipartFile spyFile = spy(file);
         doThrow(new IOException("Simulation")).when(spyFile).getBytes();
@@ -184,12 +186,11 @@ class EditUserControllerTest {
         editUser.setLname( "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
         editUser.setNoLname(false);
         editUser.setEmail("jane@email.com");
-        editUser.setDOB("01/01/1998");
 
         BindingResult bindingResult = mock(BindingResult.class);
 
         try {
-            controller.submitUser(editUser, spyFile, bindingResult, authentication, model);
+            controller.submitUser(editUser, spyFile, bindingResult, authentication, dateValidStr, model);
             fail("Expected IOException to be thrown, but nothing was thrown");
         } catch (IOException e) {
             System.out.println("IOException was thrown as expected");
