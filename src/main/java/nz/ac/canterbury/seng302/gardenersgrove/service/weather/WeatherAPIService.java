@@ -256,7 +256,7 @@ public class WeatherAPIService {
      * @param forecastResponse the forecast weather API response
      * @param previousResponse the previous weather API response
      */
-    private GardenWeather saveWeather(double lat, double lng, Garden garden, WeatherAPIForecastResponse forecastResponse, List<WeatherAPIHistoryResponse> previousResponse) {
+    public GardenWeather saveWeather(double lat, double lng, Garden garden, WeatherAPIForecastResponse forecastResponse, List<WeatherAPIHistoryResponse> previousResponse) {
         GardenWeather gardenWeather = new GardenWeather();
 
         gardenWeather.setLat(lat);
