@@ -167,7 +167,7 @@ public class GardenControllerTest {
         Model model = mock(Model.class);
         when(gardenService.getGardenById(0L)).thenReturn(Optional.empty());
         String result = gardenController.getGarden(0L, model);
-        assertEquals("/accessDenied", result);
+        assertEquals("/error/accessDenied", result);
     }
 
     @Test

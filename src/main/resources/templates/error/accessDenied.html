@@ -6,9 +6,9 @@
     <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
 </head>
 <body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
 <main class="main-container">
     <div class="card p-5 text-center">
-        <div th:replace="~{fragments/navbar :: navbar}"></div>
         <h1>Access Denied</h1>
         <p>You do not have permission to access this page.</p>
         <div class="row">
