@@ -3,16 +3,15 @@ package nz.ac.canterbury.seng302.gardenersgrove.unittests.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
+import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -26,12 +25,16 @@ class StrikeServiceTests {
     private StrikeService strikeService;
     private GardenUser user;
     private Instant now;
+    private EmailSenderService emailSenderService;
+    private GardenUserRepository gardenUserRepository;
 
     @BeforeEach
     void setUp() {
         userService = mock(GardenUserService.class);
+        emailSenderService = mock(EmailSenderService.class);
+        gardenUserRepository = mock(GardenUserRepository.class);
         clock = mock(Clock.class);
-        strikeService = new StrikeService(userService, null, clock);
+        strikeService = new StrikeService(userService, emailSenderService, gardenUserRepository,clock);
 
         user = new GardenUser();
         now = LocalDateTime.parse("2024-03-13T18:00:00").atZone(ZoneId.of("Pacific/Auckland")).toInstant();
