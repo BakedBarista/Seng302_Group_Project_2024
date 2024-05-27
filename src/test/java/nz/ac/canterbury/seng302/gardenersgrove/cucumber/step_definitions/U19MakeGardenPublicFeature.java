@@ -115,6 +115,6 @@ public class U19MakeGardenPublicFeature {
         Garden savedGarden = gardenService.getGardenById(2L).orElseThrow(() -> new RuntimeException("Garden not found"));
         assert savedGarden.getName().equals("Test Garden");
         String returnPage = gardenController.getGarden(2L, model);
-        assert returnPage.equals("access-denied");
+        assert returnPage.equals("/error/accessDenied");
     }
 }
