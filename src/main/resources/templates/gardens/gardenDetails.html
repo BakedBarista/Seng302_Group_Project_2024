@@ -79,11 +79,45 @@
                 </div>
                 <div>
                     <div th:if="${!displayWeather}">Location not found, please update your location to see the weather.</div>
-                    <!-- weather cards -->
-                    <div class="card mx-1 shadow-sm col-12 mt-2" th:if="${displayWeather}" th:each="daysWeather: ${weatherForecast}">
+                    <!-- current weather card -->
+                    <div class="card mx-1 shadow-sm col-12 mt-2" th:if="${displayWeather}">
                         <div class="d-flex">
                             <div class="text-center w-50 pt-2">
-                                <img th:src="@{'/icons/weatherIcons/' + ${daysWeather.iconUrl}}" alt="Sunny" width="50" height="50">
+                                <img th:src="@{'/icons/weatherIcons/' + ${currentWeather.icon}}" alt="Sunny" width="50" height="50">
+                                <p class="m-0" style="font-size: 16pt;"><strong th:text="${currentWeather.conditions}">Conditions</strong></p>
+                                <p style="font-size: 10pt; color: #1E1E1E70;" th:text="${currentWeather.date}">Date</p>
+                            </div>
+                            <div class="d-flex align-items-center w-25 text-center" style="font-size: 22pt;">
+                                <p class="m-0">
+                                    <span class="d-block d-sm-inline">
+                                        <span class="fw-bold mt-0" th:text="${currentWeather.maxTemp}">24</span>&deg;/
+                                    </span>
+                                    <span class="d-block d-sm-inline mt-0" style="font-size: 12pt; color: grey;">
+                                        <span class="mt-0" th:text="${currentWeather.minTemp}"></span>&deg;
+                                    </span>
+                                </p>
+                            </div>
+                            <div class="d-flex align-items-center w-25 text-center" style="font-size: 10pt;">
+                                <div class="d-flex m-0 pe-2 ps-2">
+                                    <div class="m-0 p-2">
+                                        <img th:src="@{/icons/humidity.svg}" alt="" width="24" height="24">
+                                        <p class="m-0" style="font-size: 10pt; color: #1E1E1E70;">Humidity</p>
+                                        <p class="m-0"><span th:text="${currentWeather.humidity}"></span>%</p>
+                                    </div>
+                                    <div class="m-0 p-2 d-none d-sm-block">
+                                        <img th:src="@{/icons/fast-wind-stroke-rounded.svg}" alt="" width="24" height="24">
+                                        <p class="m-0" style="font-size: 10pt; color: #1E1E1E70;">Wind</p>
+                                        <p class="m-0"><span th:text="${currentWeather.windSpeed}"></span> kph</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- forecasted weather cards -->
+                    <div class="card mx-1 shadow-sm col-12 mt-2" th:if="${displayWeather}" th:each="daysWeather: ${forecastWeather}">
+                        <div class="d-flex">
+                            <div class="text-center w-50 pt-2">
+                                <img th:src="@{'/icons/weatherIcons/' + ${daysWeather.icon}}" alt="Sunny" width="50" height="50">
                                 <p class="m-0" style="font-size: 16pt;"><strong th:text="${daysWeather.conditions}">Conditions</strong></p>
                                 <p style="font-size: 10pt; color: #1E1E1E70;" th:text="${daysWeather.date}">Date</p>
                             </div>
@@ -102,7 +136,7 @@
                                     <div class="m-0 p-2">
                                         <img th:src="@{/icons/humidity.svg}" alt="" width="24" height="24">
                                         <p class="m-0" style="font-size: 10pt; color: #1E1E1E70;">Humidity</p>
-                                        <p class="m-0"><span th:text="${daysWeather.avgHumidity}"></span>%</p>
+                                        <p class="m-0"><span th:text="${daysWeather.humidity}"></span>%</p>
                                     </div>
                                     <div class="m-0 p-2 d-none d-sm-block">
                                         <img th:src="@{/icons/fast-wind-stroke-rounded.svg}" alt="" width="24" height="24">
