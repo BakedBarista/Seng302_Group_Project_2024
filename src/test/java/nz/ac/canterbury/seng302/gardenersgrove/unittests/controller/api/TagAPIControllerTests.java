@@ -46,7 +46,8 @@ class TagAPIControllerTests {
         tagService = mock(TagService.class);
         authentication = mock(Authentication.class);
 
-        controller = new TagAPIController(gardenService, tagService);
+        // TODO: mocks
+        controller = new TagAPIController(gardenService, tagService, null, null);
 
         jsonObjectMapper = new ObjectMapper();
         user = new GardenUser();

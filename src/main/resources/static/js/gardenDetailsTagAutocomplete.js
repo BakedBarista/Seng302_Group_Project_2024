@@ -16,13 +16,17 @@ const tagAutocompleteInstance = tagAutocomplete({
             body: JSON.stringify(tags),
         });
 
-        if (response.status === 422) {
-            const error = await response.text();
-            tagAutocompleteInstance.removeLastTag();
+        switch (response.status) {
+            case 422:
+                const error = await response.text();
+                tagAutocompleteInstance.removeLastTag();
 
-            const tagsError = document.getElementById("gardenTagsError");
-            tagsError.textContent = error;
-
+                const tagsError = document.getElementById("gardenTagsError");
+                tagsError.textContent = error;
+                break;
+            case 401:
+                location.href = logoutUrl;
+                break;
         }
     },
 });
