@@ -31,7 +31,7 @@ function tagAutocomplete(options) {
      */
     function validateTag(tag) {
         const tagsError = document.getElementById("gardenTagsError");
-        const regex = new RegExp("^[\\p{L}0-9\\s\\-_']*$", 'u');
+        const regex = /^[\p{L}0-9\s\-_']*$/u;
 
         if (tag.length > 25) {
             tagsError.textContent = "A tag cannot exceed 25 characters"
