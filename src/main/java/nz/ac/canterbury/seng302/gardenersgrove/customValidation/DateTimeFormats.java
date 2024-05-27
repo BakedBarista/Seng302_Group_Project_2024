@@ -1,6 +1,9 @@
 package nz.ac.canterbury.seng302.gardenersgrove.customValidation;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Static class for holding different useful static DateTimeFormatter objects
+ */
 public class DateTimeFormats {
 
     /**
