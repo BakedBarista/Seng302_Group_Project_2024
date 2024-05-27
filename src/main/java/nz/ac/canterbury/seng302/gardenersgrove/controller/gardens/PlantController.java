@@ -136,14 +136,6 @@ public class PlantController {
         Optional<Plant> plant = plantService.getPlantById(plantId);
         GardenUser owner = gardenUserService.getCurrentUser();
         Optional<Garden> garden = gardenService.getGardenById(gardenId);
-        if (plant.isPresent()) {
-            Plant plantOpt = plant.get();
-            if (plantOpt.getPlantedDate() != null && !plantOpt.getPlantedDate().isEmpty()) {
-                DateTimeFormatter htmlDateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                LocalDate databaseDate = LocalDate.parse(plantOpt.getPlantedDate(), htmlDateFormat);
-                plantOpt.setPlantedDate(databaseDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
-            }
-        }
         if (!garden.isPresent() || !garden.get().getOwner().getId().equals(owner.getId())) {
             return "/error/accessDenied";
         }
