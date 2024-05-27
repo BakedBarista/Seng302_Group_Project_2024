@@ -11,9 +11,9 @@
         <nav th:replace="~{fragments/navbar :: navbar}"></nav>
         <main class="main-container">
             <div class="card p-5">
-                <h1 class="pb-3">Sign In</h1>
+                <h1 class="pb-2">Sign In</h1>
                 <span th:if="${generalError != null}" th:text="${generalError}" style="color: red;"></span>
-                <span th:if="${justAuthenticated == true}">Your account has been activated, please log in<br></span>
+                <span class="pb-3" th:if="${justAuthenticated == true}">Your account has been activated, please log in<br></span>
                 <form th:action="login" method="post" th:object="${loginDTO}">
                     <div class="mb-3">
                         <label for="inputEmail" th:class="'form-label ' + ${#fields.hasErrors('email') ? 'is-invalid' : ''}">Email</label>
