@@ -8,9 +8,11 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.multipart.MultipartFile;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -23,6 +25,7 @@ class EditUserControllerTest {
     private GardenUserService userService;
     private EmailSenderService emailSenderService;
 
+    private MultipartFile file;
     private Long userId = 1L;
 
     @BeforeEach
@@ -32,6 +35,7 @@ class EditUserControllerTest {
         userService = mock(GardenUserService.class);
         emailSenderService = mock(EmailSenderService.class);
         controller = new EditUserController(userService, emailSenderService);
+        file = new MockMultipartFile("file", "filename.txt", "text/plain", "Some file content".getBytes());
     }
 
     @Test
@@ -51,7 +55,7 @@ class EditUserControllerTest {
         when(bindingResult.hasErrors()).thenReturn(false);
 
         //Edit user details
-        String result = controller.submitUser(editUser, bindingResult, authentication, model);
+        String result = controller.submitUser(editUser, file, bindingResult, authentication, model);
 
         assertEquals("redirect:/users/user", result); // Verify that the returned view name is correct
     }
@@ -73,7 +77,7 @@ class EditUserControllerTest {
         when(bindingResult.hasErrors()).thenReturn(true);
 
         //Edit user details
-        String result = controller.submitUser(editUser, bindingResult, authentication, model);
+        String result = controller.submitUser(editUser,file,  bindingResult, authentication, model);
 
         assertEquals("users/editTemplate", result);
     }
@@ -96,7 +100,7 @@ class EditUserControllerTest {
         when(bindingResult.hasErrors()).thenReturn(false);
 
         //Edit user details
-        controller.submitUser(editUser, bindingResult, authentication, model);
+        controller.submitUser(editUser,file, bindingResult, authentication, model);
 
         assertEquals("Jane", user.getFname());
         assertEquals("Dough", user.getLname());
@@ -120,7 +124,7 @@ class EditUserControllerTest {
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
 
-        String result = controller.submitUser(editUser, bindingResult, authentication, model);
+        String result = controller.submitUser(editUser,file, bindingResult, authentication, model);
 
         assertEquals("users/editTemplate", result);
         assertEquals("John", user.getFname()); //Checks if first name didn't change because it is not valid
