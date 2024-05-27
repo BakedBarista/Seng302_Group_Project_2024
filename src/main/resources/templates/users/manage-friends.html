@@ -34,7 +34,7 @@
             <span class="d-inline d-sm-none">
                 <img th:src="@{/icons/friend-request-icon.svg}">
             </span>
-                <span class="d-none d-sm-inline">Requests <span class="badge request-notification-badge" th:text="countReceivedRequests()"></span></span>
+                <span class="d-none d-sm-inline">Requests <span class="badge request-notification-badge"></span></span>
             </a>
         </li>
         <li class="nav-item">
@@ -379,6 +379,40 @@
 </script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        const removeFriendButtons = document.querySelectorAll('.remove-friend-btn');
+        const confirmModal = $('#confirmModal');
+        let formToSubmit = null;
+
+        removeFriendButtons.forEach(button => {
+            button.addEventListener('click', function (event) {
+                event.preventDefault();
+                formToSubmit = button.closest('form');
+                confirmModal.modal('show');
+            });
+        });
+
+        document.getElementById('confirmRemove').addEventListener('click', function () {
+            formToSubmit.submit();
+        });
+
+        confirmModal.find('.btn-secondary').on('click', function () {
+            confirmModal.modal('hide');
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const triggerTabList = document.querySelectorAll('#friendTabs a')
+        triggerTabList.forEach(function (triggerEl) {
+            const tabTrigger = new bootstrap.Tab(triggerEl)
+
+            triggerEl.addEventListener('click', function (event) {
+                event.preventDefault()
+                tabTrigger.show()
+            })
+        })
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
         const addFriendTab = document.getElementById('addFriend-tab');
         const searchForm = document.getElementById('searchForm');
         const clickAddFriendTab = function () {
@@ -395,17 +429,35 @@
             clickAddFriendTab();
         }
     });
-</script>
-<script>
-    function countReceivedRequests() {
-        const receivedRequestsTableBody = document.querySelector('#requests-tab tbody');
 
+    function countReceivedRequests() {
+        const receivedRequestsTableBody = document.querySelector('#requests table');
         if (receivedRequestsTableBody) {
-            return receivedRequestsTableBody.querySelectorAll('tr').length;
-        } else {
-            return 0;
+            const requestRows = receivedRequestsTableBody.querySelectorAll('tbody');
+            let actualRequestCount = 0;
+            requestRows.forEach(row => {
+                if (!row.textContent.includes('No friend requests.')) {
+                    actualRequestCount++;
+                }
+            });
+            return actualRequestCount;
+        }
+        return 0;
+    }
+
+    function updateRequestBadge() {
+        const badge = document.querySelector('.request-notification-badge');
+        if (badge) {
+            badge.textContent = countReceivedRequests();
         }
     }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        updateRequestBadge();
+        document.getElementById('requests-tab').addEventListener('click', updateRequestBadge);
+    });
 </script>
+
+
 </body>
 </html>
