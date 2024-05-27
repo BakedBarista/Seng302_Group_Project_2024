@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import nz.ac.canterbury.seng302.gardenersgrove.service.ProfanityDetectedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.Authentication;
@@ -65,7 +66,7 @@ class TagAPIControllerTests {
     }
 
     @Test
-    void givenGardenIsOurs_whenSetGardenTags_thenUpdatesTags() {
+    void givenGardenIsOurs_whenSetGardenTags_thenUpdatesTags() throws ProfanityDetectedException {
         when(authentication.getPrincipal()).thenReturn(1L);
         when(gardenService.getGardenById(1L)).thenReturn(Optional.of(garden));
 
@@ -80,7 +81,7 @@ class TagAPIControllerTests {
     }
 
     @Test
-    void givenGardenDoesNotExist_whenSetGardenTags_thenReturnsNotFound() {
+    void givenGardenDoesNotExist_whenSetGardenTags_thenReturnsNotFound() throws ProfanityDetectedException {
         when(authentication.getPrincipal()).thenReturn(1L);
         when(gardenService.getGardenById(1L)).thenReturn(Optional.empty());
 
@@ -91,7 +92,7 @@ class TagAPIControllerTests {
     }
 
     @Test
-    void givenGardenIsNotOurs_whenSetGardenTags_thenReturnsForbidden() {
+    void givenGardenIsNotOurs_whenSetGardenTags_thenReturnsForbidden() throws ProfanityDetectedException {
         when(authentication.getPrincipal()).thenReturn(2L);
         when(gardenService.getGardenById(1L)).thenReturn(Optional.of(garden));
 
