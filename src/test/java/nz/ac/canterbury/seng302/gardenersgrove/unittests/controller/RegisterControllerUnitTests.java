@@ -44,7 +44,7 @@ class RegisterControllerUnitTests {
         registerDTO.setPassword("");
         registerDTO.setConfirmPassword("");
 
-        registerController.submitRegister(registerDTO, bindingResult, null, null);
+        registerController.submitRegister(registerDTO, bindingResult, null);
 
         verify(bindingResult, times(0)).rejectValue(eq("lname"), eq(null), anyString());
     }
@@ -59,7 +59,7 @@ class RegisterControllerUnitTests {
         registerDTO.setPassword("");
         registerDTO.setConfirmPassword("");
 
-        registerController.submitRegister(registerDTO, bindingResult, null, null);
+        registerController.submitRegister(registerDTO, bindingResult, null);
 
         verify(bindingResult).rejectValue(eq("lname"), eq(null), anyString());
     }
