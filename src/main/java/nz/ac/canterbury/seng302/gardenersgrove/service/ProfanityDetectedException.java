@@ -5,7 +5,4 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
  */
 public class ProfanityDetectedException extends Exception {
 
-    public ProfanityDetectedException() {
-    }
-
 }
