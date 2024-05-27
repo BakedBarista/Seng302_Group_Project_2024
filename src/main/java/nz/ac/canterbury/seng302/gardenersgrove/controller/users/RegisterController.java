@@ -1,7 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,13 +14,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.RegisterDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * Controller for registering new users
@@ -63,17 +64,22 @@ public class RegisterController {
     /**
      * Handles the submission of user registration form
      *
-     * @param model   Thymeleaf model
-     * @param request HttpServletRequest object
      * @return view name for the user registration template or a redirect URL
      */
     @PostMapping("/users/register")
     public String submitRegister(
             @Valid @ModelAttribute("registerDTO") RegisterDTO registerDTO,
             BindingResult bindingResult,
-            Model model,
-            HttpServletRequest request) {
+            @RequestParam(value = "dateError", required = false) String dateValidity) {
         logger.info("POST /users/register");
+
+        if (Objects.equals(dateValidity, "dateInvalid")) {
+            bindingResult.rejectValue(
+                    "dateOfBirth",
+                    "dateOfBirth.formatError",
+                    "Date is not in valid format, DD/MM/YYYY, or does not represent a real date"
+            );
+        }
 
         if (userService.getUserByEmail(registerDTO.getEmail()) != null) {
             bindingResult.rejectValue("email", null, "This email address is already in use");
@@ -87,8 +93,17 @@ public class RegisterController {
             return "users/registerTemplate";
         }
 
+        LocalDate dob = null;
+        if (registerDTO.getDateOfBirth() != null && !registerDTO.getDateOfBirth().isEmpty()) {
+            try {
+                dob = LocalDate.parse(registerDTO.getDateOfBirth());
+            } catch (DateTimeParseException e) {
+                // shouldn't happen because of validation
+                logger.info("cannot parse invalid date format");
+            }
+        }
         GardenUser user = new GardenUser(registerDTO.getFname(), registerDTO.getLname(), registerDTO.getEmail(),
-                registerDTO.getPassword(), registerDTO.getDOB());
+                registerDTO.getPassword(), dob);
 
         String token = tokenService.createEmailToken();
         tokenService.addEmailTokenAndTimeToUser(user, token);
@@ -106,16 +121,16 @@ public class RegisterController {
     public void createDummy() {
         try {
             GardenUser user = new GardenUser("John", "Doe", "john.doe@gmail.com", "password",
-                    "01/01/1970");
+                    LocalDate.of(1970, 1, 1));
             userService.addUser(user);
             GardenUser user1 = new GardenUser("Immy", null, "immy@gmail.com", "password",
-                    "01/01/1970");
+                    LocalDate.of(1970, 1, 1));
             userService.addUser(user1);
             GardenUser user2 = new GardenUser("Liam", "Doe", "liam@gmail.com", "password",
-                    "01/01/1970");
+                    LocalDate.of(1970, 1, 1));
             userService.addUser(user2);
             GardenUser user3 = new GardenUser("Liam", "Doe", "liam2@gmail.com", "password",
-                    "01/01/1970");
+                    LocalDate.of(1970, 1, 1));
             userService.addUser(user3);
 
             logger.info("Created dummy users for testing purposes");

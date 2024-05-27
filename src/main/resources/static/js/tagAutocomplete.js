@@ -29,7 +29,7 @@ function tagAutocomplete(options) {
      */
     function appendTagElement(tag) {
         const tagElement = document.createElement('span');
-        tagElement.className = 'badge badge-md text-bg-secondary';
+        tagElement.className = 'badge badge-md text-bg-secondary mb-1';
         tagElement.setAttribute('data-tag', tag);
 
         const tagText = document.createTextNode(tag + ' ');
