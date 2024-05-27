@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
 
 <head>
     <!-- TODO: Update this title for your page -->
@@ -24,7 +24,7 @@
         <li class="nav-item">
             <a class="nav-link active" id="friends-tab" data-toggle="tab" href="#friends" role="tab" aria-controls="friends" aria-selected="true">
             <span class="d-inline d-sm-none">
-                <img th:src="@{/icons/friends-icon-black.svg}">
+                <img th:src="@{/icons/friends-icon-black.svg}" alt="Friends tab icon">
             </span>
                 <span class="d-none d-sm-inline">My Friends</span>
             </a>
@@ -32,7 +32,7 @@
         <li class="nav-item">
             <a class="nav-link" id="requests-tab" data-toggle="tab" href="#requests" role="tab" aria-controls="requests" aria-selected="false">
             <span class="d-inline d-sm-none">
-                <img th:src="@{/icons/friend-request-icon.svg}">
+                <img th:src="@{/icons/friend-request-icon.svg}" alt="Friend request tab icon">
             </span>
                 <span class="d-none d-sm-inline">Requests <span class="badge request-notification-badge"></span></span>
             </a>
@@ -40,7 +40,7 @@
         <li class="nav-item">
             <a class="nav-link" id="addFriend-tab" data-toggle="tab" href="#addFriend" role="tab" aria-controls="addFriend" aria-selected="false">
             <span class="d-inline d-sm-none">
-                <img th:src="@{/icons/add-friend-icon.svg}">
+                <img th:src="@{/icons/add-friend-icon.svg}" alt="Add friend tab icon">
             </span>
                 <span class="d-none d-sm-inline">Add Friend</span>
             </a>
@@ -51,7 +51,7 @@
         <div class="tab-pane fade show active" id="friends" role="tabpanel" aria-labelledby="friends-tab">
             <div class="card my-2">
                 <div class="card-body">
-                    <table class="table">
+                    <table class="table" aria-description="Table with a list of my friends">
                         <thead>
                         <tr>
                             <th scope="col">Name</th>
@@ -101,7 +101,7 @@
                 <div class="card-body">
                     <h2>Received: </h2>
 
-                    <table class="table">
+                    <table class="table" aria-description="Table with a list of received friend requests">
                         <thead>
                         <tr>
                             <th scope="col">Name</th>
@@ -145,7 +145,7 @@
             <div class="card m-2">
                 <div class="card-body">
                     <h2>Sent: </h2>
-                    <table class="table">
+                    <table class="table" aria-description="Table with a list of sent friend requests">
                         <thead>
                         <tr>
                             <th scope="col">Name</th>
@@ -198,7 +198,7 @@
                 </form>
 
                 <div class="col-lg-8" th:if="${searchResults != null}">
-                    <table class="table">
+                    <table class="table" aria-description="Search results">
                         <thead>
                         <tr>
                             <th>Search Results</th>
