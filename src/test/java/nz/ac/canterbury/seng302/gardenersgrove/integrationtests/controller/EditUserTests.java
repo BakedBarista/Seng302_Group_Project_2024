@@ -4,10 +4,13 @@ import nz.ac.canterbury.seng302.gardenersgrove.controller.users.EditUserControll
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditPasswordDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
@@ -17,7 +20,14 @@ import org.springframework.web.multipart.MultipartFile;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.io.IOException;
+import java.util.logging.Logger;
+
 class EditUserControllerTest {
+
+    @Mock
+    private Logger logger;
+    
     private EditUserController controller;
 
     private Authentication authentication;
@@ -25,11 +35,13 @@ class EditUserControllerTest {
     private GardenUserService userService;
     private EmailSenderService emailSenderService;
 
+    private GardenUserRepository gardenUserRepository;
     private MultipartFile file;
     private Long userId = 1L;
 
     @BeforeEach
     void setUp() {
+        gardenUserRepository = mock(GardenUserRepository.class);
         authentication = mock(Authentication.class);
         model = mock(Model.class);
         userService = mock(GardenUserService.class);
@@ -150,5 +162,25 @@ class EditUserControllerTest {
 
         assertTrue(user.checkPassword("N3wP@ssw0rd"));
         verify(emailSenderService).sendEmail(eq(user), eq("Password Changed"), any());
+    }
+
+    @Test
+    void whenIOExceptionThenLogError() throws IOException {
+        Long userId = 1L;
+        MockMultipartFile file = new MockMultipartFile("file", "filename.txt", "text/plain",
+                "Some file content".getBytes());
+
+        MockMultipartFile spyFile = spy(file);
+        when(spyFile.getBytes()).thenThrow(new IOException("Simulation"));
+
+        EditUserController controller = new EditUserController(userService, emailSenderService);
+
+
+        try {
+            controller.editProfilePicture(userId, spyFile);
+            fail("Expected IOException to be thrown, but nothing was thrown");
+        } catch (IOException e) {
+            System.out.println("IOException was thrown as expected");
+        }
     }
 }
