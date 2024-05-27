@@ -7,6 +7,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.CurrentWeather;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.ForecastWeather;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.WeatherData;
@@ -159,6 +160,7 @@ public class GardenController {
             Double lat = garden.getLat();
             Double lng = garden.getLon();
             WeatherAPICurrentResponse currentResponse = new WeatherAPICurrentResponse();
+            CurrentWeather currentWeather = new CurrentWeather();
             List<ForecastWeather> forecastWeather = new ArrayList<>();
             boolean wateringRecommendation = false;
             boolean displayWeatherAlert = false;
@@ -176,6 +178,7 @@ public class GardenController {
                      // Extracts all the needed weather data
                      currentResponse = weatherAPIService.getCurrentWeatherFromAPI(lat, lng);
                      forecastWeather = gardenWeather.getForecastWeather();
+                     currentWeather = weatherAPIService.extractCurrentWeatherData(currentResponse);
 
                      wateringRecommendation = weatherAPIService.getWateringRecommendation(gardenWeather, currentResponse);
                      displayWeatherAlert = garden.getDisplayWeatherAlert();
@@ -184,7 +187,7 @@ public class GardenController {
             }
 
             model.addAttribute("forecastWeather", forecastWeather);
-            model.addAttribute("currentWeather", currentResponse);
+            model.addAttribute("currentWeather", currentWeather);
             model.addAttribute("wateringRecommendation", wateringRecommendation);
             model.addAttribute("displayWeatherAlert", displayWeatherAlert);
             model.addAttribute("displayWeather", displayWeather);

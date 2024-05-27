@@ -5,10 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.ForecastWeather;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.PreviousWeather;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.WeatherData;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.*;
 import nz.ac.canterbury.seng302.gardenersgrove.model.weather.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import org.slf4j.Logger;
@@ -303,6 +300,31 @@ public class WeatherAPIService {
         weather.setWindSpeed(day.getWindSpeed());
         weather.setPrecipitation(day.getPrecipitation());
         weather.setUv(day.getUv());
+
+        return weather;
+    }
+
+    /**
+     * method for extracting necessary data for displaying current weather on
+     * current weather page by creating a new CurrentWeather instance
+     *
+     * @param weatherAPIResponse API response that needs to be converted to CurrentWeather instance
+     * @return CurrentWeather instance that is populated with data from API response
+     */
+    public CurrentWeather extractCurrentWeatherData(WeatherAPICurrentResponse weatherAPIResponse) {
+        CurrentWeather weather = new CurrentWeather();
+        weather.setCity(weatherAPIResponse.getLocation().getLocationName());
+
+        Current current = weatherAPIResponse.getCurrent();
+
+        weather.setTemp(current.getCurrentTemp());
+        weather.setHumidity(current.getHumidity());
+        weather.setConditions(current.getCondition().getConditions());
+        weather.setWindSpeed(current.getWindSpeed());
+
+        String[] urlParts = current.getCondition().getIconUrl().split("/");
+        String icon = urlParts[urlParts.length - 1];
+        weather.setIcon(icon);
 
         return weather;
     }

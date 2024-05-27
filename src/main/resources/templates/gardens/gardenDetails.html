@@ -61,7 +61,7 @@
                     <script th:src="@{/js/gardenDetailsTagAutocomplete.js}"></script>
                 </div>
             </div>
-            <div class="card col-xl-6 col-12 p-3">
+            <div class="card col-xl-6 col-12 p-3 pb-0">
                 <div class="mt-4 d-md-none"></div>
                 <h2>Weather:</h2>
                 <div th:if="${displayRecommendation}" class="alert alert-warning alert-dismissible fade show d-flex" role="alert">
@@ -80,20 +80,17 @@
                 <div>
                     <div th:if="${!displayWeather}">Location not found, please update your location to see the weather.</div>
                     <!-- current weather card -->
-                    <div class="card mx-1 shadow-sm col-12 mt-2" th:if="${displayWeather}">
+                    <h4>Current: </h4>
+                    <div class="card mx-1 shadow-sm col-12 mt-2 mb-3" th:if="${displayWeather}">
                         <div class="d-flex">
-                            <div class="text-center w-50 pt-2">
+                            <div class="text-center w-50 pt-2 mb-3">
                                 <img th:src="@{'/icons/weatherIcons/' + ${currentWeather.icon}}" alt="Sunny" width="50" height="50">
                                 <p class="m-0" style="font-size: 16pt;"><strong th:text="${currentWeather.conditions}">Conditions</strong></p>
-                                <p style="font-size: 10pt; color: #1E1E1E70;" th:text="${currentWeather.date}">Date</p>
                             </div>
                             <div class="d-flex align-items-center w-25 text-center" style="font-size: 22pt;">
                                 <p class="m-0">
                                     <span class="d-block d-sm-inline">
-                                        <span class="fw-bold mt-0" th:text="${currentWeather.maxTemp}">24</span>&deg;/
-                                    </span>
-                                    <span class="d-block d-sm-inline mt-0" style="font-size: 12pt; color: grey;">
-                                        <span class="mt-0" th:text="${currentWeather.minTemp}"></span>&deg;
+                                        <span class="fw-bold mt-0" th:text="${currentWeather.temp}">24</span>&deg;
                                     </span>
                                 </p>
                             </div>
@@ -114,6 +111,7 @@
                         </div>
                     </div>
                     <!-- forecasted weather cards -->
+                    <h4>Forecast: </h4>
                     <div class="card mx-1 shadow-sm col-12 mt-2" th:if="${displayWeather}" th:each="daysWeather: ${forecastWeather}">
                         <div class="d-flex">
                             <div class="text-center w-50 pt-2">
@@ -152,7 +150,7 @@
             </div>
         </div>
     </div>
-    <div class="d-flex justify-content-center align-items-center mb-3 sticky-top bg-light p-3 rounded-3">
+    <div class="d-flex justify-content-center align-items-center mb-1 sticky-top bg-light mt-3 p-3 rounded-3">
         <hr />
         <h2 class="flex-grow-1 text-center m-0">  Your Plants</h2>
         <a type="button" th:href="@{/gardens/{id}/add-plant(id=${garden.id})}" class="btn btn-primary ms-auto"><img th:src="@{/icons/add-square-white.svg}" alt="" width="20" height="20" /> New Plant</a>
