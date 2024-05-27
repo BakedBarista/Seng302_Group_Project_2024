@@ -61,12 +61,18 @@ public class PlantController {
         model.addAttribute("plant", new Plant("","","",null));
 
         GardenUser owner = gardenUserService.getCurrentUser();
+        Optional<Garden> garden = gardenService.getGardenById(gardenId);
+        if (!garden.isPresent() || !garden.get().getOwner().getId().equals(owner.getId())) {
+            return "/error/accessDenied";
+        }
+
         List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
         model.addAttribute("gardens", gardens);
         return "plants/addPlant";
     }
 
-                             
+
+
     /**
      * check for validity of data and return user to
      * garden details page if data is valid with newly submitted plant entity
@@ -128,8 +134,11 @@ public class PlantController {
                             Model model) {
         logger.info("/garden/{}/plant/{}/edit", gardenId, plantId);
         Optional<Plant> plant = plantService.getPlantById(plantId);
-
         GardenUser owner = gardenUserService.getCurrentUser();
+        Optional<Garden> garden = gardenService.getGardenById(gardenId);
+        if (!garden.isPresent() || !garden.get().getOwner().getId().equals(owner.getId())) {
+            return "/error/accessDenied";
+        }
         List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
         model.addAttribute("gardens", gardens);
         model.addAttribute("gardenId", gardenId);
