@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.api;
 import java.util.List;
 import java.util.Optional;
 
+import nz.ac.canterbury.seng302.gardenersgrove.service.ProfanityDetectedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,7 @@ public class TagAPIController {
 
     private GardenService gardenService;
     private TagService tagService;
+
 
     public TagAPIController(GardenService gardenService, TagService tagService) {
         this.gardenService = gardenService;
@@ -58,7 +60,12 @@ public class TagAPIController {
             return ResponseEntity.status(403).build();
         }
 
-        tagService.updateGardenTags(garden, tags);
+        try {
+            tagService.updateGardenTags(garden, tags);
+        } catch (ProfanityDetectedException e) {
+            logger.info("profanity detected in tag");
+            return ResponseEntity.status(422).body("Tag is inappropriate");
+        }
 
         return ResponseEntity.ok().build();
     }
@@ -101,4 +108,5 @@ public class TagAPIController {
             return formatted;
         }
     }
+
 }

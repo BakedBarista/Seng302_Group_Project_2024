@@ -46,6 +46,14 @@ function tagAutocomplete(options) {
     }
 
     /**
+     * Removes the most recent tag
+     */
+    function removeLastTag() {
+        tags.splice(-1, 1);
+        tagContainer.lastElementChild.remove();
+    }
+
+    /**
      * Appends a tag element to the tag container.
      */
     function appendTagElement(tag) {
@@ -108,5 +116,5 @@ function tagAutocomplete(options) {
         }
     }
 
-    return { addTag };
+    return { addTag, removeLastTag };
 }
