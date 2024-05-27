@@ -25,7 +25,7 @@
 
         <div class="mt-3">
             <label for="tagInput">Add tag</label>
-            <input type="text" id="tagInput" class="form-control" placeholder="Start typing tags here" aria-label="Add tag">
+            <input type="text" id="tagInput" class="form-control" placeholder="Enter tag and press Enter or click Add Tag" aria-label="Add tag">
             <button class="btn btn-secondary mt-2" type="button" onclick="addTag()">Add Tag</button>
         </div>
 
@@ -33,9 +33,10 @@
 
         <form id="tagsForm" th:action="@{/gardens/public/search-tags}" method="post">
             <input type="hidden" name="tags" id="tagsInput" th:value="${previousTags != null ? #strings.arrayJoin(previousTags.toArray(), ',') : ''}">
-            <button class="btn btn-primary mt-2" type="submit" style="display:none;" id="searchTagsButton">Search by Tags</button>
         </form>
     </div>
+
+
 
     <div th:if="${gardenPage.empty}">
         No gardens match your search...
@@ -119,56 +120,64 @@
 <!-- Bootstrap scripts from your fragment -->
 <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
 <script>
-    let tags = /*[[${previousTags != null ? #strings.arrayJoin(previousTags.toArray(), ',') : ''}]]*/ [];
-    if (typeof tags === 'string') {
-        tags = tags.split(',');
-    }
+    // Parse the initial tags or set to empty array if none exist
+    var initialTags = document.getElementById('tagsInput').value ? document.getElementById('tagsInput').value.split(',') : [];
+    var tags = initialTags;
 
     function addTag() {
-        const tagInput = document.getElementById('tagInput');
-        const tagValue = tagInput.value.trim();
-        if (tagValue && !tags.includes(tagValue)) {
-            tags.push(tagValue);
-            updateTagsDisplay();
-            tagInput.value = '';
-            submitTagsForm();
+        var tagInput = document.getElementById('tagInput');
+        var tag = tagInput.value.trim();
+        if (tag && !tags.includes(tag)) {
+            tags.push(tag);
+            updateTagsAndSearch();
+            tagInput.value = ''; // Clear input after adding
         }
     }
 
-    function removeTag(tag) {
-        tags = tags.filter(t => t !== tag);
-        updateTagsDisplay();
-        submitTagsForm();
+    function removeTag(index) {
+        tags.splice(index, 1);
+        updateTagsAndSearch();
     }
 
-    function updateTagsDisplay() {
-        const tagsContainer = document.getElementById('tagsContainer');
-        tagsContainer.innerHTML = '';
-        tags.forEach(tag => {
-            const tagElement = document.createElement('span');
-            tagElement.className = 'badge badge-secondary mr-2';
-            tagElement.innerHTML = `${tag} <a href="#" onclick="removeTag('${tag}')" class="text-white ml-1">&times;</a>`;
-            tagsContainer.appendChild(tagElement);
-        });
+    function updateTagsAndSearch() {
+        displayTags();
+        document.getElementById('tagsForm').submit();
+    }
 
+    function displayTags() {
+        var tagsContainer = document.getElementById('tagsContainer');
+        tagsContainer.innerHTML = '';
+        tags.forEach(function(tag, index) {
+            var tagSpan = document.createElement('span');
+            tagSpan.textContent = tag + ' ';
+            var removeBtn = document.createElement('button');
+            removeBtn.textContent = 'Remove';
+            removeBtn.onclick = function() { removeTag(index); };
+            tagSpan.appendChild(removeBtn);
+            tagsContainer.appendChild(tagSpan);
+        });
         document.getElementById('tagsInput').value = tags.join(',');
     }
 
+    document.addEventListener('DOMContentLoaded', function() {
+        displayTags();
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        displayTags(); // Display tags on initial load
+    });
+
     function clearSearch() {
-        const input = document.getElementById("searchField");
-        const form = document.getElementById("searchForm");
-
-        input.value = "";
-        form.submit();
+        tags = [];
+        displayTags();
+        document.getElementById('searchField').value = '';
+        document.getElementById('searchForm').submit();
     }
-
-    function submitTagsForm() {
-        const form = document.getElementById('tagsForm');
-        form.submit();
-    }
-
-    // Initial display of tags
-    updateTagsDisplay();
 </script>
+
+
+
+
+
 </body>
 </html>
