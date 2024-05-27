@@ -74,6 +74,7 @@ public class GardenControllerTest {
         mockGarden.setOwner(mockUser);
         when(gardenService.getGardenById(0L)).thenReturn(Optional.of(mockGarden));
 
+        authentication = mock(Authentication.class);
     }
 
     @Test

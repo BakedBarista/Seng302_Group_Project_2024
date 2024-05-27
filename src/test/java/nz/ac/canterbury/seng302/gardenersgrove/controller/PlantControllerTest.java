@@ -26,6 +26,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -173,7 +175,11 @@ public class PlantControllerTest {
 
     @Test
     void testEditPlantForm_ReturnsToEditPlant() {
-        Plant plant = new Plant("#invalid", "10", "Yellow", "11/03/2024");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        LocalDate plantDate = LocalDate.parse("11/03/2024", formatter);
+
+        Plant plant = new Plant("#invalid", "10", "Yellow", plantDate);
         long gardenId = 1L;
         long plantId = 1L;
         String expectedReturnPage = "plants/editPlant";
