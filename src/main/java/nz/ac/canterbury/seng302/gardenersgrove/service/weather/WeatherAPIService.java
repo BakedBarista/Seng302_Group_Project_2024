@@ -20,6 +20,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.function.Supplier;
 
@@ -287,7 +288,13 @@ public class WeatherAPIService {
         T weather = supplier.get();
         Day day = forecastDay.getDay();
         weather.setCity(weatherAPIResponse.getLocation().getLocationName());
-        weather.setDate(forecastDay.getDate());
+
+        LocalDate date = null;
+        try {
+            date = LocalDate.parse(forecastDay.getDate());
+        } catch (DateTimeParseException ignored) {
+        }
+        weather.setDate(date);
         weather.setMaxTemp(day.getMaxTemp());
         weather.setMinTemp(day.getMinTemp());
         weather.setHumidity(day.getHumidity());
@@ -317,6 +324,7 @@ public class WeatherAPIService {
 
         Current current = weatherAPIResponse.getCurrent();
 
+        weather.setDate(LocalDate.now());
         weather.setTemp(current.getCurrentTemp());
         weather.setHumidity(current.getHumidity());
         weather.setConditions(current.getCondition().getConditions());
