@@ -132,7 +132,7 @@ public class WeatherAPIService {
             }
         }
         logger.info("It has rained the past {} days, only water if != 2", rainyDayCount);
-        return rainyDayCount != 2;
+        return rainyDayCount == 0;
     }
 
     /**
