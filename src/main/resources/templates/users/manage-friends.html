@@ -339,43 +339,6 @@
 </div>
 <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
 
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const removeFriendButtons = document.querySelectorAll('.remove-friend-btn');
-        const confirmModal = $('#confirmModal');
-        let formToSubmit = null;
-
-        removeFriendButtons.forEach(button => {
-            button.addEventListener('click', function (event) {
-                event.preventDefault();
-                formToSubmit = button.closest('form');
-                confirmModal.modal('show');
-            });
-        });
-
-        document.getElementById('confirmRemove').addEventListener('click', function () {
-            formToSubmit.submit();
-        });
-
-        confirmModal.find('.btn-secondary').on('click', function () {
-            confirmModal.modal('hide');
-        });
-    });
-</script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const triggerTabList = document.querySelectorAll('#friendTabs a')
-        triggerTabList.forEach(function (triggerEl) {
-            const tabTrigger = new bootstrap.Tab(triggerEl)
-
-            triggerEl.addEventListener('click', function (event) {
-                event.preventDefault()
-                tabTrigger.show()
-            })
-        })
-    });
-</script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const removeFriendButtons = document.querySelectorAll('.remove-friend-btn');
