@@ -41,6 +41,7 @@ import java.nio.file.Files;
 import java.util.stream.Collectors;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.DateTimeFormats.NZ_FORMAT_DATE;
+import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.DateTimeFormats.WEATHER_CARD_FORMAT_DATE;
 
 
 /**
@@ -188,6 +189,7 @@ public class GardenController {
             model.addAttribute("wateringRecommendation", wateringRecommendation);
             model.addAttribute("displayWeatherAlert", displayWeatherAlert);
             model.addAttribute("displayWeather", displayWeather);
+            model.addAttribute("WEATHER_CARD_FORMAT_DATE", WEATHER_CARD_FORMAT_DATE);
 
             GardenUser currentUser = gardenUserService.getCurrentUser();
             List<Garden> gardens = gardenService.getGardensByOwnerId(currentUser.getId());

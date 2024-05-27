@@ -13,8 +13,8 @@
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 <main class="py-5">
     <div class="mx-5">
-        <div class="d-flex flex-column flex-xl-row gap-2">
-            <div class="card col-xl-6 col-12 p-3">
+        <div class="d-flex flex-column flex-xl-row gap-3">
+            <div class="card col-xl-6 col-12 p-4">
                 <div class="d-flex">
                     <h1 class="pb-4 pe-5" th:text="${garden.name}">GARDEN NAME</h1>
                     <div class="ms-auto">
@@ -85,9 +85,10 @@
                         <h3>Current Weather: </h3>
                         <div class="card mx-1 shadow-sm col-12 mt-2 mb-3">
                             <div class="d-flex">
-                                <div class="text-center w-50 pt-2 mb-3">
+                                <div class="text-center w-50 pt-2">
                                     <img th:src="@{'/icons/weatherIcons/' + ${currentWeather.icon}}" alt="Sunny" width="50" height="50">
                                     <p class="m-0" style="font-size: 16pt;"><strong th:text="${currentWeather.conditions}">Conditions</strong></p>
+                                    <p style="font-size: 10pt; color: #1E1E1E70;" th:text="${currentWeather.date.format(WEATHER_CARD_FORMAT_DATE)}">Date</p>
                                 </div>
                                 <div class="d-flex align-items-center w-25 text-center" style="font-size: 22pt;">
                                     <p class="m-0">
@@ -119,7 +120,7 @@
                                 <div class="text-center w-50 pt-2">
                                     <img th:src="@{'/icons/weatherIcons/' + ${daysWeather.icon}}" alt="Sunny" width="50" height="50">
                                     <p class="m-0" style="font-size: 16pt;"><strong th:text="${daysWeather.conditions}">Conditions</strong></p>
-                                    <p style="font-size: 10pt; color: #1E1E1E70;" th:text="${daysWeather.date}">Date</p>
+                                    <p style="font-size: 10pt; color: #1E1E1E70;" th:text="${daysWeather.date.format(WEATHER_CARD_FORMAT_DATE)}">Date</p>
                                 </div>
                                 <div class="d-flex align-items-center w-25 text-center" style="font-size: 22pt;">
                                     <p class="m-0">
