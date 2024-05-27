@@ -2,10 +2,12 @@ package nz.ac.canterbury.seng302.gardenersgrove.entity.weather;
 
 import jakarta.persistence.Embeddable;
 
+import java.time.LocalDate;
+
 @Embeddable
 public class ForecastWeather implements WeatherData {
     private String city;
-    private String date;
+    private LocalDate date;
     private double maxTemp;
     private double minTemp;
     private int humidity;
@@ -26,12 +28,12 @@ public class ForecastWeather implements WeatherData {
     }
 
     @Override
-    public String getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
     @Override
-    public void setDate(String date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 

@@ -2,6 +2,8 @@ package nz.ac.canterbury.seng302.gardenersgrove.entity.weather;
 
 import jakarta.persistence.Embeddable;
 
+import java.time.LocalDate;
+
 @Embeddable
 public class CurrentWeather {
     private String city;
@@ -11,6 +13,16 @@ public class CurrentWeather {
     private String icon;
     private float windSpeed;
     private int uv;
+
+    private LocalDate date;
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
 
     public String getCity() {
         return city;

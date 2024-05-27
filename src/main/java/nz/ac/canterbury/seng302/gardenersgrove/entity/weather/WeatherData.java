@@ -1,11 +1,13 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity.weather;
 
+import java.time.LocalDate;
+
 public interface WeatherData {
     void setCity(String city);
     String getCity();
 
-    void setDate(String date);
-    String getDate();
+    void setDate(LocalDate date);
+    LocalDate getDate();
 
     void setMaxTemp(double maxTemp);
     double getMaxTemp();
