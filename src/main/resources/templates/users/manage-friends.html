@@ -17,22 +17,33 @@
 
 <div class="container mx-4">
 
-    <div class="p-4">
+    <div class="py-4">
         <h1>Friends</h1>
     </div>
-
     <ul class="nav nav-tabs col-lg-11" id="friendTabs" role="tablist">
         <li class="nav-item">
-            <a class="nav-link active" id="friends-tab" data-toggle="tab" href="#friends" role="tab"
-               aria-controls="friends" aria-selected="true">My Friends</a>
+            <a class="nav-link active" id="friends-tab" data-toggle="tab" href="#friends" role="tab" aria-controls="friends" aria-selected="true">
+            <span class="d-inline d-sm-none">
+                <img th:src="@{/icons/friends-icon-black.svg}">
+            </span>
+                <span class="d-none d-sm-inline">My Friends</span>
+            </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" id="requests-tab" data-toggle="tab" href="#requests" role="tab" aria-controls="requests"
-               aria-selected="false">Requests</a>
+            <a class="nav-link" id="requests-tab" data-toggle="tab" href="#requests" role="tab" aria-controls="requests" aria-selected="false">
+            <span class="d-inline d-sm-none">
+                <img th:src="@{/icons/friend-request-icon.svg}">
+            </span>
+                <span class="d-none d-sm-inline">Requests <span class="badge request-notification-badge" th:text="countReceivedRequests()"></span></span>
+            </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" id="addFriend-tab" data-toggle="tab" href="#addFriend" role="tab"
-               aria-controls="addFriend" aria-selected="false">Add Friend</a>
+            <a class="nav-link" id="addFriend-tab" data-toggle="tab" href="#addFriend" role="tab" aria-controls="addFriend" aria-selected="false">
+            <span class="d-inline d-sm-none">
+                <img th:src="@{/icons/add-friend-icon.svg}">
+            </span>
+                <span class="d-none d-sm-inline">Add Friend</span>
+            </a>
         </li>
     </ul>
 
@@ -40,7 +51,6 @@
         <div class="tab-pane fade show active" id="friends" role="tabpanel" aria-labelledby="friends-tab">
             <div class="card my-2">
                 <div class="card-body">
-                    <h2>My Friends: </h2>
                     <table class="table">
                         <thead>
                         <tr>
@@ -117,12 +127,12 @@
                             <td>
                                 <form th:action="@{/users/manage-friends/accept}" method="post" class="d-inline">
                                     <button type="submit" name="acceptUser" th:value="${friend.sender.id}"
-                                            class="btn btn-success btn-sm mr-2">Accept
+                                            class="btn btn-primary btn-sm mr-2">Accept
                                     </button>
                                 </form>
                                 <form th:action="@{/users/manage-friends/decline}" method="post" class="d-inline">
                                     <button type="submit" name="declineUser" th:value="${friend.sender.id}"
-                                            class="btn btn-success btn-sm mr-2">Decline
+                                            class="btn btn-outline-primary btn-sm mr-2">Decline
                                     </button>
                                 </form>
                             </td>
@@ -162,7 +172,7 @@
                             <form th:action="@{/users/manage-friends/cancel}" method="post" class="d-inline">
                                 <input type="hidden" name="userId" th:value="${friend.receiver.id}" class="d-inline"/>
                                 <td class="align-middle">
-                                    <button class="btn btn-warning btn-sm mr-2"
+                                    <button class="btn btn-outline-primary btn-sm mr-2"
                                             th:if="${friend.status.name() == 'PENDING'}">Cancel
                                     </button>
                                 </td>
@@ -277,12 +287,12 @@
                             <td>
                                 <form th:action="@{/users/manage-friends/accept}" method="post" class="d-inline">
                                     <button type="submit" name="acceptUser" th:value="${user.id}"
-                                            class="btn btn-success btn-sm mr-2">Accept
+                                            class="btn btn-primary btn-sm mr-2">Accept
                                     </button>
                                 </form>
                                 <form th:action="@{/users/manage-friends/decline}" method="post" class="d-inline">
                                     <button type="submit" name="declineUser" th:value="${user.id}"
-                                            class="btn btn-success btn-sm mr-2">Decline
+                                            class="btn btn-outline-primary btn-sm mr-2">Decline
                                     </button>
                                 </form>
                             </td>
@@ -297,9 +307,9 @@
                             </td>
                             <td></td>
                             <td class="align-middle">
-                                <form th:action="@{/users/manage-friends/invite}" method="post">
+                                <form th:action="@{/users/manage-friends/invite}" method="post" id="inviteBtn">
                                     <input type="hidden" name="requestedUser" th:value="${friend.id}" class="d-inline"/>
-                                    <button type="submit" class="btn btn-success btn-sm mr-2">Invite as Friend</button>
+                                    <button type="submit" class="btn btn-primary btn-sm mr-2">Invite as Friend</button>
                                 </form>
                             </td>
                         </tr>
@@ -371,27 +381,31 @@
     document.addEventListener('DOMContentLoaded', function () {
         const addFriendTab = document.getElementById('addFriend-tab');
         const searchForm = document.getElementById('searchForm');
+        const clickAddFriendTab = function () {
+            addFriendTab.click();
+        };
 
-        if (addFriendTab && searchForm) {
-            const clickAddFriendTab = function () {
-                addFriendTab.click();
-            };
+        searchForm.addEventListener('submit', function () {
+            sessionStorage.setItem('searchSubmitted', 'true');
+        });
 
-            searchForm.addEventListener('submit', function () {
-                sessionStorage.setItem('searchSubmitted', 'true');
-            });
-
-            const searchSubmitted = sessionStorage.getItem('searchSubmitted');
-            if (searchSubmitted) {
-                sessionStorage.removeItem('searchSubmitted');
-                clickAddFriendTab();
-            }
+        const searchSubmitted = sessionStorage.getItem('searchSubmitted');
+        if (searchSubmitted) {
+            sessionStorage.removeItem('searchSubmitted');
+            clickAddFriendTab();
         }
     });
 </script>
+<script>
+    function countReceivedRequests() {
+        const receivedRequestsTableBody = document.querySelector('#requests-tab tbody');
 
-
-
+        if (receivedRequestsTableBody) {
+            return receivedRequestsTableBody.querySelectorAll('tr').length;
+        } else {
+            return 0;
+        }
+    }
+</script>
 </body>
-
 </html>

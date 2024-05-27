@@ -33,7 +33,7 @@
 
 body {
     color: var(--gg-black);
-    background-color: var(--gg-white);
+    background-color: white;
 }
 
 /* Global typography */
@@ -446,4 +446,8 @@ h1, h2, h3, h4, h5, h6 {
 #friendTabs .nav-link.active {
     background-color: var(--gg-secondary-dark);
     color: var(--gg-white);
+}
+
+.request-notification-badge {
+    background-color: var(--gg-primary);
 }
