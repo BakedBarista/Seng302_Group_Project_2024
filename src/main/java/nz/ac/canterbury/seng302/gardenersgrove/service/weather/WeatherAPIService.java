@@ -36,6 +36,12 @@ public class WeatherAPIService {
 
     private final ObjectMapper objectMapper = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+    // The rainy conditions possible with WeatherAPI.com
+    private static final Set<String> RAIN_CONDITIONS = Set.of(
+            "rain", "drizzle", "heavy rain", "light rain", "showers",
+            "thunderstorms", "sleet", "snow", "light snow", "heavy snow", "snow showers"
+    );
     private final RestTemplate restTemplate;
     private final GardenService gardenService;
     private final GardenWeatherService gardenWeatherService;
@@ -111,7 +117,7 @@ public class WeatherAPIService {
         logger.info("Generating watering recommendation");
 
         // If the current weather is rain, don't water the plants
-        if (currentResponse.getCurrent().getCondition().getConditions().toLowerCase().contains("rain")) {
+        if (RAIN_CONDITIONS.contains(currentResponse.getCurrent().getCondition().getConditions().toLowerCase())) {
             logger.info("Currently raining, don't water plants");
             return false;
         }
@@ -121,7 +127,7 @@ public class WeatherAPIService {
         List<PreviousWeather> historyResponses = gardenWeather.getPreviousWeather();
 
         for (PreviousWeather weather: historyResponses) {
-            if (weather.getConditions().toLowerCase().contains("rain")) {
+            if (RAIN_CONDITIONS.contains(weather.getConditions().toLowerCase())) {
                 rainyDayCount++;
             }
         }
