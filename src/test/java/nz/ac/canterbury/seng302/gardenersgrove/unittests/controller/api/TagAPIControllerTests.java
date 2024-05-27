@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import nz.ac.canterbury.seng302.gardenersgrove.service.ProfanityDetectedException;
+import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -26,28 +26,28 @@ import nz.ac.canterbury.seng302.gardenersgrove.controller.api.TagAPIController.S
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
 
 class TagAPIControllerTests {
     private GardenService gardenService;
     private TagService tagService;
     private Authentication authentication;
-
     private TagAPIController controller;
-
     private ObjectMapper jsonObjectMapper;
     private GardenUser user;
     private Garden garden;
+    private GardenUserService gardenUserService;
+    private StrikeService strikeService;
 
     @BeforeEach
     void setUp() {
         gardenService = mock(GardenService.class);
         tagService = mock(TagService.class);
         authentication = mock(Authentication.class);
+        gardenUserService = mock(GardenUserService.class);
+        strikeService = mock(StrikeService.class);
 
         // TODO: mocks
-        controller = new TagAPIController(gardenService, tagService, null, null);
+        controller = new TagAPIController(gardenService, tagService, strikeService, gardenUserService);
 
         jsonObjectMapper = new ObjectMapper();
         user = new GardenUser();
@@ -132,6 +132,7 @@ class TagAPIControllerTests {
         when(gardenService.getGardenById(1L)).thenReturn(Optional.of(garden));
         //Alternative syntax because updateGardenTags returns void
         doThrow(new ProfanityDetectedException()).when(tagService).updateGardenTags(any(), any());
+        when(strikeService.addStrike(gardenUserService.getCurrentUser())).thenReturn(StrikeService.AddStrikeResult.NO_ACTION);
 
         ResponseEntity<String> response = controller.setGardenTags(1L, List.of("Red", "Green"), authentication);
 
