@@ -106,7 +106,6 @@ public class EditUserController {
         try {
             editProfilePicture(userId, file);
         } catch(IOException e){
-            logger.info("error adding picture: ", e);
             throw e;
         }
 

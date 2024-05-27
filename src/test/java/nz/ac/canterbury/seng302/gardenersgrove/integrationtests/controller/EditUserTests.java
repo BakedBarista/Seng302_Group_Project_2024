@@ -172,7 +172,7 @@ class EditUserControllerTest {
         GardenUser user = new GardenUser("John", "Doe", "john@email.com", "P#ssw0rd", "10/10/2000");
 
         MockMultipartFile spyFile = spy(file);
-        when(spyFile.getBytes()).thenThrow(new IOException("Simulation"));
+        doThrow(new IOException("Simulation")).when(spyFile).getBytes();
 
         when(userService.getUserById(userId)).thenReturn(user);
         when(authentication.getPrincipal()).thenReturn(userId);
@@ -187,7 +187,8 @@ class EditUserControllerTest {
         BindingResult bindingResult = mock(BindingResult.class);
 
         try {
-            controller.submitUser(editUser,file, bindingResult, authentication, model);
+            controller.submitUser(editUser, spyFile, bindingResult, authentication, model);
+            fail("Expected IOException to be thrown, but nothing was thrown");
         } catch (IOException e) {
             System.out.println("IOException was thrown as expected");
         }
