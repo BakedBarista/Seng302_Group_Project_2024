@@ -85,7 +85,7 @@ public class EditUserController {
             @Valid @ModelAttribute("user") EditUserDTO editUserDTO,
             @RequestParam("image") MultipartFile file,
             BindingResult bindingResult,
-            Authentication authentication, Model model) {
+            Authentication authentication, Model model) throws IOException {
         logger.info("POST /users/edit");
 
         Long userId = (Long) authentication.getPrincipal();
@@ -107,7 +107,8 @@ public class EditUserController {
             editProfilePicture(userId, file);
         } catch(IOException e){
             logger.info("error adding picture: ", e);
-        };
+            throw e;
+        }
 
         user.setFname(editUserDTO.getFname());
         user.setLname(editUserDTO.getLname());

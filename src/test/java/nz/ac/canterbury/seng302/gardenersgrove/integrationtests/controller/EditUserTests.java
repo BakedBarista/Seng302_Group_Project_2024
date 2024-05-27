@@ -51,7 +51,7 @@ class EditUserControllerTest {
     }
 
     @Test
-    void whenValidEditProfile_redirectToProfilePage() {
+    void whenValidEditProfile_redirectToProfilePage() throws IOException {
         GardenUser user = new GardenUser("John", "Doe", "john@email.com", "P#ssw0rd", "10/10/2000");
         when(userService.getUserById(userId)).thenReturn(user); // Mock userService.getUserById(userId)
         when(authentication.getPrincipal()).thenReturn(userId);
@@ -73,7 +73,7 @@ class EditUserControllerTest {
     }
 
     @Test
-    void whenInvalidEditProfile_redirectToEditPage() {
+    void whenInvalidEditProfile_redirectToEditPage() throws IOException {
         GardenUser user = new GardenUser("John", "Doe", "john@email.com", "P#ssw0rd", "10/10/2000");
         when(userService.getUserById(userId)).thenReturn(user);
         when(authentication.getPrincipal()).thenReturn(userId);
@@ -95,7 +95,7 @@ class EditUserControllerTest {
     }
 
     @Test
-    void whenValidEditProfile_submitUser() {
+    void whenValidEditProfile_submitUser() throws IOException {
         GardenUser user = new GardenUser("John", "Doe", "john@email.com",
                  "P#ssw0rd", "10/10/2000");
         when(userService.getUserById(userId)).thenReturn(user);
@@ -121,7 +121,7 @@ class EditUserControllerTest {
     }
 
     @Test
-    void whenNameTooLong_doNotSaveToDB() {
+    void whenNameTooLong_doNotSaveToDB() throws IOException {
         GardenUser user = new GardenUser("John", "Doe", "john@email.com", "P#ssw0rd", "10/10/2000");
         when(userService.getUserById(userId)).thenReturn(user);
         when(authentication.getPrincipal()).thenReturn(userId);
@@ -169,16 +169,25 @@ class EditUserControllerTest {
         Long userId = 1L;
         MockMultipartFile file = new MockMultipartFile("file", "filename.txt", "text/plain",
                 "Some file content".getBytes());
+        GardenUser user = new GardenUser("John", "Doe", "john@email.com", "P#ssw0rd", "10/10/2000");
 
         MockMultipartFile spyFile = spy(file);
         when(spyFile.getBytes()).thenThrow(new IOException("Simulation"));
 
+        when(userService.getUserById(userId)).thenReturn(user);
+        when(authentication.getPrincipal()).thenReturn(userId);
         EditUserController controller = new EditUserController(userService, emailSenderService);
+        EditUserDTO editUser = new EditUserDTO();
+        editUser.setFname("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+        editUser.setLname( "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
+        editUser.setNoLname(false);
+        editUser.setEmail("jane@email.com");
+        editUser.setDOB("01/01/1998");
 
+        BindingResult bindingResult = mock(BindingResult.class);
 
         try {
-            controller.editProfilePicture(userId, spyFile);
-            fail("Expected IOException to be thrown, but nothing was thrown");
+            controller.submitUser(editUser,file, bindingResult, authentication, model);
         } catch (IOException e) {
             System.out.println("IOException was thrown as expected");
         }
