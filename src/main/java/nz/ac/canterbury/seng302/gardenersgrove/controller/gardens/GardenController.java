@@ -106,10 +106,7 @@ public class GardenController {
             return "gardens/createGarden";
         }
 
-
-
         Long userId = (Long) authentication.getPrincipal();
-
         GardenUser owner = gardenUserService.getUserById(userId);
 
         garden.setOwner(owner);
