@@ -116,6 +116,19 @@
                 </div>
                 <p th:if="${displayWeather}" class="text-right justify-content-right" style="color: grey; font-size: 10pt;">Powered by <a href="https://www.weatherapi.com/" title="Free Weather API" target="_blank" rel="noopener">WeatherAPI.com</a></p>
             </div>
+            <p th:if="${displayWeather}" class="text-right justify-content-right" style="color: grey; font-size: 10pt;">Powered by <a href="https://www.weatherapi.com/" title="Free Weather API" target="_blank" rel="noopener">WeatherAPI.com</a></p>
+        </div>
+        <div class="col-xl-6 col-12 mt-4">
+            <h2>Tags</h2>
+            <div class="col-md-12">
+                <label for="tag-autocomplete-container">Add tag</label>
+                <div class="mb-3" id="tag-autocomplete-container"></div>
+                <span id="gardenTagsError" class="error gardenTagsError" style="color:red"></span>
+            </div>
+            <div class="col-md-12 mb-4" id="tag-container"></div>
+            <script th:src="@{/js/autocomplete.js}"></script>
+            <script th:src="@{/js/tagAutocomplete.js}"></script>
+            <script th:src="@{/js/gardenDetailsTagAutocomplete.js}"></script>
         </div>
     </div>
     <div class="d-flex justify-content-center align-items-center mb-3 sticky-top bg-light p-3 rounded-3">
