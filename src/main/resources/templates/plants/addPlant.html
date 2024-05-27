@@ -12,7 +12,7 @@
     <main class="main-container">
         <div class="card p-5">
             <h2 class="mb-3">Add Plant</h2>
-            <div th:replace="~{fragments/plant-form.html :: plant-form(action=@{'/gardens/' + ${gardenId} + '/add-plant'}, imgSrc='/img/default-plant.svg')}"></div>
+            <div th:replace="~{fragments/plant-form.html :: plant-form(action='/gardens/' + ${gardenId} + '/add-plant', imgSrc='/img/default-plant.svg')}"></div>
         </div>
     </main>
     <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>

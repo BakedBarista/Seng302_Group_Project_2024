@@ -8,6 +8,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -16,6 +17,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -61,7 +64,7 @@ class EditUserControllerTest {
         editUser.setLname("Dough");
         editUser.setNoLname(false);
         editUser.setEmail("jane@email.com");
-        editUser.setDOB("01/01/1998");
+        editUser.setDateOfBirth("1970-01-01");
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
@@ -83,7 +86,7 @@ class EditUserControllerTest {
         editUser.setLname("Dough");
         editUser.setNoLname(false);
         editUser.setEmail("jane@email.com");
-        editUser.setDOB("01/01/1998");
+        editUser.setDateOfBirth("1970-01-01");
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
@@ -97,7 +100,7 @@ class EditUserControllerTest {
     @Test
     void whenValidEditProfile_submitUser() throws IOException {
         GardenUser user = new GardenUser("John", "Doe", "john@email.com",
-                 "P#ssw0rd", "10/10/2000");
+                 "P#ssw0rd", LocalDate.of(2000, 10, 10));
         when(userService.getUserById(userId)).thenReturn(user);
         when(authentication.getPrincipal()).thenReturn(userId);
 
@@ -106,7 +109,7 @@ class EditUserControllerTest {
         editUser.setLname("Dough");
         editUser.setNoLname(false);
         editUser.setEmail("jane@email.com");
-        editUser.setDOB("01/01/1998");
+        editUser.setDateOfBirth("1970-01-01");
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
@@ -117,7 +120,7 @@ class EditUserControllerTest {
         assertEquals("Jane", user.getFname());
         assertEquals("Dough", user.getLname());
         assertEquals("jane@email.com", user.getEmail());
-        assertEquals("01/01/1998", user.getDOB());
+        assertEquals(LocalDate.of(1970, 1, 1), user.getDateOfBirth());
     }
 
     @Test
@@ -131,7 +134,7 @@ class EditUserControllerTest {
         editUser.setLname( "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
         editUser.setNoLname(false);
         editUser.setEmail("jane@email.com");
-        editUser.setDOB("01/01/1998");
+        editUser.setDateOfBirth("1970-01-01");
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
@@ -141,12 +144,11 @@ class EditUserControllerTest {
         assertEquals("users/editTemplate", result);
         assertEquals("John", user.getFname()); //Checks if first name didn't change because it is not valid
         assertEquals("Doe", user.getLname()); //Checks if last name didn't change because it is not valid
-
     }
 
     @Test
     void whenPasswordChanged_sendEmail() {
-        GardenUser user = new GardenUser("John", "Doe", "john@email.com", "P#ssw0rd", "10/10/2000");
+        GardenUser user = new GardenUser("John", "Doe", "john@email.com", "P#ssw0rd", LocalDate.of(2000, 10, 10));
         when(userService.getUserById(userId)).thenReturn(user);
         when(authentication.getPrincipal()).thenReturn(userId);
 

@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @DataJpaTest
@@ -47,7 +48,7 @@ public class GardenServiceIntegrationTests {
         gardenService = new GardenService(gardenRepository);
         plantService = new PlantService(plantRepository, gardenRepository);
 
-        GardenUser gardenUser = new GardenUser("John", "Doe", "john.doe@gmail.com", "password", "01/01/2000");
+        GardenUser gardenUser = new GardenUser("John", "Doe", "john.doe@gmail.com", "password", LocalDate.of(2000, 10, 10));
         gardenUserService.addUser(gardenUser);
 
         garden = new Garden("Garden Name", "1","Test Street","Test Suburb","Test City","Test Country","1000",0.55,0.55, "100", "Garden Description");
@@ -55,7 +56,7 @@ public class GardenServiceIntegrationTests {
         garden.setOwner(gardenUser);
         gardenService.addGarden(garden);
 
-        plant = new Plant("Plant Name", "1", "Plant Description", "02/01/2000");
+        plant = new Plant("Plant Name", "1", "Plant Description", LocalDate.of(2000, 2, 1));
         plantService.addPlant(plant, garden.getId());
     }
 
@@ -64,7 +65,7 @@ public class GardenServiceIntegrationTests {
         List<Garden> gardens = gardenService.getPublicGardens();
 
         Long currentId = gardens.get(0).getId();
-        for (Garden garden : gardens.subList(1, gardens.size() - 1)) {
+        for (Garden garden : gardens.subList(1, gardens.size())) {
             Assertions.assertTrue(currentId > garden.getId());
             currentId = garden.getId();
         }

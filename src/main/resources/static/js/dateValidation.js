@@ -8,7 +8,7 @@
  * @returns {boolean} to give permission for thymeleaf to continue once these checks have been done
  */
 function validateDate() {
-    let dateInput = document.getElementById('plantedDate');
+    let dateInput = document.getElementById('datePicker');
 
     if (dateInput.validity.badInput) {
         document.getElementById('dateError').value = "dateInvalid";
