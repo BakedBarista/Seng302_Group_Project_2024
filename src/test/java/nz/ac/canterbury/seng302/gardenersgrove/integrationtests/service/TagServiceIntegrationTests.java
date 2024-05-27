@@ -1,10 +1,5 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.util.List;
 
 import nz.ac.canterbury.seng302.gardenersgrove.service.ProfanityDetectedException;
@@ -20,6 +15,8 @@ import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.TagRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class TagServiceIntegrationTests {
@@ -140,4 +137,8 @@ class TagServiceIntegrationTests {
         assertNull(tagService.getOrCreateTag(invalidCharTag));
     }
 
+    @Test
+    void givenTagsHasProfanity_whenGetOrCreateTag_thenExceptionIsThrown() {
+        assertThrows(ProfanityDetectedException.class, () -> tagService.getOrCreateTag("fuck"));
+    }
 }

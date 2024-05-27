@@ -44,7 +44,7 @@ public class TagAPIController {
      * @return A response entity indicating the result of the operation.
      */
     @PutMapping("/gardens/{gardenId}/tags")
-    public ResponseEntity<Object> setGardenTags(
+    public ResponseEntity<String> setGardenTags(
             @PathVariable Long gardenId,
             @RequestBody List<String> tags,
             Authentication authentication) {
