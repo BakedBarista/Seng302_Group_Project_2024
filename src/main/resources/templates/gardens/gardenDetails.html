@@ -39,16 +39,10 @@
                                 <span th:text="${garden.country}"></span>
                             </p>
                         </div>
-
-
                     </div>
                     <div class="d-flex">
                         <img th:src="@{/icons/aspect-ratio-stroke-rounded.svg}" alt="" width="30" height="30" />
                         <p class="mx-1 mt-1 fw-bold">Size: </p><span class="mt-1"><span th:text="${garden.size}"></span> m&sup2;</span>
-                    </div>
-                    <strong>Description: </strong>
-                    <div class="overflow-y-auto">
-                        <p th:text="${garden.description}"></p>
                     </div>
                     <form th:action="@{/gardens/{id}(id=${garden.id})}" method="post" th:if="${currentUser.id == garden.owner.id}">
                         <p>
@@ -56,6 +50,11 @@
                             <input type="checkbox" class="form-check-input" id="isPublic" name="isPublic" th:checked="${garden.isPublic}" onchange="this.form.submit()"/>
                         </p>
                     </form>
+                    <strong>Description: </strong>
+                    <div class="overflow-y-auto">
+                        <p th:text="${garden.description}"></p>
+                    </div>
+
                 </div>
                 <div class="col-xl-6 col-12 mt-4" th:if="${currentUser.id == garden.owner.id}">
                     <h2>Tags</h2>
