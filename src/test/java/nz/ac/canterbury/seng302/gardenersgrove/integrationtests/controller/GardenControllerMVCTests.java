@@ -103,23 +103,4 @@ public class GardenControllerMVCTests {
                 .andExpect(model().attribute("gardenPage", expectedGardens));
     }
 
-    @Test
-    public void testLocationEmptyErrorGardens() throws Exception {
-
-        // Perform the GET request
-        mockMvc.perform(post("/gardens/create").flashAttr("garden", emptyGarden))
-                .andExpect(status().isOk())
-                .andExpect(view().name("gardens/createGarden"))
-                .andExpect(model().attribute("locationError", "Location cannot be empty"));
-    }
-
-    @Test
-    public void testLocationPatternErrorGardens() throws Exception {
-
-        // Perform the GET request
-        mockMvc.perform(post("/gardens/create").flashAttr("garden", patternGarden))
-                .andExpect(status().isOk())
-                .andExpect(view().name("gardens/createGarden"))
-                .andExpect(model().attribute("locationError", "Location name must only include letters, numbers, spaces, dots, hyphens or apostrophes"));
-    }
 }

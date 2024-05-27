@@ -9,6 +9,9 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.TagRepository;
 
+import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationConstants.TAG_MAX_LEN;
+import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationConstants.TAG_REGEX;
+
 /**
  * Service to retrieve and manipulate tags.
  */
@@ -53,12 +56,26 @@ public class TagService {
      * @return A tag with the given name.
      */
     public Tag getOrCreateTag(String name) {
+        if (!isValidTag(name)) {
+            return null;
+        }
+
         Tag tag = getTag(name);
         if (tag == null) {
             tag = new Tag(name);
             tagRepository.save(tag);
         }
         return tag;
+    }
+
+    /**
+     * Validates the tag if it contains invalid characters and checks the length
+     *
+     * @param name The name of the tag.
+     * @return True if name is valid, otherwise false
+     */
+    private boolean isValidTag(String name) {
+        return (name.matches(TAG_REGEX) && name.length() < TAG_MAX_LEN);
     }
 
     /**
@@ -69,8 +86,8 @@ public class TagService {
      */
     public void updateGardenTags(Garden garden, List<String> tagNames) {
         // Remove tags that are not in the new list
-        for (Tag tag : garden.getTags()) {
-            if (!tagNames.stream().anyMatch(t -> t.equals(tag.getName()))) {
+        for (Tag tag : List.copyOf(garden.getTags())) {
+            if (tagNames.stream().noneMatch(t -> t.equals(tag.getName()))) {
                 garden.getTags().remove(tag);
             }
         }

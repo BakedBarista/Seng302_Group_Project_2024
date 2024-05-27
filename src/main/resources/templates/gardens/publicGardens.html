@@ -11,15 +11,18 @@
 <!-- Navbar from your fragment -->
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 
-<div class="container mt-4">
-    <div class="mb-3">
+<div class="px-5 mt-5">
+    <div class="px-4">
+        <h1>Public Gardens</h1>
+    </div>
+    <div class="my-3 px-4">
         <form class="input-group w-100" action="#" th:action="@{/gardens/public/search}" method="post" id="searchForm">
             <input type="text" class="form-control" placeholder="Search Public Gardens" id="searchField"
                    aria-label="Search Public Gardens" aria-describedby="button-addon" name="search" th:value="${previousSearch}">
             <input type="hidden" name="tags" id="tagsInput" th:value="${previousTags != null ? #strings.arrayJoin(previousTags.toArray(), ',') : ''}">
             <div class="input-group-append">
                 <button class="btn btn-outline-secondary" type="submit" id="button-addon">
-                    <i class="bi bi-search"></i>
+                    <img th:src="@{/icons/search-icon.svg}" alt="" width="20" height="25" />
                 </button>
             </div>
         </form>
@@ -33,38 +36,37 @@
         <div class="mt-3" id="tagsContainer"></div>
     </div>
 
-    <div th:if="${gardenPage.empty}">
+    <div th:if="${gardenPage.empty}" class="px-4">
         No gardens match your search...
         <a href="#" role="button" onclick="clearSearch(); event.preventDefault();">
             Reset search
         </a>
     </div>
-    <div th:unless="${gardenPage.empty}">
+    <div th:unless="${gardenPage.empty}" class="px-4">
         <p class="text-secondary">
             Showing results <span th:text="${gardenPage.number * gardenPage.size + 1}"></span>
             to <span th:text="${gardenPage.number * gardenPage.size + gardenPage.numberOfElements}"></span>
             of <span th:text="${gardenPage.totalElements}"></span>
         </p>
     </div>
-
-    <div class="row">
+    <div class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-2">
         <th:block th:each="garden : ${gardenPage.content}">
-            <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+            <div class="pb-5 px-5">
                 <a th:href="@{/gardens/{id}(id=${garden.id})}" class="text-decoration-none text-dark">
                     <div class="card h-100 card-hover">
                         <!-- Plant images grid -->
                         <div class="card-img-top bg-success card-img-top-fixed d-flex align-items-center">
-                            <div class="row g-0">
+                            <div class="row g-0 img-row">
                                 <th:block th:if="${garden.getPlants().isEmpty()}">
                                     <div class="col-12">
-                                        <img src="/img/defaultgarden.jpg" class="img-fluid" alt="Default Garden Image">
+                                        <div class="plant-img" title="Default Garden Image" th:style="|background-image: url('@{/img/defaultgarden.jpg}')|"></div>
                                     </div>
                                 </th:block>
                                 <th:block th:each="plant, iterStat : ${garden.getPlants()}">
                                     <div class="col" th:class="${#lists.size(garden.getPlants()) == 1 ? 'col-12' :
                                               #lists.size(garden.getPlants()) == 2 ? 'col-6' :
                                               'col-6 col-sm-4 col-lg-6'}" th:if="${iterStat.index < 4}">
-                                        <img th:src="@{'/plants/' + ${plant.id} + '/plant-image'}" alt="Default Plant Image" class="img-fluid plant-img" th:alt="${plant.name}">
+                                        <div class="plant-img" th:style="|background-image: url('@{/plants/{plantId}/plant-image(plantId=${plant.id})}')|"></div>
                                     </div>
                                 </th:block>
                             </div>
@@ -76,41 +78,50 @@
                     </div>
                 </a>
             </div>
+
         </th:block>
     </div>
 
-    <!-- Pagination Controls -->
+
+        <!-- Pagination Controls -->
     <nav>
         <ul class="pagination justify-content-center">
             <!-- First page link -->
             <li class="page-item" th:classappend="${gardenPage.isFirst() ? 'disabled' : ''}">
-                <a class="page-link" th:href="@{/gardens/public(page=0, size=${gardenPage.size})}">First</a>
+                <a class="page-link" th:href="@{/gardens/public(page=0, size=${gardenPage.size})}">
+                    <img th:src="@{/icons/first-page-icon.svg}" alt="" width="20" height="25" />
+                </a>
             </li>
 
             <!-- Previous page link -->
             <li class="page-item" th:classappend="${gardenPage.hasPrevious() ? '' : 'disabled'}">
-                <a class="page-link" th:href="@{/gardens/public(page=${gardenPage.number - 1}, size=${gardenPage.size})}">Previous</a>
+                <a class="page-link" th:href="@{/gardens/public(page=${gardenPage.number - 1}, size=${gardenPage.size})}">
+                    <img th:src="@{/icons/prev-icon.svg}" alt="" width="20" height="25" />
+                </a>
             </li>
 
             <!-- Dynamic page links: showing current page and 2 pages in both directions if they exist -->
             <li th:each="i : ${#numbers.sequence(gardenPage.number - 2, gardenPage.number + 2)}"
                 th:if="${i >= 0 and i < gardenPage.totalPages}" class="page-item"
                 th:classappend="${i == gardenPage.number ? 'active' : ''}">
-                <a class="page-link" th:href="@{/gardens/public(page=${i}, size=${gardenPage.size})}" th:text="${i + 1}"></a>
+                <a class="page-link" th:href="@{/gardens/public(page=${i}, size=${gardenPage.size})}" th:text="${i + 1}" style="font-size:18px"></a>
             </li>
 
             <!-- Next page link -->
             <li class="page-item" th:classappend="${gardenPage.hasNext() ? '' : 'disabled'}">
-                <a class="page-link" th:href="@{/gardens/public(page=${gardenPage.number + 1}, size=${gardenPage.size})}">Next</a>
+                <a class="page-link" th:href="@{/gardens/public(page=${gardenPage.number + 1}, size=${gardenPage.size})}">
+                    <img th:src="@{/icons/next-icon.svg}" alt="" width="20" height="25" />                </a>
             </li>
 
             <!-- Last page link -->
             <li class="page-item" th:classappend="${gardenPage.isLast() ? 'disabled' : ''}">
-                <a class="page-link" th:href="@{/gardens/public(page=${gardenPage.totalPages - 1}, size=${gardenPage.size})}">Last</a>
+                <a class="page-link" th:href="@{/gardens/public(page=${gardenPage.totalPages - 1}, size=${gardenPage.size})}">
+                    <img th:src="@{/icons/last-page-icon.svg}" alt="" width="20" height="25" />                </a>
             </li>
         </ul>
     </nav>
 </div>
+
 
 <!-- Bootstrap scripts from your fragment -->
 <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>

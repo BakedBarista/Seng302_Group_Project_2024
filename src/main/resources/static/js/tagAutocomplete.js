@@ -11,7 +11,6 @@ function tagAutocomplete(options) {
         'tag-autocomplete-container'
     );
     const tagContainer = document.getElementById('tag-container');
-    /**@type {HTMLInputElement | null} */
 
     const tagAutocomplete = autocomplete(tagAutocompleteContainer, addTag, {
         apiUrl: `${apiBaseUrl}/tag-autocomplete`,
@@ -26,14 +25,38 @@ function tagAutocomplete(options) {
     }
 
     /**
+     * Validates tag input before adding the tag element
+     *
+     * @param {{ formatted: string } | string} tag - The entry in the autocomplete API response
+     */
+    function validateTag(tag) {
+        const tagsError = document.getElementById("gardenTagsError");
+        const regex = /^[\p{L}0-9\s\-_']*$/u;
+
+        if (tag.length > 25) {
+            tagsError.textContent = "A tag cannot exceed 25 characters"
+            tagAutocomplete.focus();
+        } else if (!regex.test(tag)) {
+            tagsError.textContent = "The tag name must only contain alphanumeric characters, spaces, -, _, or ' "
+            tagAutocomplete.focus();
+        } else {
+            tagsError.textContent ="";
+            appendTagElement(tag)
+        }
+    }
+
+    /**
      * Appends a tag element to the tag container.
      */
     function appendTagElement(tag) {
-        const tagElement = document.createElement('span');
-        tagElement.className = 'badge badge-md text-bg-secondary';
-        tagElement.setAttribute('data-tag', tag);
+        tagAutocomplete.clear();
 
         const tagText = document.createTextNode(tag + ' ');
+
+        const tagElement = document.createElement('span');
+        tagElement.className = 'badge badge-md text-bg-secondary mb-1';
+        tagElement.setAttribute('data-tag', tag);
+
         tagElement.appendChild(tagText);
 
         const closeButton = document.createElement('button');
@@ -43,7 +66,6 @@ function tagAutocomplete(options) {
         tagElement.appendChild(closeButton);
 
         tagContainer.appendChild(tagElement);
-        // Add spaces between tags
         tagContainer.appendChild(document.createTextNode(' '));
     }
 
@@ -53,14 +75,12 @@ function tagAutocomplete(options) {
      * @param {{ formatted: string } | string} tag - The entry in the autocomplete API response.
      */
     function addTag(tag) {
-        tagAutocomplete.clear();
-
         tag = tag.formatted ?? tag;
         if (tags.includes(tag)) {
             return;
         }
 
-        appendTagElement(tag);
+        validateTag(tag);
 
         tags.push(tag);
         options.setTags(tags);

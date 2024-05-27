@@ -15,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
 public class LoginControllerTest {
@@ -47,7 +48,7 @@ public class LoginControllerTest {
         String lastName = "doe";
         email = "jane.doe@mail.com";
         password = "TESTPassword123!";
-        String dob = "01/01/2000";
+        LocalDate dob = LocalDate.of(1970, 1, 1);
         user = new GardenUser(firstName, lastName, email, password, dob);
 
         MockitoAnnotations.openMocks(this);

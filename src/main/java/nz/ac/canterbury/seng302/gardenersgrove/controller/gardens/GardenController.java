@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.gardens;
 
 
+import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
@@ -11,6 +12,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.weatherAPI.WeatherAPIServ
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,8 +23,19 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.stream.Collectors;
+
+import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.DateTimeFormats.NZ_FORMAT_DATE;
 
 
 /**
@@ -31,7 +44,6 @@ import java.util.stream.Collectors;
 @Controller
 public class GardenController {
     Logger logger = LoggerFactory.getLogger(GardenController.class);
-
     private final GardenService gardenService;
     private final PlantService plantService;
     private final WeatherAPIService weatherAPIService;
@@ -42,11 +54,10 @@ public class GardenController {
     private final FriendService friendService;
 
     private final ProfanityService profanityService;
-
-    private final TagService tagService;
+    private final String PROFANITY = "profanity";
 
     @Autowired
-    public GardenController(TagService tagService, GardenService gardenService, PlantService plantService, GardenUserService gardenUserService, WeatherAPIService weatherAPIService, FriendService friendService, ModerationService moderationService, ProfanityService profanityService) {
+    public GardenController(GardenService gardenService, PlantService plantService, GardenUserService gardenUserService, WeatherAPIService weatherAPIService, FriendService friendService, ModerationService moderationService, ProfanityService profanityService) {
         this.gardenService = gardenService;
         this.plantService = plantService;
         this.gardenUserService = gardenUserService;
@@ -54,7 +65,6 @@ public class GardenController {
         this.friendService = friendService;
         this.moderationService = moderationService;
         this.profanityService = profanityService;
-        this.tagService = tagService;
     }
 
     /**
@@ -82,41 +92,21 @@ public class GardenController {
      */
     @PostMapping("/gardens/create")
     public String submitForm(@Valid @ModelAttribute("garden") Garden garden,
-                             BindingResult bindingResult, Model model) {
+                             BindingResult bindingResult, Authentication authentication, Model model) {
         logger.info("POST /gardens - submit the new garden form");
-        List<String> locationErrorNames = Arrays.asList("city", "country", "suburb", "streetNumber", "streetName", "postCode");
-        boolean profanityFlagged = !profanityService.badWordsFound(garden.getDescription()).isEmpty();
-        if (!profanityFlagged) {
-            profanityFlagged = moderationService.checkIfDescriptionIsFlagged(garden.getDescription());
-        }
-        if (bindingResult.hasErrors() || profanityFlagged) {
-            if(profanityFlagged) {
-                model.addAttribute("profanity", "The description does not match the language standards of the app.");
-            }
-            for (FieldError error : bindingResult.getFieldErrors()) {
-                if(locationErrorNames.contains(error.getField())){
-                    var errorCode = error.getCode();
-                    if(errorCode != null){
-                        String errorMessage;
-                        if(errorCode.equals("Pattern")){
-                            errorMessage = "Location name must only include letters, numbers, spaces, dots, hyphens or apostrophes";
-                        } else {
-                            errorMessage = "Location cannot be empty";
-                        }
-                        model.addAttribute("locationError", errorMessage);
-                        break;
-                    }
-                }
-            }
+
+        checkGardenError(model,bindingResult,garden);
+        if (bindingResult.hasErrors() || model.containsAttribute(PROFANITY)) {
             model.addAttribute("garden", garden);
             return "gardens/createGarden";
         }
 
 
 
+        Long userId = (Long) authentication.getPrincipal();
 
+        GardenUser owner = gardenUserService.getUserById(userId);
 
-        GardenUser owner = gardenUserService.getCurrentUser();
         garden.setOwner(owner);
 
         Garden savedGarden = gardenService.addGarden(garden);
@@ -156,9 +146,16 @@ public class GardenController {
             Garden garden = gardenOpt.get();
             model.addAttribute("garden", garden);
             model.addAttribute("owner", garden.getOwner());
+            model.addAttribute("NZ_FORMAT_DATE", NZ_FORMAT_DATE);
             model.addAttribute("plants", plantService.getPlantsByGardenId(id));
+            List<List<Map<String, Object>>> weatherResult;
 
-            List<List<Map<String, Object>>> weatherResult = weatherAPIService.getWeatherData(id, garden.getLat(), garden.getLon());
+            if(garden.getLat() != null || garden.getLon() != null){
+                weatherResult = weatherAPIService.getWeatherData(id, garden.getLat(), garden.getLon());
+            }else {
+                weatherResult = new ArrayList<>();
+            }
+
             List<Map<String, Object>> weatherPrevious = Collections.emptyList();
             List<Map<String, Object>> weatherForecast = Collections.emptyList();
             boolean displayWeatherAlert = false;
@@ -252,28 +249,9 @@ public class GardenController {
                                @Valid @ModelAttribute("garden") Garden garden,
                                BindingResult result,
                                Model model) {
-        List<String> locationErrorNames = Arrays.asList("city", "country", "suburb", "streetNumber", "streetName", "postCode");
-        boolean descriptionFlagged = moderationService.checkIfDescriptionIsFlagged(garden.getDescription());
 
-        if (result.hasErrors() || descriptionFlagged) {
-            if (descriptionFlagged) {
-                model.addAttribute("profanity", "The description does not match the language standards of the app.");
-            }
-
-            for (FieldError error : result.getFieldErrors()) {
-                if(locationErrorNames.contains(error.getField())){
-                    if(error.getCode().equals("Pattern")){
-                        var errorMessage = "Location name must only include letters, numbers, spaces, dots, hyphens or apostrophes";
-                        model.addAttribute("locationError", errorMessage);
-                        break;
-                    } else {
-                        var errorMessage = "Location cannot be empty";
-                        model.addAttribute("locationError", errorMessage);
-                        break;
-                    }
-                }
-            }
-
+        checkGardenError(model,result,garden);
+        if (result.hasErrors() || model.containsAttribute(PROFANITY)) {
             model.addAttribute("garden", garden);
             model.addAttribute("id", id);
             return "gardens/editGarden";
@@ -379,41 +357,114 @@ public class GardenController {
         Page<Garden> gardenPage = gardenService.findGardensBySearchAndTags(search, tags, pageable);
         model.addAttribute("gardenPage", gardenPage);
         model.addAttribute("previousSearch", search);
-        model.addAttribute("previousTags", tags);
         return "gardens/publicGardens";
     }
-
-
 
     /**
-     * send the user to public gardens with a subset of gardens matching
-     * their given search by tag
-     * @param search string that user is searching
-     * @param model representation of results
-     * @return public garden page
+     * Helper method to check garden errors
+     * @param model model to add error attributes
+     * @param bindingResult to get location error
+     * @param garden garden object
      */
-    @PostMapping("/gardens/public/search-tags")
-    public String searchTagPublicGardens(@RequestParam(defaultValue = "0") int page,
-                                         @RequestParam(defaultValue = "10") int size,
-                                         @RequestParam(name = "tags", required = false) List<String> tags,
-                                         Model model) {
-        logger.info("Tags: " + tags);
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Garden> taggedGardens = gardenService.getGardensMatchingTags(tags, pageable);
-        logger.info("" + taggedGardens);
-
-        model.addAttribute("gardenPage", taggedGardens);
-        model.addAttribute("previousTags", tags); // Pass the tags back to the view
-        return "gardens/publicGardens";
+    public void checkGardenError(Model model, BindingResult bindingResult, Garden garden) {
+        List<String> locationErrorNames = Arrays.asList("city", "country", "suburb", "streetNumber", "streetName", "postCode");
+        boolean profanityFlagged = !profanityService.badWordsFound(garden.getDescription()).isEmpty();
+        if (!profanityFlagged) {
+            profanityFlagged = moderationService.checkIfDescriptionIsFlagged(garden.getDescription());
+        }
+        if (bindingResult.hasErrors() || profanityFlagged) {
+            if (profanityFlagged) {
+                model.addAttribute(PROFANITY, "The description does not match the language standards of the app.");
+            }
+            for (FieldError error : bindingResult.getFieldErrors()) {
+                if (locationErrorNames.contains(error.getField())) {
+                    var errorCode = error.getCode();
+                    if (errorCode != null) {
+                        String errorMessage;
+                        if (errorCode.equals("Pattern")) {
+                            errorMessage = "Location name must only include letters, numbers, spaces, dots, hyphens or apostrophes";
+                        } else {
+                            errorMessage = "Location cannot be empty";
+                        }
+                        model.addAttribute("locationError", errorMessage);
+                        break;
+                    }
+                }
+            }
+        }
     }
 
+    /**
+     * Create test data
+     * @throws IOException When problem reading file.
+     * ChatGPT help with processing sql queries to arraylist
+     */
+    @PostConstruct
+    public void dummyGardens() throws IOException {
+        try {
+            logger.info("Adding test data");
 
+            // Create user
+            GardenUser user = new GardenUser("Jan", "Doe", "jan.doe@gmail.com", "password", LocalDate.of(1970, 1, 1));
+            gardenUserService.addUser(user);
 
+            // Garden names
+            List<String> gardenNames = Arrays.asList(
+                    "Gardeners Paradise", "My Parents Garden", "Home Number 1", "GreenFingers", "Dirt Pile",
+                    "Potato Heaven", "Needs Weeding", "My Work in Progress", "Freshly Built", "Greener Pastures",
+                    "Grassy Grove", "Husbands Project", "Rainy Garden", "Tomato Garden", "Berries",
+                    "Roots", "Need a professional", "Growers Garden", "Community Garden", "Free for all Garden"
+            );
 
+            // Plant details
+            List<String[]> plantsDetails = Arrays.asList(
+                    new String[][]{
+                            {"Tomato", "Red"}, {"Cucumber", "Yellow"}, {"Potato", "Purple"},
+                            {"Cabbage", "Pink"}, {"Lettuce", "White"}, {"Onion", "Orange"},
+                            {"Spring Onion", "Blue"}, {"Asparagus", "Green"}, {"Pumpkin", "Purple"},
+                            {"Carrot", "Red"}
+                    }
+            );
 
+            for (int i = 0; i < gardenNames.size(); i++) {
+                String gardenName = gardenNames.get(i);
+                String streetNumber = Integer.toString(i + 1);
+                Garden garden = new Garden(gardenName, streetNumber, "Ilam Road", "Ilam", "Christchurch", "New Zealand", "8041", -43.5320, 172.6366, (String.valueOf(1000 + (i * 50))), "Test Garden");
+                garden.setOwner(user);
+                garden.setPublic(true);
+                gardenService.addGarden(garden);
 
+                List<Plant> plants = new ArrayList<>();
+                for (int j = 0; j < plantsDetails.size(); j++) {
+                    String[] plantDetail = plantsDetails.get(j);
+                    String plantName = plantDetail[0];
+                    String plantDescription = plantDetail[1];
+                    Plant plant = new Plant(plantName, "15", plantDescription, LocalDate.of(2024, 3, 1));
+                    Plant savedPlant = plantService.addPlant(plant, garden.getId());
 
+                    // Add plant image
+                    try {
+                        String imageName = plant.getName().replaceAll("\\s+","");
+                        ClassPathResource imgFile = new ClassPathResource("static/img/testImages/" + imageName + ".jpg");
+                        logger.info("Loading image from {}",imgFile.getPath());
+                        String mimeType = Files.probeContentType(imgFile.getFile().toPath());
+                        byte[] image = Files.readAllBytes(imgFile.getFile().toPath());
+                        savedPlant.setPlantImage(mimeType, image);
+                        plantService.setPlantImage(savedPlant.getId(), mimeType, image);
+                    } catch (IOException e) {
+                        logger.info("Failed to read image for plant");
+                    }
 
+                    plants.add(savedPlant);
+                }
+
+                garden.setPlants(plants);
+                gardenService.addGarden(garden);
+            }
+        } catch (Exception e) {
+            logger.info("Failed to add garden");
+        }
+    }
 
 }
 

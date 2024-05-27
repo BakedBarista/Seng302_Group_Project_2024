@@ -3,20 +3,23 @@ package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.entity;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
-import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.PlantController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 
+import nz.ac.canterbury.seng302.gardenersgrove.customValidation.DateTimeFormats;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class PlantTest {
 
     private static Validator validator;
-    private Plant plant;
+    private PlantDTO plant;
 
     @BeforeAll
     static void setUp() {
@@ -25,7 +28,7 @@ class PlantTest {
 
     @BeforeEach
     void makeGarden() {
-        plant = new Plant("Plant", "1", "Yellow", "09/09/2023");
+        plant = new PlantDTO("Plant", "1", "Yellow", "01/01/1970");
     }
 
     @Test
@@ -83,7 +86,7 @@ class PlantTest {
         String expectedMessage = "Plant name cannot by empty and must only include letters, numbers, spaces, dots, commas, hyphens or apostrophes";
         Integer expectedConstraintSetSize = 1;
 
-        ConstraintViolation<Plant> violation = validator.validate(plant).iterator().next();
+        ConstraintViolation<PlantDTO> violation = validator.validate(plant).iterator().next();
 
         assertEquals(expectedConstraintSetSize, validator.validate(plant).size());
         assertEquals(expectedMessage, violation.getMessage());
@@ -96,7 +99,7 @@ class PlantTest {
         Integer expectedConstraintSetSize = 1;
 
 
-        ConstraintViolation<Plant> violation = validator.validate(plant).iterator().next();
+        ConstraintViolation<PlantDTO> violation = validator.validate(plant).iterator().next();
 
         assertEquals(expectedConstraintSetSize, validator.validate(plant).size());
         assertEquals(expectedMessage, violation.getMessage());
@@ -117,7 +120,7 @@ class PlantTest {
         Integer expectedConstraintSetSize = 1;
 
 
-        ConstraintViolation<Plant> violation = validator.validate(plant).iterator().next();
+        ConstraintViolation<PlantDTO> violation = validator.validate(plant).iterator().next();
 
         assertEquals(expectedConstraintSetSize, validator.validate(plant).size());
         assertEquals(expectedMessage, violation.getMessage());
@@ -160,7 +163,7 @@ class PlantTest {
         Integer expectedConstraintSetSize = 1;
 
 
-        ConstraintViolation<Plant> violation = validator.validate(plant).iterator().next();
+        ConstraintViolation<PlantDTO> violation = validator.validate(plant).iterator().next();
 
         assertEquals(expectedConstraintSetSize, validator.validate(plant).size());
         assertEquals(expectedMessage, violation.getMessage());
@@ -173,7 +176,7 @@ class PlantTest {
         Integer expectedConstraintSetSize = 1;
 
 
-        ConstraintViolation<Plant> violation = validator.validate(plant).iterator().next();
+        ConstraintViolation<PlantDTO> violation = validator.validate(plant).iterator().next();
 
         assertEquals(expectedConstraintSetSize, validator.validate(plant).size());
         assertEquals(expectedMessage, violation.getMessage());
@@ -186,7 +189,7 @@ class PlantTest {
         Integer expectedConstraintSetSize = 1;
 
 
-        ConstraintViolation<Plant> violation = validator.validate(plant).iterator().next();
+        ConstraintViolation<PlantDTO> violation = validator.validate(plant).iterator().next();
 
         assertEquals(expectedConstraintSetSize, validator.validate(plant).size());
         assertEquals(expectedMessage, violation.getMessage());
@@ -225,7 +228,7 @@ class PlantTest {
         plant.setDescription("a".repeat(513));
         String expectedMessage = "Plant description must be less than 512 characters";
         Integer expectedConstraintSetSize = 1;
-        ConstraintViolation<Plant> violation = validator.validate(plant).iterator().next();
+        ConstraintViolation<PlantDTO> violation = validator.validate(plant).iterator().next();
         assertEquals(expectedConstraintSetSize, validator.validate(plant).size());
         assertEquals(expectedMessage, violation.getMessage());
     }
@@ -239,19 +242,16 @@ class PlantTest {
 
     @Test
     void SetPlantedDate_DDMMYYYY_ReturnsEmptyConstraintViolationList() {
-        plant.setPlantedDate("18/02/2023");
+        plant.setPlantedDate("01/01/2000");
 
         assertTrue(validator.validate(plant).isEmpty());
     }
 
     @Test
     void SetPlantedDate_YYYYDDMM_ReturnPatternViolation() {
-        plant.setPlantedDate("2023-02-18");
-        String expectedFormat = "18/02/2023";
+        plant.setPlantedDate("2000/01/01");
+        Integer expectedConstraintSetSize = 1;
 
-        String correctFormat = PlantController.refactorPlantedDate(plant.getPlantedDate());
-
-        Assertions.assertEquals(correctFormat, expectedFormat);
+        assertEquals(expectedConstraintSetSize, validator.validate(plant).size());
     }
-
 }
