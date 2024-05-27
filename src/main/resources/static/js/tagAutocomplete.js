@@ -54,7 +54,7 @@ function tagAutocomplete(options) {
         const tagText = document.createTextNode(tag + ' ');
 
         const tagElement = document.createElement('span');
-        tagElement.className = 'badge badge-md text-bg-secondary';
+        tagElement.className = 'badge badge-md text-bg-secondary mb-1';
         tagElement.setAttribute('data-tag', tag);
 
         tagElement.appendChild(tagText);

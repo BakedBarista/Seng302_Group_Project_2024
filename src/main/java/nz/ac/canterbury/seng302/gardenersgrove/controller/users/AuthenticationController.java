@@ -16,11 +16,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class AuthenticationController {
 
-    private Logger logger = LoggerFactory.getLogger(LoginController.class);
+    private Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
 
     @Autowired
     private GardenUserService userService;
-
 
     /**
      * Check to see if the user has a token, if they do take the user to the authentication page.
@@ -31,10 +30,13 @@ public class AuthenticationController {
      */
     @GetMapping("/users/user/{userId}/authenticate-email")
     public String authenticateEmail(@PathVariable("userId") Long userId, Model model) {
-        // if the user has an authentication token
+        // If the user has an authentication token
         GardenUser user = userService.getUserById(userId);
+
         if (user != null  && user.getEmailValidationToken() != null) {
+            logger.info("Displaying hidden email as {}", hideEmail(user.getEmail()));
             model.addAttribute("userId", userId);
+            model.addAttribute("hiddenEmail", hideEmail(user.getEmail()));
             return "authentication/emailAuthentication";
         } else {
             return "error/404";
@@ -54,7 +56,7 @@ public class AuthenticationController {
                                               @ModelAttribute("authenticationToken") String authenticationToken,
                                               RedirectAttributes redirectAttributes,
                                               Model model) {
-        logger.info("authenticating token {} for user {}", authenticationToken, userId);
+        logger.info("Authenticating token for user {}", userId);
 
         // check if token matches token in DB
         GardenUser user = userService.getUserById(userId);
@@ -62,8 +64,11 @@ public class AuthenticationController {
         // token has expired
         if (user == null) {
             model.addAttribute("tokenExpired", true);
+            logger.info("User entered an expired token");
             return "authentication/emailAuthentication";
         }
+
+        // User not null so show hidden email
         boolean authenticated = user.getEmailValidationToken().equals(authenticationToken);
 
         logger.info("authentication: {}", authenticated);
@@ -78,8 +83,32 @@ public class AuthenticationController {
             return "redirect:/users/login";
         }
         else {
+            model.addAttribute("hiddenEmail", hideEmail(user.getEmail()));
             model.addAttribute("tokenIncorrect", true);
+            logger.info("User entered an incorrect token");
             return "authentication/emailAuthentication";
+        }
+    }
+
+    /**
+     * Converts the given email to *xxx*@gmail.com, hiding all characters but the first and last, replacing the rest
+     * with stars.
+     * @param email the email string to hide
+     * @return a string with the hidden email
+     */
+    private String hideEmail(String email) {
+        String startOfEmail = email.split("@")[0];
+        String endOfEmail = "@" + email.split("@")[1];
+        char firstChar = startOfEmail.charAt(0);
+
+        if (startOfEmail.length() == 1) {
+            return startOfEmail + endOfEmail;
+        } else if (startOfEmail.length() == 2) {
+            return firstChar + "*" + endOfEmail;
+        } else {
+            char lastChar = startOfEmail.charAt(startOfEmail.length() - 1);
+            String middle = "*".repeat(startOfEmail.length() - 2);
+            return firstChar + middle + lastChar + endOfEmail;
         }
     }
 }

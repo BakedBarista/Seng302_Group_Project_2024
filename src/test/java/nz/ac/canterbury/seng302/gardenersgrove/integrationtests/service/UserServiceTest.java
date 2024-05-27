@@ -11,6 +11,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.time.LocalDate;
+
 @DataJpaTest
 @Import(GardenUserService.class)
 public class UserServiceTest {
@@ -24,11 +26,11 @@ public class UserServiceTest {
     @Test
     public void insertingUser() {
         GardenUser gardenUser = userService
-                .addUser(new GardenUser("fname", "lname", "email", "password", "dob"));
+                .addUser(new GardenUser("fname", "lname", "email", "password", LocalDate.of(1970, 1, 1)));
         Assertions.assertEquals(gardenUser.getFname(), "fname");
         Assertions.assertEquals(gardenUser.getLname(), "lname");
         Assertions.assertEquals(gardenUser.getEmail(), "email");
-        Assertions.assertEquals(gardenUser.getDOB(), "dob");
+        Assertions.assertEquals(gardenUser.getDateOfBirth(), LocalDate.of(1970, 1, 1));
     }
 
     /**
@@ -37,7 +39,7 @@ public class UserServiceTest {
     @Test
     public void checkPassword() {
         GardenUser gardenUser = userService
-                .addUser(new GardenUser("fname", "lname", "email", "password", "dob"));
+                .addUser(new GardenUser("fname", "lname", "email", "password", LocalDate.of(1970, 1, 1)));
         Assertions.assertTrue(gardenUser.checkPassword("password"));
         Assertions.assertFalse(gardenUser.checkPassword("incorrect password"));
     }
@@ -64,7 +66,7 @@ public class UserServiceTest {
     public void setUserProfilePicture() {
         byte[] bytes = "test".getBytes();
         String contentType = "image/png";
-        GardenUser gardenUser = new GardenUser("fname", "lname", "email", "password", "dob");
+        GardenUser gardenUser = new GardenUser("fname", "lname", "email", "password", LocalDate.of(1970, 1, 1));
         userService.addUser(gardenUser);
 
         userService.setProfilePicture(gardenUser.getId(), contentType, bytes);
@@ -76,7 +78,7 @@ public class UserServiceTest {
 
     @Test
     public void getCurrentUser() {
-        GardenUser gardenUser = new GardenUser("fname", "lname", "email", "password", "dob");
+        GardenUser gardenUser = new GardenUser("fname", "lname", "email", "password", LocalDate.of(1970, 1, 1));
         userService.addUser(gardenUser);
 
         UsernamePasswordAuthenticationToken authenticationToken =
@@ -98,7 +100,7 @@ public class UserServiceTest {
     void givenTokenNotExpired_whenGetUserByResetPasswordTokenCalled_thenReturnsUser() {
         String token = "abc123xyz";
 
-        GardenUser gardenUser = new GardenUser("fname", "lname", "email", "password", "dob");
+        GardenUser gardenUser = new GardenUser("fname", "lname", "email", "password", LocalDate.of(1970, 1, 1));
         gardenUser.setResetPasswordToken(token);
         userService.addUser(gardenUser);
 
@@ -111,7 +113,7 @@ public class UserServiceTest {
     void givenTokenExpired_whenGetUserByResetPasswordTokenCalled_thenReturnsNull() {
         String token = "abc123xyz";
 
-        GardenUser gardenUser = new GardenUser("fname", "lname", "email", "password", "dob");
+        GardenUser gardenUser = new GardenUser("fname", "lname", "email", "password", LocalDate.of(1970, 1, 1));
         userService.addUser(gardenUser);
 
         GardenUser user = userService.getUserByResetPasswordToken(token);
