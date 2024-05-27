@@ -357,6 +357,7 @@ public class GardenController {
         Page<Garden> gardenPage = gardenService.findGardensBySearchAndTags(search, tags, pageable);
         model.addAttribute("gardenPage", gardenPage);
         model.addAttribute("previousSearch", search);
+        model.addAttribute("previousTags", tags);
         return "gardens/publicGardens";
     }
 

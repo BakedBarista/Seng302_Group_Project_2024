@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.cucumber.step_definitions;
 
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 
@@ -21,4 +22,5 @@ public class U2LogInFeature {
     public void my_password_is(String password) {
         user.setPassword(password);
     }
+
 }
