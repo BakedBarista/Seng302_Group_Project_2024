@@ -448,7 +448,7 @@
     function updateRequestBadge() {
         const badge = document.querySelector('.request-notification-badge');
         if (badge) {
-            badge.textContent = countReceivedRequests();
+            badge.textContent = countReceivedRequests().toString();
         }
     }
 
