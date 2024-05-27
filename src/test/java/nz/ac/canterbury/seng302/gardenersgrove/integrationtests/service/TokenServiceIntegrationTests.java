@@ -16,10 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.time.Clock;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.*;
 
 @SpringBootTest
 @ActiveProfiles("integrationTest")
@@ -54,7 +51,7 @@ public class TokenServiceIntegrationTests {
 
     @Test
     public void testCleanUpTokens_DeletesUsersWithExpiredEmailTokens() {
-        user = new GardenUser("Jane", "Doe", "jdo456@uclive.ac.nz", "password123", "01/01/1970");
+        user = new GardenUser("Jane", "Doe", "jdo456@uclive.ac.nz", "password123", LocalDate.of(1970, 1, 1));
         userService.addUser(user);
         userId = user.getId();
 
@@ -71,7 +68,7 @@ public class TokenServiceIntegrationTests {
 
     @Test
     public void testCleanUpTokens_LeavesUnexpiredEmailTokens() {
-        user = new GardenUser("Jane", "Doe", "jdo457@uclive.ac.nz", "password123", "01/01/1970");
+        user = new GardenUser("Jane", "Doe", "jdo457@uclive.ac.nz", "password123", LocalDate.of(1970, 1, 1));
         userService.addUser(user);
         userId = user.getId();
 
@@ -89,7 +86,7 @@ public class TokenServiceIntegrationTests {
     @Test
     public void testCleanUpTokens_DeletesTokenFromUserWithExpiredResetPasswordToken() {
         Mockito.when(clock.instant()).thenReturn(now);
-        user = new GardenUser("Jane", "Doe", "jdo458@uclive.ac.nz", "password123", "01/01/1970");
+        user = new GardenUser("Jane", "Doe", "jdo458@uclive.ac.nz", "password123", LocalDate.of(1970, 1, 1));
         userService.addUser(user);
         userId = user.getId();
 
@@ -106,7 +103,7 @@ public class TokenServiceIntegrationTests {
     @Test
     public void testCleanUpTokens_LeavesUnexpiredResetPasswordToken() {
         Mockito.when(clock.instant()).thenReturn(now);
-        user = new GardenUser("Jane", "Doe", "jdo459@uclive.ac.nz", "password123", "01/01/1970");
+        user = new GardenUser("Jane", "Doe", "jdo459@uclive.ac.nz", "password123", LocalDate.of(1970, 1, 1));
         userService.addUser(user);
         userId = user.getId();
 
@@ -127,7 +124,7 @@ public class TokenServiceIntegrationTests {
         String lastName = "doe";
         String email = "jane.doe@mail.com";
         String password = "TESTPassword123!";
-        String dob = "01/01/2000";
+        LocalDate dob = LocalDate.of(1970, 1, 1);
         user = new GardenUser(firstName, lastName, email, password, dob);
         gardenUserService.addUser(user);
 
