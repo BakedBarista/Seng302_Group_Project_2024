@@ -30,19 +30,44 @@ function tagAutocomplete(options) {
      * @param {{ formatted: string } | string} tag - The entry in the autocomplete API response
      */
     function validateTag(tag) {
-        const tagsError = document.getElementById("gardenTagsError");
-        const regex = /^[\p{L}0-9\s\-_']*$/u;
+        const regex = /^[\p{L}0-9\s\-_'"]*$/u;
 
         if (tag.length > 25) {
-            tagsError.textContent = "A tag cannot exceed 25 characters"
-            tagAutocomplete.focus();
+            setError("A tag cannot exceed 25 characters");
         } else if (!regex.test(tag)) {
-            tagsError.textContent = "The tag name must only contain alphanumeric characters, spaces, -, _, or ' "
+            setError(`The tag name must only contain alphanumeric characters, spaces, -, _, ', or ".`);
+        } else {
+            setError(null);
+            appendTagElement(tag);
+        }
+    }
+
+    /**
+     * Set the error that is shown
+     *
+     * @param {string | null} error The error to show, or null if no error should be shown
+     */
+    function setError(error) {
+        const tagsError = document.getElementById("gardenTagsError");
+        if (error) {
+            tagsError.textContent = error;
+            tagAutocomplete.inputElement.classList.add('is-invalid');
             tagAutocomplete.focus();
         } else {
-            tagsError.textContent ="";
-            appendTagElement(tag)
+            tagsError.textContent = '';
+            tagAutocomplete.inputElement.classList.remove('is-invalid');
         }
+    }
+
+    /**
+     * Removes the most recent tag
+     *
+     * @return {string | null} - The tag that was removed.
+     */
+    function removeLastTag() {
+        const removedTags = tags.splice(-1, 1);
+        tagContainer.lastElementChild.remove();
+        return removedTags[0] ?? null;
     }
 
     /**
@@ -108,5 +133,5 @@ function tagAutocomplete(options) {
         }
     }
 
-    return { addTag };
+    return { addTag, removeLastTag, setError, ...tagAutocomplete };
 }

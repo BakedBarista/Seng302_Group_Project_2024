@@ -1,14 +1,9 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.verify;
-
 import java.time.LocalDate;
 import java.util.List;
 
+import nz.ac.canterbury.seng302.gardenersgrove.service.ProfanityDetectedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +16,8 @@ import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.TagRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class TagServiceIntegrationTests {
@@ -102,7 +99,7 @@ class TagServiceIntegrationTests {
     }
 
     @Test
-    void givenNoTagExists_whenGetOrCreateTag_thenCreatesTag() {
+    void givenNoTagExists_whenGetOrCreateTag_thenCreatesTag() throws ProfanityDetectedException {
         Tag tag = tagService.getOrCreateTag("pink");
 
         assertEquals("pink", tag.getName());
@@ -110,14 +107,14 @@ class TagServiceIntegrationTests {
     }
 
     @Test
-    void givenTagExists_whenGetOrCreateTag_thenReturnsTag() {
+    void givenTagExists_whenGetOrCreateTag_thenReturnsTag() throws ProfanityDetectedException {
         Tag tag = tagService.getOrCreateTag("red");
 
         assertEquals("red", tag.getName());
     }
 
     @Test
-    void givenGardenHasTags_whenUpdateGardenTags_thenUpdatesTags() {
+    void givenGardenHasTags_whenUpdateGardenTags_thenUpdatesTags() throws ProfanityDetectedException {
         List<String> tagNames = List.of("red", "blue");
 
         tagService.updateGardenTags(garden, tagNames);
@@ -128,17 +125,21 @@ class TagServiceIntegrationTests {
     }
 
     @Test
-    void givenTagNameTooLOng_whenGetOrCreateTag_thenTagNotCreated() {
+    void givenTagNameTooLong_whenGetOrCreateTag_thenTagNotCreated() throws ProfanityDetectedException {
         String longTag = "Amazing wonderful peaceful garden";
 
         assertNull(tagService.getOrCreateTag(longTag));
     }
 
     @Test
-    void givenTagHasInvalidCharacters_whenGetOrCreateTag_thenTagNotCreated() {
+    void givenTagHasInvalidCharacters_whenGetOrCreateTag_thenTagNotCreated() throws ProfanityDetectedException {
         String invalidCharTag = "Cool!";
 
         assertNull(tagService.getOrCreateTag(invalidCharTag));
     }
 
+    @Test
+    void givenTagsHasProfanity_whenGetOrCreateTag_thenExceptionIsThrown() {
+        assertThrows(ProfanityDetectedException.class, () -> tagService.getOrCreateTag("fuck"));
+    }
 }
