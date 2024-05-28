@@ -56,7 +56,7 @@ public @interface AgeRange {
 
             LocalDate dob;
             try {
-                dob = LocalDate.parse(value, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+                dob = LocalDate.parse(value, DateTimeFormatter.ISO_LOCAL_DATE);
             } catch (DateTimeParseException e) {
                 return true;
             }
@@ -65,8 +65,10 @@ public @interface AgeRange {
             LocalDate now = clock.instant().atZone(clock.getZone()).toLocalDate();
 
             int age = Period.between(dob, now).getYears();
+
+            System.out.println(age);
+
             return minAge <= age && age <= maxAge;
         }
-
     }
 }

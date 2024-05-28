@@ -1,5 +1,12 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.verify;
+
+import java.time.LocalDate;
 import java.util.List;
 
 import nz.ac.canterbury.seng302.gardenersgrove.service.ProfanityDetectedException;
@@ -54,7 +61,7 @@ class TagServiceIntegrationTests {
         greyTag = new Tag("GREY");
         tagRepository.save(greyTag);
 
-        GardenUser user = new GardenUser("Test", "User", "jdo.asdf@gmail.com", "password", "01/01/1970");
+        GardenUser user = new GardenUser("Test", "User", "jdo.asdf@gmail.com", "password", LocalDate.of(1970, 1, 1));
         userRepository.save(user);
 
         garden = new Garden("Test garden", null, null, null, "Test city", "Test country", null, null, null, null, null);

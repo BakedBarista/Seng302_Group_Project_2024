@@ -7,17 +7,14 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weatherAPI.WeatherAPIService;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,6 +23,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -35,6 +33,7 @@ import static org.mockito.Mockito.*;
 public class GardenControllerTest {
 
     String EXPECTED_MODERATION_ERROR_MESSAGE = "The description does not match the language standards of the app.";
+    String LOCATION_ERROR_MESSAGE = "Location name must only include letters, numbers, spaces, dots, hyphens or apostrophes";
 
     @Mock
     private GardenService gardenService;
@@ -70,6 +69,11 @@ public class GardenControllerTest {
         when(mockUser.getId()).thenReturn(1L);
         when(gardenUserService.getCurrentUser()).thenReturn(mockUser);
         when(gardenService.getGardensByOwnerId(1L)).thenReturn(Collections.emptyList());
+
+        Garden mockGarden = new Garden();
+        mockGarden.setOwner(mockUser);
+        when(gardenService.getGardenById(0L)).thenReturn(Optional.of(mockGarden));
+
         authentication = mock(Authentication.class);
     }
 
@@ -142,12 +146,20 @@ public class GardenControllerTest {
     @Test
     public void testGetGarden() {
         Model model = mock(Model.class);
-        Garden garden = new Garden("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"100","test description");
-        when(gardenService.getGardenById(1)).thenReturn(Optional.of(garden));
+        GardenUser owner = new GardenUser();
+        owner.setId(1L);
+        Garden garden = new Garden("Test Garden", "1", "test", "test suburb", "test city", "test country", "1234", 0.0, 0.0, "100", "test description");
+        garden.setOwner(owner);
 
-        String result = gardenController.getGarden(1, model);
+        when(gardenService.getGardenById(1L)).thenReturn(Optional.of(garden));
+        when(gardenUserService.getCurrentUser()).thenReturn(owner);
+        when(gardenService.getGardensByOwnerId(owner.getId())).thenReturn(Collections.singletonList(garden));
+
+        String result = gardenController.getGarden(1L, model);
+
         assertEquals("gardens/editGarden", result);
         verify(model).addAttribute("garden", garden);
+        verify(model).addAttribute("gardens", Collections.singletonList(garden));
     }
 
     @Test
@@ -168,6 +180,14 @@ public class GardenControllerTest {
         assertEquals("1234",garden.getPostCode());
         assertEquals("100", garden.getSize());
         assertEquals("test description", garden.getDescription());
+    }
+
+    @Test
+    void testGetGarden_GardenNotPresent_ReturnsAccessDenied() {
+        Model model = mock(Model.class);
+        when(gardenService.getGardenById(0L)).thenReturn(Optional.empty());
+        String result = gardenController.getGarden(0L, model);
+        assertEquals("/error/accessDenied", result);
     }
 
     @Test
@@ -250,6 +270,74 @@ public class GardenControllerTest {
 
     }
 
+    @Test
+    void testCheckGardenError_WithProfanity() {
+        Model model = mock(Model.class);
+        BindingResult bindingResult = mock(BindingResult.class);
+        Garden garden = new Garden();
+        ArrayList<String> profanity = new ArrayList<>();
+        profanity.add("badword");
+        garden.setDescription("badword");
 
+        when(bindingResult.hasErrors()).thenReturn(false);
+        when(profanityService.badWordsFound("badword")).thenReturn(profanity);
+        when(moderationService.checkIfDescriptionIsFlagged(anyString())).thenReturn(false);
 
+        gardenController.checkGardenError(model, bindingResult, garden);
+
+        verify(model).addAttribute("profanity", "The description does not match the language standards of the app.");
+        verify(model, never()).addAttribute(eq("locationError"), anyString());
+    }
+
+    @Test
+    void testCheckGardenError_WithModerationFlagged() {
+        Model model = mock(Model.class);
+        BindingResult bindingResult = mock(BindingResult.class);
+        Garden garden = new Garden();
+        garden.setDescription("suspicious description");
+
+        when(bindingResult.hasErrors()).thenReturn(false);
+        when(profanityService.badWordsFound("suspicious description")).thenReturn(new ArrayList<>());
+        when(moderationService.checkIfDescriptionIsFlagged("suspicious description")).thenReturn(true);
+
+        gardenController.checkGardenError(model, bindingResult, garden);
+
+        verify(model).addAttribute("profanity", "The description does not match the language standards of the app.");
+        verify(model, never()).addAttribute(eq("locationError"), anyString());
+    }
+
+    @Test
+    void testCheckGardenError_NoErrors() {
+        Model model = mock(Model.class);
+        BindingResult bindingResult = mock(BindingResult.class);
+        Garden garden = new Garden();
+        garden.setDescription("good description");
+
+        when(bindingResult.hasErrors()).thenReturn(false);
+        when(profanityService.badWordsFound("good description")).thenReturn(new ArrayList<>());
+        when(moderationService.checkIfDescriptionIsFlagged("good description")).thenReturn(false);
+
+        gardenController.checkGardenError(model, bindingResult, garden);
+
+        verify(model, never()).addAttribute(eq("profanity"), anyString());
+        verify(model, never()).addAttribute(eq("locationError"), anyString());
+    }
+
+    @Test
+    void testCheckGardenError_WithLocationError() {
+        Model model = mock(Model.class);
+        BindingResult bindingResult = mock(BindingResult.class);
+        Garden garden = new Garden();
+
+        FieldError fieldError = new FieldError("garden", "city", null,false, new String[]{"Pattern"},null,null);
+        when(bindingResult.hasErrors()).thenReturn(true);
+        when(bindingResult.getFieldErrors()).thenReturn(List.of(fieldError));
+        when(profanityService.badWordsFound(anyString())).thenReturn(new ArrayList<>());
+        when(moderationService.checkIfDescriptionIsFlagged(anyString())).thenReturn(false);
+
+        gardenController.checkGardenError(model, bindingResult, garden);
+
+        verify(model).addAttribute("locationError", "Location name must only include letters, numbers, spaces, dots, hyphens or apostrophes");
+        verify(model, never()).addAttribute(eq("profanity"), anyString());
+    }
 }
