@@ -86,7 +86,7 @@ public class EditUserController {
      */
     @PostMapping("/users/edit")
     public String submitUser(
-            @Valid @ModelAttribute("user") EditUserDTO editUserDTO,
+            @Valid @ModelAttribute("editUserDTO") EditUserDTO editUserDTO,
             BindingResult bindingResult,
             Authentication authentication,
             @RequestParam(value = "dateError", required = false) String dateValidity,
@@ -112,8 +112,8 @@ public class EditUserController {
         }
 
         if (bindingResult.hasErrors()) {
+            // needed for getting image in html
             model.addAttribute("userId", userId);
-            model.addAttribute("editUserDTO", editUserDTO);
             return "users/editTemplate";
         }
 
