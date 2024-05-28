@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unittests.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nz.ac.canterbury.seng302.gardenersgrove.service.LocationService;
 import org.junit.jupiter.api.BeforeEach;
@@ -7,14 +8,17 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 class LocationServiceTest {
@@ -59,4 +63,36 @@ class LocationServiceTest {
 
         assertTrue(latAndLng.isEmpty());
     }
+
+    @Test
+    void GetLatLng_401Response_CatchesError() {
+        HttpClientErrorException exception = HttpClientErrorException.create(
+                HttpStatus.UNAUTHORIZED, "Unauthorized", null, null, null);
+
+        doThrow(exception).when(restTemplate).getForEntity(anyString(), Mockito.eq(String.class));
+        List<Double> result = locationService.getLatLng("2 Janet Street Upper Riccarton 8041 New Zealand");
+        assertEquals(new ArrayList<>(), result);
+    }
+
+    @Test
+    void GetLatLng_OtherHTTPError_CatchesError() {
+        HttpClientErrorException exception = HttpClientErrorException.create(
+                HttpStatus.BAD_REQUEST, "Bad Request", null, null, null);
+
+        doThrow(exception).when(restTemplate).getForEntity(anyString(), Mockito.eq(String.class));
+        List<Double> result = locationService.getLatLng("2 Janet Street Upper Riccarton 8041 New Zealand");
+        assertEquals(new ArrayList<>(), result);
+    }
+
+    @Test
+    void testGetLatLng_JsonProcessingException() throws Exception {
+        String jsonResponse = "{\"results\"}";
+        ResponseEntity<String> responseEntity = new ResponseEntity<>(jsonResponse, HttpStatus.OK);
+        Mockito.when(restTemplate.getForEntity(anyString(), Mockito.eq(String.class)))
+                .thenReturn(responseEntity);
+        Mockito.when(objectMapper.readTree(jsonResponse)).thenThrow(new JsonProcessingException("Error") {});
+        List<Double> result = locationService.getLatLng("2 Janet Street Upper Riccarton 8041 New Zealand");
+        assertEquals(new ArrayList<>(), result);
+    }
+
 }
