@@ -53,6 +53,5 @@ public class BlockedUserFilter extends OncePerRequestFilter {
         response.setStatus(302);
         response.addHeader("Location", SecurityConfiguration.getBasePath() + "/users/blocked");
         response.flushBuffer();
-        return;
     }
 }
