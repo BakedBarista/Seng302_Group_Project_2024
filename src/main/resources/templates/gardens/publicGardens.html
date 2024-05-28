@@ -33,7 +33,7 @@
             <button class="btn btn-secondary mt-2" type="button" onclick="addTag()">Add Tag</button>
         </div>
 
-        <div class="mt-3" id="tagsContainer"></div>
+        <div class= "mt-3" id="tagsContainer"></div>
     </div>
 
     <div th:if="${gardenPage.empty}" class="px-4">
@@ -156,10 +156,11 @@
         tagsContainer.innerHTML = '';
         tags.forEach(function(tag, index) {
             var tagSpan = document.createElement('span');
+            tagSpan.className = "badge badge-md text-bg-secondary mb-1 m-1";
             tagSpan.textContent = tag + ' ';
             var removeBtn = document.createElement('button');
-            removeBtn.textContent = 'Remove';
-            removeBtn.className = 'btn btn-link';
+            removeBtn.ariaLabel = 'remove tag'
+            removeBtn.className = 'btn-close';
             removeBtn.onclick = function() { removeTag(index); };
             tagSpan.appendChild(removeBtn);
             tagsContainer.appendChild(tagSpan);
