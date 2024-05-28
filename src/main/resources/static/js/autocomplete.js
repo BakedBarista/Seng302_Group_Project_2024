@@ -23,6 +23,7 @@ function autocomplete(containerElement, callback, options) {
     // create input element
     const inputElement = document.createElement("input");
     inputElement.type = "text";
+    inputElement.id = "locationInput";
     inputElement.placeholder = options.placeholder;
     inputElement.className = "form-control";
     inputContainerElement.appendChild(inputElement);

@@ -18,21 +18,28 @@
                 </div>
             </div>
             <!-- Garden Location Field -->
-            <div class="mb-3">
-                <label for="location-autocomplete-container" class="form-label"> Garden Location: </label>
-                <div class="autocomplete-container" id="location-autocomplete-container"></div>
-            </div>
 <!--            <div class="col-8">-->
 <!--                <div th:if="locationError != null" th:text="${locationError}" style="color: red;"></div>-->
 <!--            </div>-->
 
             <div class="d-flex justify-content-center">
-                <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#multiCollapseExample1" aria-expanded="false" aria-controls="multiCollapseExample1">Manually Enter Address</button>
+                <button id="toggleButton" class="btn btn-primary" type="button" onclick="handleToggle()">Manually Enter Address</button>
             </div>
             <div class="col">
-                <div class="collapse multi-collapse" id="multiCollapseExample1">
+                <div class="collapse multi-collapse show" id="multiCollapse1">
+                    <div class="mb-3">
+                        <label for="location-autocomplete-container" class="form-label"> Garden Location: </label>
+                        <div class="autocomplete-container" id="location-autocomplete-container"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="collapse multi-collapse" id="multiCollapse2">
                     <!-- Street Number Field -->
                     <div class="mb-3 row p-0">
+                        <div class="mb-3">
+                            <p>Note: Manually entering your address may result in location based services not working.</p>
+                        </div>
                         <div class="col-lg-3 col-12">
                             <label for="streetNumber" th:class="'form-label' + ${#fields.hasErrors('streetNumber') ? 'is-invalid' : ''}">
                                 Street Number:
@@ -186,6 +193,31 @@
             </div>
         </div>
     </form>
+    <script>
+        function handleToggle() {
+            var collapseOne = document.getElementById("multiCollapse1");
+            var collapseTwo = document.getElementById("multiCollapse2");
+            var toggleButton = document.getElementById("toggleButton");
+            var autocomplete = document.getElementById("locationInput");
+            var streetNum
+
+            if (toggleButton.textContent.includes("Manually Enter Address")) {
+                collapseOne.classList.remove('show');
+                collapseTwo.classList.add('show');
+                toggleButton.textContent = "Automatically Enter Address";
+                autocomplete.value = "";
+
+            } else {
+                collapseOne.classList.add('show');
+                collapseTwo.classList.remove('show');
+                toggleButton.textContent = "Manually Enter Address";
+            }
+
+
+
+
+        }
+    </script>
     <script>
         const numberOfCharactersText = document.getElementById("numberOfCharactersText");
         const descriptionTextBox = document.getElementById("description");
