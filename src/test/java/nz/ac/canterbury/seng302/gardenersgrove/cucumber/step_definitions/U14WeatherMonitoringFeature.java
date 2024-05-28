@@ -77,7 +77,7 @@ public class U14WeatherMonitoringFeature {
     }
 
     @Given("I create a garden called {string} in {string}, {string}")
-    public void i_create_a_garden_called_in(String gardenName, String city, String country) {
+    public void i_create_a_garden(String gardenName, String city, String country) {
         user = U2LogInFeature.user;
         garden = new Garden();
         garden.setName(gardenName);
@@ -95,7 +95,7 @@ public class U14WeatherMonitoringFeature {
     }
 
     @When("I am on the garden details page for {string}")
-    public void i_am_on_the_garden_details_page_for(String gardenName) {
+    public void i_am_on_the_garden_details_page(String gardenName) {
         gardenRepository.findById(garden.getId());
     }
 
@@ -112,19 +112,19 @@ public class U14WeatherMonitoringFeature {
     }
 
     @Then("An error message displays saying that the location cannot be found.")
-    public void an_error_message_displays_saying_that_the_location_cannot_be_found() {
+    public void error_message_displays_location_not_found() {
         // Write code here that turns the phrase above into concrete actions
         throw new io.cucumber.java.PendingException();
     }
 
     @Given("The past two days have been sunny for that location")
-    public void the_past_two_days_have_been_sunny_for_that_location() {
+    public void past_weather_sunny_for_that_location() {
         // Write code here that turns the phrase above into concrete actions
         throw new io.cucumber.java.PendingException();
     }
 
     @Then("I get a notification telling me to water my plants")
-    public void i_get_a_notification_telling_me_to_water_my_plants() {
+    public void notification_to_water_plants() {
         // Write code here that turns the phrase above into concrete actions
         throw new io.cucumber.java.PendingException();
     }
@@ -136,7 +136,7 @@ public class U14WeatherMonitoringFeature {
     }
 
     @Then("I get a notification telling me that outdoor plants do not need water that day")
-    public void i_get_a_notification_telling_me_that_outdoor_plants_do_not_need_water_that_day() {
+    public void notification_that_outdoor_plants_do_not_need_water() {
         // Write code here that turns the phrase above into concrete actions
         throw new io.cucumber.java.PendingException();
     }
