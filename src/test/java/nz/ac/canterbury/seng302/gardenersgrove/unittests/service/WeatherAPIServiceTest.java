@@ -203,9 +203,4 @@ class WeatherAPIServiceTest {
         // Check that the API is called 3 times.
         verify(restTemplate, times(3)).getForEntity(anyString(), eq(String.class));
     }
-
-    @Test
-    void GetCurrentWeather_ValidRequest_WeatherReturnedFromAPI() {
-
-    }
 }

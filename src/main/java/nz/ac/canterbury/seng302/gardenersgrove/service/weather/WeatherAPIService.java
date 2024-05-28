@@ -229,7 +229,7 @@ public class WeatherAPIService {
      * @return a String containing the request body, which will be a JSON representation of the requested weather data.
      * If there is an error then "No Response" will be returned.
      */
-    private String requestAPI(String url) {
+    public String requestAPI(String url) {
         try {
             logger.info("Requesting the weather API");
             ResponseEntity<String> result = restTemplate.getForEntity(url, String.class);
