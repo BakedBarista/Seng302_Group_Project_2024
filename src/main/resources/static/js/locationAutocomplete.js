@@ -40,3 +40,53 @@ if (locationAutocompleteContainer) {
         }
     );
 }
+
+function handleManualLocation() {
+    var manualAddress = "";
+    manualAddress += document.getElementById("streetNumber").value
+    manualAddress += document.getElementById("streetName").value;
+    manualAddress += document.getElementById("suburb").value;
+    manualAddress += document.getElementById("city").value;
+    manualAddress += document.getElementById("country").value;
+    manualAddress += document.getElementById("postCode").value;
+
+    const MIN_ADDRESS_LENGTH = 3;
+    const DEBOUNCE_DELAY = 300;
+    let debounceTimer;
+    let currentPromiseReject;
+
+    const request = new Promise((resolve, reject) => {
+        currentPromiseReject = reject;
+
+        debounceTimer = setTimeout(() => {
+            fetch(`${apiBaseUrl}/location-search?location=${manualAddress}`)
+                .then(response => {
+                    currentPromiseReject = null;
+
+                    // check if the call was successful
+                    if (response.ok) {
+                        response.json().then(data => resolve(data));
+                    } else {
+                        response.json().then(data => reject(data));
+                    }
+                });
+        }, DEBOUNCE_DELAY);
+    });
+
+    request.then((data) => {
+        // here we get address suggestions
+        currentItems = data.results;
+        console.log(data.results);
+        console.log(data.results.lat);
+        console.log(data.results.lng);
+
+        document.getElementById("lat").value = currentItems.lat;
+        document.getElementById("lng").value = currentItems.lng;
+
+    }, (err) => {
+        if (!err.cancelled) {
+            console.log(err);
+        }
+    });
+
+}

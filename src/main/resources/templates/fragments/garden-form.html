@@ -1,5 +1,5 @@
 <div th:fragment="garden-form">
-    <form action="#" th:action="@{${action}}" th:object="${garden}" method="post">
+    <form action="#" th:action="@{${action}}" th:object="${garden}" method="post" onsubmit="handleManualLocation()">
         <div>
             <!-- Garden Name Field -->
             <div class="mb-3">
@@ -17,28 +17,26 @@
                      th:errors="*{name}">
                 </div>
             </div>
-            <!-- Garden Location Field -->
-<!--            <div class="col-8">-->
-<!--                <div th:if="locationError != null" th:text="${locationError}" style="color: red;"></div>-->
-<!--            </div>-->
-
-            <div class="d-flex justify-content-center">
-                <button id="toggleButton" class="btn btn-primary" type="button" onclick="handleToggle()">Manually Enter Address</button>
-            </div>
-            <div class="col">
-                <div class="collapse multi-collapse show" id="multiCollapse1">
-                    <div class="mb-3">
-                        <label for="location-autocomplete-container" class="form-label"> Garden Location: </label>
+<!--             Garden Location Field-->
+            <div class="mb-3">
+                <label for="location-autocomplete-container" class="form-label"> Garden Location: </label>
+                <div class="d-xl-flex">
+                    <div class="col-xl-10 col-12">
                         <div class="autocomplete-container" id="location-autocomplete-container"></div>
+                        <div class="invalid-feedback" th:if="locationError != null" th:text="${locationError}"></div>
+                    </div>
+                    <div class="col-xl-2 col-12 d-flex justify-content-xl-end">
+                        <button id="toggleButton" class="btn btn-primary" type="button" onclick="handleToggle()">Show Manual</button>
                     </div>
                 </div>
             </div>
+
             <div class="col">
-                <div class="collapse multi-collapse" id="multiCollapse2">
+                <div class="collapse multi-collapse" id="multiCollapse1">
                     <!-- Street Number Field -->
                     <div class="mb-3 row p-0">
                         <div class="mb-3">
-                            <p>Note: Manually entering your address may result in location based services not working.</p>
+                            <p>Note: Manual entry of address may result in location-based services not working.</p>
                         </div>
                         <div class="col-lg-3 col-12">
                             <label for="streetNumber" th:class="'form-label' + ${#fields.hasErrors('streetNumber') ? 'is-invalid' : ''}">
@@ -196,21 +194,14 @@
     <script>
         function handleToggle() {
             var collapseOne = document.getElementById("multiCollapse1");
-            var collapseTwo = document.getElementById("multiCollapse2");
             var toggleButton = document.getElementById("toggleButton");
-            var autocomplete = document.getElementById("locationInput");
-            var streetNum
 
-            if (toggleButton.textContent.includes("Manually Enter Address")) {
-                collapseOne.classList.remove('show');
-                collapseTwo.classList.add('show');
-                toggleButton.textContent = "Automatically Enter Address";
-                autocomplete.value = "";
-
-            } else {
+            if (toggleButton.textContent.includes("Show Manual")) {
                 collapseOne.classList.add('show');
-                collapseTwo.classList.remove('show');
-                toggleButton.textContent = "Manually Enter Address";
+                toggleButton.textContent = "Hide Manual";
+            } else {
+                collapseOne.classList.remove('show');
+                toggleButton.textContent = "Show Manual";
             }
 
 
