@@ -1,5 +1,5 @@
 <div th:fragment="garden-form">
-    <form action="#" th:action="@{${action}}" th:object="${garden}" method="post" onsubmit="handleManualLocation()">
+    <form id="garden-form" action="#" th:action="@{${action}}" th:object="${garden}" method="post">
         <div>
             <!-- Garden Name Field -->
             <div class="mb-3">
@@ -135,9 +135,6 @@
                     </div>
                 </div>
             </div>
-
-
-
             <input type="hidden"
                    id="lat"
                    th:name="lat"
@@ -192,6 +189,9 @@
         </div>
     </form>
     <script>
+        /**
+         * Change the text of the button for hide and show
+         */
         function handleToggle() {
             var collapseOne = document.getElementById("multiCollapse1");
             var toggleButton = document.getElementById("toggleButton");
@@ -203,10 +203,6 @@
                 collapseOne.classList.remove('show');
                 toggleButton.textContent = "Show Manual";
             }
-
-
-
-
         }
     </script>
     <script>
