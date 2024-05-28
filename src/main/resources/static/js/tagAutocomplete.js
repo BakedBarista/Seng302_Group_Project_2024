@@ -31,13 +31,13 @@ function tagAutocomplete(options) {
      */
     function validateTag(tag) {
         const tagsError = document.getElementById("gardenTagsError");
-        const regex = /^[\p{L}0-9\s\-_']*$/u;
+        const regex = /^[\p{L}0-9\s\-_'"]*$/u;
 
         if (tag.length > 25) {
             tagsError.textContent = "A tag cannot exceed 25 characters"
             tagAutocomplete.focus();
         } else if (!regex.test(tag)) {
-            tagsError.textContent = "The tag name must only contain alphanumeric characters, spaces, -, _, or ' "
+            tagsError.textContent = `The tag name must only contain alphanumeric characters, spaces, -, _, ', or ".`;
             tagAutocomplete.focus();
         } else {
             tagsError.textContent ="";
