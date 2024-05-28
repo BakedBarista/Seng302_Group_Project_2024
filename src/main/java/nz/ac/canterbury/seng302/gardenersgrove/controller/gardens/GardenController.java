@@ -34,6 +34,8 @@ import org.springframework.web.client.RestTemplate;
 import java.lang.reflect.Array;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
@@ -42,8 +44,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.stream.Collectors;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.DateTimeFormats.NZ_FORMAT_DATE;
@@ -485,19 +485,6 @@ public class GardenController {
                     String plantDescription = plantDetail[1];
                     Plant plant = new Plant(plantName, "15", plantDescription, LocalDate.of(2024, 3, 1));
                     Plant savedPlant = plantService.addPlant(plant, garden.getId());
-
-                    // Add plant image
-                    try {
-                        String imageName = plant.getName().replaceAll("\\s+","");
-                        ClassPathResource imgFile = new ClassPathResource("static/img/testImages/" + imageName + ".jpg");
-                        logger.info("Loading image from {}",imgFile.getPath());
-                        String mimeType = Files.probeContentType(imgFile.getFile().toPath());
-                        byte[] image = Files.readAllBytes(imgFile.getFile().toPath());
-                        savedPlant.setPlantImage(mimeType, image);
-                        plantService.setPlantImage(savedPlant.getId(), mimeType, image);
-                    } catch (IOException e) {
-                        logger.info("Failed to read image for plant");
-                    }
 
                     plants.add(savedPlant);
                 }
