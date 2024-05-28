@@ -352,7 +352,6 @@ public class GardenController {
                                       @RequestParam(name = "search", required = false, defaultValue = "") String search,
                                       @RequestParam(name = "tags", required = false) List<String> tags,
                                       Model model) {
-        logger.info("Search: " + search + ", Tags: " + tags);
         Pageable pageable = PageRequest.of(page, size);
         Page<Garden> gardenPage = gardenService.findGardensBySearchAndTags(search, tags, pageable);
         model.addAttribute("gardenPage", gardenPage);
