@@ -63,6 +63,7 @@ public class GardenController {
 
     private final GardenUserService gardenUserService;
     private final FriendService friendService;
+    private final LocationService locationService;
 
     private final ProfanityService profanityService;
     private final String PROFANITY = "profanity";
@@ -71,7 +72,7 @@ public class GardenController {
     private String location_apiKey;
 
     @Autowired
-    public GardenController(GardenService gardenService, PlantService plantService, GardenUserService gardenUserService, WeatherAPIService weatherAPIService, FriendService friendService, ModerationService moderationService, ProfanityService profanityService) {
+    public GardenController(GardenService gardenService, PlantService plantService, GardenUserService gardenUserService, WeatherAPIService weatherAPIService, FriendService friendService, ModerationService moderationService, ProfanityService profanityService, LocationService locationService) {
         this.gardenService = gardenService;
         this.plantService = plantService;
         this.gardenUserService = gardenUserService;
@@ -79,6 +80,7 @@ public class GardenController {
         this.friendService = friendService;
         this.moderationService = moderationService;
         this.profanityService = profanityService;
+        this.locationService = locationService;
     }
 
     /**
@@ -120,7 +122,7 @@ public class GardenController {
                 garden.getCity() + " " + garden.getPostCode() + " " + garden.getCountry();
 
         // Request API
-        ArrayList<Double> latAndLng = getLatLng(location);
+        List<Double> latAndLng = locationService.getLatLng(location);
 
         // Null check
         if (!latAndLng.isEmpty()) {
@@ -290,7 +292,7 @@ public class GardenController {
         String location = garden.getStreetNumber() + " " + garden.getStreetName() + " " + garden.getSuburb() + " " +
                 garden.getCity() + " " + garden.getPostCode() + " " + garden.getCountry();
 
-        ArrayList<Double> latAndLng = getLatLng(location);
+        List<Double> latAndLng = locationService.getLatLng(location);
 
         Optional<Garden> existingGarden = gardenService.getGardenById(id);
         if (existingGarden.isPresent()) {
@@ -497,42 +499,6 @@ public class GardenController {
         }
     }
 
-    private ArrayList<Double> getLatLng(String location) {
-        try {
-            ArrayList<Double> latAndLng = new ArrayList<>();
-            logger.info("Requesting location from API");
-            String url = "https://api.geoapify.com/v1/geocode/autocomplete"
-                    + "?text=" + URLEncoder.encode(location, StandardCharsets.UTF_8)
-                    + "&format=json"
-                    + "&limit=" + 1
-                    + "&apiKey=" + location_apiKey;
-
-            RestTemplate restTemplate = new RestTemplate();
-            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode json = mapper.readTree(response.getBody());
-            JsonNode results = json.path("results");
-
-            if (!results.isEmpty()){
-                JsonNode result  = results.get(0);
-                latAndLng.add(result.path("lat").asDouble());
-                latAndLng.add(result.path("lon").asDouble());
-                logger.info("Location returned Lat: {}, Lon: {}", latAndLng.get(0), latAndLng.get(1));
-            }
-
-            return latAndLng;
-
-        } catch (HttpClientErrorException e) {
-            if (e.getStatusCode().value() == 401) {
-                logger.error("Authentication issue with location API, check API key.");
-            } else {
-                logger.error("An unknown error occurred with the location API.", e);
-            }
-        } catch (JsonProcessingException e) {
-            logger.error("Issue processing location API response JSON.");
-        }
-        return new ArrayList<>();
-    }
 }
 
 
