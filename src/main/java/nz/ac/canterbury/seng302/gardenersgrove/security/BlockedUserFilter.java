@@ -14,8 +14,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 
+/**
+ * Filters incoming requests to redirect blocked users to the blocked page.
+ */
 @Component
 public class BlockedUserFilter extends OncePerRequestFilter {
+    // Here we shadow a field from a superclass, but haven't renamed it because,
+    // by convention, we name the logger instance "logger"
     private static final Logger logger = LoggerFactory.getLogger(BlockedUserFilter.class);
 
     private GardenUserService userService;

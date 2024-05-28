@@ -2,7 +2,6 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -107,6 +106,15 @@ public class LoginController {
         return "users/login";
     }
 
+    /**
+     * Shows the user saying how many days they are blocked for and logs them out
+     *
+     * @param request The request object
+     * @param authentication The authentication object
+     * @param model The Thymeleaf model
+     * @return The view name for the blocked page
+     * @throws ServletException If there is an error logging out, but there shouldn't be as the user must be logged in to view this page
+     */
     @GetMapping("/users/blocked")
     public String blocked(HttpServletRequest request, Authentication authentication, Model model) throws ServletException {
         GardenUser user = userService.getUserById((Long) authentication.getPrincipal());

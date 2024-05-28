@@ -3,7 +3,6 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
-import java.time.temporal.TemporalUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,6 +69,12 @@ public class StrikeService {
         return AddStrikeResult.NO_ACTION;
     }
 
+    /**
+     * Counts the number of days until the user is unblocked
+     *
+     * @param user The user to check
+     * @return The number of days until the user is unblocked
+     */
     public long daysUntilUnblocked(GardenUser user) {
         Instant now = clock.instant();
         Instant expiry = user.getAccountDisabledExpiryInstant();
