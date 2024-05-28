@@ -9,6 +9,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.TagRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weatherAPI.WeatherAPIService;
 import org.mockito.ArgumentCaptor;
@@ -31,6 +32,8 @@ public class U19PubliciseGardenFeature {
     private static GardenUserService gardenUserService;
     private static GardenUserRepository gardenUserRepository;
     private static GardenRepository gardenRepository;
+    private static TagService tagService;
+    private static TagRepository tagRepository;
     private GardenUser gardenUser;
     private static Model model;
     private static BindingResult bindingResult;
@@ -38,17 +41,20 @@ public class U19PubliciseGardenFeature {
     private static Authentication authentication;
     private String errorMessage;
 
+
     @BeforeAll
     public static void beforeAll() {
         gardenUserRepository = mock(GardenUserRepository.class);
         gardenRepository = mock(GardenRepository.class);
         profanityService = mock(ProfanityService.class);
         moderationService = mock(ModerationService.class);
+        tagRepository = mock(TagRepository.class);
         bindingResult = mock(BindingResult.class);
         model = mock(Model.class);
         authentication = mock(Authentication.class);
         gardenUserService = new GardenUserService(gardenUserRepository);
         gardenService = new GardenService(gardenRepository);
+        tagService = new TagService(tagRepository, gardenService);
     }
 
     @Given("I enter a new description {string}")
@@ -59,7 +65,7 @@ public class U19PubliciseGardenFeature {
         bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
         gardenService = mock(GardenService.class);
-        gardenController = new GardenController(gardenService,plantService,gardenUserService,weatherAPIService,friendService,moderationService,profanityService);
+        gardenController = new GardenController(gardenService,plantService,gardenUserService,weatherAPIService,tagService, friendService,moderationService,profanityService);
     }
 
     @When("Description contains profanity")
