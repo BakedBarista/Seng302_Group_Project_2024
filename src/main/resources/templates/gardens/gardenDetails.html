@@ -61,6 +61,7 @@
                     <div class="col-md-12">
                         <label for="tag-autocomplete-container">Add tag</label>
                         <div class="mb-3" id="tag-autocomplete-container"></div>
+                        <span id="gardenTagsError" class="error gardenTagsError" style="color:red"></span>
                     </div>
                     <div class="col-md-12 mb-4" id="tag-container"></div>
                     <script th:src="@{/js/autocomplete.js}"></script>
@@ -70,7 +71,7 @@
             </div>
             <div class="card col-xl-6 col-12 p-3 pb-0">
                 <div class="mt-4 d-md-none"></div>
-                <div th:if="${displayRecommendation}" class="alert alert-dismissible fade show d-flex pe-3" style="background-color: lightskyblue" role="alert">
+                <div th:if="${displayRecommendation != null ? displayRecommendation and (currentUser.id == garden.owner.id) : false}" class="alert alert-dismissible fade show d-flex pe-3" style="background-color: lightskyblue" role="alert">
                     <div>
                         <strong th:if="${wateringRecommendation}" class="h-100 d-flex align-items-center px-3">There hasn't been any rain recently, make sure to water your plants if they need it.</strong>
                         <strong th:if="${!wateringRecommendation}" class="h-100 d-flex align-items-center px-3">Outdoor plants don't need any water today.</strong>
@@ -85,7 +86,8 @@
                 </div>
                 <div class="h-100">
                     <div th:if="${!displayWeather}" class="h-100 d-flex justify-content-center align-items-center">
-                        <strong class="alert alert-warning fade show d-flex mb-5" role="alert">Location not found, please update your location to see the weather.</strong>
+                        <strong th:if="${currentUser.id == garden.owner.id}" class="alert alert-warning fade show d-flex mb-5" role="alert">Location not found, please update your location to see the weather.</strong>
+                        <strong th:unless="${currentUser.id == garden.owner.id}" class="alert alert-warning fade show d-flex mb-5" role="alert">The location of this garden is not supported by weather services.</strong>
                     </div>
                     <div th:if="${displayWeather}">
                         <!-- current weather card -->
@@ -159,19 +161,6 @@
                 </div>
                 <p th:if="${displayWeather}" class="text-right justify-content-right mt-2" style="color: grey; font-size: 10pt;">Powered by <a href="https://www.weatherapi.com/" title="Free Weather API" target="_blank" rel="noopener">WeatherAPI.com</a></p>
             </div>
-            <p th:if="${displayWeather}" class="text-right justify-content-right" style="color: grey; font-size: 10pt;">Powered by <a href="https://www.weatherapi.com/" title="Free Weather API" target="_blank" rel="noopener">WeatherAPI.com</a></p>
-        </div>
-        <div class="col-xl-6 col-12 mt-4">
-            <h2>Tags</h2>
-            <div class="col-md-12">
-                <label for="tag-autocomplete-container">Add tag</label>
-                <div class="mb-3" id="tag-autocomplete-container"></div>
-                <span id="gardenTagsError" class="error gardenTagsError" style="color:red"></span>
-            </div>
-            <div class="col-md-12 mb-4" id="tag-container"></div>
-            <script th:src="@{/js/autocomplete.js}"></script>
-            <script th:src="@{/js/tagAutocomplete.js}"></script>
-            <script th:src="@{/js/gardenDetailsTagAutocomplete.js}"></script>
         </div>
     </div>
     <div class="d-flex justify-content-center align-items-center mb-1 sticky-top bg-light mt-3 p-3 rounded-3">
