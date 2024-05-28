@@ -1,6 +1,10 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.gardens;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
@@ -12,17 +16,24 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.weatherAPI.WeatherAPIServ
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
+import java.lang.reflect.Array;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
@@ -55,6 +66,9 @@ public class GardenController {
 
     private final ProfanityService profanityService;
     private final String PROFANITY = "profanity";
+
+    @Value("${geoapify.api.key}")
+    private String location_apiKey;
 
     @Autowired
     public GardenController(GardenService gardenService, PlantService plantService, GardenUserService gardenUserService, WeatherAPIService weatherAPIService, FriendService friendService, ModerationService moderationService, ProfanityService profanityService) {
@@ -101,14 +115,25 @@ public class GardenController {
             return "gardens/createGarden";
         }
 
+        // Get the location from the API
+        String location = garden.getStreetNumber() + " " + garden.getStreetName() + " " + garden.getSuburb() + " " +
+                garden.getCity() + " " + garden.getPostCode() + " " + garden.getCountry();
 
+        // Request API
+        ArrayList<Double> latAndLng = getLatLng(location);
+
+        // Null check
+        if (!latAndLng.isEmpty()) {
+            garden.setLat(latAndLng.get(0));
+            garden.setLon(latAndLng.get(1));
+        } else {
+            garden.setLat(null);
+            garden.setLon(null);
+        }
 
         Long userId = (Long) authentication.getPrincipal();
-
         GardenUser owner = gardenUserService.getUserById(userId);
-
         garden.setOwner(owner);
-
         Garden savedGarden = gardenService.addGarden(garden);
         return "redirect:/gardens/" + savedGarden.getId();
     }
@@ -261,6 +286,12 @@ public class GardenController {
             return "gardens/editGarden";
         }
 
+        // Get location form API
+        String location = garden.getStreetNumber() + " " + garden.getStreetName() + " " + garden.getSuburb() + " " +
+                garden.getCity() + " " + garden.getPostCode() + " " + garden.getCountry();
+
+        ArrayList<Double> latAndLng = getLatLng(location);
+
         Optional<Garden> existingGarden = gardenService.getGardenById(id);
         if (existingGarden.isPresent()) {
             existingGarden.get().setName(garden.getName());
@@ -272,8 +303,16 @@ public class GardenController {
             existingGarden.get().setPostCode(garden.getPostCode());
             existingGarden.get().setSize(garden.getSize());
             existingGarden.get().setDescription(garden.getDescription());
-            existingGarden.get().setLon(garden.getLon());
-            existingGarden.get().setLat(garden.getLat());
+            
+            // Null check
+            if (!latAndLng.isEmpty()) {
+                existingGarden.get().setLat(latAndLng.get(0));
+                existingGarden.get().setLon(latAndLng.get(1));
+            } else {
+                existingGarden.get().setLat(null);
+                existingGarden.get().setLon(null);
+            }
+
             existingGarden.get().setWeatherForecast(Collections.emptyList());
             gardenService.addGarden(existingGarden.get());
         }
@@ -471,6 +510,42 @@ public class GardenController {
         }
     }
 
+    private ArrayList<Double> getLatLng(String location) {
+        try {
+            ArrayList<Double> latAndLng = new ArrayList<>();
+            logger.info("Requesting location from API");
+            String url = "https://api.geoapify.com/v1/geocode/autocomplete"
+                    + "?text=" + URLEncoder.encode(location, StandardCharsets.UTF_8)
+                    + "&format=json"
+                    + "&limit=" + 1
+                    + "&apiKey=" + location_apiKey;
+
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode json = mapper.readTree(response.getBody());
+            JsonNode results = json.path("results");
+
+            if (!results.isEmpty()){
+                JsonNode result  = results.get(0);
+                latAndLng.add(result.path("lat").asDouble());
+                latAndLng.add(result.path("lon").asDouble());
+                logger.info("Location returned Lat: {}, Lon: {}", latAndLng.get(0), latAndLng.get(1));
+            }
+
+            return latAndLng;
+
+        } catch (HttpClientErrorException e) {
+            if (e.getStatusCode().value() == 401) {
+                logger.error("Authentication issue with location API, check API key.");
+            } else {
+                logger.error("An unknown error occurred with the location API.", e);
+            }
+        } catch (JsonProcessingException e) {
+            logger.error("Issue processing location API response JSON.");
+        }
+        return null;
+    }
 }
 
 
