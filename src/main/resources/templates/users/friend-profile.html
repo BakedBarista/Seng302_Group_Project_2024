@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" context="text/html; charset=UTF-8"/>
     <title>Friends Profile | Gardener's Grove</title>
@@ -10,12 +10,12 @@
 <body>
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 <div class="container">
-    <a th:href="@{/users/manageFriends}" class="btn btn-primary mt-3 mb-3">Back to My Friends</a>
+    <a th:href="@{/users/manage-friends}" class="btn btn-primary mt-3 mb-3">Back to My Friends</a>
     <main class="main-container">
         <h1> Friend Profile</h1>
 
         <img class="rounded-circle overflow-hidden border border-dark"
-             th:src="@{'/users/' + ${Friend.id} + '/profile-picture'}" style="width: 200px; height: 200px;">
+             th:src="@{'/users/' + ${Friend.id} + '/profile-picture'}" style="width: 200px; height: 200px;" alt="Friend's profile picture">
         <h3>First Name</h3>
         <p th:text="${Friend.fname}"></p>
         <h3>Last Name</h3>
