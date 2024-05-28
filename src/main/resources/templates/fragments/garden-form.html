@@ -167,7 +167,7 @@
                             th:class="'form-control ' + ${(#fields.hasErrors('description') || profanity != null) ? 'is-invalid' : ''}"
                             id="description"
                             th:name="description"
-                            th:value="${garden.description}"
+                            th:text="${garden.description}"
                             data-cy="size"
                             maxlength="512"
                             autofocus></textarea>
