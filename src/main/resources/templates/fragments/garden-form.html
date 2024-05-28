@@ -32,7 +32,7 @@
             </div>
 
             <div class="col">
-                <div class="collapse multi-collapse" id="multiCollapse1">
+                <div th:classappend="${locationError} ? ' show' : ''" class="collapse multi-collapse" id="multiCollapse1">
                     <!-- Street Number Field -->
                     <div class="mb-3 row p-0">
                         <div class="mb-3">
