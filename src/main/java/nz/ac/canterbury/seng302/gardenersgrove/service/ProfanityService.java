@@ -70,7 +70,9 @@ public class ProfanityService {
         if(input == null) {
             return new ArrayList<>();
         }
+        input = input.toLowerCase();
         input = replaceLeetSpeak(input);
+
         ArrayList<String> badWords = new ArrayList<>();
         String[] tokens = input.split("\\s+|\\p{Punct}");
 
@@ -175,6 +177,7 @@ public class ProfanityService {
         input = input.replace("Ú","u");
         input = input.replace("Û","u");
         input = input.replace("Ü","u");
+        input = input.replace("$","s");
 
 
         return input;
