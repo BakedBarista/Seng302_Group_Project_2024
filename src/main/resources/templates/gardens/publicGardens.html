@@ -34,9 +34,14 @@
             <div th:if="${error}">
                 <p style="color: red;" th:text="${error}"></p>
             </div>
-            <input type="text" id="tagInput" class="form-control" placeholder="Search By Tag" aria-label="Add tag"  onkeydown="handleTagInputKeyDown(event)" th:value="${invalidTag != null ? invalidTag : ''}">
-            <button class="btn btn-secondary mt-2" type="button" onclick="addTag()">Add Tag</button>
-        </div>
+            <div class="input-group mb-3">
+                <input type="text" id="tagInput" class="form-control" placeholder="Search By Tag" onkeydown="handleTagInputKeyDown(event)" aria-label="Add tag" th:value="${invalidTag != null ? invalidTag : ''}">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button" onclick="addTag()">
+                        <img th:src="@{/icons/search-icon.svg}" alt="Add tag" width="20" height="25"/>
+                    </button>
+                </div>
+            </div>
 
         <div class= "mt-3" id="tagsContainer"></div>
     </div>
