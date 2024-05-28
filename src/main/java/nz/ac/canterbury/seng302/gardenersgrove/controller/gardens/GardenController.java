@@ -356,7 +356,7 @@ public class GardenController {
             }
         }
 
-        List<String> validTagNames = validTags.stream().map(Tag::getName).collect(Collectors.toList());
+        List<String> validTagNames = validTags.stream().map(Tag::getName).toList();
         Page<Garden> gardenPage = gardenService.findGardensBySearchAndTags(search, validTagNames, pageable);
 
         if (!invalidTag.isEmpty()) {

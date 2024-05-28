@@ -4,12 +4,14 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.GardenController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weatherAPI.WeatherAPIService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
@@ -40,6 +42,9 @@ public class GardenControllerTest {
 
     @Mock
     private PlantService plantService;
+
+    @Mock
+    private TagService tagService;
 
     @Mock
     private ModerationService moderationService;
@@ -318,5 +323,27 @@ public class GardenControllerTest {
 
         verify(model).addAttribute("locationError", "Location name must only include letters, numbers, spaces, dots, hyphens or apostrophes");
         verify(model, never()).addAttribute(eq("profanity"), anyString());
+    }
+
+    @Test
+    public void testSearchPublicGardens_WithInvalidTag() {
+        Model model = mock(Model.class);
+
+        List<String> tags = List.of("validTag", "invalidTag");
+        when(tagService.getTag("validTag")).thenReturn(new Tag("validTag"));
+        when(tagService.getTag("invalidTag")).thenReturn(null);
+
+
+        Pageable pageable = mock(Pageable.class);
+        when(gardenService.findGardensBySearchAndTags(anyString(), anyList(), any(Pageable.class)))
+                .thenReturn(null);
+
+
+        String viewName = gardenController.searchPublicGardens(0, 10, "", tags, model);
+
+
+        verify(model).addAttribute(eq("error"), eq("No tag matching: invalidTag"));
+        verify(model).addAttribute(eq("invalidTag"), eq("invalidTag"));
+        assertEquals("gardens/publicGardens", viewName);
     }
 }
