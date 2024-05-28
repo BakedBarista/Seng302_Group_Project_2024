@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.client.RestTemplate;
 
 
 import java.util.Collections;
@@ -31,9 +33,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class GardenControllerMVCTests {
     @Mock
     private GardenService gardenService;
-
-
-
     @InjectMocks
     private GardenController gardenController;
 
@@ -53,7 +52,11 @@ public class GardenControllerMVCTests {
     @Mock
     private ModerationService moderationService;
 
-    @Mock ProfanityService profanityService;
+    @Mock
+    private ProfanityService profanityService;
+    @Mock
+    private LocationService locationService;
+
 
 
     private static Garden emptyGarden;
@@ -69,7 +72,8 @@ public class GardenControllerMVCTests {
         plantService = mock(PlantService.class);
         moderationService = mock(ModerationService.class);
         profanityService = mock(ProfanityService.class);
-        gardenController = new GardenController(gardenService, plantService, gardenUserService, weatherAPIService, friendService, moderationService, profanityService);
+        locationService = mock(LocationService.class);
+        gardenController = new GardenController(gardenService, plantService, gardenUserService, weatherAPIService, friendService, moderationService, profanityService, locationService);
 
         emptyGarden = new Garden();
         patternGarden = new Garden();

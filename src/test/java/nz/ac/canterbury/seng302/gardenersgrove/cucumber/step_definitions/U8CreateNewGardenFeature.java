@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.cucumber.step_definitions;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.BeforeAll;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -41,6 +42,9 @@ public class U8CreateNewGardenFeature {
 
     private static WeatherAPIService weatherAPIService;
     private static  RestTemplate restTemplate;
+
+    private static LocationService locationService;
+    private static ObjectMapper objectMapper;
     private static FriendService friendService;
     private static FriendsRepository friendsRepository;
 
@@ -63,6 +67,8 @@ public class U8CreateNewGardenFeature {
         plantRepository = mock(PlantRepository.class);
         gardenRepository = mock(GardenRepository.class);
         profanityService = mock(ProfanityService.class);
+        restTemplate = mock(RestTemplate.class);
+        objectMapper = mock(ObjectMapper.class);
         userService = new GardenUserService(gardenUserRepository);
         gardenService = new GardenService(gardenRepository);
         friendService = new FriendService(friendsRepository);
@@ -70,7 +76,8 @@ public class U8CreateNewGardenFeature {
         weatherAPIService = new WeatherAPIService(restTemplate, gardenService);
         moderationService = new ModerationService();
         mockedModerationService = mock(ModerationService.class);
-        gardenController = new GardenController(gardenService, plantService, userService, weatherAPIService, friendService, moderationService, profanityService);
+        locationService = new LocationService(restTemplate, objectMapper);
+        gardenController = new GardenController(gardenService, plantService, userService, weatherAPIService, friendService, moderationService, profanityService, locationService);
     }
 
 

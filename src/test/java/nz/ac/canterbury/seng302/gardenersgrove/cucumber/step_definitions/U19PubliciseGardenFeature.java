@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.cucumber.step_definitions;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.BeforeAll;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -16,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.junit.jupiter.api.Assertions;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import static org.mockito.Mockito.*;
@@ -38,6 +40,10 @@ public class U19PubliciseGardenFeature {
     private static Authentication authentication;
     private String errorMessage;
 
+    private static LocationService locationService;
+    private static RestTemplate restTemplate;
+    private static ObjectMapper objectMapper;
+
     @BeforeAll
     public static void beforeAll() {
         gardenUserRepository = mock(GardenUserRepository.class);
@@ -45,6 +51,9 @@ public class U19PubliciseGardenFeature {
         profanityService = mock(ProfanityService.class);
         moderationService = mock(ModerationService.class);
         bindingResult = mock(BindingResult.class);
+        restTemplate = mock(RestTemplate.class);
+        objectMapper = mock(ObjectMapper.class);
+        locationService = new LocationService(restTemplate, objectMapper);
         model = mock(Model.class);
         authentication = mock(Authentication.class);
         gardenUserService = new GardenUserService(gardenUserRepository);
@@ -59,7 +68,7 @@ public class U19PubliciseGardenFeature {
         bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
         gardenService = mock(GardenService.class);
-        gardenController = new GardenController(gardenService,plantService,gardenUserService,weatherAPIService,friendService,moderationService,profanityService);
+        gardenController = new GardenController(gardenService,plantService,gardenUserService,weatherAPIService,friendService,moderationService,profanityService, locationService);
     }
 
     @When("Description contains profanity")
