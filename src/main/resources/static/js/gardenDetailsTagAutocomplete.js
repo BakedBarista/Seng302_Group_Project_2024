@@ -19,9 +19,10 @@ const tagAutocompleteInstance = tagAutocomplete({
         switch (response.status) {
             case 422:
                 const error = await response.text();
-                tagAutocompleteInstance.removeLastTag();
+                const tagName = tagAutocompleteInstance.removeLastTag();
 
                 tagAutocompleteInstance.setError(error);
+                tagAutocompleteInstance.inputElement.value = tagName;
                 break;
             case 401:
                 location.href = logoutUrl;
