@@ -43,8 +43,6 @@ public interface GardenRepository extends CrudRepository<Garden, Long> {
     @Query("SELECT g From Garden g WHERE g.owner = ?1 AND not g.isPublic")
     List<Garden> findUserPrivateGarden(GardenUser owner);
 
-    @Query("SELECT DISTINCT g FROM Garden g JOIN g.tags t WHERE t.name IN :tagNames")
-    Page<Garden> findByTagNames(List<String> tagNames, Pageable pageable);
 
     @Query("SELECT g FROM Garden g " +
             "LEFT JOIN g.tags t " +
