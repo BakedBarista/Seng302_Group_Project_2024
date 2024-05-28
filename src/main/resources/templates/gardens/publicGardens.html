@@ -100,7 +100,7 @@
                 </a>
             </li>
 
-            <!-- Dynamic page links: showing current page and 2 pages in both directions if they exist -->
+            <!-- Dynamic page links -->
             <li th:each="i : ${#numbers.sequence(gardenPage.number - 2, gardenPage.number + 2)}"
                 th:if="${i >= 0 and i < gardenPage.totalPages}" class="page-item"
                 th:classappend="${i == gardenPage.number ? 'active' : ''}">
@@ -110,16 +110,19 @@
             <!-- Next page link -->
             <li class="page-item" th:classappend="${gardenPage.hasNext() ? '' : 'disabled'}">
                 <a class="page-link" th:href="@{/gardens/public(page=${gardenPage.number + 1}, size=${gardenPage.size})}">
-                    <img th:src="@{/icons/next-icon.svg}" alt="" width="20" height="25" />                </a>
+                    <img th:src="@{/icons/next-icon.svg}" alt="" width="20" height="25" />
+                </a>
             </li>
 
             <!-- Last page link -->
             <li class="page-item" th:classappend="${gardenPage.isLast() ? 'disabled' : ''}">
                 <a class="page-link" th:href="@{/gardens/public(page=${gardenPage.totalPages - 1}, size=${gardenPage.size})}">
-                    <img th:src="@{/icons/last-page-icon.svg}" alt="" width="20" height="25" />                </a>
+                    <img th:src="@{/icons/last-page-icon.svg}" alt="" width="20" height="25" />
+                </a>
             </li>
         </ul>
     </nav>
+
 </div>
 
 
