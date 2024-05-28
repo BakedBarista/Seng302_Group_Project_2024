@@ -33,7 +33,6 @@ public class LocationAPIController {
      */
     @GetMapping("/location-autocomplete")
     public ResponseEntity<String> getLocationData(@RequestParam String currentValue) {
-        logger.info("Requesting API autocomplete");
         try {
             Thread.sleep(300);
         } catch (InterruptedException e) {
