@@ -56,7 +56,6 @@ public class StrikeService {
         //Send warning email
         if (count == STRIKES_FOR_WARNING) {
             emailSenderService.sendEmail(user.getEmail(), "Strike Warning", warningMessage);
-            // TODO: send warning email
 
             return AddStrikeResult.WARNING;
         } else if (count >= STRIKES_FOR_DISABLING) {
