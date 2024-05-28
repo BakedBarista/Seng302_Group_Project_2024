@@ -3,10 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.gardens;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weatherAPI.WeatherAPIService;
 import org.slf4j.Logger;
@@ -47,6 +44,8 @@ public class GardenController {
     private final GardenService gardenService;
     private final PlantService plantService;
     private final WeatherAPIService weatherAPIService;
+    
+    private final TagService tagService;
 
     private final ModerationService moderationService;
 
@@ -57,11 +56,12 @@ public class GardenController {
     private final String PROFANITY = "profanity";
 
     @Autowired
-    public GardenController(GardenService gardenService, PlantService plantService, GardenUserService gardenUserService, WeatherAPIService weatherAPIService, FriendService friendService, ModerationService moderationService, ProfanityService profanityService) {
+    public GardenController(GardenService gardenService, PlantService plantService, GardenUserService gardenUserService, WeatherAPIService weatherAPIService, TagService tagService, FriendService friendService, ModerationService moderationService, ProfanityService profanityService) {
         this.gardenService = gardenService;
         this.plantService = plantService;
         this.gardenUserService = gardenUserService;
         this.weatherAPIService = weatherAPIService;
+        this.tagService = tagService;
         this.friendService = friendService;
         this.moderationService = moderationService;
         this.profanityService = profanityService;
@@ -344,12 +344,38 @@ public class GardenController {
                                       @RequestParam(name = "tags", required = false) List<String> tags,
                                       Model model) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Garden> gardenPage = gardenService.findGardensBySearchAndTags(search, tags, pageable);
+        List<Tag> validTags = new ArrayList<>();
+       String invalidTag = "";
+
+        for (String tagName : tags) {
+            Tag tag = tagService.getTag(tagName);
+            if (tag != null) {
+                validTags.add(tag);
+            } else {
+                invalidTag = tagName ;
+            }
+        }
+
+        List<String> validTagNames = validTags.stream().map(Tag::getName).collect(Collectors.toList());
+        Page<Garden> gardenPage = gardenService.findGardensBySearchAndTags(search, validTagNames, pageable);
+
+        if (!invalidTag.isEmpty()) {
+            // Error for invalid tag
+            String errorMessage = "No tag matching: " + String.join(", ", invalidTag);
+            model.addAttribute("error", errorMessage);
+            model.addAttribute("invalidTag", invalidTag);  // Assuming only one tag is processed at a time
+        }
+
         model.addAttribute("gardenPage", gardenPage);
         model.addAttribute("previousSearch", search);
-        model.addAttribute("previousTags", tags);
+        model.addAttribute("previousTags", validTagNames);  // Only valid tags should go back into the tags list
+
         return "gardens/publicGardens";
     }
+
+
+
+
 
     /**
      * Helper method to check garden errors

@@ -19,7 +19,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static nz.ac.canterbury.seng302.gardenersgrove.cucumber.step_definitions.U24BrowsingGardenByTagFeature.pageable;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
@@ -127,7 +126,7 @@ public class GardenServiceTest {
     }
 
     @Test
-    public void testFindGardensBySearchAndTags_WithEmptyTags() {
+    void testFindGardensBySearchAndTags_WithEmptyTags() {
 
         String search = "flowers";
         List<String> tags = Collections.emptyList();
@@ -141,7 +140,7 @@ public class GardenServiceTest {
     }
 
     @Test
-    public void testFindGardensBySearchAndTags_WithNullTags() {
+    void testFindGardensBySearchAndTags_WithNullTags() {
 
         String search = "flowers";
         when(gardenRepository.findPageThatContainsQuery(search, pageable)).thenReturn(expectedPage);
