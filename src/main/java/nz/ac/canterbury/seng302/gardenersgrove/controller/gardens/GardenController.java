@@ -531,7 +531,7 @@ public class GardenController {
         } catch (JsonProcessingException e) {
             logger.error("Issue processing location API response JSON.");
         }
-        return null;
+        return new ArrayList<>();
     }
 }
 
