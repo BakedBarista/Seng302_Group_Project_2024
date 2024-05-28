@@ -231,10 +231,14 @@ public class GardenController {
         logger.info(String.valueOf(garden));
         model.addAttribute("garden", garden.orElse(null));
         GardenUser owner = gardenUserService.getCurrentUser();
+        if (!garden.isPresent() || !garden.get().getOwner().getId().equals(owner.getId())) {
+            return "/error/accessDenied";
+        }
         List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
         model.addAttribute("gardens", gardens);
         return "gardens/editGarden";
     }
+
 
     /**
      * Update garden details
@@ -443,18 +447,6 @@ public class GardenController {
                     Plant plant = new Plant(plantName, "15", plantDescription, LocalDate.of(2024, 3, 1));
                     Plant savedPlant = plantService.addPlant(plant, garden.getId());
 
-                    // Add plant image
-                    try {
-                        String imageName = plant.getName().replaceAll("\\s+","");
-                        ClassPathResource imgFile = new ClassPathResource("static/img/testImages/" + imageName + ".jpg");
-                        String mimeType = Files.probeContentType(imgFile.getFile().toPath());
-                        byte[] image = Files.readAllBytes(imgFile.getFile().toPath());
-                        savedPlant.setPlantImage(mimeType, image);
-                        plantService.setPlantImage(savedPlant.getId(), mimeType, image);
-                    } catch (IOException e) {
-                        logger.info("Failed to read image for plant");
-                    }
-
                     plants.add(savedPlant);
                 }
 
@@ -465,7 +457,6 @@ public class GardenController {
             logger.info("Failed to add garden");
         }
     }
-
 }
 
 

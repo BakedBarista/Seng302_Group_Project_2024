@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Access Denied</title>
+    <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
+</head>
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<main class="main-container">
+    <div class="card p-5 text-center">
+        <h1>Access Denied</h1>
+        <p>You do not have permission to access this page.</p>
+        <div class="row">
+            <div class="col-6 mx-auto">
+                <a th:href="@{/}" class="btn btn-primary btn-block">Go to Home</a>
+            </div>
+        </div>
+        <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
+    </div>
+</main>
+</body>
+</html>

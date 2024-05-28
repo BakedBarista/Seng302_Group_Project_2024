@@ -19,7 +19,7 @@
                     <h1 class="pb-4 pe-5" th:text="${garden.name}">GARDEN NAME</h1>
                     <div class="ms-auto">
                         <a class="btn btn-primary mt-1"
-                           th:href="@{/gardens/{id}/edit(id=${garden.id})}">
+                           th:href="@{/gardens/{id}/edit(id=${garden.id})}" th:if="${currentUser.id == garden.owner.id}">
                             <img th:src="@{/icons/edit-white.svg}"
                                  alt="edit"
                                  width="20"
@@ -44,12 +44,19 @@
                         <img th:src="@{/icons/aspect-ratio-stroke-rounded.svg}" alt="" width="30" height="30" />
                         <p class="mx-1 mt-1 fw-bold">Size: </p><span class="mt-1"><span th:text="${garden.size}"></span> m&sup2;</span>
                     </div>
+                    <form th:action="@{/gardens/{id}(id=${garden.id})}" method="post" th:if="${currentUser.id == garden.owner.id}">
+                        <p>
+                            <strong>Make my garden public:</strong>
+                            <input type="checkbox" class="form-check-input" id="isPublic" name="isPublic" th:checked="${garden.isPublic}" onchange="this.form.submit()"/>
+                        </p>
+                    </form>
                     <strong>Description: </strong>
                     <div class="overflow-y-auto">
                         <p th:text="${garden.description}"></p>
                     </div>
+
                 </div>
-                <div class="col-xl-6 col-12 mt-4">
+                <div class="col-xl-6 col-12 mt-4" th:if="${currentUser.id == garden.owner.id}">
                     <h2>Tags</h2>
                     <div class="col-md-12">
                         <label for="tag-autocomplete-container">Add tag</label>
@@ -122,7 +129,7 @@
     <div class="d-flex justify-content-center align-items-center mb-3 sticky-top bg-light p-3 rounded-3">
         <hr />
         <h2 class="flex-grow-1 text-center m-0">  Your Plants</h2>
-        <a type="button" th:href="@{/gardens/{id}/add-plant(id=${garden.id})}" class="btn btn-primary ms-auto"><img th:src="@{/icons/add-square-white.svg}" alt="" width="20" height="20" /> New Plant</a>
+        <a type="button" th:if="${currentUser.id == garden.owner.id}" th:href="@{/gardens/{id}/add-plant(id=${garden.id})}" class="btn btn-primary ms-auto"><img th:src="@{/icons/add-square-white.svg}" alt="" width="20" height="20" /> New Plant</a>
     </div>
     <div class="mx-4">
         <div th:if="${plants.empty}">
@@ -137,8 +144,8 @@
                     <div class="row g-0">
                         <div class="col-4 py-2">
                             <div class="d-inline">
-                                <form class="plantImageFormSmall position-relative" th:action="@{'/plants/' + ${plant.id} + '/plant-image'}" method="post" enctype="multipart/form-data" novalidate>
-                                    <label th:for="${plant.id} + 'Small'" class="position-absolute top-0 end-0 mt-1 me-1" style="cursor: pointer;"><img th:src="@{/icons/trans-plus.svg}" alt="+" width="26px" height="26px"/></label>
+                                <form class="plantImageFormSmall position-relative"  th:action="@{'/plants/' + ${plant.id} + '/plant-image'}"  method="post" enctype="multipart/form-data" novalidate>
+                                    <label th:for="${plant.id} + 'Small'" class="position-absolute top-0 end-0 mt-1 me-1"   th:if="${currentUser.id == garden.owner.id}" style=" cursor: pointer;" ><img th:src="@{/icons/trans-plus.svg}" alt="+" width="26px" height="26px"/></label>
                                     <input th:id="${plant.id} + 'Small'" name="image" class="imageSmall d-none" type="file" accept=".png,.jpg,.jpeg,.svg"/>
                                     <img th:src="@{'/plants/' + ${plant.id} + '/plant-image'}" alt="Plant Picture" class="w-100 rounded mx-auto d-block h-auto" style="max-width: 300px; max-height: 300px;" />
                                     <span id="plantImageErrorSmall" class="plantImageErrorSmall invalid-feedback text-center position-absolute bottom-0 end-0"></span>
@@ -173,7 +180,7 @@
                                         <span class="fw-bold" style="font-size: 16pt;" th:text="${plant.name}">Plant Name</span>
                                     </div>
                                     <div class="d-flex justify-content-left ps-2 pt-1">
-                                        <a class="ms-auto justify-content-end" th:href="@{/gardens/{gardenId}/plants/{plantId}/edit(gardenId=${garden.id}, plantId=${plant.id})}">
+                                        <a class="ms-auto justify-content-end"  th:if="${currentUser.id == garden.owner.id}" th:href="@{/gardens/{gardenId}/plants/{plantId}/edit(gardenId=${garden.id}, plantId=${plant.id})}">
                                             <img class="mx-1" th:src="@{/icons/edit.svg}" alt="" width="20" height="20" />
                                         </a>
                                     </div>
@@ -195,8 +202,8 @@
                      style="max-width: 300px;">
                     <div class="card-header m-0 p-0 bg-transparent rounded-2" style="max-height: 300px;">
                         <div class="d-inline">
-                            <form class="plantImageForm" th:action="@{'/plants/' + ${plant.id} + '/plant-image'}" method="post" enctype="multipart/form-data" novalidate>
-                                <label th:for="${plant.id}" class="position-absolute top-0 end-0 mt-1 me-1" style="cursor: pointer;"><img th:src="@{/icons/trans-plus.svg}" alt="+" /></label>
+                            <form class="plantImageForm" th:action="@{'/plants/' + ${plant.id} + '/plant-image'}" method="post" enctype="multipart/form-data" novalidate >
+                                <label th:for="${plant.id}" class="position-absolute top-0 end-0 mt-1 me-1"  th:if="${currentUser.id == garden.owner.id}"  style="cursor: pointer;"><img th:src="@{/icons/trans-plus.svg}" alt="+" /></label>
                                 <input th:id="${plant.id}" name="image" class="image d-none" type="file" accept=".png,.jpg,.jpeg,.svg"/>
                                 <img th:src="@{'/plants/' + ${plant.id} + '/plant-image'}" alt="Plant Picture" class="w-100 rounded mx-auto d-block" style="width: 300px; height: 300px;" />
                                 <span id="plantImageError" class="plantImageError invalid-feedback text-center position-absolute bottom-0 start-0"></span>
@@ -209,7 +216,7 @@
                                 <span class="fw-bold" style="font-size: 14pt;" th:text="${plant.name}">Plant Name</span>
                             </div>
                             <div class="d-flex justify-content-end ms-auto">
-                                <a class="ms-auto justify-content-end" th:href="@{/gardens/{gardenId}/plants/{plantId}/edit(gardenId=${garden.id}, plantId=${plant.id})}">
+                                <a class="ms-auto justify-content-end"   th:if="${currentUser.id == garden.owner.id}" th:href="@{/gardens/{gardenId}/plants/{plantId}/edit(gardenId=${garden.id}, plantId=${plant.id})}">
                                     <img class="mx-1" th:src="@{/icons/edit.svg}" alt="" width="20" height="20" />
                                 </a>
                             </div>
