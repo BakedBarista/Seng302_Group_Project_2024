@@ -7,7 +7,33 @@
     </head>
     <body>
         <nav th:replace="~{fragments/navbar :: navbar}"></nav>
-        <div th:replace="~{fragments/garden-form :: garden-form(action='/gardens/create')}"></div>
+        <main class="main-container">
+            <div class="card p-5">
+                <h2 class="mb-3">Create Garden</h2>
+                <div th:replace="~{fragments/garden-form :: garden-form(action='/gardens/create')}"></div>
+            </div>
+        </main>
         <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
     </body>
+    <script th:src="@{/js/nextFormBox.js}"></script>
+    <script th:src="@{/js/autocomplete.js}"></script>
+    <script th:src="@{/js/locationAutocomplete.js}"></script>
+    <script th:src="@{/js/toggleSubform.js}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = '/gardens/create';
+            const referrer = document.referrer;
+
+            if (referrer && !referrer.includes(currentPath)) {
+                sessionStorage.setItem('referrer', referrer);
+            } else if (!sessionStorage.getItem('referrer')) {
+                sessionStorage.setItem('referrer', '/defaultPath');
+            }
+
+            const cancelButton = document.querySelector('.btn-cancel');
+            cancelButton.addEventListener('click', function() {
+                window.location.href = sessionStorage.getItem('referrer');
+            });
+        });
+    </script>
 </html>
