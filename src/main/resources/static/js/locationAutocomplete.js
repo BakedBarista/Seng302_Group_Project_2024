@@ -6,17 +6,17 @@
 function populateAddressFields(selectedAddress) {
     if (typeof selectedAddress === 'string') {
         const currentItem = selectedAddress.split(/\s|,/);
-        document.getElementById("streetNumber").value = currentItem[0] ? currentItem[0] : null;
-        document.getElementById("streetName").value = (currentItem[1] ? currentItem[1] : null)
-            + (currentItem[2] ? " " + currentItem[2] : null);
+        // document.getElementById("streetNumber").value = currentItem[0] ? currentItem[0] : null;
+        // document.getElementById("streetName").value = (currentItem[1] ? currentItem[1] : null)
+        //     + (currentItem[2] ? " " + currentItem[2] : null);
         document.getElementById("suburb").value = currentItem[3] ? currentItem[3] : null;
         document.getElementById("city").value = currentItem[4] ? currentItem[4] : null;
         document.getElementById("country").value = currentItem[5] ? currentItem[5] : null;
         document.getElementById("postCode").value = currentItem[6] ? currentItem[6] : null;
     } else {
         // Populate address fields with properties from the selectedAddress address
-        document.getElementById("streetNumber").value = selectedAddress.housenumber || null;
-        document.getElementById("streetName").value = selectedAddress.street || null;
+        // document.getElementById("streetNumber").value = selectedAddress.housenumber || null;
+        // document.getElementById("streetName").value = selectedAddress.street || null;
         document.getElementById("suburb").value = selectedAddress.suburb || null;
         document.getElementById("city").value = selectedAddress.city || null;
         document.getElementById("country").value = selectedAddress.country || null;

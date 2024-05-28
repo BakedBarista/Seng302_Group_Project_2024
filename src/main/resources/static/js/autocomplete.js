@@ -143,7 +143,7 @@ function autocomplete(containerElement, callback, options) {
 
                     /* Set the value for the autocomplete text field and notify: */
                     itemElement.addEventListener("click", () => {
-                        inputElement.value = currentItems[index].formatted;
+                        inputElement.value = currentItems[index]["address_line1"];
                         callback(currentItems[index]);
                         /* Close the list of autocompleted values: */
                         closeDropDownList();
