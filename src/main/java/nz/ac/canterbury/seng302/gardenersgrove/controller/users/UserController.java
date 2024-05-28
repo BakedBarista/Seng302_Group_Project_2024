@@ -74,10 +74,7 @@ public class UserController {
         if (user.getProfilePicture() == null) {
             return ResponseEntity.status(302).header(HttpHeaders.LOCATION, DEFAULT_PROFILE_PICTURE_URL).build();
         }
-
         return ResponseEntity.ok().contentType(MediaType.parseMediaType(user.getProfilePictureContentType()))
                 .body(user.getProfilePicture());
     }
-
-
 }

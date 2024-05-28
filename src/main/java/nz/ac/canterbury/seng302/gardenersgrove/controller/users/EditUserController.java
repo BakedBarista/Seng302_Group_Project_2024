@@ -108,8 +108,8 @@ public class EditUserController {
         }
 
         if (bindingResult.hasErrors()) {
+            // needed for getting image in html
             model.addAttribute("userId", userId);
-            model.addAttribute("editUserDTO", editUserDTO);
             return "users/editTemplate";
         }
 

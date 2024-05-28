@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.PlantController;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
@@ -10,6 +11,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -24,6 +26,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -60,6 +64,10 @@ public class PlantControllerTest {
         when(gardenUserService.getCurrentUser()).thenReturn(mockUser);
         when(gardenService.getGardensByOwnerId(1L)).thenReturn(Collections.emptyList());
 
+        Garden mockGarden = new Garden();
+        mockGarden.setOwner(mockUser);
+        when(gardenService.getGardenById(0L)).thenReturn(Optional.of(mockGarden));
+
         model = mock(Model.class);
     }
 
@@ -71,6 +79,36 @@ public class PlantControllerTest {
         String returnPage = plantController.addPlantForm(gardenId, model);
         assertEquals(expectedReturnPage, returnPage);
     }
+
+    @Test
+    void testAddPlantForm_GardenNotPresent_ReturnsAccessDenied() {
+        long gardenId = 0;
+        String expectedReturnPage = "/error/accessDenied";
+
+        when(gardenService.getGardenById(gardenId)).thenReturn(Optional.empty());
+        String returnPage = plantController.addPlantForm(gardenId, model);
+        assertEquals(expectedReturnPage, returnPage);
+    }
+
+    @Test
+    void testAddPlantForm_UserNotOwner_ReturnsAccessDenied() {
+        long gardenId = 0;
+        String expectedReturnPage = "/error/accessDenied";
+
+        GardenUser owner = new GardenUser();
+        owner.setId(1L);
+
+        Garden garden = new Garden("Test Garden", "1", "test", "test suburb", "test city", "test country", "1234", 0.0, 0.0, "100", "test description");
+        garden.setOwner(owner);
+
+        when(gardenService.getGardenById(gardenId) ).thenReturn(Optional.of(garden));
+        when(gardenUserService.getCurrentUser()).thenReturn(new GardenUser());
+
+        String returnPage = plantController.addPlantForm(gardenId, model);
+        assertEquals(expectedReturnPage, returnPage);
+
+    }
+
 
     @Test
     void testSubmitAddPlantForm_DataIsValid_ReturnToGardenDetailPage() throws Exception {
@@ -137,15 +175,32 @@ public class PlantControllerTest {
 
     @Test
     void testEditPlantForm_ReturnsToEditPlant() {
-        PlantDTO plantDTO = new PlantDTO("#invalid", "10", "Yellow", "2024-11-03");
-        long gardenId = 0;
-        long plantId = 0;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        LocalDate plantDate = LocalDate.parse("11/03/2024", formatter);
+
+        Plant plant = new Plant("#invalid", "10", "Yellow", plantDate);
+        long gardenId = 1L;
+        long plantId = 1L;
         String expectedReturnPage = "plants/editPlant";
 
-        when(plantService.getPlantById(plantId)).thenReturn(Optional.of(new Plant(plantDTO)));
+        GardenUser owner = new GardenUser();
+        owner.setId(1L);
+
+        Garden garden = new Garden("Test Garden", "1", "test", "test suburb", "test city", "test country", "1234", 0.0, 0.0, "100", "test description");
+        garden.setOwner(owner);
+
+        when(plantService.getPlantById(plantId)).thenReturn(Optional.of(plant));
+        when(gardenService.getGardenById(gardenId)).thenReturn(Optional.of(garden));
+        when(gardenUserService.getCurrentUser()).thenReturn(owner);
+        when(gardenService.getGardensByOwnerId(owner.getId())).thenReturn(Collections.singletonList(garden));
 
         String returnPage = plantController.editPlantForm(gardenId, plantId, model);
         assertEquals(expectedReturnPage, returnPage);
+        verify(model).addAttribute("gardens", Collections.singletonList(garden));
+        verify(model).addAttribute("gardenId", gardenId);
+        verify(model).addAttribute("plantId", plantId);
+        verify(model).addAttribute("plant", plant);
     }
 
     @Test

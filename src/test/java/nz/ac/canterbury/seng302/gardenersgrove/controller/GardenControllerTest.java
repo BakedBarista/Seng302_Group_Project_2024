@@ -69,6 +69,11 @@ public class GardenControllerTest {
         when(mockUser.getId()).thenReturn(1L);
         when(gardenUserService.getCurrentUser()).thenReturn(mockUser);
         when(gardenService.getGardensByOwnerId(1L)).thenReturn(Collections.emptyList());
+
+        Garden mockGarden = new Garden();
+        mockGarden.setOwner(mockUser);
+        when(gardenService.getGardenById(0L)).thenReturn(Optional.of(mockGarden));
+
         authentication = mock(Authentication.class);
     }
 
@@ -141,12 +146,20 @@ public class GardenControllerTest {
     @Test
     public void testGetGarden() {
         Model model = mock(Model.class);
-        Garden garden = new Garden("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"100","test description");
-        when(gardenService.getGardenById(1)).thenReturn(Optional.of(garden));
+        GardenUser owner = new GardenUser();
+        owner.setId(1L);
+        Garden garden = new Garden("Test Garden", "1", "test", "test suburb", "test city", "test country", "1234", 0.0, 0.0, "100", "test description");
+        garden.setOwner(owner);
 
-        String result = gardenController.getGarden(1, model);
+        when(gardenService.getGardenById(1L)).thenReturn(Optional.of(garden));
+        when(gardenUserService.getCurrentUser()).thenReturn(owner);
+        when(gardenService.getGardensByOwnerId(owner.getId())).thenReturn(Collections.singletonList(garden));
+
+        String result = gardenController.getGarden(1L, model);
+
         assertEquals("gardens/editGarden", result);
         verify(model).addAttribute("garden", garden);
+        verify(model).addAttribute("gardens", Collections.singletonList(garden));
     }
 
     @Test
@@ -167,6 +180,14 @@ public class GardenControllerTest {
         assertEquals("1234",garden.getPostCode());
         assertEquals("100", garden.getSize());
         assertEquals("test description", garden.getDescription());
+    }
+
+    @Test
+    void testGetGarden_GardenNotPresent_ReturnsAccessDenied() {
+        Model model = mock(Model.class);
+        when(gardenService.getGardenById(0L)).thenReturn(Optional.empty());
+        String result = gardenController.getGarden(0L, model);
+        assertEquals("/error/accessDenied", result);
     }
 
     @Test
