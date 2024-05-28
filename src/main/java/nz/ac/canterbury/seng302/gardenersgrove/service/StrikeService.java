@@ -1,7 +1,9 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import java.time.Clock;
+import java.time.Duration;
 import java.time.Instant;
+import java.time.temporal.TemporalUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,6 +68,18 @@ public class StrikeService {
             return AddStrikeResult.BLOCK;
         }
         return AddStrikeResult.NO_ACTION;
+    }
+
+    public long daysUntilUnblocked(GardenUser user) {
+        Instant now = clock.instant();
+        Instant expiry = user.getAccountDisabledExpiryInstant();
+        if (expiry == null) {
+            return 0;
+        }
+
+        Duration timeRemaining = Duration.between(now, expiry);
+
+        return (long) Math.ceil(timeRemaining.getSeconds() / (float) SECONDS_IN_DAY);
     }
 
     /**

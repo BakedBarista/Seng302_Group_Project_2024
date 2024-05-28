@@ -34,4 +34,4 @@ function getMeta(name) {
 const csrf = getMeta('_csrf');
 const csrfHeader = getMeta('_csrfHeader');
 const apiBaseUrl = getMeta('_apiBaseUrl');
-const logoutUrl = getMeta('_logoutUrl');
+const baseUrl = getMeta('_baseUrl');

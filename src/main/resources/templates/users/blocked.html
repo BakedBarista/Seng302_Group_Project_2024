@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+    <head>
+        <meta http-equiv="Content-Type" context="text/html; charset=UTF-8" />
+        <title>Account Blocked | Gardener's Grove</title>
+
+        <!-- This needs to be here for Bootstrap and general CSS imports -->
+        <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
+    </head>
+    <body>
+        <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+        <main class="main-container">
+            <div class="card p-5">
+                <div>
+                    Your account has been blocked for <span th:text="${daysLeft}"></span> days!
+                </div>
+            </div>
+        </main>
+        <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
+    </body>
+</html>

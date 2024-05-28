@@ -25,7 +25,7 @@ const tagAutocompleteInstance = tagAutocomplete({
                 tagAutocompleteInstance.inputElement.value = tagName;
                 break;
             case 401:
-                location.href = logoutUrl;
+                location.href = `${baseUrl}users/blocked`;
                 break;
         }
     },
