@@ -21,8 +21,7 @@ const tagAutocompleteInstance = tagAutocomplete({
                 const error = await response.text();
                 tagAutocompleteInstance.removeLastTag();
 
-                const tagsError = document.getElementById("gardenTagsError");
-                tagsError.textContent = error;
+                tagAutocompleteInstance.setError(error);
                 break;
             case 401:
                 location.href = logoutUrl;
