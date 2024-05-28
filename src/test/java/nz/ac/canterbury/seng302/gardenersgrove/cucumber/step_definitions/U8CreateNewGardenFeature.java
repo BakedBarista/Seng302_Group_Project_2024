@@ -55,7 +55,6 @@ public class U8CreateNewGardenFeature {
     private static Garden gardenMock;
     @BeforeAll
     public static void beforeAll() {
-        System.out.println("test");
         bindingResult = mock(BindingResult.class);
         gardenMock = mock(Garden.class);
         model = mock(Model.class);

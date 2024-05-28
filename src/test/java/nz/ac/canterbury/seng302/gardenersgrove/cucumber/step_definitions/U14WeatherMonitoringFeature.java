@@ -28,6 +28,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -80,15 +81,15 @@ public class U14WeatherMonitoringFeature {
         friendService = new FriendService(friendsRepository);
         plantService = new PlantService(plantRepository, gardenRepository);
         weatherAPIService = new WeatherAPIService(restTemplate, gardenService, gardenWeatherService);
-        moderationService = new ModerationService();
+        mockedModerationService = mock(ModerationService.class);
         profanityService = mock(ProfanityService.class);
-        gardenController = new GardenController(gardenService, plantService, userService, weatherAPIService, friendService, moderationService, profanityService);
+        gardenController = new GardenController(gardenService, plantService, userService, weatherAPIService, friendService, mockedModerationService, profanityService);
     }
 
 
     @Given("I create a garden called {string} at {string} {string}, {string}, {string}, {string}. Latitude: {string}, Longitude: {string}")
     public void i_create_a_garden(String gardenName, String streetNumber, String streetName, String suburb, String city, String country, String lat, String lon) {
-        user = new GardenUser();
+        user = U2LogInFeature.user;
         garden = new Garden();
         garden.setName(gardenName);
         garden.setStreetNumber(streetNumber);
@@ -96,10 +97,8 @@ public class U14WeatherMonitoringFeature {
         garden.setSuburb(suburb);
         garden.setCity(city);
         garden.setCountry(country);
-        Double doubleLat = Double.parseDouble(lat);
-        garden.setLat(doubleLat);
-        Double doubleLon = Double.parseDouble(lon);
-        garden.setLat(doubleLon);
+        garden.setLat(Double.parseDouble(lat));
+        garden.setLon(Double.parseDouble(lon));
 
         when(authentication.getPrincipal()).thenReturn((Long) 1L);
 
@@ -109,6 +108,8 @@ public class U14WeatherMonitoringFeature {
         when(gardenRepository.save(garden)).thenReturn(garden);
 
         gardenController.submitForm(garden, bindingResult, authentication, model);
+        assertNotNull(gardenRepository.findByOwnerId(user.getId()));
+        assertNotNull(gardenRepository.findById(garden.getId()));
     }
 
     @Then("The current weather is displaying for my location")
