@@ -7,7 +7,9 @@ import io.cucumber.java.en.When;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.GardenController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.ForecastWeather;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.PreviousWeather;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.FriendsRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
@@ -23,10 +25,14 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
 
 public class U14WeatherMonitoringFeature {
 
@@ -67,7 +73,7 @@ public class U14WeatherMonitoringFeature {
         plantRepository = mock(PlantRepository.class);
         gardenRepository = mock(GardenRepository.class);
         gardenWeatherRepository = mock(GardenWeatherRepository.class);
-        profanityService = mock(ProfanityService.class);
+        restTemplate = mock(RestTemplate.class);
         userService = new GardenUserService(gardenUserRepository);
         gardenService = new GardenService(gardenRepository);
         gardenWeatherService = new GardenWeatherService(gardenWeatherRepository);
@@ -75,17 +81,25 @@ public class U14WeatherMonitoringFeature {
         plantService = new PlantService(plantRepository, gardenRepository);
         weatherAPIService = new WeatherAPIService(restTemplate, gardenService, gardenWeatherService);
         moderationService = new ModerationService();
-        mockedModerationService = mock(ModerationService.class);
+        profanityService = mock(ProfanityService.class);
         gardenController = new GardenController(gardenService, plantService, userService, weatherAPIService, friendService, moderationService, profanityService);
     }
 
-    @Given("I create a garden called {string} in {string}, {string}")
-    public void i_create_a_garden(String gardenName, String city, String country) {
-        user = U2LogInFeature.user;
+
+    @Given("I create a garden called {string} at {string} {string}, {string}, {string}, {string}. Latitude: {string}, Longitude: {string}")
+    public void i_create_a_garden(String gardenName, String streetNumber, String streetName, String suburb, String city, String country, String lat, String lon) {
+        user = new GardenUser();
         garden = new Garden();
         garden.setName(gardenName);
+        garden.setStreetNumber(streetNumber);
+        garden.setStreetName(streetName);
+        garden.setSuburb(suburb);
         garden.setCity(city);
         garden.setCountry(country);
+        Double doubleLat = Double.parseDouble(lat);
+        garden.setLat(doubleLat);
+        Double doubleLon = Double.parseDouble(lon);
+        garden.setLat(doubleLon);
 
         when(authentication.getPrincipal()).thenReturn((Long) 1L);
 
@@ -97,46 +111,56 @@ public class U14WeatherMonitoringFeature {
         gardenController.submitForm(garden, bindingResult, authentication, model);
     }
 
-    @When("I am on the garden details page for that garden")
-    public void i_am_on_the_garden_details_page() {
-        gardenRepository.findById(garden.getId());
-    }
-
     @Then("The current weather is displaying for my location")
     public void the_current_weather_is_displaying_for_my_location() {
-        Assertions.assertNotNull(garden.getGardenWeather(), "Weather is null, but it should not be");
+        verify(model).addAttribute(eq("displayWeather"), eq(true));
     }
 
     @Then("The weather for the next three days is displaying")
     public void the_weather_for_the_next_three_days_is_displaying() {
         assert(garden.getGardenWeather().getForecastWeather().size() == 3);
+        verify(model).addAttribute(eq("forecastWeather"), anyList());
     }
 
     @Then("An error message displays saying that the location cannot be found.")
     public void error_message_displays_location_not_found() {
+        garden.setLat(null);
+        garden.setLon(null);
+        when(gardenRepository.findById(garden.getId())).thenReturn(Optional.of(garden));
         gardenController.gardenDetail(garden.getId(), model);
-        Assertions.assertFalse(displayWeather);
-        // ask chatgpt
+        verify(model).addAttribute(eq("displayWeather"), eq(false));
     }
 
     @Given("The past two days have been sunny for that location")
     public void past_weather_sunny_for_that_location() {
-        // check unit tests for making fake weather data
-
+        GardenWeather gardenWeather = new GardenWeather();
+        gardenWeather.setPreviousWeather(List.of(new PreviousWeather(), new PreviousWeather()));
+        garden.setGardenWeather(gardenWeather);
+        when(gardenRepository.findById(garden.getId())).thenReturn(Optional.of(garden));
     }
 
     @Then("I get a notification telling me to water my plants")
     public void notification_to_water_plants() {
-        Assertions.assertTrue(garden.getWateringRecommendation());
+        verify(model).addAttribute(eq("wateringRecommendation"), eq(true));
     }
 
     @Given("The current weather is rainy")
     public void the_current_weather_is_rainy() {
-        // set fake current weather to rainy
+        GardenWeather gardenWeather = new GardenWeather();
+        garden.setGardenWeather(gardenWeather);
+        when(gardenRepository.findById(garden.getId())).thenReturn(Optional.of(garden));
     }
 
     @Then("I get a notification telling me that outdoor plants do not need water that day")
     public void notification_that_outdoor_plants_do_not_need_water() {
-        Assertions.assertFalse(garden.getWateringRecommendation());
+        verify(model).addAttribute(eq("wateringRecommendation"), eq(false));
+    }
+
+
+    @When("I am on the garden details page for that garden")
+    public void i_am_on_the_garden_details_page() {
+        Assertions.assertNotNull(garden.getId(), "Garden ID should not be null before navigating to details page");
+        when(gardenRepository.findById(garden.getId())).thenReturn(Optional.of(garden));
+        gardenController.gardenDetail(garden.getId(), model);
     }
 }
