@@ -117,8 +117,7 @@ public class GardenService {
         if (tags == null || tags.isEmpty()) {
             return gardenRepository.findPageThatContainsQuery(search, pageable);
         } else {
-            long tagCount = tags.size();
-            return gardenRepository.findGardensBySearchAndTags(search, tags, tagCount, pageable);
+            return gardenRepository.findGardensBySearchAndTags(search, tags, pageable);
         }
     }
 }

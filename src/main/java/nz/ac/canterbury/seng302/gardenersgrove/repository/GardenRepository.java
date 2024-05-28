@@ -47,9 +47,9 @@ public interface GardenRepository extends CrudRepository<Garden, Long> {
     @Query("SELECT g FROM Garden g " +
             "LEFT JOIN g.tags t " +
             "WHERE (g.name ILIKE %:search% OR EXISTS (SELECT p FROM Plant p WHERE p.garden = g AND p.name ILIKE %:search%)) " +
-            "AND g.isPublic = true AND t.name IN :tags " +
+            "AND g.isPublic = true AND (t.name IN :tags OR :tags IS NULL) " +
             "GROUP BY g.id " +
-            "HAVING COUNT(DISTINCT t.name) = :tagCount")
-    Page<Garden> findGardensBySearchAndTags(@Param("search") String search, @Param("tags") List<String> tags, @Param("tagCount") long tagCount, Pageable pageable);
+            "HAVING COUNT(DISTINCT t.name) > 0")
+    Page<Garden> findGardensBySearchAndTags(@Param("search") String search, @Param("tags") List<String> tags, Pageable pageable);
 }
 

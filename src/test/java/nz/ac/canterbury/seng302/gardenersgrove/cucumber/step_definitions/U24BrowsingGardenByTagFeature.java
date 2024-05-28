@@ -89,7 +89,7 @@ public class U24BrowsingGardenByTagFeature {
         Page<Garden> page = new PageImpl<>(testGardens, pageable, testGardens.size());
         searchItems = new ArrayList<>();
         searchItems.add(tagSearch);
-        when(mockGardenRepository.findGardensBySearchAndTags("", searchItems, searchItems.size(), pageable)).thenReturn(page);
+        when(mockGardenRepository.findGardensBySearchAndTags("", searchItems, pageable)).thenReturn(page);
 
         tester = gardenService.findGardensBySearchAndTags("", searchItems, pageable);
         assertEquals(10, tester.getSize());
@@ -104,7 +104,7 @@ public class U24BrowsingGardenByTagFeature {
         Page<Garden> page = new PageImpl<>(testGardens, pageable, testGardens.size());
         searchItems = new ArrayList<>();
         searchItems.add(tagSearch);
-        when(mockGardenRepository.findGardensBySearchAndTags(search, searchItems, searchItems.size(), pageable)).thenReturn(page);
+        when(mockGardenRepository.findGardensBySearchAndTags(search, searchItems, pageable)).thenReturn(page);
 
         tester = gardenService.findGardensBySearchAndTags(search, searchItems, pageable);
         assertEquals(10, tester.getSize());
