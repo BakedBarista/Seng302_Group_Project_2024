@@ -436,14 +436,12 @@ h1, h2, h3, h4, h5, h6 {
     padding: 0;
     vertical-align: middle;
 
-    /* HACK: Normally btn-close is dark on light, but we want light on dark */
     filter: invert();
 
     --bs-btn-close-opacity: 0.75;
     --bs-btn-close-hover-opacity: 1.0;
 }
 
-/* Navbar */
 #friendTabs .nav-link {
     color: var(--gg-primary);
 }
@@ -455,4 +453,10 @@ h1, h2, h3, h4, h5, h6 {
 
 .request-notification-badge {
     background-color: var(--gg-primary);
+}
+
+.nav-tabs .nav-item .nav-link {
+    border: 1px solid #ddd;
+    border-radius: 4px 4px 0 0;
+    margin-right: 5px;
 }
