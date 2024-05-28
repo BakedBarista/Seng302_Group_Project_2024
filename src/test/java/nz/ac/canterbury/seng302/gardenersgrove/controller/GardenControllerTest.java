@@ -326,7 +326,7 @@ public class GardenControllerTest {
     }
 
     @Test
-    public void testSearchPublicGardens_WithInvalidTag() {
+    void testSearchPublicGardens_WithInvalidTag() {
         Model model = mock(Model.class);
 
         List<String> tags = List.of("validTag", "invalidTag");
@@ -342,8 +342,8 @@ public class GardenControllerTest {
         String viewName = gardenController.searchPublicGardens(0, 10, "", tags, model);
 
 
-        verify(model).addAttribute(eq("error"), eq("No tag matching: invalidTag"));
-        verify(model).addAttribute(eq("invalidTag"), eq("invalidTag"));
+        verify(model).addAttribute("error", "No tag matching: invalidTag");
+        verify(model).addAttribute("invalidTag", "invalidTag");
         assertEquals("gardens/publicGardens", viewName);
     }
 }
