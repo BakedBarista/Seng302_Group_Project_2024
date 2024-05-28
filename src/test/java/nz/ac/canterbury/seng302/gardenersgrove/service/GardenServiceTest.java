@@ -140,6 +140,19 @@ public class GardenServiceTest {
         verifyNoMoreInteractions(gardenRepository);
     }
 
+    @Test
+    public void testFindGardensBySearchAndTags_WithNullTags() {
+
+        String search = "flowers";
+        when(gardenRepository.findPageThatContainsQuery(search, pageable)).thenReturn(expectedPage);
+
+        Page<Garden> result = gardenService.findGardensBySearchAndTags(search, null, pageable);
+
+        assertEquals( expectedPage, result);
+        verify(gardenRepository).findPageThatContainsQuery(search, pageable);
+        verifyNoMoreInteractions(gardenRepository);
+    }
+
 
 
 
