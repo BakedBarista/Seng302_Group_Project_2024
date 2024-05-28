@@ -44,11 +44,11 @@ if (locationAutocompleteContainer) {
 function handleManualLocation() {
     var manualAddress = "";
     manualAddress += document.getElementById("streetNumber").value
-    manualAddress += document.getElementById("streetName").value;
-    manualAddress += document.getElementById("suburb").value;
-    manualAddress += document.getElementById("city").value;
-    manualAddress += document.getElementById("country").value;
-    manualAddress += document.getElementById("postCode").value;
+    manualAddress += " " + document.getElementById("streetName").value;
+    manualAddress += " " + document.getElementById("suburb").value;
+    manualAddress += " " + document.getElementById("city").value;
+    manualAddress += " " + document.getElementById("country").value;
+    manualAddress += " " + document.getElementById("postCode").value;
 
     const MIN_ADDRESS_LENGTH = 3;
     const DEBOUNCE_DELAY = 300;
