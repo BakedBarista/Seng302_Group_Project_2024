@@ -251,10 +251,14 @@ public class GardenController {
         logger.info(String.valueOf(garden));
         model.addAttribute("garden", garden.orElse(null));
         GardenUser owner = gardenUserService.getCurrentUser();
+        if (!garden.isPresent() || !garden.get().getOwner().getId().equals(owner.getId())) {
+            return "/error/accessDenied";
+        }
         List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
         model.addAttribute("gardens", gardens);
         return "gardens/editGarden";
     }
+
 
     /**
      * Update garden details
