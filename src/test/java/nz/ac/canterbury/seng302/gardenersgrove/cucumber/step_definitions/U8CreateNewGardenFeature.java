@@ -20,6 +20,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -44,7 +45,6 @@ public class U8CreateNewGardenFeature {
     private static  RestTemplate restTemplate;
 
     private static LocationService locationService;
-    private static ObjectMapper objectMapper;
     private static FriendService friendService;
     private static FriendsRepository friendsRepository;
 
@@ -68,7 +68,6 @@ public class U8CreateNewGardenFeature {
         gardenRepository = mock(GardenRepository.class);
         profanityService = mock(ProfanityService.class);
         restTemplate = mock(RestTemplate.class);
-        objectMapper = mock(ObjectMapper.class);
         userService = new GardenUserService(gardenUserRepository);
         gardenService = new GardenService(gardenRepository);
         friendService = new FriendService(friendsRepository);
@@ -76,7 +75,7 @@ public class U8CreateNewGardenFeature {
         weatherAPIService = new WeatherAPIService(restTemplate, gardenService);
         moderationService = new ModerationService();
         mockedModerationService = mock(ModerationService.class);
-        locationService = new LocationService(restTemplate, objectMapper);
+        locationService = mock(LocationService.class);
         gardenController = new GardenController(gardenService, plantService, userService, weatherAPIService, friendService, moderationService, profanityService, locationService);
     }
 
@@ -137,6 +136,7 @@ public class U8CreateNewGardenFeature {
 
         when(gardenUserRepository.findById(1L)).thenReturn(Optional.of(user));
         when(gardenRepository.save(garden)).thenReturn(garden);
+        when(locationService.getLatLng(anyString())).thenReturn(new ArrayList<>());
 
         gardenController.submitForm(garden, bindingResult, authentication, model);
     }
