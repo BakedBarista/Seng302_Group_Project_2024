@@ -1,7 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.gardens;
 
 
-import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
@@ -12,7 +11,6 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.weatherAPI.WeatherAPIServ
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,7 +21,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 import java.util.Arrays;
@@ -31,8 +28,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.stream.Collectors;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.DateTimeFormats.NZ_FORMAT_DATE;
@@ -398,79 +393,6 @@ public class GardenController {
             }
         }
     }
-
-    /**
-     * Create test data
-     * @throws IOException When problem reading file.
-     * ChatGPT help with processing sql queries to arraylist
-     */
-    @PostConstruct
-    public void dummyGardens() throws IOException {
-        try {
-            logger.info("Adding test data");
-
-            // Create user
-            GardenUser user = new GardenUser("Jan", "Doe", "jan.doe@gmail.com", "password", LocalDate.of(1970, 1, 1));
-            gardenUserService.addUser(user);
-
-            // Garden names
-            List<String> gardenNames = Arrays.asList(
-                    "Gardeners Paradise", "My Parents Garden", "Home Number 1", "GreenFingers", "Dirt Pile",
-                    "Potato Heaven", "Needs Weeding", "My Work in Progress", "Freshly Built", "Greener Pastures",
-                    "Grassy Grove", "Husbands Project", "Rainy Garden", "Tomato Garden", "Berries",
-                    "Roots", "Need a professional", "Growers Garden", "Community Garden", "Free for all Garden"
-            );
-
-            // Plant details
-            List<String[]> plantsDetails = Arrays.asList(
-                    new String[][]{
-                            {"Tomato", "Red"}, {"Cucumber", "Yellow"}, {"Potato", "Purple"},
-                            {"Cabbage", "Pink"}, {"Lettuce", "White"}, {"Onion", "Orange"},
-                            {"Spring Onion", "Blue"}, {"Asparagus", "Green"}, {"Pumpkin", "Purple"},
-                            {"Carrot", "Red"}
-                    }
-            );
-
-            for (int i = 0; i < gardenNames.size(); i++) {
-                String gardenName = gardenNames.get(i);
-                String streetNumber = Integer.toString(i + 1);
-                Garden garden = new Garden(gardenName, streetNumber, "Ilam Road", "Ilam", "Christchurch", "New Zealand", "8041", -43.5320, 172.6366, (String.valueOf(1000 + (i * 50))), "Test Garden");
-                garden.setOwner(user);
-                garden.setPublic(true);
-                gardenService.addGarden(garden);
-
-                List<Plant> plants = new ArrayList<>();
-                for (int j = 0; j < plantsDetails.size(); j++) {
-                    String[] plantDetail = plantsDetails.get(j);
-                    String plantName = plantDetail[0];
-                    String plantDescription = plantDetail[1];
-                    Plant plant = new Plant(plantName, "15", plantDescription, LocalDate.of(2024, 3, 1));
-                    Plant savedPlant = plantService.addPlant(plant, garden.getId());
-
-                    // Add plant image
-                    try {
-                        String imageName = plant.getName().replaceAll("\\s+","");
-                        ClassPathResource imgFile = new ClassPathResource("static/img/testImages/" + imageName + ".jpg");
-                        logger.info("Loading image from {}",imgFile.getPath());
-                        String mimeType = Files.probeContentType(imgFile.getFile().toPath());
-                        byte[] image = Files.readAllBytes(imgFile.getFile().toPath());
-                        savedPlant.setPlantImage(mimeType, image);
-                        plantService.setPlantImage(savedPlant.getId(), mimeType, image);
-                    } catch (IOException e) {
-                        logger.info("Failed to read image for plant");
-                    }
-
-                    plants.add(savedPlant);
-                }
-
-                garden.setPlants(plants);
-                gardenService.addGarden(garden);
-            }
-        } catch (Exception e) {
-            logger.info("Failed to add garden");
-        }
-    }
-
 }
 
 
