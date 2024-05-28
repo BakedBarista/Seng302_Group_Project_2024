@@ -7,6 +7,7 @@ import io.cucumber.java.en.When;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.GardenController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.FriendsRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
@@ -15,6 +16,8 @@ import nz.ac.canterbury.seng302.gardenersgrove.repository.weather.GardenWeatherR
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weather.GardenWeatherService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weather.WeatherAPIService;
+import org.assertj.core.api.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -36,12 +39,12 @@ public class U14WeatherMonitoringFeature {
     private static GardenService gardenService;
     private static GardenWeatherRepository gardenWeatherRepository;
     private static GardenWeatherService gardenWeatherService;
+    private static WeatherAPIService weatherAPIService;
     private Garden garden;
     private static PlantRepository plantRepository;
     public static PlantService plantService;
     private static GardenUserService userService;
     private static GardenUserRepository gardenUserRepository;
-    private static WeatherAPIService weatherAPIService;
     private static RestTemplate restTemplate;
     private static FriendService friendService;
     private static FriendsRepository friendsRepository;
@@ -94,50 +97,46 @@ public class U14WeatherMonitoringFeature {
         gardenController.submitForm(garden, bindingResult, authentication, model);
     }
 
-    @When("I am on the garden details page for {string}")
-    public void i_am_on_the_garden_details_page(String gardenName) {
+    @When("I am on the garden details page for that garden")
+    public void i_am_on_the_garden_details_page() {
         gardenRepository.findById(garden.getId());
     }
 
     @Then("The current weather is displaying for my location")
     public void the_current_weather_is_displaying_for_my_location() {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
+        Assertions.assertNotNull(garden.getGardenWeather(), "Weather is null, but it should not be");
     }
 
     @Then("The weather for the next three days is displaying")
     public void the_weather_for_the_next_three_days_is_displaying() {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
+        assert(garden.getGardenWeather().getForecastWeather().size() == 3);
     }
 
     @Then("An error message displays saying that the location cannot be found.")
     public void error_message_displays_location_not_found() {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
+        gardenController.gardenDetail(garden.getId(), model);
+        Assertions.assertFalse(displayWeather);
+        // ask chatgpt
     }
 
     @Given("The past two days have been sunny for that location")
     public void past_weather_sunny_for_that_location() {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
+        // check unit tests for making fake weather data
+
     }
 
     @Then("I get a notification telling me to water my plants")
     public void notification_to_water_plants() {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
+        Assertions.assertTrue(garden.getWateringRecommendation());
     }
 
     @Given("The current weather is rainy")
     public void the_current_weather_is_rainy() {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
+        // set fake current weather to rainy
     }
 
     @Then("I get a notification telling me that outdoor plants do not need water that day")
     public void notification_that_outdoor_plants_do_not_need_water() {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
+        Assertions.assertFalse(garden.getWateringRecommendation());
     }
 }
