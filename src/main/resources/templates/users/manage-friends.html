@@ -167,7 +167,9 @@
                                 <span th:if="${friend.receiver != null}"
                                       th:text="${friend.receiver.lname}"></span>
                             </td>
-                            <td class="align-middle" th:text="${friend.status}"></td>
+                            <td class="align-middle">
+                                <span th:text="${friend.status}" th:classappend="${friend.status.name() == 'PENDING'} ? 'friend-pending-badge' : 'friend-declined-badge'" class="badge-pill badge"></span>
+                            </td>
                             <form th:action="@{/users/manage-friends/cancel}" method="post" class="d-inline">
                                 <input type="hidden" name="userId" th:value="${friend.receiver.id}" class="d-inline"/>
                                 <td class="align-middle">
@@ -258,7 +260,7 @@
                             <td>
                             </td>
                             <td class="align-middle text-muted">
-                                <strong>Pending...</strong>
+                                <span class="badge-pill badge friend-pending-badge">PENDING</span>
                             </td>
                         </tr>
                         <tr th:if="${!declineSent.empty}" th:each="user : ${declineSent}">
@@ -271,7 +273,7 @@
                             </td>
                             <td></td>
                             <td class="align-middle text-muted">
-                                <strong>Declined</strong>
+                                <span class="badge-pill badge friend-declined-badge">DECLINED</span>
                             </td>
                         </tr>
                         <tr th:if="${!requestReceived.empty}" th:each="user : ${requestReceived}">

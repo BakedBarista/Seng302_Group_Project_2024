@@ -442,6 +442,16 @@ h1, h2, h3, h4, h5, h6 {
     --bs-btn-close-hover-opacity: 1.0;
 }
 
+.friend-pending-badge {
+    background-color: darkgoldenrod;
+    font-size: 14px;
+}
+
+.friend-declined-badge {
+    background-color: #888888;
+    font-size: 14px;
+}
+
 #friendTabs .nav-link {
     color: var(--gg-primary);
 }
