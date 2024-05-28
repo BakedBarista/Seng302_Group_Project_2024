@@ -31,21 +31,28 @@ public class BlockedUserFilter extends OncePerRequestFilter {
     }
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        if (principal == null) {
+            return true;
+        }
+
+        Long userId = Long.parseLong(principal.getName());
+        GardenUser user = userService.getUserById(userId);
+        if (!user.isAccountDisabled()) {
+            return true;
+        }
+
+        return request.getRequestURL().toString().contains("/users/blocked");
+    }
+
+    @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        Principal principal = request.getUserPrincipal();
-        if (principal != null) {
-            Long userId = Long.parseLong(principal.getName());
-            GardenUser user = userService.getUserById(userId);
-
-            if (user.isAccountDisabled() && !request.getRequestURL().toString().contains("/users/blocked")) {
-                logger.info("Redirecting to blocked message");
-                response.setStatus(302);
-                response.addHeader("Location", SecurityConfiguration.getBasePath() + "/users/blocked");
-                response.flushBuffer();
-                return;
-            }
-        }
-        filterChain.doFilter(request, response);
+        logger.info("Redirecting to blocked message");
+        response.setStatus(302);
+        response.addHeader("Location", SecurityConfiguration.getBasePath() + "/users/blocked");
+        response.flushBuffer();
+        return;
     }
 }
