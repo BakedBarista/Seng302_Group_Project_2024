@@ -22,6 +22,7 @@ function autocomplete(containerElement, callback, options) {
 
     // create input element
     const inputElement = document.createElement("input");
+    inputElement.className = 'form-control';
     inputElement.type = "text";
     inputElement.placeholder = options.placeholder;
     inputContainerElement.appendChild(inputElement);
@@ -308,5 +309,5 @@ function autocomplete(containerElement, callback, options) {
     });
 
     // Return an object with the desired methods
-    return { clear, focus };
+    return { clear, focus, inputElement };
 }
