@@ -161,7 +161,7 @@
             </div>
             <!-- Garden Description -->
             <div class="mb-3">
-                <label for="description" th:class="'form-label' + ${#fields.hasErrors('description') ? 'is-invalid' : ''}" >Description</label>
+                <label for="description" th:class="'form-label' + ${#fields.hasErrors('description') ? 'is-invalid' : ''}" >Description:</label>
                 <div class="input-group">
                     <textarea
                             th:class="'form-control ' + ${(#fields.hasErrors('description') || profanity != null) ? 'is-invalid' : ''}"
