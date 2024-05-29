@@ -4,10 +4,11 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URLEncoder;
@@ -44,6 +45,7 @@ public class LocationAPIController {
                 + "&format=json"
                 + "&limit=5"
                 + "&apiKey=" + location_apiKey;
+        logger.info("API KEY {}", location_apiKey);
 
         RestTemplate restTemplate = new RestTemplate();
         return restTemplate.getForEntity(url, String.class);
