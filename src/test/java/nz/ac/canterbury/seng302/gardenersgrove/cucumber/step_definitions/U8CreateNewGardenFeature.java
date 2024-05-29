@@ -77,9 +77,8 @@ public class U8CreateNewGardenFeature {
         tagService = new TagService(tagRepository, gardenService, profanityService);
         moderationService = new ModerationService();
         mockedModerationService = mock(ModerationService.class);
-
-        gardenController = new GardenController(gardenService, plantService, userService, weatherAPIService, tagService, friendService, moderationService, profanityService, locationService);
         locationService = mock(LocationService.class);
+        gardenController = new GardenController(gardenService, plantService, userService, weatherAPIService, tagService, friendService, moderationService, profanityService, locationService);
     }
 
 
