@@ -1,14 +1,11 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unittests.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.bytebuddy.asm.Advice;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.WeatherData;
 import nz.ac.canterbury.seng302.gardenersgrove.model.weather.*;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weather.GardenWeatherService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weather.WeatherAPIService;
@@ -16,7 +13,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -154,15 +150,15 @@ class WeatherAPIServiceTest {
         when(gardenService.getGardenById(gardenId)).thenReturn(Optional.of(garden));
 
         String jsonResponse = "{\"location\": {\"name\": \"Christchurch\"}, \"forecast\": {\"forecastday\": [{\"date\": \"2024-05-23\", \"day\": {\"maxtemp_c\": 10, \"mintemp_c\": 5, \"condition\": {\"text\": \"Sunny\"}}}]}}";
-        WeatherAPIForecastResponse forecastResponse = new WeatherAPIForecastResponse();
-        WeatherAPIHistoryResponse historyResponse = new WeatherAPIHistoryResponse();
-        List<WeatherAPIHistoryResponse> historyResponses = new ArrayList<>();
+        WeatherAPIResponse forecastResponse = new WeatherAPIResponse();
+        WeatherAPIResponse historyResponse = new WeatherAPIResponse();
+        List<WeatherAPIResponse> historyResponses = new ArrayList<>();
         historyResponses.add(historyResponse);
 
         when(restTemplate.getForEntity(anyString(), eq(String.class))).thenReturn(ResponseEntity.ok(jsonResponse));
-        when(objectMapper.readValue(anyString(), eq(WeatherAPIForecastResponse.class))).thenReturn(forecastResponse);
-        when(objectMapper.readValue(anyString(), eq(WeatherAPIHistoryResponse.class))).thenReturn(historyResponse);
-        doReturn(new GardenWeather()).when(weatherAPIService).saveWeather(anyDouble(), anyDouble(), any(Garden.class), any(WeatherAPIForecastResponse.class), anyList());
+        when(objectMapper.readValue(anyString(), eq(WeatherAPIResponse.class))).thenReturn(forecastResponse);
+        when(objectMapper.readValue(anyString(), eq(WeatherAPIResponse.class))).thenReturn(historyResponse);
+        doReturn(new GardenWeather()).when(weatherAPIService).saveWeather(anyDouble(), anyDouble(), any(Garden.class), any(WeatherAPIResponse.class), anyList());
 
         GardenWeather result = weatherAPIService.getWeatherData(gardenId, lat, lng);
 
@@ -188,15 +184,15 @@ class WeatherAPIServiceTest {
         when(gardenService.getGardenById(gardenId)).thenReturn(Optional.of(garden));
 
         String jsonResponse = "{\"location\": {\"name\": \"Christchurch\"}, \"forecast\": {\"forecastday\": [{\"date\": \"2024-05-23\", \"day\": {\"maxtemp_c\": 10, \"mintemp_c\": 5, \"condition\": {\"text\": \"Sunny\"}}}]}}";
-        WeatherAPIForecastResponse forecastResponse = new WeatherAPIForecastResponse();
-        WeatherAPIHistoryResponse historyResponse = new WeatherAPIHistoryResponse();
-        List<WeatherAPIHistoryResponse> historyResponses = new ArrayList<>();
+        WeatherAPIResponse forecastResponse = new WeatherAPIResponse();
+        WeatherAPIResponse historyResponse = new WeatherAPIResponse();
+        List<WeatherAPIResponse> historyResponses = new ArrayList<>();
         historyResponses.add(historyResponse);
 
         when(restTemplate.getForEntity(anyString(), eq(String.class))).thenReturn(ResponseEntity.ok(jsonResponse));
-        when(objectMapper.readValue(anyString(), eq(WeatherAPIForecastResponse.class))).thenReturn(forecastResponse);
-        when(objectMapper.readValue(anyString(), eq(WeatherAPIHistoryResponse.class))).thenReturn(historyResponse);
-        doReturn(gardenWeather).when(weatherAPIService).saveWeather(anyDouble(), anyDouble(), any(Garden.class), any(WeatherAPIForecastResponse.class), anyList());
+        when(objectMapper.readValue(anyString(), eq(WeatherAPIResponse.class))).thenReturn(forecastResponse);
+        when(objectMapper.readValue(anyString(), eq(WeatherAPIResponse.class))).thenReturn(historyResponse);
+        doReturn(gardenWeather).when(weatherAPIService).saveWeather(anyDouble(), anyDouble(), any(Garden.class), any(WeatherAPIResponse.class), anyList());
 
         GardenWeather result = weatherAPIService.getWeatherData(gardenId, lat, lng);
 
@@ -285,8 +281,8 @@ class WeatherAPIServiceTest {
         Garden garden = new Garden();
         garden.setId(1L);
 
-        WeatherAPIForecastResponse forecastResponse = new WeatherAPIForecastResponse();
-        WeatherAPIHistoryResponse historyResponse = new WeatherAPIHistoryResponse();
+        WeatherAPIResponse forecastResponse = new WeatherAPIResponse();
+        WeatherAPIResponse historyResponse = new WeatherAPIResponse();
 
         // Make some fake parsed weather
         Location location = new Location();
@@ -312,10 +308,10 @@ class WeatherAPIServiceTest {
         forecastDays.add(forecastDay);
         forecast.setForecastDays(forecastDays);
         forecastResponse.setForecast(forecast);
-        WeatherAPIHistoryResponse historyDay = new WeatherAPIHistoryResponse();
+        WeatherAPIResponse historyDay = new WeatherAPIResponse();
         historyDay.setForecast(forecast);
         historyDay.setLocation(location);
-        List<WeatherAPIHistoryResponse> historyResponses = List.of(historyDay);
+        List<WeatherAPIResponse> historyResponses = List.of(historyDay);
 
         // Actual test
         GardenWeather mockGardenWeather = new GardenWeather();

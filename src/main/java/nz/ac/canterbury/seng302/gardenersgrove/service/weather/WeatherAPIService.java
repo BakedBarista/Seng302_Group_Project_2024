@@ -89,10 +89,10 @@ public class WeatherAPIService {
             LocalDate currentDate = LocalDate.now();
             dates.add(currentDate.minusDays(2).toString());
             dates.add(currentDate.minusDays(1).toString());
-            List<WeatherAPIHistoryResponse> historyResponses = getPreviousWeatherFromAPI(lat, lng, dates);
+            List<WeatherAPIResponse> historyResponses = getPreviousWeatherFromAPI(lat, lng, dates);
 
             // Get forecast weather
-            WeatherAPIForecastResponse forecastResponse = getForecastWeatherFromAPI(lat, lng);
+            WeatherAPIResponse forecastResponse = getForecastWeatherFromAPI(lat, lng);
 
             if (forecastResponse.getForecast() == null || historyResponses.isEmpty()) {
                 logger.error("No data was returned from the weather API");
@@ -166,10 +166,10 @@ public class WeatherAPIService {
      * @param lat the latitude of the location
      * @param lng the longitude of the location
      * @param dates the previous dates requested as a list of dates in format YYYY-MM-DD e.g. "2024-05-23"
-     * @return A list of {@link WeatherAPIHistoryResponse} containing the conditions from the previous requested dates.
+     * @return A list of {@link WeatherAPIResponse} containing the conditions from the previous requested dates.
      */
-    private List<WeatherAPIHistoryResponse> getPreviousWeatherFromAPI(double lat, double lng, List<String> dates) {
-        ArrayList<WeatherAPIHistoryResponse> previousWeather = new ArrayList<>();
+    private List<WeatherAPIResponse> getPreviousWeatherFromAPI(double lat, double lng, List<String> dates) {
+        ArrayList<WeatherAPIResponse> previousWeather = new ArrayList<>();
         logger.info("Requesting previous weather data for dates: {}", dates);
 
         for (String date: dates) {
@@ -184,7 +184,7 @@ public class WeatherAPIService {
                 if (Objects.equals(response, API_NO_RESPONSE)) {
                     logger.error("No value was returned by the weather API, returning empty response object.");
                 } else {
-                    previousWeather.add(objectMapper.readValue(response, WeatherAPIHistoryResponse.class));
+                    previousWeather.add(objectMapper.readValue(response, WeatherAPIResponse.class));
                 }
             } catch (JsonProcessingException e) {
                 logger.error("Error processing JSON: ", e);
@@ -198,10 +198,10 @@ public class WeatherAPIService {
      * today, the next day , and the day after.
      * @param lat the latitude of the location
      * @param lng the longitude of the location
-     * @return a {@link WeatherAPIForecastResponse} representing the parsed JSON values from the API.
+     * @return a {@link WeatherAPIResponse} representing the parsed JSON values from the API.
      */
-    private WeatherAPIForecastResponse getForecastWeatherFromAPI(double lat, double lng) {
-        WeatherAPIForecastResponse forecastWeather = new WeatherAPIForecastResponse();
+    private WeatherAPIResponse getForecastWeatherFromAPI(double lat, double lng) {
+        WeatherAPIResponse forecastWeather = new WeatherAPIResponse();
         String locationQuery = "&q=" + lat + "," + lng + "&days=3";
         String apiForecastUrl = "https://api.weatherapi.com/v1/forecast.json?key=";
         String url = apiForecastUrl + API_KEY + locationQuery;
@@ -214,7 +214,7 @@ public class WeatherAPIService {
                 logger.error("No value was returned by the weather API, returning empty response object.");
                 return forecastWeather;
             }
-            return objectMapper.readValue(response, WeatherAPIForecastResponse.class);
+            return objectMapper.readValue(response, WeatherAPIResponse.class);
         } catch (JsonProcessingException e) {
             logger.error("Error processing JSON: ", e);
         }
@@ -254,7 +254,7 @@ public class WeatherAPIService {
      * @param forecastResponse the forecast weather API response
      * @param previousResponse the previous weather API response
      */
-    public GardenWeather saveWeather(double lat, double lng, Garden garden, WeatherAPIForecastResponse forecastResponse, List<WeatherAPIHistoryResponse> previousResponse) {
+    public GardenWeather saveWeather(double lat, double lng, Garden garden, WeatherAPIResponse forecastResponse, List<WeatherAPIResponse> previousResponse) {
         GardenWeather gardenWeather = new GardenWeather();
 
         gardenWeather.setLat(lat);
@@ -270,7 +270,7 @@ public class WeatherAPIService {
 
         logger.info("Adding the previous weather to the weather data.");
         List<WeatherData> previousWeather =  new ArrayList<>();
-        for (WeatherAPIHistoryResponse historyDay: previousResponse) {
+        for (WeatherAPIResponse historyDay: previousResponse) {
             previousWeather.add(extractDailyWeatherData(historyDay, WeatherData::new, historyDay.getForecast().getForecastDays().get(0)));
         }
         gardenWeather.setPreviousWeather(previousWeather);
