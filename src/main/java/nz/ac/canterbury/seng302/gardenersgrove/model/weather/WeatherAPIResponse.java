@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+/**
+ * The previous and forecast weather API response parent class
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WeatherAPIResponse {
     @JsonDeserialize
