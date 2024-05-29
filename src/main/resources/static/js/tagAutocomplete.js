@@ -1,7 +1,7 @@
 /**
  * Sets up tag autocomplete for the tag input field.
  *
- * @param {{ initialTags: string[], setTags: (tags: string[]) => void }} options Options for the tag autocomplete.
+ * @param {{ initialTags: string[], setTags: (tags: string[]) => void, appendUserInput: boolean, notFoundMessageHtml: string, placeholder: string, acceptButton: boolean, allowNonExistent?: boolean }} options Options for the tag autocomplete.
  * @returns An object with methods to interact with the tag autocomplete.
  */
 function tagAutocomplete(options) {
@@ -14,10 +14,12 @@ function tagAutocomplete(options) {
 
     const tagAutocomplete = autocomplete(tagAutocompleteContainer, addTag, {
         apiUrl: `${apiBaseUrl}/tag-autocomplete`,
-        notFoundMessageHtml:
-            'No matching tag. <u class="text-primary">Create new tag</u>',
-        placeholder: 'Start typing tags here',
-        acceptButton: true,
+        notFoundMessageHtml: options.notFoundMessageHtml,
+        appendUserInput: options.appendUserInput,
+        placeholder: options.placeholder,
+        acceptButton: options.acceptButton,
+        allowNonExistent: options.allowNonExistent,
+        minAutocompleteLength: 1,
     });
 
     for (const tag of tags) {
@@ -100,6 +102,11 @@ function tagAutocomplete(options) {
      * @param {{ formatted: string } | string} tag - The entry in the autocomplete API response.
      */
     function addTag(tag) {
+        // dont allow new tags to be added if allowNonExistent is false
+        if (typeof tag === 'string' && options.allowNonExistent === false) {
+            return;
+        }
+
         tag = tag.formatted ?? tag;
         if (tags.includes(tag)) {
             return;
