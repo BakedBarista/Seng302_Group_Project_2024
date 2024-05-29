@@ -9,6 +9,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.WeatherData;
+import nz.ac.canterbury.seng302.gardenersgrove.model.weather.Location;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.FriendsRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
@@ -56,8 +57,10 @@ public class U14WeatherMonitoringFeature {
     private static FriendsRepository friendsRepository;
 
     private static ModerationService moderationService;
+    private static LocationService locationService;
     private static ModerationService mockedModerationService;
     private static ProfanityService profanityService;
+    private static TagService tagService;
 
     private static GardenController gardenController;
     private static Garden gardenMock;
@@ -82,7 +85,9 @@ public class U14WeatherMonitoringFeature {
         weatherAPIService = new WeatherAPIService(restTemplate, gardenService, gardenWeatherService);
         mockedModerationService = mock(ModerationService.class);
         profanityService = mock(ProfanityService.class);
-        gardenController = new GardenController(gardenService, plantService, userService, weatherAPIService, friendService, mockedModerationService, profanityService);
+        locationService = mock(LocationService.class);
+        tagService = mock(TagService.class);
+        gardenController = new GardenController(gardenService, plantService, userService, weatherAPIService, tagService, friendService, mockedModerationService, profanityService, locationService);
     }
 
 

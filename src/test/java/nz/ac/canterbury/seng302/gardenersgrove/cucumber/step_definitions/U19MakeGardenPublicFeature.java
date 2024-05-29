@@ -14,7 +14,8 @@ import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.TagRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
-import nz.ac.canterbury.seng302.gardenersgrove.service.weatherAPI.WeatherAPIService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.weather.GardenWeatherService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.weather.WeatherAPIService;
 import org.springframework.ui.Model;
 import org.springframework.web.client.RestTemplate;
 
@@ -42,6 +43,7 @@ public class U19MakeGardenPublicFeature {
     private static ObjectMapper objectMapper;
 
     private static GardenUser gardenUser;
+    private static GardenWeatherService gardenWeatherService;
     private static Garden garden;
 
     private static Model model;
@@ -63,7 +65,8 @@ public class U19MakeGardenPublicFeature {
         gardenService = new GardenService(gardenRepository);
         plantService = new PlantService(plantRepository, gardenRepository);
         gardenUserService = mock(GardenUserService.class);
-        weatherAPIService = new WeatherAPIService(restTemplate, gardenService);
+        gardenWeatherService = mock(GardenWeatherService.class);
+        weatherAPIService = new WeatherAPIService(restTemplate, gardenService, gardenWeatherService);
         moderationService = new ModerationService();
         profanityService = new ProfanityService();
         locationService = new LocationService(restTemplate, objectMapper);
