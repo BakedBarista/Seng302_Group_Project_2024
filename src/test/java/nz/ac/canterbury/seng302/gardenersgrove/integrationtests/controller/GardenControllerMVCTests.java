@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.TagRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.GardenController;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weatherAPI.WeatherAPIService;
@@ -48,6 +49,8 @@ public class GardenControllerMVCTests {
 
     @Mock
     private FriendService friendService;
+    @Mock
+    private static TagService tagService;
 
     @Mock
     private ModerationService moderationService;
@@ -72,8 +75,8 @@ public class GardenControllerMVCTests {
         plantService = mock(PlantService.class);
         moderationService = mock(ModerationService.class);
         profanityService = mock(ProfanityService.class);
+        gardenController = new GardenController(gardenService, plantService, gardenUserService, weatherAPIService, tagService,friendService, moderationService, profanityService, locationService);
         locationService = mock(LocationService.class);
-        gardenController = new GardenController(gardenService, plantService, gardenUserService, weatherAPIService, friendService, moderationService, profanityService, locationService);
 
         emptyGarden = new Garden();
         patternGarden = new Garden();

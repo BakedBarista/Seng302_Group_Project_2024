@@ -6,6 +6,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -26,6 +28,12 @@ import static org.mockito.Mockito.*;
 public class GardenServiceTest {
     private GardenRepository gardenRepository;
     private GardenService gardenService;
+
+    @Mock
+    private Pageable pageable;
+
+    @Mock
+    private Page<Garden> expectedPage;
 
     @BeforeEach
     public void setUp() {
@@ -116,6 +124,34 @@ public class GardenServiceTest {
         assertEquals(2, returnedGardens.size());
         assertEquals(mockGardens, returnedGardens);
     }
+
+    @Test
+    void testFindGardensBySearchAndTags_WithEmptyTags() {
+
+        String search = "flowers";
+        List<String> tags = Collections.emptyList();
+        when(gardenRepository.findPageThatContainsQuery(search, pageable)).thenReturn(expectedPage);
+
+        Page<Garden> result = gardenService.findGardensBySearchAndTags(search, tags, pageable);
+
+        assertEquals( expectedPage, result);
+        verify(gardenRepository).findPageThatContainsQuery(search, pageable);
+        verifyNoMoreInteractions(gardenRepository);
+    }
+
+    @Test
+    void testFindGardensBySearchAndTags_WithNullTags() {
+
+        String search = "flowers";
+        when(gardenRepository.findPageThatContainsQuery(search, pageable)).thenReturn(expectedPage);
+
+        Page<Garden> result = gardenService.findGardensBySearchAndTags(search, null, pageable);
+
+        assertEquals( expectedPage, result);
+        verify(gardenRepository).findPageThatContainsQuery(search, pageable);
+        verifyNoMoreInteractions(gardenRepository);
+    }
+
 
 
 

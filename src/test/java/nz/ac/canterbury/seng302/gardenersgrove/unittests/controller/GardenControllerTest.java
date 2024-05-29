@@ -56,13 +56,15 @@ class GardenControllerTest {
     @Mock
     private Model model;
 
+    @Mock
+    private TagService tagService;
+
     private GardenController gardenController;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        gardenController = new GardenController(gardenService, plantService, gardenUserService, weatherAPIService,
-                friendService, moderationService, profanityService, locationService);
+        gardenController = new GardenController(gardenService,plantService,gardenUserService,weatherAPIService,tagService, friendService,moderationService,profanityService, locationService);
     }
 
     @Test

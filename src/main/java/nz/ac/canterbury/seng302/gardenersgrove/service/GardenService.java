@@ -87,13 +87,38 @@ public class GardenService {
         return gardenRepository.findByOwnerId(ownerId);
     }
 
+    /**
+     * Get all public gardens by owner id
+     * @param user owner id used to retrieve data
+     * @return a list of public gardens owned by the owner
+     */
     public List<Garden> getPublicGardensByOwnerId(GardenUser user) {
         return gardenRepository.findUserPublicGarden(user);
     }
+
+    /**
+     * Get all private gardens by owner id
+     * @param user owner id used to retrieve data
+     * @return a list of private gardens owned by the owner
+     */
 
     public List<Garden> getPrivateGardensByOwnerId(GardenUser user) {
         return gardenRepository.findUserPrivateGarden(user);
     }
 
+    /**
+     *  Get a page for pagination of user gardens that meet the given query string
+     * @param search string to be matched against
+     * @param tags list of tags to be matched against
+     * @param pageable pagination information
+     * @return page to display
+     */
+    public Page<Garden> findGardensBySearchAndTags(String search, List<String> tags, Pageable pageable) {
+        if (tags == null || tags.isEmpty()) {
+            return gardenRepository.findPageThatContainsQuery(search, pageable);
+        } else {
+            return gardenRepository.findGardensBySearchAndTags(search, tags, pageable);
+        }
+    }
 }
 
