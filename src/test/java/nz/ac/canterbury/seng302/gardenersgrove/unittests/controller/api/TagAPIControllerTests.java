@@ -46,7 +46,6 @@ class TagAPIControllerTests {
         gardenUserService = mock(GardenUserService.class);
         strikeService = mock(StrikeService.class);
 
-        // TODO: mocks
         controller = new TagAPIController(gardenService, tagService, strikeService, gardenUserService);
 
         jsonObjectMapper = new ObjectMapper();
@@ -138,6 +137,35 @@ class TagAPIControllerTests {
 
         assertEquals(422, response.getStatusCode().value());
         assertEquals("Tag is inappropriate", response.getBody());
+        verify(tagService, times(1)).updateGardenTags(any(), any());
+    }
+
+    @Test
+    void givenTagsContainProfanity_andUserIsDueAWarning_whenAddTags_thenReturnErrorMessage() throws ProfanityDetectedException {
+        when(authentication.getPrincipal()).thenReturn(1L);
+        when(gardenService.getGardenById(1L)).thenReturn(Optional.of(garden));
+        //Alternative syntax because updateGardenTags returns void
+        doThrow(new ProfanityDetectedException()).when(tagService).updateGardenTags(any(), any());
+        when(strikeService.addStrike(gardenUserService.getCurrentUser())).thenReturn(StrikeService.AddStrikeResult.WARNING);
+
+        ResponseEntity<String> response = controller.setGardenTags(1L, List.of("Red", "Green"), authentication);
+
+        assertEquals(422, response.getStatusCode().value());
+        assertEquals("You have added an inappropriate tag for the fifth time. One more strike and your account will be blocked.", response.getBody());
+        verify(tagService, times(1)).updateGardenTags(any(), any());
+    }
+
+    @Test
+    void givenTagsContainProfanity_andUserIsDueToBeBlocked_whenAddTags_thenReturnErrorMessage() throws ProfanityDetectedException {
+        when(authentication.getPrincipal()).thenReturn(1L);
+        when(gardenService.getGardenById(1L)).thenReturn(Optional.of(garden));
+        //Alternative syntax because updateGardenTags returns void
+        doThrow(new ProfanityDetectedException()).when(tagService).updateGardenTags(any(), any());
+        when(strikeService.addStrike(gardenUserService.getCurrentUser())).thenReturn(StrikeService.AddStrikeResult.BLOCK);
+
+        ResponseEntity<String> response = controller.setGardenTags(1L, List.of("Red", "Green"), authentication);
+
+        assertEquals(401, response.getStatusCode().value());
         verify(tagService, times(1)).updateGardenTags(any(), any());
     }
 }
