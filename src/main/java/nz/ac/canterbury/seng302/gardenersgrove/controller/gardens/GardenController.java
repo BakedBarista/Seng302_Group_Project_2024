@@ -4,6 +4,11 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.gardens;
 import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.CurrentWeather;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.WeatherData;
 import nz.ac.canterbury.seng302.gardenersgrove.model.weather.WeatherAPICurrentResponse;
@@ -32,6 +37,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.DateTimeFormats.NZ_FORMAT_DATE;
+import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.DateTimeFormats.WEATHER_CARD_FORMAT_DATE;
 
 
 /**
@@ -170,6 +176,7 @@ public class GardenController {
             Double lat = garden.getLat();
             Double lng = garden.getLon();
             WeatherAPICurrentResponse currentResponse = new WeatherAPICurrentResponse();
+            CurrentWeather currentWeather = new CurrentWeather();
             List<WeatherData> forecastWeather = new ArrayList<>();
             boolean wateringRecommendation = false;
             boolean displayWeatherAlert = false;
@@ -188,6 +195,7 @@ public class GardenController {
                      logger.info("Displaying the weather for Garden {}", id);
                      currentResponse = weatherAPIService.getCurrentWeatherFromAPI(lat, lng);
                      forecastWeather = gardenWeather.getForecastWeather();
+                     currentWeather = weatherAPIService.extractCurrentWeatherData(currentResponse);
 
                      wateringRecommendation = weatherAPIService.getWateringRecommendation(gardenWeather, currentResponse);
                      garden.setWateringRecommendation(weatherAPIService.getWateringRecommendation(gardenWeather, currentResponse));
@@ -205,10 +213,11 @@ public class GardenController {
             }
 
             model.addAttribute("forecastWeather", forecastWeather);
-            model.addAttribute("currentWeather", currentResponse);
+            model.addAttribute("currentWeather", currentWeather);
             model.addAttribute("wateringRecommendation", wateringRecommendation);
             model.addAttribute("displayWeatherAlert", displayWeatherAlert);
             model.addAttribute("displayWeather", displayWeather);
+            model.addAttribute("WEATHER_CARD_FORMAT_DATE", WEATHER_CARD_FORMAT_DATE);
 
             GardenUser currentUser = gardenUserService.getCurrentUser();
             List<Garden> gardens = gardenService.getGardensByOwnerId(currentUser.getId());
@@ -360,7 +369,6 @@ public class GardenController {
 
         return "gardens/publicGardens";
     }
-
 
 
     /**

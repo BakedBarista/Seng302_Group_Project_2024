@@ -3,12 +3,14 @@ package nz.ac.canterbury.seng302.gardenersgrove.unittests.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.CurrentWeather;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.WeatherData;
 import nz.ac.canterbury.seng302.gardenersgrove.model.weather.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weather.GardenWeatherService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weather.WeatherAPIService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -291,6 +293,7 @@ class WeatherAPIServiceTest {
 
         Forecast forecast = new Forecast();
         ForecastDay forecastDay = new ForecastDay();
+        forecastDay.setDate("09/08/2003");
         Day day = new Day();
         Condition condition = new Condition();
         condition.setConditions("Sunny");
@@ -320,4 +323,42 @@ class WeatherAPIServiceTest {
 
         assertEquals(mockGardenWeather, gardenWeather);
     }
+
+    @Test
+    void extractCurrentWeatherData_extractsWeatherDataAsExpected() {
+        String city = "Christchurch";
+        int temp = 20;
+        int humidity = 2;
+        String conditions = "Sunny";
+        Condition condition = new Condition();
+        String icon = "icon.png";
+        String url = "//cdn.weatherapi.com/weather/64x64/day/" + icon;
+        condition.setConditions(conditions);
+        condition.setIconUrl(url);
+
+        float windSpeed = 5;
+
+        WeatherAPICurrentResponse fakeWeatherAPIResponse = new WeatherAPICurrentResponse();
+
+        Current current = new Current();
+        current.setCurrentTemp(temp);
+        current.setHumidity(humidity);
+        current.setWindSpeed(windSpeed);
+        current.setCondition(condition);
+
+        Location location = new Location();
+        location.setLocationName(city);
+
+        fakeWeatherAPIResponse.setCurrent(current);
+        fakeWeatherAPIResponse.setLocation(location);
+
+        CurrentWeather weather = weatherAPIService.extractCurrentWeatherData(fakeWeatherAPIResponse);
+
+        Assertions.assertEquals(conditions, weather.getConditions());
+        Assertions.assertEquals(temp, weather.getTemp());
+        Assertions.assertEquals(humidity, weather.getHumidity());
+        Assertions.assertEquals(windSpeed, weather.getWindSpeed());
+        Assertions.assertEquals(icon, weather.getIcon());
+    }
+
 }

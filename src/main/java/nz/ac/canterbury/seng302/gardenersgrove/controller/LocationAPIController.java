@@ -49,8 +49,6 @@ public class LocationAPIController {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> result = restTemplate.getForEntity(url, String.class);
         logger.info("Result: {}", result.getStatusCode());
-        logger.info("Result: {}", result.getBody());
-
 
         return ResponseEntity.ok(result.getBody());
     }
