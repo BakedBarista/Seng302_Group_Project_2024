@@ -12,7 +12,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.TagRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
-import nz.ac.canterbury.seng302.gardenersgrove.service.weatherAPI.WeatherAPIService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.weather.WeatherAPIService;
 import org.mockito.ArgumentCaptor;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
