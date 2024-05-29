@@ -52,6 +52,8 @@ public class GardenControllerTest {
 
     @Mock
     private ProfanityService profanityService;
+    @Mock
+    private LocationService locationService;
 
     @InjectMocks
     private GardenController gardenController;
@@ -115,6 +117,7 @@ public class GardenControllerTest {
         when(profanityService.badWordsFound(anyString())).thenReturn(new ArrayList<>());
 
         Mockito.when(moderationService.moderateDescription(anyString())).thenReturn(ResponseEntity.ok().build());
+        when(locationService.getLatLng(anyString())).thenReturn(new ArrayList<>());
         String result = gardenController.submitForm(validGarden, bindingResult, authentication,  model);
         assertEquals("redirect:/gardens/1", result);
     }
