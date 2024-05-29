@@ -1,6 +1,9 @@
 package nz.ac.canterbury.seng302.gardenersgrove.customValidation;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Static class for holding different useful static DateTimeFormatter objects
+ */
 public class DateTimeFormats {
 
     /**
@@ -8,4 +11,6 @@ public class DateTimeFormats {
      */
     private DateTimeFormats() {}
     public static final DateTimeFormatter NZ_FORMAT_DATE = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+    public static final DateTimeFormatter WEATHER_CARD_FORMAT_DATE = DateTimeFormatter.ofPattern("EEEE dd MMM");
 }

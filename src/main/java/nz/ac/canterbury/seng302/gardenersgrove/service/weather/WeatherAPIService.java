@@ -7,6 +7,7 @@ import jakarta.transaction.Transactional;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.WeatherData;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.*;
 import nz.ac.canterbury.seng302.gardenersgrove.model.weather.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import org.slf4j.Logger;
@@ -21,6 +22,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.function.Supplier;
 
@@ -301,7 +303,13 @@ public class WeatherAPIService {
         T weather = supplier.get();
         Day day = forecastDay.getDay();
         weather.setCity(weatherAPIResponse.getLocation().getLocationName());
-        weather.setDate(forecastDay.getDate());
+
+        LocalDate date = null;
+        try {
+            date = LocalDate.parse(forecastDay.getDate());
+        } catch (DateTimeParseException ignored) {
+        }
+        weather.setDate(date);
         weather.setMaxTemp(day.getMaxTemp());
         weather.setMinTemp(day.getMinTemp());
         weather.setHumidity(day.getHumidity());
@@ -314,6 +322,32 @@ public class WeatherAPIService {
         weather.setWindSpeed(day.getWindSpeed());
         weather.setPrecipitation(day.getPrecipitation());
         weather.setUv(day.getUv());
+
+        return weather;
+    }
+
+    /**
+     * method for extracting necessary data for displaying current weather on
+     * current weather page by creating a new CurrentWeather instance
+     *
+     * @param weatherAPIResponse API response that needs to be converted to CurrentWeather instance
+     * @return CurrentWeather instance that is populated with data from API response
+     */
+    public CurrentWeather extractCurrentWeatherData(WeatherAPICurrentResponse weatherAPIResponse) {
+        CurrentWeather weather = new CurrentWeather();
+        weather.setCity(weatherAPIResponse.getLocation().getLocationName());
+
+        Current current = weatherAPIResponse.getCurrent();
+
+        weather.setDate(LocalDate.now());
+        weather.setTemp(current.getCurrentTemp());
+        weather.setHumidity(current.getHumidity());
+        weather.setConditions(current.getCondition().getConditions());
+        weather.setWindSpeed(current.getWindSpeed());
+
+        String[] urlParts = current.getCondition().getIconUrl().split("/");
+        String icon = urlParts[urlParts.length - 1];
+        weather.setIcon(icon);
 
         return weather;
     }

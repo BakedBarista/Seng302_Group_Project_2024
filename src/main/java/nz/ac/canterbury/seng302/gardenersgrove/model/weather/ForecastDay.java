@@ -3,6 +3,8 @@ package nz.ac.canterbury.seng302.gardenersgrove.model.weather;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import java.time.LocalDate;
+
 /**
  * ForecastDay component of the weather JSON response
  */
