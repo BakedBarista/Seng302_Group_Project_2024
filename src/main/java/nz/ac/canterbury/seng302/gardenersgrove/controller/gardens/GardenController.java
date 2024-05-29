@@ -349,7 +349,13 @@ public class GardenController {
                                       @RequestParam(name = "tags", required = false) String tags,
                                       Model model) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Garden> gardenPage = gardenService.findGardensBySearchAndTags(search, Arrays.asList(tags.split(",")), pageable);
+
+        boolean hasTags = !tags.isEmpty();
+        List<String> tagNames = null;
+        if (hasTags) {
+            tagNames = Arrays.asList(tags.split(","));
+        }
+        Page<Garden> gardenPage = gardenService.findGardensBySearchAndTags(search, tagNames, pageable);
 
         model.addAttribute("gardenPage", gardenPage);
         model.addAttribute("previousSearch", search);
