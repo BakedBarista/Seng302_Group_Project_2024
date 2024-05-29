@@ -291,6 +291,7 @@ class WeatherAPIServiceTest {
 
         Forecast forecast = new Forecast();
         ForecastDay forecastDay = new ForecastDay();
+        forecastDay.setDate("09/08/2003");
         Day day = new Day();
         Condition condition = new Condition();
         condition.setConditions("Sunny");
