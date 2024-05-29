@@ -192,6 +192,7 @@ public class GardenController {
                      forecastWeather = gardenWeather.getForecastWeather();
 
                      wateringRecommendation = weatherAPIService.getWateringRecommendation(gardenWeather, currentResponse);
+                     garden.setWateringRecommendation(weatherAPIService.getWateringRecommendation(gardenWeather, currentResponse));
                      displayWeatherAlert = garden.getDisplayWeatherAlert();
                      displayWeather = true;
                  }
