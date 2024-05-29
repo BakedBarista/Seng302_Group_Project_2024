@@ -7,9 +7,8 @@ import io.cucumber.java.en.When;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.GardenController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.ForecastWeather;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.PreviousWeather;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.WeatherData;
 import nz.ac.canterbury.seng302.gardenersgrove.model.weather.WeatherAPICurrentResponse;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.FriendsRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
@@ -19,7 +18,6 @@ import nz.ac.canterbury.seng302.gardenersgrove.repository.weather.GardenWeatherR
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weather.GardenWeatherService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weather.WeatherAPIService;
-import org.assertj.core.api.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -173,7 +171,7 @@ public class U14WeatherMonitoringFeature {
     @Given("The past two days have been sunny for that location")
     public void past_weather_sunny_for_that_location() {
         GardenWeather gardenWeather = new GardenWeather();
-        gardenWeather.setPreviousWeather(List.of(new PreviousWeather(), new PreviousWeather()));
+        gardenWeather.setPreviousWeather(List.of(new WeatherData(), new WeatherData()));
         garden.setGardenWeather(gardenWeather);
         when(gardenRepository.findById(garden.getId())).thenReturn(Optional.of(garden));
     }

@@ -6,7 +6,6 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.ForecastWeather;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.WeatherData;
 import nz.ac.canterbury.seng302.gardenersgrove.model.weather.WeatherAPICurrentResponse;
@@ -174,7 +173,7 @@ public class GardenController {
             Double lat = garden.getLat();
             Double lng = garden.getLon();
             WeatherAPICurrentResponse currentResponse = new WeatherAPICurrentResponse();
-            List<ForecastWeather> forecastWeather = new ArrayList<>();
+            List<WeatherData> forecastWeather = new ArrayList<>();
             boolean wateringRecommendation = false;
             boolean displayWeatherAlert = false;
             boolean displayWeather = false;

@@ -1,14 +1,11 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unittests.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.bytebuddy.asm.Advice;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.PreviousWeather;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.WeatherData;
 import nz.ac.canterbury.seng302.gardenersgrove.model.weather.*;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weather.GardenWeatherService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weather.WeatherAPIService;
@@ -16,9 +13,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
@@ -88,8 +86,8 @@ class WeatherAPIServiceTest {
     })
     void GetWateringRecommendation_VariousCombinations_CorrectValueReturned(String previousDay1, String previousDay2, String currentCondition, boolean expectedResponse) {
         GardenWeather gardenWeather = new GardenWeather();
-        PreviousWeather day1 = new PreviousWeather();
-        PreviousWeather day2 = new PreviousWeather();
+        WeatherData day1 = new WeatherData();
+        WeatherData day2 = new WeatherData();
         day1.setConditions(previousDay1);
         day2.setConditions(previousDay2);
         gardenWeather.setPreviousWeather(List.of(day1, day2));
@@ -147,26 +145,25 @@ class WeatherAPIServiceTest {
         double lng = 172.63;
 
         Garden garden = new Garden();
-        GardenWeather nullGardenWeather = null;
-        garden.setGardenWeather(nullGardenWeather);
+        garden.setGardenWeather(null);
 
         when(gardenService.getGardenById(gardenId)).thenReturn(Optional.of(garden));
 
         String jsonResponse = "{\"location\": {\"name\": \"Christchurch\"}, \"forecast\": {\"forecastday\": [{\"date\": \"2024-05-23\", \"day\": {\"maxtemp_c\": 10, \"mintemp_c\": 5, \"condition\": {\"text\": \"Sunny\"}}}]}}";
-        WeatherAPIForecastResponse forecastResponse = new WeatherAPIForecastResponse();
-        WeatherAPIHistoryResponse historyResponse = new WeatherAPIHistoryResponse();
-        List<WeatherAPIHistoryResponse> historyResponses = new ArrayList<>();
+        WeatherAPIResponse forecastResponse = new WeatherAPIResponse();
+        WeatherAPIResponse historyResponse = new WeatherAPIResponse();
+        List<WeatherAPIResponse> historyResponses = new ArrayList<>();
         historyResponses.add(historyResponse);
 
         when(restTemplate.getForEntity(anyString(), eq(String.class))).thenReturn(ResponseEntity.ok(jsonResponse));
-        when(objectMapper.readValue(anyString(), eq(WeatherAPIForecastResponse.class))).thenReturn(forecastResponse);
-        when(objectMapper.readValue(anyString(), eq(WeatherAPIHistoryResponse.class))).thenReturn(historyResponse);
-        doReturn(new GardenWeather()).when(weatherAPIService).saveWeather(anyDouble(), anyDouble(), any(Garden.class), any(WeatherAPIForecastResponse.class), anyList());
+        when(objectMapper.readValue(anyString(), eq(WeatherAPIResponse.class))).thenReturn(forecastResponse);
+        when(objectMapper.readValue(anyString(), eq(WeatherAPIResponse.class))).thenReturn(historyResponse);
+        doReturn(new GardenWeather()).when(weatherAPIService).saveWeather(anyDouble(), anyDouble(), any(Garden.class), any(WeatherAPIResponse.class), anyList());
 
         GardenWeather result = weatherAPIService.getWeatherData(gardenId, lat, lng);
 
         assertNotNull(result, "GardenWeather should be returned as not null.");
-        // Check that the API is called 3 times.
+        // Check that the API is called 3 times, 1 for forecast, 2 for previous
         verify(restTemplate, times(3)).getForEntity(anyString(), eq(String.class));
     }
 
@@ -187,25 +184,141 @@ class WeatherAPIServiceTest {
         when(gardenService.getGardenById(gardenId)).thenReturn(Optional.of(garden));
 
         String jsonResponse = "{\"location\": {\"name\": \"Christchurch\"}, \"forecast\": {\"forecastday\": [{\"date\": \"2024-05-23\", \"day\": {\"maxtemp_c\": 10, \"mintemp_c\": 5, \"condition\": {\"text\": \"Sunny\"}}}]}}";
-        WeatherAPIForecastResponse forecastResponse = new WeatherAPIForecastResponse();
-        WeatherAPIHistoryResponse historyResponse = new WeatherAPIHistoryResponse();
-        List<WeatherAPIHistoryResponse> historyResponses = new ArrayList<>();
+        WeatherAPIResponse forecastResponse = new WeatherAPIResponse();
+        WeatherAPIResponse historyResponse = new WeatherAPIResponse();
+        List<WeatherAPIResponse> historyResponses = new ArrayList<>();
         historyResponses.add(historyResponse);
 
         when(restTemplate.getForEntity(anyString(), eq(String.class))).thenReturn(ResponseEntity.ok(jsonResponse));
-        when(objectMapper.readValue(anyString(), eq(WeatherAPIForecastResponse.class))).thenReturn(forecastResponse);
-        when(objectMapper.readValue(anyString(), eq(WeatherAPIHistoryResponse.class))).thenReturn(historyResponse);
-        doReturn(gardenWeather).when(weatherAPIService).saveWeather(anyDouble(), anyDouble(), any(Garden.class), any(WeatherAPIForecastResponse.class), anyList());
+        when(objectMapper.readValue(anyString(), eq(WeatherAPIResponse.class))).thenReturn(forecastResponse);
+        when(objectMapper.readValue(anyString(), eq(WeatherAPIResponse.class))).thenReturn(historyResponse);
+        doReturn(gardenWeather).when(weatherAPIService).saveWeather(anyDouble(), anyDouble(), any(Garden.class), any(WeatherAPIResponse.class), anyList());
 
         GardenWeather result = weatherAPIService.getWeatherData(gardenId, lat, lng);
 
         assertNotNull(result, "GardenWeather should be returned as not null.");
-        // Check that the API is called 3 times.
+        // Check that the API is called 3 times, 1 for forecast, 2 for previous
         verify(restTemplate, times(3)).getForEntity(anyString(), eq(String.class));
     }
 
     @Test
-    void GetCurrentWeather_ValidRequest_WeatherReturnedFromAPI() {
+    void GetCurrentWeatherFromAPI_ValidResponseFlow_WeatherReturned() {
+        double lat = -43.53;
+        double lng = 172.63;
+        String mockApiResponse = "{\"location\": {\"name\": \"Christchurch\"}, \"current\": {\"temp_c\": 15.0, \"condition\": {\"text\": \"Sunny\"}}}";
 
+        when(restTemplate.getForEntity(anyString(), eq(String.class))).thenReturn(ResponseEntity.ok(mockApiResponse));
+        WeatherAPICurrentResponse response = weatherAPIService.getCurrentWeatherFromAPI(lat, lng);
+
+        assertNotNull(response);
+        assertEquals("Christchurch", response.getLocation().getLocationName());
+        assertEquals(15.0, response.getCurrent().getCurrentTemp());
+
+        // API should only call once for current weather
+        verify(restTemplate, times(1)).getForEntity(anyString(), eq(String.class));
+    }
+
+    @Test
+    void GetCurrentWeatherFromAPI_InvalidLatLng_NoResponse() {
+        double lat = 4444;
+        double lng = 4444;
+
+        when(restTemplate.getForEntity(anyString(), eq(String.class))).thenReturn(ResponseEntity.ok("No Response"));
+
+        WeatherAPICurrentResponse response = weatherAPIService.getCurrentWeatherFromAPI(lat, lng);
+        System.out.println(response);
+
+        assertNotNull(response);
+        // Check the contents is null
+        assertNull(response.getLocation());
+
+        // API should only call once for current weather
+        verify(restTemplate, times(1)).getForEntity(anyString(), eq(String.class));
+    }
+
+    @Test
+    void GetCurrentWeatherFromAPI_InvalidJsonReturn_JsonProcessingException() throws JsonProcessingException {
+        double lat = -43.53;
+        double lng = 172.63;
+        String mockApiResponse = "oopsies";
+
+        when(restTemplate.getForEntity(anyString(), eq(String.class))).thenReturn(ResponseEntity.ok(mockApiResponse));
+        when(objectMapper.readValue(anyString(), eq(WeatherAPICurrentResponse.class))).thenThrow(new JsonProcessingException("Error processing JSON") {});
+
+        WeatherAPICurrentResponse response = weatherAPIService.getCurrentWeatherFromAPI(lat, lng);
+
+        assertNotNull(response);
+        assertNull(response.getLocation());
+
+        // API should only call once for current weather
+        verify(restTemplate, times(1)).getForEntity(anyString(), eq(String.class));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "400, Bad Request",
+            "403, Forbidden",
+            "500, Internal server error"
+    })
+    void RequestApi_BadLatAndLng_ReturnNoResponse(String errorCode, String errorMessage) {
+        String url = "fakeurl";
+        HttpClientErrorException badRequestException = HttpClientErrorException.create(HttpStatusCode.valueOf(Integer.parseInt(errorCode)) ,errorMessage , null, null, null);
+
+        doThrow(badRequestException).when(restTemplate).getForEntity(anyString(), eq(String.class));
+        String response = weatherAPIService.requestAPI(url);
+
+        assertEquals("No Response", response);
+
+        // API should only call once
+        verify(restTemplate, times(1)).getForEntity(anyString(), eq(String.class));
+    }
+
+
+    @Test
+    void SaveWeather_ValidInput_WeatherSavedToGarden() {
+        double lat = -43.53;
+        double lng = 172.63;
+        Garden garden = new Garden();
+        garden.setId(1L);
+
+        WeatherAPIResponse forecastResponse = new WeatherAPIResponse();
+        WeatherAPIResponse historyResponse = new WeatherAPIResponse();
+
+        // Make some fake parsed weather
+        Location location = new Location();
+        location.setLocationName("Christchurch");
+        forecastResponse.setLocation(location);
+        historyResponse.setLocation(location);
+
+        Forecast forecast = new Forecast();
+        ForecastDay forecastDay = new ForecastDay();
+        Day day = new Day();
+        Condition condition = new Condition();
+        condition.setConditions("Sunny");
+        condition.setIconUrl("//cdn.weatherapi.com/weather/64x64/day/116.png");
+        day.setCondition(condition);
+        day.setHumidity(10);
+        day.setUv(10);
+        day.setMaxTemp(15);
+        day.setPrecipitation(10);
+        day.setMinTemp(5);
+        day.setWindSpeed(10);
+        forecastDay.setDay(day);
+        List<ForecastDay> forecastDays = new ArrayList<>();
+        forecastDays.add(forecastDay);
+        forecast.setForecastDays(forecastDays);
+        forecastResponse.setForecast(forecast);
+        WeatherAPIResponse historyDay = new WeatherAPIResponse();
+        historyDay.setForecast(forecast);
+        historyDay.setLocation(location);
+        List<WeatherAPIResponse> historyResponses = List.of(historyDay);
+
+        // Actual test
+        GardenWeather mockGardenWeather = new GardenWeather();
+        when(gardenWeatherService.addWeather(any(GardenWeather.class))).thenReturn(mockGardenWeather);
+
+        GardenWeather gardenWeather = weatherAPIService.saveWeather(lat, lng, garden, forecastResponse, historyResponses);
+
+        assertEquals(mockGardenWeather, gardenWeather);
     }
 }
