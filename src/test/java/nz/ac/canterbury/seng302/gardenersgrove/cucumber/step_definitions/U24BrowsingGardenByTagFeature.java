@@ -39,6 +39,7 @@ public class U24BrowsingGardenByTagFeature {
 
     public static GardenService gardenService;
     public static TagService tagService;
+    public static TagService mockTagService;
     public static GardenRepository mockGardenRepository;
     public static GardenRepository gardenRepository;
     public static TagRepository tagRepository;
@@ -51,6 +52,8 @@ public class U24BrowsingGardenByTagFeature {
     public static void beforeAll() {
 
         System.out.println("Before all");
+        profanityService = mock(ProfanityService.class);
+        mockTagService = mock(TagService.class);
         tagRepository = mock(TagRepository.class);
         mockGardenRepository = mock(GardenRepository.class);
         gardenService = new GardenService(mockGardenRepository);
@@ -59,7 +62,7 @@ public class U24BrowsingGardenByTagFeature {
     }
 
     @And("garden {string} has a tag {string}")
-    public void gardenHasATag(String garden, String tag) {
+    public void gardenHasATag(String garden, String tag) throws ProfanityDetectedException {
         String streetNumber = "1";
         String streetName = "Test Street";
         String suburb = "Test Suburb";
@@ -70,6 +73,8 @@ public class U24BrowsingGardenByTagFeature {
         Double lat = 2.0;
         String gardenSize = "100";
         String gardenDescription = "Test Description";
+        when(profanityService.badWordsFound(tag)).thenReturn(new ArrayList<>());
+        when(mockTagService.isValidTag(any())).thenReturn(true);
         try{
             tagService.getOrCreateTag(tag);
         } catch(ProfanityDetectedException doNothing){
