@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import java.time.Clock;
+import java.time.Duration;
 import java.time.Instant;
 
 import org.slf4j.Logger;
@@ -41,9 +42,10 @@ public class StrikeService {
      * After calling this method, you should check the user's `isAccountDisabled()`
      * property to see if the user needs to be signed out.
      *
-     * @param user The user to add a strike to.
+     * @param user The user to add a strike to.'
+     * @return The consequence for the strike; either warned, blocked or nothing
      */
-    public void addStrike(GardenUser user) {
+    public AddStrikeResult addStrike(GardenUser user) {
         int count = user.getStrikeCount();
         count += 1;
         user.setStrikeCount(count);
@@ -51,6 +53,8 @@ public class StrikeService {
 
         if (count == STRIKES_FOR_WARNING) {
             // TODO: send warning email
+
+            return AddStrikeResult.WARNING;
         } else if (count >= STRIKES_FOR_DISABLING) {
             Instant expiryInstant = clock.instant().plusSeconds(DISABLE_DURATION_DAYS * SECONDS_IN_DAY);
 
@@ -59,7 +63,28 @@ public class StrikeService {
             userService.addUser(user);
 
             // TODO: send confirmation email
+
+            return AddStrikeResult.BLOCK;
         }
+        return AddStrikeResult.NO_ACTION;
+    }
+
+    /**
+     * Counts the number of days until the user is unblocked
+     *
+     * @param user The user to check
+     * @return The number of days until the user is unblocked
+     */
+    public long daysUntilUnblocked(GardenUser user) {
+        Instant now = clock.instant();
+        Instant expiry = user.getAccountDisabledExpiryInstant();
+        if (expiry == null) {
+            return 0;
+        }
+
+        Duration timeRemaining = Duration.between(now, expiry);
+
+        return (long) Math.ceil(timeRemaining.getSeconds() / (float) SECONDS_IN_DAY);
     }
 
     /**
@@ -79,5 +104,23 @@ public class StrikeService {
         if (reenabledUsers != 0) {
             logger.info("re-enabled {} users whose accounts were disabled", reenabledUsers);
         }
+    }
+
+    /**
+     * The consequence for the strike; either warned, blocked or nothing
+     */
+    public enum AddStrikeResult {
+        /**
+         * There was no consequence for the strike
+         */
+        NO_ACTION,
+        /**
+         * The user was warned that they will be blocked on their next strike
+         */
+        WARNING,
+        /**
+         * The user was blocked
+         */
+        BLOCK,
     }
 }
