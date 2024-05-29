@@ -175,7 +175,6 @@ public class GardenController {
             boolean displayWeatherAlert = false;
             boolean displayWeather = false;
 
-            logger.info("here");
             if (lat == null || lng == null) {
                 logger.info("Garden ID: {} has no Lat and Lng, no weather will be displayed.", id);
             } else {
@@ -194,6 +193,14 @@ public class GardenController {
                      garden.setWateringRecommendation(weatherAPIService.getWateringRecommendation(gardenWeather, currentResponse));
                      displayWeatherAlert = garden.getDisplayWeatherAlert();
                      displayWeather = true;
+
+                     if (garden.getAlertHidden() == null || !garden.getAlertHidden().isEqual(LocalDate.now())) {
+                         logger.info("Garden alert hide status expired, showing watering alert again.");
+                         garden.setAlertHidden(null);
+                         garden.setDisplayWeatherAlert(true);
+                         gardenService.addGarden(garden);
+                         displayWeatherAlert = true;
+                     }
                  }
             }
 
@@ -226,6 +233,7 @@ public class GardenController {
             logger.info("Setting alert to hide for Garden {} until next day.", id);
             Garden garden = gardenOptional.get();
             garden.setDisplayWeatherAlert(false);
+            garden.setAlertHidden(LocalDate.now());
             gardenService.addGarden(garden);
         }
         return "redirect:/gardens/" + id;
