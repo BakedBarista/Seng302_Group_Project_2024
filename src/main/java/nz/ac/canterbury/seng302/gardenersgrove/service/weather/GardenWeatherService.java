@@ -7,6 +7,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * The service for the garden weather repository
+ */
 @Service
 public class GardenWeatherService {
     private final GardenWeatherRepository gardenWeatherRepository;

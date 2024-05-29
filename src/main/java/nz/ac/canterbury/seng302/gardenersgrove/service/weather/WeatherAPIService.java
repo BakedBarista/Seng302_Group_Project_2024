@@ -44,6 +44,12 @@ public class WeatherAPIService {
     private final GardenService gardenService;
     private final GardenWeatherService gardenWeatherService;
 
+    /**
+     * Constructor for the garden weather API service
+     * @param restTemplate the resttemplate object
+     * @param gardenService the garden service object
+     * @param gardenWeatherService the garden weather service object
+     */
     @Autowired
     public WeatherAPIService(RestTemplate restTemplate, GardenService gardenService, GardenWeatherService gardenWeatherService) {
         this.restTemplate = restTemplate;

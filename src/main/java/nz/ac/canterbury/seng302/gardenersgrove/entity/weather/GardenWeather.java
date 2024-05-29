@@ -5,6 +5,9 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 
 import java.util.List;
 
+/**
+ * An entity that creates a database table for the garden weather
+ */
 @Entity
 public class GardenWeather {
 

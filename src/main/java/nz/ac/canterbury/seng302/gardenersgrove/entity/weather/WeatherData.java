@@ -2,6 +2,9 @@ package nz.ac.canterbury.seng302.gardenersgrove.entity.weather;
 
 import jakarta.persistence.Embeddable;
 
+/**
+ * Creates an embeddable object for the weather data
+ */
 @Embeddable
 public class WeatherData {
 
