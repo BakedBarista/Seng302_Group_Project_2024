@@ -38,7 +38,7 @@ public class WeatherAPIService {
     // The rainy conditions possible with WeatherAPI.com
     private static final Set<String> RAIN_CONDITIONS = Set.of(
             "rain", "drizzle", "heavy rain", "light rain", "showers",
-            "thunderstorms", "sleet", "snow", "light snow", "heavy snow", "snow showers"
+            "thunderstorms", "sleet", "snow", "light snow", "heavy snow", "snow showers", "patchy rain nearby"
     );
     private final RestTemplate restTemplate;
     private final GardenService gardenService;
@@ -115,6 +115,7 @@ public class WeatherAPIService {
         logger.info("Generating watering recommendation");
 
         // If the current weather is rain, don't water the plants
+        logger.info("Current condition is: {}", currentResponse.getCurrent().getCondition().getConditions().toLowerCase());
         if (RAIN_CONDITIONS.contains(currentResponse.getCurrent().getCondition().getConditions().toLowerCase())) {
             logger.info("Currently raining, don't water plants");
             return false;
@@ -129,7 +130,7 @@ public class WeatherAPIService {
                 rainyDayCount++;
             }
         }
-        logger.info("It has rained the past {} days, only water if != 2", rainyDayCount);
+        logger.info("It has rained the past {} days, only water if 0", rainyDayCount);
         return rainyDayCount == 0;
     }
 
