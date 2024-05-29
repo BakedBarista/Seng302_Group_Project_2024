@@ -33,7 +33,7 @@
 
 body {
     color: var(--gg-black);
-    background-color: var(--gg-white);
+    background-color: white;
 }
 
 /* Global typography */
@@ -336,6 +336,7 @@ h1, h2, h3, h4, h5, h6 {
     flex: 1;
     outline: none;
 
+    background-image: none !important;
     border: 1px solid rgba(0, 0, 0, 0.2);
     padding: 10px;
     padding-right: 31px;
@@ -436,9 +437,37 @@ h1, h2, h3, h4, h5, h6 {
     padding: 0;
     vertical-align: middle;
 
-    /* HACK: Normally btn-close is dark on light, but we want light on dark */
     filter: invert();
 
     --bs-btn-close-opacity: 0.75;
     --bs-btn-close-hover-opacity: 1.0;
+}
+
+.friend-pending-badge {
+    background-color: darkgoldenrod;
+    font-size: 14px;
+}
+
+.friend-declined-badge {
+    background-color: #888888;
+    font-size: 14px;
+}
+
+#friendTabs .nav-link {
+    color: var(--gg-primary);
+}
+
+#friendTabs .nav-link.active {
+    background-color: var(--gg-secondary-dark);
+    color: var(--gg-white);
+}
+
+.request-notification-badge {
+    background-color: var(--gg-primary);
+}
+
+.nav-tabs .nav-item .nav-link {
+    border: 1px solid #ddd;
+    border-radius: 4px 4px 0 0;
+    margin-right: 5px;
 }

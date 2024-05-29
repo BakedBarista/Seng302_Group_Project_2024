@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity.dto;
 
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -16,12 +15,10 @@ public class RegisterDTO {
     @NotBlank(message = "First name cannot be empty")
     @Pattern(regexp = NAME_REGEX, message = "First name must only include letters, spaces, hyphens or apostrophes")
     @Size(min = 0, max = NAME_MAX_LEN, message = "First Name must be 64 characters long or less.")
-    @Column(nullable = false)
     private String fname;
 
     @Pattern(regexp = NAME_REGEX, message = "Last name must only include letters, spaces, hyphens or apostrophes")
     @Size(min = 0, max = NAME_MAX_LEN, message = "Last Name must be 64 characters long or less.")
-    @Column(nullable = true)
     private String lname;
 
     private boolean noLname;
@@ -52,12 +49,7 @@ public class RegisterDTO {
     }
 
     public void setLname(String lname) {
-        if (lname != null && lname.isEmpty()) {
-            lname = null;
-        }
-
         this.lname = lname;
-        this.noLname = lname == null;
     }
 
     public boolean isNoLname() {
@@ -65,12 +57,7 @@ public class RegisterDTO {
     }
 
     public void setNoLname(boolean noLname) {
-        if (noLname) {
-            this.noLname = true;
-            this.lname = null;
-        } else {
-            this.noLname = lname == null;
-        }
+        this.noLname = noLname;
     }
 
     public String getEmail() {

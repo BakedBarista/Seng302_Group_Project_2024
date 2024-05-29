@@ -32,18 +32,18 @@
                 <input type="text" th:name="email" th:value="*{email}" inputmode="email">
                 <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: red;"></div>
             </label>
-            <label th:class="'form-group ' + ${#fields.hasErrors('dateOfBirth') ? 'form-group-error' : ''}">
-                Date of Birth (optional)
+            <div class="mb-3">
+                <label for="datePicker" th:class="'form-label ' + ${#fields.hasErrors('dateOfBirth') ? 'is-invalid' : ''}">Date of Birth</label>
                 <input id="datePicker"
                        type="date"
                        placeholder="DD/MM/YYYY"
                        th:class="'form-control ' + ${#fields.hasErrors('dateOfBirth') ? 'is-invalid' : ''}"
-                       th:name="dateOfBirth"
-                       th:value="*{dateOfBirth}">
-                <div th:if="${#fields.hasErrors('dateOfBirth')}" th:errors="*{dateOfBirth}" style="color: red;"></div>
+                       th:name="dateOfBirth" th:value="*{dateOfBirth}">
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('dateOfBirth')}" th:errors="*{dateOfBirth}"></div>
                 <!--      dateError is the flag for when the date is not filled in correctly (e.g. 10/mm/2001)      -->
                 <input type="hidden" name="dateError" id="dateError" value="">
-            </label>
+            </div>
+
             <button class="btn">Submit</button>
             <a th:href="@{/users/user}" class="btn">Cancel</a>
         </form>

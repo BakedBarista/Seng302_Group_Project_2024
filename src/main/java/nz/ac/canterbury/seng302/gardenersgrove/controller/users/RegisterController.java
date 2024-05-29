@@ -89,6 +89,13 @@ public class RegisterController {
             bindingResult.rejectValue("confirmPassword", null, "Passwords do not match");
         }
 
+        if (registerDTO.isNoLname()) {
+            registerDTO.setLname(null);
+        }
+        if ((registerDTO.getLname() == null || registerDTO.getLname().isEmpty()) && !registerDTO.isNoLname()) {
+            bindingResult.rejectValue("lname", null, "Last name cannot be empty");
+        }
+
         if (bindingResult.hasErrors()) {
             return "users/registerTemplate";
         }
