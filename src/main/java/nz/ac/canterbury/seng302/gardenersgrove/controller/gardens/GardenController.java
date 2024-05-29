@@ -1,45 +1,33 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.gardens;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.WeatherData;
+import nz.ac.canterbury.seng302.gardenersgrove.model.weather.WeatherAPICurrentResponse;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
-import nz.ac.canterbury.seng302.gardenersgrove.service.weatherAPI.WeatherAPIService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.weather.WeatherAPIService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
 
-import java.lang.reflect.Array;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.ArrayList;
-
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -55,7 +43,7 @@ public class GardenController {
     private final GardenService gardenService;
     private final PlantService plantService;
     private final WeatherAPIService weatherAPIService;
-    
+
     private final TagService tagService;
 
     private final ModerationService moderationService;
@@ -159,8 +147,9 @@ public class GardenController {
     }
 
     /**
-     * Gets the id of garden
+     * Gets the details page for a garden based on its ID
      * @param model representation of results
+     * @param id the ID of the garden wanted
      * @return gardenDetails page
      */
     @GetMapping("/gardens/{id}")
@@ -168,6 +157,7 @@ public class GardenController {
                                Model model) {
 
         logger.info("Get /gardens/id - display garden detail");
+
         Optional<Garden> gardenOpt = gardenService.getGardenById(id);
         if(gardenOpt.isPresent()) {
             Garden garden = gardenOpt.get();
@@ -175,36 +165,58 @@ public class GardenController {
             model.addAttribute("owner", garden.getOwner());
             model.addAttribute("NZ_FORMAT_DATE", NZ_FORMAT_DATE);
             model.addAttribute("plants", plantService.getPlantsByGardenId(id));
-            List<List<Map<String, Object>>> weatherResult;
 
-            if(garden.getLat() != null || garden.getLon() != null){
-                weatherResult = weatherAPIService.getWeatherData(id, garden.getLat(), garden.getLon());
-            }else {
-                weatherResult = new ArrayList<>();
-            }
-
-            List<Map<String, Object>> weatherPrevious = Collections.emptyList();
-            List<Map<String, Object>> weatherForecast = Collections.emptyList();
+            logger.info("Getting weather information for Garden: {}", id);
+            Double lat = garden.getLat();
+            Double lng = garden.getLon();
+            WeatherAPICurrentResponse currentResponse = new WeatherAPICurrentResponse();
+            List<WeatherData> forecastWeather = new ArrayList<>();
+            boolean wateringRecommendation = false;
             boolean displayWeatherAlert = false;
+            boolean displayWeather = false;
 
-            if (!weatherResult.isEmpty()) {
-                weatherPrevious = weatherResult.get(0);
-                weatherForecast = weatherResult.get(1);
-                displayWeatherAlert = garden.getDisplayWeatherAlert();
+            if (lat == null || lng == null) {
+                logger.info("Garden ID: {} has no Lat and Lng, no weather will be displayed.", id);
+            } else {
+                GardenWeather gardenWeather = weatherAPIService.getWeatherData(id, lat, lng);
+                logger.info("garden weather shit");
+                // Check that the weather returned isn't null
+                 if (gardenWeather == null) {
+                     logger.error("Garden weather was returned as null, can't display");
+                 } else {
+                     // Extracts all the needed weather data
+                     logger.info("Displaying the weather for Garden {}", id);
+                     currentResponse = weatherAPIService.getCurrentWeatherFromAPI(lat, lng);
+                     forecastWeather = gardenWeather.getForecastWeather();
+
+                     wateringRecommendation = weatherAPIService.getWateringRecommendation(gardenWeather, currentResponse);
+                     garden.setWateringRecommendation(weatherAPIService.getWateringRecommendation(gardenWeather, currentResponse));
+                     displayWeatherAlert = garden.getDisplayWeatherAlert();
+                     displayWeather = true;
+
+                     if (garden.getAlertHidden() == null || !garden.getAlertHidden().isEqual(LocalDate.now())) {
+                         logger.info("Garden alert hide status expired, showing watering alert again.");
+                         garden.setAlertHidden(null);
+                         garden.setDisplayWeatherAlert(true);
+                         gardenService.addGarden(garden);
+                         displayWeatherAlert = true;
+                     }
+                 }
             }
 
-            model.addAttribute("weatherPrevious", weatherPrevious);
-            model.addAttribute("weatherForecast", weatherForecast);
-            model.addAttribute("displayWeather", !weatherResult.isEmpty());
-            model.addAttribute("displayRecommendation", displayWeatherAlert);
-            model.addAttribute("wateringRecommendation", garden.getWateringRecommendation());
-        }
+            model.addAttribute("forecastWeather", forecastWeather);
+            model.addAttribute("currentWeather", currentResponse);
+            model.addAttribute("wateringRecommendation", wateringRecommendation);
+            model.addAttribute("displayWeatherAlert", displayWeatherAlert);
+            model.addAttribute("displayWeather", displayWeather);
 
-        GardenUser currentUser = gardenUserService.getCurrentUser();
-        List<Garden> gardens = gardenService.getGardensByOwnerId(currentUser.getId());
-        model.addAttribute("currentUser", currentUser);
-        model.addAttribute("gardens", gardens);
-        return "gardens/gardenDetails";
+            GardenUser currentUser = gardenUserService.getCurrentUser();
+            List<Garden> gardens = gardenService.getGardensByOwnerId(currentUser.getId());
+            model.addAttribute("currentUser", currentUser);
+            model.addAttribute("gardens", gardens);
+            return "gardens/gardenDetails";
+        }
+        return "error/404";
     }
 
     /**
@@ -221,6 +233,7 @@ public class GardenController {
             logger.info("Setting alert to hide for Garden {} until next day.", id);
             Garden garden = gardenOptional.get();
             garden.setDisplayWeatherAlert(false);
+            garden.setAlertHidden(LocalDate.now());
             gardenService.addGarden(garden);
         }
         return "redirect:/gardens/" + id;
@@ -305,7 +318,7 @@ public class GardenController {
             existingGarden.get().setPostCode(garden.getPostCode());
             existingGarden.get().setSize(garden.getSize());
             existingGarden.get().setDescription(garden.getDescription());
-            
+
             // Null check
             if (!latAndLng.isEmpty()) {
                 existingGarden.get().setLat(latAndLng.get(0));
@@ -315,7 +328,7 @@ public class GardenController {
                 existingGarden.get().setLon(null);
             }
 
-            existingGarden.get().setWeatherForecast(Collections.emptyList());
+            existingGarden.get().setGardenWeather(null);
             gardenService.addGarden(existingGarden.get());
         }
         return "redirect:/gardens/" + id;
@@ -474,7 +487,7 @@ public class GardenController {
             for (int i = 0; i < gardenNames.size(); i++) {
                 String gardenName = gardenNames.get(i);
                 String streetNumber = Integer.toString(i + 1);
-                Garden garden = new Garden(gardenName, streetNumber, "Ilam Road", "Ilam", "Christchurch", "New Zealand", "8041", -43.5320, 172.6366, (String.valueOf(1000 + (i * 50))), "Test Garden");
+                Garden garden = new Garden(gardenName, streetNumber, "Ilam Road", "Ilam", "Christchurch", "New Zealand", "8041", -43.53, 172.63, (String.valueOf(1000 + (i * 50))), "Test Garden");
                 garden.setOwner(user);
                 garden.setPublic(true);
                 gardenService.addGarden(garden);

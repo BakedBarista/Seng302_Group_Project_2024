@@ -16,11 +16,17 @@ const tagAutocompleteInstance = tagAutocomplete({
             body: JSON.stringify(tags),
         });
 
-        if (response.status === 422) {
-            const error = await response.text();
-            tagAutocompleteInstance.removeLastTag();
+        switch (response.status) {
+            case 422:
+                const error = await response.text();
+                const tagName = tagAutocompleteInstance.removeLastTag();
 
-            tagAutocompleteInstance.setError(error);
+                tagAutocompleteInstance.setError(error);
+                tagAutocompleteInstance.inputElement.value = tagName;
+                break;
+            case 401:
+                location.href = `${baseUrl}users/blocked`;
+                break;
         }
     },
     notFoundMessageHtml: 'No matching tag. <u class="text-primary">Create new tag</u>',

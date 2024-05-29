@@ -69,10 +69,13 @@ function tagAutocomplete(options) {
 
     /**
      * Removes the most recent tag
+     *
+     * @return {string | null} - The tag that was removed.
      */
     function removeLastTag() {
-        tags.splice(-1, 1);
+        const removedTags = tags.splice(-1, 1);
         tagContainer.lastElementChild.remove();
+        return removedTags[0] ?? null;
     }
 
     /**
@@ -143,5 +146,5 @@ function tagAutocomplete(options) {
         }
     }
 
-    return { addTag, removeLastTag, setError };
+    return { addTag, removeLastTag, setError, ...tagAutocomplete };
 }

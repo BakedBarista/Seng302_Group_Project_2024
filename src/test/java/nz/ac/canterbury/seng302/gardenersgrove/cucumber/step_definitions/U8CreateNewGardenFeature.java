@@ -11,7 +11,8 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
-import nz.ac.canterbury.seng302.gardenersgrove.service.weatherAPI.WeatherAPIService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.weather.GardenWeatherService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.weather.WeatherAPIService;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -53,11 +54,11 @@ public class U8CreateNewGardenFeature {
     private static TagRepository   tagRepository;
 
     private static GardenController gardenController;
+    private static GardenWeatherService gardenWeatherService;
 
     private static Garden gardenMock;
     @BeforeAll
     public static void beforeAll() {
-        System.out.println("test");
         bindingResult = mock(BindingResult.class);
         gardenMock = mock(Garden.class);
         model = mock(Model.class);
@@ -73,8 +74,8 @@ public class U8CreateNewGardenFeature {
         gardenService = new GardenService(gardenRepository);
         friendService = new FriendService(friendsRepository);
         plantService = new PlantService(plantRepository, gardenRepository);
-        weatherAPIService = new WeatherAPIService(restTemplate, gardenService);
         tagService = new TagService(tagRepository, gardenService, profanityService);
+        weatherAPIService = new WeatherAPIService(restTemplate, gardenService, gardenWeatherService);
         moderationService = new ModerationService();
         mockedModerationService = mock(ModerationService.class);
         locationService = mock(LocationService.class);

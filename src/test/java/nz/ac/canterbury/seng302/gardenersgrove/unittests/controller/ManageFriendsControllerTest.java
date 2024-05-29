@@ -473,7 +473,7 @@
          friendsList.add(friendship);
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
          when(gardenUserService.getUserBySearch(searchUser, loggedInUserId)).thenReturn(searchResults);
-         when(friendService.getSent(loggedInUserId, otherUserId)).thenReturn(friendship);
+         when(friendService.getFriendship(loggedInUserId, otherUserId)).thenReturn(friendship);
 
          RedirectAttributes rm = new RedirectAttributesModelMap();
          String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
@@ -497,7 +497,7 @@
          friendsList.add(friendship);
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
          when(gardenUserService.getUserBySearch(searchUser, loggedInUserId)).thenReturn(searchResults);
-         when(friendService.getSent(loggedInUserId, otherUserId)).thenReturn(friendship);
+         when(friendService.getFriendship(loggedInUserId, otherUserId)).thenReturn(friendship);
 
          RedirectAttributes rm = new RedirectAttributesModelMap();
          String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
@@ -518,7 +518,7 @@
          Friends friendship = new Friends(loggedInUser, otherUser, ACCEPTED);
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
          when(gardenUserService.getUserBySearch(searchUser, loggedInUserId)).thenReturn(searchResults);
-         when(friendService.getSent(loggedInUserId, otherUserId)).thenReturn(null);
+         when(friendService.getFriendship(loggedInUserId, otherUserId)).thenReturn(null);
 
          RedirectAttributes rm = new RedirectAttributesModelMap();
          String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
@@ -558,7 +558,7 @@
          friendsList.add(friendship);
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
          when(gardenUserService.getUserBySearch(searchUser, loggedInUserId)).thenReturn(searchResults);
-         when(friendService.getSent(loggedInUserId, otherUserId)).thenReturn(friendship);
+         when(friendService.getFriendship(loggedInUserId, otherUserId)).thenReturn(friendship);
 
          RedirectAttributes rm = new RedirectAttributesModelMap();
          String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
@@ -573,7 +573,7 @@
       * Testing the manageFriendsSearch method
       */
      @Test
-     void whenPending_thenShownAsPending() {
+     void whenPending_thenShownAsPendingInSearchResults() {
          String searchUser = otherUser.getFname();
          List<GardenUser> searchResults = new ArrayList<>();
          List<Friends> friendsList = new ArrayList<>();
@@ -583,7 +583,7 @@
          friendsList.add(friendship);
          when(authentication.getPrincipal()).thenReturn(loggedInUserId);
          when(gardenUserService.getUserBySearch(searchUser, loggedInUserId)).thenReturn(searchResults);
-         when(friendService.getSent(loggedInUserId, otherUserId)).thenReturn(friendship);
+         when(friendService.getFriendship(loggedInUserId, otherUserId)).thenReturn(friendship);
 
          RedirectAttributes rm = new RedirectAttributesModelMap();
          String result = manageFriendsController.manageFriendsSearch(authentication, searchUser, rm);
