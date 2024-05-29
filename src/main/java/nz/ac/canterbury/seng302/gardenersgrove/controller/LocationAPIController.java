@@ -45,9 +45,13 @@ public class LocationAPIController {
                 + "&format=json"
                 + "&limit=5"
                 + "&apiKey=" + location_apiKey;
-        logger.info("API KEY {}", location_apiKey);
 
         RestTemplate restTemplate = new RestTemplate();
-        return restTemplate.getForEntity(url, String.class);
+        ResponseEntity<String> result = restTemplate.getForEntity(url, String.class);
+        logger.info("Result: {}", result.getStatusCode());
+        logger.info("Result: {}", result.getBody());
+
+
+        return result;
     }
 }
