@@ -1,67 +1,62 @@
-<img
-    class="profile-picture-large"
-    th:src="@{'/users/' + ${userId} + '/profile-picture'}"
-    width="100"
-    height="100"
-    alt="profile picture"
-/>
 
-<form
-    th:action="@{'/users/profile-picture'}"
-    method="post"
-    enctype="multipart/form-data"
-    id="profilePictureForm"
->
-    <label class="form-group link-text" tabindex="0">
-        Edit Profile Picture
-        <input type="file" name="file" id="profilePictureInput" />
-    </label>
-    <span id="profilePictureError" class="error" style="display: none"></span>
-</form>
+<div class="mb-3 d-flex justify-content-center">
+    <div class="position-relative d-inline">
+        <label for="image" class="position-absolute top-0 end-0" style="cursor: pointer;"><img th:src="@{/icons/trans-plus.svg}" alt="+" /></label>
+        <input id="image" name="image" class="d-none" type="file" accept=".png,.jpg,.jpeg,.svg"/>
+        <img id="preview" th:src="@{'/users/' + ${userId} + '/profile-picture'}" alt="Plant Picture" class="profile-picture-large" style="width: 200px;" />
+        <span id="editProfilePictureError" class="invalid-feedback text-center"></span>
+    </div>
+</div>
 
 <script>
-    (function () {
-        /** @type {HTMLFormElement} */
-        const profilePictureForm =
-            document.getElementById("profilePictureForm");
-        /** @type {HTMLInputElement} */
-        const profilePictureInput = document.getElementById(
-            "profilePictureInput"
-        );
-        /** @type {HTMLSpanElement} */
-        const profilePictureError = document.getElementById(
-            "profilePictureError"
-        );
+    
+/** @type {HTMLInputElement} */
+const editProfileImageInput = document.getElementById(
+    "image"
+);
+/** @type {HTMLSpanElement} */
+const editProfilePictureError = document.getElementById(
+    "editProfilePictureError"
+);
 
-        const VALID_MIME_TYPES = ["image/png", "image/jpeg", "image/svg+xml"];
+const VALID_MIME_TYPES = ["image/png", "image/jpeg", "image/svg+xml"];
+let hasError = false;
 
-        profilePictureForm.addEventListener("keydown", (ev) => {
-            if (ev.key === "Enter") {
-                profilePictureInput.click();
-            }
-        });
 
-        profilePictureInput.addEventListener("change", (ev) => {
-            const file = profilePictureInput.files[0];
-            if (!file) {
-                return;
-            }
+editProfileImageInput.addEventListener("change", (ev) => {
+    const file = editProfileImageInput.files[0];
+    hasError = false;
+    if (!file) {
+        return;
+    }
 
-            if (!VALID_MIME_TYPES.includes(file.type)) {
-                profilePictureError.style.display = "block";
-                profilePictureError.textContent =
-                    "Image must be of type png, jpg or svg";
-                return;
-            }
+    editProfilePictureError.textContent = "";
+    editProfilePictureError.style.display = "none";
 
-            if (file.size > 10 * 1024 * 1024) {
-                profilePictureError.style.display = "block";
-                profilePictureError.textContent =
-                    "File size must be less than 10MB";
-                return;
-            }
 
-            profilePictureForm.submit();
-        });
-    })();
+    if (!VALID_MIME_TYPES.includes(file.type)) {
+        editProfilePictureError.style.display = "block";
+        editProfilePictureError.textContent =
+            "Image must be of type png, jpg or svg";
+        hasError = true;
+        editProfileImageInput.value = null;
+        return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+        editProfilePictureError.style.display = "block";
+        editProfilePictureError.textContent =
+            "File size must be less than 10MB";
+        hasError = true;
+        editProfileImageInput.value = null;
+        return;
+    }
+    const reader = new FileReader();
+    reader.onload = function () {
+        const preview = document.getElementById("preview");
+        preview.src = reader.result;
+        preview.style.display = "block";
+    };
+    reader.readAsDataURL(file);
+});
 </script>
