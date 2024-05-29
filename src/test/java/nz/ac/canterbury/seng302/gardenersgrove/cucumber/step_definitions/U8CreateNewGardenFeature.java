@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.cucumber.step_definitions;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.BeforeAll;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -16,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -38,6 +40,8 @@ public class U8CreateNewGardenFeature {
 
     private static WeatherAPIService weatherAPIService;
     private static  RestTemplate restTemplate;
+
+    private static LocationService locationService;
     private static FriendService friendService;
     private static FriendsRepository friendsRepository;
 
@@ -64,6 +68,7 @@ public class U8CreateNewGardenFeature {
         gardenRepository = mock(GardenRepository.class);
         profanityService = mock(ProfanityService.class);
         tagRepository = mock(TagRepository.class);
+        restTemplate = mock(RestTemplate.class);
         userService = new GardenUserService(gardenUserRepository);
         gardenService = new GardenService(gardenRepository);
         friendService = new FriendService(friendsRepository);
@@ -72,7 +77,9 @@ public class U8CreateNewGardenFeature {
         tagService = new TagService(tagRepository, gardenService, profanityService);
         moderationService = new ModerationService();
         mockedModerationService = mock(ModerationService.class);
-        gardenController = new GardenController(gardenService, plantService, userService, weatherAPIService, tagService, friendService, moderationService, profanityService);
+
+        gardenController = new GardenController(gardenService, plantService, userService, weatherAPIService, tagService, friendService, moderationService, profanityService, locationService);
+        locationService = mock(LocationService.class);
     }
 
 
@@ -132,6 +139,7 @@ public class U8CreateNewGardenFeature {
 
         when(gardenUserRepository.findById(1L)).thenReturn(Optional.of(user));
         when(gardenRepository.save(garden)).thenReturn(garden);
+        when(locationService.getLatLng(anyString())).thenReturn(new ArrayList<>());
 
         gardenController.submitForm(garden, bindingResult, authentication, model);
     }
