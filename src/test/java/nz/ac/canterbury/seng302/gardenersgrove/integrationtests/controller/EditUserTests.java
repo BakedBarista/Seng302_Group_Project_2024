@@ -72,7 +72,7 @@ class EditUserControllerTest {
         when(bindingResult.hasErrors()).thenReturn(false);
 
         //Edit user details
-        String result = controller.submitUser(editUser, file, bindingResult, authentication, dateValidStr, model);
+        String result = controller.submitUser(editUser, bindingResult, file, authentication, dateValidStr, model);
 
         assertEquals("redirect:/users/user", result); // Verify that the returned view name is correct
     }
@@ -94,7 +94,7 @@ class EditUserControllerTest {
         when(bindingResult.hasErrors()).thenReturn(true);
 
         //Edit user details
-        String result = controller.submitUser(editUser,file,  bindingResult, authentication,dateValidStr,  model);
+        String result = controller.submitUser(editUser, bindingResult, file, authentication, dateValidStr, model);
 
         assertEquals("users/editTemplate", result);
     }
@@ -117,7 +117,7 @@ class EditUserControllerTest {
         when(bindingResult.hasErrors()).thenReturn(false);
 
         //Edit user details
-        controller.submitUser(editUser,file, bindingResult, authentication, dateValidStr, model);
+        controller.submitUser(editUser,bindingResult, file, authentication, dateValidStr, model);
 
         assertEquals("Jane", user.getFname());
         assertEquals("Dough", user.getLname());
@@ -141,7 +141,7 @@ class EditUserControllerTest {
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
 
-        String result = controller.submitUser(editUser,file, bindingResult, authentication, dateValidStr, model);
+        String result = controller.submitUser(editUser,bindingResult, file, authentication, dateValidStr, model);
 
         assertEquals("users/editTemplate", result);
         assertEquals("John", user.getFname()); //Checks if first name didn't change because it is not valid
@@ -190,7 +190,7 @@ class EditUserControllerTest {
         BindingResult bindingResult = mock(BindingResult.class);
 
         try {
-            controller.submitUser(editUser, spyFile, bindingResult, authentication, dateValidStr, model);
+            controller.submitUser(editUser,bindingResult,  spyFile, authentication, dateValidStr, model);
             fail("Expected IOException to be thrown, but nothing was thrown");
         } catch (IOException e) {
             System.out.println("IOException was thrown as expected");
