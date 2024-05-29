@@ -5,9 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.ForecastWeather;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.PreviousWeather;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.WeatherData;
 import nz.ac.canterbury.seng302.gardenersgrove.model.weather.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
@@ -124,9 +122,9 @@ public class WeatherAPIService {
 
         // If it has rained the last 2 days don't water the plants
         int rainyDayCount = 0;
-        List<PreviousWeather> historyResponses = gardenWeather.getPreviousWeather();
+        List<WeatherData> historyResponses = gardenWeather.getPreviousWeather();
 
-        for (PreviousWeather weather: historyResponses) {
+        for (WeatherData weather: historyResponses) {
             if (RAIN_CONDITIONS.contains(weather.getConditions().toLowerCase())) {
                 rainyDayCount++;
             }
@@ -264,16 +262,16 @@ public class WeatherAPIService {
         gardenWeather.setLastUpdated(LocalDate.now().toString());
 
         logger.info("Adding the forecasted weather to the weather data.");
-        List<ForecastWeather> forecastedWeather = new ArrayList<>();
+        List<WeatherData> forecastedWeather = new ArrayList<>();
         for (ForecastDay forecastDay: forecastResponse.getForecast().getForecastDays()) {
-            forecastedWeather.add(extractDailyWeatherData(forecastResponse, ForecastWeather::new, forecastDay));
+            forecastedWeather.add(extractDailyWeatherData(forecastResponse, WeatherData::new, forecastDay));
         }
         gardenWeather.setForecastWeather(forecastedWeather);
 
         logger.info("Adding the previous weather to the weather data.");
-        List<PreviousWeather> previousWeather =  new ArrayList<>();
+        List<WeatherData> previousWeather =  new ArrayList<>();
         for (WeatherAPIHistoryResponse historyDay: previousResponse) {
-            previousWeather.add(extractDailyWeatherData(historyDay, PreviousWeather::new, historyDay.getForecast().getForecastDays().get(0)));
+            previousWeather.add(extractDailyWeatherData(historyDay, WeatherData::new, historyDay.getForecast().getForecastDays().get(0)));
         }
         gardenWeather.setPreviousWeather(previousWeather);
 
@@ -289,7 +287,7 @@ public class WeatherAPIService {
      * <p>
      * ChatGPT helped me come up with the Supplier thing to make the generic responses work :D - Luke
      * @param weatherAPIResponse a generic weather API response
-     * @param supplier the specific type of the data wanted. {@link ForecastWeather} or {@link PreviousWeather}
+     * @param supplier the specific type of the data wanted {@link WeatherData}.
      * @return a list of generic weather data
      */
     private <T extends WeatherData> T extractDailyWeatherData(WeatherAPIResponse weatherAPIResponse, Supplier<T> supplier, ForecastDay forecastDay) {
