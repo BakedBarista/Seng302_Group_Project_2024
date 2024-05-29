@@ -10,7 +10,6 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.WeatherData;
 import nz.ac.canterbury.seng302.gardenersgrove.model.weather.WeatherAPICurrentResponse;
-import nz.ac.canterbury.seng302.gardenersgrove.model.weather.Location;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.FriendsRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
@@ -33,10 +32,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.verify;
 
 public class U14WeatherMonitoringFeature {
 
@@ -91,7 +87,6 @@ public class U14WeatherMonitoringFeature {
         locationService = mock(LocationService.class);
         tagService = mock(TagService.class);
         gardenController = new GardenController(gardenService, plantService, userService, weatherAPIService, tagService, friendService, mockedModerationService, profanityService, locationService);
-        gardenController = new GardenController(gardenService, plantService, userService, weatherAPIService, friendService, mockedModerationService, profanityService);
 
         GardenUser user = new GardenUser();
         user.setId(1L);
