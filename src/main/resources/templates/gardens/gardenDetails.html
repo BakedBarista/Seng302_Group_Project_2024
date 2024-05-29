@@ -71,7 +71,7 @@
             </div>
             <div class="card col-xl-6 col-12 p-3 pb-0">
                 <div class="mt-4 d-md-none"></div>
-                <div th:if="${displayRecommendation != null ? displayRecommendation and (currentUser.id == garden.owner.id) : false}" class="alert alert-dismissible fade show d-flex pe-3" style="background-color: lightskyblue" role="alert">
+                <div th:if="${displayWeatherAlert != null ? displayWeatherAlert and (currentUser.id == garden.owner.id) : false}" class="alert alert-dismissible fade show d-flex pe-3" style="background-color: lightskyblue" role="alert">
                     <div>
                         <strong th:if="${wateringRecommendation}" class="h-100 d-flex align-items-center px-3">There hasn't been any rain recently, make sure to water your plants if they need it.</strong>
                         <strong th:if="${!wateringRecommendation}" class="h-100 d-flex align-items-center px-3">Outdoor plants don't need any water today.</strong>
