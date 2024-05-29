@@ -350,26 +350,6 @@ public class GardenController {
                                       Model model) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Garden> gardenPage = gardenService.findGardensBySearchAndTags(search, Arrays.asList(tags.split(",")), pageable);
-//        List<Tag> validTags = new ArrayList<>();
-//       String invalidTag = "";
-//
-//        for (String tagName : tags) {
-//            Tag tag = tagService.getTag(tagName);
-//            if (tag != null) {
-//                validTags.add(tag);
-//            } else {
-//                invalidTag = tagName ;
-//            }
-//        }
-//
-//        List<String> validTagNames = validTags.stream().map(Tag::getName).toList();
-//
-//        if (!invalidTag.isEmpty()) {
-//            // Error for invalid tag
-//            String errorMessage = "No tag matching: " + String.join(", ", invalidTag);
-//            model.addAttribute("error", errorMessage);
-//            model.addAttribute("invalidTag", invalidTag);  // Assuming only one tag is processed at a time
-//        }
 
         model.addAttribute("gardenPage", gardenPage);
         model.addAttribute("previousSearch", search);
