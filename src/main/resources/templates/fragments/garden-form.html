@@ -26,7 +26,7 @@
                         <div class="invalid-feedback" th:if="locationError != null" th:text="${locationError}"></div>
                     </div>
                     <div class="col-xl-2 col-12 d-flex justify-content-xl-end">
-                        <button id="toggleButton" class="btn btn-primary" type="button" onclick="handleToggle()">Show Manual</button>
+                        <button id="toggleButton" class="btn btn-primary" type="button" th:text="${locationError} ? 'Hide Manual' : 'Show Manual'" onclick="handleToggle()">Show Manual</button>
                     </div>
                 </div>
             </div>
