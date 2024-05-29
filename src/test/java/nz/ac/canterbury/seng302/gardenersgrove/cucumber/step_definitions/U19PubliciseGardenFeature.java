@@ -19,6 +19,9 @@ import org.springframework.validation.BindingResult;
 import org.junit.jupiter.api.Assertions;
 
 import java.util.ArrayList;
+
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 public class U19PubliciseGardenFeature {
@@ -54,7 +57,7 @@ public class U19PubliciseGardenFeature {
         authentication = mock(Authentication.class);
         gardenUserService = new GardenUserService(gardenUserRepository);
         gardenService = new GardenService(gardenRepository);
-        tagService = new TagService(tagRepository, gardenService);
+        tagService = new TagService(tagRepository, gardenService, profanityService);
     }
 
     @Given("I enter a new description {string}")

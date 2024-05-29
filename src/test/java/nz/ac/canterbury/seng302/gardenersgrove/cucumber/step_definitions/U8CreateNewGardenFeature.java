@@ -69,7 +69,7 @@ public class U8CreateNewGardenFeature {
         friendService = new FriendService(friendsRepository);
         plantService = new PlantService(plantRepository, gardenRepository);
         weatherAPIService = new WeatherAPIService(restTemplate, gardenService);
-        tagService = new TagService(tagRepository, gardenService);
+        tagService = new TagService(tagRepository, gardenService, profanityService);
         moderationService = new ModerationService();
         mockedModerationService = mock(ModerationService.class);
         gardenController = new GardenController(gardenService, plantService, userService, weatherAPIService, tagService, friendService, moderationService, profanityService);

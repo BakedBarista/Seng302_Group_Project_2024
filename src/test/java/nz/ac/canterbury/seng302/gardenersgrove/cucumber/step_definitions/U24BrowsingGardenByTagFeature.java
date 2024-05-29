@@ -15,6 +15,8 @@ import nz.ac.canterbury.seng302.gardenersgrove.repository.TagRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.ProfanityDetectedException;
+import nz.ac.canterbury.seng302.gardenersgrove.service.ProfanityService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -40,6 +42,7 @@ public class U24BrowsingGardenByTagFeature {
     public static GardenRepository mockGardenRepository;
     public static GardenRepository gardenRepository;
     public static TagRepository tagRepository;
+    public static ProfanityService profanityService;
 
     public static Pageable pageable;
     public static Page<Garden> tester;
@@ -51,7 +54,7 @@ public class U24BrowsingGardenByTagFeature {
         tagRepository = mock(TagRepository.class);
         mockGardenRepository = mock(GardenRepository.class);
         gardenService = new GardenService(mockGardenRepository);
-        tagService = new TagService(tagRepository, gardenService);
+        tagService = new TagService(tagRepository, gardenService, profanityService);
         pageable = mock(Pageable.class);
     }
 
@@ -67,7 +70,10 @@ public class U24BrowsingGardenByTagFeature {
         Double lat = 2.0;
         String gardenSize = "100";
         String gardenDescription = "Test Description";
-        tagService.getOrCreateTag(tag);
+        try{
+            tagService.getOrCreateTag(tag);
+        } catch(ProfanityDetectedException doNothing){
+        }
         testTag1 = tagService.getTag(tag);
         testGarden1 = new Garden(garden, streetNumber,streetName,suburb,city,country,postCode,lon,lat, gardenSize, gardenDescription);
         gardenService.addGarden(testGarden1);
