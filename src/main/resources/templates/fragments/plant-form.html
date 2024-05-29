@@ -20,7 +20,7 @@
         </div>
         <div class="mb-3">
             <label for="count" th:class="'form-label ' + ${#fields.hasErrors('count') ? 'is-invalid' : ''}">Count:</label>
-            <input type="number" id="count" name="count" th:class="'form-control ' + ${#fields.hasErrors('count') ? 'is-invalid' : ''}" th:value="${plant.count}" >
+            <input type="text" id="count" name="count" th:class="'form-control ' + ${#fields.hasErrors('count') ? 'is-invalid' : ''}" th:value="${plant.count}" >
             <div class="invalid-feedback" th:if="${#fields.hasErrors('count')}" th:errors="*{count}"></div>
         </div>
         <div class="mb-3">
