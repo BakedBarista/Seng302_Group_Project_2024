@@ -23,7 +23,7 @@ public class LocationAPIController {
     /**
      * API key
      */
-    @Value("${GEOAPIFY_AKI_KEY:}")
+    @Value("${geoapify.api.key}")
     private String location_apiKey;
 
     /**
