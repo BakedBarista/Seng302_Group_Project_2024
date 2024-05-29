@@ -52,6 +52,6 @@ public class LocationAPIController {
         logger.info("Result: {}", result.getBody());
 
 
-        return result;
+        return ResponseEntity.ok(result.getBody());
     }
 }
