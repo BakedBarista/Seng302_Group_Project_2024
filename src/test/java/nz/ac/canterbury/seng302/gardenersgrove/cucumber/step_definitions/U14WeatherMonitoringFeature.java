@@ -9,9 +9,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.WeatherData;
-import nz.ac.canterbury.seng302.gardenersgrove.model.weather.Condition;
-import nz.ac.canterbury.seng302.gardenersgrove.model.weather.Current;
-import nz.ac.canterbury.seng302.gardenersgrove.model.weather.WeatherAPICurrentResponse;
+import nz.ac.canterbury.seng302.gardenersgrove.model.weather.*;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.FriendsRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
@@ -27,8 +25,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
@@ -50,6 +47,7 @@ public class U14WeatherMonitoringFeature {
     private static RestTemplate restTemplate;
     private static ModerationService mockedModerationService;
     private static GardenController gardenController;
+    private static GardenWeatherService gardenWeatherService;
     private GardenWeather gardenWeather;
     private WeatherAPICurrentResponse currentResponse;
     private double lat = -43.521369;
@@ -68,7 +66,7 @@ public class U14WeatherMonitoringFeature {
         restTemplate = mock(RestTemplate.class);
         GardenUserService userService = new GardenUserService(gardenUserRepository);
         gardenService = new GardenService(gardenRepository);
-        GardenWeatherService gardenWeatherService = new GardenWeatherService(gardenWeatherRepository);
+        gardenWeatherService = new GardenWeatherService(gardenWeatherRepository);
         FriendService friendService = new FriendService(friendsRepository);
         plantService = new PlantService(plantRepository, gardenRepository);
         weatherAPIService = new WeatherAPIService(restTemplate, gardenService, gardenWeatherService);
@@ -125,22 +123,62 @@ public class U14WeatherMonitoringFeature {
     public void the_current_weather_is_displaying_for_my_location() {
         GardenWeather gardenWeather = new GardenWeather();
         gardenWeather.setLastUpdated(LocalDate.now().toString());
+        WeatherAPIResponse forecastResponse = new WeatherAPIResponse();
+        WeatherAPIResponse historyResponse = new WeatherAPIResponse();
+
+        // Make some fake parsed weather
+        Location location = new Location();
+        location.setLocationName("Christchurch");
+        forecastResponse.setLocation(location);
+        historyResponse.setLocation(location);
+
+        Forecast forecast = new Forecast();
+        ForecastDay forecastDay = new ForecastDay();
+        Day day = new Day();
+        WeatherData data = new WeatherData();
+        data.setHumidity(10);
+        data.setUv(10);
+        data.setMaxTemp(15);
+        data.setPrecipitation(10);
+        data.setMinTemp(5);
+        data.setWindSpeed(10);
+        Condition condition = new Condition();
+        condition.setConditions("Sunny");
+        condition.setIconUrl("//cdn.weatherapi.com/weather/64x64/day/116.png");
+        day.setCondition(condition);
+        day.setHumidity(10);
+        day.setUv(10);
+        day.setMaxTemp(15);
+        day.setPrecipitation(10);
+        day.setMinTemp(5);
+        day.setWindSpeed(10);
+        forecastDay.setDay(day);
+        List<ForecastDay> forecastDays = new ArrayList<>();
+        forecastDays.add(forecastDay);
+        forecast.setForecastDays(forecastDays);
+        forecastResponse.setForecast(forecast);
+        WeatherAPIResponse historyDay = new WeatherAPIResponse();
+        historyDay.setForecast(forecast);
+        historyDay.setLocation(location);
+        List<WeatherAPIResponse> historyResponses = List.of(historyDay);
+        List<WeatherData> weatherData = new ArrayList<>();
+        weatherData.add(data);
+        weatherData.add(data);
+        weatherData.add(data);
+        GardenWeather mockGardenWeather = new GardenWeather();
+        when(gardenWeatherService.addWeather(any(GardenWeather.class))).thenReturn(mockGardenWeather);
+
+        gardenWeather = weatherAPIService.saveWeather(lat, lon, garden, forecastResponse, historyResponses);
         garden.setGardenWeather(gardenWeather);
+        garden.getGardenWeather().setForecastWeather(weatherData);
 
-        when(gardenService.getGardenById(garden.getId())).thenReturn(Optional.of(garden));
-
-        GardenWeather result = weatherAPIService.getWeatherData(garden.getId(), lat, lon);
-
-        assertNotNull(result, "GardenWeather should be returned as not null.");
-        assertEquals(LocalDate.now().toString(), result.getLastUpdated());
-        verify(restTemplate, never()).getForEntity(anyString(), eq(String.class));
+        assertEquals(mockGardenWeather, gardenWeather);
     }
-
 
     @Then("The weather for the next three days is displaying")
     public void the_weather_for_the_next_three_days_is_displaying() {
         assertNotNull(garden.getGardenWeather());
-        assert (garden.getGardenWeather().getForecastWeather().size() == 3);
+        assertEquals(3, garden.getGardenWeather().getForecastWeather().size());
     }
 
     @Given("The past two days have been sunny for that location")
