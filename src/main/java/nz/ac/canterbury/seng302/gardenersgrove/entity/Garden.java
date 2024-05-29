@@ -1,39 +1,20 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
-import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationConstants.GARDEN_REGEX;
-
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.Lob;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Transient;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidEuropeanDecimal;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationConstants.GARDEN_REGEX;
 
 
 /**
@@ -96,24 +77,22 @@ public class Garden {
 
     @OneToMany(mappedBy = "garden", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Plant> plants;
-    private String forecastLastUpdated = null;
-    private String timezoneId = null;
 
     @ManyToOne
     @JoinColumn(name = "owner_id", nullable = false)
     private GardenUser owner;
 
-    @Lob
-    private String weatherForecast;
-
-    @Lob
-    private String weatherPrevious;
-
     @Column(nullable = false)
     private boolean displayWeatherAlert = true;
 
     @Column
+    private LocalDate alertHidden;
+
+    @Column
     private boolean wateringRecommendation;
+
+    @OneToOne(mappedBy = "garden", cascade = CascadeType.ALL, orphanRemoval = true)
+    private GardenWeather gardenWeather;
 
     @ManyToMany
     @JoinTable(name="garden_tags", joinColumns = @JoinColumn(name="garden_id"), inverseJoinColumns = @JoinColumn(name="tag_id"))
@@ -191,94 +170,6 @@ public class Garden {
 
     public String getDescription() {
         return this.description;
-    }
-
-    /**
-     * Gets the weather forecast from the Database and deserialises the JSON to a List of Maps
-     * @return the weather forecast in a list of maps
-     */
-    public List<Map<String, Object>> getWeatherForecast() {
-        ObjectMapper objectMapper = new ObjectMapper()
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-        if (weatherForecast == null) {
-            return Collections.emptyList();
-        }
-
-        try {
-            return objectMapper.readValue(weatherForecast, new TypeReference<List<Map<String, Object>>>() {});
-        } catch (JsonProcessingException e) {
-            logger.error("Error processing JSON", e);
-            return Collections.emptyList();
-        }
-    }
-
-    /**
-     * Sets the weather forecast in the database and serialises the forecast data into a JSON string
-     * @param weatherForecast the weather data a List of Maps
-     */
-    public void setWeatherForecast(List<Map<String, Object>> weatherForecast) {
-        ObjectMapper objectMapper = new ObjectMapper()
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        try {
-            this.weatherForecast = objectMapper.writeValueAsString(weatherForecast);
-
-        } catch (JsonProcessingException e) {
-            logger.error("Issue converting weather forecast back into a String", e);
-            this.weatherForecast = "";
-        }
-    }
-
-    /**
-     * Gets the previous weather from the Database and deserialises the JSON to a List of Maps
-     * @return the weather forecast in a list of maps
-     */
-    public List<Map<String, Object>> getWeatherPrevious() {
-        ObjectMapper objectMapper = new ObjectMapper()
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-        if (weatherForecast == null) {
-            return Collections.emptyList();
-        }
-
-        try {
-            return objectMapper.readValue(weatherForecast, new TypeReference<List<Map<String, Object>>>() {});
-        } catch (JsonProcessingException e) {
-            logger.error("Error processing JSON", e);
-            return Collections.emptyList();
-        }
-    }
-
-    /**
-     * Sets the previous weather in the database and serialises the forecast data into a JSON string
-     * @param weatherPrevious the weather data a List of Maps
-     */
-    public void setWeatherPrevious(List<Map<String, Object>> weatherPrevious) {
-        ObjectMapper objectMapper = new ObjectMapper()
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        try {
-            this.weatherPrevious = objectMapper.writeValueAsString(weatherPrevious);
-
-        } catch (JsonProcessingException e) {
-            logger.error("Issue converting weather forecast back into a String", e);
-            this.weatherPrevious = "";
-        }
-    }
-
-    public String getForecastLastUpdated() {
-        return forecastLastUpdated;
-    }
-
-    public void setForecastLastUpdated(String forecastLastUpdated) {
-        this.forecastLastUpdated = forecastLastUpdated;
-    }
-
-    public String getTimezoneId() {
-        return timezoneId;
-    }
-
-    public void setTimezoneId(String timezoneId) {
-        this.timezoneId = timezoneId;
     }
 
     public String getStreetNumber() {
@@ -381,5 +272,21 @@ public class Garden {
      */
     public String getTagsString() {
         return String.join(",", tags.stream().sorted().map(Tag::getName).toList());
+    }
+
+    public GardenWeather getGardenWeather() {
+        return gardenWeather;
+    }
+
+    public void setGardenWeather(GardenWeather gardenWeather) {
+        this.gardenWeather = gardenWeather;
+    }
+
+    public LocalDate getAlertHidden() {
+        return alertHidden;
+    }
+
+    public void setAlertHidden(LocalDate alertHidden) {
+        this.alertHidden = alertHidden;
     }
 }

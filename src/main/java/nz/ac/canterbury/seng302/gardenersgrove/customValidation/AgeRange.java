@@ -61,12 +61,15 @@ public @interface AgeRange {
                 return true;
             }
 
+            
+
             Clock clock = context.getClockProvider().getClock();
             LocalDate now = clock.instant().atZone(clock.getZone()).toLocalDate();
 
             int age = Period.between(dob, now).getYears();
-
-            System.out.println(age);
+            
+            //Age cannot be less than zero
+            age = Math.max(age,0);
 
             return minAge <= age && age <= maxAge;
         }

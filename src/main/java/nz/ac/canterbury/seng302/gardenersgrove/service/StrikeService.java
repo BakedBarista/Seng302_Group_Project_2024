@@ -22,15 +22,18 @@ public class StrikeService {
     private static final int STRIKES_FOR_DISABLING = 6;
     private static final long DISABLE_DURATION_DAYS = 7;
     private static final long SECONDS_IN_DAY = 24L * 60 * 60;
-
+    private final String WARNINGMESSAGE = "You have entered five inappropriate tags, your account will be blocked for a week if you enter one more.";
+    private final String BLOCKMESSAGE = "You have entered too many inappropriate tags, your account is now blcoked for a week.";
     private Logger logger = LoggerFactory.getLogger(StrikeService.class);
 
     private GardenUserService userService;
     private GardenUserRepository userRepository;
     private Clock clock;
+    private EmailSenderService emailSenderService;
 
-    public StrikeService(GardenUserService userService, GardenUserRepository userRepository, Clock clock) {
+    public StrikeService(GardenUserService userService, EmailSenderService emailSenderService, GardenUserRepository userRepository, Clock clock) {
         this.userService = userService;
+        this.emailSenderService = emailSenderService;
         this.userRepository = userRepository;
         this.clock = clock;
     }
@@ -50,9 +53,9 @@ public class StrikeService {
         count += 1;
         user.setStrikeCount(count);
         userService.addUser(user);
-
+        //Send warning email
         if (count == STRIKES_FOR_WARNING) {
-            // TODO: send warning email
+            emailSenderService.sendEmail(user.getEmail(), "Strike Warning", WARNINGMESSAGE);
 
             return AddStrikeResult.WARNING;
         } else if (count >= STRIKES_FOR_DISABLING) {
@@ -62,7 +65,7 @@ public class StrikeService {
             user.setAccountDisabledExpiryInstant(expiryInstant);
             userService.addUser(user);
 
-            // TODO: send confirmation email
+            emailSenderService.sendEmail(user.getEmail(), "Strike Warning", BLOCKMESSAGE);
 
             return AddStrikeResult.BLOCK;
         }

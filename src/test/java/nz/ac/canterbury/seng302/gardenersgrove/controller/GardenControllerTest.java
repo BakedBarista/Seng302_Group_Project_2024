@@ -4,13 +4,17 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.GardenController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.WeatherData;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
-import nz.ac.canterbury.seng302.gardenersgrove.service.weatherAPI.WeatherAPIService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.weather.WeatherAPIService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -257,7 +261,7 @@ public class GardenControllerTest {
         Model model = mock(Model.class);
         Garden garden = new Garden("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"100","test description");
         when(gardenService.getGardenById(1)).thenReturn(Optional.of(garden));
-        List<List<Map<String, Object>>> weatherResult = new ArrayList<>();
+        GardenWeather weatherResult = new GardenWeather();
         when(weatherAPIService.getWeatherData(1, 0.0, 0.0)).thenReturn(weatherResult);
         String result = gardenController.gardenDetail(1L, model);
         assertEquals("gardens/gardenDetails", result);
@@ -353,7 +357,7 @@ public class GardenControllerTest {
     void testSearchPublicGardens_WithInvalidTag() {
         Model model = mock(Model.class);
 
-        List<String> tags = List.of("validTag", "invalidTag");
+        String tags = "validTag,invalidTag";
         when(tagService.getTag("validTag")).thenReturn(new Tag("validTag"));
         when(tagService.getTag("invalidTag")).thenReturn(null);
 
@@ -365,9 +369,7 @@ public class GardenControllerTest {
 
         String viewName = gardenController.searchPublicGardens(0, 10, "", tags, model);
 
-
-        verify(model).addAttribute("error", "No tag matching: invalidTag");
-        verify(model).addAttribute("invalidTag", "invalidTag");
+        verify(model).addAttribute("tagString", tags);
         assertEquals("gardens/publicGardens", viewName);
     }
 }
