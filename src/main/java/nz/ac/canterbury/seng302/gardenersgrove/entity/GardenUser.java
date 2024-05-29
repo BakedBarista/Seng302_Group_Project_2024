@@ -6,13 +6,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 
 /**
- * Entity class reflecting an entry of fname, lname, email, password and date of birth(DOB)
+ * Entity class reflecting an entry of fname, lname, email, password and date of birth
  * Note the @link{Entity} annotation required for declaring this as a persistence entity
  */
 @Entity
@@ -33,9 +34,8 @@ public class GardenUser {
     @Column(nullable = false)
     private String password;
 
-
     @Column(nullable = true)
-    private String DOB;
+    private LocalDate dateOfBirth;
 
     @Column(nullable = true)
     private String profilePictureContentType;
@@ -44,13 +44,13 @@ public class GardenUser {
     @Lob
     private byte[] profilePicture;
 
-    // these are a set of friendships in the friends table where the user is user1
-    @OneToMany(mappedBy = "user1")
-    private Set<Friends> friendshipsAsUser1 = new HashSet<>();
+    // these are a set of friendships in the friends table where the user is sender
+    @OneToMany(mappedBy = "sender")
+    private Set<Friends> friendshipsAsSender = new HashSet<>();
 
-    // these are a set of friendships in the friends table where the user is user2
-    @OneToMany(mappedBy = "user2")
-    private Set<Friends> friendshipsAsUser2 = new HashSet<>();
+    // these are a set of friendships in the friends table where the user is receiver
+    @OneToMany(mappedBy = "receiver")
+    private Set<Friends> friendshipsAsReceiver = new HashSet<>();
 
 
     @Column(nullable = true)
@@ -65,6 +65,15 @@ public class GardenUser {
     @Column(nullable = true)
     private Instant resetPasswordTokenExpiryInstant;
 
+    @Column(nullable = false, columnDefinition = "integer default 0")
+    private int strikeCount = 0;
+
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean accountDisabled = false;
+
+    @Column(nullable = true)
+    private Instant accountDisabledExpiryInstant;
+
     /**
      * JPA required no-args constructor
      */
@@ -77,35 +86,16 @@ public class GardenUser {
      * @param lname last name of user 
      * @param email email of user 
      * @param password password of user 
-     * @param DOB date of birth of use 
+     * @param dateOfBirth date of birth of use
      */
-    public GardenUser(String fname, String lname, String email, String password, String DOB) {
+    public GardenUser(String fname, String lname, String email, String password, LocalDate dateOfBirth) {
         this.fname = fname;
         this.lname = lname;
         this.email = email;
-        this.DOB = DOB;
+        this.dateOfBirth = dateOfBirth;
 
         this.setPassword(password);
     }
-
-    /**
-     * Gets the set of friends where user is user 2
-     *
-     * @return Set<Friends> both their id and the other users id
-     */
-    public Set<Friends> getFriendshipsAsUser2() {
-        return friendshipsAsUser2;
-    }
-
-    /**
-     * Gets the set of friends where user is user 1
-     *
-     * @return Set<Friends> both their id and the other users id
-     */
-    public Set<Friends> getFriendshipsAsUser1() {
-        return friendshipsAsUser1;
-    }
-
 
     /**
      * Gets the authorities granted to the user
@@ -162,6 +152,19 @@ public class GardenUser {
     }
 
     /**
+     * Constructs the user's full name from their first and last names
+     *
+     * @return the user's full name
+     */
+    public String getFullName() {
+        if (lname != null) {
+            return fname + " " + lname;
+        } else {
+            return fname;
+        }
+    }
+
+    /**
      * Setter for the user's email
      *
      * @param email the user's email
@@ -182,10 +185,10 @@ public class GardenUser {
     /**
      * Setter for the user's date of birth
      *
-     * @param DOB the user's date of birth
+     * @param dateOfBirth the user's date of birth
      */
-    public void setDOB(String DOB) {
-        this.DOB = DOB;
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
     }
 
     /**
@@ -193,8 +196,8 @@ public class GardenUser {
      *
      * @return user's date of birth
      */
-    public String getDOB() {
-        return DOB;
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
     }
 
     /**
@@ -313,7 +316,68 @@ public class GardenUser {
         return this.resetPasswordTokenExpiryInstant;
     }
 
+    /**
+     * Sets the id of the user. This method only intended for use in tests.
+     * 
+     * @param id the id of the user
+     */
     public void setId(long id) {
         this.id = id;
+    }
+
+    /**
+     * Gets the strike count of the user
+     *
+     * @return the number of strikes the user has accumulated
+     */
+    public int getStrikeCount() {
+        return strikeCount;
+    }
+
+    /**
+     * Sets the strike count of the user
+     * 
+     * @param strikeCount the number of strikes the user has accumulated
+     */
+    public void setStrikeCount(int strikeCount) {
+        this.strikeCount = strikeCount;
+    }
+
+    /**
+     * Checks if the user's account is disabled
+     *
+     * @return true if the account is disabled, otherwise false
+     */
+    public boolean isAccountDisabled() {
+        return accountDisabled;
+    }
+
+    /**
+     * Sets the accountDisabled status of the user
+     *
+     * @param accountDisabled true if the account is disabled, otherwise false
+     */
+    public void setAccountDisabled(boolean accountDisabled) {
+        this.accountDisabled = accountDisabled;
+    }
+
+    /**
+     * Gets the time at which the user's account will be re-enabled, if there is one
+     * 
+     * @return the time at which the user's account will be re-enabled
+     */
+    public Instant getAccountDisabledExpiryInstant() {
+        return accountDisabledExpiryInstant;
+    }
+
+    /**
+     * Sets the time at which the user's account will be re-enabled, or null if the
+     * account should not be automatically re-enabled
+     *
+     * @param accountDisabledExpiryInstant the time at which the user's account will
+     *                                     be re-enabled
+     */
+    public void setAccountDisabledExpiryInstant(Instant accountDisabledExpiryInstant) {
+        this.accountDisabledExpiryInstant = accountDisabledExpiryInstant;
     }
 }

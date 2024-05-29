@@ -75,9 +75,20 @@ public interface GardenUserRepository extends CrudRepository<GardenUser, Long> {
      * Removes all expired reset password tokens from users
      *
      * @param now The current time
+     * @return The number of users affected by this method call
      */
     @Modifying
     @Query("UPDATE GardenUser u SET u.resetPasswordToken = null, u.resetPasswordTokenExpiryInstant = null WHERE u.resetPasswordTokenExpiryInstant < ?1")
     int removeExpiredResetPasswordTokens(Instant now);
+
+    /**
+     * Re-enables all user accounts that were scheduled to be re-enabled.
+     * 
+     * @param now The current time
+     * @return The number of users affected by this method call
+     */
+    @Modifying
+    @Query("UPDATE GardenUser u SET u.strikeCount = 0, u.accountDisabled = false, u.accountDisabledExpiryInstant = null WHERE u.accountDisabledExpiryInstant < ?1")
+    int reenableScheduledUsers(Instant now);
 }
 

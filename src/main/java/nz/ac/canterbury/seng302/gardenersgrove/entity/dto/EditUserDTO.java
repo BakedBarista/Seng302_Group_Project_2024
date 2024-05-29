@@ -1,12 +1,13 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity.dto;
 
-import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationConstants.*;
-
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import nz.ac.canterbury.seng302.gardenersgrove.customValidation.AgeRange;
+import nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidDate;
+
+import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationConstants.*;
 
 /**
  * Data transfer object for the edit user form
@@ -18,7 +19,7 @@ public class EditUserDTO {
     @Column(nullable = false)
     private String fname;
 
-    @Pattern(regexp = NAME_REGEX, message = "Last name must only include letters, spaces,hyphens or apostrophes")
+    @Pattern(regexp = NAME_REGEX, message = "Last name must only include letters, spaces, hyphens or apostrophes")
     @Size(min = 0, max = 64, message = "Last Name must be 64 characters long or less.")
     @Column(nullable = true)
     private String lname;
@@ -28,10 +29,10 @@ public class EditUserDTO {
     @Pattern(regexp = EMAIL_REGEX, message = "Email address must be in the form ‘jane@doe.nz’")
     private String email;
 
-    @Pattern(regexp = DATE_REGEX, message = "Date is not in valid format, (DD/MM/YYYY)")
+    @ValidDate()
     @AgeRange(minAge = USER_MIN_AGE, message = "You must be 13 years or older to create an account")
     @AgeRange(maxAge = USER_MAX_AGE, message = "The maximum age allowed is 120 years")
-    private String DOB;
+    private String dateOfBirth;
 
     public String getFname() {
         return fname;
@@ -75,15 +76,11 @@ public class EditUserDTO {
         this.email = email;
     }
 
-    public String getDOB() {
-        return DOB;
+    public String getDateOfBirth() {
+        return dateOfBirth;
     }
 
-    public void setDOB(String DOB) {
-        if (DOB == null || DOB.isEmpty()) {
-            this.DOB = null;
-        } else {
-            this.DOB = DOB;
-        }
+    public void setDateOfBirth(String dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
     }
 }

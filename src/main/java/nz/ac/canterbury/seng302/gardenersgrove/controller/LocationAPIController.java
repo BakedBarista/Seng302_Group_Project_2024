@@ -5,7 +5,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URLEncoder;
@@ -23,14 +26,13 @@ public class LocationAPIController {
     @Value("${geoapify.api.key}")
     private String location_apiKey;
 
-
     /**
      * Return result from the location API request
      *
      * @param currentValue The value where the location data is requested
      * @return location information in json format
      */
-    @GetMapping("/get_location")
+    @GetMapping("/location-autocomplete")
     public ResponseEntity<String> getLocationData(@RequestParam String currentValue) {
         try {
             Thread.sleep(300);
@@ -45,12 +47,11 @@ public class LocationAPIController {
                 + "&apiKey=" + location_apiKey;
 
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+        ResponseEntity<String> result = restTemplate.getForEntity(url, String.class);
+        logger.info("Result: {}", result.getStatusCode());
+        logger.info("Result: {}", result.getBody());
 
 
-        return response;
-
+        return result;
     }
 }
-
-

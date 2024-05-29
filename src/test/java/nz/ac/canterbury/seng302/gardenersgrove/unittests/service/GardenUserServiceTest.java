@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.unittests.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
 import java.util.Optional;
@@ -38,6 +39,15 @@ public class GardenUserServiceTest {
 
         Mockito.verify(mockRepository).findAll();
         assertEquals(allUsers, users);
+    }
+
+    @Test
+    public void givenUserWithEmailExists_whenAddUserCalled_thenThrowsException() {
+        testUser1.setEmail("email@example.com");
+        testUser2.setEmail("email@example.com");
+        Mockito.when(mockRepository.findByEmail(testUser1.getEmail())).thenReturn(Optional.of(testUser1));
+
+        assertThrows(IllegalStateException.class, () -> gardenUserService.addUser(testUser2));
     }
 
     @Test

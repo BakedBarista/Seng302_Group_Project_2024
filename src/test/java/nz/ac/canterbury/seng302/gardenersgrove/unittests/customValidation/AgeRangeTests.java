@@ -40,7 +40,7 @@ public class AgeRangeTests {
         when(annotation.maxAge()).thenReturn(100);
 
         validator.initialize(annotation);
-        boolean result = validator.isValid("01/01/2006", context);
+        boolean result = validator.isValid("2006-01-01", context);
 
         assertTrue(result);
     }
@@ -52,7 +52,7 @@ public class AgeRangeTests {
         when(annotation.maxAge()).thenReturn(100);
 
         validator.initialize(annotation);
-        boolean result = validator.isValid("01/01/1924", context);
+        boolean result = validator.isValid("1924-01-01", context);
 
         assertTrue(result);
     }
@@ -64,7 +64,7 @@ public class AgeRangeTests {
         when(annotation.maxAge()).thenReturn(100);
 
         validator.initialize(annotation);
-        boolean result = validator.isValid("01/01/2000", context);
+        boolean result = validator.isValid("2000-01-01", context);
 
         assertTrue(result);
     }
@@ -76,7 +76,7 @@ public class AgeRangeTests {
         when(annotation.maxAge()).thenReturn(100);
 
         validator.initialize(annotation);
-        boolean result = validator.isValid("01/01/2007", context);
+        boolean result = validator.isValid("2007-01-01", context);
 
         assertFalse(result);
     }
@@ -88,7 +88,7 @@ public class AgeRangeTests {
         when(annotation.maxAge()).thenReturn(100);
 
         validator.initialize(annotation);
-        boolean result = validator.isValid("01/01/1900", context);
+        boolean result = validator.isValid("1900-01-01", context);
 
         assertFalse(result);
     }
@@ -112,7 +112,7 @@ public class AgeRangeTests {
         when(annotation.maxAge()).thenReturn(100);
 
         validator.initialize(annotation);
-        boolean result = validator.isValid("1/1/0", context);
+        boolean result = validator.isValid("0-01-01", context);
 
         assertTrue(result);
     }

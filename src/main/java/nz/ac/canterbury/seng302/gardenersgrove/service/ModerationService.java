@@ -19,13 +19,14 @@ public class ModerationService {
 
     private static final String MODERATION_API_URL = "https://api.openai.com/v1/moderations";
 
+
     /**
      * Calls OPENAI Text Moderation API with given description
      * @param description garden description
      * @return moderation response in json format
      */
     public ResponseEntity<String> moderateDescription(String description) {
-        logger.info("Moderating description {}", description);
+        logger.info("Moderating description");
 
         String requestBody = "{\"input\": \"" + description + "\"}";
         HttpHeaders headers = new HttpHeaders();
@@ -35,7 +36,9 @@ public class ModerationService {
         HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
 
         RestTemplate restTemplate = new RestTemplate();
+        
         ResponseEntity<String> responseEntity = restTemplate.postForEntity(MODERATION_API_URL, requestEntity, String.class);
+
 
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
             logger.info("Description moderated");
@@ -51,15 +54,20 @@ public class ModerationService {
      * @return
      */
     public boolean checkIfDescriptionIsFlagged(String description) {
-        String responseBody = moderateDescription(description).getBody();
-
-        try {
-            // note - this may cause problems if OpenAI changes the structure of the content they
-            // return as this doesn't properly parse the json string - could not find anything in java to do this
-            String flaggedValue = responseBody.split("\"flagged\": ")[1].split(",")[0];
-            return flaggedValue.equals("true");
-        } catch (NullPointerException e) {
+        if (description == null || description.isEmpty()) {
             return false;
         }
+
+        String responseBody = moderateDescription(description).getBody();
+
+        // note - this may cause problems if OpenAI changes the structure of the content they
+        // return as this doesn't properly parse the json string - could not find anything in java to do this
+        if (responseBody != null) {
+            String flaggedValue = responseBody.split("\"flagged\": ")[1].split(",")[0];
+            return flaggedValue.equals("true");
+        }
+
+        // if no response, return false...
+        return false;
     }
 }

@@ -9,7 +9,7 @@
     </head>
     <body>
         <nav th:replace="~{fragments/navbar :: navbar}"></nav>
-        <main class="text-center align-items-center">
+        <main class="text-center align-items-center main-container">
             <br />
             <br />
             <br />
@@ -20,9 +20,11 @@
             <br />
             <br />
             <br />
-            <h1>Welcome to Gardeners Grove</h1>
-            <h3>The world's best garden tracker</h3>
-            <img th:src="@{/img/hero.jpeg}" alt="Hero" />
+            <img th:src="@{/img/gg-logo.svg}" alt="Gardeners Grove" />
+            <br />
+            <br />
+            <br />
+            <p>Garden management reimagined</p>
         </main>
         <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
     </body>

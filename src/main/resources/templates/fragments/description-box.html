@@ -5,26 +5,9 @@
     </head>
     <body>
         <div th:fragment="description-box-with-char-count">
-            <label for="description"> Garden Description: </label>
-            <input type="text" class="form-control" id="description" placeholder="Description"
-                   th:name="description" th:value="${garden.description}" data-cy="size" autofocus>
-            <div class = flex-box>
-                <div th:if="${profanity != null}" style="color: red;"><span th:text="${profanity}"></span></div>
-                <div class = "errorMessage" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
-                <div class = "errorMessage" th:if="${!#fields.hasErrors('description')}"></div>
-                <p class = "numberOfCharactersText" id = "numberOfCharactersText"></p>
-            </div>
-
-            <script>
-                const numberOfCharactersText = document.getElementById("numberOfCharactersText");
-                const descriptionTextBox = document.getElementById("description");
-                numberOfCharactersText.innerText = descriptionTextBox.value.length + "/512";
-
-                descriptionTextBox.addEventListener("input", function () {
-                    console.log(descriptionTextBox.value.length);
-                    numberOfCharactersText.innerText = descriptionTextBox.value.length + "/512";
-                })
-            </script>
+            <label for="description"
+                   th:class="${#fields.hasErrors('description') ? 'is-invalid' : ''}"> Garden Description: </label>
         </div>
+
     </body>
 </html>

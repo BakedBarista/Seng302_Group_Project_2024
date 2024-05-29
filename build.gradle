@@ -84,11 +84,6 @@ sonar {
     property "sonar.host.url", "https://sonarqube.csse.canterbury.ac.nz"
 		property "sonar.login", "$System.env.SONARQUBE_TOKEN"
 		property "sonar.sources", "src/main/java,src/main/resources"
+		property "sonar.qualitygate.wait", "true"
   }
-}
-
-task dev(type: org.springframework.boot.gradle.tasks.run.BootRun, dependsOn: 'bootRun') {
-	group = 'Application'
-	description = 'Runs the application with the dev profile'
-	environment "SPRING_PROFILES_ACTIVE", "dev"
 }

@@ -2,8 +2,6 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
-import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import org.slf4j.Logger;
@@ -16,8 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import java.util.List;
 
 /**
- * This is a basic spring boot controller, note the @link{Controller} annotation which defines this.
- * This controller defines endpoints as functions with specific HTTP mappings
+ * This controller defines the base application end points.
  */
 @Controller
 public class ApplicationController {
@@ -26,14 +23,15 @@ public class ApplicationController {
     private GardenService gardenService;
     private GardenUserService gardenUserService;
 
+    @Autowired
     public ApplicationController(GardenService gardenService, GardenUserService gardenUserService) {
         this.gardenService = gardenService;
         this.gardenUserService = gardenUserService;
     }
 
     /**
-     * Redirects GET default url '/' to '/demo'
-     * @return redirect to /demo
+     * Controls the initial home page controller when navigating to '/'
+     * @return the home page
      */
     @GetMapping("/")
     public String home( Model model) {

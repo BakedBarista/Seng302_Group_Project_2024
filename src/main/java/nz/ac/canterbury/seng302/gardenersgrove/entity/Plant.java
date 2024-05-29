@@ -1,54 +1,47 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
-
-import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationConstants.GARDEN_REGEX;
-
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
+import java.time.LocalDate;
 
 
 /**
  * Entity class for Plants
  */
-
 @Entity
-public class Plant {
+public class Plant extends BasePlant {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Plant name cannot by empty and must only include letters, numbers, spaces, dots, commas, hyphens or apostrophes")
-    @Pattern(regexp = GARDEN_REGEX, message = "Plant name cannot by empty and must only include letters, numbers, spaces, dots, commas, hyphens or apostrophes")
-    @Column(nullable = false)
-    private String name;
-
-    @Pattern(regexp = "^[0-9]*$", message = "Plant count must be a positive number")
-    @Column(nullable = false)
-    private String count;
-
-    @Size(min = 0, max = 512, message = "Plant description must be less than 512 characters")
-    @Column(nullable = false, length = 512)
-    private String description;
-
     @Column()
-    private String plantedDate;
-
-    @ManyToOne
-    @JoinColumn
-    private Garden garden;
+    protected LocalDate plantedDate;
 
     @Column(nullable = true)
-    private String plantImagePath;
+    protected String plantImageContentType;
 
-    public Plant(String name, String count, String description, String plantedDate) {
+    @Column(nullable = true, columnDefinition = "MEDIUMBLOB")
+    @Lob
+    protected byte[] plantImage;
+
+    public Plant(String name, String count, String description, LocalDate plantedDate) {
         this.name = name;
         this.count = count;
         this.description = description;
         this.plantedDate = plantedDate;
-        this.plantImagePath = "/default.png";
+    }
+
+    public Plant(PlantDTO plantDTO) {
+        this.name = plantDTO.getName();
+        this.count = plantDTO.getCount();
+        this.description = plantDTO.getDescription();
+
+        LocalDate localDate = null;
+        if (plantDTO.getPlantedDate() != null && !plantDTO.getPlantedDate().isEmpty()) {
+            localDate = LocalDate.parse(plantDTO.getPlantedDate());
+        }
+        this.plantedDate = localDate;
     }
 
     public Plant() {}
@@ -61,49 +54,26 @@ public class Plant {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getCount() {
-        return count;
-    }
-
-    public void setCount(String count) {
-        this.count = count;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getPlantedDate() {
+    public LocalDate getPlantedDate() {
         return plantedDate;
     }
 
-    public void setPlantedDate(String plantedDate) {
+    public void setPlantedDate(LocalDate plantedDate) {
         this.plantedDate = plantedDate;
     }
 
-    public void setGarden(Garden garden) {
-        this.garden = garden;
+    public String getPlantImageContentType() {
+        return plantImageContentType;
     }
 
-    public Garden getGarden() {
-        return garden;
+    public byte[] getPlantImage() {
+        return plantImage;
     }
 
-    public String getPlantImagePath() {return plantImagePath;}
-
-    public void setPlantImagePath(String plantImagePath) { this.plantImagePath = plantImagePath;}
+    public void setPlantImage(String contentType, byte[] plantImage) {
+        this.plantImageContentType = contentType;
+        this.plantImage = plantImage;
+    }
 
     @Override
     public String toString() {
@@ -111,9 +81,8 @@ public class Plant {
                 "id=" + id +
                 ", name='" + this.name + '\'' +
                 ", count='" + this.count + '\'' +
-                ", description ='" + this.description + '\'' +
-                ", plantedDate ='" + this.plantedDate + '\'' +
+                ", description='" + this.description + '\'' +
+                ", plantedDate='" + this.plantedDate + '\'' +
                 '}';
     }
-
 }
