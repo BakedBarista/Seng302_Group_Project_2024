@@ -1,7 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unittests.service;
 
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -27,7 +27,7 @@ public class ProfanityServiceTest {
     @Test
     void givenListBadWords_ThenReturnTrue(){
         ArrayList<String> result = profanityService.badWordsFound("fuck");
-        assertTrue(!result.isEmpty());
+        assertFalse(result.isEmpty());
     }
 
     @Test
@@ -45,6 +45,28 @@ public class ProfanityServiceTest {
     @Test
     void givenListBadWordsDisguised_ThenReturnTrue(){
         ArrayList<String> result = profanityService.badWordsFound("b!tch");
-        assertTrue(!result.isEmpty());
+        assertFalse(result.isEmpty());
+    }
+
+    @Test
+    void testBadWordsFound_WithLeetSpeak() {
+        String input = "@ss";
+        ArrayList<String> result = profanityService.badWordsFound(input);
+        assertEquals(1, result.size());
+        assertEquals("ass", result.get(0));
+    }
+
+    @Test
+    void testIsStandaloneWord_Standalone() {
+        String input = "badword in a sentence.";
+        boolean result = profanityService.isStandaloneWord(input, 0, 7);
+        assertTrue(result);
+    }
+
+    @Test
+    void testIsStandaloneWord_NotStandalone() {
+        String input = "badwordin a sentence.";
+        boolean result = profanityService.isStandaloneWord(input, 0, 7);
+        assertFalse(result);
     }
 }
