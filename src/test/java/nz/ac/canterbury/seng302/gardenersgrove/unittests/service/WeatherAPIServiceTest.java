@@ -252,16 +252,21 @@ class WeatherAPIServiceTest {
         WeatherAPICurrentResponse response = weatherAPIService.getCurrentWeatherFromAPI(lat, lng);
 
         assertNotNull(response);
-        assertNull(response.getLocation().getLocationName());
+        assertNull(response.getLocation());
 
         // API should only call once for current weather
         verify(restTemplate, times(1)).getForEntity(anyString(), eq(String.class));
     }
 
-    @Test
-    void RequestApi_BadLatAndLng_ReturnNoResponse() {
+    @ParameterizedTest
+    @CsvSource({
+            "400, Bad Request",
+            "403, Forbidden",
+            "500, Internal server error"
+    })
+    void RequestApi_BadLatAndLng_ReturnNoResponse(String errorCode, String errorMessage) {
         String url = "fakeurl";
-        HttpClientErrorException badRequestException = HttpClientErrorException.create(HttpStatusCode.valueOf(400) ,"Bad Request", null, null, null);
+        HttpClientErrorException badRequestException = HttpClientErrorException.create(HttpStatusCode.valueOf(Integer.parseInt(errorCode)) ,errorMessage , null, null, null);
 
         doThrow(badRequestException).when(restTemplate).getForEntity(anyString(), eq(String.class));
         String response = weatherAPIService.requestAPI(url);
@@ -272,33 +277,6 @@ class WeatherAPIServiceTest {
         verify(restTemplate, times(1)).getForEntity(anyString(), eq(String.class));
     }
 
-    @Test
-    void RequestApi_BadApiKey_ReturnNoResponse() {
-        String url = "fakeurl";
-        HttpClientErrorException badRequestException = HttpClientErrorException.create(HttpStatusCode.valueOf(403) ,"Forbidden", null, null, null);
-
-        doThrow(badRequestException).when(restTemplate).getForEntity(anyString(), eq(String.class));
-        String response = weatherAPIService.requestAPI(url);
-
-        assertEquals("No Response", response);
-
-        // API should only call once
-        verify(restTemplate, times(1)).getForEntity(anyString(), eq(String.class));
-    }
-
-    @Test
-    void RequestApi_UnexpectedIssue_ReturnNoResponse() {
-        String url = "fakeurl";
-        HttpClientErrorException badRequestException = HttpClientErrorException.create(HttpStatusCode.valueOf(500) ,"Internal server error", null, null, null);
-
-        doThrow(badRequestException).when(restTemplate).getForEntity(anyString(), eq(String.class));
-        String response = weatherAPIService.requestAPI(url);
-
-        assertEquals("No Response", response);
-
-        // API should only call once
-        verify(restTemplate, times(1)).getForEntity(anyString(), eq(String.class));
-    }
 
     @Test
     void SaveWeather_ValidInput_WeatherSavedToGarden() {
