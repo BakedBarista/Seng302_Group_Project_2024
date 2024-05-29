@@ -6,7 +6,7 @@ let locationMatch = false;
  *
  * @param {HTMLElement} containerElement - The container element where the autocomplete feature is added.
  * @param {(result: object | string) => void} callback - The callback function to be called when an option is selected. Called with the option object if a match was found, otherwise called with the input value.
- * @param {{ apiUrl: string, notFoundMessageHtml: string, placeholder: string, acceptButton: boolean }} options - Additional named options. All of these are required.
+ * @param {{ apiUrl: string, notFoundMessageHtml: string, placeholder: string, acceptButton: boolean, appendUserInput: boolean }} options - Additional named options. All of these are required.
  * @returns An object with methods that can be used to interact with the autocomplete feature.
  */
 function autocomplete(containerElement, callback, options) {
@@ -63,7 +63,7 @@ function autocomplete(containerElement, callback, options) {
     let focusedItemIndex;
 
     /* Process a user input: */
-    inputElement.addEventListener("input", function(e) {
+    inputElement.addEventListener("input", function(input) {
         const currentValue = this.value;
 
         /* Close any already open dropdown list */
@@ -124,7 +124,7 @@ function autocomplete(containerElement, callback, options) {
 
             // handles no location match
             const noLocationMatch = document.createElement("div");
-            noLocationMatch.innerHTML = options.notFoundMessageHtml;
+            noLocationMatch.innerHTML = options.notFoundMessageHtml + (options.appendUserInput ? '"' + currentValue + '"': "");
 
             // create a DIV element that will contain the items (values)
             const autocompleteItemsElement = document.createElement("div");

@@ -1,7 +1,7 @@
 /**
  * Sets up tag autocomplete for the tag input field.
  *
- * @param {{ initialTags: string[], setTags: (tags: string[]) => void }} options Options for the tag autocomplete.
+ * @param {{ initialTags: string[], setTags: (tags: string[]) => void, appendUserInput: boolean, notFoundMessageHtml: string, placeholder: string }} options Options for the tag autocomplete.
  * @returns An object with methods to interact with the tag autocomplete.
  */
 function tagAutocomplete(options) {
@@ -14,9 +14,9 @@ function tagAutocomplete(options) {
 
     const tagAutocomplete = autocomplete(tagAutocompleteContainer, addTag, {
         apiUrl: `${apiBaseUrl}/tag-autocomplete`,
-        notFoundMessageHtml:
-            'No matching tag. <u class="text-primary">Create new tag</u>',
-        placeholder: 'Start typing tags here',
+        notFoundMessageHtml: options.notFoundMessageHtml,
+        appendUserInput: options.appendUserInput,
+        placeholder: options.placeholder,
         acceptButton: true,
     });
 

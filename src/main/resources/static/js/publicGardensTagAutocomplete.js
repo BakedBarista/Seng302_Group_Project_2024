@@ -1,13 +1,9 @@
-const gardenId = getMeta('_gardenId');
-const initialTags = getMeta('_tags').split(',');
-if (initialTags.length === 1 && initialTags[0] === '') {
-    initialTags.pop();
-}
+const initialTags = []
 
 const tagAutocompleteInstance = tagAutocomplete({
     initialTags,
     setTags: async (tags) => {
-        const response = await fetch(`${apiBaseUrl}/gardens/${gardenId}/tags`, {
+        const response = await fetch(`${apiBaseUrl}/gardens/2/tags`, {
             method: 'PUT',
             headers: {
                 'content-type': 'application/json',
@@ -23,6 +19,7 @@ const tagAutocompleteInstance = tagAutocomplete({
             tagAutocompleteInstance.setError(error);
         }
     },
-    notFoundMessageHtml: 'No matching tag. <u class="text-primary">Create new tag</u>',
-    placeholder: 'Start typing tags here',
+    appendUserInput: true,
+    notFoundMessageHtml: `No tag matching `,
+    placeholder: 'Search tags here',
 });

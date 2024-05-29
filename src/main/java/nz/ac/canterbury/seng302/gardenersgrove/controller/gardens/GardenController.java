@@ -303,6 +303,7 @@ public class GardenController {
                     return garden;
                 })
                 .collect(Collectors.toList());
+
         return "gardens/publicGardens";
     }
 
@@ -341,7 +342,7 @@ public class GardenController {
      * @param model representation of results
      * @return public garden page
      */
-    @PostMapping("/gardens/public/search")
+    @GetMapping("/gardens/public/search")
     public String searchPublicGardens(@RequestParam(defaultValue = "0") int page,
                                       @RequestParam(defaultValue = "10") int size,
                                       @RequestParam(name = "search", required = false, defaultValue = "") String search,
@@ -376,10 +377,6 @@ public class GardenController {
 
         return "gardens/publicGardens";
     }
-
-
-
-
 
     /**
      * Helper method to check garden errors
