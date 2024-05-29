@@ -194,6 +194,10 @@ function autocomplete(containerElement, callback, options) {
             } else if (e.keyCode === 13) { // Enter key
                 /* If the ENTER key is pressed and value is selected, accept the selection and close the list*/
                 e.preventDefault();
+
+                if(focusedItemIndex <=1 && currentItems.length === 1) {
+                    focusedItemIndex = 0;
+                }
                 if (focusedItemIndex > -1 || options.acceptButton) {
                     acceptFocusedItem();
                 }
