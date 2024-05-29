@@ -20,7 +20,7 @@
         <form class="input-group w-100" action="#" th:action="@{/gardens/public/search}" method="get" id="searchForm">
             <input type="text" class="form-control" placeholder="Search Public Gardens" id="searchField"
                    aria-label="Search Public Gardens" aria-describedby="button-addon" name="search" th:value="${previousSearch}">
-            <input type="hidden" name="tags" id="tagsInput" th:value="${previousTags != null ? #strings.arrayJoin(previousTags.toArray(), ',') : ''}">
+            <input type="hidden" name="tags" id="tagsInput" th:value="${tagString}">
             <div class="input-group-append">
                 <button class="btn btn-outline-secondary" type="submit" id="button-addon">
                     <img th:src="@{/icons/search-icon.svg}" alt="" width="20" height="25" />
@@ -49,7 +49,7 @@
 
     <div th:if="${gardenPage.empty}" class="px-4">
         No gardens match your search...
-        <a href="#" role="button" onclick="clearSearch(); event.preventDefault();">
+        <a th:href="@{/gardens/public}" role="button">
             Reset search
         </a>
     </div>

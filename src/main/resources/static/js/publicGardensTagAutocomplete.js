@@ -1,25 +1,17 @@
-const initialTags = []
+const initialTags = getMeta('_tags').split(',');
+if (initialTags.length === 1 && initialTags[0] === '') {
+    initialTags.pop();
+}
 
 const tagAutocompleteInstance = tagAutocomplete({
     initialTags,
     setTags: async (tags) => {
-        const response = await fetch(`${apiBaseUrl}/gardens/2/tags`, {
-            method: 'PUT',
-            headers: {
-                'content-type': 'application/json',
-                [csrfHeader]: csrf,
-            },
-            body: JSON.stringify(tags),
-        });
-
-        if (response.status === 422) {
-            const error = await response.text();
-            tagAutocompleteInstance.removeLastTag();
-
-            tagAutocompleteInstance.setError(error);
-        }
+        const tagsInput = document.getElementById("tagsInput");
+        tagsInput.value = tags.join(",");
     },
     appendUserInput: true,
     notFoundMessageHtml: `No tag matching `,
     placeholder: 'Search tags here',
+    acceptButton: false,
+    allowNonExistent: false
 });

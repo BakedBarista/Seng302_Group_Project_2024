@@ -25,4 +25,6 @@ const tagAutocompleteInstance = tagAutocomplete({
     },
     notFoundMessageHtml: 'No matching tag. <u class="text-primary">Create new tag</u>',
     placeholder: 'Start typing tags here',
+    acceptButton: true,
+    allowNonExistent: true,
 });
