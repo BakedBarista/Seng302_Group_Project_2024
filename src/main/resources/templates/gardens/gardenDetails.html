@@ -7,6 +7,7 @@
 
     <meta name="_gardenId" th:content="${garden.id}" />
     <meta name="_tags" th:content="${garden.tagsString}" />
+    <meta name="_isOurs" th:content="${currentUser.id == garden.owner.id}" />
 </head>
 
 <body>
@@ -55,14 +56,16 @@
                         <p th:text="${garden.description}"></p>
                     </div>
                 </div>
-                <div class="col-xl-6 col-12 mt-4" th:if="${currentUser.id == garden.owner.id}">
+                <div class="col-xl-6 col-12 mt-4">
                     <h2>Tags</h2>
-                    <div class="col-md-12">
-                        <label for="tag-autocomplete-container">Add tag</label>
-                        <div class="mb-3" id="tag-autocomplete-container"></div>
-                        <span id="gardenTagsError" class="error gardenTagsError" style="color:red"></span>
+                    <div>
+                        <div class="col-md-12"  th:if="${currentUser.id == garden.owner.id}" >
+                            <label for="tag-autocomplete-container">Add tag</label>
+                            <div class="mb-3" id="tag-autocomplete-container"></div>
+                            <span id="gardenTagsError" class="error gardenTagsError" style="color:red"></span>
+                        </div>
+                        <div class="col-md-12 mb-4" id="tag-container"></div>
                     </div>
-                    <div class="col-md-12 mb-4" id="tag-container"></div>
                     <script th:src="@{/js/autocomplete.js}"></script>
                     <script th:src="@{/js/tagAutocomplete.js}"></script>
                     <script th:src="@{/js/gardenDetailsTagAutocomplete.js}"></script>

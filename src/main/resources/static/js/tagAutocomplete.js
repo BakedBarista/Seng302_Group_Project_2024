@@ -12,6 +12,10 @@ function tagAutocomplete(options) {
     );
     const tagContainer = document.getElementById('tag-container');
 
+    if(!tagAutocompleteContainer) {
+        return;
+    }
+
     const tagAutocomplete = autocomplete(tagAutocompleteContainer, addTag, {
         apiUrl: `${apiBaseUrl}/tag-autocomplete`,
         notFoundMessageHtml: options.notFoundMessageHtml,
@@ -25,6 +29,8 @@ function tagAutocomplete(options) {
     for (const tag of tags) {
         appendTagElement(tag);
     }
+
+
 
     /**
      * Validates tag input before adding the tag element
