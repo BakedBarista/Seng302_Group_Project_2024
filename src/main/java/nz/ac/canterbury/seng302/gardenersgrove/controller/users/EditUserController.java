@@ -203,7 +203,9 @@ public class EditUserController {
     
     public void editProfilePicture(Long userId, MultipartFile file) throws IOException{
         logger.info("POST /users/profile-picture");
-        userService.setProfilePicture(userId, file.getContentType(), file.getBytes());
+        if(file.getSize() != 0){
+            userService.setProfilePicture(userId, file.getContentType(), file.getBytes());
+        }
     }
 
 }
