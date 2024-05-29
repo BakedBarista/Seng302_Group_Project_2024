@@ -52,6 +52,8 @@ public class U14WeatherMonitoringFeature {
     private static GardenController gardenController;
     private GardenWeather gardenWeather;
     private WeatherAPICurrentResponse currentResponse;
+    private double lat = -43.521369;
+    private double lon = 172.58492;
 
     @BeforeAll
     public static void beforeAll() {
@@ -72,7 +74,9 @@ public class U14WeatherMonitoringFeature {
         weatherAPIService = new WeatherAPIService(restTemplate, gardenService, gardenWeatherService);
         mockedModerationService = mock(ModerationService.class);
         ProfanityService profanityService = mock(ProfanityService.class);
-        gardenController = new GardenController(gardenService, plantService, userService, weatherAPIService, friendService, mockedModerationService, profanityService);
+        TagService tagService = mock(TagService.class);
+        LocationService locationService = mock(LocationService.class);
+        gardenController = new GardenController(gardenService, plantService, userService, weatherAPIService, tagService, friendService, mockedModerationService, profanityService, locationService);
 
         GardenUser user = new GardenUser();
         user.setId(1L);
@@ -125,7 +129,7 @@ public class U14WeatherMonitoringFeature {
 
         when(gardenService.getGardenById(garden.getId())).thenReturn(Optional.of(garden));
 
-        GardenWeather result = weatherAPIService.getWeatherData(garden.getId(), garden.getLat(), garden.getLon());
+        GardenWeather result = weatherAPIService.getWeatherData(garden.getId(), lat, lon);
 
         assertNotNull(result, "GardenWeather should be returned as not null.");
         assertEquals(LocalDate.now().toString(), result.getLastUpdated());
