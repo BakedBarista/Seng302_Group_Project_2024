@@ -53,6 +53,7 @@ public class UserController {
 
         if (user.getDateOfBirth() != null) {
             String dobString = user.getDateOfBirth().format(NZ_FORMAT_DATE);
+            logger.info(dobString);
             model.addAttribute("dateOfBirth", dobString);
         }
 

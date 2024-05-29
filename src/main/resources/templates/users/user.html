@@ -27,8 +27,8 @@
                 <h3>Email</h3>
                 <p>[[${email}]]</p>
                 <h3>Date of Birth</h3>
-                <p th:if="${dob != null}">[[${dob}]]</p>
-                <p th:if="${dob == null}">&mdash;</p>
+                <p th:if="${dateOfBirth != null}">[[${dateOfBirth}]]</p>
+                <p th:if="${dateOfBirth == null}">&mdash;</p>
                 <p>
                     <a th:href="@{/users/edit}" class="btn btn-primary">Edit</a>
                 </p>

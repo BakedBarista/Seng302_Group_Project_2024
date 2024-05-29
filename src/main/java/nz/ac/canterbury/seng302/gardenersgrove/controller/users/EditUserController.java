@@ -81,9 +81,9 @@ public class EditUserController {
      */
     @PostMapping("/users/edit")
     public String submitUser(
-            @Valid @ModelAttribute("user") EditUserDTO editUserDTO,
-            @RequestParam("image") MultipartFile file,
+            @Valid @ModelAttribute("editUserDTO") EditUserDTO editUserDTO,
             BindingResult bindingResult,
+            @RequestParam("image") MultipartFile file,
             Authentication authentication,
             @RequestParam(value = "dateError", required = false) String dateValidity,
             Model model) throws IOException {
@@ -108,7 +108,7 @@ public class EditUserController {
         }
 
         if (bindingResult.hasErrors()) {
-            // needed for getting image in html
+            model.addAttribute("editUserDTO", editUserDTO);
             model.addAttribute("userId", userId);
             return "users/editTemplate";
         }
@@ -125,6 +125,7 @@ public class EditUserController {
         if (editUserDTO.getDateOfBirth() != null && !editUserDTO.getDateOfBirth().isEmpty()) {
             try {
                 user.setDateOfBirth(LocalDate.parse(editUserDTO.getDateOfBirth()));
+                logger.info("" + user.getDateOfBirth());
             } catch (DateTimeParseException e) {
                 // shouldn't happen because of validation
                 logger.info("cannot parse invalid date format");

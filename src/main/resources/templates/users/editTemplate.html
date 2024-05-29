@@ -13,12 +13,12 @@
     <main class="main-container" style = "margin-top: 10%;">
         <div class="card p-5">
             <h1>Edit</h1>
-            <form th:action="edit" method="post" enctype="multipart/form-data" th:object="${editUserDTO}">
+            <form th:action="edit" method="post" enctype="multipart/form-data" th:object="${editUserDTO}" novalidate>
                 <div th:insert="fragments/edit-profile-picture.html"></div>
                 <p><a th:href="@{/users/edit/password}">Change Password</a></p>
                 <div class="mb-3"> 
                     <label th:class="'form-group ' + ${#fields.hasErrors('fname') ? 'form-group-error' : ''}">First Name</label>
-                    <input type="text" th:name="fname" th:value="*{fname}" th:class="'form-control ' + ${#fields.hasErrors('lname') ? 'is-invalid' : ''}">
+                    <input type="text" th:name="fname" th:value="*{fname}" th:class="'form-control ' + ${#fields.hasErrors('fname') ? 'is-invalid' : ''}">
                     <div class="invalid-feedback" th:if="${#fields.hasErrors('fname')}" th:errors="*{fname}"></div>
                 </div>
                 <div class="mb-3"> 
