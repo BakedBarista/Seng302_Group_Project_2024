@@ -1,28 +1,38 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.gardens;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weatherAPI.WeatherAPIService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
+import java.lang.reflect.Array;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
@@ -31,8 +41,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.stream.Collectors;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.DateTimeFormats.NZ_FORMAT_DATE;
@@ -48,23 +56,31 @@ public class GardenController {
     private final PlantService plantService;
     private final WeatherAPIService weatherAPIService;
 
+    private final TagService tagService;
+
     private final ModerationService moderationService;
 
     private final GardenUserService gardenUserService;
     private final FriendService friendService;
+    private final LocationService locationService;
 
     private final ProfanityService profanityService;
     private final String PROFANITY = "profanity";
 
+    @Value("${geoapify.api.key}")
+    private String location_apiKey;
+
     @Autowired
-    public GardenController(GardenService gardenService, PlantService plantService, GardenUserService gardenUserService, WeatherAPIService weatherAPIService, FriendService friendService, ModerationService moderationService, ProfanityService profanityService) {
+    public GardenController(GardenService gardenService, PlantService plantService, GardenUserService gardenUserService, WeatherAPIService weatherAPIService, TagService tagService, FriendService friendService, ModerationService moderationService, ProfanityService profanityService, LocationService locationService) {
         this.gardenService = gardenService;
         this.plantService = plantService;
         this.gardenUserService = gardenUserService;
         this.weatherAPIService = weatherAPIService;
+        this.tagService = tagService;
         this.friendService = friendService;
         this.moderationService = moderationService;
         this.profanityService = profanityService;
+        this.locationService = locationService;
     }
 
     /**
@@ -101,14 +117,25 @@ public class GardenController {
             return "gardens/createGarden";
         }
 
+        // Get the location from the API
+        String location = garden.getStreetNumber() + " " + garden.getStreetName() + " " + garden.getSuburb() + " " +
+                garden.getCity() + " " + garden.getPostCode() + " " + garden.getCountry();
 
+        // Request API
+        List<Double> latAndLng = locationService.getLatLng(location);
+
+        // Null check
+        if (!latAndLng.isEmpty()) {
+            garden.setLat(latAndLng.get(0));
+            garden.setLon(latAndLng.get(1));
+        } else {
+            garden.setLat(null);
+            garden.setLon(null);
+        }
 
         Long userId = (Long) authentication.getPrincipal();
-
         GardenUser owner = gardenUserService.getUserById(userId);
-
         garden.setOwner(owner);
-
         Garden savedGarden = gardenService.addGarden(garden);
         return "redirect:/gardens/" + savedGarden.getId();
     }
@@ -261,6 +288,12 @@ public class GardenController {
             return "gardens/editGarden";
         }
 
+        // Get location form API
+        String location = garden.getStreetNumber() + " " + garden.getStreetName() + " " + garden.getSuburb() + " " +
+                garden.getCity() + " " + garden.getPostCode() + " " + garden.getCountry();
+
+        List<Double> latAndLng = locationService.getLatLng(location);
+
         Optional<Garden> existingGarden = gardenService.getGardenById(id);
         if (existingGarden.isPresent()) {
             existingGarden.get().setName(garden.getName());
@@ -272,8 +305,16 @@ public class GardenController {
             existingGarden.get().setPostCode(garden.getPostCode());
             existingGarden.get().setSize(garden.getSize());
             existingGarden.get().setDescription(garden.getDescription());
-            existingGarden.get().setLon(garden.getLon());
-            existingGarden.get().setLat(garden.getLat());
+
+            // Null check
+            if (!latAndLng.isEmpty()) {
+                existingGarden.get().setLat(latAndLng.get(0));
+                existingGarden.get().setLon(latAndLng.get(1));
+            } else {
+                existingGarden.get().setLat(null);
+                existingGarden.get().setLon(null);
+            }
+
             existingGarden.get().setWeatherForecast(Collections.emptyList());
             gardenService.addGarden(existingGarden.get());
         }
@@ -287,19 +328,9 @@ public class GardenController {
      */
     @GetMapping("/gardens/public")
     public String publicGardens(
-            @RequestParam(defaultValue = "0") String pageStr,
-            @RequestParam(defaultValue = "10") String sizeStr,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
             Model model) {
-        int page;
-        int size;
-
-        try {
-            page = Math.max(0, Integer.parseInt(pageStr));
-            size = Math.max(10, Integer.parseInt(sizeStr));
-        } catch (NumberFormatException e) {
-            page = 0;
-            size = 10;
-        }
         logger.info("Get /gardens/public - display all public gardens");
         Pageable pageable = PageRequest.of(page, size);
         Page<Garden> gardenPage = gardenService.getPageForPublicGardens(pageable);
@@ -315,6 +346,7 @@ public class GardenController {
                 .collect(Collectors.toList());
         return "gardens/publicGardens";
     }
+
 
 
     /**
@@ -354,16 +386,41 @@ public class GardenController {
     public String searchPublicGardens(@RequestParam(defaultValue = "0") int page,
                                       @RequestParam(defaultValue = "10") int size,
                                       @RequestParam(name = "search", required = false, defaultValue = "") String search,
+                                      @RequestParam(name = "tags", required = false) List<String> tags,
                                       Model model) {
-        logger.info("Search: " + search);
         Pageable pageable = PageRequest.of(page, size);
-        Page<Garden> gardenPage = gardenService.findPageThatContainsQuery(search, pageable);
+        List<Tag> validTags = new ArrayList<>();
+       String invalidTag = "";
+
+        for (String tagName : tags) {
+            Tag tag = tagService.getTag(tagName);
+            if (tag != null) {
+                validTags.add(tag);
+            } else {
+                invalidTag = tagName ;
+            }
+        }
+
+        List<String> validTagNames = validTags.stream().map(Tag::getName).toList();
+        Page<Garden> gardenPage = gardenService.findGardensBySearchAndTags(search, validTagNames, pageable);
+
+        if (!invalidTag.isEmpty()) {
+            // Error for invalid tag
+            String errorMessage = "No tag matching: " + String.join(", ", invalidTag);
+            model.addAttribute("error", errorMessage);
+            model.addAttribute("invalidTag", invalidTag);  // Assuming only one tag is processed at a time
+        }
+
         model.addAttribute("gardenPage", gardenPage);
-        List<Garden> gardens = gardenService.findAllThatContainQuery(search);
-        model.addAttribute("gardens", gardens);
         model.addAttribute("previousSearch", search);
+        model.addAttribute("previousTags", validTagNames);  // Only valid tags should go back into the tags list
+
         return "gardens/publicGardens";
     }
+
+
+
+
 
     /**
      * Helper method to check garden errors
@@ -457,6 +514,7 @@ public class GardenController {
             logger.info("Failed to add garden");
         }
     }
+
 }
 
 

@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.cucumber.step_definitions;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.BeforeAll;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -11,6 +12,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.repository.FriendsRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.TagRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weatherAPI.WeatherAPIService;
 import org.springframework.ui.Model;
@@ -34,6 +36,10 @@ public class U19MakeGardenPublicFeature {
     private static FriendService friendService;
     private static ModerationService moderationService;
     private static ProfanityService profanityService;
+    private static TagService tagService;
+    private static TagRepository tagRepository;
+    private static LocationService locationService;
+    private static ObjectMapper objectMapper;
 
     private static GardenUser gardenUser;
     private static Garden garden;
@@ -49,6 +55,9 @@ public class U19MakeGardenPublicFeature {
         gardenUserRepository = mock(GardenUserRepository.class);
         restTemplate = mock(RestTemplate.class);
         friendRepository = mock(FriendsRepository.class);
+        tagRepository = mock(TagRepository.class);
+        tagService = new TagService(null, gardenService, profanityService);
+        objectMapper = mock(ObjectMapper.class);
 
         friendService = new FriendService(friendRepository);
         gardenService = new GardenService(gardenRepository);
@@ -57,9 +66,10 @@ public class U19MakeGardenPublicFeature {
         weatherAPIService = new WeatherAPIService(restTemplate, gardenService);
         moderationService = new ModerationService();
         profanityService = new ProfanityService();
+        locationService = new LocationService(restTemplate, objectMapper);
         model = mock(Model.class);
 
-        gardenController = new GardenController(gardenService, plantService, gardenUserService, weatherAPIService, friendService, moderationService, profanityService);
+        gardenController = new GardenController(gardenService, plantService, gardenUserService, weatherAPIService, tagService,  friendService, moderationService, profanityService, locationService);
         gardenUser = new GardenUser();
         gardenUser.setId(1L);
         gardenUser.setFname("testUser");
