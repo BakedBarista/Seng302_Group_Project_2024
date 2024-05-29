@@ -251,7 +251,4 @@ public class GardenControllerTest {
         verify(weatherAPIService, never()).getWeatherData(anyLong(), anyDouble(), anyDouble());
 
     }
-
-
-
 }

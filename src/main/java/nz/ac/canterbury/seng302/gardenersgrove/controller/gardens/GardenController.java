@@ -178,7 +178,6 @@ public class GardenController {
             boolean displayWeatherAlert = false;
             boolean displayWeather = false;
 
-            logger.info("here");
             if (lat == null || lng == null) {
                 logger.info("Garden ID: {} has no Lat and Lng, no weather will be displayed.", id);
             } else {
