@@ -5,6 +5,9 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 
 import java.util.List;
 
+/**
+ * An entity that creates a database table for the garden weather
+ */
 @Entity
 public class GardenWeather {
 
@@ -24,11 +27,11 @@ public class GardenWeather {
 
     @ElementCollection
     @CollectionTable(name = "previous_weather", joinColumns = @JoinColumn(name = "garden_weather_id"))
-    private List<PreviousWeather> previousWeather;
+    private List<WeatherData> previousWeather;
 
     @ElementCollection
     @CollectionTable(name = "forecast_weather", joinColumns = @JoinColumn(name = "garden_weather_id"))
-    private List<ForecastWeather> forecastWeather;
+    private List<WeatherData> forecastWeather;
 
     @Column
     private String lastUpdated;
@@ -65,19 +68,19 @@ public class GardenWeather {
         this.lng = lng;
     }
 
-    public List<PreviousWeather> getPreviousWeather() {
+    public List<WeatherData> getPreviousWeather() {
         return previousWeather;
     }
 
-    public void setPreviousWeather(List<PreviousWeather> previousWeather) {
+    public void setPreviousWeather(List<WeatherData> previousWeather) {
         this.previousWeather = previousWeather;
     }
 
-    public List<ForecastWeather> getForecastWeather() {
+    public List<WeatherData> getForecastWeather() {
         return forecastWeather;
     }
 
-    public void setForecastWeather(List<ForecastWeather> forecastWeather) {
+    public void setForecastWeather(List<WeatherData> forecastWeather) {
         this.forecastWeather = forecastWeather;
     }
 

@@ -3,6 +3,8 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.api;
 import java.util.List;
 import java.util.Optional;
 
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
 
 @RestController
 @RequestMapping("/api")
@@ -27,10 +27,15 @@ public class TagAPIController {
 
     private GardenService gardenService;
     private TagService tagService;
+    private StrikeService strikeService;
+    private GardenUserService gardenUserService;
 
-    public TagAPIController(GardenService gardenService, TagService tagService) {
+
+    public TagAPIController(GardenService gardenService, TagService tagService, StrikeService strikeService, GardenUserService gardenUserService) {
         this.gardenService = gardenService;
         this.tagService = tagService;
+        this.strikeService = strikeService;
+        this.gardenUserService = gardenUserService;
     }
 
     /**
@@ -42,11 +47,12 @@ public class TagAPIController {
      * @return A response entity indicating the result of the operation.
      */
     @PutMapping("/gardens/{gardenId}/tags")
-    public ResponseEntity<Object> setGardenTags(
+    public ResponseEntity<String> setGardenTags(
             @PathVariable Long gardenId,
             @RequestBody List<String> tags,
             Authentication authentication) {
         logger.info("Setting tags for garden {}", gardenId);
+        GardenUser user = gardenUserService.getUserById((Long) authentication.getPrincipal());
 
         Optional<Garden> gardenOptional = gardenService.getGardenById(gardenId);
         if (gardenOptional.isEmpty()) {
@@ -58,7 +64,25 @@ public class TagAPIController {
             return ResponseEntity.status(403).build();
         }
 
-        tagService.updateGardenTags(garden, tags);
+        try {
+            tagService.updateGardenTags(garden, tags);
+        } catch (ProfanityDetectedException e) {
+            logger.info("profanity detected in tag");
+            StrikeService.AddStrikeResult result = strikeService.addStrike(user);
+
+            String message;
+            switch (result) {
+                case WARNING:
+                    message = "You have added an inappropriate tag for the fifth time. One more strike and your account will be blocked.";
+                    break;
+                case BLOCK:
+                    return ResponseEntity.status(401).build();
+                default:
+                    message = "Tag is inappropriate";
+                    break;
+            }
+            return ResponseEntity.status(422).body(message);
+        }
 
         return ResponseEntity.ok().build();
     }
@@ -101,4 +125,5 @@ public class TagAPIController {
             return formatted;
         }
     }
+
 }

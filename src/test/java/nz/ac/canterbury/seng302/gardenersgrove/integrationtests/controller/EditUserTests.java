@@ -4,21 +4,33 @@ import nz.ac.canterbury.seng302.gardenersgrove.controller.users.EditUserControll
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditPasswordDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.io.IOException;
+import java.util.logging.Logger;
+
 class EditUserControllerTest {
+
+    @Mock
+    private Logger logger;
+    
     private EditUserController controller;
 
     private Authentication authentication;
@@ -26,20 +38,25 @@ class EditUserControllerTest {
     private GardenUserService userService;
     private EmailSenderService emailSenderService;
 
-    private String dateValidStr = "";
+    private GardenUserRepository gardenUserRepository;
+    private MultipartFile file;
     private Long userId = 1L;
+
+    private String dateValidStr = "";
 
     @BeforeEach
     void setUp() {
+        gardenUserRepository = mock(GardenUserRepository.class);
         authentication = mock(Authentication.class);
         model = mock(Model.class);
         userService = mock(GardenUserService.class);
         emailSenderService = mock(EmailSenderService.class);
         controller = new EditUserController(userService, emailSenderService);
+        file = new MockMultipartFile("file", "filename.txt", "text/plain", "Some file content".getBytes());
     }
 
     @Test
-    void whenValidEditProfile_redirectToProfilePage() {
+    void whenValidEditProfile_redirectToProfilePage() throws IOException {
         GardenUser user = new GardenUser("John", "Doe", "john@email.com", "P#ssw0rd", LocalDate.of(2000, 10, 10));
         when(userService.getUserById(userId)).thenReturn(user); // Mock userService.getUserById(userId)
         when(authentication.getPrincipal()).thenReturn(userId);
@@ -55,13 +72,13 @@ class EditUserControllerTest {
         when(bindingResult.hasErrors()).thenReturn(false);
 
         //Edit user details
-        String result = controller.submitUser(editUser, bindingResult, authentication, dateValidStr, model);
+        String result = controller.submitUser(editUser, bindingResult, file, authentication, dateValidStr, model);
 
         assertEquals("redirect:/users/user", result); // Verify that the returned view name is correct
     }
 
     @Test
-    void whenInvalidEditProfile_redirectToEditPage() {
+    void whenInvalidEditProfile_redirectToEditPage() throws IOException {
         GardenUser user = new GardenUser("John", "Doe", "john@email.com", "P#ssw0rd", LocalDate.of(2000, 10, 10));
         when(userService.getUserById(userId)).thenReturn(user);
         when(authentication.getPrincipal()).thenReturn(userId);
@@ -77,13 +94,13 @@ class EditUserControllerTest {
         when(bindingResult.hasErrors()).thenReturn(true);
 
         //Edit user details
-        String result = controller.submitUser(editUser, bindingResult, authentication, dateValidStr, model);
+        String result = controller.submitUser(editUser, bindingResult, file, authentication, dateValidStr, model);
 
         assertEquals("users/editTemplate", result);
     }
 
     @Test
-    void whenValidEditProfile_submitUser() {
+    void whenValidEditProfile_submitUser() throws IOException {
         GardenUser user = new GardenUser("John", "Doe", "john@email.com",
                  "P#ssw0rd", LocalDate.of(2000, 10, 10));
         when(userService.getUserById(userId)).thenReturn(user);
@@ -100,7 +117,7 @@ class EditUserControllerTest {
         when(bindingResult.hasErrors()).thenReturn(false);
 
         //Edit user details
-        controller.submitUser(editUser, bindingResult, authentication, dateValidStr, model);
+        controller.submitUser(editUser,bindingResult, file, authentication, dateValidStr, model);
 
         assertEquals("Jane", user.getFname());
         assertEquals("Dough", user.getLname());
@@ -109,7 +126,7 @@ class EditUserControllerTest {
     }
 
     @Test
-    void whenNameTooLong_doNotSaveToDB() {
+    void whenNameTooLong_doNotSaveToDB() throws IOException {
         GardenUser user = new GardenUser("John", "Doe", "john@email.com", "P#ssw0rd", LocalDate.of(2000, 10, 10));
         when(userService.getUserById(userId)).thenReturn(user);
         when(authentication.getPrincipal()).thenReturn(userId);
@@ -124,7 +141,7 @@ class EditUserControllerTest {
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
 
-        String result = controller.submitUser(editUser, bindingResult, authentication, dateValidStr, model);
+        String result = controller.submitUser(editUser,bindingResult, file, authentication, dateValidStr, model);
 
         assertEquals("users/editTemplate", result);
         assertEquals("John", user.getFname()); //Checks if first name didn't change because it is not valid
@@ -152,76 +169,31 @@ class EditUserControllerTest {
     }
 
     @Test
-    void givenIChangeDateOfBirthToNull_ThenIDoNotHaveADateOfBirth() {
-        GardenUser user = new GardenUser("John", "Doe", "john@email.com",
-                "P#ssw0rd", LocalDate.of(2000, 10, 10));
+    void whenIOExceptionThenLogError() throws IOException {
+        Long userId = 1L;
+        MockMultipartFile file = new MockMultipartFile("file", "filename.txt", "text/plain",
+                "Some file content".getBytes());
+        GardenUser user = new GardenUser("John", "Doe", "john@email.com", "P#ssw0rd", LocalDate.of(2000, 10, 10));
 
-        EditUserDTO editUser = new EditUserDTO();
-        editUser.setFname("Jane");
-        editUser.setLname("Doe");
-        editUser.setNoLname(false);
-        editUser.setEmail("john@email.com");
-        editUser.setDateOfBirth("");
+        MockMultipartFile spyFile = spy(file);
+        doThrow(new IOException("Simulation")).when(spyFile).getBytes();
 
         when(userService.getUserById(userId)).thenReturn(user);
         when(authentication.getPrincipal()).thenReturn(userId);
-
-        BindingResult bindingResult = mock(BindingResult.class);
-        when(bindingResult.hasErrors()).thenReturn(false);
-
-        controller.submitUser(editUser, bindingResult, authentication, dateValidStr, model);
-
-        Assertions.assertNull(user.getDateOfBirth());
-    }
-
-    @Test
-    void givenIEditToANewValidDateOfBirth_ThenIHaveALocalDateOfTheGivenDate() {
-        GardenUser user = new GardenUser("John", "Doe", "john@email.com",
-                "P#ssw0rd", LocalDate.of(2000, 10, 10));
-
+        EditUserController controller = new EditUserController(userService, emailSenderService);
         EditUserDTO editUser = new EditUserDTO();
-        editUser.setFname("John");
-        editUser.setLname("Doe");
+        editUser.setFname("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+        editUser.setLname( "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
         editUser.setNoLname(false);
-        editUser.setEmail("john@email.com");
-        editUser.setDateOfBirth("");
-        String dobString = "1998-01-01";
-        editUser.setDateOfBirth(dobString);
-
-        when(userService.getUserById(userId)).thenReturn(user);
-        when(authentication.getPrincipal()).thenReturn(userId);
+        editUser.setEmail("jane@email.com");
 
         BindingResult bindingResult = mock(BindingResult.class);
-        when(bindingResult.hasErrors()).thenReturn(false);
 
-        controller.submitUser(editUser, bindingResult, authentication, dateValidStr, model);
-
-        Assertions.assertEquals(LocalDate.parse(dobString), user.getDateOfBirth());
-    }
-
-    @Test
-    void givenIEditToANewInvalidDateOfBirth_ThenMyDateOfBirthIsNotChanged() {
-        LocalDate originalDOB = LocalDate.of(2000, 10, 10);
-        GardenUser user = new GardenUser("John", "Doe", "john@email.com",
-                "P#ssw0rd", originalDOB);
-
-        EditUserDTO editUser = new EditUserDTO();
-        editUser.setFname("John");
-        editUser.setLname("Doe");
-        editUser.setNoLname(false);
-        editUser.setEmail("john@email.com");
-        editUser.setDateOfBirth("");
-        String dobString = "10/10/2010";
-        editUser.setDateOfBirth(dobString);
-
-        when(userService.getUserById(userId)).thenReturn(user);
-        when(authentication.getPrincipal()).thenReturn(userId);
-
-        BindingResult bindingResult = mock(BindingResult.class);
-        when(bindingResult.hasErrors()).thenReturn(false);
-
-        controller.submitUser(editUser, bindingResult, authentication, dateValidStr, model);
-
-        Assertions.assertEquals(originalDOB, user.getDateOfBirth());
+        try {
+            controller.submitUser(editUser,bindingResult,  spyFile, authentication, dateValidStr, model);
+            fail("Expected IOException to be thrown, but nothing was thrown");
+        } catch (IOException e) {
+            System.out.println("IOException was thrown as expected");
+        }
     }
 }

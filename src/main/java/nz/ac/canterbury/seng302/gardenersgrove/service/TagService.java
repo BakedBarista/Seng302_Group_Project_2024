@@ -20,9 +20,12 @@ public class TagService {
     private TagRepository tagRepository;
     private GardenService gardenService;
 
-    public TagService(TagRepository tagRepository, GardenService gardenService) {
+    private ProfanityService profanityService;
+
+    public TagService(TagRepository tagRepository, GardenService gardenService, ProfanityService profanityService) {
         this.tagRepository = tagRepository;
         this.gardenService = gardenService;
+        this.profanityService = profanityService;
     }
 
     /**
@@ -55,7 +58,7 @@ public class TagService {
      * @param name The name of the tag.
      * @return A tag with the given name.
      */
-    public Tag getOrCreateTag(String name) {
+    public Tag getOrCreateTag(String name) throws ProfanityDetectedException {
         if (!isValidTag(name)) {
             return null;
         }
@@ -74,7 +77,13 @@ public class TagService {
      * @param name The name of the tag.
      * @return True if name is valid, otherwise false
      */
-    private boolean isValidTag(String name) {
+    public boolean isValidTag(String name) throws ProfanityDetectedException {
+        boolean profanityExists = !(profanityService.badWordsFound(name).isEmpty());
+
+        if (profanityExists) {
+            throw new ProfanityDetectedException();
+        }
+
         return (name.matches(TAG_REGEX) && name.length() < TAG_MAX_LEN);
     }
 
@@ -84,7 +93,7 @@ public class TagService {
      * @param garden The garden to update.
      * @param tagNames The names of the tags to set on the garden.
      */
-    public void updateGardenTags(Garden garden, List<String> tagNames) {
+    public void updateGardenTags(Garden garden, List<String> tagNames) throws ProfanityDetectedException {
         // Remove tags that are not in the new list
         for (Tag tag : List.copyOf(garden.getTags())) {
             if (tagNames.stream().noneMatch(t -> t.equals(tag.getName()))) {
@@ -100,4 +109,6 @@ public class TagService {
 
         gardenService.addGarden(garden);
     }
+
+
 }

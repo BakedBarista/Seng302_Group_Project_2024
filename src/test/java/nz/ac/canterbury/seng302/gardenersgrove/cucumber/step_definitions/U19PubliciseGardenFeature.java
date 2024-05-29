@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.cucumber.step_definitions;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.BeforeAll;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -9,15 +10,20 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.TagRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
-import nz.ac.canterbury.seng302.gardenersgrove.service.weatherAPI.WeatherAPIService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.weather.WeatherAPIService;
 import org.mockito.ArgumentCaptor;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.junit.jupiter.api.Assertions;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 public class U19PubliciseGardenFeature {
@@ -31,6 +37,8 @@ public class U19PubliciseGardenFeature {
     private static GardenUserService gardenUserService;
     private static GardenUserRepository gardenUserRepository;
     private static GardenRepository gardenRepository;
+    private static TagService tagService;
+    private static TagRepository tagRepository;
     private GardenUser gardenUser;
     private static Model model;
     private static BindingResult bindingResult;
@@ -38,17 +46,26 @@ public class U19PubliciseGardenFeature {
     private static Authentication authentication;
     private String errorMessage;
 
+    private static LocationService locationService;
+    private static RestTemplate restTemplate;
+    private static ObjectMapper objectMapper;
+
     @BeforeAll
     public static void beforeAll() {
         gardenUserRepository = mock(GardenUserRepository.class);
         gardenRepository = mock(GardenRepository.class);
         profanityService = mock(ProfanityService.class);
         moderationService = mock(ModerationService.class);
+        tagRepository = mock(TagRepository.class);
         bindingResult = mock(BindingResult.class);
+        restTemplate = mock(RestTemplate.class);
+        objectMapper = mock(ObjectMapper.class);
+        locationService = new LocationService(restTemplate, objectMapper);
         model = mock(Model.class);
         authentication = mock(Authentication.class);
         gardenUserService = new GardenUserService(gardenUserRepository);
         gardenService = new GardenService(gardenRepository);
+        tagService = new TagService(tagRepository, gardenService, profanityService);
     }
 
     @Given("I enter a new description {string}")
@@ -59,7 +76,7 @@ public class U19PubliciseGardenFeature {
         bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
         gardenService = mock(GardenService.class);
-        gardenController = new GardenController(gardenService,plantService,gardenUserService,weatherAPIService,friendService,moderationService,profanityService);
+        gardenController = new GardenController(gardenService,plantService,gardenUserService,weatherAPIService,tagService, friendService,moderationService,profanityService, locationService);
     }
 
     @When("Description contains profanity")

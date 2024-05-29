@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.WeatherData;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.*;
 import nz.ac.canterbury.seng302.gardenersgrove.model.weather.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
@@ -34,10 +36,22 @@ public class WeatherAPIService {
 
     private final ObjectMapper objectMapper = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+    // The rainy conditions possible with WeatherAPI.com
+    private static final Set<String> RAIN_CONDITIONS = Set.of(
+            "rain", "drizzle", "heavy rain", "light rain", "showers",
+            "thunderstorms", "sleet", "snow", "light snow", "heavy snow", "snow showers", "patchy rain nearby"
+    );
     private final RestTemplate restTemplate;
     private final GardenService gardenService;
     private final GardenWeatherService gardenWeatherService;
 
+    /**
+     * Constructor for the garden weather API service
+     * @param restTemplate the resttemplate object
+     * @param gardenService the garden service object
+     * @param gardenWeatherService the garden weather service object
+     */
     @Autowired
     public WeatherAPIService(RestTemplate restTemplate, GardenService gardenService, GardenWeatherService gardenWeatherService) {
         this.restTemplate = restTemplate;
@@ -83,10 +97,10 @@ public class WeatherAPIService {
             LocalDate currentDate = LocalDate.now();
             dates.add(currentDate.minusDays(2).toString());
             dates.add(currentDate.minusDays(1).toString());
-            List<WeatherAPIHistoryResponse> historyResponses = getPreviousWeatherFromAPI(lat, lng, dates);
+            List<WeatherAPIResponse> historyResponses = getPreviousWeatherFromAPI(lat, lng, dates);
 
             // Get forecast weather
-            WeatherAPIForecastResponse forecastResponse = getForecastWeatherFromAPI(lat, lng);
+            WeatherAPIResponse forecastResponse = getForecastWeatherFromAPI(lat, lng);
 
             if (forecastResponse.getForecast() == null || historyResponses.isEmpty()) {
                 logger.error("No data was returned from the weather API");
@@ -109,22 +123,23 @@ public class WeatherAPIService {
         logger.info("Generating watering recommendation");
 
         // If the current weather is rain, don't water the plants
-        if (currentResponse.getCurrent().getCondition().getConditions().toLowerCase().contains("rain")) {
+        logger.info("Current condition is: {}", currentResponse.getCurrent().getCondition().getConditions().toLowerCase());
+        if (RAIN_CONDITIONS.contains(currentResponse.getCurrent().getCondition().getConditions().toLowerCase())) {
             logger.info("Currently raining, don't water plants");
             return false;
         }
 
         // If it has rained the last 2 days don't water the plants
         int rainyDayCount = 0;
-        List<PreviousWeather> historyResponses = gardenWeather.getPreviousWeather();
+        List<WeatherData> historyResponses = gardenWeather.getPreviousWeather();
 
-        for (PreviousWeather weather: historyResponses) {
-            if (weather.getConditions().toLowerCase().contains("rain")) {
+        for (WeatherData weather: historyResponses) {
+            if (RAIN_CONDITIONS.contains(weather.getConditions().toLowerCase())) {
                 rainyDayCount++;
             }
         }
-        logger.info("It has rained the past {} days, only water if != 2", rainyDayCount);
-        return rainyDayCount != 2;
+        logger.info("It has rained the past {} days, only water if 0", rainyDayCount);
+        return rainyDayCount == 0;
     }
 
     /**
@@ -160,10 +175,10 @@ public class WeatherAPIService {
      * @param lat the latitude of the location
      * @param lng the longitude of the location
      * @param dates the previous dates requested as a list of dates in format YYYY-MM-DD e.g. "2024-05-23"
-     * @return A list of {@link WeatherAPIHistoryResponse} containing the conditions from the previous requested dates.
+     * @return A list of {@link WeatherAPIResponse} containing the conditions from the previous requested dates.
      */
-    private List<WeatherAPIHistoryResponse> getPreviousWeatherFromAPI(double lat, double lng, List<String> dates) {
-        ArrayList<WeatherAPIHistoryResponse> previousWeather = new ArrayList<>();
+    private List<WeatherAPIResponse> getPreviousWeatherFromAPI(double lat, double lng, List<String> dates) {
+        ArrayList<WeatherAPIResponse> previousWeather = new ArrayList<>();
         logger.info("Requesting previous weather data for dates: {}", dates);
 
         for (String date: dates) {
@@ -178,7 +193,7 @@ public class WeatherAPIService {
                 if (Objects.equals(response, API_NO_RESPONSE)) {
                     logger.error("No value was returned by the weather API, returning empty response object.");
                 } else {
-                    previousWeather.add(objectMapper.readValue(response, WeatherAPIHistoryResponse.class));
+                    previousWeather.add(objectMapper.readValue(response, WeatherAPIResponse.class));
                 }
             } catch (JsonProcessingException e) {
                 logger.error("Error processing JSON: ", e);
@@ -192,10 +207,10 @@ public class WeatherAPIService {
      * today, the next day , and the day after.
      * @param lat the latitude of the location
      * @param lng the longitude of the location
-     * @return a {@link WeatherAPIForecastResponse} representing the parsed JSON values from the API.
+     * @return a {@link WeatherAPIResponse} representing the parsed JSON values from the API.
      */
-    private WeatherAPIForecastResponse getForecastWeatherFromAPI(double lat, double lng) {
-        WeatherAPIForecastResponse forecastWeather = new WeatherAPIForecastResponse();
+    private WeatherAPIResponse getForecastWeatherFromAPI(double lat, double lng) {
+        WeatherAPIResponse forecastWeather = new WeatherAPIResponse();
         String locationQuery = "&q=" + lat + "," + lng + "&days=3";
         String apiForecastUrl = "https://api.weatherapi.com/v1/forecast.json?key=";
         String url = apiForecastUrl + API_KEY + locationQuery;
@@ -208,7 +223,7 @@ public class WeatherAPIService {
                 logger.error("No value was returned by the weather API, returning empty response object.");
                 return forecastWeather;
             }
-            return objectMapper.readValue(response, WeatherAPIForecastResponse.class);
+            return objectMapper.readValue(response, WeatherAPIResponse.class);
         } catch (JsonProcessingException e) {
             logger.error("Error processing JSON: ", e);
         }
@@ -221,7 +236,7 @@ public class WeatherAPIService {
      * @return a String containing the request body, which will be a JSON representation of the requested weather data.
      * If there is an error then "No Response" will be returned.
      */
-    private String requestAPI(String url) {
+    public String requestAPI(String url) {
         try {
             logger.info("Requesting the weather API");
             ResponseEntity<String> result = restTemplate.getForEntity(url, String.class);
@@ -248,7 +263,7 @@ public class WeatherAPIService {
      * @param forecastResponse the forecast weather API response
      * @param previousResponse the previous weather API response
      */
-    private GardenWeather saveWeather(double lat, double lng, Garden garden, WeatherAPIForecastResponse forecastResponse, List<WeatherAPIHistoryResponse> previousResponse) {
+    public GardenWeather saveWeather(double lat, double lng, Garden garden, WeatherAPIResponse forecastResponse, List<WeatherAPIResponse> previousResponse) {
         GardenWeather gardenWeather = new GardenWeather();
 
         gardenWeather.setLat(lat);
@@ -256,16 +271,16 @@ public class WeatherAPIService {
         gardenWeather.setLastUpdated(LocalDate.now().toString());
 
         logger.info("Adding the forecasted weather to the weather data.");
-        List<ForecastWeather> forecastedWeather = new ArrayList<>();
+        List<WeatherData> forecastedWeather = new ArrayList<>();
         for (ForecastDay forecastDay: forecastResponse.getForecast().getForecastDays()) {
-            forecastedWeather.add(extractDailyWeatherData(forecastResponse, ForecastWeather::new, forecastDay));
+            forecastedWeather.add(extractDailyWeatherData(forecastResponse, WeatherData::new, forecastDay));
         }
         gardenWeather.setForecastWeather(forecastedWeather);
 
         logger.info("Adding the previous weather to the weather data.");
-        List<PreviousWeather> previousWeather =  new ArrayList<>();
-        for (WeatherAPIHistoryResponse historyDay: previousResponse) {
-            previousWeather.add(extractDailyWeatherData(historyDay, PreviousWeather::new, historyDay.getForecast().getForecastDays().get(0)));
+        List<WeatherData> previousWeather =  new ArrayList<>();
+        for (WeatherAPIResponse historyDay: previousResponse) {
+            previousWeather.add(extractDailyWeatherData(historyDay, WeatherData::new, historyDay.getForecast().getForecastDays().get(0)));
         }
         gardenWeather.setPreviousWeather(previousWeather);
 
@@ -281,7 +296,7 @@ public class WeatherAPIService {
      * <p>
      * ChatGPT helped me come up with the Supplier thing to make the generic responses work :D - Luke
      * @param weatherAPIResponse a generic weather API response
-     * @param supplier the specific type of the data wanted. {@link ForecastWeather} or {@link PreviousWeather}
+     * @param supplier the specific type of the data wanted {@link WeatherData}.
      * @return a list of generic weather data
      */
     private <T extends WeatherData> T extractDailyWeatherData(WeatherAPIResponse weatherAPIResponse, Supplier<T> supplier, ForecastDay forecastDay) {

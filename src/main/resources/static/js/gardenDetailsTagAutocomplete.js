@@ -6,8 +6,8 @@ if (initialTags.length === 1 && initialTags[0] === '') {
 
 const tagAutocompleteInstance = tagAutocomplete({
     initialTags,
-    setTags: (tags) => {
-        fetch(`${apiBaseUrl}/gardens/${gardenId}/tags`, {
+    setTags: async (tags) => {
+        const response = await fetch(`${apiBaseUrl}/gardens/${gardenId}/tags`, {
             method: 'PUT',
             headers: {
                 'content-type': 'application/json',
@@ -15,5 +15,18 @@ const tagAutocompleteInstance = tagAutocomplete({
             },
             body: JSON.stringify(tags),
         });
+
+        switch (response.status) {
+            case 422:
+                const error = await response.text();
+                const tagName = tagAutocompleteInstance.removeLastTag();
+
+                tagAutocompleteInstance.setError(error);
+                tagAutocompleteInstance.inputElement.value = tagName;
+                break;
+            case 401:
+                location.href = `${baseUrl}users/blocked`;
+                break;
+        }
     },
 });

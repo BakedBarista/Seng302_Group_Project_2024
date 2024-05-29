@@ -1,35 +1,112 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity.weather;
 
+import jakarta.persistence.Embeddable;
+
 import java.time.LocalDate;
 
-public interface WeatherData {
-    void setCity(String city);
-    String getCity();
+/**
+ * Creates an embeddable object for the weather data
+ */
+@Embeddable
+public class WeatherData {
 
-    void setDate(LocalDate date);
-    LocalDate getDate();
+    private String city;
+    private LocalDate date;
+    private double maxTemp;
+    private double minTemp;
+    private int humidity;
+    private String conditions;
+    private String icon;
+    private float windSpeed;
+    private double precipitation;
+    private int uv;
+    private String type;
 
-    void setMaxTemp(double maxTemp);
-    double getMaxTemp();
+    public String getCity() {
+        return city;
+    }
 
-    void setMinTemp(double minTemp);
-    double getMinTemp();
+    public void setCity(String city) {
+        this.city = city;
+    }
 
-    void setHumidity(int humidity);
-    int getHumidity();
+    public LocalDate getDate() {
+        return date;
+    }
 
-    void setConditions(String conditions);
-    String getConditions();
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
 
-    void setIcon(String icon);
-    String getIcon();
+    public double getMaxTemp() {
+        return maxTemp;
+    }
 
-    void setWindSpeed(float windSpeed);
-    float getWindSpeed();
+    public void setMaxTemp(double maxTemp) {
+        this.maxTemp = maxTemp;
+    }
 
-    void setPrecipitation(double precipitation);
-    double getPrecipitation();
+    public double getMinTemp() {
+        return minTemp;
+    }
 
-    void setUv(int uv);
-    int getUv();
+    public void setMinTemp(double minTemp) {
+        this.minTemp = minTemp;
+    }
+
+    public int getHumidity() {
+        return humidity;
+    }
+
+    public void setHumidity(int humidity) {
+        this.humidity = humidity;
+    }
+
+    public String getConditions() {
+        return conditions;
+    }
+
+    public void setConditions(String conditions) {
+        this.conditions = conditions;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
+
+    public float getWindSpeed() {
+        return windSpeed;
+    }
+
+    public void setWindSpeed(float windSpeed) {
+        this.windSpeed = windSpeed;
+    }
+
+    public double getPrecipitation() {
+        return precipitation;
+    }
+
+    public void setPrecipitation(double precipitation) {
+        this.precipitation = precipitation;
+    }
+
+    public int getUv() {
+        return uv;
+    }
+
+    public void setUv(int uv) {
+        this.uv = uv;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 }
