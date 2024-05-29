@@ -202,7 +202,7 @@ public class ManageFriendsController {
         List<GardenUser> copyOfSearchResults = List.copyOf(searchResults);
 
         for (GardenUser user : copyOfSearchResults) {
-            Friends existingRequest = friendService.getSent(loggedInUserId, user.getId());
+            Friends existingRequest = friendService.getFriendship(loggedInUserId, user.getId());
             if (existingRequest != null) {
                 if (existingRequest.getStatus().equals(ACCEPTED)) {
                     alreadyFriendsList.add(user);
