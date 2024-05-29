@@ -226,7 +226,6 @@ class WeatherAPIServiceTest {
         when(restTemplate.getForEntity(anyString(), eq(String.class))).thenReturn(ResponseEntity.ok("No Response"));
 
         WeatherAPICurrentResponse response = weatherAPIService.getCurrentWeatherFromAPI(lat, lng);
-        System.out.println(response);
 
         assertNotNull(response);
         // Check the contents is null

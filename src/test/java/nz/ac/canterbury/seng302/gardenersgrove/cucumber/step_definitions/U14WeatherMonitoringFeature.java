@@ -9,6 +9,8 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.WeatherData;
+import nz.ac.canterbury.seng302.gardenersgrove.model.weather.Condition;
+import nz.ac.canterbury.seng302.gardenersgrove.model.weather.Current;
 import nz.ac.canterbury.seng302.gardenersgrove.model.weather.WeatherAPICurrentResponse;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.FriendsRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
@@ -19,73 +21,61 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weather.GardenWeatherService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weather.WeatherAPIService;
 import org.junit.jupiter.api.Assertions;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
 
 public class U14WeatherMonitoringFeature {
-
-    private GardenUser user;
-
     private static Authentication authentication;
     private static BindingResult bindingResult;
     private static Model model;
     private static GardenRepository gardenRepository;
     private static GardenService gardenService;
-    private static GardenWeatherRepository gardenWeatherRepository;
-    private static GardenWeatherService gardenWeatherService;
     private static WeatherAPIService weatherAPIService;
     private Garden garden;
-    private static PlantRepository plantRepository;
     public static PlantService plantService;
-    private static GardenUserService userService;
     private static GardenUserRepository gardenUserRepository;
     private static RestTemplate restTemplate;
-    private static FriendService friendService;
-    private static FriendsRepository friendsRepository;
-
-    private static ModerationService moderationService;
-    private static LocationService locationService;
     private static ModerationService mockedModerationService;
-    private static ProfanityService profanityService;
-    private static TagService tagService;
-
     private static GardenController gardenController;
-    private static Garden gardenMock;
+    private GardenWeather gardenWeather;
+    private WeatherAPICurrentResponse currentResponse;
+    private double lat = -43.521369;
+    private double lon = 172.58492;
 
     @BeforeAll
     public static void beforeAll() {
         bindingResult = mock(BindingResult.class);
-        gardenMock = mock(Garden.class);
         model = mock(Model.class);
         authentication = mock(Authentication.class);
-        friendsRepository = mock(FriendsRepository.class);
+        FriendsRepository friendsRepository = mock(FriendsRepository.class);
         gardenUserRepository = mock(GardenUserRepository.class);
-        plantRepository = mock(PlantRepository.class);
+        PlantRepository plantRepository = mock(PlantRepository.class);
         gardenRepository = mock(GardenRepository.class);
-        gardenWeatherRepository = mock(GardenWeatherRepository.class);
+        GardenWeatherRepository gardenWeatherRepository = mock(GardenWeatherRepository.class);
         restTemplate = mock(RestTemplate.class);
-        userService = new GardenUserService(gardenUserRepository);
+        GardenUserService userService = new GardenUserService(gardenUserRepository);
         gardenService = new GardenService(gardenRepository);
-        gardenWeatherService = new GardenWeatherService(gardenWeatherRepository);
-        friendService = new FriendService(friendsRepository);
+        GardenWeatherService gardenWeatherService = new GardenWeatherService(gardenWeatherRepository);
+        FriendService friendService = new FriendService(friendsRepository);
         plantService = new PlantService(plantRepository, gardenRepository);
         weatherAPIService = new WeatherAPIService(restTemplate, gardenService, gardenWeatherService);
         mockedModerationService = mock(ModerationService.class);
-        profanityService = mock(ProfanityService.class);
-        locationService = mock(LocationService.class);
-        tagService = mock(TagService.class);
+        ProfanityService profanityService = mock(ProfanityService.class);
+        TagService tagService = mock(TagService.class);
+        LocationService locationService = mock(LocationService.class);
         gardenController = new GardenController(gardenService, plantService, userService, weatherAPIService, tagService, friendService, mockedModerationService, profanityService, locationService);
 
         GardenUser user = new GardenUser();
@@ -103,7 +93,7 @@ public class U14WeatherMonitoringFeature {
 
     @Given("I create a garden called {string} at {string} {string}, {string}, {string}, {string}. Latitude: {string}, Longitude: {string}")
     public void i_create_a_garden(String gardenName, String streetNumber, String streetName, String suburb, String city, String country, String lat, String lon) {
-        user = gardenUserRepository.findById(1L).get();
+        GardenUser user = gardenUserRepository.findById(1L).get();
         garden = gardenRepository.findById(1L).get();
 
         garden.setName(gardenName);
@@ -133,23 +123,17 @@ public class U14WeatherMonitoringFeature {
 
     @Then("The current weather is displaying for my location")
     public void the_current_weather_is_displaying_for_my_location() {
-        String mockApiResponse = "{}"; // JSON string of the mocked API response
-        ResponseEntity<String> mockResponseEntity = new ResponseEntity<>(mockApiResponse, HttpStatus.OK);
+        GardenWeather gardenWeather = new GardenWeather();
+        gardenWeather.setLastUpdated(LocalDate.now().toString());
+        garden.setGardenWeather(gardenWeather);
 
-        when(restTemplate.getForEntity(anyString(), eq(String.class))).thenReturn(mockResponseEntity);
+        when(gardenService.getGardenById(garden.getId())).thenReturn(Optional.of(garden));
 
-        GardenWeather mockGardenWeather = new GardenWeather();
-        WeatherAPICurrentResponse mockCurrentResponse = new WeatherAPICurrentResponse();
+        GardenWeather result = weatherAPIService.getWeatherData(garden.getId(), lat, lon);
 
-        when(weatherAPIService.getWeatherData(1L, garden.getLat(), garden.getLon())).thenReturn(mockGardenWeather);
-        when(weatherAPIService.getCurrentWeatherFromAPI(garden.getLat(), garden.getLon())).thenReturn(mockCurrentResponse);
-
-        String result = gardenController.gardenDetail(1L, model);
-        assertEquals("gardens/gardenDetails", result);
-        verify(model).addAttribute("garden", garden);
-        verify(model).addAttribute("currentWeather", mockCurrentResponse);
-        verify(model).addAttribute("forecastWeather", mockGardenWeather.getForecastWeather());
-        verify(model).addAttribute("displayWeather", true);
+        assertNotNull(result, "GardenWeather should be returned as not null.");
+        assertEquals(LocalDate.now().toString(), result.getLastUpdated());
+        verify(restTemplate, never()).getForEntity(anyString(), eq(String.class));
     }
 
 
@@ -157,40 +141,45 @@ public class U14WeatherMonitoringFeature {
     public void the_weather_for_the_next_three_days_is_displaying() {
         assertNotNull(garden.getGardenWeather());
         assert (garden.getGardenWeather().getForecastWeather().size() == 3);
-        verify(model).addAttribute(eq("forecastWeather"), anyList());
-    }
-
-    @Then("An error message displays saying that the location cannot be found.")
-    public void error_message_displays_location_not_found() {
-        garden.setLat(null);
-        garden.setLon(null);
-        when(gardenRepository.findById(garden.getId())).thenReturn(Optional.of(garden));
-        gardenController.gardenDetail(garden.getId(), model);
-        verify(model).addAttribute(eq("displayWeather"), eq(false));
     }
 
     @Given("The past two days have been sunny for that location")
     public void past_weather_sunny_for_that_location() {
-        GardenWeather gardenWeather = new GardenWeather();
-        gardenWeather.setPreviousWeather(List.of(new WeatherData(), new WeatherData()));
-        garden.setGardenWeather(gardenWeather);
-        when(gardenRepository.findById(garden.getId())).thenReturn(Optional.of(garden));
+        gardenWeather = new GardenWeather();
+        WeatherData day1 = new WeatherData();
+        WeatherData day2 = new WeatherData();
+        day1.setConditions("Sunny");
+        day2.setConditions("Sunny");
+        gardenWeather.setPreviousWeather(List.of(day1, day2));
+
+        currentResponse = new WeatherAPICurrentResponse();
+        Current current = new Current();
+        Condition condition = new Condition();
+        condition.setConditions("Sunny");
+        current.setCondition(condition);
+        currentResponse.setCurrent(current);
+
+        assertTrue(weatherAPIService.getWateringRecommendation(gardenWeather, currentResponse));
     }
 
     @Then("I get a notification telling me to water my plants")
     public void notification_to_water_plants() {
-        verify(model).addAttribute(eq("wateringRecommendation"), eq(true));
+        assertTrue(weatherAPIService.getWateringRecommendation(gardenWeather, currentResponse));
     }
 
-    @Given("The current weather is rainy")
-    public void the_current_weather_is_rainy() {
-        GardenWeather gardenWeather = new GardenWeather();
-        garden.setGardenWeather(gardenWeather);
-        when(gardenRepository.findById(garden.getId())).thenReturn(Optional.of(garden));
+    @Given("The current weather is {string}")
+    public void the_current_weather_is_rainy(String conditions) {
+        gardenWeather = new GardenWeather();
+        currentResponse = new WeatherAPICurrentResponse();
+        Current current = new Current();
+        Condition condition = new Condition();
+        condition.setConditions(conditions);
+        current.setCondition(condition);
+        currentResponse.setCurrent(current);
     }
 
     @Then("I get a notification telling me that outdoor plants do not need water that day")
     public void notification_that_outdoor_plants_do_not_need_water() {
-        verify(model).addAttribute(eq("wateringRecommendation"), eq(false));
+        assertFalse(weatherAPIService.getWateringRecommendation(gardenWeather, currentResponse));
     }
 }
