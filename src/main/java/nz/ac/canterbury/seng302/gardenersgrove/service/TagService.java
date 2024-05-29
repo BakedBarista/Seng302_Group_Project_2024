@@ -77,7 +77,7 @@ public class TagService {
      * @param name The name of the tag.
      * @return True if name is valid, otherwise false
      */
-    private boolean isValidTag(String name) throws ProfanityDetectedException {
+    public boolean isValidTag(String name) throws ProfanityDetectedException {
         boolean profanityExists = !(profanityService.badWordsFound(name).isEmpty());
 
         if (profanityExists) {

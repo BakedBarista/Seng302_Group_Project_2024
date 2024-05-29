@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.cucumber.step_definitions;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.BeforeAll;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -8,10 +9,7 @@ import io.cucumber.java.en.When;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.GardenController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.FriendsRepository;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weatherAPI.WeatherAPIService;
 import org.springframework.security.core.Authentication;
@@ -19,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -41,12 +40,17 @@ public class U8CreateNewGardenFeature {
 
     private static WeatherAPIService weatherAPIService;
     private static  RestTemplate restTemplate;
+
+    private static LocationService locationService;
     private static FriendService friendService;
     private static FriendsRepository friendsRepository;
 
     private static ModerationService moderationService;
     private static ModerationService mockedModerationService;
     private static ProfanityService profanityService;
+
+    private static TagService tagService;
+    private static TagRepository   tagRepository;
 
     private static GardenController gardenController;
 
@@ -63,14 +67,18 @@ public class U8CreateNewGardenFeature {
         plantRepository = mock(PlantRepository.class);
         gardenRepository = mock(GardenRepository.class);
         profanityService = mock(ProfanityService.class);
+        tagRepository = mock(TagRepository.class);
+        restTemplate = mock(RestTemplate.class);
         userService = new GardenUserService(gardenUserRepository);
         gardenService = new GardenService(gardenRepository);
         friendService = new FriendService(friendsRepository);
         plantService = new PlantService(plantRepository, gardenRepository);
         weatherAPIService = new WeatherAPIService(restTemplate, gardenService);
+        tagService = new TagService(tagRepository, gardenService, profanityService);
         moderationService = new ModerationService();
         mockedModerationService = mock(ModerationService.class);
-        gardenController = new GardenController(gardenService, plantService, userService, weatherAPIService, friendService, moderationService, profanityService);
+        locationService = mock(LocationService.class);
+        gardenController = new GardenController(gardenService, plantService, userService, weatherAPIService, tagService, friendService, moderationService, profanityService, locationService);
     }
 
 
@@ -130,6 +138,7 @@ public class U8CreateNewGardenFeature {
 
         when(gardenUserRepository.findById(1L)).thenReturn(Optional.of(user));
         when(gardenRepository.save(garden)).thenReturn(garden);
+        when(locationService.getLatLng(anyString())).thenReturn(new ArrayList<>());
 
         gardenController.submitForm(garden, bindingResult, authentication, model);
     }
