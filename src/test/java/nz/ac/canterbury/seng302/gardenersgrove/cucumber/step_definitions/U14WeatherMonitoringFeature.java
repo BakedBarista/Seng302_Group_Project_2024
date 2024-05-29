@@ -7,9 +7,8 @@ import io.cucumber.java.en.When;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.GardenController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.ForecastWeather;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.PreviousWeather;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.WeatherData;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.FriendsRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
@@ -135,7 +134,7 @@ public class U14WeatherMonitoringFeature {
     @Given("The past two days have been sunny for that location")
     public void past_weather_sunny_for_that_location() {
         GardenWeather gardenWeather = new GardenWeather();
-        gardenWeather.setPreviousWeather(List.of(new PreviousWeather(), new PreviousWeather()));
+        gardenWeather.setPreviousWeather(List.of(new WeatherData(), new WeatherData()));
         garden.setGardenWeather(gardenWeather);
         when(gardenRepository.findById(garden.getId())).thenReturn(Optional.of(garden));
     }
