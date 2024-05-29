@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
 
+import java.time.LocalDate;
+
 public class TokenServiceTest {
     private TokenService tokenService = new TokenService(null, null);
 
@@ -31,7 +33,7 @@ public class TokenServiceTest {
     @Test
     public void whenAddEmailTokenAndTimeToUserCallen_thenTokenIsAddedToUser() {
         // add user to persistence and then call function to add token and time instant
-        GardenUser user = new GardenUser("Jane", "Doe", "jdo456@uclive.ac.nz", "password123", "01/01/1970");
+        GardenUser user = new GardenUser("Jane", "Doe", "jdo456@uclive.ac.nz", "password123", LocalDate.of(1970, 1, 1));
         tokenService.addEmailTokenAndTimeToUser(user);
 
         // check that toke and time instant persist
@@ -42,7 +44,7 @@ public class TokenServiceTest {
     @Test
     public void givenAddResetPasswordTokenAndTimeToUserCalled_thenResetPasswordTokenIsAddedToUser() {
         // add user to persistence and then call function to add token and time instant
-        GardenUser user = new GardenUser("Jane", "Doe", "jdo456@uclive.ac.nz", "password123", "01/01/1970");
+        GardenUser user = new GardenUser("Jane", "Doe", "jdo456@uclive.ac.nz", "password123", LocalDate.of(1970, 1, 1));
         tokenService.addResetPasswordTokenAndTimeToUser(user);
 
         // check that toke and time instant persist

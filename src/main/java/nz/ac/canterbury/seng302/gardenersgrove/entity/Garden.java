@@ -1,27 +1,20 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
-import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationConstants.GARDEN_REGEX;
-
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import jakarta.persistence.*;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidEuropeanDecimal;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationConstants.GARDEN_REGEX;
 
 
 /**
@@ -91,6 +84,9 @@ public class Garden {
 
     @Column(nullable = false)
     private boolean displayWeatherAlert = true;
+
+    @Column
+    private LocalDate alertHidden;
 
     @Column
     private boolean wateringRecommendation;
@@ -284,5 +280,13 @@ public class Garden {
 
     public void setGardenWeather(GardenWeather gardenWeather) {
         this.gardenWeather = gardenWeather;
+    }
+
+    public LocalDate getAlertHidden() {
+        return alertHidden;
+    }
+
+    public void setAlertHidden(LocalDate alertHidden) {
+        this.alertHidden = alertHidden;
     }
 }

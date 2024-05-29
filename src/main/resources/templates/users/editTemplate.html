@@ -13,7 +13,7 @@
         <h1>Edit</h1>
         <div th:insert="fragments/edit-profile-picture.html"></div>
         <p><a th:href="@{/users/edit/password}">Change Password</a></p>
-        <form th:action="edit" method="post" th:object="${editUserDTO}">
+        <form th:action="edit" method="post" th:object="${editUserDTO}" onsubmit="return validateDate()" novalidate>
             <label th:class="'form-group ' + ${#fields.hasErrors('fname') ? 'form-group-error' : ''}">
                 First Name
                 <input type="text" th:name="fname" th:value="*{fname}">
@@ -32,11 +32,18 @@
                 <input type="text" th:name="email" th:value="*{email}" inputmode="email">
                 <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: red;"></div>
             </label>
-            <label th:class="'form-group ' + ${#fields.hasErrors('DOB') ? 'form-group-error' : ''}">
-                Date of Birth (optional)
-                <input type="text" th:name="dob" th:value="*{DOB}">
-                <div th:if="${#fields.hasErrors('DOB')}" th:errors="*{DOB}" style="color: red;"></div>
-            </label>
+            <div class="mb-3">
+                <label for="datePicker" th:class="'form-label ' + ${#fields.hasErrors('dateOfBirth') ? 'is-invalid' : ''}">Date of Birth</label>
+                <input id="datePicker"
+                       type="date"
+                       placeholder="DD/MM/YYYY"
+                       th:class="'form-control ' + ${#fields.hasErrors('dateOfBirth') ? 'is-invalid' : ''}"
+                       th:name="dateOfBirth" th:value="*{dateOfBirth}">
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('dateOfBirth')}" th:errors="*{dateOfBirth}"></div>
+                <!--      dateError is the flag for when the date is not filled in correctly (e.g. 10/mm/2001)      -->
+                <input type="hidden" name="dateError" id="dateError" value="">
+            </div>
+
             <button class="btn">Submit</button>
             <a th:href="@{/users/user}" class="btn">Cancel</a>
         </form>
@@ -61,6 +68,7 @@
             checkNoLnameState();
         });
     </script>
-	<th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
+    <script th:src="@{/js/dateValidation.js}"></script>
+    <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
 </body>
 </html>

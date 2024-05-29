@@ -22,8 +22,11 @@ function autocomplete(containerElement, callback, options) {
 
     // create input element
     const inputElement = document.createElement("input");
+    inputElement.className = 'form-control';
     inputElement.type = "text";
+    inputElement.id = "locationInput";
     inputElement.placeholder = options.placeholder;
+    inputElement.className = "form-control";
     inputContainerElement.appendChild(inputElement);
 
     // add input field clear button
@@ -248,6 +251,14 @@ function autocomplete(containerElement, callback, options) {
         closeDropDownList();
     }
 
+    /**
+     * Sets focus on an element and closes the dropdown list
+     */
+    function focus() {
+        inputElement.focus();
+        closeDropDownList();
+    }
+
     // Close the dropdown list
     function closeDropDownList() {
         const autocompleteItemsElement = inputContainerElement.querySelector(".autocomplete-items");
@@ -300,5 +311,5 @@ function autocomplete(containerElement, callback, options) {
     });
 
     // Return an object with the desired methods
-    return { clear };
+    return { clear, focus, inputElement };
 }

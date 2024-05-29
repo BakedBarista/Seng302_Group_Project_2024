@@ -1,9 +1,11 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.gardens;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
@@ -22,7 +24,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -57,28 +58,34 @@ public class PlantController {
 
         logger.info("GET /gardens/${id}/add-plant - display the new plant form");
         model.addAttribute("gardenId", gardenId);
-        model.addAttribute("plant", new Plant("","","",""));
+        model.addAttribute("plant", new Plant("","","",null));
 
         GardenUser owner = gardenUserService.getCurrentUser();
+        Optional<Garden> garden = gardenService.getGardenById(gardenId);
+        if (!garden.isPresent() || !garden.get().getOwner().getId().equals(owner.getId())) {
+            return "/error/accessDenied";
+        }
+
         List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
         model.addAttribute("gardens", gardens);
         return "plants/addPlant";
     }
 
-                             
+
+
     /**
      * check for validity of data and return user to
      * garden details page if data is valid with newly submitted plant entity
      * - else keep them on the add plant form with data persistent and error messages displayed
      * @param gardenId the id of the garden the plant is being added to
-     * @param plant the plant entity being added
+     * @param plantDTO the plant dto being checaked
      * @param bindingResult binding result
      * @param model representation of results
      * @return redirect to gardens page
      */
     @PostMapping("/gardens/{gardenId}/add-plant")
     public String submitAddPlantForm(@PathVariable("gardenId") Long gardenId,
-                                     @Valid @ModelAttribute("plant") Plant plant,
+                                     @Valid @ModelAttribute("plant") PlantDTO plantDTO,
                                      BindingResult bindingResult,
                                      @RequestParam("image") MultipartFile file,
                                      @RequestParam("dateError") String dateValidity,
@@ -86,31 +93,22 @@ public class PlantController {
         logger.info("POST /gardens/${gardenId}/add-plant - submit the new plant form");
 
         if (Objects.equals(dateValidity, "dateInvalid")) {
-            bindingResult.rejectValue("plantedDate", "plantedDate.formatError", "Date must be in the format DD-MM-YYYY");
-        }
-
-        if (!plant.getPlantedDate().isEmpty()) {
-            plant.setPlantedDate(refactorPlantedDate(plant.getPlantedDate()));
-        }
-
-        // Makes sure the image is null when nothing uploaded
-        if (file.isEmpty()) {
-            logger.info("No image chosen for plant, using default image.");
-            plant.setPlantImage(null, null);
+            bindingResult.rejectValue(
+                    "plantedDate",
+                    "plantedDate.formatError",
+                    "Date is not in valid format, DD/MM/YYYY, or does not represent a real date"
+            );
         }
 
         if (bindingResult.hasErrors()) {
-            model.addAttribute("plant", plant);
+            model.addAttribute("plant", plantDTO);
             model.addAttribute("gardenId", gardenId);
             logger.error("Validation error in Plant Form.");
             return "plants/addPlant";
         }
 
-        if(!plant.getPlantedDate().isEmpty()) {
-            plant.setPlantedDate(refactorPlantedDate(plant.getPlantedDate()));
-        }
-
         // Save the new plant and image
+        Plant plant = new Plant(plantDTO);
         Plant savedPlant = plantService.addPlant(plant, gardenId);
         if (savedPlant != null) {
             try {
@@ -136,16 +134,11 @@ public class PlantController {
                             Model model) {
         logger.info("/garden/{}/plant/{}/edit", gardenId, plantId);
         Optional<Plant> plant = plantService.getPlantById(plantId);
-
-        if (plant.isPresent()) {
-            Plant plantOpt = plant.get();
-            if (plantOpt.getPlantedDate() != null && !plantOpt.getPlantedDate().isEmpty()) {
-                DateTimeFormatter htmlDateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                LocalDate databaseDate = LocalDate.parse(plantOpt.getPlantedDate(), htmlDateFormat);
-                plantOpt.setPlantedDate(databaseDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
-            }
-        }
         GardenUser owner = gardenUserService.getCurrentUser();
+        Optional<Garden> garden = gardenService.getGardenById(gardenId);
+        if (!garden.isPresent() || !garden.get().getOwner().getId().equals(owner.getId())) {
+            return "/error/accessDenied";
+        }
         List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
         model.addAttribute("gardens", gardens);
         model.addAttribute("gardenId", gardenId);
@@ -169,16 +162,16 @@ public class PlantController {
                                       @PathVariable("plantId") long plantId,
                                       @RequestParam("image") MultipartFile file,
                                       @RequestParam("dateError") String dateValidity,
-                                      @Valid @ModelAttribute("plant") Plant plant,
+                                      @Valid @ModelAttribute("plant") PlantDTO plant,
                                       BindingResult bindingResult,
                                       Model model) {
 
         if (Objects.equals(dateValidity, "dateInvalid")) {
-            bindingResult.rejectValue("plantedDate", "plantedDate.formatError", "Date must be in the format DD-MM-YYYY");
-        }
-
-        if (!plant.getPlantedDate().isEmpty()) {
-            plant.setPlantedDate(refactorPlantedDate(plant.getPlantedDate()));
+            bindingResult.rejectValue(
+                    "plantedDate",
+                    "plantedDate.formatError",
+                    "Date is not in valid format, DD/MM/YYYY, or does not represent a real date"
+            );
         }
 
         if (bindingResult.hasErrors()) {
@@ -188,16 +181,17 @@ public class PlantController {
             return "plants/editPlant";
         }
 
-        if(!plant.getPlantedDate().isEmpty()) {
-            plant.setPlantedDate(refactorPlantedDate(plant.getPlantedDate()));
-        }
-
         Optional<Plant> existingPlant = plantService.getPlantById(plantId);
         if (existingPlant.isPresent()){
             existingPlant.get().setName(plant.getName());
             existingPlant.get().setCount(plant.getCount());
             existingPlant.get().setDescription(plant.getDescription());
-            existingPlant.get().setPlantedDate(plant.getPlantedDate());
+
+            if (plant.getPlantedDate() != null && !plant.getPlantedDate().isEmpty()) {
+                existingPlant.get().setPlantedDate(LocalDate.parse(plant.getPlantedDate()));
+            } else {
+                existingPlant.get().setPlantedDate(null);
+            }
 
             Plant savedPlant = plantService.addPlant(existingPlant.get(), gardenId);
 
@@ -214,29 +208,12 @@ public class PlantController {
     }
 
     /**
-     * take in date given via form and convert to dd/mm/yyyy (fix for thymeleaf form issue)*
-     * note : catches DateTimeParseException when date is already in dd/mm/yyyy for test purposes
-     *
-     * @param date the date string that needs to be formatted
-     * @return parsed date in correct format
-     */
-    public static String refactorPlantedDate(String date) {
-        try {
-            LocalDate localDate = LocalDate.parse(date);
-            return localDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-        } catch (DateTimeParseException alreadyCorrectFormatForTest) {
-            return date;
-        }
-    }
-
-
-    /**
      * Gets a plant image from database
      * @param id plant id
      * @return ResponseEntity as bytes and content type
      */
     @GetMapping("plants/{id}/plant-image")
-    public ResponseEntity<byte[]> plantImage(@PathVariable("id") Long id) {
+    public ResponseEntity<byte[]> plantImage(@PathVariable("id") Long id, HttpServletRequest request) {
         logger.info("GET /plants/" + id + "/plant-image");
 
         Optional<Plant> plant = plantService.getPlantById(id);
@@ -245,11 +222,10 @@ public class PlantController {
         if (plant.isPresent()) {
             existingPlant = plant.get();
         }
-
         // Return the default image if nothing specified
         if (existingPlant.getPlantImage() == null || existingPlant.getPlantImage().length == 0) {
             logger.info("Returning default plant image");
-            return ResponseEntity.status(302).header(HttpHeaders.LOCATION, "/img/default-plant.svg").build();
+            return ResponseEntity.status(302).header(HttpHeaders.LOCATION, request.getContextPath() + "/img/default-plant.svg").build();
         }
 
         // Return the saved image from DB

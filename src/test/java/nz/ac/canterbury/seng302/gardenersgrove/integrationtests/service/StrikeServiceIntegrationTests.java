@@ -9,10 +9,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.time.Clock;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.util.concurrent.Executor;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -55,7 +52,7 @@ class StrikeServiceIntegrationTests {
 
     @Test
     void givenUserScheduledForReenabling_whenReenableCalled_thenUserIsReenabled() {
-        user = new GardenUser("Jane", "Doe", "jdo458@uclive.ac.nz", "password123", "01/01/1970");
+        user = new GardenUser("Jane", "Doe", "jdo458@uclive.ac.nz", "password123", LocalDate.of(1970, 1, 1));
         userService.addUser(user);
         userId = user.getId();
 
@@ -76,7 +73,7 @@ class StrikeServiceIntegrationTests {
 
     @Test
     void givenUserNotScheduledForReenabling_whenReenableCalled_thenUserIsNotReenabled() {
-        user = new GardenUser("Jane", "Doe", "jdo459@uclive.ac.nz", "password123", "01/01/1970");
+        user = new GardenUser("Jane", "Doe", "jdo459@uclive.ac.nz", "password123", LocalDate.of(1970, 1, 1));
         userService.addUser(user);
         userId = user.getId();
 

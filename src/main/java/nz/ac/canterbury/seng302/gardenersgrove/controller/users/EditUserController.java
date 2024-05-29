@@ -1,12 +1,15 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -61,7 +64,9 @@ public class EditUserController {
         editUserDTO.setFname(user.getFname());
         editUserDTO.setLname(user.getLname());
         editUserDTO.setEmail(user.getEmail());
-        editUserDTO.setDOB(user.getDOB());
+        if (user.getDateOfBirth() != null) {
+            editUserDTO.setDateOfBirth(user.getDateOfBirth().format(DateTimeFormatter.ISO_LOCAL_DATE));
+        }
         model.addAttribute("editUserDTO", editUserDTO);
 
         return "users/editTemplate";
@@ -81,9 +86,11 @@ public class EditUserController {
      */
     @PostMapping("/users/edit")
     public String submitUser(
-            @Valid @ModelAttribute("user") EditUserDTO editUserDTO,
+            @Valid @ModelAttribute("editUserDTO") EditUserDTO editUserDTO,
             BindingResult bindingResult,
-            Authentication authentication, Model model) {
+            Authentication authentication,
+            @RequestParam(value = "dateError", required = false) String dateValidity,
+            Model model) {
         logger.info("POST /users/edit");
 
         Long userId = (Long) authentication.getPrincipal();
@@ -91,20 +98,38 @@ public class EditUserController {
         GardenUser user = userService.getUserById(userId);
         String currentEmail = user.getEmail();
 
+        if (Objects.equals(dateValidity, "dateInvalid")) {
+            bindingResult.rejectValue(
+                    "dateOfBirth",
+                    "dateOfBirth.formatError",
+                    "Date is not in valid format, DD/MM/YYYY, or does not represent a real date"
+            );
+        }
+
         if (!editUserDTO.getEmail().equalsIgnoreCase(currentEmail)
                 && userService.getUserByEmail(editUserDTO.getEmail()) != null) {
             bindingResult.rejectValue("email", null, "This email address is already in use");
         }
 
         if (bindingResult.hasErrors()) {
-            model.addAttribute("user", user);
+            // needed for getting image in html
+            model.addAttribute("userId", userId);
             return "users/editTemplate";
         }
 
         user.setFname(editUserDTO.getFname());
         user.setLname(editUserDTO.getLname());
         user.setEmail(editUserDTO.getEmail());
-        user.setDOB(editUserDTO.getDOB());
+        if (editUserDTO.getDateOfBirth() != null && !editUserDTO.getDateOfBirth().isEmpty()) {
+            try {
+                user.setDateOfBirth(LocalDate.parse(editUserDTO.getDateOfBirth()));
+            } catch (DateTimeParseException e) {
+                // shouldn't happen because of validation
+                logger.info("cannot parse invalid date format");
+            }
+        } else {
+            user.setDateOfBirth(null);
+        }
         userService.addUser(user);
 
         return "redirect:/users/user";
