@@ -357,6 +357,7 @@ public class GardenController {
                     return garden;
                 })
                 .collect(Collectors.toList());
+
         return "gardens/publicGardens";
     }
 
@@ -395,45 +396,27 @@ public class GardenController {
      * @param model representation of results
      * @return public garden page
      */
-    @PostMapping("/gardens/public/search")
+    @GetMapping("/gardens/public/search")
     public String searchPublicGardens(@RequestParam(defaultValue = "0") int page,
                                       @RequestParam(defaultValue = "10") int size,
                                       @RequestParam(name = "search", required = false, defaultValue = "") String search,
-                                      @RequestParam(name = "tags", required = false) List<String> tags,
+                                      @RequestParam(name = "tags", required = false) String tags,
                                       Model model) {
         Pageable pageable = PageRequest.of(page, size);
-        List<Tag> validTags = new ArrayList<>();
-       String invalidTag = "";
 
-        for (String tagName : tags) {
-            Tag tag = tagService.getTag(tagName);
-            if (tag != null) {
-                validTags.add(tag);
-            } else {
-                invalidTag = tagName ;
-            }
+        boolean hasTags = !tags.isEmpty();
+        List<String> tagNames = null;
+        if (hasTags) {
+            tagNames = Arrays.asList(tags.split(","));
         }
-
-        List<String> validTagNames = validTags.stream().map(Tag::getName).toList();
-        Page<Garden> gardenPage = gardenService.findGardensBySearchAndTags(search, validTagNames, pageable);
-
-        if (!invalidTag.isEmpty()) {
-            // Error for invalid tag
-            String errorMessage = "No tag matching: " + String.join(", ", invalidTag);
-            model.addAttribute("error", errorMessage);
-            model.addAttribute("invalidTag", invalidTag);  // Assuming only one tag is processed at a time
-        }
+        Page<Garden> gardenPage = gardenService.findGardensBySearchAndTags(search, tagNames, pageable);
 
         model.addAttribute("gardenPage", gardenPage);
         model.addAttribute("previousSearch", search);
-        model.addAttribute("previousTags", validTagNames);  // Only valid tags should go back into the tags list
+        model.addAttribute("tagString", tags);
 
         return "gardens/publicGardens";
     }
-
-
-
-
 
     /**
      * Helper method to check garden errors
