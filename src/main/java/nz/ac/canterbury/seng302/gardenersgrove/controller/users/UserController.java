@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
 
+import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,12 +69,12 @@ public class UserController {
      * @return ResponseEntity with the profile picture bytes or a redirect to a default profile picture URL
      */
     @GetMapping("users/{id}/profile-picture")
-    public ResponseEntity<byte[]> profilePicture(@PathVariable("id") Long id) {
+    public ResponseEntity<byte[]> profilePicture(@PathVariable("id") Long id, HttpServletRequest request) {
         logger.info("GET /users/" + id + "/profile-picture");
 
         GardenUser user = userService.getUserById(id);
         if (user.getProfilePicture() == null) {
-            return ResponseEntity.status(302).header(HttpHeaders.LOCATION, DEFAULT_PROFILE_PICTURE_URL).build();
+            return ResponseEntity.status(302).header(HttpHeaders.LOCATION, request.getContextPath() + DEFAULT_PROFILE_PICTURE_URL).build();
         }
         return ResponseEntity.ok().contentType(MediaType.parseMediaType(user.getProfilePictureContentType()))
                 .body(user.getProfilePicture());
