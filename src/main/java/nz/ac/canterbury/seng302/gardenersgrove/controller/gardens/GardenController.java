@@ -400,7 +400,7 @@ public class GardenController {
 
         model.addAttribute("gardenPage", gardenPage);
         model.addAttribute("previousSearch", search);
-        model.addAttribute("tagString", tags);  // Only valid tags should go back into the tags list
+        model.addAttribute("tagString", tags);
 
         return "gardens/publicGardens";
     }

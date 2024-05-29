@@ -11,6 +11,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.weatherAPI.WeatherAPIServ
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -353,7 +354,7 @@ public class GardenControllerTest {
     void testSearchPublicGardens_WithInvalidTag() {
         Model model = mock(Model.class);
 
-        List<String> tags = List.of("validTag", "invalidTag");
+        String tags = "validTag,invalidTag";
         when(tagService.getTag("validTag")).thenReturn(new Tag("validTag"));
         when(tagService.getTag("invalidTag")).thenReturn(null);
 
@@ -365,9 +366,7 @@ public class GardenControllerTest {
 
         String viewName = gardenController.searchPublicGardens(0, 10, "", tags, model);
 
-
-        verify(model).addAttribute("error", "No tag matching: invalidTag");
-        verify(model).addAttribute("invalidTag", "invalidTag");
+        verify(model).addAttribute("tagString", tags);
         assertEquals("gardens/publicGardens", viewName);
     }
 }
