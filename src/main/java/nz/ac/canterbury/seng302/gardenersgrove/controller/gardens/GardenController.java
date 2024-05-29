@@ -1,10 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.gardens;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
@@ -14,33 +10,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
 
-import java.lang.reflect.Array;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.time.LocalDate;
-import java.util.ArrayList;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.DateTimeFormats.NZ_FORMAT_DATE;
@@ -198,13 +180,16 @@ public class GardenController {
             model.addAttribute("displayWeather", !weatherResult.isEmpty());
             model.addAttribute("displayRecommendation", displayWeatherAlert);
             model.addAttribute("wateringRecommendation", garden.getWateringRecommendation());
-        }
+            GardenUser currentUser = gardenUserService.getCurrentUser();
+            List<Garden> gardens = gardenService.getGardensByOwnerId(currentUser.getId());
+            model.addAttribute("currentUser", currentUser);
+            model.addAttribute("gardens", gardens);
+            return "gardens/gardenDetails";
+        } else {
+            logger.error("No garden found at that ID");
+            return "error/404";
 
-        GardenUser currentUser = gardenUserService.getCurrentUser();
-        List<Garden> gardens = gardenService.getGardensByOwnerId(currentUser.getId());
-        model.addAttribute("currentUser", currentUser);
-        model.addAttribute("gardens", gardens);
-        return "gardens/gardenDetails";
+        }
     }
 
     /**
