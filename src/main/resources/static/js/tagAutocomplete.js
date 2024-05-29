@@ -19,6 +19,7 @@ function tagAutocomplete(options) {
         placeholder: options.placeholder,
         acceptButton: options.acceptButton,
         allowNonExistent: options.allowNonExistent,
+        minAutocompleteLength: 1,
     });
 
     for (const tag of tags) {

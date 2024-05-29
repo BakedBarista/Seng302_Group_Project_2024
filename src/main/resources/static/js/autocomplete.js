@@ -6,12 +6,12 @@ let locationMatch = false;
  *
  * @param {HTMLElement} containerElement - The container element where the autocomplete feature is added.
  * @param {(result: object | string) => void} callback - The callback function to be called when an option is selected. Called with the option object if a match was found, otherwise called with the input value.
- * @param {{ apiUrl: string, notFoundMessageHtml: string, placeholder: string, acceptButton: boolean, appendUserInput: boolean, allowNonExistent?: boolean }} options - Additional named options. All of these are required.
+ * @param {{ apiUrl: string, notFoundMessageHtml: string, placeholder: string, acceptButton: boolean, appendUserInput: boolean, allowNonExistent?: boolean, minAutocompleteLength?: number }} options - Additional named options. All of these are required.
  * @returns An object with methods that can be used to interact with the autocomplete feature.
  */
 function autocomplete(containerElement, callback, options) {
 
-    const MIN_ADDRESS_LENGTH = 3;
+    const MIN_ADDRESS_LENGTH = options.minAutocompleteLength ?? 3;
     const DEBOUNCE_DELAY = 300;
     let debounceTimer;
 
