@@ -216,6 +216,8 @@ class EditUserControllerTest {
         String result = controller.submitUser(editUser, bindingResult, file, authentication, dateValidStr, model);
 
         assertEquals("redirect:/users/user", result);
+        assertTrue(editUser.isNoLname());
+        assertNull(editUser.getLname());
         assertNull(user.getLname());
     }
 
@@ -238,8 +240,30 @@ class EditUserControllerTest {
         String result = controller.submitUser(editUser, bindingResult, file, authentication, dateValidStr, model);
 
         assertEquals("redirect:/users/user", result);
+        assertFalse(editUser.isNoLname());
+        assertEquals("Dough", editUser.getLname());
         assertEquals("Dough", user.getLname());
     }
 
+    @Test
+    void whenLnameIsEmpty_lnameIsRejected() throws IOException {
+        GardenUser user = new GardenUser("John", "Doe", "john@email.com", "P#ssw0rd", LocalDate.of(2000, 10, 10));
+        when(userService.getUserById(userId)).thenReturn(user);
+        when(authentication.getPrincipal()).thenReturn(userId);
 
+        EditUserDTO editUser = new EditUserDTO();
+        editUser.setFname("Jane");
+        editUser.setLname("");
+        editUser.setNoLname(false);
+        editUser.setEmail("jane@email.com");
+        editUser.setDateOfBirth("1970-01-01");
+
+        BindingResult bindingResult = mock(BindingResult.class);
+        when(bindingResult.hasErrors()).thenReturn(true);
+
+        String result = controller.submitUser(editUser, bindingResult, file, authentication, dateValidStr, model);
+
+        verify(bindingResult).rejectValue("lname", null, "Last name cannot be empty");
+        assertEquals("users/editTemplate", result);
+    }
 }
