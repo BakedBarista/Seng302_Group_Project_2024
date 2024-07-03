@@ -64,11 +64,15 @@ public class EditUserController {
         EditUserDTO editUserDTO = new EditUserDTO();
         editUserDTO.setFname(user.getFname());
         editUserDTO.setLname(user.getLname());
+        if(editUserDTO.getLname() == null){
+            editUserDTO.setNoLname(true);
+        }
         editUserDTO.setEmail(user.getEmail());
         if (user.getDateOfBirth() != null) {
             editUserDTO.setDateOfBirth(user.getDateOfBirth().format(DateTimeFormatter.ISO_LOCAL_DATE));
         }
         model.addAttribute("editUserDTO", editUserDTO);
+        logger.info("{}",editUserDTO.isNoLname());
 
         return "users/editTemplate";
     }
@@ -88,7 +92,6 @@ public class EditUserController {
             @RequestParam(value = "dateError", required = false) String dateValidity,
             Model model) throws IOException {
         logger.info("POST /users/edit");
-
         Long userId = (Long) authentication.getPrincipal();
 
         GardenUser user = userService.getUserById(userId);
@@ -105,6 +108,12 @@ public class EditUserController {
         if (!editUserDTO.getEmail().equalsIgnoreCase(currentEmail)
                 && userService.getUserByEmail(editUserDTO.getEmail()) != null) {
             bindingResult.rejectValue("email", null, "This email address is already in use");
+        }
+        logger.info("{}",editUserDTO.isNoLname());
+        if (editUserDTO.isNoLname()) {
+            editUserDTO.setLname(null);
+        }else if ((editUserDTO.getLname() == null || editUserDTO.getLname().isBlank())) {
+            bindingResult.rejectValue("lname", null, "Last name cannot be empty");
         }
 
         if (bindingResult.hasErrors()) {
