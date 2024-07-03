@@ -72,7 +72,6 @@ public class EditUserController {
             editUserDTO.setDateOfBirth(user.getDateOfBirth().format(DateTimeFormatter.ISO_LOCAL_DATE));
         }
         model.addAttribute("editUserDTO", editUserDTO);
-        logger.info("{}",editUserDTO.isNoLname());
 
         return "users/editTemplate";
     }
@@ -109,7 +108,6 @@ public class EditUserController {
                 && userService.getUserByEmail(editUserDTO.getEmail()) != null) {
             bindingResult.rejectValue("email", null, "This email address is already in use");
         }
-        logger.info("{}",editUserDTO.isNoLname());
         if (editUserDTO.isNoLname()) {
             editUserDTO.setLname(null);
         }else if ((editUserDTO.getLname() == null || editUserDTO.getLname().isBlank())) {
