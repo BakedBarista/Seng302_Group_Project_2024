@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.controller;
 
+import com.sun.jna.platform.win32.WinNT;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.EditUserController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditPasswordDTO;
@@ -11,6 +12,8 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
@@ -214,7 +217,6 @@ class EditUserControllerTest {
         when(bindingResult.hasErrors()).thenReturn(false);
 
         String result = controller.submitUser(editUser, bindingResult, file, authentication, dateValidStr, model);
-
         assertEquals("redirect:/users/user", result);
         assertTrue(editUser.isNoLname());
         assertNull(editUser.getLname());
@@ -264,6 +266,28 @@ class EditUserControllerTest {
         String result = controller.submitUser(editUser, bindingResult, file, authentication, dateValidStr, model);
 
         verify(bindingResult).rejectValue("lname", null, "Last name cannot be empty");
+        assertEquals("users/editTemplate", result);
+    }
+
+    @Test
+    void whenLnameIsNull_lnameIsDisabled(){
+        GardenUser user = new GardenUser("John", null, "john@email.com", "P#ssw0rd", LocalDate.of(2000, 10, 10));
+        when(authentication.getPrincipal()).thenReturn(userId);
+        when(userService.getUserById(userId)).thenReturn(user);
+        String result = controller.edit(authentication, model);
+        verify(authentication, times(1)).getPrincipal();
+        verify(userService, times(1)).getUserById(userId);
+        verify(model, times(1)).addAttribute("userId", userId);
+        ArgumentCaptor<EditUserDTO> captor = ArgumentCaptor.forClass(EditUserDTO.class);
+        verify(model, times(1)).addAttribute(eq("editUserDTO"), captor.capture());
+
+        EditUserDTO editUserDTO = captor.getValue();
+        assertEquals("John", editUserDTO.getFname());
+        assertNull(editUserDTO.getLname());
+        assertTrue(editUserDTO.isNoLname());
+        assertEquals("john@email.com", editUserDTO.getEmail());
+        assertEquals("2000-10-10", editUserDTO.getDateOfBirth());
+
         assertEquals("users/editTemplate", result);
     }
 }
