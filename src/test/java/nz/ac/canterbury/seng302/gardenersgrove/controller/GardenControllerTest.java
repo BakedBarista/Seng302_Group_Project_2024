@@ -5,16 +5,13 @@ import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.GardenControll
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.WeatherData;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weather.WeatherAPIService;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -25,7 +22,6 @@ import org.springframework.validation.FieldError;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -91,7 +87,7 @@ public class GardenControllerTest {
     @Test
     public void testForm() {
         Model model = mock(Model.class);
-        String result = gardenController.form(model);
+        String result = gardenController.getCreateGardenForm(model);
 
         verify(model).addAttribute(eq("garden"), any(Garden.class));
         verify(model).addAttribute(eq("gardens"), anyList());
@@ -108,7 +104,7 @@ public class GardenControllerTest {
 
         when(authentication.getPrincipal()).thenReturn((Long) 1L);
         when(profanityService.badWordsFound(anyString())).thenReturn(new ArrayList<>());
-        String result = gardenController.submitForm(invalidGarden, bindingResult, authentication, model);
+        String result = gardenController.submitCreateGardenForm(invalidGarden, bindingResult, authentication, model);
 
         assertEquals("gardens/createGarden", result);
     }
@@ -126,7 +122,7 @@ public class GardenControllerTest {
         when(profanityService.badWordsFound(anyString())).thenReturn(new ArrayList<>());
 
         Mockito.when(moderationService.moderateDescription(anyString())).thenReturn(ResponseEntity.ok().build());
-        String result = gardenController.submitForm(validGarden, bindingResult, authentication,  model);
+        String result = gardenController.submitCreateGardenForm(validGarden, bindingResult, authentication,  model);
         assertEquals("redirect:/gardens/1", result);
     }
 
@@ -233,7 +229,7 @@ public class GardenControllerTest {
         when(moderationService.checkIfDescriptionIsFlagged(description)).thenReturn(true);
         when(authentication.getPrincipal()).thenReturn((Long) 1L);
         when(gardenService.addGarden(any())).thenReturn(invalidGarden);
-        gardenController.submitForm(invalidGarden, bindingResult, authentication, model);
+        gardenController.submitCreateGardenForm(invalidGarden, bindingResult, authentication, model);
 
         verify(model).addAttribute("profanity", EXPECTED_MODERATION_ERROR_MESSAGE);
         verify(model).addAttribute("garden", invalidGarden);

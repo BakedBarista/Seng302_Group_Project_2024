@@ -108,7 +108,7 @@ public class U14WeatherMonitoringFeature {
         when(mockedModerationService.checkIfDescriptionIsFlagged("")).thenReturn(false);
         when(gardenRepository.save(garden)).thenReturn(garden);
 
-        gardenController.submitForm(garden, bindingResult, authentication, model);
+        gardenController.submitCreateGardenForm(garden, bindingResult, authentication, model);
         assertNotNull(gardenRepository.findByOwnerId(user.getId()));
         assertNotNull(gardenRepository.findById(garden.getId()));
     }

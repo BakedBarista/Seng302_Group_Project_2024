@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng302.gardenersgrove.cucumber.step_definitions;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.BeforeAll;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -141,7 +140,7 @@ public class U8CreateNewGardenFeature {
         when(gardenRepository.save(garden)).thenReturn(garden);
         when(locationService.getLatLng(anyString())).thenReturn(new ArrayList<>());
 
-        gardenController.submitForm(garden, bindingResult, authentication, model);
+        gardenController.submitCreateGardenForm(garden, bindingResult, authentication, model);
     }
 
     @Then("A garden with that information is created")

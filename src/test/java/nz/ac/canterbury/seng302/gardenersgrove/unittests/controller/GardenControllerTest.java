@@ -85,7 +85,7 @@ class GardenControllerTest {
         when(locationService.getLatLng(anyString())).thenReturn(List.of(-43.53, 172.63));
         when(gardenService.addGarden(any(Garden.class))).thenReturn(garden);
 
-        gardenController.submitForm(garden, bindingResult, authentication, model);
+        gardenController.submitCreateGardenForm(garden, bindingResult, authentication, model);
 
         assertEquals(-43.53, garden.getLat());
         assertEquals(172.63, garden.getLon());
@@ -109,7 +109,7 @@ class GardenControllerTest {
         when(locationService.getLatLng(anyString())).thenReturn(new ArrayList<>());
         when(gardenService.addGarden(any(Garden.class))).thenReturn(garden);
 
-        gardenController.submitForm(garden, bindingResult, authentication, model);
+        gardenController.submitCreateGardenForm(garden, bindingResult, authentication, model);
 
         assertNull(garden.getLat());
         assertNull(garden.getLon());
