@@ -68,7 +68,7 @@ public class Garden {
     @Column
     private Double lat;
 
-    @ValidEuropeanDecimal(message = "Garden size must be a positive number")
+    @ValidEuropeanDecimal(message = "Garden size must be a valid positive number (only allows numbers and a single period or comma)")
     @Column(nullable = true)
     private String size;
 
