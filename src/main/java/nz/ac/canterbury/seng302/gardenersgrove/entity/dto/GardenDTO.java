@@ -11,7 +11,9 @@ public class GardenDTO extends BaseGarden {
     @Column(nullable = true)
     private String size;
 
-    public GardenDTO() {}
+    public GardenDTO() {
+        super();
+    }
 
     /**
      * construct GardenDTO object with Garden
@@ -19,6 +21,7 @@ public class GardenDTO extends BaseGarden {
      * @param garden Garden object to copy
      */
     public GardenDTO(Garden garden) {
+        super();
         if (garden != null) {
             this.setId(garden.getId());
             this.setName(garden.getName());
@@ -37,7 +40,7 @@ public class GardenDTO extends BaseGarden {
 
     /**
      * construct GardenDTO object with params
-     * @param gardenName name of the garden of the garden
+     * @param name name of the garden of the garden
      * @param streetNumber street number (can be string such as 12A, 12B)
      * @param streetName street name of the garden
      * @param suburb suburb of the garden
@@ -49,18 +52,9 @@ public class GardenDTO extends BaseGarden {
      * @param description short description made by the owner
      * @param gardenSize size of the garden, can be a decimal
      */
-    public GardenDTO(String gardenName, String streetNumber, String streetName, String suburb, String city, String country,
+    public GardenDTO(String name, String streetNumber, String streetName, String suburb, String city, String country,
                   String postCode, Double lat, Double lon, String description, String gardenSize) {
-        this.setName(gardenName);
-        this.setStreetNumber(streetNumber);
-        this.setStreetName(streetName);
-        this.setSuburb(suburb);
-        this.setCity(city);
-        this.setCountry(country);
-        this.setPostCode(postCode);
-        this.setLat(lat);
-        this.setLon(lon);
-        this.setDescription(description);
+        super(name, streetNumber, streetName, suburb, city, country, postCode, lat, lon, description);
         this.size = gardenSize;
     }
 
@@ -68,6 +62,10 @@ public class GardenDTO extends BaseGarden {
         return size;
     }
 
+    /**
+     * handles setting size, replacing comma with period
+     * @param size
+     */
     public void setSize(String size) {
         this.size = size.replace(',', '.');
     }

@@ -60,16 +60,7 @@ public class Garden extends BaseGarden {
      */
     public Garden(String name, String streetNumber, String streetName, String suburb, String city, String country,
                   String postCode, Double lat, Double lon, String description, Double size) {
-        this.setName(name);
-        this.setStreetNumber(streetNumber);
-        this.setStreetName(streetName);
-        this.setSuburb(suburb);
-        this.setCity(city);
-        this.setCountry(country);
-        this.setPostCode(postCode);
-        this.setLat(lat);
-        this.setLon(lon);
-        this.setDescription(description);
+        super(name, streetNumber, streetName, suburb, city, country, postCode, lat, lon, description);
         this.size = size;
     }
 

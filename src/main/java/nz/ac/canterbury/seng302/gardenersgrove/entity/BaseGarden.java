@@ -75,6 +75,22 @@ public abstract class BaseGarden {
     @JoinTable(name="garden_tags", joinColumns = @JoinColumn(name="garden_id"), inverseJoinColumns = @JoinColumn(name="tag_id"))
     private Set<Tag> tags = new HashSet<>();
 
+    public BaseGarden(String name, String streetNumber, String streetName, String suburb, String city,
+                      String country, String postCode, Double lat, Double lon, String description) {
+        this.name = name;
+        this.streetNumber = streetNumber;
+        this.streetName = streetName;
+        this.suburb = suburb;
+        this.city = city;
+        this.country = country;
+        this.postCode = postCode;
+        this.lat = lat;
+        this.lon = lon;
+        this.description = description;
+    }
+
+    public BaseGarden() {}
+
     // Getters and setters
 
     public Boolean getIsPublic() {
