@@ -57,11 +57,9 @@ public class AuthenticationControllerTest {
     }
 
     @Test
-    public void testWhenTokenDoesNotExistsForUser_UserIsNotSentToEmailAuthenticationPage() {
+    public void whenTokenDoesNotExistsForUser_thenErrorIsShown() {
         long userId = 1;
-        String notExpectedPage = "authentication/emailAuthentication";
-        // may change at later date
-        String expectedPage = "error/404";
+        String expectedPage = "authentication/emailAuthentication";
 
         // explicitly setting null here
         user.setEmailValidationToken(null);
@@ -70,8 +68,20 @@ public class AuthenticationControllerTest {
         when(userService.getUserById(userId)).thenReturn(user);
         String actualPage = authenticationController.authenticateEmail(userId, model);
 
-        assertNotEquals(notExpectedPage, actualPage);
         assertEquals(expectedPage, actualPage);
+        verify(model).addAttribute("tokenExpired", true);
+    }
+
+    @Test
+    public void whenUserHasBeenDeleted_thenErrorIsShown() {
+        long userId = 1;
+        String expectedPage = "authentication/emailAuthentication";
+
+        when(userService.getUserById(userId)).thenReturn(null);
+        String actualPage = authenticationController.authenticateEmail(userId, model);
+
+        assertEquals(expectedPage, actualPage);
+        verify(model).addAttribute("tokenExpired", true);
     }
 
     @Test

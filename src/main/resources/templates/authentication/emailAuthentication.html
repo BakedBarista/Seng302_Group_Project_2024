@@ -37,7 +37,7 @@
 <main class="main-container">
     <div class="card p-5">
         <h1>Authenticate Email</h1>
-        <p>We have sent an email to <span th:text="${hiddenEmail}">Hidden Email</span></p>
+        <p th:if="${hiddenEmail != null}">We have sent an email to <span th:text="${hiddenEmail}">Hidden Email</span></p>
         <form id = "authenticationForm" th:action="@{/users/user/{userId}/authenticate-email (userId=${userId})}" method="post">
             <div class = "groupElements">
                 <input class="hidden-input" pattern="\d*" type="text" value=" " id="authenticationToken"
@@ -55,7 +55,7 @@
                 <input class="mfaInput m-1 text-center form-control rounded" type="number" id="sixth" min="0" max="9" maxlength="1" />
             </div>
             <span style="color: red;" class="is-invalid" th:if="${tokenExpired == true}">Signup code invalid. Please create a new account</span>
-            <span style="color: red;" th:if="${tokenIncorrect == true}">Signup code incorrect. Please try again.</span>
+            <span style="color: red;" th:if="${tokenIncorrect == true}">Signup code invalid. Please try again.</span>
         </div>
     </div>
 </main>
