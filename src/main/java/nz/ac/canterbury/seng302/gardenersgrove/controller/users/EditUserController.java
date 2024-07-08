@@ -1,14 +1,13 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
-import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.util.Objects;
-
+import jakarta.validation.Valid;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditPasswordDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,18 +15,14 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-
 import org.springframework.web.multipart.MultipartFile;
 
-import jakarta.validation.Valid;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditPasswordDTO;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
-import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Objects;
 
 
 /**
@@ -64,6 +59,9 @@ public class EditUserController {
         EditUserDTO editUserDTO = new EditUserDTO();
         editUserDTO.setFname(user.getFname());
         editUserDTO.setLname(user.getLname());
+        if (editUserDTO.getLname() == null) {
+            editUserDTO.setNoLname(true);
+        }
         editUserDTO.setEmail(user.getEmail());
         if (user.getDateOfBirth() != null) {
             editUserDTO.setDateOfBirth(user.getDateOfBirth().format(DateTimeFormatter.ISO_LOCAL_DATE));
@@ -88,7 +86,6 @@ public class EditUserController {
             @RequestParam(value = "dateError", required = false) String dateValidity,
             Model model) throws IOException {
         logger.info("POST /users/edit");
-
         Long userId = (Long) authentication.getPrincipal();
 
         GardenUser user = userService.getUserById(userId);
@@ -106,6 +103,11 @@ public class EditUserController {
                 && userService.getUserByEmail(editUserDTO.getEmail()) != null) {
             bindingResult.rejectValue("email", null, "This email address is already in use");
         }
+        if (editUserDTO.isNoLname()) {
+            editUserDTO.setLname(null);
+        } else if ((editUserDTO.getLname() == null || editUserDTO.getLname().isBlank())) {
+            bindingResult.rejectValue("lname", null, "Last name cannot be empty");
+        }
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("editUserDTO", editUserDTO);
@@ -115,7 +117,7 @@ public class EditUserController {
 
         try {
             editProfilePicture(userId, file);
-        } catch(IOException e){
+        } catch (IOException e) {
             throw e;
         }
 
