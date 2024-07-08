@@ -7,6 +7,7 @@ import io.cucumber.java.en.When;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.GardenController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.GardenDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.WeatherData;
 import nz.ac.canterbury.seng302.gardenersgrove.model.weather.*;
@@ -108,7 +109,7 @@ public class U14WeatherMonitoringFeature {
         when(mockedModerationService.checkIfDescriptionIsFlagged("")).thenReturn(false);
         when(gardenRepository.save(garden)).thenReturn(garden);
 
-        gardenController.submitCreateGardenForm(garden, bindingResult, authentication, model);
+        gardenController.submitCreateGardenForm(new GardenDTO(garden), bindingResult, authentication, model);
         assertNotNull(gardenRepository.findByOwnerId(user.getId()));
         assertNotNull(gardenRepository.findById(garden.getId()));
     }

@@ -39,16 +39,46 @@ public class Garden extends BaseGarden {
     private GardenWeather gardenWeather;
 
     @Column(nullable = true)
-    private double size;
+    private Double size;
 
     public Garden() {
     }
 
     /**
-     * Creates a new FormResult object
+     * Create Garden object from given params
+     * @param name
+     * @param streetNumber
+     * @param streetName
+     * @param suburb
+     * @param city
+     * @param country
+     * @param postCode
+     * @param lat
+     * @param lon
+     * @param description
+     * @param size
+     */
+    public Garden(String name, String streetNumber, String streetName, String suburb, String city, String country,
+                  String postCode, Double lat, Double lon, String description, Double size) {
+        this.setName(name);
+        this.setStreetNumber(streetNumber);
+        this.setStreetName(streetName);
+        this.setSuburb(suburb);
+        this.setCity(city);
+        this.setCountry(country);
+        this.setPostCode(postCode);
+        this.setLat(lat);
+        this.setLon(lon);
+        this.setDescription(description);
+        this.size = size;
+    }
+
+    /**
+     * Creates Garden object from a GardenDTO object
      * @param garden garden to copy data from
      */
     public Garden(GardenDTO garden) {
+        this.setId(garden.getId());
         this.setName(garden.getName());
         this.setStreetNumber(garden.getStreetNumber());
         this.setStreetName(garden.getStreetName());
@@ -59,19 +89,31 @@ public class Garden extends BaseGarden {
         this.setLat(garden.getLat());
         this.setLon(garden.getLon());
         this.setDescription(garden.getDescription());
-        this.size = Double.parseDouble(garden.getSize());
+        this.setSize(garden.getSize());
     }
 
-    public double getSize() {
+    public Double getSize() {
         return size;
     }
 
-    public void setSize(double size) {
+    public void setSize(Double size) {
         this.size = size;
     }
 
+    /**
+     * handles converting String size to Double size
+     * @param size
+     */
     public void setSize(String size) {
-        this.size = Double.parseDouble(size);
+        if (size == null || size.trim().isEmpty()) {
+            this.size = null;
+        } else {
+            try {
+                this.size = Double.parseDouble(size);
+            } catch (NumberFormatException e) {
+                this.size = null;
+            }
+        }
     }
 
     public boolean getDisplayWeatherAlert() {

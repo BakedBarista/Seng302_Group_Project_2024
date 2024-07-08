@@ -71,7 +71,7 @@ public class U24BrowsingGardenByTagFeature {
         String postCode = "1234";
         Double lon = 1.0;
         Double lat = 2.0;
-        String gardenSize = "100";
+        Double gardenSize = 100D;
         String gardenDescription = "Test Description";
         when(profanityService.badWordsFound(tag)).thenReturn(new ArrayList<>());
         when(mockTagService.isValidTag(any())).thenReturn(true);
@@ -80,7 +80,7 @@ public class U24BrowsingGardenByTagFeature {
         } catch(ProfanityDetectedException doNothing){
         }
         testTag1 = tagService.getTag(tag);
-        testGarden1 = new Garden(garden, streetNumber,streetName,suburb,city,country,postCode,lon,lat, gardenSize, gardenDescription);
+        testGarden1 = new Garden(garden, streetNumber,streetName,suburb,city,country,postCode,lon,lat, gardenDescription, gardenSize);
         gardenService.addGarden(testGarden1);
         testGarden1.getTags().add(testTag1);
         assertTrue(testGarden1.getTags().contains(testTag1));

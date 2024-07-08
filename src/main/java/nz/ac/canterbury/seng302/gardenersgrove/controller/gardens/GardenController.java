@@ -87,7 +87,7 @@ public class GardenController {
     @GetMapping("/gardens/create")
     public String getCreateGardenForm(Model model) {
         logger.info("GET /gardens/create - display the new garden form");
-        model.addAttribute("garden", new Garden());
+        model.addAttribute("garden", new GardenDTO());
         GardenUser owner = gardenUserService.getCurrentUser();
 
         List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
@@ -97,7 +97,7 @@ public class GardenController {
 
     /**
      * Submits form to be displayed
-     * @param garden   garden details
+     * @param gardenDTO   garden details
      * @param bindingResult binding result
      * @param model representation of results
      * @return gardenForm
@@ -118,18 +118,18 @@ public class GardenController {
         }
 
         // Request API
-        Garden garden = new Garden(gardenDTO);
-        List<Double> latAndLng = locationService.getLatLng(garden.getLocation());
+        List<Double> latAndLng = locationService.getLatLng(gardenDTO.getLocation());
 
         // Null check
         if (!latAndLng.isEmpty()) {
-            garden.setLat(latAndLng.get(0));
-            garden.setLon(latAndLng.get(1));
+            gardenDTO.setLat(latAndLng.get(0));
+            gardenDTO.setLon(latAndLng.get(1));
         } else {
-            garden.setLat(null);
-            garden.setLon(null);
+            gardenDTO.setLat(null);
+            gardenDTO.setLon(null);
         }
 
+        Garden garden = new Garden(gardenDTO);
         Long userId = (Long) authentication.getPrincipal();
         GardenUser owner = gardenUserService.getUserById(userId);
         garden.setOwner(owner);
@@ -297,7 +297,7 @@ public class GardenController {
     /**
      * Update garden details
      * @param id garden id
-     * @param garden garden details
+     * @param gardenDTO garden details
      * @param result binding result
      * @param model representation of results
      * @return redirect to gardens

@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.entity.dto;
 import jakarta.persistence.Column;
 import nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidEuropeanDecimal;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.BaseGarden;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 
 public class GardenDTO extends BaseGarden {
 
@@ -13,7 +14,29 @@ public class GardenDTO extends BaseGarden {
     public GardenDTO() {}
 
     /**
-     * construct GardenDTO
+     * construct GardenDTO object with Garden
+     * checks that garden is not null before doing anything
+     * @param garden Garden object to copy
+     */
+    public GardenDTO(Garden garden) {
+        if (garden != null) {
+            this.setId(garden.getId());
+            this.setName(garden.getName());
+            this.setStreetNumber(garden.getStreetNumber());
+            this.setStreetName(garden.getStreetName());
+            this.setSuburb(garden.getSuburb());
+            this.setCity(garden.getCity());
+            this.setCountry(garden.getCountry());
+            this.setPostCode(garden.getPostCode());
+            this.setLat(garden.getLat());
+            this.setLon(garden.getLon());
+            this.setDescription(garden.getDescription());
+            this.size = String.valueOf(garden.getSize());
+        }
+    }
+
+    /**
+     * construct GardenDTO object with params
      * @param gardenName name of the garden of the garden
      * @param streetNumber street number (can be string such as 12A, 12B)
      * @param streetName street name of the garden
@@ -27,7 +50,7 @@ public class GardenDTO extends BaseGarden {
      * @param gardenSize size of the garden, can be a decimal
      */
     public GardenDTO(String gardenName, String streetNumber, String streetName, String suburb, String city, String country,
-                  String postCode, double lat, double lon, String description, String gardenSize) {
+                  String postCode, Double lat, Double lon, String description, String gardenSize) {
         this.setName(gardenName);
         this.setStreetNumber(streetNumber);
         this.setStreetName(streetName);
@@ -47,10 +70,5 @@ public class GardenDTO extends BaseGarden {
 
     public void setSize(String size) {
         this.size = size.replace(',', '.');
-    }
-
-    @Override
-    public String toString() {
-        return super.toString() + " additionally, size='" + size + "'";
     }
 }

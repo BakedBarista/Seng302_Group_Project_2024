@@ -8,6 +8,7 @@ import io.cucumber.java.en.When;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.GardenController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.GardenDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.TagRepository;
@@ -86,7 +87,7 @@ public class U19PubliciseGardenFeature {
         when(profanityService.badWordsFound(garden.getDescription())).thenReturn(profanity);
         when(moderationService.checkIfDescriptionIsFlagged(garden.getDescription())).thenReturn(false);
 
-        gardenController.checkGardenError(model, bindingResult, garden);
+        gardenController.checkGardenDTOError(model, bindingResult, new GardenDTO(garden));
 
         ArgumentCaptor<String> stringCaptor = ArgumentCaptor.forClass(String.class);
         verify(model).addAttribute(eq("profanity"), stringCaptor.capture());
@@ -98,7 +99,7 @@ public class U19PubliciseGardenFeature {
         when(profanityService.badWordsFound(garden.getDescription())).thenReturn(new ArrayList<>());
         when(moderationService.checkIfDescriptionIsFlagged(garden.getDescription())).thenReturn(false);
 
-        gardenController.checkGardenError(model, bindingResult, garden);
+        gardenController.checkGardenDTOError(model, bindingResult, new GardenDTO(garden));
     }
 
     @Then("Description is added")
@@ -114,7 +115,7 @@ public class U19PubliciseGardenFeature {
         when(profanityService.badWordsFound(garden.getDescription())).thenReturn(profanity);
         when(moderationService.checkIfDescriptionIsFlagged(garden.getDescription())).thenReturn(false);
 
-        gardenController.checkGardenError(model, bindingResult, garden);
+        gardenController.checkGardenDTOError(model, bindingResult, new GardenDTO(garden));
 
         ArgumentCaptor<String> stringCaptor = ArgumentCaptor.forClass(String.class);
         verify(model).addAttribute(eq("profanity"), stringCaptor.capture());

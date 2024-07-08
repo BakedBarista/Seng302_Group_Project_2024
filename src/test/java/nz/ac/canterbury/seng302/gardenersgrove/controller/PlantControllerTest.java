@@ -98,7 +98,7 @@ public class PlantControllerTest {
         GardenUser owner = new GardenUser();
         owner.setId(1L);
 
-        Garden garden = new Garden("Test Garden", "1", "test", "test suburb", "test city", "test country", "1234", 0.0, 0.0, "100", "test description");
+        Garden garden = new Garden("Test Garden", "1", "test", "test suburb", "test city", "test country", "1234", 0.0, 0.0, "test description", 100D);
         garden.setOwner(owner);
 
         when(gardenService.getGardenById(gardenId) ).thenReturn(Optional.of(garden));
@@ -187,7 +187,7 @@ public class PlantControllerTest {
         GardenUser owner = new GardenUser();
         owner.setId(1L);
 
-        Garden garden = new Garden("Test Garden", "1", "test", "test suburb", "test city", "test country", "1234", 0.0, 0.0, "100", "test description");
+        Garden garden = new Garden("Test Garden", "1", "test", "test suburb", "test city", "test country", "1234", 0.0, 0.0, "test description", 100D);
         garden.setOwner(owner);
 
         when(plantService.getPlantById(plantId)).thenReturn(Optional.of(plant));
