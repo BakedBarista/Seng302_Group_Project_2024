@@ -39,7 +39,9 @@ public class AuthenticationController {
             model.addAttribute("hiddenEmail", hideEmail(user.getEmail()));
             return "authentication/emailAuthentication";
         } else {
-            return "error/404";
+            model.addAttribute("tokenExpired", true);
+            logger.info("User entered an expired token");
+            return "authentication/emailAuthentication";
         }
     }
 
@@ -69,7 +71,8 @@ public class AuthenticationController {
         }
 
         // User not null so show hidden email
-        boolean authenticated = user.getEmailValidationToken().equals(authenticationToken);
+        String correctToken = user.getEmailValidationToken();
+        boolean authenticated = correctToken != null && correctToken.equals(authenticationToken);
 
         logger.info("authentication: {}", authenticated);
 
@@ -81,8 +84,7 @@ public class AuthenticationController {
 
             redirectAttributes.addFlashAttribute("justAuthenticated", true);
             return "redirect:/users/login";
-        }
-        else {
+        } else {
             model.addAttribute("hiddenEmail", hideEmail(user.getEmail()));
             model.addAttribute("tokenIncorrect", true);
             logger.info("User entered an incorrect token");

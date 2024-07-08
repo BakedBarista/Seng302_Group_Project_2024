@@ -36,6 +36,9 @@ out/
 ### VS Code ###
 .vscode/
 
+### Zed Editor ###
+.zed/
+
 ### Mac
 .DS_Store
 HELP.md
