@@ -1,21 +1,12 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
-import nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidEuropeanDecimal;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.GardenDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationConstants.GARDEN_REGEX;
 
 
 /**
@@ -69,17 +60,7 @@ public class Garden extends BaseGarden {
      * @param garden garden to copy data from
      */
     public Garden(GardenDTO garden) {
-        this.setId(garden.getId());
-        this.setName(garden.getName());
-        this.setStreetNumber(garden.getStreetNumber());
-        this.setStreetName(garden.getStreetName());
-        this.setSuburb(garden.getSuburb());
-        this.setCity(garden.getCity());
-        this.setCountry(garden.getCountry());
-        this.setPostCode(garden.getPostCode());
-        this.setLat(garden.getLat());
-        this.setLon(garden.getLon());
-        this.setDescription(garden.getDescription());
+        super(garden);
         this.setSize(garden.getSize());
     }
 

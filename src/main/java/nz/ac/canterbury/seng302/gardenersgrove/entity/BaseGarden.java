@@ -4,9 +4,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
-
-import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -87,6 +84,26 @@ public abstract class BaseGarden {
         this.lat = lat;
         this.lon = lon;
         this.description = description;
+    }
+
+    /**
+     * copy the main (shared) data for a base garden (either garden or gardenDTO)
+     * @param garden
+     */
+    public BaseGarden(BaseGarden garden) {
+        if (garden != null) {
+            this.id = garden.getId();
+            this.name = garden.getName();
+            this.streetNumber = garden.getStreetNumber();
+            this.streetName = garden.getStreetName();
+            this.suburb = garden.getSuburb();
+            this.city = garden.getCity();
+            this.country = garden.getCountry();
+            this.postCode = garden.getPostCode();
+            this.lat = garden.getLat();
+            this.lon = garden.getLon();
+            this.description = garden.getDescription();
+        }
     }
 
     public BaseGarden() {}

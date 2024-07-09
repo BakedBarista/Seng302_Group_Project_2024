@@ -21,19 +21,8 @@ public class GardenDTO extends BaseGarden {
      * @param garden Garden object to copy
      */
     public GardenDTO(Garden garden) {
-        super();
+        super(garden);
         if (garden != null) {
-            this.setId(garden.getId());
-            this.setName(garden.getName());
-            this.setStreetNumber(garden.getStreetNumber());
-            this.setStreetName(garden.getStreetName());
-            this.setSuburb(garden.getSuburb());
-            this.setCity(garden.getCity());
-            this.setCountry(garden.getCountry());
-            this.setPostCode(garden.getPostCode());
-            this.setLat(garden.getLat());
-            this.setLon(garden.getLon());
-            this.setDescription(garden.getDescription());
             this.size = String.valueOf(garden.getSize());
         }
     }
