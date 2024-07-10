@@ -258,6 +258,18 @@ class GardenDTOTest {
     }
 
     @Test
+    void gardenSize_NumberIsExponentialWithE_ReturnPatternViolation() {
+        garden.setSize("1e10");
+        String expectedMessage = "Garden size must be a valid positive number (only allows numbers and a single period or comma)";
+        Integer expectedConstraintSetSize = 1;
+
+        ConstraintViolation<GardenDTO> violation = validator.validate(garden).iterator().next();
+
+        assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
+        assertEquals(expectedMessage, violation.getMessage());
+    }
+
+    @Test
     void gardenSize_NonNumericChar_ReturnPatternViolation() {
         garden.setSize("a");
         String expectedMessage = "Garden size must be a valid positive number (only allows numbers and a single period or comma)";
