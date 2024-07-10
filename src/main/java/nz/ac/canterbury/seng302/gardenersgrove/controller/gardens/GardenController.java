@@ -129,7 +129,7 @@ public class GardenController {
             gardenDTO.setLon(null);
         }
 
-        Garden garden = new Garden(gardenDTO);
+        Garden garden = gardenDTO.toGarden();
         Long userId = (Long) authentication.getPrincipal();
         GardenUser owner = gardenUserService.getUserById(userId);
         garden.setOwner(owner);
@@ -496,7 +496,8 @@ public class GardenController {
             for (int i = 0; i < gardenNames.size(); i++) {
                 String gardenName = gardenNames.get(i);
                 String streetNumber = Integer.toString(i + 1);
-                Garden garden = new Garden(new GardenDTO(gardenName, streetNumber, "Ilam Road", "Ilam", "Christchurch", "New Zealand", "8041", -43.53, 172.63, (String.valueOf(1000 + (i * 50))), "Test Garden"));
+                GardenDTO gardenDTO = new GardenDTO(gardenName, streetNumber, "Ilam Road", "Ilam", "Christchurch", "New Zealand", "8041", -43.53, 172.63, (String.valueOf(1000 + (i * 50))), "Test Garden");
+                Garden garden = gardenDTO.toGarden();
                 garden.setOwner(user);
                 garden.setPublic(true);
                 gardenService.addGarden(garden);

@@ -47,6 +47,21 @@ public class GardenDTO extends BaseGarden {
         this.size = gardenSize;
     }
 
+    public Garden toGarden() {
+        Double size = null;
+        if (this.size == null || this.size.trim().isEmpty()) {
+            this.size = null;
+        } else {
+            try {
+                size = Double.parseDouble(this.size);
+            } catch (NumberFormatException e) {
+                this.size = null;
+            }
+        }
+
+        return new Garden(this, size);
+    }
+
     public String getSize() {
         return size;
     }

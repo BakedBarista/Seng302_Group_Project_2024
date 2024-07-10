@@ -59,9 +59,9 @@ public class Garden extends BaseGarden {
      * Creates Garden object from a GardenDTO object
      * @param garden garden to copy data from
      */
-    public Garden(GardenDTO garden) {
+    public Garden(BaseGarden garden, Double size) {
         super(garden);
-        this.setSize(garden.getSize());
+        this.setSize(size);
     }
 
     public Double getSize() {
