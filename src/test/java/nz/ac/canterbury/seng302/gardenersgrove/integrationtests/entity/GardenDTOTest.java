@@ -3,7 +3,6 @@ package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.entity;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.GardenDTO;
@@ -16,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.Arrays;
 import java.util.List;
 
-class GardenTest {
+class GardenDTOTest {
 
     private static Validator validator;
     private GardenDTO garden;
