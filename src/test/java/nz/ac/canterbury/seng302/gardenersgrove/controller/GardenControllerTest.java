@@ -115,7 +115,7 @@ public class GardenControllerTest {
         Model model = mock(Model.class);
         GardenDTO validGardenDTO = new GardenDTO("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"test description", "100");
         validGardenDTO.setId((long) 1);
-        Garden validGarden = new Garden(validGardenDTO);
+        Garden validGarden = validGardenDTO.toGarden();
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
@@ -143,7 +143,7 @@ public class GardenControllerTest {
     public void testGardenDetail() {
         Model model = mock(Model.class);
         GardenDTO gardenDTO = new GardenDTO("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"test description","100");
-        Garden garden = new Garden(gardenDTO);
+        Garden garden = gardenDTO.toGarden();
         when(gardenService.getGardenById(1L)).thenReturn(Optional.of(garden));
         when(plantService.getPlantsByGardenId(1L)).thenReturn(Collections.emptyList());
 
@@ -160,7 +160,7 @@ public class GardenControllerTest {
         GardenUser owner = new GardenUser();
         owner.setId(1L);
         GardenDTO gardenDTO = new GardenDTO("Test Garden", "1", "test", "test suburb", "test city", "test country", "1234", 0.0, 0.0, "test description", "100");
-        Garden garden = new Garden(gardenDTO);
+        Garden garden = gardenDTO.toGarden();
         garden.setOwner(owner);
 
         when(gardenService.getGardenById(1L)).thenReturn(Optional.of(garden));
@@ -177,11 +177,13 @@ public class GardenControllerTest {
     @Test
     public void testUpdateGarden() {
         Model model = mock(Model.class);
-        GardenDTO garden = new GardenDTO("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"test description", "100");
-        when(gardenService.getGardenById(1)).thenReturn(Optional.of(new Garden(garden)));
+        GardenDTO gardenDTO = new GardenDTO("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"test description", "100");
+        when(gardenService.getGardenById(1)).thenReturn(Optional.of(gardenDTO.toGarden()));
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
-        String result = gardenController.updateGarden(1, garden, bindingResult, model);
+        String result = gardenController.updateGarden(1, gardenDTO, bindingResult, model);
+        Garden garden = gardenService.getGardenById(1).get();
+
         assertEquals("redirect:/gardens/1", result);
         assertEquals("Test Garden", garden.getName());
         assertEquals("1", garden.getStreetNumber());
@@ -190,8 +192,8 @@ public class GardenControllerTest {
         assertEquals("test city", garden.getCity());
         assertEquals("test country", garden.getCountry());
         assertEquals("1234",garden.getPostCode());
-        assertEquals("100", garden.getSize());
         assertEquals("test description", garden.getDescription());
+        assertEquals(100L, garden.getSize());
     }
 
     @Test
@@ -224,7 +226,7 @@ public class GardenControllerTest {
         Model model = mock(Model.class);
         String description = "some really nasty words";
         GardenDTO invalidGardenDTO = new GardenDTO("","","","","","","",0.0,0.0,description,"");
-        Garden invalidGarden = new Garden(invalidGardenDTO);
+        Garden invalidGarden = invalidGardenDTO.toGarden();
         gardenService.addGarden(invalidGarden);
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
@@ -274,7 +276,7 @@ public class GardenControllerTest {
     public void testGardenDetail_WithNullLatLon() {
         Model model = mock(Model.class);
         GardenDTO gardenDTO = new GardenDTO("Test Garden","1","test","test suburb","test city","test country","1234",null,null,"100","test description");
-        Garden garden = new Garden(gardenDTO);
+        Garden garden = gardenDTO.toGarden();
 
         when(gardenService.getGardenById(1L)).thenReturn(Optional.of(garden));
 

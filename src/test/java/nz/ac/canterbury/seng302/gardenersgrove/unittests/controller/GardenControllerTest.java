@@ -70,13 +70,13 @@ class GardenControllerTest {
 
     @Test
     void SubmitForm_LatLngReturnedProperly_LatLngSaved() {
-        GardenDTO garden = new GardenDTO();
-        garden.setStreetNumber("2");
-        garden.setStreetName("Janet Street");
-        garden.setSuburb("Upper Riccarton");
-        garden.setCity("Christchurch");
-        garden.setPostCode("8041");
-        garden.setCountry("New Zealand");
+        GardenDTO gardenDTO = new GardenDTO();
+        gardenDTO.setStreetNumber("2");
+        gardenDTO.setStreetName("Janet Street");
+        gardenDTO.setSuburb("Upper Riccarton");
+        gardenDTO.setCity("Christchurch");
+        gardenDTO.setPostCode("8041");
+        gardenDTO.setCountry("New Zealand");
 
         GardenUser gardenUser = new GardenUser();
         gardenUser.setId(1L);
@@ -84,12 +84,12 @@ class GardenControllerTest {
         when(authentication.getPrincipal()).thenReturn(1L);
         when(gardenUserService.getUserById(1L)).thenReturn(gardenUser);
         when(locationService.getLatLng(anyString())).thenReturn(List.of(-43.53, 172.63));
-        when(gardenService.addGarden(any(Garden.class))).thenReturn(new Garden(garden));
+        when(gardenService.addGarden(any(Garden.class))).thenReturn(gardenDTO.toGarden());
 
-        gardenController.submitCreateGardenForm(garden, bindingResult, authentication, model);
+        gardenController.submitCreateGardenForm(gardenDTO, bindingResult, authentication, model);
 
-        assertEquals(-43.53, garden.getLat());
-        assertEquals(172.63, garden.getLon());
+        assertEquals(-43.53, gardenDTO.getLat());
+        assertEquals(172.63, gardenDTO.getLon());
     }
 
     @Test
