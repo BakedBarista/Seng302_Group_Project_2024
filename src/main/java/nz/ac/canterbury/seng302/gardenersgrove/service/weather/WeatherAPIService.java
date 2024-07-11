@@ -263,6 +263,7 @@ public class WeatherAPIService {
      * @param forecastResponse the forecast weather API response
      * @param previousResponse the previous weather API response
      */
+    @Transactional
     public GardenWeather saveWeather(double lat, double lng, Garden garden, WeatherAPIResponse forecastResponse, List<WeatherAPIResponse> previousResponse) {
         GardenWeather gardenWeather = new GardenWeather();
 
