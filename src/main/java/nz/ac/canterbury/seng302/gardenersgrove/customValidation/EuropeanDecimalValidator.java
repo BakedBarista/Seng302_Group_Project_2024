@@ -12,7 +12,10 @@ public class EuropeanDecimalValidator implements ConstraintValidator<ValidEurope
     public boolean isValid(String value, ConstraintValidatorContext context) {
         if (value == null || value.isEmpty()) {
             return true;
+        } else if (value.contains("e")) {
+            return false;
         }
+
         try {
             String standardizedValue = value.replace(',', '.');
             double numericValue = Double.parseDouble(standardizedValue);

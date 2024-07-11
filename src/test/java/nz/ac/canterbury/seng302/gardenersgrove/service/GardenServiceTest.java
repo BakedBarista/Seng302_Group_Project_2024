@@ -52,30 +52,31 @@ public class GardenServiceTest {
         String postCode = "1234";
         Double lon = 1.0;
         Double lat = 2.0;
-        String gardenSize = "100";
+        Double gardenSize = 100D;
         String gardenDescription = "Test Description";
 
-        Mockito.when(gardenRepository.save(Mockito.any(Garden.class))).thenReturn(new Garden(gardenName, streetNumber,streetName,suburb,city,country,postCode,lon,lat, gardenSize, gardenDescription));
+        Garden garden = new Garden(gardenName, streetNumber,streetName,suburb,city,country,postCode,lon,lat, gardenDescription, gardenSize);
+        Mockito.when(gardenRepository.save(Mockito.any(Garden.class))).thenReturn(garden);
 
-        Garden garden = gardenService.addGarden(new Garden(gardenName, streetNumber,streetName,suburb,city,country,postCode,lon,lat, gardenSize, gardenDescription));
+        Garden gardenReturned = gardenService.addGarden(garden);
 
-        Assertions.assertEquals(gardenName, garden.getName());
-        Assertions.assertEquals(streetNumber, garden.getStreetNumber());
-        Assertions.assertEquals(streetName,garden.getStreetName());
-        Assertions.assertEquals(suburb,garden.getSuburb());
-        Assertions.assertEquals(city,garden.getCity());
-        Assertions.assertEquals(country,garden.getCountry());
-        Assertions.assertEquals(postCode,garden.getPostCode());
-        Assertions.assertEquals(gardenDescription,garden.getDescription());
-        Assertions.assertEquals(gardenSize, garden.getSize());
+        Assertions.assertEquals(gardenName, gardenReturned.getName());
+        Assertions.assertEquals(streetNumber, gardenReturned.getStreetNumber());
+        Assertions.assertEquals(streetName,gardenReturned.getStreetName());
+        Assertions.assertEquals(suburb,gardenReturned.getSuburb());
+        Assertions.assertEquals(city,gardenReturned.getCity());
+        Assertions.assertEquals(country,gardenReturned.getCountry());
+        Assertions.assertEquals(postCode,gardenReturned.getPostCode());
+        Assertions.assertEquals(gardenDescription,gardenReturned.getDescription());
+        Assertions.assertEquals(gardenSize, gardenReturned.getSize());
 
     }
 
     @Test
     public void getAllGardens_ReturnsAllGardens() {
         List<Garden> mockGardens = Arrays.asList(
-                new Garden("Garden1", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041",1.0,2.0, "100", "Big"),
-                new Garden("Garden2", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041", 1.0,2.0,"100", "Small")
+                new Garden("Garden1", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041",1.0,2.0, "Big", null),
+                new Garden("Garden2", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041", 1.0,2.0,"Small", null)
         );
         when(gardenRepository.findAll()).thenReturn(mockGardens);
 
@@ -87,7 +88,7 @@ public class GardenServiceTest {
 
     @Test
     public void getGardenById_ReturnsGarden() {
-        Garden garden = new Garden("Garden", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041",1.0,2.0, "100", "Big");
+        Garden garden = new Garden("Garden", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041",1.0,2.0, "Big", null);
 
         when(gardenRepository.findById(1L)).thenReturn(java.util.Optional.of(garden));
 
@@ -114,8 +115,8 @@ public class GardenServiceTest {
     @Test
     public void getGardensByOwnerId_ReturnsGardens() {
         List<Garden> mockGardens = Arrays.asList(
-                new Garden("Garden 1", "1","Test Road","Test Suburb","Test City","Test Country","1000",0.55,0.55, "100", "Small"),
-                new Garden("Garden 2", "2","Test Road","Test Suburb","Test City","Test Country","1000",0.55,0.55, "100", "Small")
+                new Garden("Garden 1", "1","Test Road","Test Suburb","Test City","Test Country","1000",0.55,0.55, "small", null),
+                new Garden("Garden 2", "2","Test Road","Test Suburb","Test City","Test Country","1000",0.55,0.55, "small", null)
         );
         Mockito.when(gardenRepository.findByOwnerId(1L)).thenReturn(mockGardens);
 
