@@ -126,6 +126,18 @@ public class GardenServiceTest {
     }
 
     @Test
+    void getGardensPagesByOwnerId_ReturnsGardensPage() {
+        List<Garden> mockGardens = Arrays.asList(
+                new Garden("Garden 1", "1","Test Road","Test Suburb","Test City","Test Country","1000",0.55,0.55, "100", "Small"),
+                new Garden("Garden 2", "2","Test Road","Test Suburb","Test City","Test Country","1000",0.55,0.55, "100", "Small")
+        );
+        Page<Garden> mockPage = new PageImpl<>(mockGardens, PageRequest.of(0, 10), 10);
+        when(gardenService.getGardensByOwnerId(eq(1L), any(PageRequest.class))).thenReturn(mockPage);
+        Page<Garden> page = gardenService.getGardensByOwnerId(1L,PageRequest.of(0,10));
+        assertEquals(mockPage,page);
+    }
+
+    @Test
     void testFindGardensBySearchAndTags_WithEmptyTags() {
 
         String search = "flowers";

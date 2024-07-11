@@ -125,7 +125,7 @@ public class GardenControllerTest {
         when(authentication.getPrincipal()).thenReturn((Long) 1L);
         when(profanityService.badWordsFound(anyString())).thenReturn(new ArrayList<>());
 
-        Mockito.when(moderationService.moderateDescription(anyString())).thenReturn(ResponseEntity.ok().build());
+        when(moderationService.moderateDescription(anyString())).thenReturn(ResponseEntity.ok().build());
         String result = gardenController.submitForm(validGarden, bindingResult, authentication,  model);
         assertEquals("redirect:/gardens/1", result);
     }
@@ -135,12 +135,16 @@ public class GardenControllerTest {
         Model model = mock(Model.class);
         GardenUser currentUser = new GardenUser();
         currentUser.setId(1L);
-        Page<Garden> mockPage = new PageImpl<>(Collections.emptyList(), PageRequest.of(0, 10), 0);
+        List<Garden> gardens = new ArrayList<>(Collections.emptyList());
+        gardens.add(mockGarden);
+        Page<Garden> mockPage = new PageImpl<>(gardens, PageRequest.of(0, 10), 10);
         when(gardenUserService.getCurrentUser()).thenReturn(currentUser);
         when(gardenService.getGardensByOwnerId(eq(1L), any(PageRequest.class))).thenReturn(mockPage);
 
         String result = gardenController.responses(model,0,10);
         assertEquals("gardens/viewGardens", result);
+        verify(model).addAttribute("pageNumbers", List.of(1));
+
     }
 
     @Test
