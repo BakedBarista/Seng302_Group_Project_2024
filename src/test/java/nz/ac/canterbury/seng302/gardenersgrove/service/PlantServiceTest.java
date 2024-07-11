@@ -54,7 +54,7 @@ class PlantServiceTest {
     @Test
     void AddPlant_ValidPlantWithGardenId_ReturnsPlantWithCorrectGardenId() {
         Plant testPlant = new Plant("Rose", "5", "Flower", LocalDate.of(1970, 1, 1));
-        Garden testGarden = new Garden("Garden", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041",1.0,2.0, "100", "Big");
+        Garden testGarden = new Garden("Garden", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041",1.0,2.0, "Big", null);
         Long gardenId = 1L;
         testGarden.setId(gardenId);
 
@@ -125,8 +125,8 @@ class PlantServiceTest {
         Plant testPlant1 = new Plant("Rose", "5", "Flower", LocalDate.of(1970, 1, 1));
         Plant testPlant2 = new Plant("Daisy", "3", "Flower", LocalDate.of(1970, 1, 1));
         Plant testPlant3 = new Plant("Tulip", "2", "Flower", LocalDate.of(1970, 1, 1));
-        Garden testGarden1 = new Garden("Garden1", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041",1.0,2.0, "100", "Big");
-        Garden testGarden2 = new Garden("Garden2", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041",1.0,2.0, "100", "Big");
+        Garden testGarden1 = new Garden("Garden1", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041",1.0,2.0, "big", null);
+        Garden testGarden2 = new Garden("Garden2", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041",1.0,2.0, "big", null);
         Long gardenId1 = 1L;
         Long gardenId2 = 2L;
 

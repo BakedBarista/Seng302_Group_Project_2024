@@ -7,6 +7,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.GardenDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.CurrentWeather;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.WeatherData;
@@ -65,7 +66,9 @@ public class GardenController {
     private String location_apiKey;
 
     @Autowired
-    public GardenController(GardenService gardenService, PlantService plantService, GardenUserService gardenUserService, WeatherAPIService weatherAPIService, TagService tagService, FriendService friendService, ModerationService moderationService, ProfanityService profanityService, LocationService locationService) {
+    public GardenController(GardenService gardenService, PlantService plantService, GardenUserService gardenUserService,
+                            WeatherAPIService weatherAPIService, TagService tagService, FriendService friendService,
+                            ModerationService moderationService, ProfanityService profanityService, LocationService locationService) {
         this.gardenService = gardenService;
         this.plantService = plantService;
         this.gardenUserService = gardenUserService;
@@ -83,9 +86,9 @@ public class GardenController {
      * @return gardenFormTemplate
      */
     @GetMapping("/gardens/create")
-    public String form(Model model) {
+    public String getCreateGardenForm(Model model) {
         logger.info("GET /gardens/create - display the new garden form");
-        model.addAttribute("garden", new Garden());
+        model.addAttribute("garden", new GardenDTO());
         GardenUser owner = gardenUserService.getCurrentUser();
 
         List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
@@ -95,41 +98,45 @@ public class GardenController {
 
     /**
      * Submits form to be displayed
-     * @param garden   garden details
+     * @param gardenDTO   garden details
      * @param bindingResult binding result
      * @param model representation of results
      * @return gardenForm
      */
     @PostMapping("/gardens/create")
-    public String submitForm(@Valid @ModelAttribute("garden") Garden garden,
-                             BindingResult bindingResult, Authentication authentication, Model model) {
+    public String submitCreateGardenForm(@Valid @ModelAttribute("garden") GardenDTO gardenDTO,
+                                         BindingResult bindingResult,
+                                         Authentication authentication,
+                                         Model model) {
         logger.info("POST /gardens - submit the new garden form");
 
-        checkGardenError(model,bindingResult,garden);
+        logger.info(gardenDTO.toString());
+
+        checkGardenDTOError(model, bindingResult, gardenDTO);
         if (bindingResult.hasErrors() || model.containsAttribute(PROFANITY)) {
-            model.addAttribute("garden", garden);
+            model.addAttribute("garden", gardenDTO);
             return "gardens/createGarden";
         }
 
-        // Get the location from the API
-        String location = garden.getStreetNumber() + " " + garden.getStreetName() + " " + garden.getSuburb() + " " +
-                garden.getCity() + " " + garden.getPostCode() + " " + garden.getCountry();
-
         // Request API
-        List<Double> latAndLng = locationService.getLatLng(location);
+        List<Double> latAndLng = locationService.getLatLng(gardenDTO.getLocation());
 
         // Null check
         if (!latAndLng.isEmpty()) {
-            garden.setLat(latAndLng.get(0));
-            garden.setLon(latAndLng.get(1));
+            gardenDTO.setLat(latAndLng.get(0));
+            gardenDTO.setLon(latAndLng.get(1));
         } else {
-            garden.setLat(null);
-            garden.setLon(null);
+            gardenDTO.setLat(null);
+            gardenDTO.setLon(null);
         }
 
+        Garden garden = gardenDTO.toGarden();
         Long userId = (Long) authentication.getPrincipal();
         GardenUser owner = gardenUserService.getUserById(userId);
         garden.setOwner(owner);
+
+        logger.info(garden.toString());
+
         Garden savedGarden = gardenService.addGarden(garden);
         return "redirect:/gardens/" + savedGarden.getId();
     }
@@ -302,41 +309,37 @@ public class GardenController {
     /**
      * Update garden details
      * @param id garden id
-     * @param garden garden details
+     * @param gardenDTO garden details
      * @param result binding result
      * @param model representation of results
      * @return redirect to gardens
      */
     @PostMapping("/gardens/{id}/edit")
     public String updateGarden(@PathVariable(name = "id") long id,
-                               @Valid @ModelAttribute("garden") Garden garden,
+                               @Valid @ModelAttribute("garden") GardenDTO gardenDTO,
                                BindingResult result,
                                Model model) {
 
-        checkGardenError(model,result,garden);
+        checkGardenDTOError(model, result, gardenDTO);
         if (result.hasErrors() || model.containsAttribute(PROFANITY)) {
-            model.addAttribute("garden", garden);
+            model.addAttribute("garden", gardenDTO);
             model.addAttribute("id", id);
             return "gardens/editGarden";
         }
 
-        // Get location form API
-        String location = garden.getStreetNumber() + " " + garden.getStreetName() + " " + garden.getSuburb() + " " +
-                garden.getCity() + " " + garden.getPostCode() + " " + garden.getCountry();
-
-        List<Double> latAndLng = locationService.getLatLng(location);
+        List<Double> latAndLng = locationService.getLatLng(gardenDTO.getLocation());
 
         Optional<Garden> existingGarden = gardenService.getGardenById(id);
         if (existingGarden.isPresent()) {
-            existingGarden.get().setName(garden.getName());
-            existingGarden.get().setStreetNumber(garden.getStreetNumber());
-            existingGarden.get().setStreetName(garden.getStreetName());
-            existingGarden.get().setSuburb(garden.getSuburb());
-            existingGarden.get().setCity(garden.getCity());
-            existingGarden.get().setCountry(garden.getCountry());
-            existingGarden.get().setPostCode(garden.getPostCode());
-            existingGarden.get().setSize(garden.getSize());
-            existingGarden.get().setDescription(garden.getDescription());
+            existingGarden.get().setName(gardenDTO.getName());
+            existingGarden.get().setStreetNumber(gardenDTO.getStreetNumber());
+            existingGarden.get().setStreetName(gardenDTO.getStreetName());
+            existingGarden.get().setSuburb(gardenDTO.getSuburb());
+            existingGarden.get().setCity(gardenDTO.getCity());
+            existingGarden.get().setCountry(gardenDTO.getCountry());
+            existingGarden.get().setPostCode(gardenDTO.getPostCode());
+            existingGarden.get().setSize(gardenDTO.getSize());
+            existingGarden.get().setDescription(gardenDTO.getDescription());
 
             // Null check
             if (!latAndLng.isEmpty()) {
@@ -442,7 +445,7 @@ public class GardenController {
      * @param bindingResult to get location error
      * @param garden garden object
      */
-    public void checkGardenError(Model model, BindingResult bindingResult, Garden garden) {
+    public void checkGardenDTOError(Model model, BindingResult bindingResult, GardenDTO garden) {
         List<String> locationErrorNames = Arrays.asList("city", "country", "suburb", "streetNumber", "streetName", "postCode");
         boolean profanityFlagged = !profanityService.badWordsFound(garden.getDescription()).isEmpty();
         if (!profanityFlagged) {
@@ -505,7 +508,8 @@ public class GardenController {
             for (int i = 0; i < gardenNames.size(); i++) {
                 String gardenName = gardenNames.get(i);
                 String streetNumber = Integer.toString(i + 1);
-                Garden garden = new Garden(gardenName, streetNumber, "Ilam Road", "Ilam", "Christchurch", "New Zealand", "8041", -43.53, 172.63, (String.valueOf(1000 + (i * 50))), "Test Garden");
+                GardenDTO gardenDTO = new GardenDTO(gardenName, streetNumber, "Ilam Road", "Ilam", "Christchurch", "New Zealand", "8041", -43.53, 172.63, (String.valueOf(1000 + (i * 50))), "Test Garden");
+                Garden garden = gardenDTO.toGarden();
                 garden.setOwner(user);
                 garden.setPublic(true);
                 gardenService.addGarden(garden);
