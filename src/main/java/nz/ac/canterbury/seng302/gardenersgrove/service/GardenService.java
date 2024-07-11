@@ -88,6 +88,16 @@ public class GardenService {
     }
 
     /**
+     *
+     * @param ownerId owner id used to retrieve data
+     * @param pageable pagination information
+     * @return page
+     */
+    public Page<Garden> getGardensByOwnerId(Long ownerId, Pageable pageable) {
+        return gardenRepository.findByOwnerId(ownerId, pageable);
+    }
+
+    /**
      * Get all public gardens by owner id
      * @param user owner id used to retrieve data
      * @return a list of public gardens owned by the owner

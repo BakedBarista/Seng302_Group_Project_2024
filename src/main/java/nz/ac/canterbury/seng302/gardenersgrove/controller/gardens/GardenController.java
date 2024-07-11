@@ -35,6 +35,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.DateTimeFormats.NZ_FORMAT_DATE;
 import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.DateTimeFormats.WEATHER_CARD_FORMAT_DATE;
@@ -137,17 +138,27 @@ public class GardenController {
     /**
      * Gets all garden details
      * @param model representation of results
+     * @param page
      * @return viewGardenTemplate
      */
     @GetMapping("/gardens")
-    public String responses(Model model) {
+    public String responses(Model model,
+                            @RequestParam(defaultValue = "0") int page,
+                            @RequestParam(defaultValue = "10") int size) {
         logger.info("Get /gardens - display all gardens");
         GardenUser currentUser = gardenUserService.getCurrentUser();
-        if(currentUser != null) {
-            List<Garden> userGardens = gardenService.getGardensByOwnerId(currentUser.getId());
-            model.addAttribute("gardens", userGardens);
-        }
+        if (currentUser != null) {
+            Page<Garden> gardenPage = gardenService.getGardensByOwnerId(currentUser.getId(), PageRequest.of(page, size));
+            model.addAttribute("gardenPage", gardenPage);
 
+            int totalPages = gardenPage.getTotalPages();
+            if (totalPages > 0) {
+                List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+                        .boxed()
+                        .collect(Collectors.toList());
+                model.addAttribute("pageNumbers", pageNumbers);
+            }
+        }
 
         return "gardens/viewGardens";
     }

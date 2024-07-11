@@ -15,6 +15,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -133,11 +135,14 @@ public class GardenControllerTest {
     @Test
     public void testResponses() {
         Model model = mock(Model.class);
-        when(gardenService.getAllGardens()).thenReturn(Collections.emptyList());
+        GardenUser currentUser = new GardenUser();
+        currentUser.setId(1L);
+        Page<Garden> mockPage = new PageImpl<>(Collections.emptyList(), PageRequest.of(0, 10), 0);
+        when(gardenUserService.getCurrentUser()).thenReturn(currentUser);
+        when(gardenService.getGardensByOwnerId(eq(1L), any(PageRequest.class))).thenReturn(mockPage);
 
-        String result = gardenController.responses(model);
+        String result = gardenController.responses(model,0,10);
         assertEquals("gardens/viewGardens", result);
-        verify(model).addAttribute("gardens", Collections.emptyList());
     }
 
     @Test

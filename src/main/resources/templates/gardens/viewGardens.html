@@ -2,11 +2,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <title>My Gardens</title>
-
     <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- This needs to be here for Bootstrap and general CSS imports -->
     <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
 </head>
 <body>
@@ -14,38 +11,7 @@
 <div>
     <div>
         <h3>My Gardens:</h3>
-        <div class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-2">
-            <th:block th:each="garden : ${gardens}">
-                <div class="pb-5 px-5">
-                    <a th:href="@{/gardens/{id}(id=${garden.id})}" class="text-decoration-none text-dark">
-                        <div class="card h-100 card-hover">
-                            <!-- Plant images grid -->
-                            <div class="card-img-top bg-success card-img-top-fixed d-flex align-items-center">
-                                <div class="row g-0 img-row">
-                                    <th:block th:if="${garden.getPlants().isEmpty()}">
-                                        <div class="col-12">
-                                            <div class="plant-img" title="Default Garden Image" th:style="|background-image: url('@{/img/defaultgarden.jpg}')|"></div>
-                                        </div>
-                                    </th:block>
-                                    <th:block th:each="plant, iterStat : ${garden.getPlants()}">
-                                        <div class="col" th:class="${#lists.size(garden.getPlants()) == 1 ? 'col-12' :
-                                              #lists.size(garden.getPlants()) == 2 ? 'col-6' :
-                                              'col-6 col-sm-4 col-lg-6'}" th:if="${iterStat.index < 4}">
-                                            <div class="plant-img" th:style="|background-image: url('@{/plants/{plantId}/plant-image(plantId=${plant.id})}')|"></div>
-                                        </div>
-                                    </th:block>
-                                </div>
-                            </div>
-                            <div class="card-footer">
-                                <h5 class="card-title" th:text="${garden.name}"></h5>
-                                <p class="card-text" th:text="${garden.city}"></p>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-
-            </th:block>
-        </div>
+        <div th:replace="~{fragments/list-of-gardens.html :: list-of-gardens}"></div>
     </div>
 </div>
 <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
