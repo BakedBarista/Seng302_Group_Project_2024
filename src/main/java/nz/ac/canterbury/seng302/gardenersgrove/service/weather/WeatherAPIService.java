@@ -84,7 +84,8 @@ public class WeatherAPIService {
             logger.info("No weather saved for garden, fetching from API.");
             fetchFromApi = true;
         } else if (!LocalDate.parse(gardenWeather.getLastUpdated(), DateTimeFormatter.ISO_DATE).isEqual(LocalDate.now())) {
-            logger.info("The weather saved for garden has expired, fetching again from API.");
+            logger.info("The weather saved for garden has expired, it will be removed and then fetched from API.");
+            gardenWeatherService.deleteWeather(gardenWeather);
             fetchFromApi = true;
         }
 
