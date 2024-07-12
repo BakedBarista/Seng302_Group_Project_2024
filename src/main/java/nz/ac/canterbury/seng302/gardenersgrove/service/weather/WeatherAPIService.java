@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -68,6 +69,7 @@ public class WeatherAPIService {
      * @return the weather data for that garden
      */
     @Transactional
+    @Modifying
     public GardenWeather getWeatherData(long gardenId,  double lat, double lng) {
 
         Optional<Garden> optGarden = gardenService.getGardenById(gardenId);
@@ -76,6 +78,7 @@ public class WeatherAPIService {
             return null;
         }
         boolean fetchFromApi = false;
+        boolean updateData = false;
         Garden garden = optGarden.get();
 
         GardenWeather gardenWeather = garden.getGardenWeather();
@@ -84,9 +87,9 @@ public class WeatherAPIService {
             logger.info("No weather saved for garden, fetching from API.");
             fetchFromApi = true;
         } else if (!LocalDate.parse(gardenWeather.getLastUpdated(), DateTimeFormatter.ISO_DATE).isEqual(LocalDate.now())) {
-            logger.info("The weather saved for garden has expired, it will be removed and then fetched from API.");
-            gardenWeatherService.deleteWeather(gardenWeather);
+            logger.info("The weather saved for garden has expired, it will be fetched again from API.");
             fetchFromApi = true;
+            updateData = true;
         }
 
         if (!fetchFromApi) {
@@ -108,7 +111,11 @@ public class WeatherAPIService {
                 return null;
             }
 
-            return saveWeather(lat, lng, garden, forecastResponse, historyResponses);
+            if (updateData) {
+                return saveWeather(gardenWeather, lat, lng, garden, forecastResponse, historyResponses);
+            } else {
+                return saveWeather(lat, lng, garden, forecastResponse, historyResponses);
+            }
         }
     }
 
@@ -289,6 +296,39 @@ public class WeatherAPIService {
         logger.info("Saving the weather data to the database.");
         gardenWeather.setGarden(garden);
         return gardenWeatherService.addWeather(gardenWeather);
+    }
+
+    /**
+     * Takes an old weather data record from the database and updates it to the newly fetched values.
+     * @param lat the latitude of the weather data
+     * @param lng the longitude of the weather data
+     * @param garden the Garden this weather is associated with
+     * @param forecastResponse the forecast weather API response
+     * @param previousResponse the previous weather API response
+     */
+    @Transactional
+    public GardenWeather saveWeather(GardenWeather oldWeather, double lat, double lng, Garden garden, WeatherAPIResponse forecastResponse, List<WeatherAPIResponse> previousResponse) {
+        oldWeather.setLat(lat);
+        oldWeather.setLng(lng);
+        oldWeather.setLastUpdated(LocalDate.now().toString());
+
+        logger.info("Adding the forecasted weather to the weather data.");
+        List<WeatherData> forecastedWeather = new ArrayList<>();
+        for (ForecastDay forecastDay: forecastResponse.getForecast().getForecastDays()) {
+            forecastedWeather.add(extractDailyWeatherData(forecastResponse, WeatherData::new, forecastDay));
+        }
+        oldWeather.setForecastWeather(forecastedWeather);
+
+        logger.info("Adding the previous weather to the weather data.");
+        List<WeatherData> previousWeather =  new ArrayList<>();
+        for (WeatherAPIResponse historyDay: previousResponse) {
+            previousWeather.add(extractDailyWeatherData(historyDay, WeatherData::new, historyDay.getForecast().getForecastDays().get(0)));
+        }
+        oldWeather.setPreviousWeather(previousWeather);
+
+        logger.info("Saving the weather data to the database.");
+        oldWeather.setGarden(garden);
+        return gardenWeatherService.addWeather(oldWeather);
     }
 
     /**

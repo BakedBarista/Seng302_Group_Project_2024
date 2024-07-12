@@ -43,12 +43,4 @@ public class GardenWeatherService {
     public GardenWeather addWeather(GardenWeather gardenWeather) {
         return gardenWeatherRepository.save(gardenWeather);
     }
-
-    /**
-     * Deletes a specified Garden weather from the database
-     * @param gardenWeather
-     */
-    public void deleteWeather(GardenWeather gardenWeather) {
-        gardenWeatherRepository.delete(gardenWeather);
-    }
 }
