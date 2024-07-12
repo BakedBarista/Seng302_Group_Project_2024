@@ -194,7 +194,7 @@ class WeatherAPIServiceTest {
         when(restTemplate.getForEntity(anyString(), eq(String.class))).thenReturn(ResponseEntity.ok(jsonResponse));
         when(objectMapper.readValue(anyString(), eq(WeatherAPIResponse.class))).thenReturn(forecastResponse);
         when(objectMapper.readValue(anyString(), eq(WeatherAPIResponse.class))).thenReturn(historyResponse);
-        doReturn(gardenWeather).when(weatherAPIService).saveWeather(anyDouble(), anyDouble(), any(Garden.class), any(WeatherAPIResponse.class), anyList());
+        doReturn(gardenWeather).when(weatherAPIService).saveWeather(any(GardenWeather.class), anyDouble(), anyDouble(), any(Garden.class), any(WeatherAPIResponse.class), anyList());
 
         GardenWeather result = weatherAPIService.getWeatherData(gardenId, lat, lng);
 
