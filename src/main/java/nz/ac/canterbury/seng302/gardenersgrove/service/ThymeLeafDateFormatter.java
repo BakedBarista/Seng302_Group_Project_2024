@@ -9,6 +9,8 @@ import java.time.format.DateTimeFormatter;
  */
 public class ThymeLeafDateFormatter {
 
+    private static String DEFAULT_RESPONSE = "-";
+
     /**
      * empty constructor so that you can pass the class instance to thymeleaf
      */
@@ -24,7 +26,7 @@ public class ThymeLeafDateFormatter {
         if (date != null) {
             return date.format(formatter);
         } else {
-            return "-";
+            return DEFAULT_RESPONSE;
         }
     }
 }
