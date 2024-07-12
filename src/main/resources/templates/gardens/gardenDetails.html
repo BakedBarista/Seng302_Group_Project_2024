@@ -99,7 +99,7 @@
                                 <div class="text-center w-50 pt-2">
                                     <img th:src="@{'/icons/weatherIcons/' + ${currentWeather.icon}}" alt="Sunny" width="50" height="50">
                                     <p class="m-0" style="font-size: 16pt;"><strong th:text="${currentWeather.conditions}">Conditions</strong></p>
-                                    <p style="font-size: 10pt; color: #1E1E1E70;" th:text="${#dates.format(currentWeather.date, WEATHER_CARD_FORMAT_DATE)}">Date</p>
+                                    <p style="font-size: 10pt; color: #1E1E1E70;" th:text="${dateFormatter.format(currentWeather.date, WEATHER_CARD_FORMAT_DATE)}">Date</p>
                                 </div>
                                 <div class="d-flex align-items-center w-25 text-center" style="font-size: 22pt;">
                                     <p class="m-0">
@@ -130,8 +130,8 @@
                             <div class="d-flex">
                                 <div class="text-center w-50 pt-2">
                                     <img th:src="@{'/icons/weatherIcons/' + ${daysWeather.icon}}" alt="Sunny" width="50" height="50">
-                                    <p class="m-0" style="font-size: 16pt;"><strong th:text="${daysWeather.conditions}">Conditions</strong></p>
-                                    <p style="font-size: 10pt; color: #1E1E1E70;" th:text="${#dates.format(daysWeather.date, WEATHER_CARD_FORMAT_DATE)}">Date</p>
+                                    <p class="m-0" style="font-size: 16pt;"><strong th:text="${daysWeather.getConditions()}">Conditions</strong></p>
+                                    <p style="font-size: 10pt; color: #1E1E1E70;" th:text="${dateFormatter.format(daysWeather.date, WEATHER_CARD_FORMAT_DATE)}">Date</p>
                                 </div>
                                 <div class="d-flex align-items-center w-25 text-center" style="font-size: 22pt;">
                                     <p class="m-0">
@@ -199,7 +199,7 @@
                                          alt=""
                                          width="20"
                                          height="20" />
-                                    <p class="mx-1 my-0" th:text="${#dates.format(plant.plantedDate, NZ_FORMAT_DATE)}">Planted Date</p>
+                                    <p class="mx-1 my-0" th:text="${dateFormatter.format(plant.plantedDate, NZ_FORMAT_DATE)}">Planted Date</p>
                                 </div>
                                 <div class="d-flex">
                                     <div class="d-flex">
@@ -262,9 +262,10 @@
                         </div>
                         <div class="d-flex mb-1">
                             <img class="my-0 py-0 pt-1" th:src="@{/icons/calendar-03-stroke-rounded.svg}" alt="" width="22" height="22" />
-                            <p class="ms-1 my-0" th:text="${#dates.format(plant.plantedDate, NZ_FORMAT_DATE)}">Planted Date</p>
+                            <p class="ms-1 my-0" th:text="${dateFormatter.format(plant.plantedDate, NZ_FORMAT_DATE)}">Planted Date</p>
                         </div>
                         <div class="d-flex mb-0">
+
                             <img class="my-0 py-0 pt-1" th:src="@{/icons/natural-food-stroke-rounded.svg}" alt="" width="22" height="22" />
                             <p class="ms-1 my-1">
                                 <span th:text="${plant.count}">Plant Count</span>

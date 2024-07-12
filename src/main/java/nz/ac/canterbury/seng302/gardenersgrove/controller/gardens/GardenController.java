@@ -168,6 +168,7 @@ public class GardenController {
                                Model model) {
 
         logger.info("Get /gardens/id - display garden detail");
+        model.addAttribute("dateFormatter", new ThymeLeafDateFormatter());
 
         Optional<Garden> gardenOpt = gardenService.getGardenById(id);
         if(gardenOpt.isPresent()) {
