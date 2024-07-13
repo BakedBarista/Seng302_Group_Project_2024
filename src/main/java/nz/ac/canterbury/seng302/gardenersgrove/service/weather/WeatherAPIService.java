@@ -40,8 +40,13 @@ public class WeatherAPIService {
 
     // The rainy conditions possible with WeatherAPI.com
     private static final Set<String> RAIN_CONDITIONS = Set.of(
-            "rain", "drizzle", "heavy rain", "light rain", "showers",
-            "thunderstorms", "sleet", "snow", "light snow", "heavy snow", "snow showers", "patchy rain nearby"
+            "rain", "drizzle", "heavy rain", "light rain", "light rain shower", "showers",
+            "thunderstorms", "sleet", "snow", "light snow", "heavy snow", "snow showers", "patchy rain nearby",
+            "patchy snow nearby", "patchy sleet nearby", "patchy freezing drizzle possible", "thundery outbreaks possible",
+            "patchy light drizzle", "light drizzle", "freezing drizzle", "heavy freezing drizzle", "patchy light rain",
+            "moderate rain at times", "moderate rain", "heavy rain at times", "light freezing rain", "Thundery outbreaks possible",
+            "moderate or heavy rain shower", "torrential rain shower", "light sleet showers", "patchy light rain with thunder",
+            "moderate or heavy rain with thunder"
     );
     private final RestTemplate restTemplate;
     private final GardenService gardenService;
