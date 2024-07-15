@@ -17,7 +17,8 @@ public class ThymeLeafDateFormatter {
     public ThymeLeafDateFormatter() {}
 
     /**
-     *
+     * Formats the LocalDate into a String using a given DateTimeFormatter object, this is primarily used by Thymeleaf
+     * because Thymeleaf cannot handle this itself (in some circumstances)
      * @param date LocalDate to format
      * @param formatter formatter provided
      * @return the date as a formatted string or "-" if the date is null
