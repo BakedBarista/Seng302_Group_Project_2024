@@ -168,6 +168,7 @@ public class GardenController {
                                Model model) {
 
         logger.info("Get /gardens/id - display garden detail");
+        model.addAttribute("dateFormatter", new ThymeLeafDateFormatter());
 
         Optional<Garden> gardenOpt = gardenService.getGardenById(id);
         if(gardenOpt.isPresent()) {
@@ -475,6 +476,8 @@ public class GardenController {
             GardenUser user = new GardenUser("Jan", "Doe", "jan.doe@gmail.com", "password", LocalDate.of(1970, 1, 1));
             gardenUserService.addUser(user);
 
+            logger.info("User " + user.getFullName() + " added");
+
             // Garden names
             List<String> gardenNames = Arrays.asList(
                     "Gardeners Paradise", "My Parents Garden", "Home Number 1", "GreenFingers", "Dirt Pile",
@@ -496,11 +499,13 @@ public class GardenController {
             for (int i = 0; i < gardenNames.size(); i++) {
                 String gardenName = gardenNames.get(i);
                 String streetNumber = Integer.toString(i + 1);
-                GardenDTO gardenDTO = new GardenDTO(gardenName, streetNumber, "Ilam Road", "Ilam", "Christchurch", "New Zealand", "8041", -43.53, 172.63, (String.valueOf(1000 + (i * 50))), "Test Garden");
+                GardenDTO gardenDTO = new GardenDTO(gardenName, streetNumber, "Ilam Road", "Ilam", "Christchurch", "New Zealand", "8041", -43.53, 172.63, "Test Garden", (String.valueOf(1000 + (i * 50))));
                 Garden garden = gardenDTO.toGarden();
                 garden.setOwner(user);
                 garden.setPublic(true);
                 gardenService.addGarden(garden);
+
+                logger.info("Garden " + gardenName + "added");
 
                 List<Plant> plants = new ArrayList<>();
                 for (int j = 0; j < plantsDetails.size(); j++) {
