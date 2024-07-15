@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.entity.weather;
 
 import jakarta.persistence.*;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import org.hibernate.annotations.Cascade;
 
 import java.util.List;
 
@@ -27,10 +28,12 @@ public class GardenWeather {
 
     @ElementCollection
     @CollectionTable(name = "previous_weather", joinColumns = @JoinColumn(name = "garden_weather_id"))
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private List<WeatherData> previousWeather;
 
     @ElementCollection
     @CollectionTable(name = "forecast_weather", joinColumns = @JoinColumn(name = "garden_weather_id"))
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private List<WeatherData> forecastWeather;
 
     @Column
