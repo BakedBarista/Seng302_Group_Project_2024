@@ -90,8 +90,14 @@ public class RegisterController {
         }
 
         if (registerDTO.isNoLname()) {
-            registerDTO.setLname(null);
+            // Checking if noLname checkbox is ticked but a lastname is supplied. 
+            if (!(registerDTO.getLname() == null || registerDTO.getLname().isEmpty())){
+                bindingResult.rejectValue("lname", null, "Cannot have a lastname");
+            } else {
+                registerDTO.setLname(null);
+            }
         }
+
         if ((registerDTO.getLname() == null || registerDTO.getLname().isEmpty()) && !registerDTO.isNoLname()) {
             bindingResult.rejectValue("lname", null, "Last name cannot be empty");
         }
