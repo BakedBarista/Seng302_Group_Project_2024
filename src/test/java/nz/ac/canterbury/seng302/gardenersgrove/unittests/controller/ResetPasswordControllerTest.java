@@ -51,7 +51,7 @@ public class ResetPasswordControllerTest {
     @CsvSource({
         "https,example.com,8080,/test,https://example.com:8080/test/users/reset-password/callback?token=abc123xyz",
         "http,example.com,80,/test,http://example.com/test/users/reset-password/callback?token=abc123xyz",
-        "https,example.com,443,/test,https://example.com/test/users/reset-password/callback?token=abc123xyz",
+        "https,example.com,443,/prod,https://example.com/prod/users/reset-password/callback?token=abc123xyz",
     })
     void whenGenerateUrlStringCalled_thenUrlIsGenerated(String scheme, String host, int port, String contextPath, String expectedUrl) {
         // Set up the expected behaviors of the mock object
