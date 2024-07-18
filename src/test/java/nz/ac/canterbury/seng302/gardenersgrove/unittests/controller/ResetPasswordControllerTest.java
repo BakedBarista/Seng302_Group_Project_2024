@@ -74,13 +74,14 @@ public class ResetPasswordControllerTest {
         when(request.getScheme()).thenReturn("https");
         when(request.getServerName()).thenReturn("example.com");
         when(request.getServerPort()).thenReturn(443); // Standard HTTPS port
+        when(request.getContextPath()).thenReturn("/prod"); // Prod context path
         when(resetPasswordDTO.getEmail()).thenReturn(user.getEmail());
 
         String result = controller.resetPasswordConfirmation(request, resetPasswordDTO, bindingResult, model);
 
         assertEquals("users/resetPasswordConfirmation", result);
         verify(emailSenderService).sendEmail(eq(user), any(),
-                matches("https://example.com/users/reset-password/callback\\?token=abc123xyz"));
+                matches("https://example.com/prod/users/reset-password/callback\\?token=abc123xyz"));
 
     }
 
