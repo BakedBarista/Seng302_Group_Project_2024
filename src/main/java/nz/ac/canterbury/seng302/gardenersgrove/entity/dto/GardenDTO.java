@@ -1,7 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity.dto;
 
 import jakarta.persistence.Column;
-import nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidEuropeanDecimal;
+import nz.ac.canterbury.seng302.gardenersgrove.validation.ValidEuropeanDecimal;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.BaseGarden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 

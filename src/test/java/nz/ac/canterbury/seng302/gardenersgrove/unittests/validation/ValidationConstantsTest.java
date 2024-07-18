@@ -1,11 +1,11 @@
-package nz.ac.canterbury.seng302.gardenersgrove.unittests.customValidation;
+package nz.ac.canterbury.seng302.gardenersgrove.unittests.validation;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationConstants;
+import nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationConstants;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
