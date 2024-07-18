@@ -7,6 +7,9 @@ import java.lang.annotation.*;
 import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationConstants.MAX_GARDEN_SIZE;
 import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationMessages.MAX_GARDEN_SIZE_MESSAGE;
 
+/**
+ * Interface for using GardenSizeStringValidator in the GardenDTO class
+ */
 @Constraint(validatedBy = GardenSizeStringValidator.class)
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
