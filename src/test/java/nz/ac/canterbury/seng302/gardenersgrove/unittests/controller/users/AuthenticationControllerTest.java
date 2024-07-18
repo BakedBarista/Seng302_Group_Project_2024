@@ -1,8 +1,13 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unittests.controller.users;
 
-import nz.ac.canterbury.seng302.gardenersgrove.controller.users.AuthenticationController;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.time.Instant;
+import java.time.LocalDate;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,13 +17,11 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.time.Instant;
-import java.time.LocalDate;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.users.AuthenticationController;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
-public class AuthenticationControllerTest {
+class AuthenticationControllerTest {
 
     private static final String OBFUSCATED_EMAIL = "obfuscated-email";
 
@@ -37,14 +40,14 @@ public class AuthenticationControllerTest {
     private RedirectAttributes redirectAttributes;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
 
         user = new GardenUser("John", "Doe", "john.doe@gmail.com", "password", LocalDate.of(1970, 1, 1));
     }
 
     @Test
-    public void testWhenTokenExistsForUser_UserIsSentToEmailAuthenticationPage() {
+    void testWhenTokenExistsForUser_UserIsSentToEmailAuthenticationPage() {
         String expectedPage = "authentication/emailAuthentication";
         Instant time = Instant.now();
 
@@ -59,7 +62,7 @@ public class AuthenticationControllerTest {
     }
 
     @Test
-    public void whenTokenDoesNotExistsForUser_thenErrorIsShown() {
+    void whenTokenDoesNotExistsForUser_thenErrorIsShown() {
         String expectedPage = "authentication/emailAuthentication";
 
         // explicitly setting null here
@@ -75,7 +78,7 @@ public class AuthenticationControllerTest {
     }
 
     @Test
-    public void whenUserHasBeenDeleted_thenErrorIsShown() {
+    void whenUserHasBeenDeleted_thenErrorIsShown() {
         String expectedPage = "authentication/emailAuthentication";
 
         when(userService.deobfuscateEmail(OBFUSCATED_EMAIL)).thenReturn(user.getEmail());
@@ -103,7 +106,7 @@ public class AuthenticationControllerTest {
     }
 
     @Test
-    public void whenUserGivesIncorrectToken_thenUserIsTakenBackToEmailAuthenticationPage() {
+    void whenUserGivesIncorrectToken_thenUserIsTakenBackToEmailAuthenticationPage() {
         String expectedPage = "authentication/emailAuthentication";
         String userInputtedToken = "000000";
         String storedToken = "000001";
@@ -121,7 +124,7 @@ public class AuthenticationControllerTest {
     }
 
     @Test
-    public void whenUserGivesCorrectToken_thenTokenAndTimeInstantRemovedFromUserEntity() {
+    void whenUserGivesCorrectToken_thenTokenAndTimeInstantRemovedFromUserEntity() {
         String token = "000000";
         Instant time = Instant.now();
 
@@ -137,7 +140,7 @@ public class AuthenticationControllerTest {
     }
 
     @Test
-    public void whenUserGivesIncorrectToken_thenTokenAndTimeInstantPersist() {
+    void whenUserGivesIncorrectToken_thenTokenAndTimeInstantPersist() {
         String userInputtedToken = "000000";
         String storedToken = "000001";
         Instant time = Instant.now();
@@ -155,7 +158,7 @@ public class AuthenticationControllerTest {
     }
 
     @Test
-    public void whenTokenExpired_AndUserInputsAnyToken_thenUserIsInformedOfTokenExpiration() {
+    void whenTokenExpired_AndUserInputsAnyToken_thenUserIsInformedOfTokenExpiration() {
         String userInputtedToken = "000000";
         String expectedPage = "authentication/emailAuthentication";
 
