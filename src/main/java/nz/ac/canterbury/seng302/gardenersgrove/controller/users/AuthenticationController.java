@@ -28,17 +28,19 @@ public class AuthenticationController {
      * @param model
      * @return authentication page
      */
-    @GetMapping("/users/user/{userId}/authenticate-email")
-    public String authenticateEmail(@PathVariable("userId") Long userId, Model model) {
+    @GetMapping("/users/user/{obfuscatedEmail}/authenticate-email")
+    public String authenticateEmail(@PathVariable("obfuscatedEmail") String obfuscatedEmail, Model model) {
         // If the user has an authentication token
-        GardenUser user = userService.getUserById(userId);
+        String userEmail = userService.deobfuscateEmail(obfuscatedEmail);
+        GardenUser user = userService.getUserByEmail(userEmail);
 
         if (user != null  && user.getEmailValidationToken() != null) {
             logger.info("Displaying hidden email as {}", hideEmail(user.getEmail()));
-            model.addAttribute("userId", userId);
             model.addAttribute("hiddenEmail", hideEmail(user.getEmail()));
+            model.addAttribute("obfuscatedEmail", obfuscatedEmail);
             return "authentication/emailAuthentication";
         } else {
+            model.addAttribute("hiddenEmail", hideEmail(user.getEmail()));
             model.addAttribute("tokenExpired", true);
             logger.info("User entered an expired token");
             return "authentication/emailAuthentication";
@@ -53,18 +55,20 @@ public class AuthenticationController {
      * @param authenticationToken
      * @return home page if authenticated, otherwise authentication page
      */
-    @PostMapping("/users/user/{userId}/authenticate-email")
-    public String validateAuthenticationToken(@PathVariable("userId") Long userId,
+    @PostMapping("/users/user/{obfuscatedEmail}/authenticate-email")
+    public String validateAuthenticationToken(@PathVariable("obfuscatedEmail") String obfuscatedEmail,
                                               @ModelAttribute("authenticationToken") String authenticationToken,
                                               RedirectAttributes redirectAttributes,
                                               Model model) {
-        logger.info("Authenticating token for user {}", userId);
+        String userEmail = userService.deobfuscateEmail(obfuscatedEmail);
+        logger.info("Authenticating token for user {}", userEmail);
 
         // check if token matches token in DB
-        GardenUser user = userService.getUserById(userId);
+        GardenUser user = userService.getUserByEmail(userEmail);
 
         // token has expired
         if (user == null) {
+            model.addAttribute("hiddenEmail", hideEmail(userEmail));
             model.addAttribute("tokenExpired", true);
             logger.info("User entered an expired token");
             return "authentication/emailAuthentication";
