@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.unittests.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.Optional;
@@ -151,5 +152,42 @@ public class GardenUserServiceTest {
         gardenUserService.setProfilePicture(id, contentType, profilePicture);
 
         Mockito.verify(mockRepository, Mockito.never()).save(testUser1);
+    }
+
+    @Test
+    public void givenEmailIsValid_whenObfuscateEmailCalled_thenReturnsBase64EncodedEmail() {
+        var email = "john.doe@gmail.com";
+        var expected = "am9obi5kb2VAZ21haWwuY29t";
+
+        var obfuscatedEmail = gardenUserService.obfuscateEmail(email);
+
+        assertEquals(expected, obfuscatedEmail);
+    }
+
+    @Test
+    public void givenEmailIsInvalid_whenObfuscateEmailCalled_thenReturnsBase64EncodedEmail() {
+        var email = "not an email";
+        var expected = "bm90IGFuIGVtYWls";
+
+        var obfuscatedEmail = gardenUserService.obfuscateEmail(email);
+
+        assertEquals(expected, obfuscatedEmail);
+    }
+
+    @Test
+    public void givenObfuscatedEmailIsValid_whenDeobfuscateEmailCalled_thenReturnsEmail() {
+        var obfuscatedEmail = "am9obi5kb2VAZ21haWwuY29t";
+        var expected = "john.doe@gmail.com";
+
+        var email = gardenUserService.deobfuscateEmail(obfuscatedEmail);
+
+        assertEquals(expected, email);
+    }
+
+    @Test
+    public void givenObfuscatedEmailIsInvalid_whenDeobfuscateEmailCalled_thenThrowsException() {
+        var obfuscatedEmail = "not-base64 :)";
+
+        assertThrows(RuntimeException.class, () -> gardenUserService.deobfuscateEmail(obfuscatedEmail));
     }
 }
