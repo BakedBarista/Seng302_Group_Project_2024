@@ -40,7 +40,7 @@ public class AuthenticationController {
             model.addAttribute("obfuscatedEmail", obfuscatedEmail);
             return "authentication/emailAuthentication";
         } else {
-            model.addAttribute("hiddenEmail", hideEmail(user.getEmail()));
+            model.addAttribute("hiddenEmail", hideEmail(userEmail));
             model.addAttribute("tokenExpired", true);
             logger.info("User entered an expired token");
             return "authentication/emailAuthentication";
