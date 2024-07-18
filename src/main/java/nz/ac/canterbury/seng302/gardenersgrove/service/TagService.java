@@ -84,7 +84,7 @@ public class TagService {
             throw new ProfanityDetectedException();
         }
 
-        return (name.matches(TAG_REGEX) && name.length() <= TAG_MAX_LEN);
+        return (name.matches(TAG_REGEX) && name.length() < TAG_MAX_LEN);
     }
 
     /**
