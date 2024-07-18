@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationMessages.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Arrays;
@@ -89,39 +90,36 @@ class GardenDTOTest {
     @Test
     void gardenName_NameHasExclamationMark_ReturnPatternConstraintViolation() {
         garden.setName("garden!");
-        String expectedMessage = "Garden name must only include letters, numbers, spaces, dots, commas, hyphens, or apostrophes";
         Integer expectedConstraintSetSize = 1;
 
 
         ConstraintViolation<GardenDTO> violation = validator.validate(garden).iterator().next();
 
         assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
-        assertEquals(expectedMessage, violation.getMessage());
+        assertEquals(INVALID_GARDEN_NAME_MESSAGE, violation.getMessage());
     }
 
     @Test
     void gardenName_NameHasHash_ReturnPatternConstraintViolation() {
         garden.setName("garden #2");
-        String expectedMessage = "Garden name must only include letters, numbers, spaces, dots, commas, hyphens, or apostrophes";
         Integer expectedConstraintSetSize = 1;
 
 
         ConstraintViolation<GardenDTO> violation = validator.validate(garden).iterator().next();
 
         assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
-        assertEquals(expectedMessage, violation.getMessage());
+        assertEquals(INVALID_GARDEN_NAME_MESSAGE, violation.getMessage());
     }
     @Test
     void gardenName_Null_ReturnNotBlankViolation() {
         garden.setName(null);
-        String expectedMessage = "Garden name cannot be empty";
         Integer expectedConstraintSetSize = 1;
 
 
         ConstraintViolation<GardenDTO> violation = validator.validate(garden).iterator().next();
 
         assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
-        assertEquals(expectedMessage, violation.getMessage());
+        assertEquals(EMPTY_GARDEN_NAME_MESSAGE, violation.getMessage());
     }
 
     @Test
@@ -176,39 +174,36 @@ class GardenDTOTest {
     @Test
     void gardenLocation_LocationHasExclamationMark_ReturnPatternConstraintViolation() {
         garden.setCity("Christchurch!");
-        String expectedMessage = "Please enter a valid City name";
         Integer expectedConstraintSetSize = 1;
 
 
         ConstraintViolation<GardenDTO> violation = validator.validate(garden).iterator().next();
 
         assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
-        assertEquals(expectedMessage, violation.getMessage());
+        assertEquals(GARDEN_CITY_MESSAGE, violation.getMessage());
     }
 
     @Test
     void gardenLocation_LocationHasHash_ReturnPatternConstraintViolation() {
         garden.setCity("garden #2");
-        String expectedMessage = "Please enter a valid City name";
         Integer expectedConstraintSetSize = 1;
 
 
         ConstraintViolation<GardenDTO> violation = validator.validate(garden).iterator().next();
 
         assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
-        assertEquals(expectedMessage, violation.getMessage());
+        assertEquals(GARDEN_CITY_MESSAGE, violation.getMessage());
     }
     @Test
     void gardenLocation_Null_ReturnsViolation() {
         garden.setCity(null);
-        String expectedMessage = "City is required";
         Integer expectedConstraintSetSize = 1;
 
 
         ConstraintViolation<GardenDTO> violation = validator.validate(garden).iterator().next();
 
         assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
-        assertEquals(expectedMessage, violation.getMessage());
+        assertEquals(GARDEN_CITY_REQUIRED_MESSAGE, violation.getMessage());
     }
 
     @Test
@@ -221,14 +216,13 @@ class GardenDTOTest {
     @Test
     void gardenSize_CountIsNegativeOne_ReturnsEmptyConstraintViolationList() {
         garden.setSize("-1");
-        String expectedMessage = "Garden size must be a valid positive number (only allows numbers and a single period or comma)";
         Integer expectedConstraintSetSize = 1;
 
 
         ConstraintViolation<GardenDTO> violation = validator.validate(garden).iterator().next();
 
         assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
-        assertEquals(expectedMessage, violation.getMessage());
+        assertEquals(INVALID_GARDEN_SIZE_MESSAGE, violation.getMessage());
     }
 
     @Test
@@ -248,63 +242,58 @@ class GardenDTOTest {
     @Test
     void gardenSize_IntegerWithNonNumericChar_ReturnPatternViolation() {
         garden.setSize("1a");
-        String expectedMessage = "Garden size must be a valid positive number (only allows numbers and a single period or comma)";
         Integer expectedConstraintSetSize = 1;
 
         ConstraintViolation<GardenDTO> violation = validator.validate(garden).iterator().next();
 
         assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
-        assertEquals(expectedMessage, violation.getMessage());
+        assertEquals(INVALID_GARDEN_SIZE_MESSAGE, violation.getMessage());
     }
 
     @Test
     void gardenSize_NumberIsExponentialWithE_ReturnPatternViolation() {
         garden.setSize("1e10");
-        String expectedMessage = "Garden size must be a valid positive number (only allows numbers and a single period or comma)";
         Integer expectedConstraintSetSize = 1;
 
         ConstraintViolation<GardenDTO> violation = validator.validate(garden).iterator().next();
 
         assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
-        assertEquals(expectedMessage, violation.getMessage());
+        assertEquals(INVALID_GARDEN_SIZE_MESSAGE, violation.getMessage());
     }
 
     @Test
     void gardenSize_NonNumericChar_ReturnPatternViolation() {
         garden.setSize("a");
-        String expectedMessage = "Garden size must be a valid positive number (only allows numbers and a single period or comma)";
         Integer expectedConstraintSetSize = 1;
 
 
         ConstraintViolation<GardenDTO> violation = validator.validate(garden).iterator().next();
 
         assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
-        assertEquals(expectedMessage, violation.getMessage());
+        assertEquals(INVALID_GARDEN_SIZE_MESSAGE, violation.getMessage());
     }
 
     @Test
     void gardenSize_DoubleDotAsDecimalPlace_ReturnPatternViolation() {
         garden.setSize("1..5");
-        String expectedMessage = "Garden size must be a valid positive number (only allows numbers and a single period or comma)";
         Integer expectedConstraintSetSize = 1;
 
         ConstraintViolation<GardenDTO> violation = validator.validate(garden).iterator().next();
 
         assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
-        assertEquals(expectedMessage, violation.getMessage());
+        assertEquals(INVALID_GARDEN_SIZE_MESSAGE, violation.getMessage());
     }
 
     @Test
     void gardenSize_DoubleCommaAsDecimalPlace_ReturnPatternViolation() {
         garden.setSize("1,,5");
-        String expectedMessage = "Garden size must be a valid positive number (only allows numbers and a single period or comma)";
         Integer expectedConstraintSetSize = 1;
 
 
         ConstraintViolation<GardenDTO> violation = validator.validate(garden).iterator().next();
 
         assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
-        assertEquals(expectedMessage, violation.getMessage());
+        assertEquals(INVALID_GARDEN_SIZE_MESSAGE, violation.getMessage());
     }
 
     @Test
@@ -317,25 +306,23 @@ class GardenDTOTest {
     @Test
     void gardenDescription_IsSpaces_ReturnPatternViolation() {
         garden.setDescription("     ");
-        String expectedMessage = "Description must be 512 characters or less and contain some text";
         Integer expectedConstraintSetSize = 1;
 
         ConstraintViolation<GardenDTO> violation = validator.validate(garden).iterator().next();
 
         assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
-        assertEquals(expectedMessage, violation.getMessage());
+        assertEquals(INVALID_GARDEN_DESCRIPTION, violation.getMessage());
     }
 
     @Test
     void gardenDescription_IsFiveHundredAndThirteenChars_ReturnPatternViolation() {
         garden.setDescription("a".repeat(513));
-        String expectedMessage = "Description must be 512 characters or less and contain some text";
         Integer expectedConstraintSetSize = 1;
 
         ConstraintViolation<GardenDTO> violation = validator.validate(garden).iterator().next();
 
         assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
-        assertEquals(expectedMessage, violation.getMessage());
+        assertEquals(INVALID_GARDEN_DESCRIPTION, violation.getMessage());
     }
 
     @Test
@@ -362,37 +349,34 @@ class GardenDTOTest {
     @Test
     void gardenDescription_HasJustNumbers_ReturnPatternViolation() {
         garden.setDescription("123");
-        String expectedMessage = "Description must be 512 characters or less and contain some text";
         Integer expectedConstraintSetSize = 1;
 
         ConstraintViolation<GardenDTO> violation = validator.validate(garden).iterator().next();
 
         assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
-        assertEquals(expectedMessage, violation.getMessage());
+        assertEquals(INVALID_GARDEN_DESCRIPTION, violation.getMessage());
     }
 
     @Test
     void gardenDescription_HasJustSpecialChars_ReturnPatternViolation() {
         garden.setDescription("!!!");
-        String expectedMessage = "Description must be 512 characters or less and contain some text";
         Integer expectedConstraintSetSize = 1;
 
         ConstraintViolation<GardenDTO> violation = validator.validate(garden).iterator().next();
 
         assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
-        assertEquals(expectedMessage, violation.getMessage());
+        assertEquals(INVALID_GARDEN_DESCRIPTION, violation.getMessage());
     }
 
     @Test
     void gardenDescription_HasSpecialCharsAndNumbers_ReturnPatternViolation() {
         garden.setDescription("100!");
-        String expectedMessage = "Description must be 512 characters or less and contain some text";
         Integer expectedConstraintSetSize = 1;
 
         ConstraintViolation<GardenDTO> violation = validator.validate(garden).iterator().next();
 
         assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
-        assertEquals(expectedMessage, violation.getMessage());
+        assertEquals(INVALID_GARDEN_DESCRIPTION, violation.getMessage());
     }
 
     @Test
@@ -433,13 +417,12 @@ class GardenDTOTest {
     @Test
     void enterEmptyGardenName_whenSubmitted_ReturnsViolation() {
         garden.setName(" ");
-        String expectedMessage = "Garden name cannot be empty";
         Integer expectedConstraintSetSize = 1;
 
         ConstraintViolation<GardenDTO> violation = validator.validate(garden).iterator().next();
 
         assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
-        assertEquals(expectedMessage, violation.getMessage());
+        assertEquals(EMPTY_GARDEN_NAME_MESSAGE, violation.getMessage());
     }
 
     @Test
@@ -452,48 +435,44 @@ class GardenDTOTest {
     @Test
     void enterEmptyStreetNumber_whenSubmitted_ReturnsViolation() {
         garden.setStreetNumber(" ");
-        String expectedMessage = "Please enter a valid street number";
         Integer expectedConstraintSetSize = 1;
 
         ConstraintViolation<GardenDTO> violation = validator.validate(garden).iterator().next();
 
         assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
-        assertEquals(expectedMessage, violation.getMessage());
+        assertEquals(GARDEN_STREET_NUMBER_MESSAGE, violation.getMessage());
     }
     @Test
     void enterEmptyCity_whenSubmitted_ReturnsViolation() {
         garden.setCity(" ");
-        String expectedMessage = "City is required";
         Integer expectedConstraintSetSize = 1;
 
 
         ConstraintViolation<GardenDTO> violation = validator.validate(garden).iterator().next();
 
         assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
-        assertEquals(expectedMessage, violation.getMessage());
+        assertEquals(GARDEN_CITY_REQUIRED_MESSAGE, violation.getMessage());
     }
     @Test
     void enterEmptyCountry_whenSubmitted_ReturnsViolation() {
         garden.setCountry(" ");
-        String expectedMessage = "Country is required";
         Integer expectedConstraintSetSize = 1;
 
 
         ConstraintViolation<GardenDTO> violation = validator.validate(garden).iterator().next();
 
         assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
-        assertEquals(expectedMessage, violation.getMessage());
+        assertEquals(GARDEN_COUNTRY_REQUIRED_MESSAGE, violation.getMessage());
     }
     @Test
     void enterEmptyPostCode_whenSubmitted_ReturnsViolation() {
         garden.setPostCode(" ");
-        String expectedMessage = "Please enter a valid post code";
         Integer expectedConstraintSetSize = 1;
 
         ConstraintViolation<GardenDTO> violation = validator.validate(garden).iterator().next();
 
         assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
-        assertEquals(expectedMessage, violation.getMessage());
+        assertEquals(GARDEN_POST_CODE_MESSAGE, violation.getMessage());
 
 
     }
