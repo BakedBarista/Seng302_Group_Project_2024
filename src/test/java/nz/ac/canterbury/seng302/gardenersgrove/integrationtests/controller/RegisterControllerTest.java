@@ -67,7 +67,7 @@ public class RegisterControllerTest {
 
         String actualPage = registerController.submitRegister(registerDTO, bindingResult, null);
 
-        String expectedPage = "redirect:/users/user/" + gardenUserService.getUserByEmail(registerDTO.getEmail()).getId() + "/authenticate-email";
+        String expectedPage = "redirect:/users/user/" + gardenUserService.obfuscateEmail(registerDTO.getEmail()) + "/authenticate-email";
         Assertions.assertEquals(expectedPage, actualPage);
     }
 
@@ -90,7 +90,7 @@ public class RegisterControllerTest {
         registerDTO.setDateOfBirth(dobString);
 
         String actualPage = registerController.submitRegister(registerDTO, bindingResult, null);
-        String expectedPage = "redirect:/users/user/" + gardenUserService.getUserByEmail(registerDTO.getEmail()).getId() + "/authenticate-email";
+        String expectedPage = "redirect:/users/user/" + gardenUserService.obfuscateEmail(registerDTO.getEmail()) + "/authenticate-email";
 
         Assertions.assertEquals(expectedPage, actualPage);
     }
