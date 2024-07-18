@@ -28,6 +28,6 @@ public class GardenSizeStringValidator implements ConstraintValidator<ValidGarde
     public boolean isValid(String value, ConstraintValidatorContext context) {
         double valueAsDouble = Double.parseDouble(value);
 
-        return valueAsDouble < maxSize;
+        return valueAsDouble <= maxSize;
     }
 }
