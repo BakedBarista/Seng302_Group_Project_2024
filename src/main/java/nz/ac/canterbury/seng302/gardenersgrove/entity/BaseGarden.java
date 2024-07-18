@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import org.hibernate.validator.constraints.Length;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -20,6 +22,7 @@ public abstract class BaseGarden {
     private Long id;
 
     @NotBlank(message = "Garden name cannot be empty")
+    @Length(max = 100, message = "Garden name cannot exceed 100 characters")
     @Pattern(regexp = GARDEN_REGEX, message = "Garden name must only include letters, numbers, spaces, dots, commas, hyphens, or apostrophes")
     @Column(nullable = false)
     private String name;

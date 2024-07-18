@@ -14,4 +14,6 @@ public class ValidationConstants {
 
     public static final String TAG_REGEX = "^[\\p{L}0-9\\s\\-_'\"]*$";
     public static final int TAG_MAX_LEN = 25;
+
+    public static final int MAX_GARDEN_SIZE = 9999999;
 }
