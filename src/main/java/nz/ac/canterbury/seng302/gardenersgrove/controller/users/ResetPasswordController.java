@@ -168,13 +168,16 @@ public class ResetPasswordController {
      * @return the URL string
      */
     public String generateUrlString(HttpServletRequest request, String token) {
+        // Get the URL they requested from (not the localhost)
+        StringBuilder url = new StringBuilder();
+        url.append(request.getScheme()).append("://").append(request.getServerName());
 
-        String baseUrl = request.getScheme() + "://" + request.getServerName();
         if (request.getServerPort() != 80 && request.getServerPort() != 443) {
-            baseUrl += ":" + request.getServerPort();
+            url.append(":").append(request.getServerPort());
         }
-        baseUrl += "/users/reset-password/callback?token=" + token;
-        return baseUrl;
 
+        url.append(request.getContextPath()); // This is the /test or /prod
+        url.append("/users/reset-password/callback?token=").append(token);
+        return url.toString();
     }
 }
