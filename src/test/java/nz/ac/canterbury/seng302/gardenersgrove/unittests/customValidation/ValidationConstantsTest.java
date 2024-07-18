@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 import nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationConstants;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class ValidationConstantsTest {
     @Test
@@ -90,6 +92,12 @@ public class ValidationConstantsTest {
         assertFalse(emailResult);
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"invalid--email@gmail.com","-invalid-email@gmail.com"})
+    void testListOfInvalidEmails(String input) {
+        boolean emailResult = input.matches(ValidationConstants.EMAIL_REGEX);
+        assertFalse(emailResult);
+    }
     @Test
     public void testInvalidDate() {
         String date = "200/200/200";
