@@ -67,7 +67,7 @@ public class TagAPIController {
         String message;
         for (String tag : tags) {
             if (tag.isBlank()) {
-                message = "You cannot add a blank tag";
+                message = "Tag cannot be blank";
                 return ResponseEntity.status(422).body(message);
             }
         }
