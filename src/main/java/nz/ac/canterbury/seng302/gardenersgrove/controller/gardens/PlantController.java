@@ -111,12 +111,8 @@ public class PlantController {
         Plant plant = new Plant(plantDTO);
         Plant savedPlant = plantService.addPlant(plant, gardenId);
         if (savedPlant != null) {
-            try {
-                plantService.setPlantImage(savedPlant.getId(), file.getContentType(), file.getBytes());
-                logger.info("Saved new plant to Garden ID: {}", gardenId);
-            } catch (IOException e) {
-                logger.error("Something went wrong saving the user's plant image: ", e);
-            }
+            plantService.setPlantImage(savedPlant.getId(), file);
+            logger.info("Saved new plant to Garden ID: {}", gardenId);
         } else {
             logger.error("Failed to save new plant to garden ID: {}", gardenId);
         }
@@ -174,7 +170,7 @@ public class PlantController {
             );
         }
 
-        if (bindingResult.hasErrors()) {
+        if (bindingResult.hasErrors() ) {
             model.addAttribute("plant", plant);
             model.addAttribute("gardenId", gardenId);
             model.addAttribute("plantId", plantId);
@@ -196,11 +192,7 @@ public class PlantController {
             Plant savedPlant = plantService.addPlant(existingPlant.get(), gardenId);
 
             if (file != null) {
-                try {
-                    plantService.setPlantImage(savedPlant.getId(), file.getContentType(), file.getBytes());
-            } catch (Exception e) {
-                    logger.info("Exception {}",e.toString());
-                }
+                plantService.setPlantImage(savedPlant.getId(), file);
             }
         }
 
@@ -241,19 +233,14 @@ public class PlantController {
      * @param id Plant id the image is saving to
      * @param referer The page where the request sent from
      * @return Redirects to the current page
-     * @throws Exception File exception
      */
     @PostMapping("plants/{id}/plant-image")
     public String uploadPlantImage(
             @RequestParam("image") MultipartFile file,
             @PathVariable("id") Long id,
-            @RequestHeader(HttpHeaders.REFERER) String referer) throws Exception {
+            @RequestHeader(HttpHeaders.REFERER) String referer) {
         logger.info("POST /plants " + id + "/plant-image");
-        try {
-            plantService.setPlantImage(id, file.getContentType(), file.getBytes());
-        } catch (Exception e) {
-            logger.info("Exception {}",e.toString());
-        }
+        plantService.setPlantImage(id, file);
         return "redirect:" + referer;
     }
 }
