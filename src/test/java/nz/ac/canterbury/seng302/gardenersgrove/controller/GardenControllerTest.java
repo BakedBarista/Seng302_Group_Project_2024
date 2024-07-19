@@ -146,6 +146,10 @@ public class GardenControllerTest {
         Garden garden = gardenDTO.toGarden();
         when(gardenService.getGardenById(1L)).thenReturn(Optional.of(garden));
         when(plantService.getPlantsByGardenId(1L)).thenReturn(Collections.emptyList());
+        GardenUser owner = new GardenUser();
+        owner.setId(1L);
+        garden.setOwner(owner);
+        when(gardenUserService.getCurrentUser()).thenReturn(owner);
 
 
         String result = gardenController.gardenDetail(1L, model);
@@ -264,6 +268,10 @@ public class GardenControllerTest {
     public void testGetGardenId() {
         Model model = mock(Model.class);
         Garden garden = new Garden("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"test description",null);
+        GardenUser owner = new GardenUser();
+        owner.setId(1L);
+        garden.setOwner(owner);
+        when(gardenUserService.getCurrentUser()).thenReturn(owner);
         when(gardenService.getGardenById(1)).thenReturn(Optional.of(garden));
         GardenWeather weatherResult = new GardenWeather();
         when(weatherAPIService.getWeatherData(1, 0.0, 0.0)).thenReturn(weatherResult);
@@ -277,8 +285,12 @@ public class GardenControllerTest {
         Model model = mock(Model.class);
         GardenDTO gardenDTO = new GardenDTO("Test Garden","1","test","test suburb","test city","test country","1234",null,null,"100","test description");
         Garden garden = gardenDTO.toGarden();
-
+        GardenUser owner = new GardenUser();
+        owner.setId(1L);
+        garden.setOwner(owner);
+        when(gardenUserService.getCurrentUser()).thenReturn(owner);
         when(gardenService.getGardenById(1L)).thenReturn(Optional.of(garden));
+
 
         String result = gardenController.gardenDetail(1L, model);
 
