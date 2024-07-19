@@ -1,6 +1,8 @@
-package nz.ac.canterbury.seng302.gardenersgrove.customValidation;
+package nz.ac.canterbury.seng302.gardenersgrove.validation;
 
 public class ValidationConstants {
+
+    private ValidationConstants() {}
     public static final int NAME_MAX_LEN = 64;
     public static final int USER_MIN_AGE = 13;
     public static final int USER_MAX_AGE = 120;
