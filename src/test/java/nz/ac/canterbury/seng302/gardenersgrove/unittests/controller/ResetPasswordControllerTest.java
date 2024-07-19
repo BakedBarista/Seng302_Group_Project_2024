@@ -60,7 +60,7 @@ public class ResetPasswordControllerTest {
         when(request.getServerPort()).thenReturn(port);
         when(request.getContextPath()).thenReturn(contextPath);
 
-        String url = controller.generateUrlString(request, token);
+        String url = emailSenderService.generateUrlString(request, token);
 
         assertEquals(expectedUrl, url);
     }

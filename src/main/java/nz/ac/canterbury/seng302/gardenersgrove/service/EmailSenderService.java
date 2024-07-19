@@ -1,7 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
-import java.util.concurrent.Executor;
-
+import jakarta.servlet.http.HttpServletRequest;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -9,7 +9,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
-import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import java.util.concurrent.Executor;
 
 /**
  * Used to send emails. Currently only support plain-text emails.
@@ -38,6 +38,25 @@ public class EmailSenderService {
      */
     public void sendEmail(GardenUser to, String subject, String body) {
         sendEmail(formatNameAddr(to), subject, body);
+    }
+
+    /**
+     * Generates a URL string for the reset password link
+     * @param request the HTTP request
+     * @return the URL string
+     */
+    public String generateUrlString(HttpServletRequest request, String token) {
+        // Get the URL they requested from (not the localhost)
+        StringBuilder url = new StringBuilder();
+        url.append(request.getScheme()).append("://").append(request.getServerName());
+
+        if (request.getServerPort() != 80 && request.getServerPort() != 443) {
+            url.append(":").append(request.getServerPort());
+        }
+
+        url.append(request.getContextPath()); // This is the /test or /prod
+        url.append("/users/reset-password/callback?token=").append(token);
+        return url.toString();
     }
 
     private String formatNameAddr(GardenUser user) {
@@ -82,4 +101,5 @@ public class EmailSenderService {
 
         logger.info("Message sent successfully");
     }
+
 }

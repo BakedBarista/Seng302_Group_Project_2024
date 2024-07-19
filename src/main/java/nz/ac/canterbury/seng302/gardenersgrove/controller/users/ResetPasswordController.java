@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class ResetPasswordController {
-    private final Logger logger = LoggerFactory.getLogger(LoginController.class);
+    private final Logger logger = LoggerFactory.getLogger(ResetPasswordController.class);
 
     private final TokenService tokenService;
 
@@ -76,7 +76,7 @@ public class ResetPasswordController {
         boolean emailExists = user != null;
         if (emailExists) {
             String token = tokenService.createAuthenticationToken();
-            String resetPasswordLink = generateUrlString(request, token);
+            String resetPasswordLink = emailSenderService.generateUrlString(request, token);
             logger.info("Reset password link: {}", resetPasswordLink);
 
             tokenService.addResetPasswordTokenAndTimeToUser(user, token);
@@ -160,24 +160,5 @@ public class ResetPasswordController {
         emailSenderService.sendEmail(user, "Password Changed", "Your password has been updated");
 
         return "redirect:/users/login";
-    }
-
-    /**
-     * Generates a URL string for the reset password link
-     * @param request the HTTP request
-     * @return the URL string
-     */
-    public String generateUrlString(HttpServletRequest request, String token) {
-        // Get the URL they requested from (not the localhost)
-        StringBuilder url = new StringBuilder();
-        url.append(request.getScheme()).append("://").append(request.getServerName());
-
-        if (request.getServerPort() != 80 && request.getServerPort() != 443) {
-            url.append(":").append(request.getServerPort());
-        }
-
-        url.append(request.getContextPath()); // This is the /test or /prod
-        url.append("/users/reset-password/callback?token=").append(token);
-        return url.toString();
     }
 }
