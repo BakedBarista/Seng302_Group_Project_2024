@@ -390,4 +390,26 @@ public class GardenControllerTest {
         verify(model).addAttribute("tagString", tags);
         assertEquals("gardens/publicGardens", viewName);
     }
+
+    @Test
+    void testAccessPrivateGardensIfNotOwner_thenAccessDenied() {
+        Model model = mock(Model.class);
+        Garden garden = new Garden();
+
+        GardenUser owner = new GardenUser();
+        owner.setId(1L);
+        garden.setOwner(owner);
+
+        GardenUser currentUser = new GardenUser();
+        currentUser.setId(2L);
+
+
+        when(gardenService.getGardenById(1L)).thenReturn(Optional.of(garden));
+        when(gardenUserService.getCurrentUser()).thenReturn(currentUser);
+
+        String result = gardenController.gardenDetail(1L, model);
+
+        assertEquals("/error/accessDenied", result);
+    }
+
 }
