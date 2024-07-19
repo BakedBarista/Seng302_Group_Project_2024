@@ -39,6 +39,23 @@ class GardenDTOTest {
     }
 
     @Test
+    void gardenName_NameIsTooLong_ReturnsConstraintViolation() {
+        garden.setName("a".repeat(101));
+
+        ConstraintViolation<GardenDTO> violation = validator.validate(garden).iterator().next();
+
+        assertEquals(1, validator.validate(garden).size());
+        assertEquals(MAX_GARDEN_NAME_MESSAGE, violation.getMessage());
+    }
+
+    @Test
+    void gardenName_NameIsOKLength_ReturnsEmptyConstraintViolationList() {
+        garden.setName("a".repeat(100));
+
+        assertTrue(validator.validate(garden).isEmpty());
+    }
+
+    @Test
     void gardenName_NameIsGarden_ReturnsEmptyConstraintViolationList() {
         garden.setName("Garden");
 
@@ -297,6 +314,23 @@ class GardenDTOTest {
     }
 
     @Test
+    void gardenSize_SizeIsTooLong_ReturnsConstraintViolation() {
+        garden.setSize("1." + "0".repeat(49));
+
+        ConstraintViolation<GardenDTO> violation = validator.validate(garden).iterator().next();
+
+        assertEquals(1, validator.validate(garden).size());
+        assertEquals(MAX_GARDEN_SIZE_LENGTH_MESSAGE, violation.getMessage());
+    }
+
+    @Test
+    void gardenSize_SizeIsOKLength_ReturnsEmptyConstraintViolationList() {
+        garden.setSize("1." + "0".repeat(48));
+
+        assertTrue(validator.validate(garden).isEmpty());
+    }
+
+    @Test
     void gardenDescription_IsEmpty_ReturnNoViolations() {
         garden.setDescription("");
 
@@ -442,6 +476,7 @@ class GardenDTOTest {
         assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
         assertEquals(GARDEN_STREET_NUMBER_MESSAGE, violation.getMessage());
     }
+
     @Test
     void enterEmptyCity_whenSubmitted_ReturnsViolation() {
         garden.setCity(" ");
@@ -453,6 +488,7 @@ class GardenDTOTest {
         assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
         assertEquals(GARDEN_CITY_REQUIRED_MESSAGE, violation.getMessage());
     }
+
     @Test
     void enterEmptyCountry_whenSubmitted_ReturnsViolation() {
         garden.setCountry(" ");
@@ -464,6 +500,7 @@ class GardenDTOTest {
         assertEquals(expectedConstraintSetSize, validator.validate(garden).size());
         assertEquals(GARDEN_COUNTRY_REQUIRED_MESSAGE, violation.getMessage());
     }
+
     @Test
     void enterEmptyPostCode_whenSubmitted_ReturnsViolation() {
         garden.setPostCode(" ");

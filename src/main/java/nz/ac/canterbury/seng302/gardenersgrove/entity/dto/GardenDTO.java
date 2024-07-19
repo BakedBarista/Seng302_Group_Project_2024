@@ -8,12 +8,12 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.BaseGarden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationMessages.INVALID_GARDEN_SIZE_MESSAGE;
-import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationMessages.MAX_GARDEN_NAME_LENGTH_MESSAGE;
+import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationMessages.MAX_GARDEN_SIZE_LENGTH_MESSAGE;
 
 public class GardenDTO extends BaseGarden {
 
     @ValidEuropeanDecimal(message = INVALID_GARDEN_SIZE_MESSAGE)
-    @Size(max = 50, message = MAX_GARDEN_NAME_LENGTH_MESSAGE)
+    @Size(max = 50, message = MAX_GARDEN_SIZE_LENGTH_MESSAGE)
     @ValidGardenSizeString()
     @Column(nullable = true)
     private String size;
