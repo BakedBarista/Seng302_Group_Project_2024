@@ -18,6 +18,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -142,14 +143,18 @@ class PlantServiceTest {
     }
 
     @Test
-    public void setPlantImageWithValidId_imageSaved() {
+    void setPlantImageWithValidId_imageSaved() {
         long id = 1L;
         byte[] imageBytes = {};
         String contentType = "image/png";
+
+        MultipartFile file = mock(MultipartFile.class);
+        Mockito.when(plantService.validateImage(Mockito.any())).thenReturn(false);
+
         Plant plant = new Plant();
         plant.setId(id);
         when(plantRepository.findById(id)).thenReturn(Optional.of(plant));
-        plantService.setPlantImage(id, contentType, imageBytes);
+        plantService.setPlantImage(id, file);
         verify(plantRepository, times(1)).save(plant);
         assertEquals(contentType, plant.getPlantImageContentType());
         assertEquals(imageBytes, plant.getPlantImage());
@@ -159,7 +164,10 @@ class PlantServiceTest {
     public void setPlantImageWithNonExistentId_imageNotSaved() {
         long id = 1L;
         when(plantRepository.findById(id)).thenReturn(Optional.empty());
-        plantService.setPlantImage(id, "image/png", new byte[]{});
+        MultipartFile file = mock(MultipartFile.class);
+        Mockito.when(plantService.validateImage(Mockito.any())).thenReturn(false);
+
+        plantService.setPlantImage(id, file);
         verify(plantRepository, never()).save(any());
     }
 }
