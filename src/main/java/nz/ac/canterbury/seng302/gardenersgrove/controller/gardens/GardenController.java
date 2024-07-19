@@ -168,13 +168,22 @@ public class GardenController {
                                Model model) {
 
         logger.info("Get /gardens/id - display garden detail");
+        Optional<Garden> gardenOpt = gardenService.getGardenById(id);
         model.addAttribute("dateFormatter", new ThymeLeafDateFormatter());
 
-        Optional<Garden> gardenOpt = gardenService.getGardenById(id);
+
         if(gardenOpt.isPresent()) {
             Garden garden = gardenOpt.get();
             model.addAttribute("garden", garden);
             model.addAttribute("owner", garden.getOwner());
+            GardenUser currentUser = gardenUserService.getCurrentUser();
+
+
+            if((!garden.getOwner().getId().equals(currentUser.getId()))&&(!garden.getIsPublic())){
+                return "/error/accessDenied";
+            }
+
+
             model.addAttribute("NZ_FORMAT_DATE", NZ_FORMAT_DATE);
             model.addAttribute("plants", plantService.getPlantsByGardenId(id));
 
@@ -225,7 +234,6 @@ public class GardenController {
             model.addAttribute("displayWeather", displayWeather);
             model.addAttribute("WEATHER_CARD_FORMAT_DATE", WEATHER_CARD_FORMAT_DATE);
 
-            GardenUser currentUser = gardenUserService.getCurrentUser();
             List<Garden> gardens = gardenService.getGardensByOwnerId(currentUser.getId());
             model.addAttribute("currentUser", currentUser);
             model.addAttribute("gardens", gardens);
