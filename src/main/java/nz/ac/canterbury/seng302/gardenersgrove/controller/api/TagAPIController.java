@@ -49,7 +49,7 @@ public class TagAPIController {
     @PutMapping("/gardens/{gardenId}/tags")
     public ResponseEntity<String> setGardenTags(
             @PathVariable Long gardenId,
-            @RequestBody List<String> tags,
+                @RequestBody List<String> tags,
             Authentication authentication) {
         logger.info("Setting tags for garden {}", gardenId);
         GardenUser user = gardenUserService.getUserById((Long) authentication.getPrincipal());
@@ -64,13 +64,19 @@ public class TagAPIController {
             return ResponseEntity.status(403).build();
         }
 
+        String message;
+        for (String tag : tags) {
+            if (tag.isBlank()) {
+                message = "You cannot add a blank tag";
+                return ResponseEntity.status(422).body(message);
+            }
+        }
         try {
             tagService.updateGardenTags(garden, tags);
         } catch (ProfanityDetectedException e) {
             logger.info("profanity detected in tag");
             StrikeService.AddStrikeResult result = strikeService.addStrike(user);
 
-            String message;
             switch (result) {
                 case WARNING:
                     message = "You have added an inappropriate tag for the fifth time. One more strike and your account will be blocked.";
