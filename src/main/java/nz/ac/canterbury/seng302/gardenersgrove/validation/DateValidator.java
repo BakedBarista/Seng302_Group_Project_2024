@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.validation;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -55,6 +56,10 @@ public class DateValidator implements ConstraintValidator<ValidDate, String> {
         boolean monthValid = month > 0 && month <= 12;
         boolean yearValid = year > 0;
 
+        if (!dayValid || !monthValid || !yearValid) {
+            return false;
+        }
+
         if (day == 31 && !THIRTY_ONE_DAY_MONTHS.contains(month)) {
             return false;
         } else if (day == 30 && !(THIRTY_ONE_DAY_MONTHS.contains(month) || THIRTY_DAY_MONTHS.contains(month))) {
@@ -63,8 +68,9 @@ public class DateValidator implements ConstraintValidator<ValidDate, String> {
             // 29th of feb on a leap year case
             return false;
         }
-
-        return dayValid && monthValid && yearValid;
+        LocalDate parsedDate = LocalDate.of(year, month, day);
+        return !parsedDate.isAfter(LocalDate.now());
+        
     }
 
     /**
