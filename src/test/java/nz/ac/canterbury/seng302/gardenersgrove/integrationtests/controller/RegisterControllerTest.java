@@ -1,9 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.controller;
 
-import nz.ac.canterbury.seng302.gardenersgrove.controller.users.RegisterController;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.RegisterDTO;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import java.time.LocalDate;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,14 +11,16 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-
-import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
 import org.springframework.validation.BindingResult;
 
-import java.time.LocalDate;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.users.RegisterController;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.RegisterDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 
 @SpringBootTest
-public class RegisterControllerTest {
+class RegisterControllerTest {
 
     @Autowired
     private RegisterController registerController;
@@ -39,7 +39,7 @@ public class RegisterControllerTest {
     private RegisterDTO registerDTO;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
 
         registerDTO = new RegisterDTO();
@@ -67,7 +67,7 @@ public class RegisterControllerTest {
 
         String actualPage = registerController.submitRegister(registerDTO, bindingResult, null);
 
-        String expectedPage = "redirect:/users/user/" + gardenUserService.getUserByEmail(registerDTO.getEmail()).getId() + "/authenticate-email";
+        String expectedPage = "redirect:/users/user/" + gardenUserService.obfuscateEmail(registerDTO.getEmail()) + "/authenticate-email";
         Assertions.assertEquals(expectedPage, actualPage);
     }
 
@@ -90,7 +90,7 @@ public class RegisterControllerTest {
         registerDTO.setDateOfBirth(dobString);
 
         String actualPage = registerController.submitRegister(registerDTO, bindingResult, null);
-        String expectedPage = "redirect:/users/user/" + gardenUserService.getUserByEmail(registerDTO.getEmail()).getId() + "/authenticate-email";
+        String expectedPage = "redirect:/users/user/" + gardenUserService.obfuscateEmail(registerDTO.getEmail()) + "/authenticate-email";
 
         Assertions.assertEquals(expectedPage, actualPage);
     }
