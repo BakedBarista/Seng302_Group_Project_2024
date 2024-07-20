@@ -69,7 +69,6 @@ public class TagAPIController {
         List<String> strippedTags = new ArrayList<>();
         for (String tag : tags) {
             String strippedTag = tag.strip();
-            logger.info("Adding tag {}", tag);
             if (tag.isBlank()) {
                 message = "Tag cannot be blank";
                 return ResponseEntity.status(422).body(message);
