@@ -118,7 +118,8 @@ public class RegisterController {
 
         sendRegisterEmail(user, token);
 
-        return "redirect:/users/user/" + user.getId() + "/authenticate-email";
+        String obfuscatedEmail = userService.obfuscateEmail(user.getEmail());
+        return "redirect:/users/user/" + obfuscatedEmail + "/authenticate-email";
     }
 
     /**
