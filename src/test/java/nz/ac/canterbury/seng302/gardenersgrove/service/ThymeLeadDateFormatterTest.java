@@ -1,6 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
-import nz.ac.canterbury.seng302.gardenersgrove.customValidation.DateTimeFormats;
+import nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

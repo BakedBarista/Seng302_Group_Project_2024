@@ -9,8 +9,8 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.TagRepository;
 
-import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationConstants.TAG_MAX_LEN;
-import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationConstants.TAG_REGEX;
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationConstants.TAG_MAX_LEN;
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationConstants.TAG_REGEX;
 
 /**
  * Service to retrieve and manipulate tags.

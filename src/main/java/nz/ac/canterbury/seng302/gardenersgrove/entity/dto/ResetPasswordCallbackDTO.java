@@ -2,7 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.entity.dto;
 
 import jakarta.validation.constraints.Pattern;
 
-import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationConstants.PASSWORD_REGEX;
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationConstants.PASSWORD_REGEX;
 
 /**
  * Data transfer object for the reset password callback form
