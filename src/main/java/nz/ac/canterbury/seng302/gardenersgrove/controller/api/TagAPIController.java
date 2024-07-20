@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.api;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -65,14 +66,18 @@ public class TagAPIController {
         }
 
         String message;
+        List<String> strippedTags = new ArrayList<>();
         for (String tag : tags) {
+            String strippedTag = tag.strip();
+            logger.info("Adding tag {}", tag);
             if (tag.isBlank()) {
                 message = "Tag cannot be blank";
                 return ResponseEntity.status(422).body(message);
             }
+            strippedTags.add(strippedTag);
         }
         try {
-            tagService.updateGardenTags(garden, tags);
+            tagService.updateGardenTags(garden, strippedTags);
         } catch (ProfanityDetectedException e) {
             logger.info("profanity detected in tag");
             StrikeService.AddStrikeResult result = strikeService.addStrike(user);
