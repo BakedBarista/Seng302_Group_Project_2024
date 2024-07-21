@@ -8,10 +8,9 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.ResetPasswordDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.URLService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mockito;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-public class ResetPasswordControllerTest {
+class ResetPasswordControllerTest {
 
     private HttpServletRequest request;
     private String token;
@@ -32,6 +31,7 @@ public class ResetPasswordControllerTest {
     private GardenUser user;
 
     private ResetPasswordDTO resetPasswordDTO;
+    private URLService urlService;
     private Model model;
 
     @BeforeEach
@@ -40,34 +40,19 @@ public class ResetPasswordControllerTest {
         userService = mock(GardenUserService.class);
         tokenService = mock(TokenService.class);
         emailSenderService = mock(EmailSenderService.class);
-        controller = new ResetPasswordController(userService, emailSenderService, tokenService);
+        urlService = mock(URLService.class);
+        controller = new ResetPasswordController(userService, emailSenderService, tokenService, urlService);
 
         resetPasswordDTO = mock(ResetPasswordDTO.class);
         token = "abc123xyz";
         user = new GardenUser("John", "Doe", "john.doe@gmail.com", "password", null);
     }
 
-    @ParameterizedTest
-    @CsvSource({
-        "https,example.com,8080,/test,https://example.com:8080/test/users/reset-password/callback?token=abc123xyz",
-        "http,example.com,80,/test,http://example.com/test/users/reset-password/callback?token=abc123xyz",
-        "https,example.com,443,/prod,https://example.com/prod/users/reset-password/callback?token=abc123xyz",
-    })
-    void whenGenerateUrlStringCalled_thenUrlIsGenerated(String scheme, String host, int port, String contextPath, String expectedUrl) {
-        // Set up the expected behaviors of the mock object
-        when(request.getScheme()).thenReturn(scheme);
-        when(request.getServerName()).thenReturn(host);
-        when(request.getServerPort()).thenReturn(port);
-        when(request.getContextPath()).thenReturn(contextPath);
-
-        String url = emailSenderService.generateUrlString(request, token);
-
-        assertEquals(expectedUrl, url);
-    }
 
     @Test
     void givenEmailExists_whenResetPasswordRequested_thenEmailIsSent() {
         BindingResult bindingResult = Mockito.mock(BindingResult.class);
+        String expectedUrl = "https://example.com/prod/users/reset-password/callback?token=abc123xyz";
 
         when(userService.getUserByEmail(user.getEmail())).thenReturn(user);
         when(tokenService.createAuthenticationToken()).thenReturn(token);
@@ -76,6 +61,7 @@ public class ResetPasswordControllerTest {
         when(request.getServerPort()).thenReturn(443); // Standard HTTPS port
         when(request.getContextPath()).thenReturn("/prod"); // Prod context path
         when(resetPasswordDTO.getEmail()).thenReturn(user.getEmail());
+        when(urlService.generateResetPasswordUrlString(any(HttpServletRequest.class), anyString())).thenReturn(expectedUrl);
 
         String result = controller.resetPasswordConfirmation(request, resetPasswordDTO, bindingResult, model);
 

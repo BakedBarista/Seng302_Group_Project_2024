@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
-import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,24 +39,6 @@ public class EmailSenderService {
         sendEmail(formatNameAddr(to), subject, body);
     }
 
-    /**
-     * Generates a URL string for the reset password link
-     * @param request the HTTP request
-     * @return the URL string
-     */
-    public String generateUrlString(HttpServletRequest request, String token) {
-        // Get the URL they requested from (not the localhost)
-        StringBuilder url = new StringBuilder();
-        url.append(request.getScheme()).append("://").append(request.getServerName());
-
-        if (request.getServerPort() != 80 && request.getServerPort() != 443) {
-            url.append(":").append(request.getServerPort());
-        }
-
-        url.append(request.getContextPath()); // This is the /test or /prod
-        url.append("/users/reset-password/callback?token=").append(token);
-        return url.toString();
-    }
 
     private String formatNameAddr(GardenUser user) {
         StringBuilder sb = new StringBuilder();

@@ -8,6 +8,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.ResetPasswordDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.URLService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,12 +30,14 @@ public class ResetPasswordController {
     private final GardenUserService userService;
 
     private final EmailSenderService emailSenderService;
+    private final URLService urlService;
 
     @Autowired
-    public ResetPasswordController(GardenUserService userService, EmailSenderService emailSenderService, TokenService tokenService) {
+    public ResetPasswordController(GardenUserService userService, EmailSenderService emailSenderService, TokenService tokenService, URLService urlService) {
         this.userService = userService;
         this.emailSenderService = emailSenderService;
         this.tokenService = tokenService;
+        this.urlService = urlService;
     }
 
     /**
@@ -76,7 +79,7 @@ public class ResetPasswordController {
         boolean emailExists = user != null;
         if (emailExists) {
             String token = tokenService.createAuthenticationToken();
-            String resetPasswordLink = emailSenderService.generateUrlString(request, token);
+            String resetPasswordLink = urlService.generateResetPasswordUrlString(request, token);
             logger.info("Reset password link: {}", resetPasswordLink);
 
             tokenService.addResetPasswordTokenAndTimeToUser(user, token);
