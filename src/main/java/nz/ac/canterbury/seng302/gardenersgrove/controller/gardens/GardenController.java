@@ -476,6 +476,9 @@ public class GardenController {
             GardenUser user = new GardenUser("Jan", "Doe", "jan.doe@gmail.com", "password", LocalDate.of(1970, 1, 1));
             gardenUserService.addUser(user);
 
+            GardenUser user1 = new GardenUser("Luke", "Stynes", "stynesluke@gmail.com", "password", LocalDate.of(1970, 1, 1));
+            gardenUserService.addUser(user1);
+
             logger.info("User " + user.getFullName() + " added");
 
             // Garden names
