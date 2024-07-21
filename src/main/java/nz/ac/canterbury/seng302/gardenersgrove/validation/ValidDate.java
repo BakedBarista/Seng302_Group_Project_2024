@@ -8,7 +8,7 @@ import java.lang.annotation.*;
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidDate {
-    String message() default "Date is not in valid format, DD/MM/YYYY, or does not represent a real date";
+    String message() default "Date is not in valid format, DD/MM/YYYY, or is not within the valid range of dates (1800 - present)";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

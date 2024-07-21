@@ -19,6 +19,8 @@ public class DateValidator implements ConstraintValidator<ValidDate, String> {
 
     private static final String DATE_PATTERN_STORED = "^\\d{2}/\\d{2}/\\d{4}$";
 
+    private static final int MIN_YEAR = 1800;
+
     /**
      * validate a given date string as long as it is not empty.
      * This deals with making sure each value of the date is within its correct bound
@@ -54,7 +56,7 @@ public class DateValidator implements ConstraintValidator<ValidDate, String> {
 
         boolean dayValid = day > 0 && day <= 31;
         boolean monthValid = month > 0 && month <= 12;
-        boolean yearValid = year > 0;
+        boolean yearValid = year >= MIN_YEAR;
 
         if (!dayValid || !monthValid || !yearValid) {
             return false;
@@ -70,7 +72,7 @@ public class DateValidator implements ConstraintValidator<ValidDate, String> {
         }
         LocalDate parsedDate = LocalDate.of(year, month, day);
         return !parsedDate.isAfter(LocalDate.now());
-        
+
     }
 
     /**
