@@ -1,7 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unittests.customValidation;
 
 import jakarta.validation.ConstraintValidatorContext;
-import jakarta.validation.constraints.Null;
 import nz.ac.canterbury.seng302.gardenersgrove.customValidation.GardenSizeStringValidator;
 import nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidGardenSizeString;
 import org.junit.jupiter.api.Assertions;

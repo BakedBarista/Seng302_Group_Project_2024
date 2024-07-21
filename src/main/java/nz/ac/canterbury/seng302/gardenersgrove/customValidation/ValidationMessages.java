@@ -1,5 +1,9 @@
 package nz.ac.canterbury.seng302.gardenersgrove.customValidation;
 
+/**
+ * Collection of global string constants that are used for error messages in the application
+ * Please use these for jakatra validation messages and for testing the correct message is entered
+ */
 public class ValidationMessages {
     public static final String MAX_GARDEN_SIZE_LENGTH_MESSAGE = "Garden size cannot exceed 50 characters";
     public static final String MAX_GARDEN_SIZE_MESSAGE = "Garden size must be less than 10,000,000";
