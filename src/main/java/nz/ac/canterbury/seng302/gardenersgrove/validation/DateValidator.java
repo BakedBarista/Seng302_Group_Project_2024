@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng302.gardenersgrove.customValidation;
+package nz.ac.canterbury.seng302.gardenersgrove.validation;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

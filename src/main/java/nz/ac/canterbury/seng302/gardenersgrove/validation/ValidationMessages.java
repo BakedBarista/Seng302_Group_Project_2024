@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng302.gardenersgrove.customValidation;
+package nz.ac.canterbury.seng302.gardenersgrove.validation;
 
 /**
  * Collection of global string constants that are used for error messages in the application

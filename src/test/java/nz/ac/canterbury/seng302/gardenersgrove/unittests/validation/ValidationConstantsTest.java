@@ -1,11 +1,13 @@
-package nz.ac.canterbury.seng302.gardenersgrove.unittests.customValidation;
+package nz.ac.canterbury.seng302.gardenersgrove.unittests.validation;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationConstants;
+import nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationConstants;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class ValidationConstantsTest {
     @Test
@@ -90,6 +92,75 @@ public class ValidationConstantsTest {
         assertFalse(emailResult);
     }
 
+    @ParameterizedTest
+    @ValueSource(strings =
+            {"invalid--email@gmail.com",
+                    "-invalid-email@gmail.com",
+                    "-@gmail.com", "--@gmail.com",
+                    "invalid@-invalid.com",
+                    "invalid@invalid-.com",
+                    "invalid@-.com",
+                    "@doe.nz",
+                    "jane@doe",
+                    "jane.doe.nz",
+                    "jane.nz",
+                    "jane@.",
+                    "jane@",
+                    ".@.",
+                    "*@.nz",
+                    "jane@.nz",
+                    "plainaddress",
+                    "@missingusername.com",
+                    "invalid@.com",
+                    "invalid@com",
+                    "invalid@missingtld.c",
+                    "invalid@-domain.com",
+                    "invalid@domain..com",
+                    "invalid@domain_.com",
+                    "invalid@domain.com.",
+                    "invalid@domain-.com",
+                    "user..name@domain.com",
+                    "user.name@domain..com",
+                    "invalid@domain,com",
+                    "invalid@domain@domain.com",
+                    "invalid@domain@domain",
+                    "invalid@domain.c_m",
+                    "invalid@domain.c",
+                    ".invalid@domain.com",
+                    "invalid.@domain.com",
+                    "invalid@-domain-.com",
+                    "invalid@domain.-com",
+                    "invalid@domain.com..",
+                    "invalid@domain.com.123",
+                    "invalid@.domain.com",
+                    "invalid@domain.c_m",
+                    "invalid@domain.",
+                    "invalid@domaincom",
+                    "invalid@domain,com",
+                    "invalid@domain.com.123",
+                    "invalid@123.456.789.012",
+                    "invalid@domain.123",
+                    "invalid@domain.12",
+                    "123@.com",
+                    "123@domain,com",
+                    "123@domain.com.",
+                    "123@-domain.com",
+                    "123@domain-.com",
+                    "123@domain..com",
+                    "123@domain.c",
+                    "123@domain..com",
+                    "123@domain,com",
+                    "user@domain@domain,.com",
+                    "user@domain@domain.com-",
+                    "user@domain@domain,com",
+                    "user@domain@domain.com.",
+                    "user@domain@domain..com",
+                    "user@domain@domain@domain@domain@domain@domain@domain@domain-.com"
+            })
+    void testListOfInvalidEmails(String input) {
+        boolean emailResult = input.matches(ValidationConstants.EMAIL_REGEX);
+        assertFalse(emailResult);
+    }
     @Test
     public void testInvalidDate() {
         String date = "200/200/200";

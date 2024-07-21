@@ -1,17 +1,11 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.GardenDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
-import org.checkerframework.common.value.qual.DoubleVal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
-
-import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationConstants.MAX_GARDEN_SIZE;
-
 
 /**
  * Entity class for garden with name, location and size

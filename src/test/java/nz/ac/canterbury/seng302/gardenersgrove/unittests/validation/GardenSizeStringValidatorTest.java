@@ -1,8 +1,8 @@
-package nz.ac.canterbury.seng302.gardenersgrove.unittests.customValidation;
+package nz.ac.canterbury.seng302.gardenersgrove.unittests.validation;
 
 import jakarta.validation.ConstraintValidatorContext;
-import nz.ac.canterbury.seng302.gardenersgrove.customValidation.GardenSizeStringValidator;
-import nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidGardenSizeString;
+import nz.ac.canterbury.seng302.gardenersgrove.validation.GardenSizeStringValidator;
+import nz.ac.canterbury.seng302.gardenersgrove.validation.ValidGardenSizeString;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

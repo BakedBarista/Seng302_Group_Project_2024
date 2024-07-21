@@ -1,11 +1,11 @@
-package nz.ac.canterbury.seng302.gardenersgrove.customValidation;
+package nz.ac.canterbury.seng302.gardenersgrove.validation;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
 import java.lang.annotation.*;
 
-import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationConstants.MAX_GARDEN_SIZE;
-import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationMessages.MAX_GARDEN_SIZE_MESSAGE;
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationConstants.MAX_GARDEN_SIZE;
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationMessages.MAX_GARDEN_SIZE_MESSAGE;
 
 /**
  * Interface for using GardenSizeStringValidator in the GardenDTO class

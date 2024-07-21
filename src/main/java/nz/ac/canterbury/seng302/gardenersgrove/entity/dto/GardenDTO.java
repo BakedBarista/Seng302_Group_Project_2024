@@ -2,13 +2,13 @@ package nz.ac.canterbury.seng302.gardenersgrove.entity.dto;
 
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.Size;
-import nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidEuropeanDecimal;
-import nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidGardenSizeString;
+import nz.ac.canterbury.seng302.gardenersgrove.validation.ValidGardenSizeString;
+import nz.ac.canterbury.seng302.gardenersgrove.validation.ValidEuropeanDecimal;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.BaseGarden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 
-import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationMessages.INVALID_GARDEN_SIZE_MESSAGE;
-import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationMessages.MAX_GARDEN_SIZE_LENGTH_MESSAGE;
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationMessages.INVALID_GARDEN_SIZE_MESSAGE;
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationMessages.MAX_GARDEN_SIZE_LENGTH_MESSAGE;
 
 public class GardenDTO extends BaseGarden {
 

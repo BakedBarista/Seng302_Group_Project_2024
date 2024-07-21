@@ -10,7 +10,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationMessages.*;
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationMessages.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Arrays;
