@@ -177,13 +177,12 @@ public class GardenController {
             model.addAttribute("garden", garden);
             model.addAttribute("owner", garden.getOwner());
             GardenUser currentUser = gardenUserService.getCurrentUser();
+            boolean isNotOwner = !garden.getOwner().getId().equals(currentUser.getId());
+            boolean isNotPublic = !garden.getIsPublic();
 
-
-            if((!garden.getOwner().getId().equals(currentUser.getId()))&&(!garden.getIsPublic())){
+            if (isNotOwner && isNotPublic){
                 return "/error/accessDenied";
             }
-
-
             model.addAttribute("NZ_FORMAT_DATE", NZ_FORMAT_DATE);
             model.addAttribute("plants", plantService.getPlantsByGardenId(id));
 
