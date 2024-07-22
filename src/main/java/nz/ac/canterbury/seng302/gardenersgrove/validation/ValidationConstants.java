@@ -1,12 +1,16 @@
-package nz.ac.canterbury.seng302.gardenersgrove.customValidation;
+package nz.ac.canterbury.seng302.gardenersgrove.validation;
 
 public class ValidationConstants {
+
+    private ValidationConstants() {}
     public static final int NAME_MAX_LEN = 64;
     public static final int USER_MIN_AGE = 13;
     public static final int USER_MAX_AGE = 120;
 
     public static final String DATE_REGEX = "\\d{4}-\\d{2}-\\d{2}";
-    public static final String EMAIL_REGEX = "^[a-zA-Z0-9_+*-]+(?:\\.[a-zA-Z0-9_+*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+    public static final String EMAIL_REGEX = "^[a-zA-Z0-9]+(?:[._-]?[a-zA-Z0-9]+)*@([a-zA-Z0-9]+(?:-[a-zA-Z0-9]+)?\\.)+[a-zA-Z]{2,7}$";
+    ;
+    public static final String EMAIL_LENGTH_REGEX = "^(?=.{1,64}@)(?=.{1,255}$).+$";
     public static final String PASSWORD_REGEX = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$";
     public static final String NAME_REGEX = "^('?\\p{L}[\\p{L}\\s'-]*)$";
 

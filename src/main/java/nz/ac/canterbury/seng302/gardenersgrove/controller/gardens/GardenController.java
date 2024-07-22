@@ -36,8 +36,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.DateTimeFormats.NZ_FORMAT_DATE;
-import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.DateTimeFormats.WEATHER_CARD_FORMAT_DATE;
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.NZ_FORMAT_DATE;
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.WEATHER_CARD_FORMAT_DATE;
 
 
 /**
@@ -475,6 +475,9 @@ public class GardenController {
             // Create user
             GardenUser user = new GardenUser("Jan", "Doe", "jan.doe@gmail.com", "password", LocalDate.of(1970, 1, 1));
             gardenUserService.addUser(user);
+
+            GardenUser user1 = new GardenUser("Luke", "Stynes", "stynesluke@gmail.com", "password", LocalDate.of(1970, 1, 1));
+            gardenUserService.addUser(user1);
 
             logger.info("User " + user.getFullName() + " added");
 

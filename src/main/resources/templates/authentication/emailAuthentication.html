@@ -37,8 +37,8 @@
 <main class="main-container">
     <div class="card p-5">
         <h1>Authenticate Email</h1>
-        <p th:if="${hiddenEmail != null}">We have sent an email to <span th:text="${hiddenEmail}">Hidden Email</span></p>
-        <form id = "authenticationForm" th:action="@{/users/user/{userId}/authenticate-email (userId=${userId})}" method="post">
+        <p>We have sent an email to <span th:text="${hiddenEmail}">Hidden Email</span></p>
+        <form id = "authenticationForm" th:action="@{/users/user/{obfuscatedEmail}/authenticate-email (obfuscatedEmail=${obfuscatedEmail})}" method="post">
             <div class = "groupElements">
                 <input class="hidden-input" pattern="\d*" type="text" value=" " id="authenticationToken"
                        th:name="authenticationToken"/>

@@ -113,7 +113,7 @@ function tagAutocomplete(options) {
             return;
         }
 
-        tag = tag.formatted ?? tag;
+        tag = (tag.formatted ?? tag).trim();
         if (tags.includes(tag)) {
             return;
         }

@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng302.gardenersgrove.unittests.customValidation;
+package nz.ac.canterbury.seng302.gardenersgrove.unittests.validation;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import jakarta.validation.ClockProvider;
 import jakarta.validation.ConstraintValidatorContext;
-import nz.ac.canterbury.seng302.gardenersgrove.customValidation.AgeRange;
+import nz.ac.canterbury.seng302.gardenersgrove.validation.AgeRange;
 
 public class AgeRangeTests {
     private ConstraintValidatorContext context;
