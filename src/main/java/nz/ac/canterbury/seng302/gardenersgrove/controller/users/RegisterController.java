@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import jakarta.annotation.Nullable;
 import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
@@ -70,7 +71,7 @@ public class RegisterController {
     public String submitRegister(
             @Valid @ModelAttribute("registerDTO") RegisterDTO registerDTO,
             BindingResult bindingResult,
-            @RequestParam(value = "dateError", required = false) String dateValidity) {
+            @RequestParam(value = "dateError", required = false) @Nullable String dateValidity) {
         logger.info("POST /users/register");
 
         if (Objects.equals(dateValidity, "dateInvalid")) {
