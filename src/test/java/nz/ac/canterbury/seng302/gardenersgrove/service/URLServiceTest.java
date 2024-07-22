@@ -16,7 +16,7 @@ public class URLServiceTest {
 
     @BeforeEach
     public void setUp() {
-        urlService = new URLService();
+        urlService = new URLService(null);
         token = "abc123xyz";
     }
 
@@ -44,6 +44,25 @@ public class URLServiceTest {
             "https,example.com,443,/prod,https://example.com/prod/users/reset-password/callback?token=abc123xyz",
     })
     void whenGenerateResetPasswordUrlCalled_thenUrlIsGeneratedWithToken(String scheme, String host, int port, String contextPath, String expectedUrl) {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getScheme()).thenReturn(scheme);
+        when(request.getServerName()).thenReturn(host);
+        when(request.getServerPort()).thenReturn(port);
+        when(request.getContextPath()).thenReturn(contextPath);
+
+        String result = urlService.generateResetPasswordUrlString(request, token);
+        assertEquals(expectedUrl, result);
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "https://example.com,http,localhost,8080,/test,https://example.com/test/users/reset-password/callback?token=abc123xyz",
+            "https://example.com,http,localhost,80,/test,https://example.com/test/users/reset-password/callback?token=abc123xyz",
+            "https://canterbury.ac.nz,https,localhost,443,/prod,https://canterbury.ac.nz/prod/users/reset-password/callback?token=abc123xyz",
+    })
+    void givenServerOriginSpecified_whenGenerateResetPasswordUrlCalled_thenUrlIsGeneratedWithTokenAndCorrectOrigin(String serverOrigin, String scheme, String host, int port, String contextPath, String expectedUrl) {
+        urlService = new URLService(serverOrigin);
+
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getScheme()).thenReturn(scheme);
         when(request.getServerName()).thenReturn(host);
