@@ -1,36 +1,26 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unittests.controller;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.assertArg;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.matches;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import jakarta.validation.Valid;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.ResetPasswordDTO;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
-import org.mockito.Mockito;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.ResetPasswordController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.ResetPasswordCallbackDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.ResetPasswordDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import nz.ac.canterbury.seng302.gardenersgrove.service.URLService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 
-public class ResetPasswordControllerTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
+class ResetPasswordControllerTest {
 
     private HttpServletRequest request;
     private String token;
@@ -41,6 +31,7 @@ public class ResetPasswordControllerTest {
     private GardenUser user;
 
     private ResetPasswordDTO resetPasswordDTO;
+    private URLService urlService;
     private Model model;
 
     @BeforeEach
@@ -49,46 +40,34 @@ public class ResetPasswordControllerTest {
         userService = mock(GardenUserService.class);
         tokenService = mock(TokenService.class);
         emailSenderService = mock(EmailSenderService.class);
-        controller = new ResetPasswordController(userService, emailSenderService, tokenService);
+        urlService = mock(URLService.class);
+        controller = new ResetPasswordController(userService, emailSenderService, tokenService, urlService);
 
         resetPasswordDTO = mock(ResetPasswordDTO.class);
         token = "abc123xyz";
         user = new GardenUser("John", "Doe", "john.doe@gmail.com", "password", null);
     }
 
-    @ParameterizedTest
-    @CsvSource({
-        "https,example.com,8080,https://example.com:8080/users/reset-password/callback?token=abc123xyz",
-        "http,example.com,80,http://example.com/users/reset-password/callback?token=abc123xyz",
-        "https,example.com,443,https://example.com/users/reset-password/callback?token=abc123xyz",
-    })
-    void whenGenerateUrlStringCalled_thenUrlIsGenerated(String scheme, String host, int port, String expectedUrl) {
-        // Set up the expected behaviors of the mock object
-        when(request.getScheme()).thenReturn(scheme);
-        when(request.getServerName()).thenReturn(host);
-        when(request.getServerPort()).thenReturn(port);
-
-        String url = controller.generateUrlString(request, token);
-
-        assertEquals(expectedUrl, url);
-    }
 
     @Test
     void givenEmailExists_whenResetPasswordRequested_thenEmailIsSent() {
         BindingResult bindingResult = Mockito.mock(BindingResult.class);
+        String expectedUrl = "https://example.com/prod/users/reset-password/callback?token=abc123xyz";
 
         when(userService.getUserByEmail(user.getEmail())).thenReturn(user);
         when(tokenService.createAuthenticationToken()).thenReturn(token);
         when(request.getScheme()).thenReturn("https");
         when(request.getServerName()).thenReturn("example.com");
         when(request.getServerPort()).thenReturn(443); // Standard HTTPS port
+        when(request.getContextPath()).thenReturn("/prod"); // Prod context path
         when(resetPasswordDTO.getEmail()).thenReturn(user.getEmail());
+        when(urlService.generateResetPasswordUrlString(any(HttpServletRequest.class), anyString())).thenReturn(expectedUrl);
 
         String result = controller.resetPasswordConfirmation(request, resetPasswordDTO, bindingResult, model);
 
         assertEquals("users/resetPasswordConfirmation", result);
         verify(emailSenderService).sendEmail(eq(user), any(),
-                matches("https://example.com/users/reset-password/callback\\?token=abc123xyz"));
+                matches("https://example.com/prod/users/reset-password/callback\\?token=abc123xyz"));
 
     }
 
