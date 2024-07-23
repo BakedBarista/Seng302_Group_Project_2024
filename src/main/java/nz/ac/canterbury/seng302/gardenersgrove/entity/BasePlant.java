@@ -26,10 +26,6 @@ public abstract class BasePlant {
     @Column(nullable = false, length = 512)
     protected String description;
 
-    @ManyToOne
-    @JoinColumn
-    protected Garden garden;
-
     // Getters and setters
 
     public String getName() {
@@ -54,13 +50,5 @@ public abstract class BasePlant {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public Garden getGarden() {
-        return garden;
-    }
-
-    public void setGarden(Garden garden) {
-        this.garden = garden;
     }
 }

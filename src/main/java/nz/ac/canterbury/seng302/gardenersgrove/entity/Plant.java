@@ -17,6 +17,10 @@ public class Plant extends BasePlant {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne
+    @JoinColumn
+    protected Garden garden;
+
     @Column()
     protected LocalDate plantedDate;
 
@@ -57,6 +61,14 @@ public class Plant extends BasePlant {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Garden getGarden() {
+        return garden;
+    }
+
+    public void setGarden(Garden garden) {
+        this.garden = garden;
     }
 
     public LocalDate getPlantedDate() {
