@@ -8,6 +8,8 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -121,76 +123,22 @@ class PlantTest {
         assertEquals(expectedMessage, violation.getMessage());
     }
 
-    @Test
-    void SetCount_Null_ReturnsEmptyConstraintViolationList() {
-        plant.setCount(null);
+    @ParameterizedTest
+    @ValueSource(strings = { "", "0", "1", "42.0" })
+    void whenSetCountToValidValue_thenNoError(String value) {
+        plant.setCount(value);
 
         assertTrue(validator.validate(plant).isEmpty());
     }
 
-    @Test
-    void SetCount_Zero_ReturnsEmptyConstraintViolationList() {
-        plant.setCount("0");
+    @ParameterizedTest
+    @ValueSource(strings = {"-1", "char", "123char", "123!"})
+    void whenSetCountToInvalidValue_thenErrors(String value) {
+        plant.setCount(value);
 
-        assertTrue(validator.validate(plant).isEmpty());
-    }
-
-    @Test
-    void whenSetCountToPositiveInteger_thenNoError() {
-        plant.setCount("1");
-
-        assertTrue(validator.validate(plant).isEmpty());
-    }
-
-    @Test
-    void whenSetCountWithZeroDecimal_thenNoErrors() {
-        plant.setCount("1.0");
-
-        assertTrue(validator.validate(plant).isEmpty());
-    }
-
-    @Test
-    void whenSetCountToNegativeInteger_thenErrors() {
-        plant.setCount("-1");
-        String expectedMessage = "Plant count must be a positive whole number";
-        Integer expectedConstraintSetSize = 1;
-
-        assertEquals(expectedConstraintSetSize, validator.validate(plant).size());
+        assertEquals(1, validator.validate(plant).size());
         ConstraintViolation<PlantDTO> violation = validator.validate(plant).iterator().next();
-        assertEquals(expectedMessage, violation.getMessage());
-    }
-
-    @Test
-    void whenSetCountWithNonNumberChars_thenErrors() {
-        plant.setCount("char");
-        String expectedMessage = "Plant count must be a positive whole number";
-        Integer expectedConstraintSetSize = 1;
-
-        assertEquals(expectedConstraintSetSize, validator.validate(plant).size());
-        ConstraintViolation<PlantDTO> violation = validator.validate(plant).iterator().next();
-        assertEquals(expectedMessage, violation.getMessage());
-    }
-
-    @Test
-    void whenSetCountWithNumberAndNonNumberChars_thenErrors() {
-        plant.setCount("123char");
-        String expectedMessage = "Plant count must be a positive whole number";
-        Integer expectedConstraintSetSize = 1;
-
-        assertEquals(expectedConstraintSetSize, validator.validate(plant).size());
-        ConstraintViolation<PlantDTO> violation = validator.validate(plant).iterator().next();
-        assertEquals(expectedMessage, violation.getMessage());
-    }
-
-    @Test
-    void whenSetCountWithSpecialChars_thenErrors() {
-        plant.setCount("123!");
-        String expectedMessage = "Plant count must be a positive whole number";
-        Integer expectedConstraintSetSize = 1;
-
-        assertEquals(expectedConstraintSetSize, validator.validate(plant).size());
-        ConstraintViolation<PlantDTO> violation = validator.validate(plant).iterator().next();
-        assertEquals(expectedMessage, violation.getMessage());
+        assertEquals("Plant count must be a positive whole number", violation.getMessage());
     }
 
     @Test
