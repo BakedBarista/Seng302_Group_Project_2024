@@ -13,14 +13,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import jakarta.annotation.Nullable;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.RegisterDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.URLService;
+
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
@@ -35,6 +37,7 @@ public class RegisterController {
     private GardenUserService userService;
     private TokenService tokenService;
     private EmailSenderService emailSenderService;
+    private URLService urlService;
 
     /**
      * Constructs a new RegisterController
@@ -44,10 +47,11 @@ public class RegisterController {
      * @param emailSenderService The EmailSenderService to use
      */
     public RegisterController(GardenUserService userService, TokenService tokenService,
-            EmailSenderService emailSenderService) {
+            EmailSenderService emailSenderService, URLService urlService) {
         this.userService = userService;
         this.tokenService = tokenService;
         this.emailSenderService = emailSenderService;
+        this.urlService = urlService;
     }
 
     /**
@@ -69,9 +73,10 @@ public class RegisterController {
      */
     @PostMapping("/users/register")
     public String submitRegister(
+            HttpServletRequest request,
             @Valid @ModelAttribute("registerDTO") RegisterDTO registerDTO,
             BindingResult bindingResult,
-            @RequestParam(value = "dateError", required = false) @Nullable String dateValidity) {
+            @RequestParam(value = "dateError", required = false) String dateValidity) {
         logger.info("POST /users/register");
 
         if (Objects.equals(dateValidity, "dateInvalid")) {
@@ -122,7 +127,7 @@ public class RegisterController {
         tokenService.addEmailTokenAndTimeToUser(user, token);
         userService.addUser(user);
 
-        sendRegisterEmail(user, token);
+        sendRegisterEmail(request, user, token);
 
         String obfuscatedEmail = userService.obfuscateEmail(user.getEmail());
         return "redirect:/users/user/" + obfuscatedEmail + "/authenticate-email";
@@ -160,11 +165,20 @@ public class RegisterController {
      * @param user
      * @param token
      */
-    public void sendRegisterEmail(GardenUser user, String token) {
-        emailSenderService.sendEmail(user, "Welcome to Gardener's Grove",
-                "Your account has been created!\n\n"
-                        + "Your token is: " + token + "\n\n"
-                        + "If this was not you, you can ignore this message and the account will be deleted after 10 minutes.");
+    public void sendRegisterEmail(HttpServletRequest request, GardenUser user, String token) {
+        String obfuscatedEmail = userService.obfuscateEmail(user.getEmail());
+        String url = urlService.generateAuthenticateEmailUrlString(request, obfuscatedEmail);
+
+        StringBuilder body = new StringBuilder();
+        body.append("Your account has been created!\n\n");
+        body.append("Your token is: ").append(token).append("\n\n");
+        body.append(
+                "You should have been redirected when you registered. If you were not, please visit the following link to authenticate your email: ")
+                .append(url).append("\n\n");
+        body.append(
+                "If this was not you, you can ignore this message and the account will be deleted after 10 minutes.");
+
+        emailSenderService.sendEmail(user, "Welcome to Gardener's Grove", body.toString());
 
     }
 }
