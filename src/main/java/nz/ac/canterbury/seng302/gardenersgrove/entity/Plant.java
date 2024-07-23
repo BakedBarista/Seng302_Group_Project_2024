@@ -3,6 +3,8 @@ package nz.ac.canterbury.seng302.gardenersgrove.entity;
 import jakarta.persistence.*;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
@@ -24,6 +26,9 @@ public class Plant extends BasePlant {
     @Column(nullable = true, columnDefinition = "MEDIUMBLOB")
     @Lob
     protected byte[] plantImage;
+
+    @OneToMany(mappedBy = "plant")
+    private Set<PlantHistoryItem> history = new HashSet<>();
 
     public Plant(String name, String count, String description, LocalDate plantedDate) {
         this.name = name;
@@ -73,6 +78,10 @@ public class Plant extends BasePlant {
     public void setPlantImage(String contentType, byte[] plantImage) {
         this.plantImageContentType = contentType;
         this.plantImage = plantImage;
+    }
+
+    public Set<PlantHistoryItem> getHistory() {
+        return history;
     }
 
     @Override
