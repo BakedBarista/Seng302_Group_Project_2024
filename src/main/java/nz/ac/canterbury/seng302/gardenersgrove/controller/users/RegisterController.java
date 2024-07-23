@@ -96,8 +96,13 @@ public class RegisterController {
         }
 
         if (registerDTO.isNoLname()) {
+            // Checking if noLname checkbox is ticked but a lastname is supplied. 
+            if (registerDTO.getLname() != null && !registerDTO.getLname().isEmpty()){
+                bindingResult.rejectValue("lname", null, "Cannot have a last name while no surname box ticked.");
+            }
             registerDTO.setLname(null);
         }
+
         if ((registerDTO.getLname() == null || registerDTO.getLname().isEmpty()) && !registerDTO.isNoLname()) {
             bindingResult.rejectValue("lname", null, "Last name cannot be empty");
         }
@@ -134,16 +139,18 @@ public class RegisterController {
     @PostConstruct
     public void createDummy() {
         try {
-            GardenUser user = new GardenUser("John", "Doe", "john.doe@gmail.com", "password",
+            var password = "password";
+
+            GardenUser user = new GardenUser("John", "Doe", "john.doe@gmail.com", password,
                     LocalDate.of(1970, 1, 1));
             userService.addUser(user);
-            GardenUser user1 = new GardenUser("Immy", null, "immy@gmail.com", "password",
+            GardenUser user1 = new GardenUser("Immy", null, "immy@gmail.com", password,
                     LocalDate.of(1970, 1, 1));
             userService.addUser(user1);
-            GardenUser user2 = new GardenUser("Liam", "Doe", "liam@gmail.com", "password",
+            GardenUser user2 = new GardenUser("Liam", "Doe", "liam@gmail.com", password,
                     LocalDate.of(1970, 1, 1));
             userService.addUser(user2);
-            GardenUser user3 = new GardenUser("Liam", "Doe", "liam2@gmail.com", "password",
+            GardenUser user3 = new GardenUser("Liam", "Doe", "liam2@gmail.com", password,
                     LocalDate.of(1970, 1, 1));
             userService.addUser(user3);
 

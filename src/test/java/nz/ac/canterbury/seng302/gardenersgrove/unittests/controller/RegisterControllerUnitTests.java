@@ -78,6 +78,20 @@ class RegisterControllerUnitTests {
     }
 
     @Test
+    void whenLnameIsNotBlankAndNoLnameIsTicked_thenError() {
+        RegisterDTO registerDTO = new RegisterDTO();
+        registerDTO.setFname("");
+        registerDTO.setLname("Ceelen");
+        registerDTO.setNoLname(true);
+        registerDTO.setEmail("");
+        registerDTO.setPassword("");
+        registerDTO.setConfirmPassword("");
+
+        registerController.submitRegister(request, registerDTO, bindingResult, null);
+
+        verify(bindingResult).rejectValue(eq("lname"), eq(null), anyString());
+    }
+
     void whenUserRegisters_thenEmailIsSentWithTokenAndLink() {
         RegisterDTO registerDTO = new RegisterDTO();
         registerDTO.setFname("John");
