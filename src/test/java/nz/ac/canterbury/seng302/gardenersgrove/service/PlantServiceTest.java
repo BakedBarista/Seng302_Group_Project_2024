@@ -18,6 +18,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
@@ -145,16 +146,19 @@ class PlantServiceTest {
     @Test
     void setPlantImageWithValidId_imageSaved() {
         long id = 1L;
+
+        String filename = "test";
+        String originalFilename = "test.png";
         byte[] imageBytes = {};
         String contentType = "image/png";
 
-        MultipartFile file = mock(MultipartFile.class);
-        Mockito.when(plantService.validateImage(Mockito.any())).thenReturn(false);
-
+        MockMultipartFile file = new MockMultipartFile(filename, originalFilename, contentType, imageBytes);
         Plant plant = new Plant();
         plant.setId(id);
-        when(plantRepository.findById(id)).thenReturn(Optional.of(plant));
+        Mockito.when(plantRepository.findById(id)).thenReturn(Optional.of(plant));
+
         plantService.setPlantImage(id, file);
+
         verify(plantRepository, times(1)).save(plant);
         assertEquals(contentType, plant.getPlantImageContentType());
         assertEquals(imageBytes, plant.getPlantImage());
@@ -163,9 +167,13 @@ class PlantServiceTest {
     @Test
     public void setPlantImageWithNonExistentId_imageNotSaved() {
         long id = 1L;
-        when(plantRepository.findById(id)).thenReturn(Optional.empty());
-        MultipartFile file = mock(MultipartFile.class);
-        Mockito.when(plantService.validateImage(Mockito.any())).thenReturn(false);
+        byte[] image = {};
+        String contentType = "image/png";
+        String name = "plant.png";
+        String originalFilename = "plant.png";
+        MultipartFile file = new MockMultipartFile(name,originalFilename,contentType,image);
+
+        Mockito.when(plantRepository.findById(id)).thenReturn(Optional.empty());
 
         plantService.setPlantImage(id, file);
         verify(plantRepository, never()).save(any());

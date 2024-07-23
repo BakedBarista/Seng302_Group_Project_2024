@@ -111,8 +111,12 @@ public class PlantController {
         Plant plant = new Plant(plantDTO);
         Plant savedPlant = plantService.addPlant(plant, gardenId);
         if (savedPlant != null) {
-            plantService.setPlantImage(savedPlant.getId(), file);
-            logger.info("Saved new plant to Garden ID: {}", gardenId);
+            try {
+                plantService.setPlantImage(savedPlant.getId(), file);
+                logger.info("Saved new plant to Garden ID: {}", gardenId);
+            } catch (Exception e) {
+                logger.error("Failed to save new plant to garden ID: {}", gardenId);
+            }
         } else {
             logger.error("Failed to save new plant to garden ID: {}", gardenId);
         }
@@ -192,7 +196,12 @@ public class PlantController {
             Plant savedPlant = plantService.addPlant(existingPlant.get(), gardenId);
 
             if (file != null) {
-                plantService.setPlantImage(savedPlant.getId(), file);
+                try {
+                    plantService.setPlantImage(savedPlant.getId(), file);
+                    logger.info("Saved new plant to Garden ID: {}", gardenId);
+                } catch (Exception e) {
+                    logger.error("Failed to save new plant to garden ID: {}", gardenId);
+                }
             }
         }
 
@@ -240,7 +249,12 @@ public class PlantController {
             @PathVariable("id") Long id,
             @RequestHeader(HttpHeaders.REFERER) String referer) {
         logger.info("POST /plants " + id + "/plant-image");
-        plantService.setPlantImage(id, file);
+        try {
+            plantService.setPlantImage(id, file);
+            logger.info("Saved new plant to Garden ID: {}", id);
+        } catch (Exception e) {
+            logger.error("Failed to save new plant to garden ID: {}", id);
+        }
         return "redirect:" + referer;
     }
 }

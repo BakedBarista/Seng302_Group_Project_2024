@@ -84,10 +84,10 @@ public class PlantService {
 
             try {
                 plant.get().setPlantImage(plantImage.getContentType(), plantImage.getBytes());
-            } catch (IOException e) {
+                plantRepository.save(plant.get());
+            } catch (Exception e) {
                 logger.error("Exception ", e);
             }
-            plantRepository.save(plant.get());
         } else {
             logger.error("Plant image is too large or not of correct type");
         }

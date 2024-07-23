@@ -344,7 +344,7 @@ public class PlantControllerTest {
         assertEquals("redirect:" + referer, response);
     }
     @Test
-    void testSubmitAddPlantFormWithImage() {
+    void testSubmitAddPlantFormWithImage() throws Exception {
         Long gardenId = 1L;
         PlantDTO plantDTO = new PlantDTO();
         plantDTO.setPlantedDate("2023-05-14");
