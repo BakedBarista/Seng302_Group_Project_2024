@@ -183,6 +183,7 @@ public class PlantController {
 
         Optional<Plant> existingPlant = plantService.getPlantById(plantId);
         if (existingPlant.isPresent()){
+            plant.normalize();
             existingPlant.get().setName(plant.getName());
             existingPlant.get().setCount(plant.getCount());
             existingPlant.get().setDescription(plant.getDescription());
