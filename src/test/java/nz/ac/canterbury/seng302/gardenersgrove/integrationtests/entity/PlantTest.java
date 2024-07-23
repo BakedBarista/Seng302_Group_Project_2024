@@ -136,57 +136,60 @@ class PlantTest {
     }
 
     @Test
-    void SetCount_One_ReturnsEmptyConstraintViolationList() {
+    void whenSetCountToPositiveInteger_thenNoError() {
         plant.setCount("1");
 
         assertTrue(validator.validate(plant).isEmpty());
     }
 
     @Test
-    void setCount_NegativeOne_ReturnsEmptyConstraintViolationList() {
+    void whenSetCountWithZeroDecimal_thenNoErrors() {
+        plant.setCount("1.0");
+
+        assertTrue(validator.validate(plant).isEmpty());
+    }
+
+    @Test
+    void whenSetCountToNegativeInteger_thenErrors() {
         plant.setCount("-1");
+        String expectedMessage = "Plant count must be a positive whole number";
+        Integer expectedConstraintSetSize = 1;
 
-        //FIX
-
-        assertFalse(validator.validate(plant).isEmpty());
+        assertEquals(expectedConstraintSetSize, validator.validate(plant).size());
+        ConstraintViolation<PlantDTO> violation = validator.validate(plant).iterator().next();
+        assertEquals(expectedMessage, violation.getMessage());
     }
 
     @Test
-    void setCount_NonIntegerChars_ReturnConstraintViolation() {
+    void whenSetCountWithNonNumberChars_thenErrors() {
         plant.setCount("char");
-        String expectedMessage = "Plant count must be a positive number";
+        String expectedMessage = "Plant count must be a positive whole number";
         Integer expectedConstraintSetSize = 1;
 
-
-        ConstraintViolation<PlantDTO> violation = validator.validate(plant).iterator().next();
-
         assertEquals(expectedConstraintSetSize, validator.validate(plant).size());
+        ConstraintViolation<PlantDTO> violation = validator.validate(plant).iterator().next();
         assertEquals(expectedMessage, violation.getMessage());
     }
 
     @Test
-    void setCount_IntegerAndNonIntegerChars_ReturnConstraintViolation() {
+    void whenSetCountWithNumberAndNonNumberChars_thenErrors() {
         plant.setCount("123char");
-        String expectedMessage = "Plant count must be a positive number";
+        String expectedMessage = "Plant count must be a positive whole number";
         Integer expectedConstraintSetSize = 1;
 
-
-        ConstraintViolation<PlantDTO> violation = validator.validate(plant).iterator().next();
-
         assertEquals(expectedConstraintSetSize, validator.validate(plant).size());
+        ConstraintViolation<PlantDTO> violation = validator.validate(plant).iterator().next();
         assertEquals(expectedMessage, violation.getMessage());
     }
 
     @Test
-    void setCount_SpecialCharsWithInteger_ReturnConstraintViolation() {
+    void whenSetCountWithSpecialChars_thenErrors() {
         plant.setCount("123!");
-        String expectedMessage = "Plant count must be a positive number";
+        String expectedMessage = "Plant count must be a positive whole number";
         Integer expectedConstraintSetSize = 1;
 
-
-        ConstraintViolation<PlantDTO> violation = validator.validate(plant).iterator().next();
-
         assertEquals(expectedConstraintSetSize, validator.validate(plant).size());
+        ConstraintViolation<PlantDTO> violation = validator.validate(plant).iterator().next();
         assertEquals(expectedMessage, violation.getMessage());
     }
 
