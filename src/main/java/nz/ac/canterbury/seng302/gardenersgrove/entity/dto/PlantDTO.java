@@ -1,8 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity.dto;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Lob;
-import nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidDate;
+import nz.ac.canterbury.seng302.gardenersgrove.validation.ValidDate;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant;
 
 /**

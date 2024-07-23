@@ -15,7 +15,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 
-public class GardenUserServiceTest {
+class GardenUserServiceTest {
     private GardenUserService gardenUserService;
     private GardenUserRepository mockRepository;
 
@@ -25,13 +25,13 @@ public class GardenUserServiceTest {
             null);
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         mockRepository = Mockito.mock(GardenUserRepository.class);
         gardenUserService = new GardenUserService(mockRepository);
     }
 
     @Test
-    public void givenGetUsersCalled_thenReturnsUsers() {
+    void givenGetUsersCalled_thenReturnsUsers() {
         var allUsers = List.of(testUser1, testUser2);
         Mockito.when(mockRepository.findAll()).thenReturn(allUsers);
 
@@ -42,7 +42,7 @@ public class GardenUserServiceTest {
     }
 
     @Test
-    public void givenUserWithEmailExists_whenAddUserCalled_thenThrowsException() {
+    void givenUserWithEmailExists_whenAddUserCalled_thenThrowsException() {
         testUser1.setEmail("email@example.com");
         testUser2.setEmail("email@example.com");
         Mockito.when(mockRepository.findByEmail(testUser1.getEmail())).thenReturn(Optional.of(testUser1));
@@ -51,7 +51,7 @@ public class GardenUserServiceTest {
     }
 
     @Test
-    public void givenUserWithEmailExists_whenGetUserByEmailCalled_thenReturnsUser() {
+    void givenUserWithEmailExists_whenGetUserByEmailCalled_thenReturnsUser() {
         var email = testUser1.getEmail();
         Mockito.when(mockRepository.findByEmail(email)).thenReturn(Optional.of(testUser1));
 
@@ -62,7 +62,7 @@ public class GardenUserServiceTest {
     }
 
     @Test
-    public void givenUserWithEmailDoesntExist_whenGetUserByEmailCalled_thenReturnsNull() {
+    void givenUserWithEmailDoesntExist_whenGetUserByEmailCalled_thenReturnsNull() {
         var email = testUser1.getEmail();
         Mockito.when(mockRepository.findByEmail(email)).thenReturn(Optional.empty());
 
@@ -73,7 +73,7 @@ public class GardenUserServiceTest {
     }
 
     @Test
-    public void givenGetUserByEmailAndPasswordCalledWithValidEmailAndPassword_thenReturnsUser() {
+    void givenGetUserByEmailAndPasswordCalledWithValidEmailAndPassword_thenReturnsUser() {
         var email = testUser1.getEmail();
         Mockito.when(mockRepository.findByEmail(email)).thenReturn(Optional.of(testUser1));
 
@@ -84,7 +84,7 @@ public class GardenUserServiceTest {
     }
 
     @Test
-    public void givenGetUserByEmailAndPasswordCalledWithInvalidEmail_thenReturnsNull() {
+    void givenGetUserByEmailAndPasswordCalledWithInvalidEmail_thenReturnsNull() {
         var email = testUser1.getEmail();
         Mockito.when(mockRepository.findByEmail(email)).thenReturn(Optional.empty());
 
@@ -95,7 +95,7 @@ public class GardenUserServiceTest {
     }
 
     @Test
-    public void givenGetUserByEmailAndPasswordCalledWithInvalidPassword_thenReturnsNull() {
+    void givenGetUserByEmailAndPasswordCalledWithInvalidPassword_thenReturnsNull() {
         var email = testUser1.getEmail();
         Mockito.when(mockRepository.findByEmail(email)).thenReturn(Optional.of(testUser1));
 
@@ -106,7 +106,7 @@ public class GardenUserServiceTest {
     }
 
     @Test
-    public void givenGetUserByIdCalledWithValidId_thenReturnsUser() {
+    void givenGetUserByIdCalledWithValidId_thenReturnsUser() {
         var id = 1L;
         Mockito.when(mockRepository.findById(id)).thenReturn(Optional.of(testUser1));
 
@@ -117,7 +117,7 @@ public class GardenUserServiceTest {
     }
 
     @Test
-    public void giveGetUserByIdCalledWithInvalidId_thenReturnsNull() {
+    void giveGetUserByIdCalledWithInvalidId_thenReturnsNull() {
         var id = 1L;
         Mockito.when(mockRepository.findById(id)).thenReturn(Optional.empty());
 
@@ -128,7 +128,7 @@ public class GardenUserServiceTest {
     }
 
     @Test
-    public void givenSetProfilePictureCalled_thenUpdatesProfilePicture() {
+    void givenSetProfilePictureCalled_thenUpdatesProfilePicture() {
         var id = 1L;
         var contentType = "text/plain";
         var profilePicture = "profile-picture".getBytes();
@@ -142,7 +142,7 @@ public class GardenUserServiceTest {
     }
 
     @Test
-    public void givenSetProfilePictureCalledWithInvalidId_thenDoesNothing() {
+    void givenSetProfilePictureCalledWithInvalidId_thenDoesNothing() {
         var id = 1L;
         var contentType = "text/plain";
         var profilePicture = "profile-picture".getBytes();
@@ -151,5 +151,42 @@ public class GardenUserServiceTest {
         gardenUserService.setProfilePicture(id, contentType, profilePicture);
 
         Mockito.verify(mockRepository, Mockito.never()).save(testUser1);
+    }
+
+    @Test
+    void givenEmailIsValid_whenObfuscateEmailCalled_thenReturnsBase64EncodedEmail() {
+        var email = "john.doe@gmail.com";
+        var expected = "am9obi5kb2VAZ21haWwuY29t";
+
+        var obfuscatedEmail = gardenUserService.obfuscateEmail(email);
+
+        assertEquals(expected, obfuscatedEmail);
+    }
+
+    @Test
+    void givenEmailIsInvalid_whenObfuscateEmailCalled_thenReturnsBase64EncodedEmail() {
+        var email = "not an email";
+        var expected = "bm90IGFuIGVtYWls";
+
+        var obfuscatedEmail = gardenUserService.obfuscateEmail(email);
+
+        assertEquals(expected, obfuscatedEmail);
+    }
+
+    @Test
+    void givenObfuscatedEmailIsValid_whenDeobfuscateEmailCalled_thenReturnsEmail() {
+        var obfuscatedEmail = "am9obi5kb2VAZ21haWwuY29t";
+        var expected = "john.doe@gmail.com";
+
+        var email = gardenUserService.deobfuscateEmail(obfuscatedEmail);
+
+        assertEquals(expected, email);
+    }
+
+    @Test
+    void givenObfuscatedEmailIsInvalid_whenDeobfuscateEmailCalled_thenThrowsException() {
+        var obfuscatedEmail = "not-base64 :)";
+
+        assertThrows(RuntimeException.class, () -> gardenUserService.deobfuscateEmail(obfuscatedEmail));
     }
 }

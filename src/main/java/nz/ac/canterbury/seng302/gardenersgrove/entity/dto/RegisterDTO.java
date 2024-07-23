@@ -3,10 +3,10 @@ package nz.ac.canterbury.seng302.gardenersgrove.entity.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import nz.ac.canterbury.seng302.gardenersgrove.customValidation.AgeRange;
-import nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidDate;
+import nz.ac.canterbury.seng302.gardenersgrove.validation.AgeRange;
+import nz.ac.canterbury.seng302.gardenersgrove.validation.ValidDate;
 
-import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationConstants.*;
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationConstants.*;
 
 /**
  * Data transfer object for the register form
@@ -24,6 +24,8 @@ public class RegisterDTO {
     private boolean noLname;
 
     @Pattern(regexp = EMAIL_REGEX, message = "Email address must be in the form ‘jane@doe.nz’")
+    @Pattern(regexp = EMAIL_LENGTH_REGEX, message = "Local part(before @) should be less than 64 characters and the domain part(after @) should be less than 255 characters")
+    @Size(max = 320, message = "Email address length exceeds max length of 320 characters")
     private String email;
 
     @Pattern(regexp = PASSWORD_REGEX, message = "Your password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character")
