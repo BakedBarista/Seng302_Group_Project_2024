@@ -5,8 +5,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.WeatherData;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.*;
 import nz.ac.canterbury.seng302.gardenersgrove.model.weather.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
@@ -46,7 +44,12 @@ public class WeatherAPIService {
             "patchy light drizzle", "light drizzle", "freezing drizzle", "heavy freezing drizzle", "patchy light rain",
             "moderate rain at times", "moderate rain", "heavy rain at times", "light freezing rain", "Thundery outbreaks possible",
             "moderate or heavy rain shower", "torrential rain shower", "light sleet showers", "patchy light rain with thunder",
-            "moderate or heavy rain with thunder"
+            "moderate or heavy rain with thunder", "moderate or heavy snow with thunder", "patchy light snow with thunder",
+            "moderate or heavy showers of ice pellets", "light showers of ice pellets", "moderate or heavy snow showers",
+            "light snow showers", "moderate or heavy sleet showers", "ice pellets", "patchy heavy snow", "moderate snow",
+            "patchy moderate snow", "patchy light snow", "moderate or heavy sleet", "light sleet", "moderate or heavy freezing rain",
+            "patchy sleet possible", "patchy snow possible", "patchy rain possible"
+
     );
     private final RestTemplate restTemplate;
     private final GardenService gardenService;

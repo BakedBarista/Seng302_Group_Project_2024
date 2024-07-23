@@ -72,4 +72,21 @@ public class URLServiceTest {
         String result = urlService.generateResetPasswordUrlString(request, token);
         assertEquals(expectedUrl, result);
     }
+
+    @ParameterizedTest
+    @CsvSource({
+            "https,example.com,443,/prod,https://example.com/prod/users/user/obfuscated-email/authenticate-email",
+            "https,example.com,443,/prod,https://example.com/prod/users/user/obfuscated-email/authenticate-email",
+            "https,example.com,443,/prod,https://example.com/prod/users/user/obfuscated-email/authenticate-email",
+    })
+    void whenGenerateAuthenticateEmailUrlCalled_thenUrlIsGeneratedWithToken(String scheme, String host, int port, String contextPath, String expectedUrl) {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getScheme()).thenReturn(scheme);
+        when(request.getServerName()).thenReturn(host);
+        when(request.getServerPort()).thenReturn(port);
+        when(request.getContextPath()).thenReturn(contextPath);
+
+        String result = urlService.generateAuthenticateEmailUrlString(request, "obfuscated-email");
+        assertEquals(expectedUrl, result);
+    }
 }
