@@ -259,7 +259,8 @@ class WeatherAPIServiceTest {
     @CsvSource({
             "400, Bad Request",
             "403, Forbidden",
-            "500, Internal server error"
+            "500, Internal Server Error",
+            "502, Bad Gateway"
     })
     void RequestApi_BadLatAndLng_ReturnNoResponse(String errorCode, String errorMessage) {
         String url = "fakeurl";
