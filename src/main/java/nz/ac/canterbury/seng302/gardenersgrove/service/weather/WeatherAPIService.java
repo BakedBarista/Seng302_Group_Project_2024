@@ -204,7 +204,7 @@ public class WeatherAPIService {
         for (String date: dates) {
             try {
                 String locationQuery = "&q=" + lat + "," + lng + "&dt=" + date;
-                String apiHistoryUrl = "https://api.weatherapi.cm/v1/history.json?key=";
+                String apiHistoryUrl = "https://api.weatherapi.com/v1/history.json?key=";
                 String url = apiHistoryUrl + API_KEY + locationQuery;
 
                 logger.info("Requesting the previous forecast for Lat: {} Lng: {} on Day: {}", lat, lng, date);
