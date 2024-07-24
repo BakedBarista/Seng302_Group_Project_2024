@@ -1,7 +1,9 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity.dto;
 
+import jakarta.persistence.Lob;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationConstants.*;
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationMessages.*;
@@ -11,8 +13,6 @@ import static nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationMessa
  */
 public class PlantHistoryItemDTO{
 
-
-    private String image;
 
     @Size(max = 512, message = INVALID_GARDEN_DESCRIPTION)
     @Pattern(regexp = DESCRIPTION_REGEX , message = INVALID_GARDEN_DESCRIPTION)
@@ -26,11 +26,5 @@ public class PlantHistoryItemDTO{
         return description;
     }
 
-    public void setImage(String image) {
-        this.image = image;
-    }
 
-    public String getImage() {
-        return image;
-    }
 }   

@@ -255,7 +255,7 @@ public class PlantController {
      * @param gardenId the id of the garden the plant is being added to
      * @return redirect to add plant form
      */
-    @GetMapping("/gardens/{gardenId}/plant/{id}/history")
+    @GetMapping("/gardens/{gardenId}/plants/{id}/history")
     public String addPlantHistoryForm(@PathVariable("id") Long gardenId, Model model){
 
         logger.info("GET /gardens/${id}/add-plant - display the new plant form");
@@ -275,37 +275,33 @@ public class PlantController {
      * @param gardenId the id of the garden that the plant belongs to
      * @param plantId the id of the plant being edited
      * @param file the image file
-     * @param plant the plant entity being edited
+     * @param plantHistoryDTO the plant
      * @param bindingResult binding result which helps display errors
      * @param model representation of results
      * @return redirect to gardens page if data is valid
      */
-    @PostMapping("/gardens/{gardenId}/plant/{plantId}/history")
+    @PostMapping("/gardens/{gardenId}/plants/{plantId}/history")
     public String submitPlantHistoryForm(@PathVariable("gardenId") long gardenId,
                                       @PathVariable("plantId") long plantId,
                                       @RequestParam("image") MultipartFile file,
                                       @RequestParam("description") String description,
-                                      @Valid @ModelAttribute("plant") PlantHistoryItemDTO plantDTO,
+                                      @Valid @ModelAttribute("plant") PlantHistoryItemDTO plantHistoryDTO,
                                       BindingResult bindingResult,
-                                      Model model) {
+                                      Model model) throws IOException {
 
         if (bindingResult.hasErrors()) {
-            model.addAttribute("description", plant);
-            logger.info("error");
+            model.addAttribute("description", plantHistoryDTO);
+            logger.info("{}",bindingResult.getFieldError());
             return "plants/plantHistory";
         }
 
         Optional<Plant> existingPlant = plantService.getPlantById(plantId);
 
         if (existingPlant.isPresent()){
-            plantService.updatePlant(existingPlant.get(), plant);
-            Plant nonOptionalPlant = existingPlant.get();
-            if (file != null) {
-                try {
-                    plantHistoryService.addHistoryItem(nonOptionalPlant, file.getContentType(), file.getBytes(), description);
-                } catch (Exception e) {
-                    logger.info("Exception {}",e.toString());
-                }
+            try {
+                plantHistoryService.addHistoryItem(existingPlant.get(), file.getContentType(), file.getBytes(), description);
+            } catch (IOException e) {
+                logger.info("Exception {}",e.toString());
             }
         }
 

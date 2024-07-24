@@ -13,7 +13,7 @@ public class ValidationConstants {
     public static final String EMAIL_LENGTH_REGEX = "^(?=.{1,64}@)(?=.{1,255}$).+$";
     public static final String PASSWORD_REGEX = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$";
     public static final String NAME_REGEX = "^('?\\p{L}[\\p{L}\\s'-]*)$";
-    public static final String DESCRIPTION_REGEX = "^(.*\\\\p{L}.*)?$";
+    public static final String DESCRIPTION_REGEX = "^(.*\\p{L}.*)?$";
 
     public static final String GARDEN_REGEX = "^[\\p{L}0-9 .,'-]*$";
     public static final String POSITIVE_WHOLE_NUMBER_REGEX = "^[0-9]*(?:\\.0*)?$";
