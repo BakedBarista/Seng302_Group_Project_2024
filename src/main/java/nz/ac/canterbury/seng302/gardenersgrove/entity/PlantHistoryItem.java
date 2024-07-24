@@ -93,14 +93,6 @@ public class PlantHistoryItem {
         this.name = name;
     }
 
-    public String getCount() {
-        return count;
-    }
-
-    public void setCount(String count) {
-        this.count = count;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -109,12 +101,12 @@ public class PlantHistoryItem {
         this.description = description;
     }
 
-    public LocalDate getPlantedDate() {
-        return plantedDate;
+    public String getCount() {
+        return count;
     }
 
-    public void setPlantedDate(LocalDate plantedDate) {
-        this.plantedDate = plantedDate;
+    public void setCount(String count) {
+        this.count = count;
     }
 
     public String getPlantImageContentType() {
@@ -128,5 +120,13 @@ public class PlantHistoryItem {
     public void setPlantImage(String contentType, byte[] plantImage) {
         this.plantImageContentType = contentType;
         this.plantImage = plantImage;
+    }
+
+    public LocalDate getPlantedDate() {
+        return plantedDate;
+    }
+
+    public void setPlantedDate(LocalDate plantedDate) {
+        this.plantedDate = plantedDate;
     }
 }
