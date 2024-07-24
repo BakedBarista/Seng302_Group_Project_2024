@@ -19,6 +19,8 @@ import org.mockito.Mockito;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
@@ -260,9 +262,8 @@ class WeatherAPIServiceTest {
             "400, Bad Request",
             "403, Forbidden",
             "500, Internal Server Error",
-            "502, Bad Gateway"
     })
-    void RequestApi_BadLatAndLng_ReturnNoResponse(String errorCode, String errorMessage) {
+    void RequestApi_BadRequests_ReturnNoResponse(String errorCode, String errorMessage) {
         String url = "fakeurl";
         HttpClientErrorException badRequestException = HttpClientErrorException.create(HttpStatusCode.valueOf(Integer.parseInt(errorCode)) ,errorMessage , null, null, null);
 
@@ -271,6 +272,32 @@ class WeatherAPIServiceTest {
 
         assertEquals("No Response", response);
 
+        // API should only call once
+        verify(restTemplate, times(1)).getForEntity(anyString(), eq(String.class));
+    }
+
+    @Test
+    void RequestApi_WeatherProviderServerError_ReturnNoResponse() {
+        String url = "fakeurl";
+        HttpServerErrorException badRequestException = HttpServerErrorException.create(HttpStatusCode.valueOf(502) ,"Bad Gateway" , null, null, null);
+
+        doThrow(badRequestException).when(restTemplate).getForEntity(anyString(), eq(String.class));
+        String response = weatherAPIService.requestAPI(url);
+
+        assertEquals("No Response", response);
+
+        // API should only call once
+        verify(restTemplate, times(1)).getForEntity(anyString(), eq(String.class));
+    }
+
+    // TODO: Finish this test
+    @Test
+    void RequestApi_ResourceAccessError_ReturnNoResponse() {
+        String url = "fakeurl";
+        when(restTemplate.getForEntity(url, String.class)).thenThrow(new ResourceAccessException("Service unavailable"));
+        String response = weatherAPIService.requestAPI(url);
+
+        assertEquals("No Response", response);
         // API should only call once
         verify(restTemplate, times(1)).getForEntity(anyString(), eq(String.class));
     }
