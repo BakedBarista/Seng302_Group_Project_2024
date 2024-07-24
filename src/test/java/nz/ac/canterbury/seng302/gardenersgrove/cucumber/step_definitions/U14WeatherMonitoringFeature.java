@@ -14,6 +14,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.model.weather.*;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.FriendsRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantHistoryRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.weather.GardenWeatherRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
@@ -25,6 +26,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -46,6 +48,7 @@ public class U14WeatherMonitoringFeature {
     public static PlantService plantService;
     private static GardenUserRepository gardenUserRepository;
     private static RestTemplate restTemplate;
+    private static Clock clock;
     private static ModerationService mockedModerationService;
     private static GardenController gardenController;
     private static GardenWeatherService gardenWeatherService;
@@ -62,14 +65,16 @@ public class U14WeatherMonitoringFeature {
         FriendsRepository friendsRepository = mock(FriendsRepository.class);
         gardenUserRepository = mock(GardenUserRepository.class);
         PlantRepository plantRepository = mock(PlantRepository.class);
+        PlantHistoryRepository plantHistoryRepository = mock(PlantHistoryRepository.class);
         gardenRepository = mock(GardenRepository.class);
         GardenWeatherRepository gardenWeatherRepository = mock(GardenWeatherRepository.class);
         restTemplate = mock(RestTemplate.class);
+        clock = mock(Clock.class);
         GardenUserService userService = new GardenUserService(gardenUserRepository);
         gardenService = new GardenService(gardenRepository);
         gardenWeatherService = new GardenWeatherService(gardenWeatherRepository);
         FriendService friendService = new FriendService(friendsRepository);
-        plantService = new PlantService(plantRepository, gardenRepository);
+        plantService = new PlantService(plantRepository, plantHistoryRepository, gardenRepository, clock);
         weatherAPIService = new WeatherAPIService(restTemplate, gardenService, gardenWeatherService);
         mockedModerationService = mock(ModerationService.class);
         ProfanityService profanityService = mock(ProfanityService.class);

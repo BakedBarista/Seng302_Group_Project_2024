@@ -1,42 +1,44 @@
-package nz.ac.canterbury.seng302.gardenersgrove.service;
+package nz.ac.canterbury.seng302.gardenersgrove.unittests.service;
 
-import nz.ac.canterbury.seng302.gardenersgrove.controller.users.RegisterController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantHistoryRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
-
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Clock;
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-@DataJpaTest
-@Import(PlantService.class)
+@ExtendWith(MockitoExtension.class)
 class PlantServiceTest {
 
     @Mock
     private PlantRepository plantRepository;
     @Mock
+    private PlantHistoryRepository plantHistoryRepository;
+    @Mock
     private GardenRepository gardenRepository;
     @Mock
     private GardenUserRepository gardenUserRepository;
+    @Mock
+    private Clock clock;
 
     @Mock
     private GardenUserService gardenUserService;
@@ -53,7 +55,7 @@ class PlantServiceTest {
 
     @Test
     void AddPlant_ValidPlantWithGardenId_ReturnsPlantWithCorrectGardenId() {
-        Plant testPlant = new Plant("Rose", "5", "Flower", LocalDate.of(1970, 1, 1));
+        PlantDTO testPlant = new PlantDTO("Rose", "5", "Flower", "1970-01-01");
         Garden testGarden = new Garden("Garden", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041",1.0,2.0, "Big", null);
         Long gardenId = 1L;
         testGarden.setId(gardenId);
@@ -62,18 +64,18 @@ class PlantServiceTest {
 
         Mockito.when(plantRepository.save(Mockito.any(Plant.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Plant result = plantService.addPlant(testPlant, gardenId);
+        Plant result = plantService.createPlant(testPlant, gardenId);
         assertEquals(result.getGarden().getId(), gardenId);
     }
 
     @Test
     void AddPlant_InvalidGardenId_ThrowsException() {
-        Plant testPlant = new Plant("Rose", "5", "Flower", LocalDate.of(1970, 1, 1));
+        PlantDTO testPlant = new PlantDTO("Rose", "5", "Flower", "1970-01-01");
         Long gardenId = 1L;
 
         Mockito.when(gardenRepository.findById(Mockito.any())).thenReturn(Optional.empty());
 
-        Assertions.assertThrows(RuntimeException.class, () -> plantService.addPlant(testPlant, gardenId));
+        Assertions.assertThrows(RuntimeException.class, () -> plantService.createPlant(testPlant, gardenId));
         verify(plantRepository, Mockito.never()).save(Mockito.any(Plant.class));
     }
 
@@ -135,7 +137,6 @@ class PlantServiceTest {
         testPlant3.setGarden(testGarden2);
 
         Mockito.when(plantRepository.findByGardenId(gardenId1)).thenReturn(List.of(testPlant1, testPlant2));
-        Mockito.when(plantRepository.findByGardenId(gardenId2)).thenReturn(List.of(testPlant3));
         assertEquals(2, plantService.getPlantsByGardenId(gardenId1).size());
         assertEquals(testPlant1, plantService.getPlantsByGardenId(gardenId1).get(0));
         assertEquals(testPlant2, plantService.getPlantsByGardenId(gardenId1).get(1));

@@ -11,6 +11,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.FriendsRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantHistoryRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.TagRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
@@ -19,6 +20,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.weather.WeatherAPIService
 import org.springframework.ui.Model;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Clock;
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
@@ -27,6 +29,7 @@ public class U19MakeGardenPublicFeature {
     private static RestTemplate restTemplate;
     private static FriendsRepository friendRepository;
     private static PlantRepository plantRepository;
+    private static PlantHistoryRepository plantHistoryRepository;
     private static GardenRepository gardenRepository;
     private static GardenUserRepository gardenUserRepository;
 
@@ -41,6 +44,7 @@ public class U19MakeGardenPublicFeature {
     private static TagRepository tagRepository;
     private static LocationService locationService;
     private static ObjectMapper objectMapper;
+    private static Clock clock;
 
     private static GardenUser gardenUser;
     private static GardenWeatherService gardenWeatherService;
@@ -53,6 +57,7 @@ public class U19MakeGardenPublicFeature {
     @BeforeAll
     public static void beforeAll() {
         plantRepository = mock(PlantRepository.class);
+        plantHistoryRepository = mock(PlantHistoryRepository.class);
         gardenRepository = mock(GardenRepository.class);
         gardenUserRepository = mock(GardenUserRepository.class);
         restTemplate = mock(RestTemplate.class);
@@ -60,10 +65,11 @@ public class U19MakeGardenPublicFeature {
         tagRepository = mock(TagRepository.class);
         tagService = new TagService(null, gardenService, profanityService);
         objectMapper = mock(ObjectMapper.class);
+        clock = mock(Clock.class);
 
         friendService = new FriendService(friendRepository);
         gardenService = new GardenService(gardenRepository);
-        plantService = new PlantService(plantRepository, gardenRepository);
+        plantService = new PlantService(plantRepository, plantHistoryRepository, gardenRepository, clock);
         gardenUserService = mock(GardenUserService.class);
         gardenWeatherService = mock(GardenWeatherService.class);
         weatherAPIService = new WeatherAPIService(restTemplate, gardenService, gardenWeatherService);

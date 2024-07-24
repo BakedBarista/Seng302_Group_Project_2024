@@ -286,7 +286,7 @@ public class PlantControllerTest {
         when(bindingResult.hasErrors()).thenReturn(true);
         String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, invalidPlantDTO, bindingResult, model);
 
-        verify(plantService, times(0)).updatePlant(plant, any());
+        verify(plantService, times(0)).updatePlant(eq(plant), any());
         assertEquals(expectedReturnPage, returnPage);
     }
 

@@ -19,6 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Clock;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -36,12 +37,14 @@ public class U8CreateNewGardenFeature {
     private static GardenService gardenService;
     private Garden garden;
     private static PlantRepository plantRepository;
+    private static PlantHistoryRepository plantHistoryRepository;
     public static PlantService plantService;
     private static GardenUserService userService;
     private static GardenUserRepository gardenUserRepository;
 
     private static WeatherAPIService weatherAPIService;
     private static  RestTemplate restTemplate;
+    private static Clock clock;
 
     private static LocationService locationService;
     private static FriendService friendService;
@@ -65,14 +68,16 @@ public class U8CreateNewGardenFeature {
         friendsRepository = mock(FriendsRepository.class);
         gardenUserRepository = mock(GardenUserRepository.class);
         plantRepository = mock(PlantRepository.class);
+        plantHistoryRepository = mock(PlantHistoryRepository.class);
         gardenRepository = mock(GardenRepository.class);
         profanityService = mock(ProfanityService.class);
         tagRepository = mock(TagRepository.class);
         restTemplate = mock(RestTemplate.class);
+        clock = mock(Clock.class);
         userService = new GardenUserService(gardenUserRepository);
         gardenService = new GardenService(gardenRepository);
         friendService = new FriendService(friendsRepository);
-        plantService = new PlantService(plantRepository, gardenRepository);
+        plantService = new PlantService(plantRepository, plantHistoryRepository, gardenRepository, clock);
         tagService = new TagService(tagRepository, gardenService, profanityService);
         weatherAPIService = new WeatherAPIService(restTemplate, gardenService, gardenWeatherService);
         moderationService = new ModerationService();
