@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationConstants.GARDEN_REGEX;
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationConstants.POSITIVE_WHOLE_NUMBER_REGEX;
 
 /**
  * Acts as a skeleton for Plant and PlantDTO, which share a lot of the same fields and methods
@@ -18,7 +19,7 @@ public abstract class BasePlant {
     @Column(nullable = false)
     protected String name;
 
-    @Pattern(regexp = "^[0-9]*$", message = "Plant count must be a positive number")
+    @Pattern(regexp = POSITIVE_WHOLE_NUMBER_REGEX, message = "Plant count must be a positive whole number")
     @Column(nullable = false)
     protected String count;
 
@@ -62,5 +63,16 @@ public abstract class BasePlant {
 
     public void setGarden(Garden garden) {
         this.garden = garden;
+    }
+
+    /**
+     * Removes extraneous information (such as weird decimals) from the plant object.
+     *
+     * Should be called before persisting changes to the DB.
+     */
+    public void normalize() {
+        if (this.count != null && this.count.contains(".")) {
+            this.count = this.count.substring(0, this.count.indexOf("."));
+        }
     }
 }
