@@ -22,8 +22,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -108,8 +106,7 @@ public class PlantController {
         }
 
         // Save the new plant and image
-        Plant plant = new Plant(plantDTO);
-        Plant savedPlant = plantService.addPlant(plant, gardenId);
+        Plant savedPlant = plantService.createPlant(plantDTO, gardenId);
         if (savedPlant != null) {
             try {
                 plantService.setPlantImage(savedPlant.getId(), file.getContentType(), file.getBytes());
@@ -183,23 +180,12 @@ public class PlantController {
 
         Optional<Plant> existingPlant = plantService.getPlantById(plantId);
         if (existingPlant.isPresent()){
-            plant.normalize();
-            existingPlant.get().setName(plant.getName());
-            existingPlant.get().setCount(plant.getCount());
-            existingPlant.get().setDescription(plant.getDescription());
-
-            if (plant.getPlantedDate() != null && !plant.getPlantedDate().isEmpty()) {
-                existingPlant.get().setPlantedDate(LocalDate.parse(plant.getPlantedDate()));
-            } else {
-                existingPlant.get().setPlantedDate(null);
-            }
-
-            Plant savedPlant = plantService.addPlant(existingPlant.get(), gardenId);
+            plantService.updatePlant(existingPlant.get(), plant);
 
             if (file != null) {
                 try {
-                    plantService.setPlantImage(savedPlant.getId(), file.getContentType(), file.getBytes());
-            } catch (Exception e) {
+                    plantService.setPlantImage(plantId, file.getContentType(), file.getBytes());
+                } catch (Exception e) {
                     logger.info("Exception {}",e.toString());
                 }
             }

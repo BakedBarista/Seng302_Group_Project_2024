@@ -55,6 +55,20 @@ public class PlantHistoryItem {
     @Lob
     private byte[] plantImage;
 
+    /**
+     * Constructs a plant history item with all fields set to null.
+     */
+    public PlantHistoryItem() {
+    }
+
+    /**
+     * Constructs a plant history item with the given plant and timestamp
+     */
+    public PlantHistoryItem(Plant plant, Instant timestamp) {
+        this.plant = plant;
+        this.timestamp = timestamp;
+    }
+
     public Long getId() {
         return id;
     }

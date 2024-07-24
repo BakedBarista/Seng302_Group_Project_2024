@@ -11,7 +11,6 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -32,7 +31,6 @@ import java.util.Collections;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
 public class PlantControllerTest {
@@ -218,7 +216,7 @@ public class PlantControllerTest {
 
         assertEquals(expectedReturnPage, returnPage);
 
-        verify(plantService, times(1)).addPlant(plant, gardenId);
+        verify(plantService, times(1)).updatePlant(plant, validPlantDTO);
     }
 
     @Test
@@ -272,7 +270,7 @@ public class PlantControllerTest {
         when(plantService.getPlantById(plantId)).thenReturn(Optional.of(plant));
         String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, validPlantDTO, bindingResult, model);
 
-        verify(plantService, times(1)).addPlant(plant, gardenId);
+        verify(plantService, times(1)).updatePlant(plant, validPlantDTO);
         assertEquals(expectedReturnPage, returnPage);
     }
 
@@ -288,7 +286,7 @@ public class PlantControllerTest {
         when(bindingResult.hasErrors()).thenReturn(true);
         String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, invalidPlantDTO, bindingResult, model);
 
-        verify(plantService, times(0)).addPlant(plant, gardenId);
+        verify(plantService, times(0)).updatePlant(plant, any());
         assertEquals(expectedReturnPage, returnPage);
     }
 
@@ -354,7 +352,7 @@ public class PlantControllerTest {
         plant.setId(gardenId);
 
         when(bindingResult.hasErrors()).thenReturn(false);
-        when(plantService.addPlant(any(Plant.class), eq(gardenId))).thenReturn(plant);
+        when(plantService.createPlant(any(PlantDTO.class), eq(gardenId))).thenReturn(plant);
         when(file.isEmpty()).thenReturn(false);
         doThrow(new RuntimeException("Image processing error"))
                 .when(plantService).setPlantImage(anyLong(), anyString(), any(byte[].class));

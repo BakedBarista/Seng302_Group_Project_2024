@@ -46,12 +46,7 @@ public class Plant extends BasePlant {
         this.name = plantDTO.getName();
         this.count = plantDTO.getCount();
         this.description = plantDTO.getDescription();
-
-        LocalDate localDate = null;
-        if (plantDTO.getPlantedDate() != null && !plantDTO.getPlantedDate().isEmpty()) {
-            localDate = LocalDate.parse(plantDTO.getPlantedDate());
-        }
-        this.plantedDate = localDate;
+        this.plantedDate = plantDTO.getParsedPlantedDate();
     }
 
     public Plant() {}
