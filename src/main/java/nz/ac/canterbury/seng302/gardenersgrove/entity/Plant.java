@@ -42,6 +42,7 @@ public class Plant extends BasePlant {
     }
 
     public Plant(PlantDTO plantDTO) {
+        plantDTO.normalize();
         this.name = plantDTO.getName();
         this.count = plantDTO.getCount();
         this.description = plantDTO.getDescription();

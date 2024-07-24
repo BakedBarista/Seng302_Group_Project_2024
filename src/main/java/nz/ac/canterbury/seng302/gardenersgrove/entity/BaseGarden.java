@@ -4,11 +4,14 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import org.hibernate.validator.constraints.Length;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationConstants.GARDEN_REGEX;
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationMessages.*;
 
 /**
  * Acts as a skeleton for Garden and GardenDTO, which share a lot of the same fields and methods
@@ -19,38 +22,39 @@ public abstract class BaseGarden {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Garden name cannot be empty")
-    @Pattern(regexp = GARDEN_REGEX, message = "Garden name must only include letters, numbers, spaces, dots, commas, hyphens, or apostrophes")
+    @NotBlank(message = EMPTY_GARDEN_NAME_MESSAGE)
+    @Length(max = 100, message = MAX_GARDEN_NAME_MESSAGE)
+    @Pattern(regexp = GARDEN_REGEX, message = INVALID_GARDEN_NAME_MESSAGE)
     @Column(nullable = false)
     private String name;
 
-    @Size(max = 512, message = "Description must be 512 characters or less and contain some text")
-    @Pattern(regexp = "^(.*\\p{L}.*)?$" , message = "Description must be 512 characters or less and contain some text")
+    @Size(max = 512, message = INVALID_GARDEN_DESCRIPTION)
+    @Pattern(regexp = "^(.*\\p{L}.*)?$" , message = INVALID_GARDEN_DESCRIPTION)
     private String description;
 
-    @Pattern(regexp = "^([0-9]+[a-zA-Z]?(\\s?\\-?\\s?[0-9]+[a-zA-Z]?)?)?$", message = "Please enter a valid street number")
+    @Pattern(regexp = "^([0-9]+[a-zA-Z]?(\\s?\\-?\\s?[0-9]+[a-zA-Z]?)?)?$", message = GARDEN_STREET_NUMBER_MESSAGE)
     @Column
     private String streetNumber;
 
-    @Pattern(regexp = GARDEN_REGEX, message = "Please enter a valid street name")
+    @Pattern(regexp = GARDEN_REGEX, message = GARDEN_STREET_NAME_MESSAGE)
     @Column
     private String streetName;
 
-    @Pattern(regexp = GARDEN_REGEX, message = "Please enter a valid suburb")
+    @Pattern(regexp = GARDEN_REGEX, message = GARDEN_SUBURB_MESSAGE)
     @Column
     private String suburb;
 
-    @NotBlank(message = "City is required")
-    @Pattern(regexp = GARDEN_REGEX, message = "Please enter a valid City name")
+    @NotBlank(message = GARDEN_CITY_REQUIRED_MESSAGE)
+    @Pattern(regexp = GARDEN_REGEX, message = GARDEN_CITY_MESSAGE)
     @Column(nullable = false)
     private String city;
 
-    @NotBlank(message = "Country is required")
-    @Pattern(regexp = GARDEN_REGEX, message = "Please enter a valid country name")
+    @NotBlank(message = GARDEN_COUNTRY_REQUIRED_MESSAGE)
+    @Pattern(regexp = GARDEN_REGEX, message = GARDEN_COUNTRY_MESSAGE)
     @Column(nullable = false)
     private String country;
 
-    @Pattern(regexp = "^[0-9]*$", message = "Please enter a valid post code")
+    @Pattern(regexp = "^[0-9]*$", message = GARDEN_POST_CODE_MESSAGE)
     @Column
     private String postCode;
     @Column
