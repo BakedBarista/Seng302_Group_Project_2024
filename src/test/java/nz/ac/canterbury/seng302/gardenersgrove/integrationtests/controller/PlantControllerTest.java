@@ -8,9 +8,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @SpringBootTest
 public class PlantControllerTest {
@@ -39,19 +38,20 @@ public class PlantControllerTest {
 
     private Plant testPlant;
 
+    private int test = 0;
+
     @BeforeEach
     void setup() {
+        test++;
         testGarden = new Garden("test", "1", "test", "test", "test",
                 "test", "1234", 10D, 10D, "test", 10D);
-        GardenUser owner = new GardenUser("john", "doe", "johndoe@gmail.com", "password", LocalDate.of(1997, 1, 1));
+        GardenUser owner = userRepository.findAll().get(0);
         userRepository.save(owner);
 
         testGarden.setOwner(owner);
-        testGarden.setId(1L);
         gardenRepository.save(testGarden);
 
         testPlant = new Plant("test", "1", "test", LocalDate.of(1997, 1, 1));
-        testPlant.setId(1L);
         plantRepository.save(testPlant);
     }
 
@@ -72,7 +72,7 @@ public class PlantControllerTest {
     @Test
     void givenIHaveAPlant_whenIUploadAnInvalidImageWithUploadPlantImage_thenTheImageIsNotSaved() {
         String filename = "test";
-        String originalFilename = "test.png";
+        String originalFilename = "test.gif";
         byte[] imageBytes = "test".getBytes();
         String contentType = "image/gif";
         MockMultipartFile file = new MockMultipartFile(filename, originalFilename, contentType, imageBytes);
@@ -96,22 +96,62 @@ public class PlantControllerTest {
 
         plantController.submitAddPlantForm(testGarden.getId(), testPlantDTO, bindingResult, file, "", model);
 
-        Plant savedPlant = testGarden.getPlants().get(0);
+        List<Plant> savedPlants = plantRepository.findAll();
+        Plant savedPlant = savedPlants.get(savedPlants.size() - 1);
         Assertions.assertArrayEquals(imageBytes, savedPlant.getPlantImage());
     }
 
     @Test
     void givenIHaveAPlant_whenIUploadAnInvalidImageWithSubmitAddPlantForm_thenTheImageIsNotSaved() {
+        String filename = "test";
+        String originalFilename = "test.gif";
+        byte[] imageBytes = "test".getBytes();
+        String contentType = "image/gif";
+        MockMultipartFile file = new MockMultipartFile(filename, originalFilename, contentType, imageBytes);
+        PlantDTO testPlantDTO = new PlantDTO("test", "1", "test", "2003-01-01");
+        BindingResult bindingResult = Mockito.mock(BindingResult.class);
+        Model model = Mockito.mock(Model.class);
 
+        plantController.submitAddPlantForm(testGarden.getId(), testPlantDTO, bindingResult, file, "", model);
+
+        List<Plant> savedPlants = plantRepository.findAll();
+        Plant savedPlant = savedPlants.get(savedPlants.size() - 1);
+        Assertions.assertNull(savedPlant.getPlantImage());
     }
 
     @Test
     void givenIHaveAPlant_whenIUploadAValidImageWithSubmitEditPlantForm_thenTheImageIsSaved() {
+        String filename = "test";
+        String originalFilename = "test.png";
+        byte[] imageBytes = "test".getBytes();
+        String contentType = "image/png";
+        MockMultipartFile file = new MockMultipartFile(filename, originalFilename, contentType, imageBytes);
+        PlantDTO testPlantDTO = new PlantDTO("test", "1", "test", "2003-01-01");
+        BindingResult bindingResult = Mockito.mock(BindingResult.class);
+        Model model = Mockito.mock(Model.class);
 
+        plantController.submitEditPlantForm(testGarden.getId(), testPlant.getId(), file, "", testPlantDTO, bindingResult, model);
+
+        List<Plant> savedPlants = plantRepository.findAll();
+        Plant savedPlant = savedPlants.get(savedPlants.size() - 1);
+        Assertions.assertArrayEquals(imageBytes, savedPlant.getPlantImage());
     }
 
     @Test
     void givenIHaveAPlant_whenIUploadAnInvalidImageWithSubmitEditPlantForm_thenTheImageIsNotSaved() {
+        String filename = "test";
+        String originalFilename = "test.gif";
+        byte[] imageBytes = "test".getBytes();
+        String contentType = "image/gif";
+        MockMultipartFile file = new MockMultipartFile(filename, originalFilename, contentType, imageBytes);
+        PlantDTO testPlantDTO = new PlantDTO("test", "1", "test", "2003-01-01");
+        BindingResult bindingResult = Mockito.mock(BindingResult.class);
+        Model model = Mockito.mock(Model.class);
 
+        plantController.submitEditPlantForm(testGarden.getId(), testPlant.getId(), file, "", testPlantDTO, bindingResult, model);
+
+        List<Plant> savedPlants = plantRepository.findAll();
+        Plant savedPlant = savedPlants.get(savedPlants.size() - 1);
+        Assertions.assertNull(savedPlant.getPlantImage());
     }
 }
