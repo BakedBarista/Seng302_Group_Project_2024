@@ -535,9 +535,4 @@ public class GardenController {
             logger.info("Failed to add garden");
         }
     }
-
 }
-
-
-
-

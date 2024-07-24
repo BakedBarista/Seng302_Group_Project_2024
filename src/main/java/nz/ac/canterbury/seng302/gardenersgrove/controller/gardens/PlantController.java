@@ -38,8 +38,8 @@ public class PlantController {
     private final GardenUserService gardenUserService;
     private final GardenService gardenService;
 
-    private final String PLANT_SUCCESSFULLY_SAVED_LOG = "Saved new plant to Garden ID: {}";
-    private final String PLANT_UNSUCCESSFULLY_SAVED_LOG = "Failed to save new plant to garden ID: {}";
+    private final static String PLANT_SUCCESSFULLY_SAVED_LOG = "Saved new plant to Garden ID: {}";
+    private final static String PLANT_UNSUCCESSFULLY_SAVED_LOG = "Failed to save new plant to garden ID: {}";
 
     @Autowired
     public PlantController(PlantService plantService, GardenService gardenService, GardenUserService gardenUserService) {

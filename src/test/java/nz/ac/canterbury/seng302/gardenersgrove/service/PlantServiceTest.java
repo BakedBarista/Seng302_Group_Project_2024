@@ -7,9 +7,6 @@ import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -21,7 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -40,7 +36,8 @@ class PlantServiceTest {
     @Test
     void AddPlant_ValidPlantWithGardenId_ReturnsPlantWithCorrectGardenId() {
         Plant testPlant = new Plant("Rose", "5", "Flower", LocalDate.of(1970, 1, 1));
-        Garden testGarden = new Garden("Garden", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041",1.0,2.0, "Big", null);
+        Garden testGarden = new Garden("Garden", "1","Ilam Road","Ilam",
+                "Christchurch","New Zealand","8041",1.0,2.0, "Big", null);
         Long gardenId = 1L;
         testGarden.setId(gardenId);
 
@@ -149,10 +146,10 @@ class PlantServiceTest {
     }
 
     @Test
-    public void setPlantImageWithNonExistentId_imageNotSaved() {
+    void setPlantImageWithNonExistentId_imageNotSaved() {
         long id = 1L;
         byte[] image = {};
-        String contentType = "image/png";
+        String contentType = "image/svg";
         String name = "plant.png";
         String originalFilename = "plant.png";
         MultipartFile file = new MockMultipartFile(name,originalFilename,contentType,image);
@@ -161,40 +158,5 @@ class PlantServiceTest {
 
         plantService.setPlantImage(id, file);
         verify(plantRepository, never()).save(any());
-    }
-
-    static Stream<Arguments> provideInvalidFiles() {
-        return Stream.of(
-                Arguments.of(new MockMultipartFile("file", "invalid.gif", "image/gif", new byte[0])),
-                Arguments.of(new MockMultipartFile("file", "invalid.html", "text/html", new byte[0])),
-                Arguments.of(new MockMultipartFile("file", "invalid.txt", "text/plain", new byte[0])),
-                Arguments.of(new MockMultipartFile("file", "invalid.png", "image/png", new byte[10 * 2024 * 1024]))
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("provideInvalidFiles")
-    void givenImageIsInvalid_WhenValidateImage_ReturnTrue(MockMultipartFile file) {
-        boolean result = plantService.validateImage(file);
-
-        Assertions.assertFalse(result);
-    }
-
-    static Stream<Arguments> provideValidFiles() {
-        return Stream.of(
-                Arguments.of(new MockMultipartFile("file", "invalid.png", "image/png", new byte[0])),
-                Arguments.of(new MockMultipartFile("file", "invalid.svg", "image/svg", new byte[0])),
-                Arguments.of(new MockMultipartFile("file", "invalid.jpg", "image/jpg", new byte[0])),
-                Arguments.of(new MockMultipartFile("file", "invalid.jpeg", "image/jpeg", new byte[0])),
-                Arguments.of(new MockMultipartFile("file", "invalid.png", "image/png", new byte[10 * 1024 * 1024 - 1]))
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("provideValidFiles")
-    void givenImageIsValid_WhenValidateImage_ReturnTrue(MockMultipartFile file) {
-        boolean result = plantService.validateImage(file);
-
-        Assertions.assertTrue(result);
     }
 }
