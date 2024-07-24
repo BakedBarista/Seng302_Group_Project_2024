@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.service;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
@@ -56,8 +57,8 @@ public class GardenServiceIntegrationTests {
         garden.setOwner(gardenUser);
         gardenService.addGarden(garden);
 
-        plant = new Plant("Plant Name", "1", "Plant Description", LocalDate.of(2000, 2, 1));
-        plantService.addPlant(plant, garden.getId());
+        PlantDTO plantDTO = new PlantDTO("Plant Name", "1", "Plant Description", "2000-02-01");
+        plant = plantService.createPlant(plantDTO, garden.getId());
     }
 
     @Test
