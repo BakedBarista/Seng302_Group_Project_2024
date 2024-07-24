@@ -1,27 +1,25 @@
-package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.service;
+package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.controller;
 
+import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.PlantController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
-import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.time.LocalDate;
 
-@DataJpaTest
-@Import(PlantService.class)
-public class PlantServiceTest {
-
-    @Autowired
-    private PlantService plantService;
+@SpringBootTest
+public class PlantControllerTest {
 
     @Autowired
     private PlantRepository plantRepository;
+
+    @Autowired
+    private PlantController plantController;
 
     private Plant testPlant;
 
@@ -33,28 +31,28 @@ public class PlantServiceTest {
     }
 
     @Test
-    void givenIHaveAPlant_whenISaveAValidImageForThatPlant_thenThatPlantHasAnImage() {
+    void givenIHaveAPlant_whenIUploadAValidImage_thenTheImageIsSaved() {
         String filename = "test";
         String originalFilename = "test.png";
         byte[] imageBytes = "test".getBytes();
         String contentType = "image/png";
         MockMultipartFile file = new MockMultipartFile(filename, originalFilename, contentType, imageBytes);
 
-        plantService.setPlantImage(testPlant.getId(), file);
+        plantController.uploadPlantImage(file, testPlant.getId(), "");
 
         Plant savedPlant = plantRepository.findById(testPlant.getId()).get();
-        Assertions.assertEquals(imageBytes, savedPlant.getPlantImage());
+        Assertions.assertArrayEquals(imageBytes, savedPlant.getPlantImage());
     }
 
     @Test
-    void givenIHaveAPlant_whenISaveAnInvalidImageForThatPlant_thenThatPlantDoesNotHaveThatImage() {
+    void givenIHaveAPlant_whenIUploadAnInvalidImage_thenTheImageIsNotSaved() {
         String filename = "test";
         String originalFilename = "test.png";
         byte[] imageBytes = "test".getBytes();
         String contentType = "image/gif";
         MockMultipartFile file = new MockMultipartFile(filename, originalFilename, contentType, imageBytes);
 
-        plantService.setPlantImage(testPlant.getId(), file);
+        plantController.uploadPlantImage(file, testPlant.getId(), "");
 
         Plant savedPlant = plantRepository.findById(testPlant.getId()).get();
         Assertions.assertNull(savedPlant.getPlantImage());
