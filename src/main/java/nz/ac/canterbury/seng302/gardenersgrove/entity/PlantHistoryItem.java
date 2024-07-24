@@ -13,15 +13,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.Size;
 
 /**
- * Item in the plant history table. A new history item is automatically created
- * by PlantService every time a new version of the plant is saved.
- *
- * Each item only contains the fields that have changed since the last version
- * of the plant and all other fields are set to null. This is to allow easy
- * detection of what changed at a given time.
- *
- * This class cannot extend BasePlant as almost all of the fields need to be
- * nullable.
+ * Item in the plant history table. History items are created by the user to
+ * document changes to a plant.
  */
 @Entity(name = "plant_history")
 public class PlantHistoryItem {
@@ -37,13 +30,13 @@ public class PlantHistoryItem {
     private Instant timestamp;
 
     @Size(min = 0, max = 512, message = "Plant history description must be less than 512 characters")
-    @Column(nullable = false, length = 512)
+    @Column(nullable = true, length = 512)
     protected String description;
 
-    @Column(nullable = true)
+    @Column(nullable = false)
     private String imageContentType;
 
-    @Column(nullable = true, columnDefinition = "MEDIUMBLOB")
+    @Column(nullable = false, columnDefinition = "MEDIUMBLOB")
     @Lob
     private byte[] image;
 
@@ -73,10 +66,6 @@ public class PlantHistoryItem {
         return timestamp;
     }
 
-    public void setTimestamp(Instant timestamp) {
-        this.timestamp = timestamp;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -85,7 +74,7 @@ public class PlantHistoryItem {
         this.description = description;
     }
 
-    public String getimageContentType() {
+    public String getImageContentType() {
         return imageContentType;
     }
 

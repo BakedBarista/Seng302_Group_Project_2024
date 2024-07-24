@@ -1,19 +1,15 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.PlantHistoryItem;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantHistoryRepository;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
+import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import java.time.Clock;
-import java.time.Instant;
-import java.util.List;
-import java.util.Optional;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
 
 /**
  * PlantService implementation of the plant repository
