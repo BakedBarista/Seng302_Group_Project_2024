@@ -6,7 +6,6 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantHistoryRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
@@ -19,7 +18,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 
-import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -36,12 +34,6 @@ public class GardenServiceIntegrationTests {
     @Autowired
     private PlantRepository plantRepository;
 
-    @Autowired
-    private PlantHistoryRepository plantHistoryRepository;
-
-    @MockBean
-    private Clock clock;
-
     private GardenUserService gardenUserService;
 
     private GardenService gardenService;
@@ -56,7 +48,7 @@ public class GardenServiceIntegrationTests {
     public void setUp() {
         gardenUserService = new GardenUserService(gardenUserRepository);
         gardenService = new GardenService(gardenRepository);
-        plantService = new PlantService(plantRepository, plantHistoryRepository, gardenRepository, clock);
+        plantService = new PlantService(plantRepository, gardenRepository);
 
         GardenUser gardenUser = new GardenUser("John", "Doe", "john.doe@gmail.com", "password", LocalDate.of(2000, 10, 10));
         gardenUserService.addUser(gardenUser);

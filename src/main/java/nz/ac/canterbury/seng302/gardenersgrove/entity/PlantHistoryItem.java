@@ -1,7 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
 import java.time.Instant;
-import java.time.LocalDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

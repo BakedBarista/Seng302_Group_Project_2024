@@ -21,21 +21,15 @@ import java.util.Optional;
 @Service
 public class PlantService {
     private final PlantRepository plantRepository;
-    private final PlantHistoryRepository plantHistoryRepository;
     private final GardenRepository gardenRepository;
-    private final Clock clock;
-
 
     /**
      * Constructor of PlantService, takes an instance of plantRepository
      * @param plantRepository an instance of PlantRepository
      */
-    public PlantService(PlantRepository plantRepository, PlantHistoryRepository plantHistoryRepository,
-            GardenRepository gardenRepository, Clock clock) {
-        this.gardenRepository = gardenRepository;
-        this.plantHistoryRepository = plantHistoryRepository;
+    public PlantService(PlantRepository plantRepository, GardenRepository gardenRepository) {
         this.plantRepository = plantRepository;
-        this.clock = clock;
+        this.gardenRepository = gardenRepository;
     }
 
     /**
@@ -109,12 +103,6 @@ public class PlantService {
             return;
         }
         plant.get().setPlantImage(contentType, plantImage);
-
-        Instant timestamp = clock.instant();
-        PlantHistoryItem historyItem = new PlantHistoryItem(plant.get(), timestamp);
-        historyItem.setImage(contentType, plantImage);
-
         plantRepository.save(plant.get());
-        plantHistoryRepository.save(historyItem);
     }
 }
