@@ -20,7 +20,7 @@ import jakarta.persistence.ManyToOne;
  * of the plant and all other fields are set to null. This is to allow easy
  * detection of what changed at a given time.
  *
- * This class cannot extend BasePlant as allmost all of the fields need to be
+ * This class cannot extend BasePlant as almost all of the fields need to be
  * nullable.
  */
 @Entity(name = "plant_history")
