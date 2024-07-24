@@ -55,6 +55,12 @@ public class ProfanityServiceTest {
     }
 
     @Test
+    void givenListBadWordInSentence_ThenReturnTrue() {
+        List<String> result = profanityService.badWordsFound("my code is shit");
+        assertFalse(result.isEmpty());
+    }
+
+    @Test
     void testBadWordsFound_WithLeetSpeak() {
         String input = "@ss";
         List<String> result = profanityService.badWordsFound(input);
