@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.Size;
 
 /**
  * Item in the plant history table. A new history item is automatically created
@@ -36,24 +37,16 @@ public class PlantHistoryItem {
     @Column()
     private Instant timestamp;
 
-    @Column(nullable = true)
-    private String name;
+    @Size(min = 0, max = 512, message = "Plant history description must be less than 512 characters")
+    @Column(nullable = false, length = 512)
+    protected String description;
 
     @Column(nullable = true)
-    private String count;
-
-    @Column(nullable = true, length = 512)
-    private String description;
-
-    @Column(nullable = true)
-    protected LocalDate plantedDate;
-
-    @Column(nullable = true)
-    private String plantImageContentType;
+    private String imageContentType;
 
     @Column(nullable = true, columnDefinition = "MEDIUMBLOB")
     @Lob
-    private byte[] plantImage;
+    private byte[] image;
 
     /**
      * Constructs a plant history item with all fields set to null.
@@ -85,14 +78,6 @@ public class PlantHistoryItem {
         this.timestamp = timestamp;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -101,32 +86,16 @@ public class PlantHistoryItem {
         this.description = description;
     }
 
-    public String getCount() {
-        return count;
+    public String getimageContentType() {
+        return imageContentType;
     }
 
-    public void setCount(String count) {
-        this.count = count;
+    public byte[] getImage() {
+        return image;
     }
 
-    public String getPlantImageContentType() {
-        return plantImageContentType;
-    }
-
-    public byte[] getPlantImage() {
-        return plantImage;
-    }
-
-    public void setPlantImage(String contentType, byte[] plantImage) {
-        this.plantImageContentType = contentType;
-        this.plantImage = plantImage;
-    }
-
-    public LocalDate getPlantedDate() {
-        return plantedDate;
-    }
-
-    public void setPlantedDate(LocalDate plantedDate) {
-        this.plantedDate = plantedDate;
+    public void setImage(String contentType, byte[] image) {
+        this.imageContentType = contentType;
+        this.image = image;
     }
 }

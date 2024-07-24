@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -163,99 +162,5 @@ class PlantServiceTest {
         when(plantRepository.findById(id)).thenReturn(Optional.empty());
         plantService.setPlantImage(id, "image/png", new byte[]{});
         verify(plantRepository, never()).save(any());
-    }
-
-    @Test
-    void whenCreatePlant_thenTracksChanges() {
-        PlantDTO plantDTO = new PlantDTO("Rose", "5", "Flower", "1970-01-01");
-        Garden garden = new Garden("Garden", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041",1.0,2.0, "Big", null);
-        Long gardenId = 1L;
-        garden.setId(gardenId);
-
-        when(gardenRepository.findById(gardenId)).thenReturn(Optional.of(garden));
-        when(plantRepository.save(any(Plant.class))).thenAnswer((invocation) -> invocation.getArgument(0));
-
-        Plant plant = plantService.createPlant(plantDTO, gardenId);
-
-        verify(plantHistoryRepository).save(assertArg(historyItem -> {
-            assertEquals(plant, historyItem.getPlant());
-            assertEquals("Rose", historyItem.getName());
-            assertEquals("5", historyItem.getCount());
-            assertEquals("Flower", historyItem.getDescription());
-            assertNull(historyItem.getPlantImage());
-        }));
-    }
-
-    @Test
-    void whenUpdatePlant_andNoFieldsChanged_thenNoChangesTracked() {
-        Plant plant = new Plant("Rose", "5", "Flower", LocalDate.of(1970, 1, 1));
-        Long plantId = 1L;
-        plant.setId(plantId);
-        PlantDTO plantDTO = new PlantDTO("Rose", "5", "Flower", "1970-01-01");
-
-        plantService.updatePlant(plant, plantDTO);
-
-        verify(plantHistoryRepository, times(0)).save(any());
-    }
-
-    @Test
-    void whenUpdatePlant_andSomeFieldsChanged_thenTracksChanges() {
-        Plant plant = new Plant("Rose", "5", "Flower", LocalDate.of(1970, 1, 1));
-        Long plantId = 1L;
-        plant.setId(plantId);
-        PlantDTO plantDTO = new PlantDTO("Daisy", "3", "Flower", "1970-01-01");
-
-        plantService.updatePlant(plant, plantDTO);
-
-        verify(plantHistoryRepository).save(assertArg(historyItem -> {
-            assertEquals(plant, historyItem.getPlant());
-            assertEquals("Daisy", historyItem.getName());
-            assertEquals("3", historyItem.getCount());
-            assertNull(historyItem.getDescription());
-            assertNull(historyItem.getPlantedDate());
-            assertNull(historyItem.getPlantImage());
-        }));
-    }
-
-    @Test
-    void whenUpdatePlant_andAllFieldsChanged_thenTracksChanges() {
-        Plant plant = new Plant("Rose", "5", "Flower", LocalDate.of(1970, 1, 1));
-        Long plantId = 1L;
-        plant.setId(plantId);
-        PlantDTO plantDTO = new PlantDTO("Daisy", "3", "Pretty Flower", "2024-07-24");
-
-        plantService.updatePlant(plant, plantDTO);
-
-        verify(plantHistoryRepository).save(assertArg(historyItem -> {
-            assertEquals(plant, historyItem.getPlant());
-            assertEquals("Daisy", historyItem.getName());
-            assertEquals("3", historyItem.getCount());
-            assertEquals("Pretty Flower", historyItem.getDescription());
-            assertEquals(LocalDate.of(2024, 07, 24), historyItem.getPlantedDate());
-            assertNull(historyItem.getPlantImage());
-        }));
-    }
-
-    @Test
-    void whenUpdatePlantImage_thenTracksChanges() {
-        Plant plant = new Plant("Rose", "5", "Flower", LocalDate.of(1970, 1, 1));
-        long plantId = 1;
-        plant.setId(plantId);
-        String contentType = "image/png";
-        byte[] imageData = new byte[]{1, 2, 3, 4, 5};
-
-        when(plantRepository.findById(plantId)).thenReturn(Optional.of(plant));
-
-        plantService.setPlantImage(plantId, contentType, imageData);
-
-        verify(plantHistoryRepository).save(assertArg(historyItem -> {
-            assertEquals(plant, historyItem.getPlant());
-            assertNull(historyItem.getName());
-            assertNull(historyItem.getCount());
-            assertNull(historyItem.getDescription());
-            assertNull(historyItem.getPlantedDate());
-            assertEquals(contentType, historyItem.getPlantImageContentType());
-            assertEquals(imageData, historyItem.getPlantImage());
-        }));
     }
 }

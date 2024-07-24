@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.Clock;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -66,19 +65,9 @@ public class PlantService {
         plantDTO.normalize();
         Plant plant = new Plant(plantDTO);
 
-        Instant timestamp = clock.instant();
-        PlantHistoryItem historyItem = new PlantHistoryItem(plant, timestamp);
-        historyItem.setName(plant.getName());
-        historyItem.setCount(plant.getCount());
-        historyItem.setDescription(plant.getDescription());
-        historyItem.setPlantedDate(plant.getPlantedDate());
-
         Garden garden = gardenRepository.findById(gardenId).orElseThrow(() -> new RuntimeException("Garden not found"));
         plant.setGarden(garden);
-        plant = plantRepository.save(plant);
-        plantHistoryRepository.save(historyItem);
-
-        return plant;
+        return plantRepository.save(plant);
     }
 
 
@@ -86,41 +75,15 @@ public class PlantService {
      * Updates a plant in the database.
      * @param plant the plant object to update.
      * @param plantDTO the plant data to update the plant with.
-     * @return true if the plant was updated, false otherwise.
      */
-    public boolean updatePlant(Plant plant, PlantDTO plantDTO) {
-        Instant timestamp = clock.instant();
-        PlantHistoryItem historyItem = new PlantHistoryItem(plant, timestamp);
-
+    public void updatePlant(Plant plant, PlantDTO plantDTO) {
         plantDTO.normalize();
-        boolean hasChanged = false;
-        if (!plant.getName().equals(plantDTO.getName())) {
-            plant.setName(plantDTO.getName());
-            historyItem.setName(plant.getName());
-            hasChanged = true;
-        }
-        if (!plant.getCount().equals(plantDTO.getCount())) {
-            plant.setCount(plantDTO.getCount());
-            historyItem.setCount(plant.getCount());
-            hasChanged = true;
-        }
-        if (!plant.getDescription().equals(plantDTO.getDescription())) {
-            plant.setDescription(plantDTO.getDescription());
-            historyItem.setDescription(plant.getDescription());
-            hasChanged = true;
-        }
-        LocalDate plantedDate = plantDTO.getParsedPlantedDate();
-        if (plant.getPlantedDate() == null || !plant.getPlantedDate().equals(plantedDate)) {
-            plant.setPlantedDate(plantedDate);
-            historyItem.setPlantedDate(plant.getPlantedDate());
-            hasChanged = true;
-        }
+        plant.setName(plantDTO.getName());
+        plant.setCount(plantDTO.getCount());
+        plant.setDescription(plantDTO.getDescription());
+        plant.setPlantedDate(plantDTO.getParsedPlantedDate());
 
-        if (hasChanged) {
-            plantRepository.save(plant);
-            plantHistoryRepository.save(historyItem);
-        }
-        return hasChanged;
+        plantRepository.save(plant);
     }
 
 
@@ -149,7 +112,7 @@ public class PlantService {
 
         Instant timestamp = clock.instant();
         PlantHistoryItem historyItem = new PlantHistoryItem(plant.get(), timestamp);
-        historyItem.setPlantImage(contentType, plantImage);
+        historyItem.setImage(contentType, plantImage);
 
         plantRepository.save(plant.get());
         plantHistoryRepository.save(historyItem);
