@@ -533,7 +533,7 @@ public class GardenController {
                 gardenService.addGarden(garden);
             }
         } catch (Exception e) {
-            logger.info("Failed to add garden: {}", e);
+            logger.info("Failed to add garden", e);
         }
     }
 
