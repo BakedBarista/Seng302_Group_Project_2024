@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
+    <title>Add Plant</title>
+
+    <!-- This needs to be here for Bootstrap and general CSS imports -->
+    <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
+</head>
+<body>
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+    <main class="main-container">
+        <div class="card p-5">
+            <h2 class="mb-3">hiii</h2>
+            <form id="addPlantForm" th:action="@{${action}}" th:object="${plant}"  method="post" enctype="multipart/form-data" novalidate>
+                <div class="mb-3 d-flex justify-content-center">
+                    <div class="position-relative d-inline">
+                        <label for="image" class="position-absolute top-0 end-0" style="cursor: pointer;"><img th:src="@{/icons/trans-plus.svg}" alt="+" /></label>
+                        <input id="image" name="image" class="d-none" type="file" accept=".png,.jpg,.jpeg,.svg"/>
+                        <img id="preview" th:src="@{${imgSrc}}" alt="Plant Picture" class="rounded mx-auto d-block h-auto" style="width: 300px;" />
+                        <span id="plantImageError" class="invalid-feedback text-center"></span>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="description" th:class="'form-label ' + ${#fields.hasErrors('description') ? 'is-invalid' : ''}">Description:</label>
+                    <textarea id="description" name="description" th:class="'form-control ' + ${#fields.hasErrors('description') ? 'is-invalid' : ''}"th:text="${plant.description}"></textarea>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+                </div>
+                <div class="alert alert-danger" th:if="${fileTypeError}">
+                    <div th:text="${fileTypeError}" style="color: red"></div>
+                </div>
+        
+                <div class="alert alert-danger" th:if="${fileSizeError}">
+                    <div th:text="${fileSizeError}" style="color: red"></div>
+                </div>
+                <div>
+                    <button class="btn btn-primary" type="submit" onclick="return validateDate()">Submit!</button>
+                    <a type="button" class="btn btn-outline-secondary" th:href="@{/gardens/{id}(id=${gardenId})}">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </main>
+    <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
+</body>
+</html>

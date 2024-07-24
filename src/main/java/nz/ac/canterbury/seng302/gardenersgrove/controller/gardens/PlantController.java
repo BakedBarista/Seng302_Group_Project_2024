@@ -6,8 +6,10 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantHistoryItemDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.PlantHistoryService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,12 +38,14 @@ public class PlantController {
     private final PlantService plantService;
     private final GardenUserService gardenUserService;
     private final GardenService gardenService;
+    private final PlantHistoryService plantHistoryService;
 
     @Autowired
-    public PlantController(PlantService plantService, GardenService gardenService, GardenUserService gardenUserService) {
+    public PlantController(PlantService plantService, GardenService gardenService, GardenUserService gardenUserService, PlantHistoryService plantHistoryService) {
         this.plantService = plantService;
         this.gardenService = gardenService;
         this.gardenUserService = gardenUserService;
+        this.plantHistoryService = plantHistoryService;
     }
 
     /**
@@ -219,7 +223,6 @@ public class PlantController {
         logger.info("Returning the plants saved image from DB");
         return ResponseEntity.ok().contentType(MediaType.parseMediaType(existingPlant.getPlantImageContentType()))
                 .body(existingPlant.getPlantImage());
-
     }
 
     /**
@@ -242,5 +245,70 @@ public class PlantController {
             logger.info("Exception {}",e.toString());
         }
         return "redirect:" + referer;
+    }
+
+
+    /**
+     * send user to add plant history form - add plant and garden id to model for
+     * use in html file through thymeleaf
+     * @param model representation of results
+     * @param gardenId the id of the garden the plant is being added to
+     * @return redirect to add plant form
+     */
+    @GetMapping("/gardens/{gardenId}/plant/{id}/history")
+    public String addPlantHistoryForm(@PathVariable("id") Long gardenId, Model model){
+
+        logger.info("GET /gardens/${id}/add-plant - display the new plant form");
+        model.addAttribute("gardenId", gardenId);
+        model.addAttribute("plant", new Plant("","","",null));
+
+        GardenUser owner = gardenUserService.getCurrentUser();
+        Optional<Garden> garden = gardenService.getGardenById(gardenId);
+
+        List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
+        model.addAttribute("gardens", gardens);
+        return "plants/plantHistory";
+    }
+
+    /**
+     *
+     * @param gardenId the id of the garden that the plant belongs to
+     * @param plantId the id of the plant being edited
+     * @param file the image file
+     * @param plant the plant entity being edited
+     * @param bindingResult binding result which helps display errors
+     * @param model representation of results
+     * @return redirect to gardens page if data is valid
+     */
+    @PostMapping("/gardens/{gardenId}/plant/{plantId}/history")
+    public String submitPlantHistoryForm(@PathVariable("gardenId") long gardenId,
+                                      @PathVariable("plantId") long plantId,
+                                      @RequestParam("image") MultipartFile file,
+                                      @RequestParam("description") String description,
+                                      @Valid @ModelAttribute("plant") PlantHistoryItemDTO plantDTO,
+                                      BindingResult bindingResult,
+                                      Model model) {
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("description", plant);
+            logger.info("error");
+            return "plants/plantHistory";
+        }
+
+        Optional<Plant> existingPlant = plantService.getPlantById(plantId);
+
+        if (existingPlant.isPresent()){
+            plantService.updatePlant(existingPlant.get(), plant);
+            Plant nonOptionalPlant = existingPlant.get();
+            if (file != null) {
+                try {
+                    plantHistoryService.addHistoryItem(nonOptionalPlant, file.getContentType(), file.getBytes(), description);
+                } catch (Exception e) {
+                    logger.info("Exception {}",e.toString());
+                }
+            }
+        }
+
+        return "redirect:/gardens/"+gardenId;
     }
 }
