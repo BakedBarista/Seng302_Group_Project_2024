@@ -26,32 +26,38 @@ public class ProfanityServiceTest {
 
     @Test
     void givenListBadWords_ThenReturnTrue(){
-        ArrayList<String> result = profanityService.badWordsFound("fuck");
+        List<String> result = profanityService.badWordsFound("fuck");
         assertFalse(result.isEmpty());
     }
 
     @Test
     void givenListEmptyWords_ThenReturnEmpty(){
-        ArrayList<String> result = profanityService.badWordsFound("");
+        List<String> result = profanityService.badWordsFound("");
         assertTrue(result.isEmpty());
     }
 
     @Test
     void givenListGoodWords_ThenReturnEmpty(){
-        ArrayList<String> result = profanityService.badWordsFound("this is a very interesting story about gardens, there are no swear words in here :)");
+        List<String> result = profanityService.badWordsFound("this is a very interesting story about gardens, there are no swear words in here :)");
         assertTrue(result.isEmpty());
     }
 
     @Test
     void givenListBadWordsDisguised_ThenReturnTrue(){
-        ArrayList<String> result = profanityService.badWordsFound("b!tch");
+        List<String> result = profanityService.badWordsFound("b!tch");
+        assertFalse(result.isEmpty());
+    }
+
+    @Test
+    void givenListBadWordWithSpace_ThenReturnsTrue() {
+        List<String> result = profanityService.badWordsFound(" shit");
         assertFalse(result.isEmpty());
     }
 
     @Test
     void testBadWordsFound_WithLeetSpeak() {
         String input = "@ss";
-        ArrayList<String> result = profanityService.badWordsFound(input);
+        List<String> result = profanityService.badWordsFound(input);
         assertEquals(1, result.size());
         assertEquals("ass", result.get(0));
     }

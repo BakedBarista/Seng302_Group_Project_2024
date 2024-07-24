@@ -4,18 +4,20 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
-
-import jakarta.annotation.PostConstruct;
-import org.springframework.core.io.Resource;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
+
+import jakarta.annotation.PostConstruct;
 
 // skeleton code provided by https://gist.github.com/PimDeWitte/c04cc17bc5fa9d7e3aee6670d4105941.
 @Service
@@ -54,24 +56,27 @@ public class ProfanityService {
      * @return A list of bad words found
      */
 
-    public ArrayList<String> badWordsFound(String input) {
+    public List<String> badWordsFound(String input) {
         if(input == null) {
             return new ArrayList<>();
         }
         input = input.toLowerCase();
         input = replaceLeetSpeak(input);
 
-        ArrayList<String> badWords = new ArrayList<>();
-        String[] tokens = input.split("\\s+|\\p{Punct}");
+        List<String> badWords = new ArrayList<>();
+        Pattern pattern = Pattern.compile("[^\\s\\p{Punct}]+");
+        Matcher matcher = pattern.matcher(input);
 
         // iterate over each letter in the word
-        for (String token : tokens) {
-            for (int start = 0; start < token.length(); start++) {
-                for (int offset = 1; offset <= token.length() - start && offset <= largestWordLength; offset++) {
-                    String wordToCheck = token.substring(start, start + offset);
+        for (MatchResult match : matcher.results().toList()) {
+            String token = match.group();
+            int start = match.start();
+            for (int offset = 0; offset < token.length(); offset++) {
+                for (int length = 1; length <= token.length() - offset && length <= largestWordLength; length++) {
+                    String wordToCheck = token.substring(offset, offset + length);
                     if (words.contains(wordToCheck)) {
                         // Avoid false positive
-                        if (isStandaloneWord(input, start, start + offset)) {
+                        if (isStandaloneWord(input, start + offset, start + offset + length)) {
                             badWords.add(wordToCheck);
                         }
                     }
