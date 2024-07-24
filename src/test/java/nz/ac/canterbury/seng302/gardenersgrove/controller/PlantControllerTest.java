@@ -11,7 +11,6 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -32,7 +31,6 @@ import java.util.Collections;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
 public class PlantControllerTest {
@@ -83,7 +81,7 @@ public class PlantControllerTest {
     @Test
     void testAddPlantForm_GardenNotPresent_ReturnsAccessDenied() {
         long gardenId = 0;
-        String expectedReturnPage = "/error/accessDenied";
+        String expectedReturnPage = "error/accessDenied";
 
         when(gardenService.getGardenById(gardenId)).thenReturn(Optional.empty());
         String returnPage = plantController.addPlantForm(gardenId, model);
@@ -93,7 +91,7 @@ public class PlantControllerTest {
     @Test
     void testAddPlantForm_UserNotOwner_ReturnsAccessDenied() {
         long gardenId = 0;
-        String expectedReturnPage = "/error/accessDenied";
+        String expectedReturnPage = "error/accessDenied";
 
         GardenUser owner = new GardenUser();
         owner.setId(1L);
