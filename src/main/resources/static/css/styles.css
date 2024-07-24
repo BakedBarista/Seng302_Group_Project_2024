@@ -471,3 +471,11 @@ h1, h2, h3, h4, h5, h6 {
     border-radius: 4px 4px 0 0;
     margin-right: 5px;
 }
+
+/* Plant name on plant cards */
+.overflow-hidden {
+    max-width: 200px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
