@@ -1,6 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
-import java.time.Instant;
+import java.time.LocalDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -27,7 +27,7 @@ public class PlantHistoryItem {
     private Plant plant;
 
     @Column()
-    private Instant timestamp;
+    private LocalDate timestamp;
 
     @Size(min = 0, max = 512, message = "Plant history description must be less than 512 characters")
     @Column(nullable = true, length = 512)
@@ -49,7 +49,7 @@ public class PlantHistoryItem {
     /**
      * Constructs a plant history item with the given plant and timestamp
      */
-    public PlantHistoryItem(Plant plant, Instant timestamp) {
+    public PlantHistoryItem(Plant plant, LocalDate timestamp) {
         this.plant = plant;
         this.timestamp = timestamp;
     }
@@ -62,7 +62,7 @@ public class PlantHistoryItem {
         return plant;
     }
 
-    public Instant getTimestamp() {
+    public LocalDate getTimestamp() {
         return timestamp;
     }
 

@@ -5,7 +5,7 @@ import static org.mockito.Mockito.when;
 
 import java.time.Clock;
 import java.time.Instant;
-import java.util.Set;
+import java.time.ZoneId;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
@@ -66,6 +66,7 @@ class PlantHistoryServiceTest {
 
     @Test
     void whenAddHistoryItem_thenHistoryItemCreated() {
+        when(clock.getZone()).thenReturn(ZoneId.systemDefault());
         when(clock.instant()).thenReturn(timestamp);
         String contentType = "image/png";
         byte[] image = new byte[] { 1, 2, 3, 4, 5 };
@@ -75,7 +76,7 @@ class PlantHistoryServiceTest {
         assertEquals(1, plant.getHistory().size());
         PlantHistoryItem historyItem = plant.getHistory().iterator().next();
         assertEquals(plant, historyItem.getPlant());
-        assertEquals(timestamp, historyItem.getTimestamp());
+        assertEquals(timestamp.atZone(clock.getZone()).toLocalDate(), historyItem.getTimestamp());
         assertEquals(contentType, historyItem.getImageContentType());
         assertEquals(image, historyItem.getImage());
         assertEquals("Description", historyItem.getDescription());

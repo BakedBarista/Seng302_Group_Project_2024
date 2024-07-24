@@ -1,7 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import java.time.Clock;
-import java.time.Instant;
+import java.time.LocalDate;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.PlantHistoryItem;
@@ -20,7 +20,7 @@ public class PlantHistoryService {
     }
 
     public void addHistoryItem(Plant plant, String contentType, byte[] image, String description) {
-        Instant timestamp = clock.instant();
+        LocalDate timestamp = clock.instant().atZone(clock.getZone()).toLocalDate();
         PlantHistoryItem historyItem = new PlantHistoryItem(plant, timestamp);
         historyItem.setImage(contentType, image);
         historyItem.setDescription(description);
