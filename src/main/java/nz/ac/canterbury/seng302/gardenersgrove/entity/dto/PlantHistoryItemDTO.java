@@ -1,9 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity.dto;
 
-import jakarta.persistence.Lob;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationConstants.*;
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationMessages.*;
@@ -18,10 +16,15 @@ public class PlantHistoryItemDTO{
     @Pattern(regexp = DESCRIPTION_REGEX , message = INVALID_GARDEN_DESCRIPTION)
     private String description;
     
+    public PlantHistoryItemDTO(String description) {
+        this.description = description;
+    }
+
     public void setDescription() {
         this.description = description;
     }
 
+    
     public String getDescription() {
         return description;
     }

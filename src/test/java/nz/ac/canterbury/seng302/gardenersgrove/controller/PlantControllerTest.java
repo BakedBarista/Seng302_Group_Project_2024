@@ -5,10 +5,13 @@ import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.PlantControlle
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.PlantHistoryItem;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantHistoryItemDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.PlantHistoryService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -31,11 +34,19 @@ import java.util.Collections;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 public class PlantControllerTest {
     @Mock
     private PlantService plantService;
+
+    @Mock
+    private PlantHistoryService plantHistoryService;
 
     @Mock
     private MultipartFile file;
@@ -383,5 +394,24 @@ public class PlantControllerTest {
         String view = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, plantDTO, bindingResult, model);
 
         assertEquals("redirect:/gardens/" + gardenId, view);
+    }
+
+    @Test
+    void testSubmitAddPlantHistoryFormNoImage_ReturnToGardenDetailPage_PlantHistoryAddedToRepository() {
+        PlantHistoryItemDTO validHistoryPlantDTO = new PlantHistoryItemDTO("validDescription");
+        Plant plant = new Plant();
+        long gardenId = 0;
+        long plantId = 0;
+        String expectedReturnPage = "redirect:/gardens/" + gardenId;
+
+        BindingResult bindingResult = mock(BindingResult.class);
+        when(bindingResult.hasErrors()).thenReturn(false);
+        when(plantService.getPlantById(plantId)).thenReturn(Optional.of(plant));
+        try {
+            String returnPage = plantController.submitPlantHistoryForm(gardenId, plantId, file, dateValidStr, validHistoryPlantDTO, bindingResult, model);
+            assertEquals(expectedReturnPage, returnPage);
+        } catch (IOException e) {
+            fail("IOException occurred during test: " + e.getMessage());
+        }
     }
 }
