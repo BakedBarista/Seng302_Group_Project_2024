@@ -21,8 +21,8 @@ import java.util.Set;
 public class PlantService {
     Logger logger = LoggerFactory.getLogger(PlantService.class);
 
-    private final static Set<String> ACCEPTED_FILE_TYPES = Set.of("image/jpeg", "image/jpg", "image/png", "image/svg");
-    private final static int MAX_FILE_SIZE = 10 * 1024 * 1024;
+    private static final Set<String> ACCEPTED_FILE_TYPES = Set.of("image/jpeg", "image/jpg", "image/png", "image/svg");
+    private static final int MAX_FILE_SIZE = 10 * 1024 * 1024;
     private final PlantRepository plantRepository;
     private final GardenRepository gardenRepository;
 

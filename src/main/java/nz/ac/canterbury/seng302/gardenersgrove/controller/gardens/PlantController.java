@@ -34,10 +34,12 @@ import java.util.Optional;
 @Controller
 public class PlantController {
     Logger logger = LoggerFactory.getLogger(PlantController.class);
-
     private final PlantService plantService;
     private final GardenUserService gardenUserService;
     private final GardenService gardenService;
+
+    private final String PLANT_SUCCESSFULLY_SAVED_LOG = "Saved new plant to Garden ID: {}";
+    private final String PLANT_UNSUCCESSFULLY_SAVED_LOG = "Failed to save new plant to garden ID: {}";
 
     @Autowired
     public PlantController(PlantService plantService, GardenService gardenService, GardenUserService gardenUserService) {
@@ -113,12 +115,12 @@ public class PlantController {
         if (savedPlant != null) {
             try {
                 plantService.setPlantImage(savedPlant.getId(), file);
-                logger.info("Saved new plant to Garden ID: {}", gardenId);
+                logger.info(PLANT_SUCCESSFULLY_SAVED_LOG, gardenId);
             } catch (Exception e) {
-                logger.error("Failed to save new plant to garden ID: {}", gardenId);
+                logger.error(PLANT_UNSUCCESSFULLY_SAVED_LOG, gardenId);
             }
         } else {
-            logger.error("Failed to save new plant to garden ID: {}", gardenId);
+            logger.error(PLANT_UNSUCCESSFULLY_SAVED_LOG, gardenId);
         }
         return "redirect:/gardens/" + gardenId;
     }
@@ -198,9 +200,9 @@ public class PlantController {
             if (file != null) {
                 try {
                     plantService.setPlantImage(savedPlant.getId(), file);
-                    logger.info("Saved new plant to Garden ID: {}", gardenId);
+                    logger.info(PLANT_SUCCESSFULLY_SAVED_LOG, gardenId);
                 } catch (Exception e) {
-                    logger.error("Failed to save new plant to garden ID: {}", gardenId);
+                    logger.error(PLANT_UNSUCCESSFULLY_SAVED_LOG, gardenId);
                 }
             }
         }
@@ -251,9 +253,9 @@ public class PlantController {
         logger.info("POST /plants " + id + "/plant-image");
         try {
             plantService.setPlantImage(id, file);
-            logger.info("Saved new plant to Garden ID: {}", id);
+            logger.info(PLANT_SUCCESSFULLY_SAVED_LOG, id);
         } catch (Exception e) {
-            logger.error("Failed to save new plant to garden ID: {}", id);
+            logger.error(PLANT_UNSUCCESSFULLY_SAVED_LOG, id);
         }
         return "redirect:" + referer;
     }
