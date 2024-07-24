@@ -254,4 +254,18 @@ class PlantTest {
 
         assertEquals(expectedConstraintSetSize, validator.validate(plant).size());
     }
+
+    @Test
+    void givenPlantNameTooLong_whenFormSubmitted_thenReturnsConstraintViolationList() {
+        plant.setName("a".repeat(257));
+
+        assertFalse(validator.validate(plant).isEmpty());
+    }
+
+    @Test
+    void givenPlantNameHasValidLength_whenFormSubmitted_thenReturnsEmptyConstraintViolationList() {
+        plant.setName("a".repeat(256));
+
+        assertTrue(validator.validate(plant).isEmpty());
+    }
 }
