@@ -27,14 +27,24 @@ public abstract class BasePlant {
     @Column(nullable = false, length = 512)
     protected String description;
 
+
     @ManyToOne
     @JoinColumn
     protected Garden garden;
+
+    @Enumerated(EnumType.STRING)
+    private BasePlant.PlantStatus status;
 
     // Getters and setters
 
     public String getName() {
         return name;
+    }
+
+    public enum PlantStatus {
+        NOT_GROWING,
+        CURRENTLY_GROWING,
+        HARVESTED,
     }
 
     public void setName(String name) {
@@ -55,6 +65,14 @@ public abstract class BasePlant {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public void setIsHarvested(PlantStatus status) {
+         this.status = status;
+    }
+
+    public PlantStatus getIsHarvested() {
+        return status;
     }
 
     public Garden getGarden() {

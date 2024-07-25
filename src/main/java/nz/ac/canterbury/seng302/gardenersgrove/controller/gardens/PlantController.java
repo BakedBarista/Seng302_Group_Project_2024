@@ -257,4 +257,17 @@ public class PlantController {
         }
         return "redirect:" + referer;
     }
+
+    @PutMapping("/plants/{id}/status")
+    public ResponseEntity<String> updatePlantStatus(@PathVariable("id") Long id) {
+        logger.info("PUT /plants/" + id + "/status");
+        Optional<Plant> plant = plantService.getPlantById(id);
+        if (plant.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        Plant existingPlant = plant.get();
+
+
+        return ResponseEntity.ok().build();
+    }
 }

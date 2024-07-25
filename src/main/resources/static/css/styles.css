@@ -443,6 +443,21 @@ h1, h2, h3, h4, h5, h6 {
     --bs-btn-close-hover-opacity: 1.0;
 }
 
+.harvest-badge {
+    background-color: sandybrown;
+    color: white;
+}
+
+.growing-badge {
+    background-color: var(--gg-primary-light);
+    color: white;
+}
+
+.not-planted-badge {
+    background-color: saddlebrown;
+    color: white;
+}
+
 .friend-pending-badge {
     background-color: darkgoldenrod;
     font-size: 14px;
