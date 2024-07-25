@@ -50,6 +50,9 @@ public class PlantControllerTest {
 
     @Mock
     private MultipartFile file;
+
+    @Mock
+    private MultipartFile fileFilled;
     
     @Mock
     private GardenService gardenService;
@@ -76,7 +79,7 @@ public class PlantControllerTest {
         Garden mockGarden = new Garden();
         mockGarden.setOwner(mockUser);
         when(gardenService.getGardenById(0L)).thenReturn(Optional.of(mockGarden));
-
+        fileFilled = new MockMultipartFile("image", "testImage.jpg", "image/jpeg", "test image content".getBytes());
         model = mock(Model.class);
     }
 
@@ -410,6 +413,28 @@ public class PlantControllerTest {
         try {
             String returnPage = plantController.submitPlantHistoryForm(gardenId, plantId, file, dateValidStr, validHistoryPlantDTO, bindingResult, model);
             assertEquals(expectedReturnPage, returnPage);
+            verify(plantHistoryService, times(1)).addHistoryItem(plant, null, null, "");
+        } catch (IOException e) {
+            fail("IOException occurred during test: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void testSubmitAddPlantHistoryFormWithImage_ReturnToGardenDetailPage_PlantHistoryAddedToRepository() {
+        PlantHistoryItemDTO validHistoryPlantDTO = new PlantHistoryItemDTO("validDescription");
+        Plant plant = new Plant();
+        long gardenId = 0;
+        long plantId = 0;
+        String expectedReturnPage = "redirect:/gardens/" + gardenId;
+
+        BindingResult bindingResult = mock(BindingResult.class);
+        when(bindingResult.hasErrors()).thenReturn(false);
+        when(plantService.getPlantById(plantId)).thenReturn(Optional.of(plant));
+        try {
+            String returnPage = plantController.submitPlantHistoryForm(gardenId, plantId, fileFilled, "validDescription", validHistoryPlantDTO, bindingResult, model);
+            assertEquals(expectedReturnPage, returnPage);
+
+            verify(plantHistoryService).addHistoryItem(eq(plant), eq("image/jpeg"), any(byte[].class), eq("validDescription"));
         } catch (IOException e) {
             fail("IOException occurred during test: " + e.getMessage());
         }

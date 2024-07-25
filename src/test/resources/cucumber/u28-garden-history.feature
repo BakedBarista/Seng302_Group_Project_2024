@@ -4,11 +4,11 @@ Feature: U28, As Kaia, I want to keep track of planting history recording when I
         Given I am logged in as "Kaia"
         And My email is "Kaia@gmail.com"
         And My password is "P@ssw0rd"
-        And I have a garden "garden1"
+        And I have a garden
 
     Scenario: AC1 - planting date valid
         Given I am on the add plant form
-        When I enter a valid plant name "plant1" and a valid date "01/02/2020"
+        When I enter a valid plant name "plant1" and a valid date "2020-01-01"
         And I submit the add plant form
         Then the plant is successfully added
 
