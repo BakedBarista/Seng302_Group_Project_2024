@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
@@ -11,11 +12,19 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.multipart.MultipartFile;
+
 /**
  * PlantService implementation of the plant repository
  */
 @Service
 public class PlantService {
+    Logger logger = LoggerFactory.getLogger(PlantService.class);
+
+    private static final Set<String> ACCEPTED_FILE_TYPES = Set.of("image/jpeg", "image/jpg", "image/png", "image/svg");
+    private static final int MAX_FILE_SIZE = 10 * 1024 * 1024;
     private final PlantRepository plantRepository;
     private final GardenRepository gardenRepository;
 
@@ -34,7 +43,6 @@ public class PlantService {
      */
     public List<Plant> getAllPlants() { return plantRepository.findAll();}
 
-
     /**
      * Get a list of plants for given gardenId
      * @param gardenId the id of the garden
@@ -43,7 +51,6 @@ public class PlantService {
     public List<Plant> getPlantsByGardenId(long gardenId) {
         return plantRepository.findByGardenId(gardenId);
     }
-
 
     /**
      * Adds a plant to the database.
@@ -60,7 +67,6 @@ public class PlantService {
         return plantRepository.save(plant);
     }
 
-
     /**
      * Updates a plant in the database.
      * @param plant the plant object to update.
@@ -76,7 +82,6 @@ public class PlantService {
         plantRepository.save(plant);
     }
 
-
     /**
      * Get's one plant by it's unique ID.
      * @param id the unique ID of the plant in the database.
@@ -86,19 +91,37 @@ public class PlantService {
         return plantRepository.findById(id);
     }
 
-
     /**
      * Sets the image of the plant with given ID.
      * @param id ID of the plant which image is to be set
-     * @param contentType contentType The content type of the plant image
-     * @param plantImage The byte array representing the plant image
+     * @param plantImage multipart file for the plant image
      */
-    public void setPlantImage(long id, String contentType, byte[] plantImage) {
-        var plant = plantRepository.findById(id);
-        if (plant.isEmpty()) {
-            return;
+    public void setPlantImage(long id, MultipartFile plantImage) {
+        if (validateImage(plantImage)) {
+            var plant = plantRepository.findById(id);
+            if (plant.isEmpty()) {
+                return;
+            }
+
+            try {
+                plant.get().setPlantImage(plantImage.getContentType(), plantImage.getBytes());
+                plantRepository.save(plant.get());
+            } catch (Exception e) {
+                logger.error("Exception ", e);
+            }
+        } else {
+            logger.error("Plant image is too large or not of correct type");
         }
-        plant.get().setPlantImage(contentType, plantImage);
-        plantRepository.save(plant.get());
+    }
+
+    /**
+     * Validate an image on the server side to be > 10MB
+     * and a valid file type (png, svg, jpg, jpeg
+     * @param plantImage image to be validated
+     * @return true if it is valid
+     */
+    public boolean validateImage(MultipartFile plantImage) {
+        return ACCEPTED_FILE_TYPES.contains(plantImage.getContentType())
+                && (plantImage.getSize() <= MAX_FILE_SIZE);
     }
 }
