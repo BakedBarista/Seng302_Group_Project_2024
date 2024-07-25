@@ -21,9 +21,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -110,8 +107,7 @@ public class PlantController {
         }
 
         // Save the new plant and image
-        Plant plant = new Plant(plantDTO);
-        Plant savedPlant = plantService.addPlant(plant, gardenId);
+        Plant savedPlant = plantService.createPlant(plantDTO, gardenId);
         if (savedPlant != null) {
             try {
                 plantService.setPlantImage(savedPlant.getId(), file);
@@ -176,7 +172,7 @@ public class PlantController {
             );
         }
 
-        if (bindingResult.hasErrors() ) {
+        if (bindingResult.hasErrors()) {
             model.addAttribute("plant", plant);
             model.addAttribute("gardenId", gardenId);
             model.addAttribute("plantId", plantId);
@@ -185,21 +181,11 @@ public class PlantController {
 
         Optional<Plant> existingPlant = plantService.getPlantById(plantId);
         if (existingPlant.isPresent()){
-            existingPlant.get().setName(plant.getName());
-            existingPlant.get().setCount(plant.getCount());
-            existingPlant.get().setDescription(plant.getDescription());
-
-            if (plant.getPlantedDate() != null && !plant.getPlantedDate().isEmpty()) {
-                existingPlant.get().setPlantedDate(LocalDate.parse(plant.getPlantedDate()));
-            } else {
-                existingPlant.get().setPlantedDate(null);
-            }
-
-            Plant savedPlant = plantService.addPlant(existingPlant.get(), gardenId);
+            plantService.updatePlant(existingPlant.get(), plant);
 
             if (file != null) {
                 try {
-                    plantService.setPlantImage(savedPlant.getId(), file);
+                    plantService.setPlantImage(plantId, file);
                     logger.info(PLANT_SUCCESSFULLY_SAVED_LOG, gardenId);
                 } catch (Exception e) {
                     logger.error(PLANT_UNSUCCESSFULLY_SAVED_LOG, gardenId);

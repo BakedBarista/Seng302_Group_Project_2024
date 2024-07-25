@@ -1,5 +1,24 @@
 package nz.ac.canterbury.seng302.gardenersgrove.cucumber.step_definitions;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import org.junit.jupiter.api.Assertions;
+import org.springframework.security.core.Authentication;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.client.RestTemplate;
+
 import io.cucumber.java.BeforeAll;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -10,30 +29,29 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.GardenDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.WeatherData;
-import nz.ac.canterbury.seng302.gardenersgrove.model.weather.*;
+import nz.ac.canterbury.seng302.gardenersgrove.model.weather.Condition;
+import nz.ac.canterbury.seng302.gardenersgrove.model.weather.Current;
+import nz.ac.canterbury.seng302.gardenersgrove.model.weather.Day;
+import nz.ac.canterbury.seng302.gardenersgrove.model.weather.Forecast;
+import nz.ac.canterbury.seng302.gardenersgrove.model.weather.ForecastDay;
+import nz.ac.canterbury.seng302.gardenersgrove.model.weather.Location;
+import nz.ac.canterbury.seng302.gardenersgrove.model.weather.WeatherAPICurrentResponse;
+import nz.ac.canterbury.seng302.gardenersgrove.model.weather.WeatherAPIResponse;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.FriendsRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.weather.GardenWeatherRepository;
-import nz.ac.canterbury.seng302.gardenersgrove.service.*;
+import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.LocationService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.ModerationService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.ProfanityService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weather.GardenWeatherService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weather.WeatherAPIService;
-import org.junit.jupiter.api.Assertions;
-import org.springframework.security.core.Authentication;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.client.RestTemplate;
-
-import java.time.LocalDate;
-import java.util.*;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.verify;
 
 public class U14WeatherMonitoringFeature {
     private static Authentication authentication;

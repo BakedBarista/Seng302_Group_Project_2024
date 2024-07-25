@@ -216,7 +216,7 @@ public class PlantControllerTest {
 
         assertEquals(expectedReturnPage, returnPage);
 
-        verify(plantService, times(1)).addPlant(plant, gardenId);
+        verify(plantService, times(1)).updatePlant(plant, validPlantDTO);
     }
 
     @Test
@@ -270,7 +270,7 @@ public class PlantControllerTest {
         when(plantService.getPlantById(plantId)).thenReturn(Optional.of(plant));
         String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, validPlantDTO, bindingResult, model);
 
-        verify(plantService, times(1)).addPlant(plant, gardenId);
+        verify(plantService, times(1)).updatePlant(plant, validPlantDTO);
         assertEquals(expectedReturnPage, returnPage);
     }
 
@@ -286,7 +286,7 @@ public class PlantControllerTest {
         when(bindingResult.hasErrors()).thenReturn(true);
         String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, invalidPlantDTO, bindingResult, model);
 
-        verify(plantService, times(0)).addPlant(plant, gardenId);
+        verify(plantService, times(0)).updatePlant(eq(plant), any());
         assertEquals(expectedReturnPage, returnPage);
     }
 
@@ -352,7 +352,7 @@ public class PlantControllerTest {
         plant.setId(gardenId);
 
         when(bindingResult.hasErrors()).thenReturn(false);
-        when(plantService.addPlant(any(Plant.class), eq(gardenId))).thenReturn(plant);
+        when(plantService.createPlant(any(PlantDTO.class), eq(gardenId))).thenReturn(plant);
         when(file.isEmpty()).thenReturn(false);
         doThrow(new RuntimeException("Image processing error"))
                 .when(plantService).setPlantImage(anyLong(), any(MultipartFile.class));
