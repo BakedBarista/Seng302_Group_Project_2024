@@ -310,9 +310,20 @@
         const plantImageForms = document.querySelectorAll(".plantImageForm");
         const plantImageFormsSmall = document.querySelectorAll(".plantImageFormSmall");
 
+        function clearErrorMessages() {
+            document.querySelectorAll(".plantImageError").forEach((errorElement) => {
+                errorElement.style.display = "none";
+                errorElement.textContent = "";
+            });
+            document.querySelectorAll(".plantImageErrorSmall").forEach((errorElement) => {
+                errorElement.style.display = "none";
+                errorElement.textContent = "";
+            });
+        }
+
         function handleImageInputChange(plantImageInput, plantImageError, form) {
-            console.log("here")
             plantImageInput.addEventListener("change", (e) => {
+                clearErrorMessages()
                 const file = plantImageInput.files[0];
                 if (!file) {
                     return;
