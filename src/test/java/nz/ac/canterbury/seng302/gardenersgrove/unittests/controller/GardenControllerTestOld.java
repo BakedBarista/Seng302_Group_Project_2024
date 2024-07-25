@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng302.gardenersgrove.controller;
+package nz.ac.canterbury.seng302.gardenersgrove.unittests.controller;
 
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.GardenController;
@@ -36,7 +36,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-public class GardenControllerTest {
+public class GardenControllerTestOld {
 
     String EXPECTED_MODERATION_ERROR_MESSAGE = "The description does not match the language standards of the app.";
     String LOCATION_ERROR_MESSAGE = "Location name must only include letters, numbers, spaces, dots, hyphens or apostrophes";
