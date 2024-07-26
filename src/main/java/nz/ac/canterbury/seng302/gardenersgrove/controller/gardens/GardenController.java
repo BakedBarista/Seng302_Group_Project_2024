@@ -271,6 +271,7 @@ public class GardenController {
             if (isNotOwner && isNotPublic){
                 return "/error/accessDenied";
             }
+
             model.addAttribute("NZ_FORMAT_DATE", NZ_FORMAT_DATE);
             model.addAttribute("HISTORY_FORMAT_DATE", HISTORY_FORMAT_DATE);
             model.addAttribute("plants", plantService.getPlantsByGardenId(id));

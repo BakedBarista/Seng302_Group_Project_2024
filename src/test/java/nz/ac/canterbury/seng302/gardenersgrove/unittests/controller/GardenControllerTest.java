@@ -417,6 +417,7 @@ public class GardenControllerTest {
     @Test
     void givenIGoToTheGardenHistoryPage_whenThereIsAGardenWithHistory_thenTheGardenHistoryIsAddedToTheModel() {
         Model model = mock(Model.class);
+        when(authentication.getPrincipal()).thenReturn(1L);
         LocalDate expectedDate = LocalDate.of(1999, 1, 1);
         Long gardenId = 0L;
         List<Plant> plants = new ArrayList<>();
@@ -438,6 +439,7 @@ public class GardenControllerTest {
     @Test
     void givenIGoToTheGardenHistoryPage_whenThereIsNoGardenWithHistory_thenReturnAnEmptyMap() {
         Model model = mock(Model.class);
+        when(authentication.getPrincipal()).thenReturn(1L);
         LocalDate expectedDate = LocalDate.of(1999, 1, 1);
         Long gardenId = 0L;
         List<Plant> plants = new ArrayList<>();
@@ -456,6 +458,7 @@ public class GardenControllerTest {
     @Test
     void givenIGoToTheGardenHistoryPage_whenThereIsNoGarden_thenRedirectTo404() {
         Model model = mock(Model.class);
+        when(authentication.getPrincipal()).thenReturn(1L);
         LocalDate expectedDate = LocalDate.of(1999, 1, 1);
         Long gardenId = 999L;
         List<Plant> plants = new ArrayList<>();
@@ -481,6 +484,6 @@ public class GardenControllerTest {
 
         String result = gardenController.gardenHistory(authentication, 0L, model);
 
-        Assertions.assertEquals("error/404", result);
+        Assertions.assertEquals("/error/accessDenied", result);
     }
 }
