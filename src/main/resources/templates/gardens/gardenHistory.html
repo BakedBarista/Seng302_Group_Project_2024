@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
+    <title>Garden History</title>
+    <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
+
+    <meta name="_gardenId" th:content="${garden.id}" />
+</head>
+
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<main class="main-container" style="margin-top: 10%;">
+    <div class="card p-5">
+        <h1><span th:text="${garden.name}"></span> History</h1>
+        <div th:each="item : ${history}" class="mt-3">
+            <strong th:text="${dateFormatter.format(item.date, HISTORY_FORMAT_DATE)}"></strong>
+            <div class="mt-2 ms-3">
+                <span class="badge-pill badge friend-pending-badge" th:text="${item.action}"></span>
+                <span th:text="${item.plant.name}"></span>
+            </div>
+        </div>
+    </div>
+</main> 
+<th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
+</body>
+</html>

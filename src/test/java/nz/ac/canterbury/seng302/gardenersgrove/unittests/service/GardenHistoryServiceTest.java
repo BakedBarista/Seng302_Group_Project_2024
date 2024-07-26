@@ -28,7 +28,7 @@ class GardenHistoryServiceTest {
         Garden garden = new Garden();
         garden.setPlants(null);
 
-        List<GardenHistoryItemDTO> gardenHistory = gardenHistoryService.findPlantHistoryByGarden(garden);
+        List<GardenHistoryItemDTO> gardenHistory = gardenHistoryService.getGardenHistory(garden);
 
         assertTrue(gardenHistory.isEmpty());
     }
@@ -38,7 +38,7 @@ class GardenHistoryServiceTest {
         Garden garden = new Garden();
         garden.setPlants(List.of());
 
-        List<GardenHistoryItemDTO> gardenHistory = gardenHistoryService.findPlantHistoryByGarden(garden);
+        List<GardenHistoryItemDTO> gardenHistory = gardenHistoryService.getGardenHistory(garden);
 
         assertTrue(gardenHistory.isEmpty());
     }
@@ -56,7 +56,7 @@ class GardenHistoryServiceTest {
         Garden garden = new Garden();
         garden.setPlants(List.of(plant1, plant2, plant3, plant4));
 
-        List<GardenHistoryItemDTO> gardenHistory = gardenHistoryService.findPlantHistoryByGarden(garden);
+        List<GardenHistoryItemDTO> gardenHistory = gardenHistoryService.getGardenHistory(garden);
 
         assertEquals(3, gardenHistory.size() );
         assertEquals(plant3, gardenHistory.get(0).getPlant());

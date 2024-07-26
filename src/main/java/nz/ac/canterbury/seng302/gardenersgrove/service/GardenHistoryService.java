@@ -20,7 +20,7 @@ public class GardenHistoryService {
      * @param garden Garden to retrieve the plant history of
      * @return History of plants in a garden
      */
-    public List<GardenHistoryItemDTO> findPlantHistoryByGarden(Garden garden) {
+    public List<GardenHistoryItemDTO> getGardenHistory(Garden garden) {
         List<Plant> plants = garden.getPlants();
 
         List<GardenHistoryItemDTO> items = new ArrayList<>();
