@@ -19,7 +19,7 @@ public class Garden extends BaseGarden {
     private boolean displayWeatherAlert = true;
 
     @Column
-    private LocalDate alertHidden;
+    private LocalDate weatherAlertHidden;
 
     @Column
     private boolean wateringRecommendation;
@@ -110,12 +110,12 @@ public class Garden extends BaseGarden {
         this.gardenWeather = gardenWeather;
     }
 
-    public LocalDate getAlertHidden() {
-        return alertHidden;
+    public LocalDate getWeatherAlertHidden() {
+        return weatherAlertHidden;
     }
 
-    public void setAlertHidden(LocalDate alertHidden) {
-        this.alertHidden = alertHidden;
+    public void setWeatherAlertHidden(LocalDate alertHidden) {
+        this.weatherAlertHidden = alertHidden;
     }
 
 
