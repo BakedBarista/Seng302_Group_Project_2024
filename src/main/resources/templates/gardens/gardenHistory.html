@@ -13,9 +13,9 @@
 <main class="main-container" style="margin-top: 10%;">
     <div class="card p-5">
         <h1><span th:text="${garden.name}"></span> History</h1>
-        <div th:each="item : ${history}" class="mt-3">
-            <strong th:text="${dateFormatter.format(item.date, HISTORY_FORMAT_DATE)}"></strong>
-            <div class="mt-2 ms-3">
+        <div th:each="entry : ${history.entrySet()}" class="mt-3">
+            <strong th:text="${dateFormatter.format(entry.key, HISTORY_FORMAT_DATE)}"></strong>
+            <div th:each="item : ${entry.value}" class="mt-2 ms-3">
                 <span class="badge-pill badge friend-pending-badge" th:text="${item.action}"></span>
                 <span th:text="${item.plant.name}"></span>
             </div>

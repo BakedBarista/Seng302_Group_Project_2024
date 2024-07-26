@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.SortedMap;
 import java.util.stream.Collectors;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.HISTORY_FORMAT_DATE;;
@@ -275,7 +276,7 @@ public class GardenController {
             model.addAttribute("HISTORY_FORMAT_DATE", HISTORY_FORMAT_DATE);
             model.addAttribute("plants", plantService.getPlantsByGardenId(id));
 
-            List<GardenHistoryItemDTO> history = gardenHistoryService.getGardenHistory(garden);
+            SortedMap<LocalDate, List<GardenHistoryItemDTO>> history = gardenHistoryService.getGardenHistory(garden);
             model.addAttribute("history", history);
 
             return "gardens/gardenHistory";
@@ -564,7 +565,7 @@ public class GardenController {
                     String[] plantDetail = plantsDetails.get(j);
                     String plantName = plantDetail[0];
                     String plantDescription = plantDetail[1];
-                    PlantDTO plant = new PlantDTO(plantName, "15", plantDescription, "2024-03-01");
+                    PlantDTO plant = new PlantDTO(plantName, "15", plantDescription, "2024-03-%02d".formatted(j % 5 + 1));
                     Plant savedPlant = plantService.createPlant(plant, garden.getId());
 
                     plants.add(savedPlant);
