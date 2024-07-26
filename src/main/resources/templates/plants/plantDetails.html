@@ -9,34 +9,43 @@
 </head>
 <body>
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
-<!--<main class="main-container">-->
-<!--</main>-->
-<!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-    Plant Details
-</button>
+<!--                <p>Planted Date: <span th:text="${plant.plantedDate"></span></p>-->
+<!--                <p>Plant Count: <span th:text="${plant.count"></span></p>-->
+<!--                <p>Description: <span th:text="${plant.description"></span></p>-->
+<!--                <div>-->
+<!--                    <h2>Plant History: </h2>-->
+<!--                    <p>... TBD</p>-->
+<!--                </div>-->
 
-<!-- Modal -->
-<div class="modal fade" id="staticBackdrop"tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" th:text="${plant.name}"></h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>Planted Date: <span th:text="${plant.plantedDate"></span></p>
-                <p>Plant Count: <span th:text="${plant.count"></span></p>
-                <p>Description: <span th:text="${plant.description"></span></p>
-                <div>
-                    <h2>Plant History: </h2>
-                    <p>... TBD</p>
+<main class="row">
+    <div class="col-md-4 px-5">
+        <img th:src="@{'/plants/' + ${plant.id} + '/plant-image'}" alt="Plant Picture" class="w-100 rounded d-block" style="width: 300px; height: 300px;" />
+        <h1 th:text="${plant.name}">Plant Name:</h1>
+        <p>Planted Date: <span th:text="${plant.plantedDate}"></span></p>
+        <p>Plant Count: <span th:text="${plant.count}"></span></p>
+        <p>Harvested: </p>
+        <p>Description: <span th:text="${plant.description}"></span></p>
+    </div>
+    <div class="col-md-8">
+        <h1>Plant Timeline</h1>
+<!--    Make multiple of these cards using the same format as the way plant cards work on the gardenDetail page. It is commented out below and needs adapting    -->
+<!--        <div th:each="plant: ${plants}" class="card mb-3 d-lg-none" style="max-width: 540px;">-->
+        <div class="card mb-3" style="max-width: 540px;">
+            <div class="row g-0">
+                <div class="col-md-4">
+<!--                    This needs to be updated to the history image-->
+                    <img th:src="@{'/plants/' + ${plant.id} + '/plant-image'}" alt="Plant Picture" class="w-100 rounded d-block" style="width: 50px; height: 50px;" />
+                    <p>Date here temporarily</p>
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <p class="card-text">This is where the optional description will go.</p>
+                    </div>
                 </div>
             </div>
-
         </div>
     </div>
-</div>
+</main>
 
 
 
