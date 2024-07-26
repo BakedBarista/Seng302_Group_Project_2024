@@ -24,13 +24,15 @@ public class GardenHistoryService {
         List<Plant> plants = garden.getPlants();
 
         List<GardenHistoryItemDTO> items = new ArrayList<>();
+        if (plants == null) {
+            return items;
+        }
 
         for (Plant plant : plants) {
-            //TODO implement harvest action
-
             if (plant.getPlantedDate() != null) {
-                items.add(new GardenHistoryItemDTO(plant.getPlantedDate(), GardenHistoryItemDTO.Action.PLANTED));
+                items.add(new GardenHistoryItemDTO(plant, plant.getPlantedDate(), GardenHistoryItemDTO.Action.PLANTED));
             }
+            //TODO implement harvest action
         }
         items.sort(Comparator.reverseOrder());
         return items;
