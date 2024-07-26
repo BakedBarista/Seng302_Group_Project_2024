@@ -255,7 +255,7 @@ public class GardenController {
      * @return gardenHistory page
      */
     @GetMapping("/gardens/{id}/history")
-    public String gardenHistory(@PathVariable(name = "id") Long id, Model model) {
+    public String gardenHistory(Authentication authentication, @PathVariable(name = "id") Long id, Model model) {
         logger.info("Get /gardens/{}/history - display garden history", id);
         Optional<Garden> gardenOpt = gardenService.getGardenById(id);
         model.addAttribute("dateFormatter", new ThymeLeafDateFormatter());
@@ -264,8 +264,8 @@ public class GardenController {
             Garden garden = gardenOpt.get();
             model.addAttribute("garden", garden);
             model.addAttribute("owner", garden.getOwner());
-            GardenUser currentUser = gardenUserService.getCurrentUser();
-            boolean isNotOwner = !garden.getOwner().getId().equals(currentUser.getId());
+            Long userId = (Long) authentication.getPrincipal();
+            boolean isNotOwner = !garden.getOwner().getId().equals(userId);
             boolean isNotPublic = !garden.getIsPublic();
 
             if (isNotOwner && isNotPublic){

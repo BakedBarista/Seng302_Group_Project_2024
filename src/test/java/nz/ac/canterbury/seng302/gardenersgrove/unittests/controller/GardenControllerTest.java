@@ -12,6 +12,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weather.WeatherAPIService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
@@ -414,7 +415,7 @@ public class GardenControllerTest {
     }
 
     @Test
-    void givenIGoToTheGardenHistoryPage_whenTheGardenIsFound_thenTheGardenHistoryIsAddedToTheModel() {
+    void givenIGoToTheGardenHistoryPage_whenThereIsAGardenWithHistory_thenTheGardenHistoryIsAddedToTheModel() {
         Model model = mock(Model.class);
         LocalDate expectedDate = LocalDate.of(1999, 1, 1);
         Long gardenId = 0L;
@@ -428,8 +429,58 @@ public class GardenControllerTest {
         expectedHistory.put(expectedDate, List.of(expectedDTO));
         when(gardenHistoryService.getGardenHistory(mockGarden)).thenReturn(expectedHistory);
 
-        gardenController.gardenHistory(gardenId, model);
+        String result = gardenController.gardenHistory(authentication, gardenId, model);
 
         verify(model).addAttribute("history", expectedHistory);
+        Assertions.assertEquals("gardens/gardenHistory", result);
+    }
+
+    @Test
+    void givenIGoToTheGardenHistoryPage_whenThereIsNoGardenWithHistory_thenReturnAnEmptyMap() {
+        Model model = mock(Model.class);
+        LocalDate expectedDate = LocalDate.of(1999, 1, 1);
+        Long gardenId = 0L;
+        List<Plant> plants = new ArrayList<>();
+        mockGarden.setPlants(plants);
+
+        SortedMap<LocalDate, List<GardenHistoryItemDTO>> expectedHistory = new TreeMap<>(Comparator.reverseOrder());
+        expectedHistory.put(expectedDate, List.of());
+        when(gardenHistoryService.getGardenHistory(mockGarden)).thenReturn(expectedHistory);
+
+        String result = gardenController.gardenHistory(authentication, gardenId, model);
+
+        verify(model).addAttribute("history", expectedHistory);
+        Assertions.assertEquals("gardens/gardenHistory", result);
+    }
+
+    @Test
+    void givenIGoToTheGardenHistoryPage_whenThereIsNoGarden_thenRedirectTo404() {
+        Model model = mock(Model.class);
+        LocalDate expectedDate = LocalDate.of(1999, 1, 1);
+        Long gardenId = 999L;
+        List<Plant> plants = new ArrayList<>();
+        mockGarden.setPlants(plants);
+
+        SortedMap<LocalDate, List<GardenHistoryItemDTO>> expectedHistory = new TreeMap<>(Comparator.reverseOrder());
+        expectedHistory.put(expectedDate, List.of());
+        when(gardenHistoryService.getGardenHistory(mockGarden)).thenReturn(expectedHistory);
+
+        String result = gardenController.gardenHistory(authentication, gardenId, model);
+
+        Assertions.assertEquals("error/404", result);
+    }
+
+    @Test
+    void givenIGoToTheGardenHistoryPage_whenTheGardenIsNotMine_andItIsNotPublic_thenDontAuthenticate() {
+        Model model = mock(Model.class);
+        when(authentication.getPrincipal()).thenReturn(2L);
+        mockGarden.setPublic(false);
+
+        SortedMap<LocalDate, List<GardenHistoryItemDTO>> expectedHistory = new TreeMap<>(Comparator.reverseOrder());
+        when(gardenHistoryService.getGardenHistory(mockGarden)).thenReturn(expectedHistory);
+
+        String result = gardenController.gardenHistory(authentication, 0L, model);
+
+        Assertions.assertEquals("error/404", result);
     }
 }
