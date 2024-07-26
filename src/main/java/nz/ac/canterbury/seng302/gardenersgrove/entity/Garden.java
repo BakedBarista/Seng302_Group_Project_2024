@@ -18,7 +18,7 @@ public class Garden extends BaseGarden {
     @Column(nullable = false)
     private boolean displayWeatherAlert = true;
 
-    @Column
+    @Column(name = "alert_hidden")
     private LocalDate weatherAlertHidden;
 
     @Column
