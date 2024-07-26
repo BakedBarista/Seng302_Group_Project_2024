@@ -14,7 +14,7 @@ Feature: U28, As Kaia, I want to keep track of planting history recording when I
 
     Scenario: AC2 - planting date invalid
         Given I am on the add plant form
-        When I enter a valid plant name "plant1" and a invalid date "01/02/2030"
+        When I enter a valid plant name "plant2" and a invalid date "2030-02-01"
         And I submit the add plant form
         Then the plant is not added
 

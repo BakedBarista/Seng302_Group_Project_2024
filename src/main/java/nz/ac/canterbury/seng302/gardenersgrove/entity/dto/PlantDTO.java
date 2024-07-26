@@ -1,10 +1,13 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity.dto;
 
+import nz.ac.canterbury.seng302.gardenersgrove.validation.AgeRange;
 import nz.ac.canterbury.seng302.gardenersgrove.validation.ValidDate;
 
 import java.time.LocalDate;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant;
+
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationConstants.USER_MAX_AGE;
 
 /**
  * DTO for plants

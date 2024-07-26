@@ -21,4 +21,5 @@ import org.springframework.test.context.ContextConfiguration;
 @SpringBootTest
 @ActiveProfiles("cucumber")
 public class RunCucumberTest {
+
 }
