@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
+    <title>Plant Details</title>
+
+    <!-- This needs to be here for Bootstrap and general CSS imports -->
+    <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
+</head>
+<body>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+<!--<main class="main-container">-->
+<!--</main>-->
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+    Plant Details
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop"tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" th:text="${plant.name}"></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Planted Date: <span th:text="${plant.plantedDate"></span></p>
+                <p>Plant Count: <span th:text="${plant.count"></span></p>
+                <p>Description: <span th:text="${plant.description"></span></p>
+                <div>
+                    <h2>Plant History: </h2>
+                    <p>... TBD</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+<th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
+</body>
+<script th:src="@{/js/nextFormBox.js}"></script>
+<script th:src="@{/js/plantImageErrorChecking.js}"></script>
+<script th:src="@{/js/dateValidation.js}"></script>
+</html>

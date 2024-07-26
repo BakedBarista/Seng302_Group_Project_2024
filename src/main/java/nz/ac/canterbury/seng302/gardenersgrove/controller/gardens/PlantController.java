@@ -313,4 +313,30 @@ public class PlantController {
 
         return "redirect:/gardens/"+gardenId;
     }
+
+    /**
+     * Controller for the plant detail page
+     * @param model representation of results
+     * @return redirect to plant detail page
+     */
+    @GetMapping("/gardens/{gardenId}/plants/{plantId}")
+    public String getPlantDetail(@PathVariable("gardenId") long gardenId,
+                                @PathVariable("plantId") long plantId,
+                                Model model) {
+        logger.info("/garden/{}/plant/{}", gardenId, plantId);
+        Optional<Plant> plant = plantService.getPlantById(plantId);
+        GardenUser owner = gardenUserService.getCurrentUser();
+        Optional<Garden> garden = gardenService.getGardenById(gardenId);
+
+        if (!garden.isPresent() || !garden.get().getOwner().getId().equals(owner.getId())) {
+            return "/error/accessDenied";
+        }
+
+        List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
+//        model.addAttribute("gardens", gardens);
+        model.addAttribute("gardenId", gardenId);
+        model.addAttribute("plantId", plantId);
+        model.addAttribute("plant", plant.orElse(null));
+        return "plants/plantDetails";
+    }
 }
