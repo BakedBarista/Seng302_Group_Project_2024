@@ -117,4 +117,6 @@ public class Garden extends BaseGarden {
     public void setAlertHidden(LocalDate alertHidden) {
         this.alertHidden = alertHidden;
     }
+
+
 }

@@ -23,7 +23,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -34,11 +33,13 @@ import java.util.Optional;
 @Controller
 public class PlantController {
     Logger logger = LoggerFactory.getLogger(PlantController.class);
-
     private final PlantService plantService;
     private final GardenUserService gardenUserService;
     private final GardenService gardenService;
     private final PlantHistoryService plantHistoryService;
+
+    private final static String PLANT_SUCCESSFULLY_SAVED_LOG = "Saved new plant to Garden ID: {}";
+    private final static String PLANT_UNSUCCESSFULLY_SAVED_LOG = "Failed to save new plant to garden ID: {}";
 
     @Autowired
     public PlantController(PlantService plantService, GardenService gardenService, GardenUserService gardenUserService, PlantHistoryService plantHistoryService) {
@@ -113,13 +114,13 @@ public class PlantController {
         Plant savedPlant = plantService.createPlant(plantDTO, gardenId);
         if (savedPlant != null) {
             try {
-                plantService.setPlantImage(savedPlant.getId(), file.getContentType(), file.getBytes());
-                logger.info("Saved new plant to Garden ID: {}", gardenId);
-            } catch (IOException e) {
-                logger.error("Something went wrong saving the user's plant image: ", e);
+                plantService.setPlantImage(savedPlant.getId(), file);
+                logger.info(PLANT_SUCCESSFULLY_SAVED_LOG, gardenId);
+            } catch (Exception e) {
+                logger.error(PLANT_UNSUCCESSFULLY_SAVED_LOG, gardenId);
             }
         } else {
-            logger.error("Failed to save new plant to garden ID: {}", gardenId);
+            logger.error(PLANT_UNSUCCESSFULLY_SAVED_LOG, gardenId);
         }
         return "redirect:/gardens/" + gardenId;
     }
@@ -188,9 +189,10 @@ public class PlantController {
 
             if (file != null) {
                 try {
-                    plantService.setPlantImage(plantId, file.getContentType(), file.getBytes());
+                    plantService.setPlantImage(plantId, file);
+                    logger.info(PLANT_SUCCESSFULLY_SAVED_LOG, gardenId);
                 } catch (Exception e) {
-                    logger.info("Exception {}",e.toString());
+                    logger.error(PLANT_UNSUCCESSFULLY_SAVED_LOG, gardenId);
                 }
             }
         }
@@ -231,18 +233,18 @@ public class PlantController {
      * @param id Plant id the image is saving to
      * @param referer The page where the request sent from
      * @return Redirects to the current page
-     * @throws Exception File exception
      */
     @PostMapping("plants/{id}/plant-image")
     public String uploadPlantImage(
             @RequestParam("image") MultipartFile file,
             @PathVariable("id") Long id,
-            @RequestHeader(HttpHeaders.REFERER) String referer) throws Exception {
+            @RequestHeader(HttpHeaders.REFERER) String referer) {
         logger.info("POST /plants " + id + "/plant-image");
         try {
-            plantService.setPlantImage(id, file.getContentType(), file.getBytes());
+            plantService.setPlantImage(id, file);
+            logger.info(PLANT_SUCCESSFULLY_SAVED_LOG, id);
         } catch (Exception e) {
-            logger.info("Exception {}",e.toString());
+            logger.error(PLANT_UNSUCCESSFULLY_SAVED_LOG, id);
         }
         return "redirect:" + referer;
     }
