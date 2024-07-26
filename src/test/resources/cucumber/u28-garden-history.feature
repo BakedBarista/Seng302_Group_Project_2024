@@ -43,13 +43,6 @@ Feature: U28, As Kaia, I want to keep track of planting history recording when I
         When I add a image on the record and submit
         Then the image is on the record
 
-    Scenario: AC6 - planting record add image, no image
-        Given I am browsing my recorded plants
-        And I select a plant "plant1" that has not been harvested 
-        And has no image on record for today
-        When I add a image on the record and submit
-        Then the image is on the record
-
     Scenario: AC7 - planting record add image, image exists
         Given I am browsing my recorded plants
         And I select a plant "plant1" that has not been harvested 

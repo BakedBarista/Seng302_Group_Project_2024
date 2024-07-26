@@ -28,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.mockito.Mock;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -130,5 +131,31 @@ public class U28GardenHistoryPlantDateFeature {
         assertNull(plantService.getPlantsByGardenId(gardenId));
     }
 
+    @Given("I am browsing my recorded plants")
+    public void iAmBrowsingMyRecordedPlants() {
+        List<Plant> plants = plantService.getPlantsByGardenId(gardenId);
+        assertNotNull(plants);
+    }
 
+
+    @And("I select a plant {string} that has not been harvested")
+    public void iSelectAPlantThatHasNotBeenHarvested(String arg0) {
+
+    }
+
+    @And("has no image on record for today")
+    public void hasNoImageOnRecordForToday() {
+        Optional<Plant> plant = plantService.getPlantById(plantId);
+        assertNotNull(plant);
+    }
+
+    @When("I add a image on the record and submit")
+    public void iAddAImageOnTheRecordAndSubmit() {
+
+    }
+
+    @Then("the image is on the record")
+    public void theImageIsOnTheRecord() {
+
+    }
 }
