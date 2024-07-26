@@ -4,7 +4,7 @@ Feature: U28, As Kaia, I want to keep track of planting history recording when I
         Given I am logged in as "Kaia"
         And My email is "Kaia@gmail.com"
         And My password is "P@ssw0rd"
-        And I have a garden
+        And I have a garden named "garden1"
 
     Scenario: AC1 - planting date valid
         Given I am on the add plant form
