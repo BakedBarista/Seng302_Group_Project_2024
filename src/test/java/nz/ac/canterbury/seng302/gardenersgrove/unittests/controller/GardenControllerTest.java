@@ -12,7 +12,6 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weather.WeatherAPIService;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
@@ -27,7 +26,6 @@ import java.time.LocalDate;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -71,18 +69,17 @@ public class GardenControllerTest {
     private static Authentication authentication;
 
     private static GardenRepository gardenRepository;
-    private static Garden mockGarden;
+    private Garden mockGarden;
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
         gardenRepository = mock(GardenRepository.class);
         GardenUser mockUser = mock(GardenUser.class);
-        mockGarden = mock(Garden.class);
         when(mockUser.getId()).thenReturn(1L);
         when(gardenUserService.getCurrentUser()).thenReturn(mockUser);
         when(gardenService.getGardensByOwnerId(1L)).thenReturn(Collections.emptyList());
 
-        Garden mockGarden = new Garden();
+        mockGarden = new Garden();
         mockGarden.setOwner(mockUser);
         when(gardenService.getGardenById(0L)).thenReturn(Optional.of(mockGarden));
 
@@ -416,7 +413,6 @@ public class GardenControllerTest {
         assertEquals("/error/accessDenied", result);
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     void givenIGoToTheGardenHistoryPage_whenTheGardenIsFound_thenTheGardenHistoryIsAddedToTheModel() {
         Model model = mock(Model.class);
@@ -434,10 +430,6 @@ public class GardenControllerTest {
 
         gardenController.gardenHistory(gardenId, model);
 
-        var history = (SortedMap<LocalDate, List<GardenHistoryItemDTO>>) model.getAttribute("history");
-
-        Assertions.assertNotNull(history);
-        Assertions.assertEquals(expectedDTO, history.get(expectedDate).get(0));
+        verify(model).addAttribute("history", expectedHistory);
     }
-
 }
