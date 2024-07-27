@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.PlantHistoryItem;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantHistoryItemDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
@@ -328,15 +329,26 @@ public class PlantController {
         GardenUser owner = gardenUserService.getCurrentUser();
         Optional<Garden> garden = gardenService.getGardenById(gardenId);
 
-        if (!garden.isPresent() || !garden.get().getOwner().getId().equals(owner.getId())) {
-            return "/error/accessDenied";
+        if (plant.isPresent()) {
+            Plant plantItem =  plant.get();
+            List <PlantHistoryItemDTO> plantHistory = plantHistoryService.getPlantHistory(plantItem);
+            model.addAttribute("plantHistory", plantHistory);
+
+            if (!garden.isPresent() || !garden.get().getOwner().getId().equals(owner.getId())) {
+                return "/error/accessDenied";
+            }
+
+            List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
+//        model.addAttribute("gardens", gardens);
+            model.addAttribute("gardenId", gardenId);
+            model.addAttribute("plantId", plantId);
+            model.addAttribute("plant", plant.orElse(null));
+
+
+            return "plants/plantDetails";
+
         }
 
-        List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
-//        model.addAttribute("gardens", gardens);
-        model.addAttribute("gardenId", gardenId);
-        model.addAttribute("plantId", plantId);
-        model.addAttribute("plant", plant.orElse(null));
-        return "plants/plantDetails";
+        return "error/404";
     }
 }

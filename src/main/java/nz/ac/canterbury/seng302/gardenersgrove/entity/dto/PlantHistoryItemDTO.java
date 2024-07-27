@@ -9,7 +9,7 @@ import static nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationMessa
 /**
  * Data transfer object for the plant history form
  */
-public class PlantHistoryItemDTO{
+public class PlantHistoryItemDTO {
 
 
     @Size(max = 512, message = INVALID_GARDEN_DESCRIPTION)
@@ -18,6 +18,9 @@ public class PlantHistoryItemDTO{
     
     public PlantHistoryItemDTO(String description) {
         this.description = description;
+    }
+
+    public PlantHistoryItemDTO () {
     }
 
     public void setDescription() {

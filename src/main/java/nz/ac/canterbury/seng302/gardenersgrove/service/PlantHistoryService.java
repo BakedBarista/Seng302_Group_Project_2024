@@ -2,7 +2,10 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantHistoryItemDTO;
 import org.springframework.stereotype.Service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
@@ -31,4 +34,13 @@ public class PlantHistoryService {
         plant.getHistory().add(historyItem);
         plantHistoryRepository.save(historyItem);
     }
+
+    public List<PlantHistoryItemDTO> getPlantHistory(Plant plant) {
+        List<PlantHistoryItem> historyItems = plantHistoryRepository.findByPlantId(plant.getId());
+        return historyItems.stream()
+                .map(item -> new PlantHistoryItemDTO(item.getDescription()))
+                .collect(Collectors.toList());
+    }
+
+
 }
