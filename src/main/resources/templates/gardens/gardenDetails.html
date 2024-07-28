@@ -280,7 +280,7 @@
                                 <p class="m-0" th:text="${plant.description}"><!--Plant Description goes here--></p>
                             </div>
                         </div >
-                        <div class="dropdown d-flex justify-content-end">
+                        <div class="dropdown d-flex justify-content-start">
                             <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).NOT_GROWING}" class="badge not-planted-badge">Not Growing</span>
                                 <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).CURRENTLY_GROWING}" class="badge growing-badge">Growing</span>
@@ -297,20 +297,10 @@
                                     <span class="badge harvest-badge">Harvested</span>
                                 </button>
                             </div>
+                            <div>
+                                <label id=`harvestDate/${plant.id}` th:if="plant.harvestedDate != null" th:text="${plant.harvestedDate}"></label>
+                            </div>
                         </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
                     </div>
 
                 </div>
@@ -389,6 +379,7 @@
                 } else if (newStatus === 'HARVESTED') {
                     badge.textContent = 'Harvested';
                     badge.className = 'badge harvest-badge';
+                    document.getElementById(`harvestDate/${plantId}`).innerText = `${data.harvestedDate}`;
                 }
             })
             .catch(error => {

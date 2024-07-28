@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
+import java.time.LocalDate;
+
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationConstants.GARDEN_REGEX;
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationConstants.POSITIVE_WHOLE_NUMBER_REGEX;
 
@@ -33,7 +35,10 @@ public abstract class BasePlant {
     protected Garden garden;
 
     @Enumerated(EnumType.STRING)
-    private PlantStatus status = PlantStatus.NOT_GROWING;;
+    private PlantStatus status = PlantStatus.NOT_GROWING;
+
+    @Column()
+    protected LocalDate harvestedDate;
 
     // Getters and setters
 
@@ -45,6 +50,14 @@ public abstract class BasePlant {
         NOT_GROWING,
         CURRENTLY_GROWING,
         HARVESTED,
+    }
+
+    public void setHarvestedDate(LocalDate date) {
+        this.harvestedDate = date;
+    }
+
+    public LocalDate getHarvestedDate() {
+        return harvestedDate;
     }
 
     public void setName(String name) {
