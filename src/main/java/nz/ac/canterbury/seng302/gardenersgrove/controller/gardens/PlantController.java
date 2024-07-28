@@ -7,10 +7,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantHistoryItemDTO;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.PlantHistoryService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +24,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.NZ_FORMAT_DATE;
 
 /**
  * Controller for Plant related activities
@@ -325,18 +324,29 @@ public class PlantController {
                                 Model model) {
         logger.info("/garden/{}/plant/{}", gardenId, plantId);
         Optional<Plant> plant = plantService.getPlantById(plantId);
-        GardenUser owner = gardenUserService.getCurrentUser();
         Optional<Garden> garden = gardenService.getGardenById(gardenId);
 
-        if (!garden.isPresent() || !garden.get().getOwner().getId().equals(owner.getId())) {
-            return "/error/accessDenied";
+        if (garden.isPresent()) {
+            GardenUser owner = garden.get().getOwner();
+            GardenUser currentUser = gardenUserService.getCurrentUser();
+            boolean isNotOwner = !owner.getId().equals(currentUser.getId());
+            boolean isNotPublic = !garden.get().getIsPublic();
+
+            if (isNotOwner && isNotPublic){
+                logger.warn("User tried to access a non-public garden that is not theirs, denying access.");
+                return "/error/accessDenied";
+            }
+
+            model.addAttribute("garden", garden.get());
+            model.addAttribute("owner", owner);
+            model.addAttribute("currentUser", currentUser);
         }
 
-        List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
-//        model.addAttribute("gardens", gardens);
         model.addAttribute("gardenId", gardenId);
         model.addAttribute("plantId", plantId);
         model.addAttribute("plant", plant.orElse(null));
+        model.addAttribute("dateFormatter", new ThymeLeafDateFormatter());
+        model.addAttribute("NZ_FORMAT_DATE", NZ_FORMAT_DATE);
         return "plants/plantDetails";
     }
 }
