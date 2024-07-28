@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
     <title>Plant Details</title>
@@ -48,18 +48,17 @@
 <main class="row">
     <div class="col-lg-4 px-5 justify-content-center d-flex full-height-lg" style="background-color: #E2E9CE40">
         <div class="text-center py-5">
+            <div class="pb-3 d-flex justify-content-start">
+                <!--            <a type="button" class="btn btn-outline-secondary" th:href="@{/gardens/{id}(id=${gardenId})}">Cancel</a>-->
+                <a class="btn btn-outline-primary" type="button" th:href="@{/gardens/{id}(id=${gardenId})}"><img th:src="@{/icons/back.svg}" alt="" width="20" height="20" /></a>
+            </div>
             <img th:src="@{'/plants/' + ${plant.id} + '/plant-image'}" alt="Plant Picture" class="w-100 rounded d-block" style="width: 300px; height: 300px;" />
-<!--            <h1 class="py-3" th:text="${plant.name}">Plant Name:</h1>-->
             <div class="d-flex">
-                <!--                                    <div class="fw-bold mb-1">-->
-                <!--                                        <span class="fw-bold" style="font-size: 16pt;" th:text="${plant.name}">Plant Name</span>-->
-                <!--                                    </div>-->
                 <div class="overflow-hidden">
                     <h1 class="fw-bold text-truncate" th:text="${plant.name}">Plant Name</h1>
                 </div>
-<!--                TODO: Link back up the edit button-->
                 <div class="d-flex align-items-center justify-content-left ps-3">
-                    <a class="ms-auto justify-content-end">
+                    <a class="ms-auto justify-content-end"  th:if="${currentUser.id == garden.owner.id}" th:href="@{/gardens/{gardenId}/plants/{plantId}/edit(gardenId=${garden.id}, plantId=${plant.id})}">
                         <img class="mx-1" th:src="@{/icons/edit.svg}" alt="" width="25" height="25" />
                     </a>
                 </div>
@@ -71,8 +70,7 @@
                          alt=""
                          width="20"
                          height="20" />
-<!--                    TODO: put ryans plant formatter back in here-->
-                    <p class="mx-1 my-0" th:text="${plant.plantedDate}">Planted Date</p>
+                    <p class="ms-1 my-0" th:text="${dateFormatter.format(plant.plantedDate, NZ_FORMAT_DATE)}">Planted Date</p>
                 </div>
                 <div class="d-flex">
                     <div class="d-flex">
@@ -98,11 +96,11 @@
         <div class="d-flex justify-content-center align-items-center mb-1 sticky-top bg-white p-5">
             <h1 class="flex-grow-1 text-center m-0">Plant Timeline</h1>
         </div>
-<!--    Make multiple of these cards using the same format as the way plant cards work on the gardenDetail page. It is commented out below and needs adapting    -->
-<!--        <div th:each="plant: ${plants}" class="card mb-3 d-lg-none" style="max-width: 540px;">-->
-<!-- Section: Timeline -->
+
         <section class="py-3 px-3">
           <ul class="timeline-with-icons">
+<!--              TODO: Actually show the plants history-->
+<!--              Link up one of these cards with the backend and use thymeleaf to make as many as their are records.-->
             <li class="timeline-item mb-5">
               <span class="timeline-icon">
                 <img class="mx-1" th:src="@{/icons/harvest.svg}" alt="" width="25" height="25" />
@@ -136,170 +134,10 @@
                   The day this plant was first planted.
               </p>
             </li>
-              <li class="timeline-item mb-5">
-              <span class="timeline-icon">
-                <img class="mx-1" th:src="@{/icons/harvest.svg}" alt="" width="25" height="25" />
-              </span>
-
-                  <p class="fw-bold">Harvested</p>
-                  <p class="text-muted mb-2 fw-bold">11 March 2020</p>
-                  <p class="text-muted">
-                      My tomatoes were ready to go today! So yummy!
-                  </p>
-              </li>
-
-              <li class="timeline-item mb-5">
-              <span class="timeline-icon">
-                <img class="mx-1" th:src="@{/icons/record.svg}" alt="" width="25" height="25" />
-              </span>
-                  <p class="fw-bold">Update</p>
-                  <p class="text-muted mb-2 fw-bold">19 March 2020</p>
-                  <p class="text-muted">
-                      My tomato bush grew 3cm!
-                  </p>
-              </li>
-
-              <li class="timeline-item mb-5">
-              <span class="timeline-icon">
-                <img class="mx-1" th:src="@{/icons/first-planted.svg}" alt="" width="25" height="25" />
-              </span>
-                  <p class="fw-bold">First Planted!</p>
-                  <p class="text-muted mb-2 fw-bold">24 June 2020</p>
-                  <p class="text-muted">
-                      The day this plant was first planted.
-                  </p>
-              </li>
-              <li class="timeline-item mb-5">
-              <span class="timeline-icon">
-                <img class="mx-1" th:src="@{/icons/harvest.svg}" alt="" width="25" height="25" />
-              </span>
-
-                  <p class="fw-bold">Harvested</p>
-                  <p class="text-muted mb-2 fw-bold">11 March 2020</p>
-                  <p class="text-muted">
-                      My tomatoes were ready to go today! So yummy!
-                  </p>
-              </li>
-
-              <li class="timeline-item mb-5">
-              <span class="timeline-icon">
-                <img class="mx-1" th:src="@{/icons/record.svg}" alt="" width="25" height="25" />
-              </span>
-                  <p class="fw-bold">Update</p>
-                  <p class="text-muted mb-2 fw-bold">19 March 2020</p>
-                  <p class="text-muted">
-                      My tomato bush grew 3cm!
-                  </p>
-              </li>
-
-              <li class="timeline-item mb-5">
-              <span class="timeline-icon">
-                <img class="mx-1" th:src="@{/icons/first-planted.svg}" alt="" width="25" height="25" />
-              </span>
-                  <p class="fw-bold">First Planted!</p>
-                  <p class="text-muted mb-2 fw-bold">24 June 2020</p>
-                  <p class="text-muted">
-                      The day this plant was first planted.
-                  </p>
-              </li>
-              <li class="timeline-item mb-5">
-              <span class="timeline-icon">
-                <img class="mx-1" th:src="@{/icons/harvest.svg}" alt="" width="25" height="25" />
-              </span>
-
-                  <p class="fw-bold">Harvested</p>
-                  <p class="text-muted mb-2 fw-bold">11 March 2020</p>
-                  <p class="text-muted">
-                      My tomatoes were ready to go today! So yummy!
-                  </p>
-              </li>
-
-              <li class="timeline-item mb-5">
-              <span class="timeline-icon">
-                <img class="mx-1" th:src="@{/icons/record.svg}" alt="" width="25" height="25" />
-              </span>
-                  <p class="fw-bold">Update</p>
-                  <p class="text-muted mb-2 fw-bold">19 March 2020</p>
-                  <p class="text-muted">
-                      My tomato bush grew 3cm!
-                  </p>
-              </li>
-
-              <li class="timeline-item mb-5">
-              <span class="timeline-icon">
-                <img class="mx-1" th:src="@{/icons/first-planted.svg}" alt="" width="25" height="25" />
-              </span>
-                  <p class="fw-bold">First Planted!</p>
-                  <p class="text-muted mb-2 fw-bold">24 June 2020</p>
-                  <p class="text-muted">
-                      The day this plant was first planted.
-                  </p>
-              </li>
-              <li class="timeline-item mb-5">
-              <span class="timeline-icon">
-                <img class="mx-1" th:src="@{/icons/harvest.svg}" alt="" width="25" height="25" />
-              </span>
-
-                  <p class="fw-bold">Harvested</p>
-                  <p class="text-muted mb-2 fw-bold">11 March 2020</p>
-                  <p class="text-muted">
-                      My tomatoes were ready to go today! So yummy!
-                  </p>
-              </li>
-
-              <li class="timeline-item mb-5">
-              <span class="timeline-icon">
-                <img class="mx-1" th:src="@{/icons/record.svg}" alt="" width="25" height="25" />
-              </span>
-                  <p class="fw-bold">Update</p>
-                  <p class="text-muted mb-2 fw-bold">19 March 2020</p>
-                  <p class="text-muted">
-                      My tomato bush grew 3cm!
-                  </p>
-              </li>
-
-              <li class="timeline-item mb-5">
-              <span class="timeline-icon">
-                <img class="mx-1" th:src="@{/icons/first-planted.svg}" alt="" width="25" height="25" />
-              </span>
-                  <p class="fw-bold">First Planted!</p>
-                  <p class="text-muted mb-2 fw-bold">24 June 2020</p>
-                  <p class="text-muted">
-                      The day this plant was first planted.
-                  </p>
-              </li>
           </ul>
         </section>
-<!-- Section: Timeline -->
-
-
-
-
-
-
-
-<!--        <div class="card mb-3" style="max-width: 540px;">-->
-<!--            <div class="row g-0">-->
-<!--                <div class="col-md-4">-->
-<!--&lt;!&ndash;                    This needs to be updated to the history image&ndash;&gt;-->
-<!--                    <img th:src="@{'/plants/' + ${plant.id} + '/plant-image'}" alt="Plant Picture" class="w-100 rounded d-block" style="width: 50px; height: 50px;" />-->
-<!--                    <p>Date here temporarily</p>-->
-<!--                </div>-->
-<!--                <div class="col-md-8">-->
-<!--                    <div class="card-body">-->
-<!--                        <p class="card-text">This is where the optional description will go.</p>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
     </div>
 </main>
-
-
-
-
-
-
 <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
 </body>
 <script th:src="@{/js/nextFormBox.js}"></script>
