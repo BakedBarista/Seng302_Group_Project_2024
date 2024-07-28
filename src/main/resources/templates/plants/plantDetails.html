@@ -35,7 +35,7 @@
                 <div class="col-md-4">
 <!--                    This needs to be updated to the history image-->
                     <img th:src="@{'/plants/' + ${plant.id} + '/plant-image'}" alt="Plant Picture" class="w-100 rounded d-block" style="width: 50px; height: 50px;" />
-                    <p>Date here temporarily</p>
+                    <p th:text="${history.timestamp}">Date here temporarily</p>
                 </div>
                 <div class="col-md-8">
                     <div class="card-body">
