@@ -19,7 +19,7 @@ public class DateValidator implements ConstraintValidator<ValidDate, String> {
 
     private static final String DATE_PATTERN_STORED = "^\\d{2}/\\d{2}/\\d{4}$";
 
-    private static final int MIN_YEAR = 1800;
+    private static final int MIN_YEAR = 1900;
 
     /**
      * validate a given date string as long as it is not empty.
