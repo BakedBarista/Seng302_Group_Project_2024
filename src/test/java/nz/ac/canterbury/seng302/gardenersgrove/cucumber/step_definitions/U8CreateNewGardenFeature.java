@@ -41,7 +41,7 @@ public class U8CreateNewGardenFeature {
     private static GardenUserRepository gardenUserRepository;
 
     private static WeatherAPIService weatherAPIService;
-    private static  RestTemplate restTemplate;
+    private static RestTemplate restTemplate;
 
     private static LocationService locationService;
     private static FriendService friendService;

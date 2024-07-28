@@ -8,6 +8,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.GardenDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.CurrentWeather;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.WeatherData;
@@ -216,9 +217,9 @@ public class GardenController {
                      displayWeatherAlert = garden.getDisplayWeatherAlert();
                      displayWeather = true;
 
-                     if (garden.getAlertHidden() == null || !garden.getAlertHidden().isEqual(LocalDate.now())) {
+                     if (garden.getWeatherAlertHidden() == null || !garden.getWeatherAlertHidden().isEqual(LocalDate.now())) {
                          logger.info("Garden alert hide status expired, showing watering alert again.");
-                         garden.setAlertHidden(null);
+                         garden.setWeatherAlertHidden(null);
                          garden.setDisplayWeatherAlert(true);
                          gardenService.addGarden(garden);
                          displayWeatherAlert = true;
@@ -255,7 +256,7 @@ public class GardenController {
             logger.info("Setting alert to hide for Garden {} until next day.", id);
             Garden garden = gardenOptional.get();
             garden.setDisplayWeatherAlert(false);
-            garden.setAlertHidden(LocalDate.now());
+            garden.setWeatherAlertHidden(LocalDate.now());
             gardenService.addGarden(garden);
         }
         return "redirect:/gardens/" + id;
@@ -515,15 +516,15 @@ public class GardenController {
                 garden.setPublic(true);
                 gardenService.addGarden(garden);
 
-                logger.info("Garden " + gardenName + "added");
+                logger.info("Garden {} added", gardenName);
 
                 List<Plant> plants = new ArrayList<>();
                 for (int j = 0; j < plantsDetails.size(); j++) {
                     String[] plantDetail = plantsDetails.get(j);
                     String plantName = plantDetail[0];
                     String plantDescription = plantDetail[1];
-                    Plant plant = new Plant(plantName, "15", plantDescription, LocalDate.of(2024, 3, 1));
-                    Plant savedPlant = plantService.addPlant(plant, garden.getId());
+                    PlantDTO plant = new PlantDTO(plantName, "15", plantDescription, "2024-03-01");
+                    Plant savedPlant = plantService.createPlant(plant, garden.getId());
 
                     plants.add(savedPlant);
                 }
@@ -532,12 +533,7 @@ public class GardenController {
                 gardenService.addGarden(garden);
             }
         } catch (Exception e) {
-            logger.info("Failed to add garden");
+            logger.info("Failed to add garden", e);
         }
     }
-
 }
-
-
-
-

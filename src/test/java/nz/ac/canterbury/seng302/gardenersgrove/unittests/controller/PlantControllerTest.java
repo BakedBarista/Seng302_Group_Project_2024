@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng302.gardenersgrove.controller;
+package nz.ac.canterbury.seng302.gardenersgrove.unittests.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.PlantController;
@@ -216,7 +216,7 @@ public class PlantControllerTest {
 
         assertEquals(expectedReturnPage, returnPage);
 
-        verify(plantService, times(1)).addPlant(plant, gardenId);
+        verify(plantService, times(1)).updatePlant(plant, validPlantDTO);
     }
 
     @Test
@@ -270,7 +270,7 @@ public class PlantControllerTest {
         when(plantService.getPlantById(plantId)).thenReturn(Optional.of(plant));
         String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, validPlantDTO, bindingResult, model);
 
-        verify(plantService, times(1)).addPlant(plant, gardenId);
+        verify(plantService, times(1)).updatePlant(plant, validPlantDTO);
         assertEquals(expectedReturnPage, returnPage);
     }
 
@@ -286,7 +286,7 @@ public class PlantControllerTest {
         when(bindingResult.hasErrors()).thenReturn(true);
         String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, invalidPlantDTO, bindingResult, model);
 
-        verify(plantService, times(0)).addPlant(plant, gardenId);
+        verify(plantService, times(0)).updatePlant(eq(plant), any());
         assertEquals(expectedReturnPage, returnPage);
     }
 
@@ -325,7 +325,7 @@ public class PlantControllerTest {
     }
 
     @Test
-    void whenImageUploaded_thenRedirectToReferer() throws Exception {
+    void whenImageUploaded_thenRedirectToReferer() {
         Plant plant = new Plant();
         String referer = "/gardens/1";
         byte[] image = {};
@@ -335,7 +335,7 @@ public class PlantControllerTest {
         MultipartFile file = new MockMultipartFile(name,originalFilename,contentType,image);
         when(plantService.getPlantById(1L)).thenReturn(Optional.of(plant));
         doThrow(new RuntimeException("Image processing error"))
-                .when(plantService).setPlantImage(anyLong(), anyString(), any(byte[].class));
+                .when(plantService).setPlantImage(anyLong(), any(MultipartFile.class));
 
         String response = plantController.uploadPlantImage(file, 1L, referer);
 
@@ -352,10 +352,10 @@ public class PlantControllerTest {
         plant.setId(gardenId);
 
         when(bindingResult.hasErrors()).thenReturn(false);
-        when(plantService.addPlant(any(Plant.class), eq(gardenId))).thenReturn(plant);
+        when(plantService.createPlant(any(PlantDTO.class), eq(gardenId))).thenReturn(plant);
         when(file.isEmpty()).thenReturn(false);
         doThrow(new RuntimeException("Image processing error"))
-                .when(plantService).setPlantImage(anyLong(), anyString(), any(byte[].class));
+                .when(plantService).setPlantImage(anyLong(), any(MultipartFile.class));
 
         String view = plantController.submitAddPlantForm(gardenId, plantDTO, bindingResult, file, dateValidStr, model);
 
@@ -363,7 +363,7 @@ public class PlantControllerTest {
     }
 
     @Test
-    void testSubmitEditPlantFormWithImage() throws Exception {
+    void testSubmitEditPlantFormWithImage() {
         long gardenId = 1L;
         long plantId = 1L;
         PlantDTO plantDTO = new PlantDTO("Plant", "10", "Yellow", "2024-11-03");
@@ -378,7 +378,7 @@ public class PlantControllerTest {
         when(plantService.getPlantById(plantId)).thenReturn(existingPlant);
         when(file.isEmpty()).thenReturn(false);
         doThrow(new RuntimeException("Image processing error"))
-                .when(plantService).setPlantImage(anyLong(), anyString(), any(byte[].class));
+                .when(plantService).setPlantImage(anyLong(), any(MultipartFile.class));
 
         String view = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, plantDTO, bindingResult, model);
 

@@ -1,6 +1,8 @@
-package nz.ac.canterbury.seng302.gardenersgrove.service;
+package nz.ac.canterbury.seng302.gardenersgrove.unittests.service;
 
 import jakarta.servlet.http.HttpServletRequest;
+import nz.ac.canterbury.seng302.gardenersgrove.service.URLService;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
