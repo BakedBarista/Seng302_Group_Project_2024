@@ -80,4 +80,8 @@ public class PlantService {
         plant.get().setPlantImage(contentType, plantImage);
         plantRepository.save(plant.get());
     }
+
+    public Plant save(Plant plant) {
+        return plantRepository.save(plant);
+    }
 }

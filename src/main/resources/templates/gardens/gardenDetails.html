@@ -282,15 +282,34 @@
                         </div >
                         <div class="dropdown d-flex justify-content-end">
                             <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Dropdown button
+                                <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).NOT_GROWING}" class="badge not-planted-badge">Not Growing</span>
+                                <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).CURRENTLY_GROWING}" class="badge growing-badge">Growing</span>
+                                <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).HARVESTED}" class="badge harvest-badge">Harvested</span>
                             </button>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item" href="#"><span class="badge not-planted-badge">Not Planted</span></a>
-                                <a class="dropdown-item" href="#"><span class="badge growing-badge">Growing</span></a>
-                                <a class="dropdown-item" href="#"><span class="badge harvest-badge">Harvested</span></a>
-
+                                <button type="button" class="dropdown-item" th:onclick="'updateStatus(' + ${plant.id} + ', \'NOT_GROWING\')'">
+                                    <span class="badge not-planted-badge">Not Growing</span>
+                                </button>
+                                <button type="button" class="dropdown-item" th:onclick="'updateStatus(' + ${plant.id} + ', \'CURRENTLY_GROWING\')'">
+                                    <span class="badge growing-badge">Growing</span>
+                                </button>
+                                <button type="button" class="dropdown-item" th:onclick="'updateStatus(' + ${plant.id} + ', \'HARVESTED\')'">
+                                    <span class="badge harvest-badge">Harvested</span>
+                                </button>
                             </div>
                         </div>
+
+
+
+
+
+
+
+
+
+
+
+
 
                     </div>
 
@@ -330,7 +349,7 @@
             });
         }
 
-        plantImageForms.forEach(function(plantImageForm) {
+        plantImageForms.forEach(function (plantImageForm) {
             const plantImageInput = plantImageForm.querySelector(".image");
             const plantImageError = plantImageForm.querySelector(".plantImageError");
             handleImageInputChange(plantImageInput, plantImageError, plantImageForm);
@@ -342,6 +361,43 @@
             handleImageInputChange(plantImageInput, plantImageError, form);
         });
     })();
+
+
+    function updateStatus(plantId, newStatus) {
+        fetch(`${apiBaseUrl}/plants/${plantId}/status?status=${newStatus}`, {
+            method: 'PUT',
+            headers: {
+                'content-type': 'application/json',
+                [csrfHeader]: csrf,
+            },
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Network response was not ok.');
+            })
+            .then(data => {
+                // Update the badge text based on the new status
+                const badge = document.querySelector('#dropdownMenuButton .badge');
+                if (newStatus === 'NOT_GROWING') {
+                    badge.textContent = 'Not Growing';
+                    badge.className = 'badge not-planted-badge';
+                } else if (newStatus === 'CURRENTLY_GROWING') {
+                    badge.textContent = 'Growing';
+                    badge.className = 'badge growing-badge';
+                } else if (newStatus === 'HARVESTED') {
+                    badge.textContent = 'Harvested';
+                    badge.className = 'badge harvest-badge';
+                }
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    }
+
+
+
 
 
 </script>

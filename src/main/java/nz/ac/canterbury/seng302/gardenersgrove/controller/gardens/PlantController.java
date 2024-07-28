@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.gardens;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
@@ -25,6 +26,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -258,16 +260,12 @@ public class PlantController {
         return "redirect:" + referer;
     }
 
-    @PutMapping("/plants/{id}/status")
-    public ResponseEntity<String> updatePlantStatus(@PathVariable("id") Long id) {
-        logger.info("PUT /plants/" + id + "/status");
-        Optional<Plant> plant = plantService.getPlantById(id);
-        if (plant.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        Plant existingPlant = plant.get();
 
 
-        return ResponseEntity.ok().build();
-    }
+
+
+
+
+
+
 }

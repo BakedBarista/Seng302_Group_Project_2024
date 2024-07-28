@@ -33,7 +33,7 @@ public abstract class BasePlant {
     protected Garden garden;
 
     @Enumerated(EnumType.STRING)
-    private BasePlant.PlantStatus status;
+    private PlantStatus status = PlantStatus.NOT_GROWING;;
 
     // Getters and setters
 
@@ -67,11 +67,11 @@ public abstract class BasePlant {
         this.description = description;
     }
 
-    public void setIsHarvested(PlantStatus status) {
+    public void setStatus(BasePlant.PlantStatus status) {
          this.status = status;
     }
 
-    public PlantStatus getIsHarvested() {
+    public BasePlant.PlantStatus getStatus() {
         return status;
     }
 

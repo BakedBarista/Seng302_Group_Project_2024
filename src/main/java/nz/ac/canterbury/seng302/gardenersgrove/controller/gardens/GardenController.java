@@ -3,10 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.gardens;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.GardenDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.CurrentWeather;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
@@ -21,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,10 +28,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.NZ_FORMAT_DATE;
@@ -535,6 +530,8 @@ public class GardenController {
             logger.info("Failed to add garden");
         }
     }
+
+
 
 }
 
