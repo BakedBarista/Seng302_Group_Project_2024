@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Plant</title>
+
+    <!-- This needs to be here for Bootstrap and general CSS imports -->
+    <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
+</head>
+<body>
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+    <main class="main-container">
+        <div class="card p-5">
+            <h2 class="mb-3">Search Plants</h2>
+            <form class="input-group w-100" action="#" th:action="@{/plantInformation}" method="get" id="searchForm">
+                <input type="text" class="form-control" placeholder="Search Plant repository" id="searchField"
+                       aria-label="Search Plant repository" aria-describedby="button-addon" name="search" th:value="${previousSearch}">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit" id="button-addon">
+                        <img th:src="@{/icons/search-icon.svg}" alt="" width="20" height="25" />
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+    <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
+</body>
+<script th:src="@{/js/nextFormBox.js}"></script>
+<script th:src="@{/js/plantImageErrorChecking.js}"></script>
+<script th:src="@{/js/dateValidation.js}"></script>
+</html>
