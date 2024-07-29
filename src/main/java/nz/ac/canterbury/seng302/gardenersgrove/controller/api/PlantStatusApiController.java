@@ -11,6 +11,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Controller for handling API requests related to updating and setting plant status
+ */
 @RestController
 @RequestMapping("/api")
 public class PlantStatusApiController {
@@ -20,6 +23,12 @@ public class PlantStatusApiController {
         this.plantService = plantService;
     }
 
+    /**
+     * Update the status of a plant and sets it's harvested date
+     * @param id plant id
+     * @param newStatus new status
+     * @return response entity
+     */
     @PutMapping("/plants/{id}/status")
     public ResponseEntity<Map<String, Object>> updatePlantStatus(@PathVariable("id") Long id, @RequestParam("status") BasePlant.PlantStatus newStatus) {
         Optional<Plant> plant = plantService.getPlantById(id);

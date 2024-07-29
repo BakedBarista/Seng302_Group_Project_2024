@@ -81,6 +81,11 @@ public class PlantService {
         plantRepository.save(plant.get());
     }
 
+    /**
+     * Saves the updated  plant in the repository
+     * @param plant the plant to be saved
+     * @return the saved plant
+     */
     public Plant save(Plant plant) {
         return plantRepository.save(plant);
     }
