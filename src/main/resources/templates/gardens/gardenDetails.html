@@ -230,7 +230,7 @@
                                 <div class="overflow-y-scroll" style="min-height: 144px; max-height: 200px">
                                     <p class="m-0" th:text="${plant.description}"><!--Plant Description goes here--></p>
                                 </div>
-                                <div class="dropdown d-flex justify-content-start">
+                                <div class="dropdown d-flex justify-content-end">
                                     <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).NOT_GROWING}" class="btn button-not-planted dropdown-toggle"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButtonSmall' + plant.id}">Not Growing</span>
                                     <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).CURRENTLY_GROWING}" class="btn button-growing dropdown-toggle"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButtonSmall' + plant.id}">Growing</span>
                                     <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).HARVESTED}" class="btn button-harvest dropdown-toggle"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButtonSmall' + plant.id}">Harvested</span>
@@ -296,7 +296,7 @@
                                 <p class="m-0" th:text="${plant.description}"><!--Plant Description goes here--></p>
                             </div>
                         </div >
-                        <div class="dropdown d-flex justify-content-start">
+                        <div class="dropdown d-flex justify-content-end">
                             <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).NOT_GROWING}" class="btn button-not-planted dropdown-toggle"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButton' + plant.id}">Not Growing</span>
                             <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).CURRENTLY_GROWING}" class="btn button-growing dropdown-toggle"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButton' + plant.id}">Growing</span>
                             <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).HARVESTED}" class="btn button-harvest dropdown-toggle"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButton' + plant.id}">Harvested</span>
