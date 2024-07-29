@@ -230,6 +230,25 @@
                                 <div class="overflow-y-scroll" style="min-height: 144px; max-height: 200px">
                                     <p class="m-0" th:text="${plant.description}"><!--Plant Description goes here--></p>
                                 </div>
+                                <div class="dropdown d-flex justify-content-start">
+                                    <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).NOT_GROWING}" class="btn button-not-planted dropdown-toggle"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButtonSmall' + plant.id}">Not Growing</span>
+                                    <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).CURRENTLY_GROWING}" class="btn button-growing dropdown-toggle"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButtonSmall' + plant.id}">Growing</span>
+                                    <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).HARVESTED}" class="btn button-harvest dropdown-toggle"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButtonSmall' + plant.id}">Harvested</span>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButtonSmall">
+                                        <button type="button" class="dropdown-item" th:onclick="'updateStatus(' + ${plant.id} + ', \'NOT_GROWING\')'">
+                                            <span class="badge not-planted-badge">Not Growing</span>
+                                        </button>
+                                        <button type="button" class="dropdown-item" th:onclick="'updateStatus(' + ${plant.id} + ', \'CURRENTLY_GROWING\')'">
+                                            <span class="badge growing-badge">Growing</span>
+                                        </button>
+                                        <button type="button" class="dropdown-item" th:onclick="'updateStatus(' + ${plant.id} + ', \'HARVESTED\')'">
+                                            <span class="badge harvest-badge">Harvested</span>
+                                        </button>
+                                    </div>
+                                    <div>
+                                        <label th:id="${'harvestDateSmall'+ plant.id}" th:if="plant.harvestedDate != null" th:text="${plant.harvestedDate}"></label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -366,19 +385,36 @@
                 throw new Error('Network response was not ok.');
             })
             .then(data => {
-                // Update the badge text based on the new status
-                const badge = document.querySelector(`#dropdownMenuButton${plantId}`);
-                if (newStatus === 'NOT_GROWING') {
-                    badge.textContent = 'Not Growing';
-                    badge.className = 'btn button-not-planted dropdown-toggle';
-                } else if (newStatus === 'CURRENTLY_GROWING') {
-                    badge.textContent = 'Growing';
-                    badge.className = 'btn button-growing dropdown-toggle';
-                } else if (newStatus === 'HARVESTED') {
-                    badge.textContent = 'Harvested';
-                    badge.className = 'btn button-harvest dropdown-toggle';
+                const largeBadge = document.querySelector(`#dropdownMenuButton${plantId}`);
+                if (largeBadge) {
+                    if (newStatus === 'NOT_GROWING') {
+                        largeBadge.textContent = 'Not Growing';
+                        largeBadge.className = 'btn button-not-planted dropdown-toggle';
+                    } else if (newStatus === 'CURRENTLY_GROWING') {
+                        largeBadge.textContent = 'Growing';
+                        largeBadge.className = 'btn button-growing dropdown-toggle';
+                    } else if (newStatus === 'HARVESTED') {
+                        largeBadge.textContent = 'Harvested';
+                        largeBadge.className = 'btn button-harvest dropdown-toggle';
+                    }
                 }
+
+                const smallBadge = document.querySelector(`#dropdownMenuButtonSmall${plantId}`);
+                if (smallBadge) {
+                    if (newStatus === 'NOT_GROWING') {
+                        smallBadge.textContent = 'Not Growing';
+                        smallBadge.className = 'btn button-not-planted dropdown-toggle';
+                    } else if (newStatus === 'CURRENTLY_GROWING') {
+                        smallBadge.textContent = 'Growing';
+                        smallBadge.className = 'btn button-growing dropdown-toggle';
+                    } else if (newStatus === 'HARVESTED') {
+                        smallBadge.textContent = 'Harvested';
+                        smallBadge.className = 'btn button-harvest dropdown-toggle';
+                    }
+                }
+
                 document.getElementById(`harvestDate${plantId}`).innerText = data.harvestedDate ?? '';
+                document.getElementById(`harvestDateSmall${plantId}`).innerText = data.harvestedDate ?? '';
             })
             .catch(error => {
                 console.error('There was a problem with the fetch operation:', error);
