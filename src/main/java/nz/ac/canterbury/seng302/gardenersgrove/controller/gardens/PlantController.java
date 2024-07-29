@@ -356,7 +356,7 @@ public class PlantController {
         model.addAttribute("plant", plant.orElse(null));
         model.addAttribute("dateFormatter", new ThymeLeafDateFormatter());
         model.addAttribute("NZ_FORMAT_DATE", NZ_FORMAT_DATE);
-        return "plants/plantDetails";
+//        return "plants/plantDetails";
             List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
 //        model.addAttribute("gardens", gardens);
             model.addAttribute("gardenId", gardenId);
