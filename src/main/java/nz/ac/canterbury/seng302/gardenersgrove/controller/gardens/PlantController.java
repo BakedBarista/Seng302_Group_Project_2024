@@ -245,4 +245,27 @@ public class PlantController {
         }
         return "redirect:" + referer;
     }
+
+    /**
+     * take user to search plant information form
+     * @return redirect to a more detailed page about a specific plant
+     */
+    @GetMapping("/plantInformation")
+    public String plantInformationForm(
+                            Model model) {
+        return "plants/plantInformation";
+    }
+
+    /**
+     *
+     * @param plantId the id of the plant being looked into
+     * @param model representation of results
+     * @return returns to the same plant information page with results from search
+     */
+    @PostMapping("/plantInformation")
+    public String plantInformationSubmit(
+                                      @PathVariable("plantId") long plantId,
+                                      Model model) {
+        return "plants/plantInformation";
+    }
 }
