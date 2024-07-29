@@ -95,7 +95,7 @@ public class PlantControllerTest {
     @Test
     void testAddPlantForm_GardenNotPresent_ReturnsAccessDenied() {
         long gardenId = 0;
-        String expectedReturnPage = "/error/accessDenied";
+        String expectedReturnPage = "error/accessDenied";
 
         when(gardenService.getGardenById(gardenId)).thenReturn(Optional.empty());
         String returnPage = plantController.addPlantForm(gardenId, model);
@@ -105,7 +105,7 @@ public class PlantControllerTest {
     @Test
     void testAddPlantForm_UserNotOwner_ReturnsAccessDenied() {
         long gardenId = 0;
-        String expectedReturnPage = "/error/accessDenied";
+        String expectedReturnPage = "error/accessDenied";
 
         GardenUser owner = new GardenUser();
         owner.setId(1L);
