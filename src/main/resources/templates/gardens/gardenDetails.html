@@ -380,6 +380,7 @@
             })
             .then(data => {
                 const largeBadge = document.querySelector(`#dropdownMenuButton${plantId}`);
+                const smallBadge = document.querySelector(`#dropdownMenuButtonSmall${plantId}`);
 
                 if (largeBadge || smallBadge) {
                     if (newStatus === 'NOT_GROWING') {
@@ -409,19 +410,6 @@
                             smallBadge.textContent = 'Harvested';
                             smallBadge.className = 'btn button-harvest dropdown-toggle';
                         }
-                    }
-                }
-                const smallBadge = document.querySelector(`#dropdownMenuButtonSmall${plantId}`);
-                if (smallBadge) {
-                    if (newStatus === 'NOT_GROWING') {
-                        smallBadge.textContent = 'Not Growing';
-                        smallBadge.className = 'btn button-not-planted dropdown-toggle';
-                    } else if (newStatus === 'CURRENTLY_GROWING') {
-                        smallBadge.textContent = 'Growing';
-                        smallBadge.className = 'btn button-growing dropdown-toggle';
-                    } else if (newStatus === 'HARVESTED') {
-                        smallBadge.textContent = 'Harvested';
-                        smallBadge.className = 'btn button-harvest dropdown-toggle';
                     }
                 }
 
