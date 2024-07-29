@@ -9,6 +9,8 @@
     --gg-secondary-dark: #8C9D34;
     --gg-secondary-light: #D3DD9D;
     --gg-pale: #FFE0B5;
+    --gg-not-planted:  saddlebrown;
+    --gg-harvest: sandybrown;
 
     --gg-white: #F5F5F5;
     --gg-white-rgb: 245, 245, 245;
@@ -74,6 +76,53 @@ h1, h2, h3, h4, h5, h6 {
     --bs-btn-disabled-color: white;
     --bs-btn-disabled-bg: var(--gg-pale);
     --bs-btn-disabled-border-color: var(--gg-primary);
+}
+
+.button-not-planted {
+    --bs-btn-color: var(--gg-white);
+    --bs-btn-bg: var(--gg-not-planted);
+    --bs-btn-border-color: var(--gg-primary);
+    --bs-btn-hover-color: var(--gg-white);
+    --bs-btn-hover-bg: var(--gg-primary-light);
+    --bs-btn-hover-border-color: var(--gg-primary-light);
+    --bs-btn-focus-shadow-rgb: var(--gg-primary-rgb);
+    --bs-btn-active-color: var(--gg-white);
+    --bs-btn-active-bg: var(--gg-dark);
+    --bs-btn-active-border-color: var(--gg-dark);
+    --bs-btn-disabled-color: white;
+    --bs-btn-disabled-bg: var(--gg-pale);
+    --bs-btn-disabled-border-color: var(--gg-primary);
+}
+.button-growing {
+    --bs-btn-color: var(--gg-white);
+    --bs-btn-bg: var(--gg-primary-light);
+    --bs-btn-border-color: var(--gg-primary);
+    --bs-btn-hover-color: var(--gg-white);
+    --bs-btn-hover-bg: var(--gg-primary-light);
+    --bs-btn-hover-border-color: var(--gg-primary-light);
+    --bs-btn-focus-shadow-rgb: var(--gg-primary-rgb);
+    --bs-btn-active-color: var(--gg-white);
+    --bs-btn-active-bg: var(--gg-dark);
+    --bs-btn-active-border-color: var(--gg-dark);
+    --bs-btn-disabled-color: white;
+    --bs-btn-disabled-bg: var(--gg-pale);
+    --bs-btn-disabled-border-color: var(--gg-primary);
+}
+.button-harvest {
+    --bs-btn-color: var(--gg-white);
+    --bs-btn-bg: var(--gg-harvest);
+    --bs-btn-border-color: var(--gg-primary);
+    --bs-btn-hover-color: var(--gg-white);
+    --bs-btn-hover-bg: var(--gg-primary-light);
+    --bs-btn-hover-border-color: var(--gg-primary-light);
+    --bs-btn-focus-shadow-rgb: var(--gg-primary-rgb);
+    --bs-btn-active-color: var(--gg-white);
+    --bs-btn-active-bg: var(--gg-dark);
+    --bs-btn-active-border-color: var(--gg-dark);
+    --bs-btn-disabled-color: white;
+    --bs-btn-disabled-bg: var(--gg-pale);
+    --bs-btn-disabled-border-color: var(--gg-primary);
+
 }
 
 .btn-outline-primary {

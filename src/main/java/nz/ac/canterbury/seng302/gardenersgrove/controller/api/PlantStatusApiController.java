@@ -21,7 +21,7 @@ public class PlantStatusApiController {
     }
 
     @PutMapping("/plants/{id}/status")
-    public ResponseEntity<?> updatePlantStatus(@PathVariable("id") Long id, @RequestParam("status") BasePlant.PlantStatus newStatus) {
+    public ResponseEntity<Map<String, Object>> updatePlantStatus(@PathVariable("id") Long id, @RequestParam("status") BasePlant.PlantStatus newStatus) {
         Optional<Plant> plant = plantService.getPlantById(id);
         if (plant.isEmpty()) {
             return ResponseEntity.notFound().build();

@@ -281,11 +281,9 @@
                             </div>
                         </div >
                         <div class="dropdown d-flex justify-content-start">
-                            <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).NOT_GROWING}" class="badge not-planted-badge">Not Growing</span>
-                                <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).CURRENTLY_GROWING}" class="badge growing-badge">Growing</span>
-                                <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).HARVESTED}" class="badge harvest-badge">Harvested</span>
-                            </button>
+                            <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).NOT_GROWING}" class="btn button-not-planted dropdown-toggle"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButton' + plant.id}">Not Growing</span>
+                            <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).CURRENTLY_GROWING}" class="btn button-growing dropdown-toggle"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButton' + plant.id}">Growing</span>
+                            <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).HARVESTED}" class="btn button-harvest dropdown-toggle"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButton' + plant.id}">Harvested</span>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                 <button type="button" class="dropdown-item" th:onclick="'updateStatus(' + ${plant.id} + ', \'NOT_GROWING\')'">
                                     <span class="badge not-planted-badge">Not Growing</span>
@@ -298,7 +296,7 @@
                                 </button>
                             </div>
                             <div>
-                                <label id=`harvestDate/${plant.id}` th:if="plant.harvestedDate != null" th:text="${plant.harvestedDate}"></label>
+                                <label th:id="${'harvestDate'+ plant.id}" th:if="plant.harvestedDate != null" th:text="${plant.harvestedDate}"></label>
                             </div>
                         </div>
                     </div>
@@ -369,18 +367,18 @@
             })
             .then(data => {
                 // Update the badge text based on the new status
-                const badge = document.querySelector('#dropdownMenuButton .badge');
+                const badge = document.querySelector(`#dropdownMenuButton${plantId}`);
                 if (newStatus === 'NOT_GROWING') {
                     badge.textContent = 'Not Growing';
-                    badge.className = 'badge not-planted-badge';
+                    badge.className = 'btn button-not-planted dropdown-toggle';
                 } else if (newStatus === 'CURRENTLY_GROWING') {
                     badge.textContent = 'Growing';
-                    badge.className = 'badge growing-badge';
+                    badge.className = 'btn button-growing dropdown-toggle';
                 } else if (newStatus === 'HARVESTED') {
                     badge.textContent = 'Harvested';
-                    badge.className = 'badge harvest-badge';
-                    document.getElementById(`harvestDate/${plantId}`).innerText = `${data.harvestedDate}`;
+                    badge.className = 'btn button-harvest dropdown-toggle';
                 }
+                document.getElementById(`harvestDate${plantId}`).innerText = data.harvestedDate ?? '';
             })
             .catch(error => {
                 console.error('There was a problem with the fetch operation:', error);
