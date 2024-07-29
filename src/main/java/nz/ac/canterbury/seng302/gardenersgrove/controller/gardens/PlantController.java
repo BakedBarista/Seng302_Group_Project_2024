@@ -294,7 +294,9 @@ public class PlantController {
                                       @Valid @ModelAttribute("plant") PlantHistoryItemDTO plantHistoryDTO,
                                       BindingResult bindingResult,
                                       Model model) throws IOException {
-
+                            
+        logger.info("GET /gardens/{}/plants/{}/history - display the plant history form", gardenId, plantId);
+        
         if (bindingResult.hasErrors()) {
             model.addAttribute("description", plantHistoryDTO);
             return "plants/plantHistory";
