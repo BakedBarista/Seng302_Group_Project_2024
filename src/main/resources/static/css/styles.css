@@ -34,11 +34,6 @@
     --bs-secondary-bg: var(--gg-white);
 }
 
-body {
-    color: var(--gg-black);
-    background-color: white;
-}
-
 /* Global typography */
 body {
     font-family: "Open Sans", sans-serif;
@@ -47,6 +42,7 @@ body {
     font-style: normal;
     font-variation-settings: "wdth" 100;
     color: var(--gg-black);
+    background-color: white;
 }
 
 h1, h2, h3, h4, h5, h6 {
