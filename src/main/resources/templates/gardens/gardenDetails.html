@@ -245,9 +245,6 @@
                                             <span class="badge harvest-badge">Harvested</span>
                                         </button>
                                     </div>
-                                    <div>
-                                        <label th:id="${'harvestDateSmall'+ plant.id}" th:if="plant.harvestedDate != null" th:text="${plant.harvestedDate}"></label>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -313,9 +310,6 @@
                                 <button type="button" class="dropdown-item" th:onclick="'updateStatus(' + ${plant.id} + ', \'HARVESTED\')'">
                                     <span class="badge harvest-badge">Harvested</span>
                                 </button>
-                            </div>
-                            <div>
-                                <label th:id="${'harvestDate'+ plant.id}" th:if="plant.harvestedDate != null" th:text="${plant.harvestedDate}"></label>
                             </div>
                         </div>
                     </div>
@@ -412,9 +406,6 @@
                         smallBadge.className = 'btn button-harvest dropdown-toggle';
                     }
                 }
-
-                document.getElementById(`harvestDate${plantId}`).innerText = data.harvestedDate ?? '';
-                document.getElementById(`harvestDateSmall${plantId}`).innerText = data.harvestedDate ?? '';
             })
             .catch(error => {
                 console.error('There was a problem with the fetch operation:', error);
