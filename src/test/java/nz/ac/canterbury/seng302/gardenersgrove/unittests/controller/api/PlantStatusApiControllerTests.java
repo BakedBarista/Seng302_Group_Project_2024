@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.Optional;
 
 
-public class PlantStatusApiControllerTests {
+class PlantStatusApiControllerTests {
 
 
 
@@ -45,11 +45,11 @@ public class PlantStatusApiControllerTests {
         when(plantService.getPlantById(1L)).thenReturn(Optional.of(plant));
         ResponseEntity <Map<String,Object>> response = plantStatusApiController.updatePlantStatus(1L, BasePlant.PlantStatus.CURRENTLY_GROWING);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertTrue(response.getBody() instanceof Map);
+        assertNotNull(response.getBody());
 
         Map<String, Object> responseBody = (Map<String, Object>) response.getBody();
         assertEquals("CURRENTLY_GROWING", responseBody.get("status"));
-        assertTrue(responseBody.get("harvestedDate") == null);
+        assertNull(responseBody.get("harvestedDate"));
 
         verify(plantService, times(1)).save(any(Plant.class));
 
