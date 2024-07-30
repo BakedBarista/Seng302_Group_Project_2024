@@ -12,35 +12,6 @@
                 height: 100vh;
             }
         }
-
-        .timeline-with-icons {
-            border-left: 1px solid hsl(0, 0%, 90%);
-            position: relative;
-            list-style: none;
-        }
-
-        .timeline-with-icons .timeline-item {
-            position: relative;
-        }
-
-        .timeline-with-icons .timeline-item:after {
-            position: absolute;
-            display: block;
-            top: 0;
-        }
-
-        .timeline-with-icons .timeline-icon {
-            position: absolute;
-            left: -48px;
-            background-color: #E2E9CE;
-            color: #E2E9CE60;
-            border-radius: 50%;
-            height: 31px;
-            width: 31px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
     </style>
 </head>
 <body class="vh-100 overflow-x-hidden vw-100">
@@ -49,7 +20,6 @@
     <div class="col-lg-4 px-5 justify-content-center d-flex full-height-lg" style="background-color: #E2E9CE40">
         <div class="text-center py-5">
             <div class="pb-3 d-flex justify-content-start">
-                <!--            <a type="button" class="btn btn-outline-secondary" th:href="@{/gardens/{id}(id=${gardenId})}">Cancel</a>-->
                 <a class="btn btn-outline-primary" type="button" th:href="@{/gardens/{id}(id=${gardenId})}"><img th:src="@{/icons/back.svg}" alt="" width="20" height="20" /></a>
             </div>
             <img th:src="@{'/plants/' + ${plant.id} + '/plant-image'}" alt="Plant Picture" class="w-100 rounded d-block" style="width: 300px; height: 300px;" />
