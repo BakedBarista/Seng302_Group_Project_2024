@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng302.gardenersgrove.controller;
+package nz.ac.canterbury.seng302.gardenersgrove.unittests.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.PlantController;
@@ -11,7 +11,6 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -32,7 +31,6 @@ import java.util.Collections;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
 public class PlantControllerTest {
@@ -83,7 +81,7 @@ public class PlantControllerTest {
     @Test
     void testAddPlantForm_GardenNotPresent_ReturnsAccessDenied() {
         long gardenId = 0;
-        String expectedReturnPage = "/error/accessDenied";
+        String expectedReturnPage = "error/accessDenied";
 
         when(gardenService.getGardenById(gardenId)).thenReturn(Optional.empty());
         String returnPage = plantController.addPlantForm(gardenId, model);
@@ -93,7 +91,7 @@ public class PlantControllerTest {
     @Test
     void testAddPlantForm_UserNotOwner_ReturnsAccessDenied() {
         long gardenId = 0;
-        String expectedReturnPage = "/error/accessDenied";
+        String expectedReturnPage = "error/accessDenied";
 
         GardenUser owner = new GardenUser();
         owner.setId(1L);
@@ -218,7 +216,7 @@ public class PlantControllerTest {
 
         assertEquals(expectedReturnPage, returnPage);
 
-        verify(plantService, times(1)).addPlant(plant, gardenId);
+        verify(plantService, times(1)).updatePlant(plant, validPlantDTO);
     }
 
     @Test
@@ -272,7 +270,7 @@ public class PlantControllerTest {
         when(plantService.getPlantById(plantId)).thenReturn(Optional.of(plant));
         String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, validPlantDTO, bindingResult, model);
 
-        verify(plantService, times(1)).addPlant(plant, gardenId);
+        verify(plantService, times(1)).updatePlant(plant, validPlantDTO);
         assertEquals(expectedReturnPage, returnPage);
     }
 
@@ -288,7 +286,7 @@ public class PlantControllerTest {
         when(bindingResult.hasErrors()).thenReturn(true);
         String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, invalidPlantDTO, bindingResult, model);
 
-        verify(plantService, times(0)).addPlant(plant, gardenId);
+        verify(plantService, times(0)).updatePlant(eq(plant), any());
         assertEquals(expectedReturnPage, returnPage);
     }
 
@@ -327,7 +325,7 @@ public class PlantControllerTest {
     }
 
     @Test
-    void whenImageUploaded_thenRedirectToReferer() throws Exception {
+    void whenImageUploaded_thenRedirectToReferer() {
         Plant plant = new Plant();
         String referer = "/gardens/1";
         byte[] image = {};
@@ -337,7 +335,7 @@ public class PlantControllerTest {
         MultipartFile file = new MockMultipartFile(name,originalFilename,contentType,image);
         when(plantService.getPlantById(1L)).thenReturn(Optional.of(plant));
         doThrow(new RuntimeException("Image processing error"))
-                .when(plantService).setPlantImage(anyLong(), anyString(), any(byte[].class));
+                .when(plantService).setPlantImage(anyLong(), any(MultipartFile.class));
 
         String response = plantController.uploadPlantImage(file, 1L, referer);
 
@@ -354,10 +352,10 @@ public class PlantControllerTest {
         plant.setId(gardenId);
 
         when(bindingResult.hasErrors()).thenReturn(false);
-        when(plantService.addPlant(any(Plant.class), eq(gardenId))).thenReturn(plant);
+        when(plantService.createPlant(any(PlantDTO.class), eq(gardenId))).thenReturn(plant);
         when(file.isEmpty()).thenReturn(false);
         doThrow(new RuntimeException("Image processing error"))
-                .when(plantService).setPlantImage(anyLong(), anyString(), any(byte[].class));
+                .when(plantService).setPlantImage(anyLong(), any(MultipartFile.class));
 
         String view = plantController.submitAddPlantForm(gardenId, plantDTO, bindingResult, file, dateValidStr, model);
 
@@ -365,7 +363,7 @@ public class PlantControllerTest {
     }
 
     @Test
-    void testSubmitEditPlantFormWithImage() throws Exception {
+    void testSubmitEditPlantFormWithImage() {
         long gardenId = 1L;
         long plantId = 1L;
         PlantDTO plantDTO = new PlantDTO("Plant", "10", "Yellow", "2024-11-03");
@@ -380,10 +378,52 @@ public class PlantControllerTest {
         when(plantService.getPlantById(plantId)).thenReturn(existingPlant);
         when(file.isEmpty()).thenReturn(false);
         doThrow(new RuntimeException("Image processing error"))
-                .when(plantService).setPlantImage(anyLong(), anyString(), any(byte[].class));
+                .when(plantService).setPlantImage(anyLong(), any(MultipartFile.class));
 
         String view = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, plantDTO, bindingResult, model);
 
         assertEquals("redirect:/gardens/" + gardenId, view);
+    }
+
+    @Test
+    void whenDateTooOld_ReturnError() {
+        PlantDTO plantDTO = new PlantDTO("Plant", "10", "Yellow", "1799-11-03");
+        BindingResult bindingResult = mock(BindingResult.class);
+        when(bindingResult.hasErrors()).thenReturn(true);
+
+        String returnPage = plantController.submitAddPlantForm(1L, plantDTO, bindingResult, file, dateValidStr, model);
+        verify(bindingResult).hasErrors();
+
+        assertEquals("plants/addPlant", returnPage);
+    }
+
+    @Test
+    void whenDateInFuture_ReturnError() {
+        LocalDate tomorrow = LocalDate.now().plusDays(1);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String formattedTomorrow = tomorrow.format(formatter);
+
+        PlantDTO plantDTO = new PlantDTO("Plant", "10", "Yellow", formattedTomorrow);
+        BindingResult bindingResult = mock(BindingResult.class);
+        when(bindingResult.hasErrors()).thenReturn(true);
+
+        String returnPage = plantController.submitAddPlantForm(1L, plantDTO, bindingResult, file, dateValidStr, model);
+        verify(bindingResult).hasErrors();
+        assertEquals("plants/addPlant", returnPage);
+
+    }
+    @Test
+    void testPlantInformationForm_ReturnsToPlantInformation() {
+        String expectedReturnPage = "plants/plantInformation";
+        String returnPage = plantController.plantInformationForm(model);
+        assertEquals(expectedReturnPage, returnPage);
+    }
+
+    @Test
+    void testPlantInformationSubmitForm_ReturnsToPlantInformation() {
+        String expectedReturnPage = "plants/plantInformation";
+        String returnPage = plantController.plantInformationSubmit(1, model);
+        assertEquals(expectedReturnPage, returnPage);
     }
 }

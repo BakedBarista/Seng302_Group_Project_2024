@@ -1,7 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
-import java.util.concurrent.Executor;
-
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -9,7 +8,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
-import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import java.util.concurrent.Executor;
 
 /**
  * Used to send emails. Currently only support plain-text emails.
@@ -39,6 +38,7 @@ public class EmailSenderService {
     public void sendEmail(GardenUser to, String subject, String body) {
         sendEmail(formatNameAddr(to), subject, body);
     }
+
 
     private String formatNameAddr(GardenUser user) {
         StringBuilder sb = new StringBuilder();
@@ -82,4 +82,5 @@ public class EmailSenderService {
 
         logger.info("Message sent successfully");
     }
+
 }
