@@ -46,7 +46,7 @@ class PlantHistoryServiceTest {
     @Autowired
     private PlantHistoryService historyService;
 
-    @Mock
+    @Autowired
     private PlantHistoryRepository plantHistoryRepository;
 
     @MockBean
@@ -93,21 +93,17 @@ class PlantHistoryServiceTest {
 
     @Test
     void whenGetHistoryItem_thenItemsRetrieved() {
-        PlantHistoryItem plantHistoryItem = new PlantHistoryItem(plant, LocalDate.of(1970, 1, 1));
-        System.out.println(plantHistoryItem);
+        LocalDate date = LocalDate.of(1970, 1, 1);
+        PlantHistoryItem plantHistoryItem = new PlantHistoryItem(plant, date);
+        plantHistoryItem.setImage("", new byte[0]);
 
-        List<PlantHistoryItem> historyItems = Collections.singletonList(plantHistoryItem);
-        System.out.println(historyItems);
-
-        when(plantHistoryRepository.findByPlantId(plant.getId())).thenReturn(historyItems);
+        plantHistoryRepository.save(plantHistoryItem);
 
         List<PlantHistoryItemDTO> result = historyService.getPlantHistory(plant);
-        System.out.println(result);
 
         assertEquals(1, result.size());
         PlantHistoryItemDTO resultItem = result.get(0);
-        assertEquals(timestamp, resultItem.getTimestamp());
-
+        assertEquals(date, resultItem.getTimestamp());
 
     }
 
