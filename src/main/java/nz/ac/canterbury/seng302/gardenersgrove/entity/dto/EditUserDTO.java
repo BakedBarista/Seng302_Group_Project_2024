@@ -27,6 +27,7 @@ public class EditUserDTO {
     private boolean noLname;
 
     @Pattern(regexp = EMAIL_REGEX, message = "Email address must be in the form ‘jane@doe.nz’")
+    @Size(max = 320, message = "Email address length exceeds max length of 320 characters")
     private String email;
 
     @ValidDate()
