@@ -319,12 +319,19 @@ public class PlantController {
      * @return redirect to plant detail page
      */
     @GetMapping("/gardens/{gardenId}/plants/{plantId}")
-    public String getPlantDetail(@PathVariable("gardenId") long gardenId,
-                                @PathVariable("plantId") long plantId,
-                                Model model) {
+    public String getPlantTimeline(@PathVariable("gardenId") long gardenId,
+                                   @PathVariable("plantId") long plantId,
+                                   Model model) {
+        logger.info("Serving up plant detail page.");
         logger.info("/garden/{}/plant/{}", gardenId, plantId);
+
         Optional<Plant> plant = plantService.getPlantById(plantId);
         Optional<Garden> garden = gardenService.getGardenById(gardenId);
+
+        if (plant.isEmpty()) {
+            logger.warn("User tried to access a non-existent plant, returning 404.");
+            return "error/404";
+        }
 
         if (garden.isPresent()) {
             GardenUser owner = garden.get().getOwner();
@@ -340,6 +347,9 @@ public class PlantController {
             model.addAttribute("garden", garden.get());
             model.addAttribute("owner", owner);
             model.addAttribute("currentUser", currentUser);
+        } else {
+            logger.warn("User tried to access a non-existant garden, returning 404.");
+            return "error/404";
         }
 
         model.addAttribute("gardenId", gardenId);
