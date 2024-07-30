@@ -44,6 +44,7 @@ public class PlantController {
     private static final String PLANT_ID = "plantId";
     private static final String PLANT = "plant";
     private static final String ACCESS_DENIED = "error/accessDenied";
+    private static final String GARDENS_REDIRECT = "redirect:/gardens/";
 
 
     @Autowired
@@ -127,7 +128,7 @@ public class PlantController {
         } else {
             logger.error(PLANT_UNSUCCESSFULLY_SAVED_LOG, gardenId);
         }
-        return "redirect:/gardens/" + gardenId;
+        return GARDENS_REDIRECT + gardenId;
     }
 
     /**
@@ -202,7 +203,7 @@ public class PlantController {
             }
         }
 
-        return "redirect:/gardens/"+gardenId;
+        return GARDENS_REDIRECT+gardenId;
     }
 
     /**
@@ -316,7 +317,7 @@ public class PlantController {
             }
         }
 
-        return "redirect:/gardens/"+gardenId;
+        return GARDENS_REDIRECT+gardenId;
     }
 
     /**
