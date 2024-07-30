@@ -5,12 +5,18 @@ import static org.mockito.Mockito.when;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Collections;
+import java.util.List;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantHistoryItemDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantHistoryRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -39,6 +45,9 @@ class PlantHistoryServiceTest {
 
     @Autowired
     private PlantHistoryService historyService;
+
+    @Mock
+    private PlantHistoryRepository plantHistoryRepository;
 
     @MockBean
     private Clock clock;
@@ -80,6 +89,26 @@ class PlantHistoryServiceTest {
         assertEquals(contentType, historyItem.getImageContentType());
         assertEquals(image, historyItem.getImage());
         assertEquals("Description", historyItem.getDescription());
+    }
+
+    @Test
+    void whenGetHistoryItem_thenItemsRetrieved() {
+        PlantHistoryItem plantHistoryItem = new PlantHistoryItem(plant, LocalDate.of(1970, 1, 1));
+        System.out.println(plantHistoryItem);
+
+        List<PlantHistoryItem> historyItems = Collections.singletonList(plantHistoryItem);
+        System.out.println(historyItems);
+
+        when(plantHistoryRepository.findByPlantId(plant.getId())).thenReturn(historyItems);
+
+        List<PlantHistoryItemDTO> result = historyService.getPlantHistory(plant);
+        System.out.println(result);
+
+        assertEquals(1, result.size());
+        PlantHistoryItemDTO resultItem = result.get(0);
+        assertEquals(timestamp, resultItem.getTimestamp());
+
+
     }
 
 }
