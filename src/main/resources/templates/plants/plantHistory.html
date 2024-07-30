@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<!--added lang, chatgpt said to do so to fix sonar qube issue -->
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xmlns:th="http://thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
     <title>Add Plant</title>
@@ -12,7 +13,7 @@
     <main class="main-container">
         <div class="card p-5">
             <h2 class="mb-3">Add Record</h2>
-            <form id="addPlantForm" th:action="@{${action}}" th:object="${plant}"  method="post" enctype="multipart/form-data" novalidate>
+            <form id="addPlantForm" th:action="@{/gardens/{gardenId}/plants/{plantId}/history(gardenId=${gardenId}, plantId=${plantId})}" th:object="${plant}"  method="post" enctype="multipart/form-data" novalidate>
                 <div class="mb-3 d-flex justify-content-center">
                     <div class="position-relative d-inline">
                         <label for="image" class="position-absolute top-0 end-0" style="cursor: pointer;"><img th:src="@{/icons/trans-plus.svg}" alt="+" /></label>

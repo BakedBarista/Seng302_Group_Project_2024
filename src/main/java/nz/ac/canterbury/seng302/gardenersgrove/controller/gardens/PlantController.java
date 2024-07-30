@@ -257,23 +257,23 @@ public class PlantController {
      * @param gardenId the id of the garden the plant is being added to
      * @return redirect to add plant form
      */
-    @GetMapping("/gardens/{gardenId}/plants/{id}/history")
-    public String addPlantHistoryForm(@PathVariable("id") Long gardenId, Model model){
+    @GetMapping("/gardens/{gardenId}/plants/{plantId}/history")
+    public String addPlantHistoryForm(@PathVariable("gardenId") Long gardenId, @PathVariable("plantId") Long plantId, Model model) {
 
-        logger.info("GET /gardens/${id}/add-plant - display the new plant form");
-        model.addAttribute("gardenId", gardenId);
-        model.addAttribute("plant", new Plant("","","",null));
+        logger.info("GET /gardens/{}/plants/{}/history - display the plant history form", gardenId, plantId);
+
 
         GardenUser owner = gardenUserService.getCurrentUser();
         Optional<Garden> garden = gardenService.getGardenById(gardenId);
         if (!garden.isPresent() || !garden.get().getOwner().getId().equals(owner.getId())) {
             return "/error/accessDenied";
         }
-
-        List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
-        model.addAttribute("gardens", gardens);
+        model.addAttribute("gardenId", gardenId);
+        model.addAttribute("plantId", plantId);
+        model.addAttribute("plant", new Plant("", "", "", null));
         return "plants/plantHistory";
     }
+
 
     /**
      *
@@ -293,10 +293,11 @@ public class PlantController {
                                       @Valid @ModelAttribute("plant") PlantHistoryItemDTO plantHistoryDTO,
                                       BindingResult bindingResult,
                                       Model model) throws IOException {
-
+                            
+        logger.info("GET /gardens/{}/plants/{}/history - display the plant history form", gardenId, plantId);
+        
         if (bindingResult.hasErrors()) {
             model.addAttribute("description", plantHistoryDTO);
-            logger.info("{}",bindingResult.getFieldError());
             return "plants/plantHistory";
         }
 
