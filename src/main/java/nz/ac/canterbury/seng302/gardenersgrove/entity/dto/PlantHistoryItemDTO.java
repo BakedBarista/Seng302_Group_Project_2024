@@ -29,7 +29,7 @@ public class PlantHistoryItemDTO {
     public PlantHistoryItemDTO () {
     }
 
-    public void setDescription() {
+    public void setDescription(String description) {
         this.description = description;
     }
 
