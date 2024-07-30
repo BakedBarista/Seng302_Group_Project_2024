@@ -242,11 +242,10 @@
                         <div class="col-8">
                             <div class="card-body pt-2">
                                 <div class="d-flex">
-<!--                                    <div class="fw-bold mb-1">-->
-<!--                                        <span class="fw-bold" style="font-size: 16pt;" th:text="${plant.name}">Plant Name</span>-->
-<!--                                    </div>-->
                                     <div class="overflow-hidden">
-                                        <span class="fw-bold text-truncate" style="font-size: 16pt" th:text="${plant.name}">Plant Name</span>
+                                        <a class="link-hover" th:href="@{/gardens/{gardenId}/plants/{plantId}(gardenId=${garden.id}, plantId=${plant.id})}">
+                                            <span class="fw-bold text-truncate" style="font-size: 16pt" th:text="${plant.name}">Plant Name</span>
+                                        </a>
                                     </div>
                                     <div class="d-flex justify-content-left ps-2 pt-1">
                                         <a class="ms-auto justify-content-end"  th:if="${currentUser.id == garden.owner.id}" th:href="@{/gardens/{gardenId}/plants/{plantId}/edit(gardenId=${garden.id}, plantId=${plant.id})}">
