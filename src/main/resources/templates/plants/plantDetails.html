@@ -118,7 +118,8 @@
                 <img class="mx-1" th:src="@{/icons/record.svg}" alt="" width="25" height="25" />
               </span>
               <p class="fw-bold">Update</p>
-              <p th:text="${dateFormatter.format(history.timestamp, NZ_FORMAT_DATE)}" class="text-muted mb-2 fw-bold">19 March 2020</p>
+                <img class="pb-3" th:src="@{'/plants/' + ${plant.id} + '/plant-image'}" width="200" height="200" alt="plant"/>
+                <p th:text="${dateFormatter.format(history.timestamp, NZ_FORMAT_DATE)}" class="text-muted mb-2 fw-bold">19 March 2020</p>
               <p th:text="${history.description}" class="text-muted">
                   My tomato bush grew 3cm!
               </p>
