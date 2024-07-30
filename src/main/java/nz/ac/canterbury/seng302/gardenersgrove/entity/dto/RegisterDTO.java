@@ -24,6 +24,8 @@ public class RegisterDTO {
     private boolean noLname;
 
     @Pattern(regexp = EMAIL_REGEX, message = "Email address must be in the form ‘jane@doe.nz’")
+    @Pattern(regexp = EMAIL_LENGTH_REGEX, message = "Local part(before @) should be less than 64 characters and the domain part(after @) should be less than 255 characters")
+    @Size(max = 320, message = "Email address length exceeds max length of 320 characters")
     private String email;
 
     @Pattern(regexp = PASSWORD_REGEX, message = "Your password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character")

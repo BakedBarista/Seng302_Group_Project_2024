@@ -1,13 +1,11 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
 import jakarta.persistence.*;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.GardenDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
-
 
 /**
  * Entity class for garden with name, location and size
@@ -20,8 +18,8 @@ public class Garden extends BaseGarden {
     @Column(nullable = false)
     private boolean displayWeatherAlert = true;
 
-    @Column
-    private LocalDate alertHidden;
+    @Column(name = "alert_hidden")
+    private LocalDate weatherAlertHidden;
 
     @Column
     private boolean wateringRecommendation;
@@ -112,11 +110,13 @@ public class Garden extends BaseGarden {
         this.gardenWeather = gardenWeather;
     }
 
-    public LocalDate getAlertHidden() {
-        return alertHidden;
+    public LocalDate getWeatherAlertHidden() {
+        return weatherAlertHidden;
     }
 
-    public void setAlertHidden(LocalDate alertHidden) {
-        this.alertHidden = alertHidden;
+    public void setWeatherAlertHidden(LocalDate alertHidden) {
+        this.weatherAlertHidden = alertHidden;
     }
+
+
 }

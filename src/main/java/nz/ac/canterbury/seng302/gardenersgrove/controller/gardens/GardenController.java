@@ -8,6 +8,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.GardenDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.CurrentWeather;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.WeatherData;
@@ -168,13 +169,21 @@ public class GardenController {
                                Model model) {
 
         logger.info("Get /gardens/id - display garden detail");
+        Optional<Garden> gardenOpt = gardenService.getGardenById(id);
         model.addAttribute("dateFormatter", new ThymeLeafDateFormatter());
 
-        Optional<Garden> gardenOpt = gardenService.getGardenById(id);
+
         if(gardenOpt.isPresent()) {
             Garden garden = gardenOpt.get();
             model.addAttribute("garden", garden);
             model.addAttribute("owner", garden.getOwner());
+            GardenUser currentUser = gardenUserService.getCurrentUser();
+            boolean isNotOwner = !garden.getOwner().getId().equals(currentUser.getId());
+            boolean isNotPublic = !garden.getIsPublic();
+
+            if (isNotOwner && isNotPublic){
+                return "error/accessDenied";
+            }
             model.addAttribute("NZ_FORMAT_DATE", NZ_FORMAT_DATE);
             model.addAttribute("plants", plantService.getPlantsByGardenId(id));
 
@@ -208,9 +217,9 @@ public class GardenController {
                      displayWeatherAlert = garden.getDisplayWeatherAlert();
                      displayWeather = true;
 
-                     if (garden.getAlertHidden() == null || !garden.getAlertHidden().isEqual(LocalDate.now())) {
+                     if (garden.getWeatherAlertHidden() == null || !garden.getWeatherAlertHidden().isEqual(LocalDate.now())) {
                          logger.info("Garden alert hide status expired, showing watering alert again.");
-                         garden.setAlertHidden(null);
+                         garden.setWeatherAlertHidden(null);
                          garden.setDisplayWeatherAlert(true);
                          gardenService.addGarden(garden);
                          displayWeatherAlert = true;
@@ -225,7 +234,6 @@ public class GardenController {
             model.addAttribute("displayWeather", displayWeather);
             model.addAttribute("WEATHER_CARD_FORMAT_DATE", WEATHER_CARD_FORMAT_DATE);
 
-            GardenUser currentUser = gardenUserService.getCurrentUser();
             List<Garden> gardens = gardenService.getGardensByOwnerId(currentUser.getId());
             model.addAttribute("currentUser", currentUser);
             model.addAttribute("gardens", gardens);
@@ -248,7 +256,7 @@ public class GardenController {
             logger.info("Setting alert to hide for Garden {} until next day.", id);
             Garden garden = gardenOptional.get();
             garden.setDisplayWeatherAlert(false);
-            garden.setAlertHidden(LocalDate.now());
+            garden.setWeatherAlertHidden(LocalDate.now());
             gardenService.addGarden(garden);
         }
         return "redirect:/gardens/" + id;
@@ -287,7 +295,7 @@ public class GardenController {
         model.addAttribute("garden", garden.orElse(null));
         GardenUser owner = gardenUserService.getCurrentUser();
         if (!garden.isPresent() || !garden.get().getOwner().getId().equals(owner.getId())) {
-            return "/error/accessDenied";
+            return "error/accessDenied";
         }
         List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
         model.addAttribute("gardens", gardens);
@@ -476,6 +484,9 @@ public class GardenController {
             GardenUser user = new GardenUser("Jan", "Doe", "jan.doe@gmail.com", "password", LocalDate.of(1970, 1, 1));
             gardenUserService.addUser(user);
 
+            GardenUser user1 = new GardenUser("Luke", "Stynes", "stynesluke@gmail.com", "password", LocalDate.of(1970, 1, 1));
+            gardenUserService.addUser(user1);
+
             logger.info("User " + user.getFullName() + " added");
 
             // Garden names
@@ -505,15 +516,15 @@ public class GardenController {
                 garden.setPublic(true);
                 gardenService.addGarden(garden);
 
-                logger.info("Garden " + gardenName + "added");
+                logger.info("Garden {} added", gardenName);
 
                 List<Plant> plants = new ArrayList<>();
                 for (int j = 0; j < plantsDetails.size(); j++) {
                     String[] plantDetail = plantsDetails.get(j);
                     String plantName = plantDetail[0];
                     String plantDescription = plantDetail[1];
-                    Plant plant = new Plant(plantName, "15", plantDescription, LocalDate.of(2024, 3, 1));
-                    Plant savedPlant = plantService.addPlant(plant, garden.getId());
+                    PlantDTO plant = new PlantDTO(plantName, "15", plantDescription, "2024-03-01");
+                    Plant savedPlant = plantService.createPlant(plant, garden.getId());
 
                     plants.add(savedPlant);
                 }
@@ -522,12 +533,7 @@ public class GardenController {
                 gardenService.addGarden(garden);
             }
         } catch (Exception e) {
-            logger.info("Failed to add garden");
+            logger.info("Failed to add garden", e);
         }
     }
-
 }
-
-
-
-

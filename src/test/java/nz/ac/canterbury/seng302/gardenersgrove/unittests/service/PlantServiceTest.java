@@ -1,42 +1,51 @@
-package nz.ac.canterbury.seng302.gardenersgrove.service;
+package nz.ac.canterbury.seng302.gardenersgrove.unittests.service;
 
-import nz.ac.canterbury.seng302.gardenersgrove.controller.users.RegisterController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantHistoryRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
-
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Clock;
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-@DataJpaTest
-@Import(PlantService.class)
+@ExtendWith(MockitoExtension.class)
 class PlantServiceTest {
 
     @Mock
     private PlantRepository plantRepository;
     @Mock
+    private PlantHistoryRepository plantHistoryRepository;
+    @Mock
     private GardenRepository gardenRepository;
+
     @Mock
     private GardenUserRepository gardenUserRepository;
+    @Mock
+    private Clock clock;
 
     @Mock
     private GardenUserService gardenUserService;
@@ -46,15 +55,15 @@ class PlantServiceTest {
 
     @Mock
     private GardenService gardenService;
+
     @InjectMocks
     private PlantService plantService;
 
-
-
     @Test
     void AddPlant_ValidPlantWithGardenId_ReturnsPlantWithCorrectGardenId() {
-        Plant testPlant = new Plant("Rose", "5", "Flower", LocalDate.of(1970, 1, 1));
-        Garden testGarden = new Garden("Garden", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041",1.0,2.0, "Big", null);
+        PlantDTO testPlant = new PlantDTO("Rose", "5", "Flower", "1970-01-01");
+        Garden testGarden = new Garden("Garden", "1","Ilam Road","Ilam",
+                "Christchurch","New Zealand","8041",1.0,2.0, "Big", null);
         Long gardenId = 1L;
         testGarden.setId(gardenId);
 
@@ -62,18 +71,18 @@ class PlantServiceTest {
 
         Mockito.when(plantRepository.save(Mockito.any(Plant.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Plant result = plantService.addPlant(testPlant, gardenId);
+        Plant result = plantService.createPlant(testPlant, gardenId);
         assertEquals(result.getGarden().getId(), gardenId);
     }
 
     @Test
     void AddPlant_InvalidGardenId_ThrowsException() {
-        Plant testPlant = new Plant("Rose", "5", "Flower", LocalDate.of(1970, 1, 1));
+        PlantDTO testPlant = new PlantDTO("Rose", "5", "Flower", "1970-01-01");
         Long gardenId = 1L;
 
         Mockito.when(gardenRepository.findById(Mockito.any())).thenReturn(Optional.empty());
 
-        Assertions.assertThrows(RuntimeException.class, () -> plantService.addPlant(testPlant, gardenId));
+        Assertions.assertThrows(RuntimeException.class, () -> plantService.createPlant(testPlant, gardenId));
         verify(plantRepository, Mockito.never()).save(Mockito.any(Plant.class));
     }
 
@@ -135,31 +144,79 @@ class PlantServiceTest {
         testPlant3.setGarden(testGarden2);
 
         Mockito.when(plantRepository.findByGardenId(gardenId1)).thenReturn(List.of(testPlant1, testPlant2));
-        Mockito.when(plantRepository.findByGardenId(gardenId2)).thenReturn(List.of(testPlant3));
         assertEquals(2, plantService.getPlantsByGardenId(gardenId1).size());
         assertEquals(testPlant1, plantService.getPlantsByGardenId(gardenId1).get(0));
         assertEquals(testPlant2, plantService.getPlantsByGardenId(gardenId1).get(1));
     }
 
     @Test
-    public void setPlantImageWithValidId_imageSaved() {
+    void setPlantImageWithValidId_imageSaved() {
         long id = 1L;
+
+        String filename = "test";
+        String originalFilename = "test.png";
         byte[] imageBytes = {};
         String contentType = "image/png";
+
+        MockMultipartFile file = new MockMultipartFile(filename, originalFilename, contentType, imageBytes);
         Plant plant = new Plant();
         plant.setId(id);
-        when(plantRepository.findById(id)).thenReturn(Optional.of(plant));
-        plantService.setPlantImage(id, contentType, imageBytes);
+        Mockito.when(plantRepository.findById(id)).thenReturn(Optional.of(plant));
+
+        plantService.setPlantImage(id, file);
+
         verify(plantRepository, times(1)).save(plant);
         assertEquals(contentType, plant.getPlantImageContentType());
         assertEquals(imageBytes, plant.getPlantImage());
     }
 
     @Test
-    public void setPlantImageWithNonExistentId_imageNotSaved() {
+    void setPlantImageWithNonExistentId_imageNotSaved() {
         long id = 1L;
-        when(plantRepository.findById(id)).thenReturn(Optional.empty());
-        plantService.setPlantImage(id, "image/png", new byte[]{});
+        byte[] image = {};
+        String contentType = "image/svg";
+        String name = "plant.png";
+        String originalFilename = "plant.png";
+        MultipartFile file = new MockMultipartFile(name,originalFilename,contentType,image);
+
+        Mockito.when(plantRepository.findById(id)).thenReturn(Optional.empty());
+
+        plantService.setPlantImage(id, file);
         verify(plantRepository, never()).save(any());
+    }
+
+    static Stream<Arguments> provideInvalidFiles() {
+        return Stream.of(
+                Arguments.of(new MockMultipartFile("file", "invalid.gif", "image/gif", new byte[0])),
+                Arguments.of(new MockMultipartFile("file", "invalid.html", "text/html", new byte[0])),
+                Arguments.of(new MockMultipartFile("file", "invalid.txt", "text/plain", new byte[0])),
+                Arguments.of(new MockMultipartFile("file", "invalid.png", "image/png", new byte[10 * 2024 * 1024]))
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideInvalidFiles")
+    void givenImageIsInvalid_WhenValidateImage_ReturnTrue(MockMultipartFile file) {
+        boolean result = plantService.validateImage(file);
+
+        Assertions.assertFalse(result);
+    }
+
+    static Stream<Arguments> provideValidFiles() {
+        return Stream.of(
+                Arguments.of(new MockMultipartFile("file", "invalid.png", "image/png", new byte[0])),
+                Arguments.of(new MockMultipartFile("file", "invalid.svg", "image/svg", new byte[0])),
+                Arguments.of(new MockMultipartFile("file", "invalid.jpg", "image/jpg", new byte[0])),
+                Arguments.of(new MockMultipartFile("file", "invalid.jpeg", "image/jpeg", new byte[0])),
+                Arguments.of(new MockMultipartFile("file", "invalid.png", "image/png", new byte[10 * 1024 * 1024 - 1]))
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideValidFiles")
+    void givenImageIsValid_WhenValidateImage_ReturnTrue(MockMultipartFile file) {
+        boolean result = plantService.validateImage(file);
+
+        Assertions.assertTrue(result);
     }
 }

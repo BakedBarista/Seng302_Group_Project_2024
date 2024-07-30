@@ -5,7 +5,7 @@ plugins {
 	id 'org.springframework.boot' version '3.2.2'
 	id 'io.spring.dependency-management' version '1.1.4'
 	id 'jacoco'
-  id 'org.sonarqube' version '4.0.0.2929'
+	id 'org.sonarqube' version '4.0.0.2929'
 }
 
 group = 'nz.ac.canterbury.seng302.team-800'
@@ -48,42 +48,153 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
-tasks.named('test') {
+tasks.named("check") {
+	dependsOn unit, integration, cucumber
+}
+
+// for backwards compatability with running single tests / class of tests - doesn't generate coverage report
+tasks.named("test", Test) {
 	useJUnitPlatform()
-	finalizedBy jacocoTestReport
-}
-
-tasks.register("cucumber", Test) {
-    testLogging.showStandardStreams = true
-    useJUnitPlatform()
-    filter {
-        includeTestsMatching "nz.ac.canterbury.seng302.gardenersgrove.cucumber.*"
-    }
-    testLogging {
-        events "passed", "skipped", "failed", "standardOut", "standardError"
-        exceptionFormat TestExceptionFormat.FULL
-    }
-}
-
-jacocoTestReport {
-	dependsOn test
-
-	reports {
-		xml.required = true
-		xml.destination = file("$buildDir/jacoco/test-report.xml")
-		csv.required = false
-		html.destination = file("$buildDir/jacoco/html")
+	filter {
+		includeTestsMatching("nz.ac.canterbury.seng302.gardenersgrove.unittests.*")
+		includeTestsMatching("nz.ac.canterbury.seng302.gardenersgrove.integrationtests.*")
+	}
+	testLogging {
+		events "passed", "skipped", "failed", "standardOut", "standardError"
 	}
 }
 
+tasks.register('unit', Test) {
+	useJUnitPlatform()
+	filter {
+		includeTestsMatching "nz.ac.canterbury.seng302.gardenersgrove.unittests.*"
+	}
+	testLogging {
+		events "passed", "skipped", "failed", "standardOut", "standardError"
+	}
+	finalizedBy unitTestReport
+}
+
+tasks.register("integration", Test) {
+	useJUnitPlatform()
+	filter {
+		includeTestsMatching "nz.ac.canterbury.seng302.gardenersgrove.integrationtests.*"
+	}
+	testLogging {
+		events "passed", "skipped", "failed", "standardOut", "standardError"
+	}
+	finalizedBy integrationTestReport
+}
+
+tasks.register("cucumber", Test) {
+	testLogging.showStandardStreams = true
+	useJUnitPlatform()
+	filter {
+		includeTestsMatching "nz.ac.canterbury.seng302.gardenersgrove.cucumber.*"
+	}
+	testLogging {
+		events "passed", "skipped", "failed", "standardOut", "standardError"
+		exceptionFormat TestExceptionFormat.FULL
+	}
+	finalizedBy cucumberTestReport
+}
+
+tasks.register("unitTestReport", JacocoReport) { // Generate a report for unit tests
+	group = 'verification'
+
+	onlyIf { // Allow the report to be skipped when -PskipTestReport is passed via commandline
+		return !project.hasProperty('skipTestReport')
+	}
+
+	dependsOn unit
+
+	executionData project.tasks.unit
+
+	sourceDirectories.setFrom(project.files(project.sourceSets.main.allSource.srcDirs))
+	classDirectories.setFrom(project.sourceSets.main.output)
+
+	reports {
+		xml.required = true
+		// The jacoco coverage report will ge generated in the destination below
+		html.destination file("${buildDir}/reports/coverage/junit")
+	}
+}
+tasks.register("integrationTestReport", JacocoReport) { // Generate a report for integration tests
+	group = 'verification'
+
+	onlyIf { // Allow the report to be skipped when -PskipTestReport is passed via commandline
+		return !project.hasProperty('skipTestReport')
+	}
+
+	dependsOn integration
+
+	executionData project.tasks.integration
+
+	sourceDirectories.setFrom(project.files(project.sourceSets.main.allSource.srcDirs))
+	classDirectories.setFrom(project.sourceSets.main.output)
+
+	reports {
+		xml.required = true
+		// The jacoco coverage report will ge generated in the destination below
+		html.destination file("${buildDir}/reports/coverage/integration")
+	}
+}
+
+
+tasks.register("cucumberTestReport", JacocoReport) { // Generate a report for cucumber tests
+	group = 'verification'
+
+	onlyIf { // Allow the report to be skipped when -PskipTestReport is passed via commandline
+		return !project.hasProperty('skipTestReport')
+	}
+
+	dependsOn cucumber
+
+	executionData project.tasks.cucumber
+
+	sourceDirectories.setFrom(project.files(project.sourceSets.main.allSource.srcDirs))
+	classDirectories.setFrom(project.sourceSets.main.output)
+
+	reports {
+		xml.required = true
+		// The jacoco coverage report will ge generated in the destination below
+		html.destination file("${buildDir}/reports/coverage/cucumber")
+	}
+}
+
+
+
+jacocoTestReport { // Generate a report for all generated test data
+	onlyIf { // Allow the report to be skipped when -PskipTestReport is passed via commandline
+		return !project.hasProperty('skipTestReport')
+	}
+
+	mustRunAfter unit, integration, cucumber // end2end
+
+	executionData fileTree(project.rootDir) {
+		include '**/*.exec'
+	}
+	reports {
+		xml.required = true
+		xml.destination file("$buildDir/jacoco/test-report.xml")
+		html.destination file("${buildDir}/reports/coverage/overall")
+	}
+}
+
+// Ensure jacocoTestReport is ran after each specific test report.
+// The 'overall' coverage will then include each of the test tasks ran.
+tasks.named("unitTestReport").configure { finalizedBy "jacocoTestReport" }
+tasks.named("integrationTestReport").configure { finalizedBy "jacocoTestReport" }
+tasks.named("cucumberTestReport").configure { finalizedBy "jacocoTestReport" }
+
 sonar {
-  properties {
-    property "sonar.projectKey", "seng302-2024-team800"
+	properties {
+		property "sonar.projectKey", "seng302-2024-team800"
 		property "sonar.projectName", "seng302-2024-team800"
 		property "sonar.sourceEncoding", "UTF-8"
-    property "sonar.host.url", "https://sonarqube.csse.canterbury.ac.nz"
+		property "sonar.host.url", "https://sonarqube.csse.canterbury.ac.nz"
 		property "sonar.login", "$System.env.SONARQUBE_TOKEN"
 		property "sonar.sources", "src/main/java,src/main/resources"
 		property "sonar.qualitygate.wait", "true"
-  }
+	}
 }

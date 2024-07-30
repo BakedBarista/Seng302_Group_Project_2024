@@ -183,11 +183,28 @@
                     <div class="row g-0">
                         <div class="col-4 py-2">
                             <div class="d-inline">
-                                <form class="plantImageFormSmall position-relative"  th:action="@{'/plants/' + ${plant.id} + '/plant-image'}"  method="post" enctype="multipart/form-data" novalidate>
-                                    <label th:for="${plant.id} + 'Small'" class="position-absolute top-0 end-0 mt-1 me-1"   th:if="${currentUser.id == garden.owner.id}" style=" cursor: pointer;" ><img th:src="@{/icons/trans-plus.svg}" alt="+" width="26px" height="26px"/></label>
-                                    <input th:id="${plant.id} + 'Small'" name="image" class="imageSmall d-none" type="file" accept=".png,.jpg,.jpeg,.svg"/>
-                                    <img th:src="@{'/plants/' + ${plant.id} + '/plant-image'}" alt="Plant Picture" class="w-100 rounded mx-auto d-block h-auto" style="max-width: 300px; max-height: 300px;" />
-                                    <span id="plantImageErrorSmall" class="plantImageErrorSmall invalid-feedback text-center position-absolute bottom-0 end-0"></span>
+                                <form class="plantImageFormSmall position-relative"
+                                      th:action="@{'/plants/' + ${plant.id} + '/plant-image'}"
+                                      method="post"
+                                      enctype="multipart/form-data"
+                                      novalidate>
+                                    <label th:for="${plant.id} + 'Small'"
+                                           class="position-absolute top-0 end-0 mt-1 me-1"
+                                           th:if="${currentUser.id == garden.owner.id}" style=" cursor: pointer;" >
+                                        <img th:src="@{/icons/trans-plus.svg}" alt="+" width="26px" height="26px"/>
+                                    </label>
+                                    <input th:id="${plant.id} + 'Small'"
+                                           name="image"
+                                           class="imageSmall d-none"
+                                           type="file"
+                                           accept=".png,.jpg,.jpeg,.svg"/>
+                                    <img th:src="@{'/plants/' + ${plant.id} + '/plant-image'}"
+                                         alt="Plant Picture"
+                                         class="w-100 rounded mx-auto d-block h-auto"
+                                         style="max-width: 300px; max-height: 300px;" />
+                                    <span id="plantImageErrorSmall"
+                                          class="plantImageErrorSmall invalid-feedback text-center position-absolute bottom-0 end-0">
+                                    </span>
                                 </form>
                             </div>
                             <div class="pt-2">
@@ -215,8 +232,11 @@
                         <div class="col-8">
                             <div class="card-body pt-2">
                                 <div class="d-flex">
-                                    <div class="fw-bold mb-1">
-                                        <span class="fw-bold" style="font-size: 16pt;" th:text="${plant.name}">Plant Name</span>
+<!--                                    <div class="fw-bold mb-1">-->
+<!--                                        <span class="fw-bold" style="font-size: 16pt;" th:text="${plant.name}">Plant Name</span>-->
+<!--                                    </div>-->
+                                    <div class="overflow-hidden">
+                                        <span class="fw-bold text-truncate" style="font-size: 16pt" th:text="${plant.name}">Plant Name</span>
                                     </div>
                                     <div class="d-flex justify-content-left ps-2 pt-1">
                                         <a class="ms-auto justify-content-end"  th:if="${currentUser.id == garden.owner.id}" th:href="@{/gardens/{gardenId}/plants/{plantId}/edit(gardenId=${garden.id}, plantId=${plant.id})}">
@@ -245,14 +265,14 @@
                                 <label th:for="${plant.id}" class="position-absolute top-0 end-0 mt-1 me-1"  th:if="${currentUser.id == garden.owner.id}"  style="cursor: pointer;"><img th:src="@{/icons/trans-plus.svg}" alt="+" /></label>
                                 <input th:id="${plant.id}" name="image" class="image d-none" type="file" accept=".png,.jpg,.jpeg,.svg"/>
                                 <img th:src="@{'/plants/' + ${plant.id} + '/plant-image'}" alt="Plant Picture" class="w-100 rounded mx-auto d-block" style="width: 300px; height: 300px;" />
-                                <span id="plantImageError" class="plantImageError invalid-feedback text-center position-absolute bottom-0 start-0"></span>
+                                <span id="plantImageError" class="plantImageError invalid-feedback text-center position-absolute top-0 start-0 mb-3"></span>
                             </form>
                         </div>
                     </div>
                     <div class="card-body m-0 p-3">
                         <div class="d-flex">
-                            <div class="fw-bold mb-1">
-                                <span class="fw-bold" style="font-size: 14pt;" th:text="${plant.name}">Plant Name</span>
+                            <div class="overflow-hidden">
+                                <span class="fw-bold text-truncate" style="font-size: 14pt" th:text="${plant.name}">Plant Name</span>
                             </div>
                             <div class="d-flex justify-content-end ms-auto">
                                 <a class="ms-auto justify-content-end"   th:if="${currentUser.id == garden.owner.id}" th:href="@{/gardens/{gardenId}/plants/{plantId}/edit(gardenId=${garden.id}, plantId=${plant.id})}">
@@ -281,22 +301,32 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
     </div>
 </main>
 <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
-</body>
 <script>
     (function () {
-        const VALID_MIME_TYPES = ["image/png", "image/jpeg", "image/svg+xml"];
+        const VALID_MIME_TYPES = ["image/png", "image/jpeg", "image/jpg", "image/svg+xml"];
         const plantImageForms = document.querySelectorAll(".plantImageForm");
         const plantImageFormsSmall = document.querySelectorAll(".plantImageFormSmall");
 
-        function handleInputImageChange(plantImageInput, plantImageError, form) {
+        function clearErrorMessages() {
+            document.querySelectorAll(".plantImageError").forEach((errorElement) => {
+                errorElement.style.display = "none";
+                errorElement.textContent = "";
+            });
+            document.querySelectorAll(".plantImageErrorSmall").forEach((errorElement) => {
+                errorElement.style.display = "none";
+                errorElement.textContent = "";
+            });
+        }
+
+        function handleImageInputChange(plantImageInput, plantImageError, form) {
             plantImageInput.addEventListener("change", (e) => {
+                clearErrorMessages()
                 const file = plantImageInput.files[0];
                 if (!file) {
                     return;
@@ -331,4 +361,5 @@
         });
     })();
 </script>
+</body>
 </html>
