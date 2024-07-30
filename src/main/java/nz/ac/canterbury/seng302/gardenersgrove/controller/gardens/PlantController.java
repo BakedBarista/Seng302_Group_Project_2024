@@ -338,17 +338,13 @@ public class PlantController {
                 logger.warn("User tried to access a non-public garden that is not theirs, denying access.");
                 return "/error/accessDenied";
             }
+
         if (plant.isPresent()) {
             Plant plantItem =  plant.get();
             List <PlantHistoryItemDTO> plantHistory = plantHistoryService.getPlantHistory(plantItem);
             model.addAttribute("plantHistory", plantHistory);
             model.addAttribute("dateFormatter", new ThymeLeafDateFormatter());
             model.addAttribute("NZ_FORMAT_DATE", NZ_FORMAT_DATE);
-//            model.addAttribute("HISTORY_FORMAT_DATE", HISTORY_FORMAT_DATE);
-
-            if (!garden.isPresent() || !garden.get().getOwner().getId().equals(owner.getId())) {
-                return "/error/accessDenied";
-            }
 
             model.addAttribute("garden", garden.get());
             model.addAttribute("owner", owner);

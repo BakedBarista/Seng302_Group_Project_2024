@@ -219,4 +219,14 @@ public class PlantControllerTest {
         Mockito.verify(model).addAttribute("description", plantHistoryDTO);
     }
 
+    @Test
+    void givenInvalidUser_whenAccessUnauthorizedPlant_thenAccessDenied() {
+        Model model = Mockito.mock(Model.class);
+        GardenUser notOwner = new GardenUser();
+        when(userService.getCurrentUser()).thenReturn(notOwner);
+        String result = plantController.getPlantDetail(testGarden.getId(),testPlant.getId(),model);
+        Assertions.assertEquals("/error/accessDenied",result);
+    }
+
+
 }
