@@ -296,9 +296,11 @@
                             </div>
                         </div >
                         <div class="dropdown d-flex justify-content-end">
-                            <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).NOT_GROWING}" class="btn button-not-planted dropdown-toggle"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButton' + plant.id}">Not Growing</span>
-                            <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).CURRENTLY_GROWING}" class="btn button-growing dropdown-toggle"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButton' + plant.id}">Growing</span>
-                            <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).HARVESTED}" class="btn button-harvest dropdown-toggle"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButton' + plant.id}">Harvested</span>
+                            <!-- Plant Status Button -->
+                            <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).NOT_GROWING}" class="btn button-not-planted dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButton' + plant.id}">Not Growing</span>
+                            <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).CURRENTLY_GROWING}" class="btn button-growing dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButton' + plant.id}">Growing</span>
+                            <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).HARVESTED}" class="btn button-harvest dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButton' + plant.id}">Harvested</span>
+
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                 <button type="button" class="dropdown-item" th:onclick="'updateStatus(' + ${plant.id} + ', \'NOT_GROWING\')'">
                                     <span class="badge not-planted-badge">Not Growing</span>
@@ -306,29 +308,31 @@
                                 <button type="button" class="dropdown-item" th:onclick="'updateStatus(' + ${plant.id} + ', \'CURRENTLY_GROWING\')'">
                                     <span class="badge growing-badge">Growing</span>
                                 </button>
-                                <button type="button" class="dropdown-item" th:onclick="'updateStatus(' + ${plant.id} + ', \'HARVESTED\')'" data-bs-toggle="modal" data-bs-target="#harvestedDateModal">
+                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#harvestedDateModal" th:attr="onclick='setPlantId(' + ${plant.id} + ')'">
                                     <span class="badge harvest-badge">Harvested</span>
                                 </button>
                             </div>
+                        </div>
+                    </div>
 
-                            <!-- Harvested Date Modal -->
-                            <div class="modal fade" id="harvestedDateModal" tabindex="-1" aria-labelledby="harvestedDateModalLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-centered modal-sm">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h4 class="modal-title mx-2" id="harvestedDateModalLabel">Harvested Date</h4>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body mx-2">
-                                            <label>Date:
-                                                <input type="date">
-                                            </label>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                            <button type="button" class="btn btn-primary">Save date</button>
-                                        </div>
-                                    </div>
+                    <!-- Harvested Date Modal -->
+                    <div class="modal fade" id="harvestedDateModal" tabindex="-1" aria-labelledby="harvestedDateModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-sm">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title mx-2" id="harvestedDateModalLabel">Harvested Date</h4>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body mx-2">
+                                    <label>Date:
+                                        <input type="date" id="harvestedDateInput">
+                                    </label>
+                                    <div id="errorContainer" class="text-danger mt-2"></div>
+                                    <input type="hidden" id="currentPlantId">
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-primary" onclick="saveHarvestedDate()">Save date</button>
                                 </div>
                             </div>
                         </div>
@@ -342,6 +346,17 @@
 <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
 </body>
 <script>
+    $(document).ready(function() {
+        $('#harvestedDateModal').on('show.bs.modal', function (event) {
+            const today = new Date().toISOString().split('T')[0];
+            $('#harvestedDateInput').val(today);
+            $('#errorContainer').text('');
+        });
+    });
+    function setPlantId(plantId) {
+        document.getElementById('currentPlantId').value = plantId;
+    }
+
     (function () {
         const VALID_MIME_TYPES = ["image/png", "image/jpeg", "image/svg+xml"];
         const plantImageForms = document.querySelectorAll(".plantImageForm");
@@ -384,11 +399,45 @@
     })();
 
 
+
+    function saveHarvestedDate() {
+        const plantId = document.getElementById('currentPlantId').value;
+        const harvestedDate = document.getElementById('harvestedDateInput').value;
+        const errorContainer = document.getElementById('errorContainer');
+        console.log(plantId);
+
+        fetch(`${apiBaseUrl}/plants/${plantId}/harvest-date`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                [csrfHeader]: csrf,
+            },
+            body: JSON.stringify({ harvestedDate: harvestedDate }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    updateStatus(plantId, 'HARVESTED');
+                    const harvestedDateModal = document.getElementById('harvestedDateModal');
+                    const modal = bootstrap.Modal.getInstance(harvestedDateModal);
+                    modal.hide();
+                } else if (data.status === 'error') {
+                    errorContainer.textContent = data.errors.join(', ');
+                } else {
+                    console.log(data);
+                    throw new Error('Unexpected response status');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+
     function updateStatus(plantId, newStatus) {
         fetch(`${apiBaseUrl}/plants/${plantId}/status?status=${newStatus}`, {
             method: 'PUT',
             headers: {
-                'content-type': 'application/json',
+                'Content-Type': 'application/json',
                 [csrfHeader]: csrf,
             },
         })
@@ -432,12 +481,12 @@
                         }
                     }
                 }
-
             })
             .catch(error => {
                 console.error('There was a problem with the fetch operation:', error);
             });
     }
+
 
 
 
