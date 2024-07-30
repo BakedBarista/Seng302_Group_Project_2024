@@ -31,6 +31,7 @@ import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -462,6 +463,7 @@ class PlantControllerTest {
        when(mockGardenTimeline.getOwner()).thenReturn(ownerTimeline);
        when(mockGardenTimeline.getId()).thenReturn(gardenIdTimeline);
        when(mockGardenTimeline.getIsPublic()).thenReturn(true);
+       when(mockGardenTimeline.getPlants()).thenReturn(List.of(mockPlantTimeline));
        when(mockPlantTimeline.getId()).thenReturn(plantIdTimeline);
        when(mockPlantTimeline.getGarden()).thenReturn(mockGardenTimeline);
 
