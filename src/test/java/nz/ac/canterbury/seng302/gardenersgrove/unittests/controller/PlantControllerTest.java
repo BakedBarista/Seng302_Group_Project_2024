@@ -66,8 +66,9 @@ class PlantControllerTest {
     String dateInvalidStr = "dateInvalid";
     private static Authentication authentication;
 
-    private Garden mockTimelineGarden;
-    private Plant mockTimelinePlant;
+    // For the garden timeline tests
+    private Garden mockGardenTimeline;
+    private Plant mockPlantTimeline;
     private GardenUser ownerTimeline;
     private GardenUser currentUserTimeline;
     private long ownerIdTimeline = 1L;
@@ -450,32 +451,25 @@ class PlantControllerTest {
     }
 
    void setUpForPlantTimelineTests() {
-       mockTimelineGarden = mock(Garden.class);
-       mockTimelinePlant = mock(Plant.class);
+       mockGardenTimeline = mock(Garden.class);
+       mockPlantTimeline = mock(Plant.class);
        ownerTimeline = mock(GardenUser.class);
        currentUserTimeline = mock(GardenUser.class);
 
        // Define the behavior of the mock objects
        when(ownerTimeline.getId()).thenReturn(ownerIdTimeline);
        when(currentUserTimeline.getId()).thenReturn(currentUserIdTimeline);
-       when(mockTimelineGarden.getOwner()).thenReturn(ownerTimeline);
-       when(mockTimelineGarden.getId()).thenReturn(gardenIdTimeline);
-       when(mockTimelineGarden.getIsPublic()).thenReturn(true);
-       when(mockTimelinePlant.getId()).thenReturn(plantIdTimeline);
-       when(mockTimelinePlant.getGarden()).thenReturn(mockTimelineGarden);
+       when(mockGardenTimeline.getOwner()).thenReturn(ownerTimeline);
+       when(mockGardenTimeline.getId()).thenReturn(gardenIdTimeline);
+       when(mockGardenTimeline.getIsPublic()).thenReturn(true);
+       when(mockPlantTimeline.getId()).thenReturn(plantIdTimeline);
+       when(mockPlantTimeline.getGarden()).thenReturn(mockGardenTimeline);
 
        // Define the behavior of the services
        when(gardenUserService.getCurrentUser()).thenReturn(currentUserTimeline);
-       when(plantService.getPlantById(plantIdTimeline)).thenReturn(Optional.of(mockTimelinePlant));
-       when(gardenService.getGardenById(gardenIdTimeline)).thenReturn(Optional.of(mockTimelineGarden));
+       when(plantService.getPlantById(plantIdTimeline)).thenReturn(Optional.of(mockPlantTimeline));
+       when(gardenService.getGardenById(gardenIdTimeline)).thenReturn(Optional.of(mockGardenTimeline));
    }
-    @Test
-    void getPlantTimeline_NonOwnerViewingPrivateGardenPlantsDetails_AccessDeniedShown() {
-        setUpForPlantTimelineTests();
-
-        String result = plantController.getPlantTimeline(gardenIdTimeline, plantIdTimeline, model);
-        assertEquals("/error/accessDenied", result);
-    }
     @Test
     void getPlantTimeline_AttemptToAccessNonExistingGardenId_Shown404() {
         setUpForPlantTimelineTests();
@@ -499,10 +493,10 @@ class PlantControllerTest {
     @Test
     void getPlantTimeline_NotOwnerViewingPrivateGardenPlant_AccessDenied() {
         setUpForPlantTimelineTests();
-        mockTimelineGarden.setPublic(false);
-        currentUserIdTimeline = 2L;
+        currentUserIdTimeline = 3L;
 
-        when(mockTimelineGarden.getIsPublic()).thenReturn(false);
+        when(mockGardenTimeline.getIsPublic()).thenReturn(false);
+        when(currentUserTimeline.getId()).thenReturn(currentUserIdTimeline);
 
         String result = plantController.getPlantTimeline(gardenIdTimeline, plantIdTimeline, model);
         assertEquals("/error/accessDenied", result);
@@ -510,9 +504,19 @@ class PlantControllerTest {
 
     @Test
     void getPlantTimeline_OwnerViewingPrivateGardenPlant_DetailPageShown() {
+        setUpForPlantTimelineTests();
+
+        when(mockGardenTimeline.getIsPublic()).thenReturn(false);
+
+        String result = plantController.getPlantTimeline(gardenIdTimeline, plantIdTimeline, model);
+        assertEquals("plants/plantDetails", result);
     }
 
     @Test
     void getPlantTimeline_NonOwnerViewingPublicGardenPlant_DetailPageShown() {
+        setUpForPlantTimelineTests();
+
+        String result = plantController.getPlantTimeline(gardenIdTimeline, plantIdTimeline, model);
+        assertEquals("plants/plantDetails", result);
     }
 }
