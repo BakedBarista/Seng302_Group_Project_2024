@@ -66,7 +66,7 @@ public class PlantController {
         GardenUser owner = gardenUserService.getCurrentUser();
         Optional<Garden> garden = gardenService.getGardenById(gardenId);
         if (!garden.isPresent() || !garden.get().getOwner().getId().equals(owner.getId())) {
-            return "/error/accessDenied";
+            return "error/accessDenied";
         }
 
         List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
@@ -139,7 +139,7 @@ public class PlantController {
         GardenUser owner = gardenUserService.getCurrentUser();
         Optional<Garden> garden = gardenService.getGardenById(gardenId);
         if (!garden.isPresent() || !garden.get().getOwner().getId().equals(owner.getId())) {
-            return "/error/accessDenied";
+            return "error/accessDenied";
         }
         List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
         model.addAttribute("gardens", gardens);
@@ -358,5 +358,28 @@ public class PlantController {
         model.addAttribute("dateFormatter", new ThymeLeafDateFormatter());
         model.addAttribute("NZ_FORMAT_DATE", NZ_FORMAT_DATE);
         return "plants/plantDetails";
+    }
+
+    /**
+     * take user to search plant information form
+     * @return redirect to a more detailed page about a specific plant
+     */
+    @GetMapping("/plantInformation")
+    public String plantInformationForm(
+                            Model model) {
+        return "plants/plantInformation";
+    }
+
+    /**
+     *
+     * @param plantId the id of the plant being looked into
+     * @param model representation of results
+     * @return returns to the same plant information page with results from search
+     */
+    @PostMapping("/plantInformation")
+    public String plantInformationSubmit(
+                                      @PathVariable("plantId") long plantId,
+                                      Model model) {
+        return "plants/plantInformation";
     }
 }

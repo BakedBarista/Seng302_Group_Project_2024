@@ -105,7 +105,7 @@ class PlantControllerTest {
     @Test
     void testAddPlantForm_GardenNotPresent_ReturnsAccessDenied() {
         long gardenId = 0;
-        String expectedReturnPage = "/error/accessDenied";
+        String expectedReturnPage = "error/accessDenied";
 
         when(gardenService.getGardenById(gardenId)).thenReturn(Optional.empty());
         String returnPage = plantController.addPlantForm(gardenId, model);
@@ -115,7 +115,7 @@ class PlantControllerTest {
     @Test
     void testAddPlantForm_UserNotOwner_ReturnsAccessDenied() {
         long gardenId = 0;
-        String expectedReturnPage = "/error/accessDenied";
+        String expectedReturnPage = "error/accessDenied";
 
         GardenUser owner = new GardenUser();
         owner.setId(1L);
@@ -518,5 +518,19 @@ class PlantControllerTest {
 
         String result = plantController.getPlantTimeline(gardenIdTimeline, plantIdTimeline, model);
         assertEquals("plants/plantDetails", result);
+    }
+
+    @Test
+    void testPlantInformationForm_ReturnsToPlantInformation() {
+        String expectedReturnPage = "plants/plantInformation";
+        String returnPage = plantController.plantInformationForm(model);
+        assertEquals(expectedReturnPage, returnPage);
+    }
+
+    @Test
+    void testPlantInformationSubmitForm_ReturnsToPlantInformation() {
+        String expectedReturnPage = "plants/plantInformation";
+        String returnPage = plantController.plantInformationSubmit(1, model);
+        assertEquals(expectedReturnPage, returnPage);
     }
 }
