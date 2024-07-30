@@ -45,9 +45,10 @@ public class PlantHistoryService {
     public List<PlantHistoryItemDTO> getPlantHistory(Plant plant) {
 
         List<PlantHistoryItem> historyItems = plantHistoryRepository.findByPlantId(plant.getId());
+
         return historyItems.stream()
                 .map(item -> new PlantHistoryItemDTO(item.getDescription(), item.getTimestamp()))
-                .collect(Collectors.toList());
+                .toList();
     }
 
 
