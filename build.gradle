@@ -52,8 +52,16 @@ tasks.named("check") {
 	dependsOn unit, integration, cucumber
 }
 
-tasks.named("test") {
-	dependsOn unit, integration
+// for backwards compatability with running single tests / class of tests - doesn't generate coverage report
+tasks.named("test", Test) {
+	useJUnitPlatform()
+	filter {
+		includeTestsMatching("nz.ac.canterbury.seng302.gardenersgrove.unittests.*")
+		includeTestsMatching("nz.ac.canterbury.seng302.gardenersgrove.integrationtests.*")
+	}
+	testLogging {
+		events "passed", "skipped", "failed", "standardOut", "standardError"
+	}
 }
 
 tasks.register('unit', Test) {
@@ -64,7 +72,7 @@ tasks.register('unit', Test) {
 	testLogging {
 		events "passed", "skipped", "failed", "standardOut", "standardError"
 	}
-	finalizedBy "unitTestReport"
+	finalizedBy unitTestReport
 }
 
 tasks.register("integration", Test) {
@@ -75,7 +83,7 @@ tasks.register("integration", Test) {
 	testLogging {
 		events "passed", "skipped", "failed", "standardOut", "standardError"
 	}
-	finalizedBy "integrationTestReport"
+	finalizedBy integrationTestReport
 }
 
 tasks.register("cucumber", Test) {
@@ -88,7 +96,7 @@ tasks.register("cucumber", Test) {
 		events "passed", "skipped", "failed", "standardOut", "standardError"
 		exceptionFormat TestExceptionFormat.FULL
 	}
-	finalizedBy "cucumberTestReport"
+	finalizedBy cucumberTestReport
 }
 
 tasks.register("unitTestReport", JacocoReport) { // Generate a report for unit tests
@@ -178,9 +186,6 @@ jacocoTestReport { // Generate a report for all generated test data
 tasks.named("unitTestReport").configure { finalizedBy "jacocoTestReport" }
 tasks.named("integrationTestReport").configure { finalizedBy "jacocoTestReport" }
 tasks.named("cucumberTestReport").configure { finalizedBy "jacocoTestReport" }
-
-
-
 
 sonar {
 	properties {
