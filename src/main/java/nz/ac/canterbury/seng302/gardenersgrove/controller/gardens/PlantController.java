@@ -328,10 +328,6 @@ public class PlantController {
         Optional<Plant> plant = plantService.getPlantById(plantId);
         Optional<Garden> garden = gardenService.getGardenById(gardenId);
 
-        if (plant.isEmpty()) {
-            logger.warn("User tried to access a non-existent plant, returning 404.");
-            return "error/404";
-        }
 
         if (garden.isPresent()) {
             GardenUser owner = garden.get().getOwner();
@@ -342,6 +338,11 @@ public class PlantController {
             if (isNotOwner && isNotPublic){
                 logger.warn("User tried to access a non-public garden that is not theirs, denying access.");
                 return "error/accessDenied";
+            }
+
+            if (plant.isEmpty() || !garden.get().getPlants().contains(plant.get())) {
+                logger.warn("User tried to access a non-existent plant for that garden, returning 404.");
+                return "error/404";
             }
 
             model.addAttribute("garden", garden.get());
