@@ -8,22 +8,17 @@ import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.PlantControlle
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
-
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.security.core.parameters.P;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
-import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
-import org.mockito.Mock;
 
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 public class U28GardenHistoryPlantDateFeature {
@@ -72,13 +67,13 @@ public class U28GardenHistoryPlantDateFeature {
     public void i_submit_the_add_plant_form() {
         Plant savedPlant = new Plant(plantDTO);
         when(plantService.createPlant(plantDTO, gardenId)).thenReturn(new Plant(plantDTO));
-        doNothing().when(plantService).setPlantImage(anyLong(), anyString(), any(byte[].class));
+        doNothing().when(plantService).setPlantImage(anyLong(), any(MultipartFile.class));
         plantController.submitAddPlantForm(gardenId, plantDTO, bindingResult, file, date, model);
     }
     @Then("the plant is successfully added")
     public void the_plant_is_successfully_added() {
         verify(plantService).createPlant(eq(plantDTO), eq(gardenId));
-        verify(plantService).setPlantImage(anyLong(), anyString(), any(byte[].class));
+        verify(plantService).setPlantImage(anyLong(), any(MultipartFile.class));
     }
 
     @When("I enter a valid plant name {string} and a invalid date {string}")
