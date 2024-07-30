@@ -197,7 +197,7 @@ public class PlantControllerTest {
         long gardenId = testGarden.getId();
         long plantId = testPlant.getId();
         MockMultipartFile file = new MockMultipartFile("image", "test.png", "image/png", "test".getBytes());
-        PlantHistoryItemDTO plantHistoryDTO = new PlantHistoryItemDTO("Test Description");
+        PlantHistoryItemDTO plantHistoryDTO = new PlantHistoryItemDTO("Test Description", LocalDate.of(1970, 1, 1));
         BindingResult bindingResult = Mockito.mock(BindingResult.class);
         Model model = Mockito.mock(Model.class);
         Mockito.doNothing().when(plantHistoryService).addHistoryItem(Mockito.any(Plant.class),Mockito.anyString(),Mockito.any(byte[].class),Mockito.anyString());
@@ -210,7 +210,7 @@ public class PlantControllerTest {
         long gardenId = testGarden.getId();
         long plantId = testPlant.getId();
         MockMultipartFile file = new MockMultipartFile("image", "test.png", "image/png", "test".getBytes());
-        PlantHistoryItemDTO plantHistoryDTO = new PlantHistoryItemDTO("Test Description");
+        PlantHistoryItemDTO plantHistoryDTO = new PlantHistoryItemDTO("Test Description", LocalDate.of(1970, 1, 1));
         BindingResult bindingResult = Mockito.mock(BindingResult.class);
         Mockito.when(bindingResult.hasErrors()).thenReturn(true);
         Model model = Mockito.mock(Model.class);
