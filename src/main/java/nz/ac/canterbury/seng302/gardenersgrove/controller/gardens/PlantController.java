@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.HISTORY_FORMAT_DATE;
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.NZ_FORMAT_DATE;
 
 /**
@@ -341,6 +342,9 @@ public class PlantController {
             Plant plantItem =  plant.get();
             List <PlantHistoryItemDTO> plantHistory = plantHistoryService.getPlantHistory(plantItem);
             model.addAttribute("plantHistory", plantHistory);
+            model.addAttribute("dateFormatter", new ThymeLeafDateFormatter());
+            model.addAttribute("NZ_FORMAT_DATE", NZ_FORMAT_DATE);
+//            model.addAttribute("HISTORY_FORMAT_DATE", HISTORY_FORMAT_DATE);
 
             if (!garden.isPresent() || !garden.get().getOwner().getId().equals(owner.getId())) {
                 return "/error/accessDenied";
@@ -354,17 +358,8 @@ public class PlantController {
         model.addAttribute("gardenId", gardenId);
         model.addAttribute("plantId", plantId);
         model.addAttribute("plant", plant.orElse(null));
-        model.addAttribute("dateFormatter", new ThymeLeafDateFormatter());
-        model.addAttribute("NZ_FORMAT_DATE", NZ_FORMAT_DATE);
-//        return "plants/plantDetails";
-            List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
-//        model.addAttribute("gardens", gardens);
-            model.addAttribute("gardenId", gardenId);
-            model.addAttribute("plantId", plantId);
-            model.addAttribute("plant", plant.orElse(null));
 
-
-            return "plants/plantDetails";
+        return "plants/plantDetails";
 
         }
 

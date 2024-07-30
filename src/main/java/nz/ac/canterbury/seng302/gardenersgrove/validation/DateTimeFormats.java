@@ -13,4 +13,8 @@ public class DateTimeFormats {
     public static final DateTimeFormatter NZ_FORMAT_DATE = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     public static final DateTimeFormatter WEATHER_CARD_FORMAT_DATE = DateTimeFormatter.ofPattern("EEEE dd MMM");
+
+    public static final DateTimeFormatter HISTORY_FORMAT_DATE = DateTimeFormatter.ofPattern("EEEE d MMMM yyyy");
+
+
 }
