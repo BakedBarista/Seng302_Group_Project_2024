@@ -306,9 +306,30 @@
                                 <button type="button" class="dropdown-item" th:onclick="'updateStatus(' + ${plant.id} + ', \'CURRENTLY_GROWING\')'">
                                     <span class="badge growing-badge">Growing</span>
                                 </button>
-                                <button type="button" class="dropdown-item" th:onclick="'updateStatus(' + ${plant.id} + ', \'HARVESTED\')'">
+                                <button type="button" class="dropdown-item" th:onclick="'updateStatus(' + ${plant.id} + ', \'HARVESTED\')'" data-bs-toggle="modal" data-bs-target="#harvestedDateModal">
                                     <span class="badge harvest-badge">Harvested</span>
                                 </button>
+                            </div>
+
+                            <!-- Harvested Date Modal -->
+                            <div class="modal fade" id="harvestedDateModal" tabindex="-1" aria-labelledby="harvestedDateModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered modal-sm">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title mx-2" id="harvestedDateModalLabel">Harvested Date</h4>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body mx-2">
+                                            <label>Date:
+                                                <input type="date">
+                                            </label>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <button type="button" class="btn btn-primary">Save date</button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
