@@ -38,8 +38,13 @@ public class PlantController {
     private final GardenService gardenService;
     private final PlantHistoryService plantHistoryService;
 
-    private final static String PLANT_SUCCESSFULLY_SAVED_LOG = "Saved new plant to Garden ID: {}";
-    private final static String PLANT_UNSUCCESSFULLY_SAVED_LOG = "Failed to save new plant to garden ID: {}";
+    private static final String PLANT_SUCCESSFULLY_SAVED_LOG = "Saved new plant to Garden ID: {}";
+    private static final String PLANT_UNSUCCESSFULLY_SAVED_LOG = "Failed to save new plant to garden ID: {}";
+    private static final String GARDEN_ID = "gardenId";
+    private static final String PLANT_ID = "plantId";
+    private static final String PLANT = "plant";
+    private static final String ACCESS_DENIED = "error/accessDenied";
+
 
     @Autowired
     public PlantController(PlantService plantService, GardenService gardenService, GardenUserService gardenUserService, PlantHistoryService plantHistoryService) {
@@ -60,13 +65,13 @@ public class PlantController {
     public String addPlantForm(@PathVariable("id") Long gardenId, Model model){
 
         logger.info("GET /gardens/${id}/add-plant - display the new plant form");
-        model.addAttribute("gardenId", gardenId);
-        model.addAttribute("plant", new Plant("","","",null));
+        model.addAttribute(GARDEN_ID, gardenId);
+        model.addAttribute(PLANT, new Plant("","","",null));
 
         GardenUser owner = gardenUserService.getCurrentUser();
         Optional<Garden> garden = gardenService.getGardenById(gardenId);
         if (!garden.isPresent() || !garden.get().getOwner().getId().equals(owner.getId())) {
-            return "error/accessDenied";
+            return ACCESS_DENIED;
         }
 
         List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
@@ -87,8 +92,8 @@ public class PlantController {
      * @return redirect to gardens page
      */
     @PostMapping("/gardens/{gardenId}/add-plant")
-    public String submitAddPlantForm(@PathVariable("gardenId") Long gardenId,
-                                     @Valid @ModelAttribute("plant") PlantDTO plantDTO,
+    public String submitAddPlantForm(@PathVariable(GARDEN_ID) Long gardenId,
+                                     @Valid @ModelAttribute(PLANT) PlantDTO plantDTO,
                                      BindingResult bindingResult,
                                      @RequestParam("image") MultipartFile file,
                                      @RequestParam("dateError") String dateValidity,
@@ -104,8 +109,8 @@ public class PlantController {
         }
 
         if (bindingResult.hasErrors()) {
-            model.addAttribute("plant", plantDTO);
-            model.addAttribute("gardenId", gardenId);
+            model.addAttribute(PLANT, plantDTO);
+            model.addAttribute(GARDEN_ID, gardenId);
             logger.error("Validation error in Plant Form.");
             return "plants/addPlant";
         }
@@ -131,21 +136,21 @@ public class PlantController {
      * @return redirect to gardens page
      */
     @GetMapping("/gardens/{gardenId}/plants/{plantId}/edit")
-    public String editPlantForm(@PathVariable("gardenId") long gardenId,
-                            @PathVariable("plantId") long plantId,
+    public String editPlantForm(@PathVariable(GARDEN_ID) long gardenId,
+                            @PathVariable(PLANT_ID) long plantId,
                             Model model) {
         logger.info("/garden/{}/plant/{}/edit", gardenId, plantId);
         Optional<Plant> plant = plantService.getPlantById(plantId);
         GardenUser owner = gardenUserService.getCurrentUser();
         Optional<Garden> garden = gardenService.getGardenById(gardenId);
         if (!garden.isPresent() || !garden.get().getOwner().getId().equals(owner.getId())) {
-            return "error/accessDenied";
+            return ACCESS_DENIED;
         }
         List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
         model.addAttribute("gardens", gardens);
-        model.addAttribute("gardenId", gardenId);
-        model.addAttribute("plantId", plantId);
-        model.addAttribute("plant", plant.orElse(null));
+        model.addAttribute(GARDEN_ID, gardenId);
+        model.addAttribute(PLANT_ID, plantId);
+        model.addAttribute(PLANT, plant.orElse(null));
         return "plants/editPlant";
     }
 
@@ -160,11 +165,11 @@ public class PlantController {
      * @return redirect to gardens page if data is valid
      */
     @PostMapping("/gardens/{gardenId}/plants/{plantId}/edit")
-    public String submitEditPlantForm(@PathVariable("gardenId") long gardenId,
-                                      @PathVariable("plantId") long plantId,
+    public String submitEditPlantForm(@PathVariable(GARDEN_ID) long gardenId,
+                                      @PathVariable(PLANT_ID) long plantId,
                                       @RequestParam("image") MultipartFile file,
                                       @RequestParam("dateError") String dateValidity,
-                                      @Valid @ModelAttribute("plant") PlantDTO plant,
+                                      @Valid @ModelAttribute(PLANT) PlantDTO plant,
                                       BindingResult bindingResult,
                                       Model model) {
 
@@ -177,9 +182,9 @@ public class PlantController {
         }
 
         if (bindingResult.hasErrors()) {
-            model.addAttribute("plant", plant);
-            model.addAttribute("gardenId", gardenId);
-            model.addAttribute("plantId", plantId);
+            model.addAttribute(PLANT, plant);
+            model.addAttribute(GARDEN_ID, gardenId);
+            model.addAttribute(PLANT_ID, plantId);
             return "plants/editPlant";
         }
 
@@ -258,7 +263,7 @@ public class PlantController {
      * @return redirect to add plant form
      */
     @GetMapping("/gardens/{gardenId}/plants/{plantId}/history")
-    public String addPlantHistoryForm(@PathVariable("gardenId") Long gardenId, @PathVariable("plantId") Long plantId, Model model) {
+    public String addPlantHistoryForm(@PathVariable(GARDEN_ID) Long gardenId, @PathVariable(PLANT_ID) Long plantId, Model model) {
 
         logger.info("GET /gardens/{}/plants/{}/history - display the plant history form", gardenId, plantId);
 
@@ -268,9 +273,9 @@ public class PlantController {
         if (!garden.isPresent() || !garden.get().getOwner().getId().equals(owner.getId())) {
             return "/error/accessDenied";
         }
-        model.addAttribute("gardenId", gardenId);
-        model.addAttribute("plantId", plantId);
-        model.addAttribute("plant", new Plant("", "", "", null));
+        model.addAttribute(GARDEN_ID, gardenId);
+        model.addAttribute(PLANT_ID, plantId);
+        model.addAttribute(PLANT, new Plant("", "", "", null));
         return "plants/plantHistory";
     }
 
@@ -286,11 +291,11 @@ public class PlantController {
      * @return redirect to gardens page if data is valid
      */
     @PostMapping("/gardens/{gardenId}/plants/{plantId}/history")
-    public String submitPlantHistoryForm(@PathVariable("gardenId") long gardenId,
-                                      @PathVariable("plantId") long plantId,
+    public String submitPlantHistoryForm(@PathVariable(GARDEN_ID) long gardenId,
+                                      @PathVariable(PLANT_ID) long plantId,
                                       @RequestParam("image") MultipartFile file,
                                       @RequestParam("description") String description,
-                                      @Valid @ModelAttribute("plant") PlantHistoryItemDTO plantHistoryDTO,
+                                      @Valid @ModelAttribute(PLANT) PlantHistoryItemDTO plantHistoryDTO,
                                       BindingResult bindingResult,
                                       Model model) throws IOException {
                             
@@ -320,8 +325,8 @@ public class PlantController {
      * @return redirect to plant detail page
      */
     @GetMapping("/gardens/{gardenId}/plants/{plantId}")
-    public String getPlantTimeline(@PathVariable("gardenId") long gardenId,
-                                   @PathVariable("plantId") long plantId,
+    public String getPlantTimeline(@PathVariable(GARDEN_ID) long gardenId,
+                                   @PathVariable(PLANT_ID) long plantId,
                                    Model model) {
         logger.info("Serving up plant detail page.");
         logger.info("/garden/{}/plant/{}", gardenId, plantId);
@@ -338,7 +343,7 @@ public class PlantController {
 
             if (isNotOwner && isNotPublic){
                 logger.warn("User tried to access a non-public garden that is not theirs, denying access.");
-                return "error/accessDenied";
+                return ACCESS_DENIED;
             }
 
             if (plant.isEmpty() || !garden.get().getPlants().contains(plant.get())) {
@@ -354,9 +359,9 @@ public class PlantController {
             return "error/404";
         }
 
-        model.addAttribute("gardenId", gardenId);
-        model.addAttribute("plantId", plantId);
-        model.addAttribute("plant", plant.orElse(null));
+        model.addAttribute(GARDEN_ID, gardenId);
+        model.addAttribute(PLANT_ID, plantId);
+        model.addAttribute(PLANT, plant.orElse(null));
         model.addAttribute("dateFormatter", new ThymeLeafDateFormatter());
         model.addAttribute("NZ_FORMAT_DATE", NZ_FORMAT_DATE);
         return "plants/plantDetails";
@@ -380,7 +385,7 @@ public class PlantController {
      */
     @PostMapping("/plantInformation")
     public String plantInformationSubmit(
-                                      @PathVariable("plantId") long plantId,
+                                      @PathVariable(PLANT_ID) long plantId,
                                       Model model) {
         return "plants/plantInformation";
     }
