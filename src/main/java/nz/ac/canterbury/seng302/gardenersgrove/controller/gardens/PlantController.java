@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.Clock;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -42,12 +44,17 @@ public class PlantController {
     private final static String PLANT_SUCCESSFULLY_SAVED_LOG = "Saved new plant to Garden ID: {}";
     private final static String PLANT_UNSUCCESSFULLY_SAVED_LOG = "Failed to save new plant to garden ID: {}";
 
+    private Clock clock;
+
+
     @Autowired
     public PlantController(PlantService plantService, GardenService gardenService, GardenUserService gardenUserService, PlantHistoryService plantHistoryService) {
         this.plantService = plantService;
         this.gardenService = gardenService;
         this.gardenUserService = gardenUserService;
         this.plantHistoryService = plantHistoryService;
+//        this.clock = clock;
+
     }
 
     /**
@@ -269,6 +276,19 @@ public class PlantController {
         if (!garden.isPresent() || !garden.get().getOwner().getId().equals(owner.getId())) {
             return "/error/accessDenied";
         }
+
+        Optional<Plant> existingPlant = plantService.getPlantById(plantId);
+
+        if (existingPlant.isPresent()){
+            Plant plant = existingPlant.get();
+            LocalDate timestamp = LocalDate.now();
+
+            if (plantHistoryService.historyExists(plant, timestamp)) {
+                logger.info("Update already exists today");
+                return "error/404";
+            }
+        }
+
         model.addAttribute("gardenId", gardenId);
         model.addAttribute("plantId", plantId);
         model.addAttribute("plant", new Plant("", "", "", null));
@@ -305,8 +325,16 @@ public class PlantController {
         Optional<Plant> existingPlant = plantService.getPlantById(plantId);
 
         if (existingPlant.isPresent()){
+//            Plant plant = existingPlant.get();
+//            LocalDate timestamp = LocalDate.now();
+//
+//            if (plantHistoryService.historyExists(plant, timestamp)) {
+//                logger.info("Update already exists today");
+//                return "error/404";
+//            }
             try {
                 plantHistoryService.addHistoryItem(existingPlant.get(), file.getContentType(), file.getBytes(), description);
+
             } catch (IOException e) {
                 logger.info("Exception {}",e.toString());
             }

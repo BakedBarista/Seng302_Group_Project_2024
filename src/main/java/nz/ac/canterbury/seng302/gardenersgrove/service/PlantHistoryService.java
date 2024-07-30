@@ -51,5 +51,10 @@ public class PlantHistoryService {
                 .toList();
     }
 
+    public boolean historyExists(Plant plant, LocalDate timestamp) {
+        List<PlantHistoryItem> plantHistoryItems = plantHistoryRepository.findByPlantIdAndTimestamp(plant.getId(), timestamp);
+        return !plantHistoryItems.isEmpty();
+    }
+
 
 }
