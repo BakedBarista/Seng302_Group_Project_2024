@@ -401,7 +401,7 @@ public class PlantControllerTest {
 
     @Test
     void testSubmitAddPlantHistoryFormNoImage_ReturnToGardenDetailPage_PlantHistoryAddedToRepository() {
-        PlantHistoryItemDTO validHistoryPlantDTO = new PlantHistoryItemDTO("validDescription");
+        PlantHistoryItemDTO validHistoryPlantDTO = new PlantHistoryItemDTO("validDescription", LocalDate.of(1970, 1, 1));
         Plant plant = new Plant();
         long gardenId = 0;
         long plantId = 0;
@@ -421,7 +421,7 @@ public class PlantControllerTest {
 
     @Test
     void testSubmitAddPlantHistoryFormWithImage_ReturnToGardenDetailPage_PlantHistoryAddedToRepository() {
-        PlantHistoryItemDTO validHistoryPlantDTO = new PlantHistoryItemDTO("validDescription");
+        PlantHistoryItemDTO validHistoryPlantDTO = new PlantHistoryItemDTO("validDescription", LocalDate.of(1970, 1, 1));
         Plant plant = new Plant();
         long gardenId = 0;
         long plantId = 0;
