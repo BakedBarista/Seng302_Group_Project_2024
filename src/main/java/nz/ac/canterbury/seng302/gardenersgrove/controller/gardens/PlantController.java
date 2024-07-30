@@ -341,7 +341,7 @@ public class PlantController {
 
             if (isNotOwner && isNotPublic){
                 logger.warn("User tried to access a non-public garden that is not theirs, denying access.");
-                return "/error/accessDenied";
+                return "error/accessDenied";
             }
 
             model.addAttribute("garden", garden.get());
