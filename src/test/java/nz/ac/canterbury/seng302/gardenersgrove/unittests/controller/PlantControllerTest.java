@@ -499,7 +499,7 @@ class PlantControllerTest {
         when(currentUserTimeline.getId()).thenReturn(currentUserIdTimeline);
 
         String result = plantController.getPlantTimeline(gardenIdTimeline, plantIdTimeline, model);
-        assertEquals("/error/accessDenied", result);
+        assertEquals("error/accessDenied", result);
     }
 
     @Test
