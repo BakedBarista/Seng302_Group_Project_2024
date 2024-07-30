@@ -113,13 +113,13 @@
               </p>
             </li>
 
-            <li class="timeline-item mb-5">
+            <li th:each="history : ${plantHistory}" class="timeline-item mb-5">
               <span class="timeline-icon">
                 <img class="mx-1" th:src="@{/icons/record.svg}" alt="" width="25" height="25" />
               </span>
               <p class="fw-bold">Update</p>
-              <p class="text-muted mb-2 fw-bold">19 March 2020</p>
-              <p class="text-muted">
+              <p th:text="${history.timestamp}" class="text-muted mb-2 fw-bold">19 March 2020</p>
+              <p th:text="${history.description}" class="text-muted">
                   My tomato bush grew 3cm!
               </p>
             </li>
