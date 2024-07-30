@@ -129,7 +129,7 @@
                 <img class="mx-1" th:src="@{/icons/first-planted.svg}" alt="" width="25" height="25" />
               </span>
               <p class="fw-bold">First Planted!</p>
-              <p class="text-muted mb-2 fw-bold">24 June 2020</p>
+              <p th:text="${dateFormatter.format(plant.getPlantedDate, NZ_FORMAT_DATE)}" class="text-muted mb-2 fw-bold">24 June 2020</p>
               <p class="text-muted">
                   The day this plant was first planted.
               </p>
