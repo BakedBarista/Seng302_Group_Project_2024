@@ -92,7 +92,6 @@ public class PlantStatusApiController {
         try {
             LocalDate harvestedDate = LocalDate.parse(harvestedDateString);
             existingPlant.setHarvestedDate(harvestedDate);
-            logger.info("Setting the harvested date to: " + harvestedDateString);
         } catch (DateTimeParseException e) {
             Map<String, Object> response = new HashMap<>();
             response.put("status", "error");

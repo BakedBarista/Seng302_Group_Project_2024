@@ -229,7 +229,7 @@
                                 <div class="overflow-y-scroll" style="min-height: 144px; max-height: 200px">
                                     <p class="m-0" th:text="${plant.description}"><!--Plant Description goes here--></p>
                                 </div>
-                                <div class="dropdown d-flex justify-content-end">
+                                <div class="dropdown d-flex justify-content-end" th:if="${currentUser.id == garden.owner.id}">
                                     <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).NOT_GROWING}" class="btn button-not-planted dropdown-toggle"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButtonSmall' + plant.id}">Not Growing</span>
                                     <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).CURRENTLY_GROWING}" class="btn button-growing dropdown-toggle"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButtonSmall' + plant.id}">Growing</span>
                                     <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).HARVESTED}" class="btn button-harvest dropdown-toggle"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButtonSmall' + plant.id}">Harvested</span>
@@ -295,29 +295,12 @@
                                 <p class="m-0" th:text="${plant.description}"><!--Plant Description goes here--></p>
                             </div>
                         </div >
-                        <div class="dropdown d-flex justify-content-end">
-                            <!-- Plant Status Button -->
-                            <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).NOT_GROWING}" class="btn button-not-planted dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButton' + plant.id}">Not Growing</span>
-                            <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).CURRENTLY_GROWING}" class="btn button-growing dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButton' + plant.id}">Growing</span>
-                            <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).HARVESTED}" class="btn button-harvest dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButton' + plant.id}">Harvested</span>
-
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <button type="button" class="dropdown-item" th:onclick="'updateStatus(' + ${plant.id} + ', \'NOT_GROWING\')'">
-                                    <span class="badge not-planted-badge">Not Growing</span>
-                                </button>
-                                <button type="button" class="dropdown-item" th:onclick="'updateStatus(' + ${plant.id} + ', \'CURRENTLY_GROWING\')'">
-                                    <span class="badge growing-badge">Growing</span>
-                                </button>
-                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#harvestedDateModal" th:attr="onclick='setPlantId(' + ${plant.id} + ')'">
-                                    <span class="badge harvest-badge">Harvested</span>
-                                </button>
-                            </div>
-                        </div>
+                        <div th:if="${currentUser.id == garden.owner.id}" th:replace="~{fragments/plant-status-dropdown :: plant-status-dropdown(plantId=${plant.id})}"></div>
                     </div>
                 </div>
 
                 <!-- Harvested Date Modal -->
-                <div class="modal fade" id="harvestedDateModal" tabindex="-1" aria-labelledby="harvestedDateModalLabel" aria-hidden="true">
+                <div class="modal fade" id="harvestedDateModal" tabindex="-1" aria-labelledby="harvestedDateModalLabel" aria-hidden="true" th:if="${currentUser.id == garden.owner.id}">
                     <div class="modal-dialog modal-dialog-centered modal-sm">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -425,12 +408,11 @@
                 } else if (data.status === 'error') {
                     errorContainer.textContent = data.errors.join(', ');
                 } else {
-                    console.log(data);
                     throw new Error('Unexpected response status');
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
+                console.error('There was a problem with the fetch operation:', error);
             });
     }
 
