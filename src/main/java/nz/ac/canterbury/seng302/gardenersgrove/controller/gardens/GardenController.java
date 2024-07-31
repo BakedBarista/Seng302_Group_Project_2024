@@ -269,7 +269,7 @@ public class GardenController {
             boolean isNotPublic = !garden.getIsPublic();
 
             if (isNotOwner && isNotPublic){
-                return "/error/accessDenied";
+                return "error/accessDenied";
             }
 
             model.addAttribute("NZ_FORMAT_DATE", NZ_FORMAT_DATE);
