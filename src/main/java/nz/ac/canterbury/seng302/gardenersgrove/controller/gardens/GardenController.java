@@ -279,6 +279,9 @@ public class GardenController {
             SortedMap<LocalDate, List<GardenHistoryItemDTO>> history = gardenHistoryService.getGardenHistory(garden);
             model.addAttribute("history", history);
 
+            GardenUser currentUser = gardenUserService.getUserById(userId);
+            model.addAttribute("currentUser", currentUser);
+
             return "gardens/gardenHistory";
         }
         return "error/404";
