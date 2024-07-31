@@ -40,7 +40,7 @@ public class GardenHistoryService {
         SortedMap<LocalDate, List<GardenHistoryItemDTO>> history = new TreeMap<>(Comparator.reverseOrder());
         for (GardenHistoryItemDTO item : items) {
             LocalDate date = item.getDate();
-            history.computeIfAbsent(date, () -> new ArrayList<>())
+            history.computeIfAbsent(date, (d) -> new ArrayList<>());
             history.get(date).add(item);
         }
         return history;
