@@ -202,7 +202,7 @@ public class PlantControllerTest {
         Model model = Mockito.mock(Model.class);
         Mockito.doNothing().when(plantHistoryService).addHistoryItem(Mockito.any(Plant.class),Mockito.anyString(),Mockito.any(byte[].class),Mockito.anyString());
         String result = plantController.submitPlantHistoryForm(gardenId, plantId, file, plantHistoryDTO.getDescription(), plantHistoryDTO,bindingResult, model);
-        Assertions.assertEquals("redirect:/gardens/" + gardenId, result);
+        Assertions.assertEquals("redirect:/gardens/" + gardenId + "/plants/" + plantId, result);
     }
 
     @Test

@@ -405,7 +405,7 @@ public class PlantControllerTest {
         Plant plant = new Plant();
         long gardenId = 0;
         long plantId = 0;
-        String expectedReturnPage = "redirect:/gardens/" + gardenId;
+        String expectedReturnPage = "redirect:/gardens/" + gardenId + "/plants/" + plantId;
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
@@ -425,7 +425,7 @@ public class PlantControllerTest {
         Plant plant = new Plant();
         long gardenId = 0;
         long plantId = 0;
-        String expectedReturnPage = "redirect:/gardens/" + gardenId;
+        String expectedReturnPage = "redirect:/gardens/" + gardenId + "/plants/" + plantId;
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
