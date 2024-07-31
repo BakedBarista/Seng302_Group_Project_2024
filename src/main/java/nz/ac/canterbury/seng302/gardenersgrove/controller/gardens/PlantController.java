@@ -22,13 +22,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.HISTORY_FORMAT_DATE;
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.NZ_FORMAT_DATE;
 
 /**
@@ -45,7 +43,6 @@ public class PlantController {
     private final static String PLANT_SUCCESSFULLY_SAVED_LOG = "Saved new plant to Garden ID: {}";
     private final static String PLANT_UNSUCCESSFULLY_SAVED_LOG = "Failed to save new plant to garden ID: {}";
 
-    private Clock clock;
 
 
     @Autowired
@@ -54,8 +51,6 @@ public class PlantController {
         this.gardenService = gardenService;
         this.gardenUserService = gardenUserService;
         this.plantHistoryService = plantHistoryService;
-//        this.clock = clock;
-
     }
 
     /**

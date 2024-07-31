@@ -3,9 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
-import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantHistoryItemDTO;
 import org.springframework.stereotype.Service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;

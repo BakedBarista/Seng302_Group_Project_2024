@@ -18,15 +18,10 @@ public class PlantHistoryItemDTO {
     @Pattern(regexp = DESCRIPTION_REGEX , message = INVALID_GARDEN_DESCRIPTION)
     private String description;
 
-    private LocalDate timestamp;
 
 
-    public PlantHistoryItemDTO(String description, LocalDate timestamp) {
+    public PlantHistoryItemDTO(String description) {
         this.description = description;
-        this.timestamp = timestamp;
-    }
-
-    public PlantHistoryItemDTO () {
     }
 
     public void setDescription(String description) {
@@ -36,14 +31,6 @@ public class PlantHistoryItemDTO {
     
     public String getDescription() {
         return description;
-    }
-
-    public LocalDate getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(LocalDate timestamp) {
-        this.timestamp = timestamp;
     }
 
 
