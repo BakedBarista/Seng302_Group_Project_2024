@@ -36,7 +36,7 @@ public class WikidataService {
         String url = SEARCH_ENDPOINT + plantName;
         logger.info("Sending search request...");
         HttpHeaders headers = new HttpHeaders();
-        headers.set("User-Agent","Gardener's Grove/0.0; team800.garden@gmail.com");
+        headers.set("User-Agent","Gardener's Grove/0.0; https://csse-seng302-team800.canterbury.ac.nz/prod/; team800.garden@gmail.com");
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
         String response = responseEntity.getBody();
