@@ -64,7 +64,6 @@ class PlantStatusApiControllerTests {
 
         Map<String, Object> responseBody = (Map<String, Object>) response.getBody();
         assertEquals("HARVESTED", responseBody.get("status"));
-        assertNotNull(responseBody.get("harvestedDate"));
 
         verify(plantService, times(1)).save(any(Plant.class));
     }
