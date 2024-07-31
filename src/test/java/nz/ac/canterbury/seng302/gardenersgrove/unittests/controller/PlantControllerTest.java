@@ -451,7 +451,36 @@ class PlantControllerTest {
         }
     }
 
-   void setUpForPlantTimelineTests() {
+    @Test
+    void whenDateTooOld_ReturnError() {
+        PlantDTO plantDTO = new PlantDTO("Plant", "10", "Yellow", "1799-11-03");
+        BindingResult bindingResult = mock(BindingResult.class);
+        when(bindingResult.hasErrors()).thenReturn(true);
+
+        String returnPage = plantController.submitAddPlantForm(1L, plantDTO, bindingResult, file, dateValidStr, model);
+        verify(bindingResult).hasErrors();
+
+        assertEquals("plants/addPlant", returnPage);
+    }
+
+    @Test
+    void whenDateInFuture_ReturnError() {
+        LocalDate tomorrow = LocalDate.now().plusDays(1);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String formattedTomorrow = tomorrow.format(formatter);
+
+        PlantDTO plantDTO = new PlantDTO("Plant", "10", "Yellow", formattedTomorrow);
+        BindingResult bindingResult = mock(BindingResult.class);
+        when(bindingResult.hasErrors()).thenReturn(true);
+
+        String returnPage = plantController.submitAddPlantForm(1L, plantDTO, bindingResult, file, dateValidStr, model);
+        verify(bindingResult).hasErrors();
+        assertEquals("plants/addPlant", returnPage);
+
+    }
+
+    void setUpForPlantTimelineTests() {
        mockGardenTimeline = mock(Garden.class);
        mockPlantTimeline = mock(Plant.class);
        ownerTimeline = mock(GardenUser.class);
@@ -471,7 +500,8 @@ class PlantControllerTest {
        when(gardenUserService.getCurrentUser()).thenReturn(currentUserTimeline);
        when(plantService.getPlantById(plantIdTimeline)).thenReturn(Optional.of(mockPlantTimeline));
        when(gardenService.getGardenById(gardenIdTimeline)).thenReturn(Optional.of(mockGardenTimeline));
-   }
+    }
+
     @Test
     void getPlantTimeline_AttemptToAccessNonExistingGardenId_Shown404() {
         setUpForPlantTimelineTests();
