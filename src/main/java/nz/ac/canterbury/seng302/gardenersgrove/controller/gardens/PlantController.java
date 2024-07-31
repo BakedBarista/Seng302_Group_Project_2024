@@ -6,8 +6,10 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantHistoryItemDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.PlantHistoryService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +23,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -34,15 +37,17 @@ public class PlantController {
     private final PlantService plantService;
     private final GardenUserService gardenUserService;
     private final GardenService gardenService;
+    private final PlantHistoryService plantHistoryService;
 
     private final static String PLANT_SUCCESSFULLY_SAVED_LOG = "Saved new plant to Garden ID: {}";
     private final static String PLANT_UNSUCCESSFULLY_SAVED_LOG = "Failed to save new plant to garden ID: {}";
 
     @Autowired
-    public PlantController(PlantService plantService, GardenService gardenService, GardenUserService gardenUserService) {
+    public PlantController(PlantService plantService, GardenService gardenService, GardenUserService gardenUserService, PlantHistoryService plantHistoryService) {
         this.plantService = plantService;
         this.gardenService = gardenService;
         this.gardenUserService = gardenUserService;
+        this.plantHistoryService = plantHistoryService;
     }
 
     /**
@@ -244,6 +249,71 @@ public class PlantController {
             logger.error(PLANT_UNSUCCESSFULLY_SAVED_LOG, id);
         }
         return "redirect:" + referer;
+    }
+
+
+    /**
+     * send user to add plant history form - add plant and garden id to model for
+     * use in html file through thymeleaf
+     * @param model representation of results
+     * @param gardenId the id of the garden the plant is being added to
+     * @return redirect to add plant form
+     */
+    @GetMapping("/gardens/{gardenId}/plants/{plantId}/history")
+    public String addPlantHistoryForm(@PathVariable("gardenId") Long gardenId, @PathVariable("plantId") Long plantId, Model model) {
+
+        logger.info("GET /gardens/{}/plants/{}/history - display the plant history form", gardenId, plantId);
+
+
+        GardenUser owner = gardenUserService.getCurrentUser();
+        Optional<Garden> garden = gardenService.getGardenById(gardenId);
+        if (!garden.isPresent() || !garden.get().getOwner().getId().equals(owner.getId())) {
+            return "/error/accessDenied";
+        }
+        model.addAttribute("gardenId", gardenId);
+        model.addAttribute("plantId", plantId);
+        model.addAttribute("plant", new Plant("", "", "", null));
+        return "plants/plantHistory";
+    }
+
+
+    /**
+     *
+     * @param gardenId the id of the garden that the plant belongs to
+     * @param plantId the id of the plant being edited
+     * @param file the image file
+     * @param plantHistoryDTO the plant
+     * @param bindingResult binding result which helps display errors
+     * @param model representation of results
+     * @return redirect to gardens page if data is valid
+     */
+    @PostMapping("/gardens/{gardenId}/plants/{plantId}/history")
+    public String submitPlantHistoryForm(@PathVariable("gardenId") long gardenId,
+                                      @PathVariable("plantId") long plantId,
+                                      @RequestParam("image") MultipartFile file,
+                                      @RequestParam("description") String description,
+                                      @Valid @ModelAttribute("plant") PlantHistoryItemDTO plantHistoryDTO,
+                                      BindingResult bindingResult,
+                                      Model model) throws IOException {
+
+        logger.info("GET /gardens/{}/plants/{}/history - display the plant history form", gardenId, plantId);
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("description", plantHistoryDTO);
+            return "plants/plantHistory";
+        }
+
+        Optional<Plant> existingPlant = plantService.getPlantById(plantId);
+
+        if (existingPlant.isPresent()){
+            try {
+                plantHistoryService.addHistoryItem(existingPlant.get(), file.getContentType(), file.getBytes(), description);
+            } catch (IOException e) {
+                logger.info("Exception {}",e.toString());
+            }
+        }
+
+        return "redirect:/gardens/"+gardenId;
     }
 
     /**

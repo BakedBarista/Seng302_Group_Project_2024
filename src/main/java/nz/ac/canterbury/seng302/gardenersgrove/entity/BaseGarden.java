@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationConstants.GARDEN_REGEX;
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationConstants.*;
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationMessages.*;
 
 /**
@@ -29,7 +29,7 @@ public abstract class BaseGarden {
     private String name;
 
     @Size(max = 512, message = INVALID_GARDEN_DESCRIPTION)
-    @Pattern(regexp = "^(.*\\p{L}.*)?$" , message = INVALID_GARDEN_DESCRIPTION)
+    @Pattern(regexp = DESCRIPTION_REGEX , message = INVALID_GARDEN_DESCRIPTION)
     private String description;
 
     @Pattern(regexp = "^([0-9]+[a-zA-Z]?(\\s?\\-?\\s?[0-9]+[a-zA-Z]?)?)?$", message = GARDEN_STREET_NUMBER_MESSAGE)
