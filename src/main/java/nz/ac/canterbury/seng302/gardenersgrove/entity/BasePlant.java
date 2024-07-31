@@ -52,12 +52,12 @@ public abstract class BasePlant {
         HARVESTED,
     }
 
-    public void setHarvestedDate(LocalDate date) {
-        this.harvestedDate = date;
-    }
-
     public LocalDate getHarvestedDate() {
         return harvestedDate;
+    }
+
+    public void setHarvestedDate(LocalDate date) {
+        this.harvestedDate = date;
     }
 
     public void setName(String name) {

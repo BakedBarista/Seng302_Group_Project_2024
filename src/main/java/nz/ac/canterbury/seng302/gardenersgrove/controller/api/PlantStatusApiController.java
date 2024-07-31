@@ -6,12 +6,15 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantHarvestedDateDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.ObjectError;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +28,8 @@ import java.util.stream.Collectors;
 @RequestMapping("/api")
 public class PlantStatusApiController {
     private final PlantService plantService;
+
+    Logger logger = LoggerFactory.getLogger(PlantStatusApiController.class);
 
     public PlantStatusApiController(PlantService plantService) {
         this.plantService = plantService;
@@ -43,11 +48,6 @@ public class PlantStatusApiController {
             return ResponseEntity.notFound().build();
         }
         Plant existingPlant = plant.get();
-        if (newStatus == BasePlant.PlantStatus.HARVESTED) {
-            existingPlant.setHarvestedDate(LocalDate.now());
-        } else {
-            existingPlant.setHarvestedDate(null);
-        }
         existingPlant.setStatus(newStatus);
 
         plantService.save(existingPlant);
@@ -68,7 +68,9 @@ public class PlantStatusApiController {
      * @return response entity
      */
     @PostMapping("/plants/{id}/harvest-date")
-    public ResponseEntity<Map<String, Object>> updateHarvestedDate(@PathVariable("id") Long id, @RequestBody @Valid PlantHarvestedDateDTO request, BindingResult result) {
+    public ResponseEntity<Map<String, Object>> updateHarvestedDate(@PathVariable("id") Long id,
+                                                                   @RequestBody @Valid PlantHarvestedDateDTO request,
+                                                                   BindingResult result) {
         if (result.hasErrors()) {
             Map<String, Object> response = new HashMap<>();
             response.put("status", "error");
@@ -86,15 +88,26 @@ public class PlantStatusApiController {
 
         Plant existingPlant = plant.get();
         String harvestedDateString = request.getHarvestedDate();
-        LocalDate harvestedDate = LocalDate.parse(harvestedDateString);
-        existingPlant.setHarvestedDate(harvestedDate);
+
+        try {
+            LocalDate harvestedDate = LocalDate.parse(harvestedDateString);
+            existingPlant.setHarvestedDate(harvestedDate);
+            logger.info("Setting the harvested date to: " + harvestedDateString);
+        } catch (DateTimeParseException e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "error");
+            response.put("errors", List.of("Invalid date format"));
+            return ResponseEntity.badRequest().body(response);
+        }
 
         plantService.save(existingPlant);
+
         Map<String, Object> response = new HashMap<>();
         response.put("status", "success");
         response.put("harvestedDate", existingPlant.getHarvestedDate());
 
         return ResponseEntity.ok().body(response);
     }
+
 
 }

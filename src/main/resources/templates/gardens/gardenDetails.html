@@ -240,7 +240,7 @@
                                         <button type="button" class="dropdown-item" th:onclick="'updateStatus(' + ${plant.id} + ', \'CURRENTLY_GROWING\')'">
                                             <span class="badge growing-badge">Growing</span>
                                         </button>
-                                        <button type="button" class="dropdown-item" th:onclick="'updateStatus(' + ${plant.id} + ', \'HARVESTED\')'">
+                                        <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#harvestedDateModal" th:attr="onclick='setPlantId(' + ${plant.id} + ')'">
                                             <span class="badge harvest-badge">Harvested</span>
                                         </button>
                                     </div>
@@ -314,31 +314,31 @@
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Harvested Date Modal -->
-                    <div class="modal fade" id="harvestedDateModal" tabindex="-1" aria-labelledby="harvestedDateModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered modal-sm">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h4 class="modal-title mx-2" id="harvestedDateModalLabel">Harvested Date</h4>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body mx-2">
-                                    <label>Date:
-                                        <input type="date" id="harvestedDateInput">
-                                    </label>
-                                    <div id="errorContainer" class="text-danger mt-2"></div>
-                                    <input type="hidden" id="currentPlantId">
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary" onclick="saveHarvestedDate()">Save date</button>
-                                </div>
+                <!-- Harvested Date Modal -->
+                <div class="modal fade" id="harvestedDateModal" tabindex="-1" aria-labelledby="harvestedDateModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-sm">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title mx-2" id="harvestedDateModalLabel">Harvested Date</h4>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body mx-2">
+                                <label>Date:
+                                    <input type="date" id="harvestedDateInput">
+                                </label>
+                                <div id="errorContainer" class="text-danger mt-2"></div>
+                                <input type="hidden" id="currentPlantId">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" onclick="saveHarvestedDate()">Save date</button>
                             </div>
                         </div>
                     </div>
-
                 </div>
+
             </div>
         </div>
     </div>
@@ -404,7 +404,8 @@
         const plantId = document.getElementById('currentPlantId').value;
         const harvestedDate = document.getElementById('harvestedDateInput').value;
         const errorContainer = document.getElementById('errorContainer');
-        console.log(plantId);
+        console.log('Plant ID:', plantId);
+        console.log('Harvested Date:', harvestedDate);
 
         fetch(`${apiBaseUrl}/plants/${plantId}/harvest-date`, {
             method: 'POST',
