@@ -79,5 +79,4 @@ public class UserController {
         return ResponseEntity.ok().contentType(MediaType.parseMediaType(user.getProfilePictureContentType()))
                 .body(user.getProfilePicture());
     }
-
 }

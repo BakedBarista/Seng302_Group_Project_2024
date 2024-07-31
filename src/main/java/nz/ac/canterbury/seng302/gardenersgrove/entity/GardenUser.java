@@ -303,7 +303,7 @@ public class GardenUser {
      */
     public void setProfileBanner(String contentType, byte[] profileBanner) {
         this.profileBannerContentType = contentType;
-        this.profileBanner = profilePicture;
+        this.profileBanner = profileBanner;
     }
 
     /**

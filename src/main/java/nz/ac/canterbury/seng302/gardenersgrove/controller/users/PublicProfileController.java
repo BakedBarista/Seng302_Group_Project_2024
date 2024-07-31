@@ -14,9 +14,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.users.EditUserController;
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.NZ_FORMAT_DATE;
+
+import java.io.IOException;
 
 @Controller
 public class PublicProfileController {
@@ -26,7 +31,7 @@ public class PublicProfileController {
     private final GardenUserService userService;
 
     private static final String DEFAULT_PROFILE_BANNER_URL = "/img/default-profile.svg";
-
+    
     @Autowired
     public PublicProfileController(GardenUserService userService) {
         this.userService = userService;
@@ -64,15 +69,92 @@ public class PublicProfileController {
                 .body(user.getProfileBanner());
     }
 
-
+    /**
+     * returns a the edit-public-profile page
+     *
+     * @return A redirection to the "/users/edit-public-profile"
+     */
     @GetMapping("users/edit-public-profile")
-    public String publicProfile(Authentication authentication, Model model) {
+    public String publicProfile(Authentication authentication, 
+        Model model) {
 
         Long userId = (Long) authentication.getPrincipal();
         GardenUser user = userService.getUserById(userId);
+        EditUserDTO editUserDTO = new EditUserDTO();
+
         model.addAttribute("userId", userId);
+        editUserDTO.setDescription(user.getDescription());
+        model.addAttribute("editUserDTO", editUserDTO);
+
+        return "users/edit-public-profile";
+    }
+
+    /**
+     * returns a the edit-public-profile page
+     *
+     * @param profilePic the profile picture of the user
+     * @param banner the banner of the user
+     * @param description the description of the user
+     * @return A redirection to the "/users/public-profile"
+     */
+
+    @PostMapping("users/edit-public-profile")
+    public String publicProfileEditSubmit(Authentication authentication, 
+        @RequestParam("image") MultipartFile profilePic,
+        @RequestParam("bannerImage") MultipartFile banner,
+        @RequestParam("description") String description,
+        Model model) throws IOException {
+
+        Long userId = (Long) authentication.getPrincipal();
+        GardenUser user = userService.getUserById(userId);
+
         EditUserDTO editUserDTO = new EditUserDTO();
         model.addAttribute("editUserDTO", editUserDTO);
-        return "users/edit-public-profile";
+        model.addAttribute("userId", userId);
+        
+        // for submission of profile picture
+        try {
+            editProfilePicture(userId, profilePic);
+        } catch (IOException e) {
+            throw e;
+        }
+        // for submission of banner
+        try {
+            editProfileBanner(userId, banner);
+        } catch (IOException e) {
+            throw e;
+        }
+
+        user.setDescription(description);
+        userService.addUser(user);
+        return "redirect:/users/public-profile";
+    }
+    
+    /**
+     * Handles the submission of profile picture edits
+     * @param userId id of the user to update picture
+     * @param file the MultipartFile containing the new profile picture
+     * @throws IOException
+     */
+    
+     public void editProfilePicture(Long userId, MultipartFile file) throws IOException{
+        logger.info("POST /users/profile-picture");
+        if(file.getSize() != 0){
+            userService.setProfilePicture(userId, file.getContentType(), file.getBytes());
+        }
+    }
+
+    /**
+     * Handles the submission of profile picture edits
+     * @param userId id of the user to update picture
+     * @param file the MultipartFile containing the new profile picture
+     * @throws IOException
+     */
+    
+     public void editProfileBanner(Long userId, MultipartFile file) throws IOException{
+        logger.info("POST /users/edit-banner-picture");
+        if(file.getSize() != 0){
+            userService.setProfileBanner(userId, file.getContentType(), file.getBytes());
+        }
     }
 }

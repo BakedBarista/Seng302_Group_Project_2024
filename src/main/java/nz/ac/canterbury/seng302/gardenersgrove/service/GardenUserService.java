@@ -165,6 +165,23 @@ public class GardenUserService {
     }
 
     /**
+     * Sets the profile banner of the user with the given ID.
+     *
+     * @param id ID of the user whose profile banner is to be set
+     * @param contentType contentType The content type of the profile picture
+     * @param profilePicture profileBanner The byte array representing the profile banner
+     */
+    public void setProfileBanner(long id, String contentType, byte[] profileBanner) {
+        var user = gardenUserRepository.findById(id);
+        if (user.isEmpty()) {
+            return;
+        }
+
+        user.get().setProfileBanner(contentType, profileBanner);
+        gardenUserRepository.save(user.get());
+    }
+
+    /**
      * Gets the currently authenticated user
      *
      * @return The currently authenticated user
