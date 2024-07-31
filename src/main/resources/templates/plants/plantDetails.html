@@ -43,7 +43,7 @@
         }
     </style>
 </head>
-<body class="overflow-y-hidden vh-100 overflow-x-hidden vw-100">
+<body class="vh-100 overflow-x-hidden vw-100">
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 <main class="row">
     <div class="col-lg-4 px-5 justify-content-center d-flex full-height-lg" style="background-color: #E2E9CE40">
@@ -93,8 +93,20 @@
         </div>
     </div>
     <div class="col-lg-8 pb-5 px-5 overflow-y-auto overflow-x-hidden" style="max-height: 100vh;">
-        <div class="d-flex justify-content-center align-items-center mb-1 sticky-top bg-white p-5">
-            <h1 class="flex-grow-1 text-center m-0">Plant Timeline</h1>
+<!--        <div class="d-flex flex-column justify-content-center align-items-center mb-1 sticky-top bg-white p-5">-->
+<!--            <h1 class="flex-grow-1 text-center m-0">Plant Timeline</h1>-->
+<!--            <a class="btn btn-outline-primary ms-auto justify-content-end" style="font-size: 10pt;"  th:if="${currentUser.id == garden.owner.id}" th:href="@{/gardens/{gardenId}/plants/{plantId}/history(gardenId=${garden.id}, plantId=${plant.id})}">-->
+<!--                Add Update-->
+<!--            </a>-->
+<!--        </div>-->
+
+
+        <div class="d-flex justify-content-center align-items-center mb-1 sticky-top mt-3 p-3">
+            <hr />
+            <h1 class="flex-grow-1 text-left text-lg-center m-0">Plant Timeline</h1>
+            <a class="btn btn-primary ms-auto justify-content-end" th:classappend="${disabledRecordButton} ? 'disabled' : ''"  th:if="${currentUser.id == garden.owner.id}" th:href="@{/gardens/{gardenId}/plants/{plantId}/history(gardenId=${garden.id}, plantId=${plant.id})}">
+                <img th:src="@{/icons/add-square-white.svg}" alt="" width="20" height="20" /> Record Update
+            </a>
         </div>
 
         <section class="py-3 px-3">
@@ -118,7 +130,7 @@
                 <img class="mx-1" th:src="@{/icons/record.svg}" alt="" width="25" height="25" />
               </span>
               <p class="fw-bold">Update</p>
-                <img class="pb-3" th:src="@{'/plants/' + ${plant.id} + '/plant-image'}" width="200" height="200" alt="plant"/>
+                <img class="pb-3" th:src="@{'/plants/' + ${plant.id} + '/history/' + ${history.id} + '/image'}" width="200" height="200" alt="plant"/>
                 <p th:text="${dateFormatter.format(history.timestamp, NZ_FORMAT_DATE)}" class="text-muted mb-2 fw-bold">19 March 2020</p>
               <p th:text="${history.description}" class="text-muted">
                   My tomato bush grew 3cm!

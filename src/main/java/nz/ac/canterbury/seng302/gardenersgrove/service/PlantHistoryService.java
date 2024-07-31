@@ -42,18 +42,18 @@ public class PlantHistoryService {
         plantHistoryRepository.save(historyItem);
     }
 
-    public List<PlantHistoryItemDTO> getPlantHistory(Plant plant) {
-
-        List<PlantHistoryItem> historyItems = plantHistoryRepository.findByPlantId(plant.getId());
-
-        return historyItems.stream()
-                .map(item -> new PlantHistoryItemDTO(item.getDescription(), item.getTimestamp()))
-                .toList();
+    public List<PlantHistoryItem> getPlantHistory(Plant plant) {
+        return plantHistoryRepository.findByPlantId(plant.getId());
     }
 
     public boolean historyExists(Plant plant, LocalDate timestamp) {
         List<PlantHistoryItem> plantHistoryItems = plantHistoryRepository.findByPlantIdAndTimestamp(plant.getId(), timestamp);
         return !plantHistoryItems.isEmpty();
+    }
+
+    public Optional<PlantHistoryItem> getPlantHistoryById(Long id) {
+        return plantHistoryRepository.findById(id);
+
     }
 
 

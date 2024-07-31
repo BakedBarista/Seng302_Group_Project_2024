@@ -99,10 +99,10 @@ class PlantHistoryServiceTest {
 
         plantHistoryRepository.save(plantHistoryItem);
 
-        List<PlantHistoryItemDTO> result = historyService.getPlantHistory(plant);
+        List<PlantHistoryItem> result = historyService.getPlantHistory(plant);
 
         assertEquals(1, result.size());
-        PlantHistoryItemDTO resultItem = result.get(0);
+        PlantHistoryItem resultItem = result.get(0);
         assertEquals(date, resultItem.getTimestamp());
 
     }

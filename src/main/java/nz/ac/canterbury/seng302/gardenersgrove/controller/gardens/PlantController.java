@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.PlantHistoryItem;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantHistoryItemDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
@@ -284,7 +285,7 @@ public class PlantController {
             LocalDate timestamp = LocalDate.now();
 
             if (plantHistoryService.historyExists(plant, timestamp)) {
-                logger.info("Update already exists today");
+                logger.warn("Update already exists today");
                 return "error/404";
             }
         }
@@ -340,7 +341,7 @@ public class PlantController {
             }
         }
 
-        return "redirect:/gardens/"+gardenId;
+        return "redirect:/gardens/" + gardenId + "/plants/" + plantId;
     }
 
     /**
@@ -369,7 +370,16 @@ public class PlantController {
 
         if (plant.isPresent()) {
             Plant plantItem =  plant.get();
-            List <PlantHistoryItemDTO> plantHistory = plantHistoryService.getPlantHistory(plantItem);
+            LocalDate timestamp = LocalDate.now();
+
+            if (plantHistoryService.historyExists(plantItem, timestamp)) {
+                logger.warn("Update already exists today");
+                model.addAttribute("disabledRecordButton", true);
+            } else {
+                model.addAttribute("disabledRecordButton", false);
+            }
+
+            List <PlantHistoryItem> plantHistory = plantHistoryService.getPlantHistory(plantItem);
             model.addAttribute("plantHistory", plantHistory);
             model.addAttribute("dateFormatter", new ThymeLeafDateFormatter());
             model.addAttribute("NZ_FORMAT_DATE", NZ_FORMAT_DATE);
@@ -388,5 +398,28 @@ public class PlantController {
         }
 
         return "error/404";
+    }
+
+    /**
+     * Gets a plant image from database
+     * @param id plant id
+     * @return ResponseEntity as bytes and content type
+     */
+    @GetMapping("plants/{plantId}/history/{recordId}/image")
+    public ResponseEntity<byte[]> historyImage(@PathVariable("plantId") Long plantId, @PathVariable("recordId") Long recordId, HttpServletRequest request) {
+        logger.info("GET /plants/" + plantId + "/history/" + recordId + "/image");
+
+        Optional<Plant> plant = plantService.getPlantById(plantId);
+        Optional<PlantHistoryItem> historyItem = plantHistoryService.getPlantHistoryById(recordId);
+
+        if (plant.isEmpty() || historyItem.isEmpty()) {
+            logger.info("Returning default plant image");
+            return ResponseEntity.status(302).header(HttpHeaders.LOCATION, request.getContextPath() + "/img/default-plant.svg").build();
+        }
+
+        // Return the saved image from DB
+        logger.info("Returning the plants saved image from DB");
+        return ResponseEntity.ok().contentType(MediaType.parseMediaType(historyItem.get().getImageContentType()))
+                .body(historyItem.get().getImage());
     }
 }
