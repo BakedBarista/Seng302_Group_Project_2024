@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import nz.ac.canterbury.seng302.gardenersgrove.controller.users.EditUserController;
-import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.NZ_FORMAT_DATE;
 
 import java.io.IOException;
 
@@ -32,6 +30,8 @@ public class PublicProfileController {
 
     private static final String DEFAULT_PROFILE_BANNER_URL = "/img/default-profile.svg";
     
+    private static final String USER_ID_ATTRIBUTE = "userId";
+
     @Autowired
     public PublicProfileController(GardenUserService userService) {
         this.userService = userService;
@@ -44,7 +44,7 @@ public class PublicProfileController {
         Long userId = (Long) authentication.getPrincipal();
         GardenUser user = userService.getUserById(userId);
 
-        model.addAttribute("userId", userId);
+        model.addAttribute(USER_ID_ATTRIBUTE, userId);
         model.addAttribute("name", user.getFname() + " " + user.getLname());
         model.addAttribute("description", user.getDescription());
 
@@ -59,7 +59,6 @@ public class PublicProfileController {
      */
     @GetMapping("users/{id}/profile-banner")
     public ResponseEntity<byte[]> getProfileBanner(@PathVariable("id") Long id, HttpServletRequest request) {
-        logger.info("GET /users/" + id + "/profile-banner");
 
         GardenUser user = userService.getUserById(id);
         if (user.getProfileBanner() == null) {
@@ -82,7 +81,7 @@ public class PublicProfileController {
         GardenUser user = userService.getUserById(userId);
         EditUserDTO editUserDTO = new EditUserDTO();
 
-        model.addAttribute("userId", userId);
+        model.addAttribute(USER_ID_ATTRIBUTE, userId);
         editUserDTO.setDescription(user.getDescription());
         model.addAttribute("editUserDTO", editUserDTO);
 
@@ -110,20 +109,14 @@ public class PublicProfileController {
 
         EditUserDTO editUserDTO = new EditUserDTO();
         model.addAttribute("editUserDTO", editUserDTO);
-        model.addAttribute("userId", userId);
+        model.addAttribute(USER_ID_ATTRIBUTE, userId);
         
         // for submission of profile picture
-        try {
-            editProfilePicture(userId, profilePic);
-        } catch (IOException e) {
-            throw e;
-        }
+        editProfilePicture(userId, profilePic);
+        
         // for submission of banner
-        try {
-            editProfileBanner(userId, banner);
-        } catch (IOException e) {
-            throw e;
-        }
+        editProfileBanner(userId, banner);
+        
 
         user.setDescription(description);
         userService.addUser(user);

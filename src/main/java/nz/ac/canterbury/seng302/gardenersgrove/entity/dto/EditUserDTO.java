@@ -36,8 +36,6 @@ public class EditUserDTO {
 
     private String description;
 
-    private byte[] banner;
-
     public String getFname() {
         return fname;
     }

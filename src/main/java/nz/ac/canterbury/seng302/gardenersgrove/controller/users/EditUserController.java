@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditPasswordDTO;
