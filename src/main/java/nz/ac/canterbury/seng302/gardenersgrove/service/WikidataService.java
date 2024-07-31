@@ -36,6 +36,10 @@ public class WikidataService {
 
         try {
             JsonNode jsonNode = objectMapper.readTree(response);
+            if (jsonNode.get("search").isEmpty()) {
+                return "[]";
+            }
+
             StringBuilder result = new StringBuilder();
             for (JsonNode entity : jsonNode.get("search")) {
                 String entityId = entity.get("id").asText();
