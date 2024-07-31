@@ -231,6 +231,7 @@ public class PlantController {
         logger.info("Returning the plants saved image from DB");
         return ResponseEntity.ok().contentType(MediaType.parseMediaType(existingPlant.getPlantImageContentType()))
                 .body(existingPlant.getPlantImage());
+
     }
 
     /**
@@ -299,9 +300,9 @@ public class PlantController {
                                       @Valid @ModelAttribute(PLANT) PlantHistoryItemDTO plantHistoryDTO,
                                       BindingResult bindingResult,
                                       Model model) throws IOException {
-                            
+
         logger.info("GET /gardens/{}/plants/{}/history - display the plant history form", gardenId, plantId);
-        
+
         if (bindingResult.hasErrors()) {
             model.addAttribute("description", plantHistoryDTO);
             return "plants/plantHistory";

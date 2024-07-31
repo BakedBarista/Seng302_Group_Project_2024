@@ -4,21 +4,25 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-import jakarta.annotation.PostConstruct;
-import org.springframework.core.io.Resource;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
+
+import jakarta.annotation.PostConstruct;
 
 // skeleton code provided by https://gist.github.com/PimDeWitte/c04cc17bc5fa9d7e3aee6670d4105941.
 @Service
 public class ProfanityService {
-    private Map<String, String[]> words = new HashMap<>();
+    private Set<String> words = new HashSet<>();
     Logger logger = LoggerFactory.getLogger(ProfanityService.class);
 
     private int largestWordLength = 0;
@@ -28,31 +32,17 @@ public class ProfanityService {
      */
     @PostConstruct
     public void loadConfigs() {
-        Resource resource = new ClassPathResource("static/badWordList.txt");
+        Resource resource = new ClassPathResource("badWordList.txt");
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()))){
-            String line = "";
+            String line;
             while((line = reader.readLine()) != null) {
-                String[] content = null;
-                try {
-                    content = line.split("\\n");
-                    if(content.length == 0) {
-                        continue;
-                    }
-                    String word = content[0];
-                    String[] ignoreInCombinationWithWords = new String[]{};
-                    if(content.length > 1) {
-                        ignoreInCombinationWithWords = content[1].split("_");
-                    }
-
-                    if(word.length() > largestWordLength) {
-                        largestWordLength = word.length();
-                    }
-                    words.put(word.replaceAll(" ", ""), ignoreInCombinationWithWords);
-
-                } catch(Exception e) {
-                    logger.info("{}",e.toString());
+                String word = line.trim();
+                if (word.length() > largestWordLength) {
+                    largestWordLength = word.length();
                 }
-
+                if (!word.isEmpty()) {
+                    words.add(word);
+                }
             }
         } catch (IOException e) {
             logger.info("{}",e.toString());
@@ -66,32 +56,27 @@ public class ProfanityService {
      * @return A list of bad words found
      */
 
-    public ArrayList<String> badWordsFound(String input) {
+    public List<String> badWordsFound(String input) {
         if(input == null) {
             return new ArrayList<>();
         }
         input = input.toLowerCase();
         input = replaceLeetSpeak(input);
 
-        ArrayList<String> badWords = new ArrayList<>();
-        String[] tokens = input.split("\\s+|\\p{Punct}");
+        List<String> badWords = new ArrayList<>();
+        Pattern pattern = Pattern.compile("[^\\s\\p{Punct}]+");
+        Matcher matcher = pattern.matcher(input);
 
         // iterate over each letter in the word
-        for (String token : tokens) {
-            for (int start = 0; start < token.length(); start++) {
-                for (int offset = 1; offset <= token.length() - start && offset <= largestWordLength; offset++) {
-                    String wordToCheck = token.substring(start, start + offset);
-                    //Avoid false positive
-                    if (words.containsKey(wordToCheck)) {
-                        String[] ignoreCheck = words.get(wordToCheck);
-                        boolean ignore = false;
-                        for (String ignoreWord : ignoreCheck) {
-                            if (input.contains(ignoreWord)) {
-                                ignore = true;
-                                break;
-                            }
-                        }
-                        if (!ignore && isStandaloneWord(input, start, start + offset)) {
+        for (MatchResult match : matcher.results().toList()) {
+            String token = match.group();
+            int start = match.start();
+            for (int offset = 0; offset < token.length(); offset++) {
+                for (int length = 1; length <= token.length() - offset && length <= largestWordLength; length++) {
+                    String wordToCheck = token.substring(offset, offset + length);
+                    if (words.contains(wordToCheck)) {
+                        // Avoid false positive
+                        if (isStandaloneWord(input, start + offset, start + offset + length)) {
                             badWords.add(wordToCheck);
                         }
                     }
