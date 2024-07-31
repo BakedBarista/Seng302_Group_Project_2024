@@ -9,8 +9,11 @@
     --gg-secondary-dark: #8C9D34;
     --gg-secondary-light: #D3DD9D;
     --gg-pale: #FFE0B5;
+    --gg-not-planted:  saddlebrown;
+    --gg-not-planted-hover: #af7244;
+    --gg-harvest: sandybrown;
+    --gg-harvest-hover: #b97f4d;
     --gg-side-panel: #E2E9CE40;
-
     --gg-white: #F5F5F5;
     --gg-white-rgb: 245, 245, 245;
     --gg-black: #1E1E1E;
@@ -32,11 +35,6 @@
     --bs-secondary-bg: var(--gg-white);
 }
 
-body {
-    color: var(--gg-black);
-    background-color: white;
-}
-
 /* Global typography */
 body {
     font-family: "Open Sans", sans-serif;
@@ -45,6 +43,7 @@ body {
     font-style: normal;
     font-variation-settings: "wdth" 100;
     color: var(--gg-black);
+    background-color: white;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -85,6 +84,35 @@ h1, h2, h3, h4, h5, h6 {
     --bs-btn-disabled-color: white;
     --bs-btn-disabled-bg: var(--gg-pale);
     --bs-btn-disabled-border-color: var(--gg-primary);
+}
+
+.button-not-planted {
+    --bs-btn-color: var(--gg-white);
+    --bs-btn-bg: var(--gg-not-planted);
+    --bs-btn-hover-color: var(--gg-white);
+    --bs-btn-hover-bg: var(--gg-not-planted-hover);
+    --bs-btn-focus-shadow-rgb: var(--gg-primary-rgb);
+    --bs-btn-active-color: var(--gg-white);
+    --bs-btn-active-bg: var(--gg-not-planted-hover);
+}
+.button-growing {
+    --bs-btn-color: var(--gg-white);
+    --bs-btn-bg: var(--gg-primary-light);
+    --bs-btn-hover-color: var(--gg-white);
+    --bs-btn-hover-bg: var(--gg-dark);
+    --bs-btn-hover-border-color: var(--gg-dark);
+    --bs-btn-focus-shadow-rgb: var(--gg-primary-rgb);
+    --bs-btn-active-color: var(--gg-white);
+    --bs-btn-active-bg: var(--gg-dark);
+}
+.button-harvest {
+    --bs-btn-color: var(--gg-white);
+    --bs-btn-bg: var(--gg-harvest);
+    --bs-btn-hover-color: var(--gg-white);
+    --bs-btn-hover-bg: var(--gg-harvest-hover);
+    --bs-btn-focus-shadow-rgb: var(--gg-primary-rgb);
+    --bs-btn-active-color: var(--gg-white);
+    --bs-btn-active-bg: var(--gg-harvest-hover);
 }
 
 .btn-outline-primary {
@@ -452,6 +480,21 @@ h1, h2, h3, h4, h5, h6 {
 
     --bs-btn-close-opacity: 0.75;
     --bs-btn-close-hover-opacity: 1.0;
+}
+
+.harvest-badge {
+    background-color: sandybrown;
+    color: white;
+}
+
+.growing-badge {
+    background-color: var(--gg-primary-light);
+    color: white;
+}
+
+.not-planted-badge {
+    background-color: saddlebrown;
+    color: white;
 }
 
 .friend-pending-badge {
