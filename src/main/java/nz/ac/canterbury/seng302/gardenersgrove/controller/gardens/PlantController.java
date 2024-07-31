@@ -226,6 +226,7 @@ public class PlantController {
         logger.info("Returning the plants saved image from DB");
         return ResponseEntity.ok().contentType(MediaType.parseMediaType(existingPlant.getPlantImageContentType()))
                 .body(existingPlant.getPlantImage());
+
     }
 
     /**
@@ -294,9 +295,9 @@ public class PlantController {
                                       @Valid @ModelAttribute("plant") PlantHistoryItemDTO plantHistoryDTO,
                                       BindingResult bindingResult,
                                       Model model) throws IOException {
-                            
+
         logger.info("GET /gardens/{}/plants/{}/history - display the plant history form", gardenId, plantId);
-        
+
         if (bindingResult.hasErrors()) {
             model.addAttribute("description", plantHistoryDTO);
             return "plants/plantHistory";
@@ -313,5 +314,28 @@ public class PlantController {
         }
 
         return "redirect:/gardens/"+gardenId;
+    }
+
+    /**
+     * take user to search plant information form
+     * @return redirect to a more detailed page about a specific plant
+     */
+    @GetMapping("/plantInformation")
+    public String plantInformationForm(
+                            Model model) {
+        return "plants/plantInformation";
+    }
+
+    /**
+     *
+     * @param plantId the id of the plant being looked into
+     * @param model representation of results
+     * @return returns to the same plant information page with results from search
+     */
+    @PostMapping("/plantInformation")
+    public String plantInformationSubmit(
+                                      @PathVariable("plantId") long plantId,
+                                      Model model) {
+        return "plants/plantInformation";
     }
 }
