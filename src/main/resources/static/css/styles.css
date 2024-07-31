@@ -9,6 +9,7 @@
     --gg-secondary-dark: #8C9D34;
     --gg-secondary-light: #D3DD9D;
     --gg-pale: #FFE0B5;
+    --gg-side-panel: #E2E9CE40;
 
     --gg-white: #F5F5F5;
     --gg-white-rgb: 245, 245, 245;
@@ -56,6 +57,16 @@ h1, h2, h3, h4, h5, h6 {
     font-family: "Averia Serif Libre", serif;
     font-weight: 700;
     font-style: normal;
+}
+
+@media (min-width: 992px) {
+    .full-height-lg {
+        height: 100vh;
+    }
+
+    .max-full-height-lg {
+        max-height: 100vh;
+    }
 }
 
 

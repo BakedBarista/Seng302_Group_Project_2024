@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
+    <title>Garden Timeline</title>
+    <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
+
+    <meta name="_gardenId" th:content="${garden.id}" />
+</head>
+<body class="vh-100 overflow-x-hidden vw-100">
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<main class="row mx-0">
+    <div class="col-lg-4 px-5 justify-content-center d-flex full-height-lg" style="background-color: var(--gg-side-panel)">
+        <div class="py-5">
+            <div class="pb-3 d-flex justify-content-start">
+                <a class="btn btn-outline-primary" type="button" th:href="@{/gardens/{id}(id=${garden.id})}"><img th:src="@{/icons/back.svg}" alt="" width="20" height="20" /></a>
+            </div>
+            <div class="d-flex" style="width: 300px">
+                <div>
+                    <h1 class="fw-bold text-break" th:text="${garden.name}">Garden Name</h1>
+                </div>
+                <div class="d-flex align-items-center justify-content-left ps-3">
+                    <a class="ms-auto justify-content-end"  th:if="${currentUser.id == garden.owner.id}" th:href="@{/gardens/{gardenId}/edit(gardenId=${garden.id})}">
+                        <img class="mx-1" th:src="@{/icons/edit.svg}" alt="" width="25" height="25" />
+                    </a>
+                </div>
+            </div>
+                <div class="pt-3">
+                    <p class="fw-bold mb-1">
+                        Description:
+                    </p>
+                    <div>
+                        <p class="m-0" th:text="${garden.description}">Garden Description</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8 pb-5 px-5 overflow-y-auto overflow-x-hidden max-full-height-lg">
+        <div class="d-flex justify-content-center align-items-center mb-1 sticky-top bg-white p-5">
+            <h1 class="flex-grow-1 text-center m-0">Garden Timeline</h1>
+        </div>
+
+        <section class="py-3 px-3">
+            <ul class="timeline-with-icons">
+                <div th:each="entry : ${history.entrySet()}">
+                    <li th:each="item : ${entry.value}" class="timeline-item mb-5">
+                        <span class="timeline-icon">
+                            <img th:if="${item.action.toString() == 'PLANTED'}" class="mx-1"
+                                th:src="@{/icons/first-planted.svg}" alt="" width="25" height="25" />
+                            <img th:if="${item.action.toString() == 'HARVESTED'}" class="mx-1" th:src="@{/icons/harvest.svg}"
+                                alt="" width="25" height="25" />
+                        </span>
+        
+                        <p class="fw-bold" th:text="${item.plant.name + ' ' + item.action.toString().toLowerCase()}"></p>
+                        <p class="text-muted mb-2 fw-bold" th:text="${dateFormatter.format(entry.key, HISTORY_FORMAT_DATE)}">
+                        </p>
+                    </li>
+                </div>
+            </ul>
+        </section>
+    </div>
+</main>
+<th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
+</body>
+</html>

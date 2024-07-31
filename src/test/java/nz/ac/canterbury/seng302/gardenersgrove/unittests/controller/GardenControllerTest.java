@@ -4,12 +4,15 @@ package nz.ac.canterbury.seng302.gardenersgrove.unittests.controller;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.GardenController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.GardenDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.GardenHistoryItemDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weather.WeatherAPIService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -23,15 +26,11 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.anyDouble;
-import static org.mockito.Mockito.anyLong;
 import static org.mockito.Mockito.*;
 
 public class GardenControllerTest {
@@ -41,6 +40,9 @@ public class GardenControllerTest {
 
     @Mock
     private GardenService gardenService;
+
+    @Mock
+    private GardenHistoryService gardenHistoryService;
 
     @Mock
     private PlantService plantService;
@@ -68,18 +70,17 @@ public class GardenControllerTest {
     private static Authentication authentication;
 
     private static GardenRepository gardenRepository;
-    private static Garden mockGarden;
+    private Garden mockGarden;
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
         gardenRepository = mock(GardenRepository.class);
         GardenUser mockUser = mock(GardenUser.class);
-        mockGarden = mock(Garden.class);
         when(mockUser.getId()).thenReturn(1L);
         when(gardenUserService.getCurrentUser()).thenReturn(mockUser);
         when(gardenService.getGardensByOwnerId(1L)).thenReturn(Collections.emptyList());
 
-        Garden mockGarden = new Garden();
+        mockGarden = new Garden();
         mockGarden.setOwner(mockUser);
         when(gardenService.getGardenById(0L)).thenReturn(Optional.of(mockGarden));
 
@@ -413,4 +414,76 @@ public class GardenControllerTest {
         assertEquals("error/accessDenied", result);
     }
 
+    @Test
+    void givenIGoToTheGardenHistoryPage_whenThereIsAGardenWithHistory_thenTheGardenHistoryIsAddedToTheModel() {
+        Model model = mock(Model.class);
+        when(authentication.getPrincipal()).thenReturn(1L);
+        LocalDate expectedDate = LocalDate.of(1999, 1, 1);
+        Long gardenId = 0L;
+        List<Plant> plants = new ArrayList<>();
+        Plant plant = new Plant("test", "1", "test", expectedDate);
+        plants.add(plant);
+        mockGarden.setPlants(plants);
+
+        GardenHistoryItemDTO expectedDTO = new GardenHistoryItemDTO(plant, plant.getPlantedDate(), GardenHistoryItemDTO.Action.PLANTED);
+        SortedMap<LocalDate, List<GardenHistoryItemDTO>> expectedHistory = new TreeMap<>(Comparator.reverseOrder());
+        expectedHistory.put(expectedDate, List.of(expectedDTO));
+        when(gardenHistoryService.getGardenHistory(mockGarden)).thenReturn(expectedHistory);
+
+        String result = gardenController.gardenHistory(authentication, gardenId, model);
+
+        verify(model).addAttribute("history", expectedHistory);
+        Assertions.assertEquals("gardens/gardenHistory", result);
+    }
+
+    @Test
+    void givenIGoToTheGardenHistoryPage_whenThereIsNoGardenWithHistory_thenReturnAnEmptyMap() {
+        Model model = mock(Model.class);
+        when(authentication.getPrincipal()).thenReturn(1L);
+        LocalDate expectedDate = LocalDate.of(1999, 1, 1);
+        Long gardenId = 0L;
+        List<Plant> plants = new ArrayList<>();
+        mockGarden.setPlants(plants);
+
+        SortedMap<LocalDate, List<GardenHistoryItemDTO>> expectedHistory = new TreeMap<>(Comparator.reverseOrder());
+        expectedHistory.put(expectedDate, List.of());
+        when(gardenHistoryService.getGardenHistory(mockGarden)).thenReturn(expectedHistory);
+
+        String result = gardenController.gardenHistory(authentication, gardenId, model);
+
+        verify(model).addAttribute("history", expectedHistory);
+        Assertions.assertEquals("gardens/gardenHistory", result);
+    }
+
+    @Test
+    void givenIGoToTheGardenHistoryPage_whenThereIsNoGarden_thenRedirectTo404() {
+        Model model = mock(Model.class);
+        when(authentication.getPrincipal()).thenReturn(1L);
+        LocalDate expectedDate = LocalDate.of(1999, 1, 1);
+        Long gardenId = 999L;
+        List<Plant> plants = new ArrayList<>();
+        mockGarden.setPlants(plants);
+
+        SortedMap<LocalDate, List<GardenHistoryItemDTO>> expectedHistory = new TreeMap<>(Comparator.reverseOrder());
+        expectedHistory.put(expectedDate, List.of());
+        when(gardenHistoryService.getGardenHistory(mockGarden)).thenReturn(expectedHistory);
+
+        String result = gardenController.gardenHistory(authentication, gardenId, model);
+
+        Assertions.assertEquals("error/404", result);
+    }
+
+    @Test
+    void givenIGoToTheGardenHistoryPage_whenTheGardenIsNotMine_andItIsNotPublic_thenDontAuthenticate() {
+        Model model = mock(Model.class);
+        when(authentication.getPrincipal()).thenReturn(2L);
+        mockGarden.setPublic(false);
+
+        SortedMap<LocalDate, List<GardenHistoryItemDTO>> expectedHistory = new TreeMap<>(Comparator.reverseOrder());
+        when(gardenHistoryService.getGardenHistory(mockGarden)).thenReturn(expectedHistory);
+
+        String result = gardenController.gardenHistory(authentication, 0L, model);
+
+        Assertions.assertEquals("error/accessDenied", result);
+    }
 }
