@@ -76,7 +76,7 @@ public class PlantStatusApiController {
             response.put("status", "error");
             List<String> errors = result.getAllErrors().stream()
                     .map(ObjectError::getDefaultMessage)
-                    .collect(Collectors.toList());
+                    .toList();
             response.put("errors", errors);
             return ResponseEntity.badRequest().body(response);
         }
