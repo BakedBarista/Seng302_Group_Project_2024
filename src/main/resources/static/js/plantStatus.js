@@ -19,6 +19,9 @@ function saveHarvestedDate() {
                 const modal = bootstrap.Modal.getInstance(harvestedDateModal);
                 modal.hide();
 
+                const toastBody = document.getElementById('toastBody');
+                toastBody.textContent = `Plant successfully harvested on: ${harvestedDate}`;
+
                 const toastElement = document.querySelector('.toast');
                 const toast = new bootstrap.Toast(toastElement);
                 toast.show();
