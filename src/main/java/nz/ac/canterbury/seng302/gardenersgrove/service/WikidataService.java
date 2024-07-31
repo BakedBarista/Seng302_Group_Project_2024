@@ -4,6 +4,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -31,7 +35,11 @@ public class WikidataService {
     public String getPlantInfo(String plantName) {
         String url = SEARCH_ENDPOINT + plantName;
         logger.info("Sending search request...");
-        String response = restTemplate.getForObject(url, String.class);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("User-Agent","Gardener's Grove/0.0; team800.garden@gmail.com");
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+        String response = responseEntity.getBody();
         logger.info("{}",response);
 
         try {
@@ -41,12 +49,12 @@ public class WikidataService {
             }
 
             StringBuilder result = new StringBuilder();
-            for (JsonNode entity : jsonNode.get("search")) {
-                String entityId = entity.get("id").asText();
+            for (JsonNode entityNode : jsonNode.get("search")) {
+                String entityId = entityNode.get("id").asText();
                 String imageUrl = getImageUrl(entityId);
                 result.append("{")
-                        .append("\"label\":\"").append(entity.get("label").asText()).append("\",")
-                        .append("\"description\":\"").append(entity.get("description").asText()).append("\",")
+                        .append("\"label\":\"").append(entityNode.get("label").asText()).append("\",")
+                        .append("\"description\":\"").append(entityNode.get("description").asText()).append("\",")
                         .append("\"id\":\"").append(entityId).append("\",")
                         .append("\"image\":\"").append(imageUrl).append("\"")
                         .append("},");

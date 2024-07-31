@@ -5,12 +5,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import nz.ac.canterbury.seng302.gardenersgrove.service.WikidataService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
@@ -30,12 +36,14 @@ public class WikidataServiceTest {
     @Test
     void givenPlantExists_whenSearchTomato_thenReturnInformationAndImage() throws IOException {
         String searchResponse = "{\"search\":[{\"id\":\"Q235\",\"label\":\"Tomato\",\"description\":\"A red fruit\"}]}";
-        when(restTemplate.getForObject(Mockito.contains("wbsearchentities"), eq(String.class)))
-                .thenReturn(searchResponse);
+        ResponseEntity<String> searchEntity = ResponseEntity.ok(searchResponse);
+        when(restTemplate.exchange(Mockito.contains("wbsearchentities"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
+                .thenReturn(searchEntity);
 
         String entityResponse = "{\"entities\":{\"Q235\":{\"claims\":{\"P18\":[{\"mainsnak\":{\"datavalue\":{\"value\":\"Tomato.jpg\"}}}]}}}}";
-        when(restTemplate.getForObject(Mockito.contains("wbgetentities"), eq(String.class)))
-                .thenReturn(entityResponse);
+        ResponseEntity<String> entityEntity = ResponseEntity.ok(entityResponse);
+        when(restTemplate.exchange(Mockito.contains("wbgetentities"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
+                .thenReturn(entityEntity);
 
         JsonNode searchNode = new ObjectMapper().readTree(searchResponse);
         JsonNode entityNode = new ObjectMapper().readTree(entityResponse);
@@ -47,13 +55,20 @@ public class WikidataServiceTest {
         String expected = "[{\"label\":\"Tomato\",\"description\":\"A red fruit\",\"id\":\"Q235\",\"image\":\"https://commons.wikimedia.org/wiki/Special:FilePath/Tomato.jpg\"}]";
 
         assertEquals(expected, result);
+
+        ArgumentCaptor<HttpEntity> entityCaptor = ArgumentCaptor.forClass(HttpEntity.class);
+        Mockito.verify(restTemplate).exchange(Mockito.contains("wbsearchentities"), eq(HttpMethod.GET), entityCaptor.capture(), eq(String.class));
+
+        HttpHeaders headers = entityCaptor.getValue().getHeaders();
+        assertEquals("YourAppName/1.0 (your-email@example.com)", headers.getFirst("User-Agent"));
     }
 
     @Test
     void givenPlantNotExist_whenSearchReturnsNoResults_thenReturnEmptyList() throws IOException {
         String searchResponse = "{\"search\":[]}";
-        when(restTemplate.getForObject(Mockito.contains("wbsearchentities"), eq(String.class)))
-                .thenReturn(searchResponse);
+        ResponseEntity<String> searchEntity = ResponseEntity.ok(searchResponse);
+        when(restTemplate.exchange(Mockito.contains("wbsearchentities"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
+                .thenReturn(searchEntity);
 
         JsonNode searchNode = new ObjectMapper().readTree(searchResponse);
         when(objectMapper.readTree(searchResponse)).thenReturn(searchNode);
@@ -63,6 +78,12 @@ public class WikidataServiceTest {
         String expected = "[]";
 
         assertEquals(expected, result);
+
+        ArgumentCaptor<HttpEntity> entityCaptor = ArgumentCaptor.forClass(HttpEntity.class);
+        Mockito.verify(restTemplate).exchange(Mockito.contains("wbsearchentities"), eq(HttpMethod.GET), entityCaptor.capture(), eq(String.class));
+
+        HttpHeaders headers = entityCaptor.getValue().getHeaders();
+        assertEquals("YourAppName/1.0 (your-email@example.com)", headers.getFirst("User-Agent"));
     }
 
 }
