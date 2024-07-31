@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" context="text/html; charset=UTF-8" />
+    <title>My Public Profile | Gardener's Grove</title>
+
+    <!-- This needs to be here for Bootstrap and general CSS imports -->
+    <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
+</head>
+<body>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+<main class="main-container" style = "margin-top: 10%;">
+    <div class="card">
+        <img
+                class="card-img-top img-fluid fixed-height mb-4"
+                th:src="@{'/users/' + ${userId} + '/profile-banner'}"
+                alt="profile picture"
+        />
+        <div class="m-4 mt-0">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <div class="d-flex justify-content-start">
+                        <h1>My Profile</h1>
+                        <p class="ms-4 pt-1 ">
+                            <a th:href="@{/users/edit}" class="btn btn-primary">Edit</a>
+                        </p>
+                    </div>
+                    <h3>My Name is...</h3>
+                    <p>[[${name}]]</p>
+                    <h3>About me...</h3>
+                    <p>[[${desciption}]]</p>
+                </div>
+                <img
+                        class="profile-picture-large"
+                        th:src="@{'/users/' + ${userId} + '/profile-picture'}"
+                        width="200"
+                        height="200"
+                        alt="profile picture"
+                />
+            </div>
+        </div>
+    </div>
+</main>
+<th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
+</body>
+</html>
