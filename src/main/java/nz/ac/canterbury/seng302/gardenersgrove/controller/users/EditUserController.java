@@ -209,16 +209,4 @@ public class EditUserController {
         }
     }
 
-
-    @GetMapping("users/edit-public-profile")
-    public String publicProfile(Authentication authentication, Model model) {
-
-        Long userId = (Long) authentication.getPrincipal();
-        GardenUser user = userService.getUserById(userId);
-        model.addAttribute("userId", userId);
-        EditUserDTO editUserDTO = new EditUserDTO();
-        model.addAttribute("editUserDTO", editUserDTO);
-        return "users/edit-public-profile";
-    }
-
 }

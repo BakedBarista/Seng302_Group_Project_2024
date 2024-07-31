@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,5 +62,17 @@ public class PublicProfileController {
         }
         return ResponseEntity.ok().contentType(MediaType.parseMediaType(user.getProfileBannerContentType()))
                 .body(user.getProfileBanner());
+    }
+
+
+    @GetMapping("users/edit-public-profile")
+    public String publicProfile(Authentication authentication, Model model) {
+
+        Long userId = (Long) authentication.getPrincipal();
+        GardenUser user = userService.getUserById(userId);
+        model.addAttribute("userId", userId);
+        EditUserDTO editUserDTO = new EditUserDTO();
+        model.addAttribute("editUserDTO", editUserDTO);
+        return "users/edit-public-profile";
     }
 }
