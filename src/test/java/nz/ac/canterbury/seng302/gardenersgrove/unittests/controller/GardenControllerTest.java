@@ -5,17 +5,20 @@ import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.GardenControll
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.GardenDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.GardenHistoryItemDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weather.WeatherAPIService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -27,10 +30,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 public class GardenControllerTest {
@@ -207,7 +207,7 @@ public class GardenControllerTest {
         Model model = mock(Model.class);
         when(gardenService.getGardenById(0L)).thenReturn(Optional.empty());
         String result = gardenController.getGarden(0L, model);
-        assertEquals("/error/accessDenied", result);
+        assertEquals("error/accessDenied", result);
     }
 
     @Test
@@ -411,7 +411,7 @@ public class GardenControllerTest {
 
         String result = gardenController.gardenDetail(1L, model);
 
-        assertEquals("/error/accessDenied", result);
+        assertEquals("error/accessDenied", result);
     }
 
     @Test
