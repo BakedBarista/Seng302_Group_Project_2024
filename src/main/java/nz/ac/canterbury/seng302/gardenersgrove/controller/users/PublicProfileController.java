@@ -69,13 +69,13 @@ public class PublicProfileController {
     }
 
     /**
-     * returns a the edit-public-profile page
+     * returns the edit-public-profile page
      *
      * @return A redirection to the "/users/edit-public-profile"
      */
     @GetMapping("users/edit-public-profile")
-    public String publicProfile(Authentication authentication, 
-        Model model) {
+    public String editPublicProfile(Authentication authentication,
+                                    Model model) {
 
         Long userId = (Long) authentication.getPrincipal();
         GardenUser user = userService.getUserById(userId);
@@ -89,7 +89,7 @@ public class PublicProfileController {
     }
 
     /**
-     * returns a the edit-public-profile page
+     * returns the edit-public-profile page
      *
      * @param profilePic the profile picture of the user
      * @param banner the banner of the user
@@ -127,7 +127,6 @@ public class PublicProfileController {
      * Handles the submission of profile picture edits
      * @param userId id of the user to update picture
      * @param file the MultipartFile containing the new profile picture
-     * @throws IOException
      */
     
      public void editProfilePicture(Long userId, MultipartFile file) throws IOException{
