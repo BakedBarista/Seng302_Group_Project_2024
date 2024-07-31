@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Controller for handling API requests related to updating and setting plant status
@@ -28,8 +27,8 @@ import java.util.stream.Collectors;
 @RequestMapping("/api")
 public class PlantStatusApiController {
     private final PlantService plantService;
+    private static final String STATUS = "status";
 
-    Logger logger = LoggerFactory.getLogger(PlantStatusApiController.class);
 
     public PlantStatusApiController(PlantService plantService) {
         this.plantService = plantService;
@@ -52,7 +51,7 @@ public class PlantStatusApiController {
 
         plantService.save(existingPlant);
         Map<String, Object> response = new HashMap<>();
-        response.put("status", newStatus.name());
+        response.put(STATUS, newStatus.name());
         if (existingPlant.getHarvestedDate() != null) {
             response.put("harvestedDate", existingPlant.getHarvestedDate());
         }
@@ -73,7 +72,7 @@ public class PlantStatusApiController {
                                                                    BindingResult result) {
         if (result.hasErrors()) {
             Map<String, Object> response = new HashMap<>();
-            response.put("status", "error");
+            response.put(STATUS, "error");
             List<String> errors = result.getAllErrors().stream()
                     .map(ObjectError::getDefaultMessage)
                     .toList();
@@ -94,7 +93,7 @@ public class PlantStatusApiController {
             existingPlant.setHarvestedDate(harvestedDate);
         } catch (DateTimeParseException e) {
             Map<String, Object> response = new HashMap<>();
-            response.put("status", "error");
+            response.put(STATUS, "error");
             response.put("errors", List.of("Invalid date format"));
             return ResponseEntity.badRequest().body(response);
         }
@@ -102,7 +101,7 @@ public class PlantStatusApiController {
         plantService.save(existingPlant);
 
         Map<String, Object> response = new HashMap<>();
-        response.put("status", "success");
+        response.put(STATUS, "success");
         response.put("harvestedDate", existingPlant.getHarvestedDate());
 
         return ResponseEntity.ok().body(response);

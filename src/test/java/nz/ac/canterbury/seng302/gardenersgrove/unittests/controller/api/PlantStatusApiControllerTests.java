@@ -18,6 +18,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -109,6 +112,24 @@ class PlantStatusApiControllerTests {
         verify(plantService, times(0)).save(any(Plant.class));
 
     }
+    @Test
+    void updateDate_invalidDate_ReturnBadResponse() {
+        Long plantId = 1L;
+        PlantHarvestedDateDTO request = new PlantHarvestedDateDTO();
+        request.setHarvestedDate("2021-13-01");
+
+        when(plantService.getPlantById(plantId)).thenReturn(Optional.of(new Plant()));
+        when(bindingResult.hasErrors()).thenReturn(false);
+
+        ResponseEntity<Map<String, Object>> response = plantStatusApiController.updateHarvestedDate(plantId, request, bindingResult);
+
+        Map<String, Object> expectedResponse = new HashMap<>();
+        expectedResponse.put("status", "error");
+        expectedResponse.put("errors", List.of("Invalid date format"));
+
+        assertEquals(ResponseEntity.badRequest().body(expectedResponse), response);
+    }
+
 
 
 
