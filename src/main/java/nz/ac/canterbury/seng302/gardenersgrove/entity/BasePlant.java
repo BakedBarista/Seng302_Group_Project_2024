@@ -46,6 +46,9 @@ public abstract class BasePlant {
         return name;
     }
 
+    /**
+     * The status of the plant, whether it is currently growing, harvested, or not growing.
+     */
     public enum PlantStatus {
         NOT_GROWING,
         CURRENTLY_GROWING,
