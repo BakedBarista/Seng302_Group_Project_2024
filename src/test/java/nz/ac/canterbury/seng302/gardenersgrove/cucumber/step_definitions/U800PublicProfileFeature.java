@@ -11,7 +11,7 @@ public class U800PublicProfileFeature {
         // Write code here that turns the phrase above into concrete actions
         throw new io.cucumber.java.PendingException();
     }
-    @When("I enter a valid description \\(that is not longer than {int} characters) about myself")
+    @When("I enter a valid description \\(that is not longer than {int} characters)")
     public void i_enter_a_valid_description_that_is_not_longer_than_characters_about_myself(Integer int1) {
         // Write code here that turns the phrase above into concrete actions
         throw new io.cucumber.java.PendingException();

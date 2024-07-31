@@ -480,7 +480,6 @@ h1, h2, h3, h4, h5, h6 {
     white-space: nowrap;
 }
 
-<<<<<<< HEAD
 /*Timeline styling*/
 .timeline-with-icons {
     border-left: 1px solid hsl(0, 0%, 90%);
@@ -509,9 +508,9 @@ h1, h2, h3, h4, h5, h6 {
     display: flex;
     align-items: center;
     justify-content: center;
-=======
+}
+
 .fixed-height {
     height: 200px;
     object-fit: cover;
->>>>>>> U800.1.1/public-profile-page
 }
