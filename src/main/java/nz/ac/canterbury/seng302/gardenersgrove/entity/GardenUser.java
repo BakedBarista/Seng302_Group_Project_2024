@@ -37,12 +37,22 @@ public class GardenUser {
     @Column(nullable = true)
     private LocalDate dateOfBirth;
 
+    @Column(nullable=true)
+    private String description;
+
     @Column(nullable = true)
     private String profilePictureContentType;
 
     @Column(nullable = true, columnDefinition = "MEDIUMBLOB")
     @Lob
     private byte[] profilePicture;
+
+    @Column(nullable = true)
+    private String bannerContentType;
+
+    @Column(nullable = true, columnDefinition = "MEDIUMBLOB")
+    @Lob
+    private byte[] banner;
 
     // these are a set of friendships in the friends table where the user is sender
     @OneToMany(mappedBy = "sender")
@@ -237,6 +247,24 @@ public class GardenUser {
      */
     public byte[] getProfilePicture() {
         return profilePicture;
+    }
+
+    /**
+     * Retrieves the content type of the user's banner
+     *
+     * @return The content type of the banner
+     */
+    public String getBannerContentType() {
+        return bannerContentType;
+    }
+
+    /**
+     * Retrieves the byte array representing the user's banner
+     *
+     * @return The byte array of the banner
+     */
+    public byte[] getBanner() {
+        return banner;
     }
 
     /**

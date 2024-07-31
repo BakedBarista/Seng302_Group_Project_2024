@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditPasswordDTO;
@@ -12,10 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -209,6 +207,18 @@ public class EditUserController {
         if(file.getSize() != 0){
             userService.setProfilePicture(userId, file.getContentType(), file.getBytes());
         }
+    }
+
+
+    @GetMapping("users/edit-public-profile")
+    public String publicProfile(Authentication authentication, Model model) {
+
+        Long userId = (Long) authentication.getPrincipal();
+        GardenUser user = userService.getUserById(userId);
+        model.addAttribute("userId", userId);
+        EditUserDTO editUserDTO = new EditUserDTO();
+        model.addAttribute("editUserDTO", editUserDTO);
+        return "users/edit-public-profile";
     }
 
 }

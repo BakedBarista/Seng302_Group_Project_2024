@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit My Profile | Pollinat*r</title>
+
+  <!-- This needs to be here for Bootstrap and general CSS imports -->
+  <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
+</head>
+<body>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+<main class="main-container" style = "margin-top: 10%;">
+  <div class="card p-5">
+    <h1>Edit Public Profile</h1>
+    <form th:action="edit" method="post" enctype="multipart/form-data" th:object="${editUserDTO}" novalidate>
+      <div class="mb-3 d-flex justify-content-center">
+        <div class="position-relative d-inline">
+          <label for="image" class="position-absolute top-0 end-0" style="cursor: pointer;"><img th:src="@{/icons/trans-plus.svg}" alt="+" /></label>
+          <input id="image" name="image" class="d-none" type="file" accept=".png,.jpg,.jpeg,.svg"/>
+          <img id="preview" th:src="@{'/users/' + ${userId} + '/profile-picture'}" alt="Plant Picture" class="profile-picture-large" style="width: 200px;" />
+          <span id="editProfilePictureError" class="invalid-feedback text-center"></span>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label for="description" th:class="'form-label ' + ${#fields.hasErrors('description') ? 'is-invalid' : ''}">About Me</label>
+        <textarea rows="3" id="description" type="text" th:class="'form-control ' + ${#fields.hasErrors('description') ? 'is-invalid' : ''}" th:name="description" th:value="*{description}"></textarea>
+        <div class="invalid-feedback" th:if="${#fields.hasErrors('fname')}" th:errors="*{description}"></div>
+      </div>
+      <button class="btn btn-primary">Submit</button>
+      <a th:href="@{/users/user}" class="btn btn-outline-secondary">Cancel</a>
+    </form>
+  </div>
+
+</main>
+<th:block th:insert="~{fragments/user-form.html :: handleNoLnameCheckbox}"></th:block>
+<script th:src="@{/js/dateValidation.js}"></script>
+<th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
+
+<script>
+
+  /** @type {HTMLInputElement} */
+  const editProfileImageInput = document.getElementById(
+          "image"
+  );
+  /** @type {HTMLSpanElement} */
+  const editProfilePictureError = document.getElementById(
+          "editProfilePictureError"
+  );
+
+  const VALID_MIME_TYPES = ["image/png", "image/jpeg", "image/svg+xml"];
+  let hasError = false;
+
+
+  editProfileImageInput.addEventListener("change", (ev) => {
+    const file = editProfileImageInput.files[0];
+    hasError = false;
+    if (!file) {
+      return;
+    }
+
+    editProfilePictureError.textContent = "";
+    editProfilePictureError.style.display = "none";
+
+
+    if (!VALID_MIME_TYPES.includes(file.type)) {
+      editProfilePictureError.style.display = "block";
+      editProfilePictureError.textContent =
+              "Image must be of type png, jpg or svg";
+      hasError = true;
+      editProfileImageInput.value = null;
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      editProfilePictureError.style.display = "block";
+      editProfilePictureError.textContent =
+              "File size must be less than 10MB";
+      hasError = true;
+      editProfileImageInput.value = null;
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = function () {
+      const preview = document.getElementById("preview");
+      preview.src = reader.result;
+      preview.style.display = "block";
+    };
+    reader.readAsDataURL(file);
+  });
+</script>
+</body>
+
+</html>
