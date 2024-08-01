@@ -19,6 +19,7 @@ public abstract class BasePlant {
     @NotBlank(message = "Plant name cannot by empty and must only include letters, numbers, spaces, dots, commas, hyphens or apostrophes")
     @Pattern(regexp = GARDEN_REGEX, message = "Plant name cannot by empty and must only include letters, numbers, spaces, dots, commas, hyphens or apostrophes")
     @Column(nullable = false)
+    @Size(max = 256, message = "Plant name must be less than 256 characters")
     protected String name;
 
     @Pattern(regexp = POSITIVE_WHOLE_NUMBER_REGEX, message = "Plant count must be a positive whole number")
@@ -28,7 +29,6 @@ public abstract class BasePlant {
     @Size(min = 0, max = 512, message = "Plant description must be less than 512 characters")
     @Column(nullable = false, length = 512)
     protected String description;
-
 
     @ManyToOne
     @JoinColumn

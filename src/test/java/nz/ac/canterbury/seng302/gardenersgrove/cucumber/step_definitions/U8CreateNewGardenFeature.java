@@ -41,7 +41,7 @@ public class U8CreateNewGardenFeature {
     private static GardenUserRepository gardenUserRepository;
 
     private static WeatherAPIService weatherAPIService;
-    private static  RestTemplate restTemplate;
+    private static RestTemplate restTemplate;
 
     private static LocationService locationService;
     private static FriendService friendService;
@@ -78,7 +78,7 @@ public class U8CreateNewGardenFeature {
         moderationService = new ModerationService();
         mockedModerationService = mock(ModerationService.class);
         locationService = mock(LocationService.class);
-        gardenController = new GardenController(gardenService, plantService, userService, weatherAPIService, tagService, friendService, moderationService, profanityService, locationService);
+        gardenController = new GardenController(gardenService, null, plantService, userService, weatherAPIService, tagService, friendService, moderationService, profanityService, locationService);
     }
 
 

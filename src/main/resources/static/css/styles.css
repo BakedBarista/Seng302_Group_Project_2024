@@ -13,6 +13,8 @@
     --gg-not-planted-hover: #af7244;
     --gg-harvest: sandybrown;
     --gg-harvest-hover: #b97f4d;
+    --gg-side-panel: #E2E9CE40;
+
     --gg-white: #F5F5F5;
     --gg-white-rgb: 245, 245, 245;
     --gg-black: #1E1E1E;
@@ -55,6 +57,16 @@ h1, h2, h3, h4, h5, h6 {
     font-family: "Averia Serif Libre", serif;
     font-weight: 700;
     font-style: normal;
+}
+
+@media (min-width: 992px) {
+    .full-height-lg {
+        height: 100vh;
+    }
+
+    .max-full-height-lg {
+        max-height: 100vh;
+    }
 }
 
 
@@ -515,6 +527,7 @@ h1, h2, h3, h4, h5, h6 {
     margin-right: 5px;
 }
 
+
 /* Toast container */
 .toast-container {
     position: fixed;
@@ -565,5 +578,40 @@ h1, h2, h3, h4, h5, h6 {
     font-family: var(--gg-body-font);
 }
 
+/* Plant name on plant cards */
+.overflow-hidden {
+    max-width: 200px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
 
+/*Timeline styling*/
+.timeline-with-icons {
+    border-left: 1px solid hsl(0, 0%, 90%);
+    position: relative;
+    list-style: none;
+}
 
+.timeline-with-icons .timeline-item {
+    position: relative;
+}
+
+.timeline-with-icons .timeline-item:after {
+    position: absolute;
+    display: block;
+    top: 0;
+}
+
+.timeline-with-icons .timeline-icon {
+    position: absolute;
+    left: -48px;
+    background-color: #E2E9CE;
+    color: #E2E9CE60;
+    border-radius: 50%;
+    height: 31px;
+    width: 31px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

@@ -5,7 +5,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.*;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.CurrentWeather;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.WeatherData;
 import nz.ac.canterbury.seng302.gardenersgrove.model.weather.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import org.slf4j.Logger;
@@ -17,6 +19,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
@@ -267,6 +271,10 @@ public class WeatherAPIService {
             } else {
                 logger.error("An unknown error occurred with the weather API.", e);
             }
+        } catch (HttpServerErrorException e) {
+            logger.error("Something went wrong on Weather API's end, they returned a 502 error.");
+        } catch (ResourceAccessException e) {
+            logger.error("Could not access the weather API, is the URL wrong or is the service down?");
         }
         return API_NO_RESPONSE;
     }
