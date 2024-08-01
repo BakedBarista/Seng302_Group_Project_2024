@@ -3,10 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.gardens;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.GardenDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.GardenHistoryItemDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
@@ -581,4 +578,5 @@ public class GardenController {
             logger.info("Failed to add garden", e);
         }
     }
+
 }

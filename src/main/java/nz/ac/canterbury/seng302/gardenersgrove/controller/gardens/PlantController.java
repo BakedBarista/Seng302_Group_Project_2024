@@ -256,7 +256,6 @@ public class PlantController {
         return "redirect:" + referer;
     }
 
-
     /**
      * send user to add plant history form - add plant and garden id to model for
      * use in html file through thymeleaf
