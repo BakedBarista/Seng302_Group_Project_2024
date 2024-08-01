@@ -28,7 +28,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
-@SpringBootTest
+@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 public class U28GardenHistoryPlantDateFeature {
 
     @Autowired

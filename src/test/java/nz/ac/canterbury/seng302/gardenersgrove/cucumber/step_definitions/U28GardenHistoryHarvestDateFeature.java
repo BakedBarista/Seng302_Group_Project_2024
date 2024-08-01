@@ -6,7 +6,6 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.api.PlantStatusApiController;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantHarvestedDateDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
@@ -14,7 +13,6 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.junit.jupiter.api.Assertions;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.validation.BindingResult;
 
 import java.time.LocalDate;
@@ -23,7 +21,7 @@ import java.util.List;
 
 import static org.mockito.Mockito.mock;
 
-@SpringBootTest
+@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 public class U28GardenHistoryHarvestDateFeature {
 
     @Autowired
@@ -38,7 +36,6 @@ public class U28GardenHistoryHarvestDateFeature {
     private static BindingResult bindingResult;
     private Long selectedPlantId;
     private Long selectedGardenId;
-
     private final PlantHarvestedDateDTO plantHarvestDTO = new PlantHarvestedDateDTO();
 
     @BeforeAll
@@ -80,7 +77,9 @@ public class U28GardenHistoryHarvestDateFeature {
     @And("I change the date to tomorrow's date")
     public void i_change_the_date_to_tomorrow_s_date() {
         Mockito.when(bindingResult.hasErrors()).thenReturn(true);
-        plantHarvestDTO.setHarvestedDate(LocalDate.now().plusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+
+        // plus 2 days to avoid race condition at midnight
+        plantHarvestDTO.setHarvestedDate(LocalDate.now().plusDays(2).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
     }
 
     @And("I submit the harvest date form")
