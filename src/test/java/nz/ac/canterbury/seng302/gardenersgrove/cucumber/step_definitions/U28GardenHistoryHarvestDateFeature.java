@@ -12,6 +12,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantHarvestedDateDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.junit.jupiter.api.Assertions;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.validation.BindingResult;
@@ -38,12 +39,11 @@ public class U28GardenHistoryHarvestDateFeature {
     private Long selectedPlantId;
     private Long selectedGardenId;
 
-    private static PlantHarvestedDateDTO plantHarvestDTO;
+    private final PlantHarvestedDateDTO plantHarvestDTO = new PlantHarvestedDateDTO();
 
     @BeforeAll
     public static void setup() {
         bindingResult = mock(BindingResult.class);
-        plantHarvestDTO = new PlantHarvestedDateDTO();
     }
 
     @Given("I am browsing my recorded plants for garden {string}")
@@ -53,34 +53,39 @@ public class U28GardenHistoryHarvestDateFeature {
 
     @And("{string} has no harvested date")
     public void plant_has_no_harvested_date(String plantName) {
-        plantHarvestDTO.setHarvestedDate(null);
+        List<Plant> gardenPlants = plantService.getPlantsByGardenId(selectedGardenId);
+        Plant plant = gardenPlants.stream().filter(_plant -> _plant.getName().equals(plantName)).findFirst().get();
+        plant.setHarvestedDate(null);
+        plantService.save(plant);
     }
 
     @When("I select a plant {string} to be harvested")
     public void i_select_a_plant_to_be_harvested(String plantName) {
         List<Plant> gardenPlants = plantService.getPlantsByGardenId(selectedGardenId);
-
         selectedPlantId = gardenPlants.stream().filter(plant -> plant.getName().equals(plantName)).findFirst().get().getId();
     }
 
     @And("I do not change the default date")
     public void i_do_not_change_the_default_date() {
+        Mockito.when(bindingResult.hasErrors()).thenReturn(false);
         plantHarvestDTO.setHarvestedDate(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-    }
-
-    @And("I submit the harvest date form")
-    public void i_submit_the_harvest_date_form() {
-        plantStatusApiController.updateHarvestedDate(selectedPlantId, plantHarvestDTO, bindingResult);
     }
 
     @And("I change the date to yesterday's date")
     public void i_change_the_date_to_yesterday_s_date() {
+        Mockito.when(bindingResult.hasErrors()).thenReturn(false);
         plantHarvestDTO.setHarvestedDate(LocalDate.now().minusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
     }
 
     @And("I change the date to tomorrow's date")
     public void i_change_the_date_to_tomorrow_s_date() {
+        Mockito.when(bindingResult.hasErrors()).thenReturn(true);
         plantHarvestDTO.setHarvestedDate(LocalDate.now().plusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+    }
+
+    @And("I submit the harvest date form")
+    public void i_submit_the_harvest_date_form() {
+        plantStatusApiController.updateHarvestedDate(selectedPlantId, plantHarvestDTO, bindingResult);
     }
 
     @Then("The plant is marked harvested on today's date")

@@ -34,13 +34,13 @@ Feature: U28, As Kaia, I want to keep track of planting history recording when I
         And I submit the harvest date form
         Then The plant is marked harvested on yesterday's date
 
-#    Scenario: AC5 - planting harvest date future
-#        Given I am browsing my recorded plants for garden "garden1"
-#        And "plant1" has no harvested date
-#        When I select a plant "plant1" to be harvested
-#        And I change the date to tomorrow's date
-#        And I submit the harvest date form
-#        Then The plant is not marked harvested
+    Scenario: AC5 - planting harvest date future
+        Given I am browsing my recorded plants for garden "garden1"
+        And "plant1" has no harvested date
+        When I select a plant "plant1" to be harvested
+        And I change the date to tomorrow's date
+        And I submit the harvest date form
+        Then The plant is not marked harvested
 #
 #    Scenario: AC6 - planting record add image
 #        Given I am browsing my recorded plants
