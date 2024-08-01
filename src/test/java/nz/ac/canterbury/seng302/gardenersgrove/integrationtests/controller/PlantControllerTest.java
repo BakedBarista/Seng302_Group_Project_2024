@@ -1,30 +1,42 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.PlantController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.PlantHistoryItem;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantHistoryItemDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantHistoryRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantHistoryService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -42,6 +54,12 @@ public class PlantControllerTest {
 
     @Autowired
     private PlantController plantController;
+
+    @Autowired
+    private PlantService plantService;
+
+    @Autowired
+    private PlantHistoryRepository plantHistoryRepository;
 
     @MockBean
     private GardenUserService userService;
@@ -219,6 +237,27 @@ public class PlantControllerTest {
         Mockito.verify(model).addAttribute("description", plantHistoryDTO);
     }
 
+//    @Test
+//    void givenNonExistingPlant_whenSubmitPlantHistoryForm_thenReturnErrorPage() throws IOException {
+//        long gardenId = testGarden.getId();
+//        long invalidPlantId = 2L;
+//        MockMultipartFile file = new MockMultipartFile("image", "test.png", "image/png", "test".getBytes());
+//        PlantHistoryItemDTO plantHistoryDTO = new PlantHistoryItemDTO("Test Description");
+//        BindingResult bindingResult = Mockito.mock(BindingResult.class);
+//        Mockito.when(bindingResult.hasErrors()).thenReturn(false); // No binding errors
+//        Model model = Mockito.mock(Model.class);
+//
+//        PlantService plantService = Mockito.mock(PlantService.class);
+//        Mockito.when(plantService.getPlantById(invalidPlantId)).thenReturn(Optional.empty());
+//
+//        String result = plantController.submitPlantHistoryForm(gardenId, invalidPlantId, file, plantHistoryDTO.getDescription(), plantHistoryDTO, bindingResult, model);
+//
+//        Assertions.assertEquals("redirect:/gardens/" + gardenId + "/plants/" + invalidPlantId, result);
+//
+//        Mockito.verify(model, Mockito.never()).addAttribute(Mockito.anyString(), Mockito.any());
+//    }
+
+
     @Test
     void givenInvalidUser_whenAccessUnauthorizedPlant_thenAccessDenied() {
         Model model = Mockito.mock(Model.class);
@@ -228,5 +267,97 @@ public class PlantControllerTest {
         Assertions.assertEquals("/error/accessDenied",result);
     }
 
+    @Test
+    void whenAccessingPlantHistoryPage_whenPlantExists_thenRedirectToPlantDetailsPage() {
+        Model model = Mockito.mock(Model.class);
+        long gardenId = testGarden.getId();
+        long plantId = testPlant.getId();
 
-}
+        String result = plantController.getPlantDetail(gardenId, plantId, model);
+
+        Assertions.assertEquals("plants/plantDetails", result);
+
+    }
+
+    @Test
+    void whenHistoryExists_thenDisabledRecordButtonIsTrue() {
+
+    }
+
+    @Test
+    void whenPlantHistoryImageExists_returnPlantHistoryImage() {
+        HttpServletRequest mockRequest = new MockHttpServletRequest();
+        String imagePath = "static/img/plant.png";
+        try (InputStream inputStream = nz.ac.canterbury.seng302.gardenersgrove.unittests.controller.PlantControllerTest.class.getClassLoader().getResourceAsStream(imagePath)) {
+            if (inputStream == null) {
+                throw new IOException("Image not found: " + imagePath);
+            }
+            byte[] image = inputStream.readAllBytes();
+            String contentType = "image/png";
+            Plant plant = new Plant();
+
+            LocalDate date = LocalDate.of(1970, 1, 1);
+            PlantHistoryItem plantHistoryItem = new PlantHistoryItem(plant, date);
+            plantHistoryItem.setImage(contentType, image);
+            plant.setPlantImage(contentType,image);
+
+            when(plantHistoryService.getPlantHistoryById(1L)).thenReturn(Optional.of(plantHistoryItem));
+
+            ResponseEntity<byte[]> response = plantController.historyImage(1L, 1L, mockRequest);
+            assertEquals(HttpStatus.OK, response.getStatusCode());
+            assertEquals(contentType, response.getHeaders().getContentType().toString());
+            assertEquals(image, response.getBody());
+
+        } catch (IOException e) {
+            System.out.println("Error with resource file " + e.getMessage());
+        }
+    }
+
+
+    @Test
+    void whenHistoryDoesNotExist_returnDefaultImage() {
+        HttpServletRequest mockRequest = new MockHttpServletRequest();
+        String imagePath = "static/img/plant.png";
+
+        try (InputStream inputStream = nz.ac.canterbury.seng302.gardenersgrove.unittests.controller.PlantControllerTest.class.getClassLoader().getResourceAsStream(imagePath)) {
+            if (inputStream == null) {
+                throw new IOException("Image not found: " + imagePath);
+            }
+            byte[] image = inputStream.readAllBytes();
+            String contentType = "image/png";
+            Plant plant = new Plant();
+
+            LocalDate date = LocalDate.of(1970, 1, 1);
+            PlantHistoryItem plantHistoryItem = new PlantHistoryItem(plant, date);
+            plantHistoryItem.setImage(contentType, image);
+            plant.setPlantImage(contentType,image);
+
+            when(plantHistoryService.getPlantHistoryById(1L)).thenReturn(Optional.of(plantHistoryItem));
+
+            ResponseEntity<byte[]> response = plantController.historyImage(1L, plantHistoryItem.getId(), mockRequest);
+            assertEquals(HttpStatus.FOUND, response.getStatusCode());
+            assertEquals("/img/default-plant.svg", response.getHeaders().getFirst(HttpHeaders.LOCATION));
+        } catch (IOException e) {
+            System.out.println("Error with resource file " + e.getMessage());
+        }
+
+
+    }
+
+//    @Test
+//    void whenPlantDoesNotExist_returnDefaultImage() {
+//        HttpServletRequest mockRequest = new MockHttpServletRequest();
+//        Plant plant = new Plant();
+//        LocalDate date = LocalDate.of(1970, 1, 1);
+//        PlantHistoryItem plantHistoryItem = new PlantHistoryItem(plant, date);
+//
+//        when(plantService.getPlantById(1L)).thenReturn(Optional.of(plant));
+//        when(plantHistoryService.getPlantHistoryById(1L)).thenReturn(Optional.of(plantHistoryItem));
+//
+//        ResponseEntity<byte[]> response = plantController.historyImage(1L, plantHistoryItem.getId(), mockRequest);
+//        assertEquals(HttpStatus.FOUND, response.getStatusCode());
+//        assertEquals("/img/default-plant.svg", response.getHeaders().getFirst(HttpHeaders.LOCATION));
+//    }
+
+
+    }

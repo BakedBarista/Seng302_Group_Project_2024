@@ -321,13 +321,7 @@ public class PlantController {
         Optional<Plant> existingPlant = plantService.getPlantById(plantId);
 
         if (existingPlant.isPresent()){
-//            Plant plant = existingPlant.get();
-//            LocalDate timestamp = LocalDate.now();
-//
-//            if (plantHistoryService.historyExists(plant, timestamp)) {
-//                logger.info("Update already exists today");
-//                return "error/404";
-//            }
+
             try {
                 plantHistoryService.addHistoryItem(existingPlant.get(), file.getContentType(), file.getBytes(), description);
 
