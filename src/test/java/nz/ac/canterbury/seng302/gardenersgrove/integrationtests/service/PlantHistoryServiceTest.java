@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 import java.time.Clock;
@@ -9,6 +10,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantHistoryItemDTO;
@@ -104,6 +106,43 @@ class PlantHistoryServiceTest {
         assertEquals(1, result.size());
         PlantHistoryItem resultItem = result.get(0);
         assertEquals(date, resultItem.getTimestamp());
+
+    }
+
+    @Test
+    void givenPlantHistoryExists_whenRetrieved_thenReturnsTrue() {
+        LocalDate date = LocalDate.of(1970, 1, 1);
+        PlantHistoryItem plantHistoryItem = new PlantHistoryItem(plant, date);
+        plantHistoryItem.setImage("", new byte[0]);
+
+        plantHistoryRepository.save(plantHistoryItem);
+
+        Boolean result = historyService.historyExists(plant, date);
+        assertEquals(true, result);
+    }
+
+    @Test
+    void givenPlantDoesntHistoryExists_whenRetrieved_thenReturnsFalse() {
+        LocalDate date = LocalDate.of(1970, 1, 1);
+        PlantHistoryItem plantHistoryItem = new PlantHistoryItem(plant, date);
+        plantHistoryItem.setImage("", new byte[0]);
+
+        Boolean result = historyService.historyExists(plant, date);
+        assertEquals(false, result);
+    }
+
+    @Test
+    void givenPlantHistoryExists_whenRetrievedById_thenReturnsPlantHistory() {
+        LocalDate date = LocalDate.of(1970, 1, 1);
+        PlantHistoryItem plantHistoryItem = new PlantHistoryItem(plant, date);
+        plantHistoryItem.setImage("", new byte[0]);
+
+        plantHistoryRepository.save(plantHistoryItem);
+        Optional<PlantHistoryItem> result = historyService.getPlantHistoryById(plant.getId());
+
+        PlantHistoryItem resultItem = result.get();
+        assertEquals(resultItem.getTimestamp(), date);
+
 
     }
 
