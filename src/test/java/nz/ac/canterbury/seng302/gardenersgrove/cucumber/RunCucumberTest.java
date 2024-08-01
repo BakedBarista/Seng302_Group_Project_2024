@@ -4,6 +4,7 @@ import io.cucumber.junit.platform.engine.Constants;
 import io.cucumber.spring.CucumberContextConfiguration;
 import nz.ac.canterbury.seng302.gardenersgrove.GardenersGroveApplication;
 import org.junit.platform.suite.api.*;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -20,6 +21,7 @@ import org.springframework.test.context.ContextConfiguration;
 @CucumberContextConfiguration
 @SpringBootTest
 @ActiveProfiles("cucumber")
+@AutoConfigureMockMvc
 public class RunCucumberTest {
 
 }
