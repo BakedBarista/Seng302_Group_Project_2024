@@ -67,12 +67,12 @@ Feature: U28, As Kaia, I want to keep track of planting history recording when I
 #        And I select a plant "plant1" that has not been harvested
 #        When I leave the description on the record empty and submit
 #        Then the record has no description
-#
-#    Scenario: AC10 - garden timeline
-#        Given I am on the garden detials page for "garden1"
-#        When I view my gardens timeline
-#        Then there is a record of plant history for "garden1"
-#
+
+    Scenario: AC10 - garden timeline
+        Given I am on the garden detials page for "garden1"
+        When I view my gardens timeline
+        Then there is a record of plant history for "garden1"
+
 #    Scenario: AC11 - view plant timeline with images and descriptions
 #        Given I view my plant
 #        And the plant has records with images and descriptions
