@@ -21,6 +21,8 @@ import java.util.Optional;
 public interface GardenRepository extends CrudRepository<Garden, Long> {
     Optional<Garden> findById(long id);
 
+    List<Garden> findByName(String name);
+
     List<Garden> findAll();
 
     Page<Garden> findByIsPublicTrueOrderByIdDesc(Pageable pageable);
