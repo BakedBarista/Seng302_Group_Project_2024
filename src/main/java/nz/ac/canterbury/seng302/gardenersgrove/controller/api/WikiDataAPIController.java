@@ -26,6 +26,11 @@ public class WikiDataAPIController {
     @GetMapping("/searchPlant")
     public String searchPlant(@RequestParam String search) {
         logger.info("Searching {}", search);
+        try {
+            Thread.sleep(300);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
         return wikidataService.getPlantInfo(search);
     }
 }
