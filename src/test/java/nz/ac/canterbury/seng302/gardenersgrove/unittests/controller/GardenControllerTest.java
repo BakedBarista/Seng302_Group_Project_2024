@@ -484,6 +484,6 @@ public class GardenControllerTest {
 
         String result = gardenController.gardenHistory(authentication, 0L, model);
 
-        Assertions.assertEquals("/error/accessDenied", result);
+        Assertions.assertEquals("error/accessDenied", result);
     }
 }

@@ -38,6 +38,4 @@ public class PlantHistoryService {
         plant.getHistory().add(historyItem);
         plantHistoryRepository.save(historyItem);
     }
-
-
 }
