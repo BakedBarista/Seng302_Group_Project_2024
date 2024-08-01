@@ -30,6 +30,9 @@ public abstract class BasePlant {
     @Column(nullable = false, length = 512)
     protected String description;
 
+    @ManyToOne
+    @JoinColumn
+    protected Garden garden;
 
     @Enumerated(EnumType.STRING)
     private PlantStatus status = PlantStatus.NOT_GROWING;
@@ -43,6 +46,9 @@ public abstract class BasePlant {
         return name;
     }
 
+    /**
+     * The status of the plant, whether it is currently growing, harvested, or not growing.
+     */
     public enum PlantStatus {
         NOT_GROWING,
         CURRENTLY_GROWING,
@@ -83,6 +89,14 @@ public abstract class BasePlant {
 
     public BasePlant.PlantStatus getStatus() {
         return status;
+    }
+
+    public Garden getGarden() {
+        return garden;
+    }
+
+    public void setGarden(Garden garden) {
+        this.garden = garden;
     }
 
     /**

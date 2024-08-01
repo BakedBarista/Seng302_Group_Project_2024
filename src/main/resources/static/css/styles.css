@@ -14,6 +14,7 @@
     --gg-harvest: sandybrown;
     --gg-harvest-hover: #b97f4d;
     --gg-side-panel: #E2E9CE40;
+
     --gg-white: #F5F5F5;
     --gg-white-rgb: 245, 245, 245;
     --gg-black: #1E1E1E;
@@ -524,6 +525,57 @@ h1, h2, h3, h4, h5, h6 {
     border: 1px solid #ddd;
     border-radius: 4px 4px 0 0;
     margin-right: 5px;
+}
+
+
+/* Toast container */
+.toast-container {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    min-width: 250px;
+}
+
+/* Toast styles */
+.toast {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 0.25rem;
+    font-family: var(--gg-body-font);
+}
+
+.toast .btn-close {
+    color: var(--gg-white) !important; /* Ensure the color is applied */
+    opacity: 0.75;
+    font-weight: bold;
+    font-size: 1.25rem;
+    line-height: 1;
+}
+
+.toast .btn-close:hover {
+    opacity: 1;
+}
+
+/* Toast header */
+.toast-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 0.75rem;
+    background-color: var(--gg-primary);
+    color: var(--gg-white);
+    border-top-left-radius: 0.25rem;
+    border-top-right-radius: 0.25rem;
+    border-bottom: 1px solid var(--gg-secondary-dark);
+}
+
+/* Toast body */
+.toast-body {
+    padding: 0.75rem;
+    background-color: var(--gg-secondary-light);
+    color: var(--gg-black);
+    border-bottom-left-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem;
+    font-family: var(--gg-body-font);
 }
 
 /* Plant name on plant cards */

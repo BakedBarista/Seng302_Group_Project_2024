@@ -51,69 +51,75 @@ class PlantStatusApiControllerTests {
     }
 
     @Test
-    void testUpdatePlantStatusSuccess() throws Exception {
+    void givenPlantId_whenUpdatePlantStatus_thenReturnSuccessResponse()  throws Exception {
         when(plantService.getPlantById(1L)).thenReturn(Optional.of(plant));
         ResponseEntity <Map<String,Object>> response = plantStatusApiController.updatePlantStatus(1L, BasePlant.PlantStatus.CURRENTLY_GROWING);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
+
 
         Map<String, Object> responseBody = (Map<String, Object>) response.getBody();
+
+
+        verify(plantService, times(1)).save(any(Plant.class));
         assertEquals("CURRENTLY_GROWING", responseBody.get("status"));
         assertNull(responseBody.get("harvestedDate"));
-
-        verify(plantService, times(1)).save(any(Plant.class));
-
-    }
-
-    @Test
-    void testUpdatePlantStatusHarvested() throws Exception {
-        when(plantService.getPlantById(1L)).thenReturn(Optional.of(plant));
-        ResponseEntity <Map<String,Object>> response = plantStatusApiController.updatePlantStatus(1L, BasePlant.PlantStatus.HARVESTED);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
 
-        Map<String, Object> responseBody = (Map<String, Object>) response.getBody();
-        assertEquals("HARVESTED", responseBody.get("status"));
-
-        verify(plantService, times(1)).save(any(Plant.class));
     }
 
     @Test
-    void testUpdateHarvestDateSuccess() throws Exception {
+    void givenPlantIdAndHarvestedStatus_whenUpdatePlantStatus_thenReturnSuccessResponse()  throws Exception {
+        when(plantService.getPlantById(1L)).thenReturn(Optional.of(plant));
+        ResponseEntity <Map<String,Object>> response = plantStatusApiController.updatePlantStatus(1L, BasePlant.PlantStatus.HARVESTED);
+
+
+        Map<String, Object> responseBody = (Map<String, Object>) response.getBody();
+
+
+        verify(plantService, times(1)).save(any(Plant.class));
+        assertEquals("HARVESTED", responseBody.get("status"));
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+    }
+
+    @Test
+    void givenPlantIdAndHarvestedStatus_whenSetHarvestedDate_thenReturnSuccessResponse()  throws Exception {
         LocalDate harvestedDate = LocalDate.now();
         PlantHarvestedDateDTO plantHarvestedDateDTO = new PlantHarvestedDateDTO();
         plantHarvestedDateDTO.setHarvestedDate(String.valueOf(harvestedDate));
         when(plantService.getPlantById(1L)).thenReturn(Optional.of(plant));
         when(bindingResult.hasErrors()).thenReturn(false);
         ResponseEntity <Map<String,Object>> response = plantStatusApiController.updateHarvestedDate(1L, plantHarvestedDateDTO, bindingResult);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-
         Map<String, Object> responseBody = (Map<String, Object>) response.getBody();
-        assertEquals(harvestedDate, responseBody.get("harvestedDate"));
 
         verify(plantService, times(1)).save(any(Plant.class));
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(harvestedDate, responseBody.get("harvestedDate"));
+
     }
 
     @Test
-    void testUpdateHarvestDateFailed() throws Exception {
+    void givenInvalidHarvestDate_whenUpdateHarvestDate_thenReturnBadResponse() throws Exception {
         PlantHarvestedDateDTO plantHarvestedDateDTO = new PlantHarvestedDateDTO();
         plantHarvestedDateDTO.setHarvestedDate("2021-13-01");
         when(plantService.getPlantById(1L)).thenReturn(Optional.of(plant));
         when(bindingResult.hasErrors()).thenReturn(true);
         ResponseEntity <Map<String,Object>> response = plantStatusApiController.updateHarvestedDate(1L, plantHarvestedDateDTO, bindingResult);
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertNotNull(response.getBody());
+
 
         Map<String, Object> responseBody = (Map<String, Object>) response.getBody();
+
+
+        verify(plantService, times(0)).save(any(Plant.class));
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertNotNull(response.getBody());
         assertEquals("error", responseBody.get("status"));
         assertNotNull(responseBody.get("errors"));
 
-        verify(plantService, times(0)).save(any(Plant.class));
-
     }
     @Test
-    void updateDate_invalidDate_ReturnBadResponse() {
+    void givenInvalidDate_whenUpdateDate_thenReturnBadResponse() {
         Long plantId = 1L;
         PlantHarvestedDateDTO request = new PlantHarvestedDateDTO();
         request.setHarvestedDate("2021-13-01");

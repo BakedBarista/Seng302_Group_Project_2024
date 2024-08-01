@@ -18,23 +18,29 @@ Feature: U28, As Kaia, I want to keep track of planting history recording when I
         And I submit the add plant form
         Then the plant is not added
 
-#    Scenario: AC3 - planting havest date default
-#        Given I am browsing my recorded plants
-#        When I select a plant "plant1" to be harvested
-#        And I do not change the default date
-#        Then the plant is marked harvested on todays date
-#
-#    Scenario: AC4 - planting havest date past
-#        Given I am browsing my recorded plants
-#        When I select a plant "plant1" to be harvested
-#        And I change the date to one in the past "01/02/2020
-#        Then the plant is marked harvested on the "01/02/2020"
-#
-#    Scenario: AC5 - planting havest date future
-#        Given I am browsing my recorded plants
-#        When I select a plant "plant1" to be harvested
-#        And I change the date to one in the future "01/02/2030
-#        Then the plant is not marked harvested
+    Scenario: AC3 - planting harvest date default
+        Given I am browsing my recorded plants for garden "garden1"
+        And "plant1" has no harvested date
+        When I select a plant "plant1" to be harvested
+        And I do not change the default date
+        And I submit the harvest date form
+        Then The plant is marked harvested on today's date
+
+    Scenario: AC4 - planting harvest date past
+        Given I am browsing my recorded plants for garden "garden1"
+        And "plant1" has no harvested date
+        When I select a plant "plant1" to be harvested
+        And I change the date to yesterday's date
+        And I submit the harvest date form
+        Then The plant is marked harvested on yesterday's date
+
+    Scenario: AC5 - planting harvest date future
+        Given I am browsing my recorded plants for garden "garden1"
+        And "plant1" has no harvested date
+        When I select a plant "plant1" to be harvested
+        And I change the date to tomorrow's date
+        And I submit the harvest date form
+        Then The plant is not marked harvested
 #
 #    Scenario: AC6 - planting record add image
 #        Given I am browsing my recorded plants
