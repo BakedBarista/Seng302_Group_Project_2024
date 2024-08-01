@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.validation;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -17,6 +18,8 @@ public class DateValidator implements ConstraintValidator<ValidDate, String> {
     private static final String DATE_PATTERN_THYMELEAF = "^\\d{4}-\\d{2}-\\d{2}$";
 
     private static final String DATE_PATTERN_STORED = "^\\d{2}/\\d{2}/\\d{4}$";
+
+    private static final int MIN_YEAR = 1901;
 
     /**
      * validate a given date string as long as it is not empty.
@@ -53,7 +56,11 @@ public class DateValidator implements ConstraintValidator<ValidDate, String> {
 
         boolean dayValid = day > 0 && day <= 31;
         boolean monthValid = month > 0 && month <= 12;
-        boolean yearValid = year > 0;
+        boolean yearValid = year >= MIN_YEAR;
+
+        if (!dayValid || !monthValid || !yearValid) {
+            return false;
+        }
 
         if (day == 31 && !THIRTY_ONE_DAY_MONTHS.contains(month)) {
             return false;
@@ -63,8 +70,9 @@ public class DateValidator implements ConstraintValidator<ValidDate, String> {
             // 29th of feb on a leap year case
             return false;
         }
+        LocalDate parsedDate = LocalDate.of(year, month, day);
+        return !parsedDate.isAfter(LocalDate.now());
 
-        return dayValid && monthValid && yearValid;
     }
 
     /**

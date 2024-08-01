@@ -80,7 +80,7 @@ public class U19MakeGardenPublicFeature {
         locationService = new LocationService(restTemplate, objectMapper);
         model = mock(Model.class);
 
-        gardenController = new GardenController(gardenService, plantService, gardenUserService, weatherAPIService, tagService,  friendService, moderationService, profanityService, locationService);
+        gardenController = new GardenController(gardenService, null, plantService, gardenUserService, weatherAPIService, tagService,  friendService, moderationService, profanityService, locationService);
         gardenUser = new GardenUser();
         gardenUser.setId(1L);
         gardenUser.setFname("testUser");

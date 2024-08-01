@@ -8,6 +8,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.GardenDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.GardenHistoryItemDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.CurrentWeather;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
@@ -35,8 +36,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.SortedMap;
 import java.util.stream.Collectors;
 
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.HISTORY_FORMAT_DATE;
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.NZ_FORMAT_DATE;
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.WEATHER_CARD_FORMAT_DATE;
 
@@ -48,6 +51,7 @@ import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats
 public class GardenController {
     Logger logger = LoggerFactory.getLogger(GardenController.class);
     private final GardenService gardenService;
+    private final GardenHistoryService gardenHistoryService;
     private final PlantService plantService;
     private final WeatherAPIService weatherAPIService;
 
@@ -66,10 +70,12 @@ public class GardenController {
     private String location_apiKey;
 
     @Autowired
-    public GardenController(GardenService gardenService, PlantService plantService, GardenUserService gardenUserService,
-                            WeatherAPIService weatherAPIService, TagService tagService, FriendService friendService,
-                            ModerationService moderationService, ProfanityService profanityService, LocationService locationService) {
+    public GardenController(GardenService gardenService, GardenHistoryService gardenHistoryService,
+            PlantService plantService, GardenUserService gardenUserService, WeatherAPIService weatherAPIService,
+            TagService tagService, FriendService friendService, ModerationService moderationService,
+            ProfanityService profanityService, LocationService locationService) {
         this.gardenService = gardenService;
+        this.gardenHistoryService = gardenHistoryService;
         this.plantService = plantService;
         this.gardenUserService = gardenUserService;
         this.weatherAPIService = weatherAPIService;
@@ -238,6 +244,45 @@ public class GardenController {
             model.addAttribute("currentUser", currentUser);
             model.addAttribute("gardens", gardens);
             return "gardens/gardenDetails";
+        }
+        return "error/404";
+    }
+
+    /**
+     * Gets the history page for a garden based on its ID
+     * @param model representation of results
+     * @param id the ID of the garden wanted
+     * @return gardenHistory page
+     */
+    @GetMapping("/gardens/{id}/history")
+    public String gardenHistory(Authentication authentication, @PathVariable(name = "id") Long id, Model model) {
+        logger.info("Get /gardens/{}/history - display garden history", id);
+        Optional<Garden> gardenOpt = gardenService.getGardenById(id);
+        model.addAttribute("dateFormatter", new ThymeLeafDateFormatter());
+
+        if(gardenOpt.isPresent()) {
+            Garden garden = gardenOpt.get();
+            model.addAttribute("garden", garden);
+            model.addAttribute("owner", garden.getOwner());
+            Long userId = (Long) authentication.getPrincipal();
+            boolean isNotOwner = !garden.getOwner().getId().equals(userId);
+            boolean isNotPublic = !garden.getIsPublic();
+
+            if (isNotOwner && isNotPublic){
+                return "error/accessDenied";
+            }
+
+            model.addAttribute("NZ_FORMAT_DATE", NZ_FORMAT_DATE);
+            model.addAttribute("HISTORY_FORMAT_DATE", HISTORY_FORMAT_DATE);
+            model.addAttribute("plants", plantService.getPlantsByGardenId(id));
+
+            SortedMap<LocalDate, List<GardenHistoryItemDTO>> history = gardenHistoryService.getGardenHistory(garden);
+            model.addAttribute("history", history);
+
+            GardenUser currentUser = gardenUserService.getUserById(userId);
+            model.addAttribute("currentUser", currentUser);
+
+            return "gardens/gardenHistory";
         }
         return "error/404";
     }
@@ -523,7 +568,7 @@ public class GardenController {
                     String[] plantDetail = plantsDetails.get(j);
                     String plantName = plantDetail[0];
                     String plantDescription = plantDetail[1];
-                    PlantDTO plant = new PlantDTO(plantName, "15", plantDescription, "2024-03-01");
+                    PlantDTO plant = new PlantDTO(plantName, "15", plantDescription, "2024-03-%02d".formatted(j % 5 + 1));
                     Plant savedPlant = plantService.createPlant(plant, garden.getId());
 
                     plants.add(savedPlant);

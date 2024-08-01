@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
     <title>Garden Details</title>
@@ -29,12 +29,19 @@
                 <div class="d-flex">
                     <h1 class="pb-4 pe-5" th:text="${garden.name}">GARDEN NAME</h1>
                     <div class="ms-auto">
+                        <a class="btn btn-secondary mt-1" th:href="@{/gardens/{id}/history(id=${garden.id})}">
+                            <img th:src="@{/icons/calendar-03-stroke-rounded-white.svg}"
+                                 aria-hidden
+                                 alt="history"
+                                 width="20"
+                                 height="20" /> View History</a>
                         <a class="btn btn-primary mt-1"
                            th:href="@{/gardens/{id}/edit(id=${garden.id})}" th:if="${currentUser.id == garden.owner.id}">
                             <img th:src="@{/icons/edit-white.svg}"
+                                 aria-hidden
                                  alt="edit"
                                  width="20"
-                                 height="20" />Edit</a>
+                                 height="20" /> Edit</a>
                     </div>
                 </div>
                 <div>
@@ -243,11 +250,10 @@
                         <div class="col-8">
                             <div class="card-body pt-2">
                                 <div class="d-flex">
-<!--                                    <div class="fw-bold mb-1">-->
-<!--                                        <span class="fw-bold" style="font-size: 16pt;" th:text="${plant.name}">Plant Name</span>-->
-<!--                                    </div>-->
                                     <div class="overflow-hidden">
-                                        <span class="fw-bold text-truncate" style="font-size: 16pt" th:text="${plant.name}">Plant Name</span>
+                                        <a class="link-hover" th:href="@{/gardens/{gardenId}/plants/{plantId}(gardenId=${garden.id}, plantId=${plant.id})}">
+                                            <span class="fw-bold text-truncate" style="font-size: 16pt" th:text="${plant.name}">Plant Name</span>
+                                        </a>
                                     </div>
                                     <div class="d-flex justify-content-left ps-2 pt-1">
                                         <a class="ms-auto justify-content-end"  th:if="${currentUser.id == garden.owner.id}" th:href="@{/gardens/{gardenId}/plants/{plantId}/edit(gardenId=${garden.id}, plantId=${plant.id})}">
