@@ -409,7 +409,6 @@ class PlantControllerTest {
 
         assertEquals("redirect:/gardens/" + gardenId, view);
     }
-
     @Test
     void testSubmitAddPlantHistoryFormNoImage_ReturnToGardenDetailPage_PlantHistoryAddedToRepository() {
         PlantHistoryItemDTO validHistoryPlantDTO = new PlantHistoryItemDTO("validDescription");
