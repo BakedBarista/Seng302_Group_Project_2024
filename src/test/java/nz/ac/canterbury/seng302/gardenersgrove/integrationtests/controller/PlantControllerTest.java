@@ -17,6 +17,9 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantHistoryService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -263,8 +266,8 @@ public class PlantControllerTest {
         Model model = Mockito.mock(Model.class);
         GardenUser notOwner = new GardenUser();
         when(userService.getCurrentUser()).thenReturn(notOwner);
-        String result = plantController.getPlantDetail(testGarden.getId(),testPlant.getId(),model);
-        Assertions.assertEquals("/error/accessDenied",result);
+        String result = plantController.getPlantTimeline(testGarden.getId(),testPlant.getId(),model);
+        Assertions.assertEquals("error/accessDenied",result);
     }
 
     @Test
@@ -273,7 +276,7 @@ public class PlantControllerTest {
         long gardenId = testGarden.getId();
         long plantId = testPlant.getId();
 
-        String result = plantController.getPlantDetail(gardenId, plantId, model);
+        String result = plantController.getPlantTimeline(gardenId, plantId, model);
 
         Assertions.assertEquals("plants/plantDetails", result);
 
@@ -288,7 +291,7 @@ public class PlantControllerTest {
     void whenPlantHistoryImageExists_returnPlantHistoryImage() {
         HttpServletRequest mockRequest = new MockHttpServletRequest();
         String imagePath = "static/img/plant.png";
-        try (InputStream inputStream = nz.ac.canterbury.seng302.gardenersgrove.unittests.controller.PlantControllerTest.class.getClassLoader().getResourceAsStream(imagePath)) {
+        try (InputStream inputStream = nz.ac.canterbury.seng302.gardenersgrove.integrationtests.controller.PlantControllerTest.class.getClassLoader().getResourceAsStream(imagePath)) {
             if (inputStream == null) {
                 throw new IOException("Image not found: " + imagePath);
             }
@@ -319,7 +322,7 @@ public class PlantControllerTest {
         HttpServletRequest mockRequest = new MockHttpServletRequest();
         String imagePath = "static/img/plant.png";
 
-        try (InputStream inputStream = nz.ac.canterbury.seng302.gardenersgrove.unittests.controller.PlantControllerTest.class.getClassLoader().getResourceAsStream(imagePath)) {
+        try (InputStream inputStream = nz.ac.canterbury.seng302.gardenersgrove.integrationtests.controller.PlantControllerTest.class.getClassLoader().getResourceAsStream(imagePath)) {
             if (inputStream == null) {
                 throw new IOException("Image not found: " + imagePath);
             }
