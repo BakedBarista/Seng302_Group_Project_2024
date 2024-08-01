@@ -25,13 +25,13 @@
                             <a th:href="@{/users/edit}" class="btn btn-primary">Edit</a>
                         </p>
                     </div>
-                    <h3>My Name is...</h3>
+                    <h4>My Name is...</h4>
                     <p>[[${name}]]</p>
-                    <h3>About me...</h3>
-                    <p>[[${desciption}]]</p>
+                    <h4>About me...</h4>
+                    <p>[[${description}]]</p>
                 </div>
                 <img
-                        class="profile-picture-large"
+                        class="public-profile-picture position-absolute top-0 end-0 public-profile-picture-padding me-2"
                         th:src="@{'/users/' + ${userId} + '/profile-picture'}"
                         width="200"
                         height="200"
