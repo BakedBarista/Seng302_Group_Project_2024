@@ -20,7 +20,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-public class WikidataServiceTest {
+class WikidataServiceTest {
 
     private RestTemplate restTemplate;
     private ObjectMapper objectMapper;
@@ -60,7 +60,7 @@ public class WikidataServiceTest {
         Mockito.verify(restTemplate).exchange(Mockito.contains("wbsearchentities"), eq(HttpMethod.GET), entityCaptor.capture(), eq(String.class));
 
         HttpHeaders headers = entityCaptor.getValue().getHeaders();
-        assertEquals("YourAppName/1.0 (your-email@example.com)", headers.getFirst("User-Agent"));
+        assertEquals("Gardener's Grove/0.0; https://csse-seng302-team800.canterbury.ac.nz/prod/; team800.garden@gmail.com", headers.getFirst("User-Agent"));
     }
 
     @Test
@@ -83,7 +83,7 @@ public class WikidataServiceTest {
         Mockito.verify(restTemplate).exchange(Mockito.contains("wbsearchentities"), eq(HttpMethod.GET), entityCaptor.capture(), eq(String.class));
 
         HttpHeaders headers = entityCaptor.getValue().getHeaders();
-        assertEquals("YourAppName/1.0 (your-email@example.com)", headers.getFirst("User-Agent"));
+        assertEquals("Gardener's Grove/0.0; https://csse-seng302-team800.canterbury.ac.nz/prod/; team800.garden@gmail.com", headers.getFirst("User-Agent"));
     }
 
 }

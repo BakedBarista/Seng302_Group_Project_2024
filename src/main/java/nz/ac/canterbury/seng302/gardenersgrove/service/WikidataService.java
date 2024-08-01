@@ -76,8 +76,12 @@ public class WikidataService {
      */
     private String getImageUrl(String entityId) {
         String url = ENTITY_ENDPOINT + entityId;
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("User-Agent","Gardener's Grove/0.0; https://csse-seng302-team800.canterbury.ac.nz/prod/; team800.garden@gmail.com");
+        HttpEntity<String> entity = new HttpEntity<>(headers);
         try {
-            String response = restTemplate.getForObject(url, String.class);
+            ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+            String response = responseEntity.getBody();
             JsonNode jsonNode = objectMapper.readTree(response);
             JsonNode claims = jsonNode.path("entities").path(entityId).path("claims").path("P18");
             if (claims.isArray() && !claims.isEmpty()) {
