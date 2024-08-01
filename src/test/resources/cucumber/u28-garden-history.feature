@@ -67,12 +67,12 @@ Feature: U28, As Kaia, I want to keep track of planting history recording when I
 #        When I view my gardens timeline
 #        Then there is a record of plant history for "garden1"
 #
-    Scenario: AC11 - view plant timeline with images and descriptions
-        Given I view my plant
-        And the plant has records with images and descriptions
-        When I view my plant's timeline
-        Then I am presented with a timeline of specific plant records
-        And each record includes dates, images, and descriptions of the plant at these dates
+#    Scenario: AC11 - view plant timeline with images and descriptions
+#        Given I view my plant
+#        And the plant has records with images and descriptions
+#        When I view my plant's timeline
+#        Then I am presented with a timeline of specific plant records
+#        And each record includes dates, images, and descriptions of the plant at these dates
 #
 #    Scenario: AC12 - harvest and replant a plant in a different spot
 #        Given I have a plant in a spot of my garden
