@@ -225,7 +225,7 @@ public class PlantControllerTest {
         GardenUser notOwner = new GardenUser();
         when(userService.getCurrentUser()).thenReturn(notOwner);
         String result = plantController.getPlantTimeline(testGarden.getId(),testPlant.getId(),model);
-        Assertions.assertEquals("/error/accessDenied",result);
+        Assertions.assertEquals("error/accessDenied",result);
     }
 
 
