@@ -137,7 +137,7 @@ public class EditUserController {
         }
         userService.addUser(user);
 
-        return "redirect:/users/user";
+        return "redirect:/users/accountSettings";
 
     }
 
@@ -193,7 +193,7 @@ public class EditUserController {
         user.setPassword(newPassword);
         userService.addUser(user);
         emailSenderService.sendEmail(user, "Password Changed", "Your password has been updated");
-        return "redirect:/users/user";
+        return "redirect:/users/accountSettings";
 
     }
 

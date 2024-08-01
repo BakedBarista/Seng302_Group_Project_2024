@@ -11,8 +11,8 @@
     <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 
     <main class="main-container" style = "margin-top: 10%;">
-        <div class="card p-5">
-            <h1>Edit</h1>
+        <div class="p-5">
+            <h1>Edit Account Settings</h1>
             <form th:action="edit" method="post" enctype="multipart/form-data" th:object="${editUserDTO}" novalidate>
                 <div th:insert="fragments/edit-profile-picture.html"></div>
                 <p><a th:href="@{/users/edit/password}">Change Password</a></p>

@@ -40,7 +40,7 @@ public class UserController {
      * @param model Thymeleaf model
      * @return view name for the user profile page
      */
-    @GetMapping("users/user")
+    @GetMapping("users/settings")
     public String view(Authentication authentication, Model model) {
         logger.info("GET /users/user");
 
@@ -58,7 +58,7 @@ public class UserController {
             model.addAttribute("dateOfBirth", dobString);
         }
 
-        return "users/user";
+        return "users/accountSettings";
     }
 
 
