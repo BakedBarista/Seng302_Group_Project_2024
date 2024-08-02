@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.unittests.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import nz.ac.canterbury.seng302.gardenersgrove.service.ProfanityDetectedException;
 import nz.ac.canterbury.seng302.gardenersgrove.service.WikidataService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,8 +17,10 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class WikidataServiceTest {
@@ -28,8 +31,8 @@ class WikidataServiceTest {
 
     @BeforeEach
     void setup() {
-        restTemplate = Mockito.mock(RestTemplate.class);
-        objectMapper = Mockito.mock(ObjectMapper.class);
+        restTemplate = mock(RestTemplate.class);
+        objectMapper = mock(ObjectMapper.class);
         wikidataService = new WikidataService(restTemplate,objectMapper);
     }
 
@@ -84,6 +87,21 @@ class WikidataServiceTest {
 
         HttpHeaders headers = entityCaptor.getValue().getHeaders();
         assertEquals("Gardener's Grove/0.0; https://csse-seng302-team800.canterbury.ac.nz/prod/; team800.garden@gmail.com", headers.getFirst("User-Agent"));
+    }
+
+    @Test
+    void givenIOException_whenSearchTomato_thenThrowRuntimeException() {
+        // Create mocks
+        RestTemplate restTemplate = mock(RestTemplate.class);
+        ObjectMapper objectMapper = mock(ObjectMapper.class);
+        WikidataService wikidataService = new WikidataService(restTemplate, objectMapper);
+
+        // Set up the mock to throw IOException
+        when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.GET), Mockito.any(HttpEntity.class), Mockito.eq(String.class)))
+                .thenThrow(new RuntimeException("Network error"));
+
+        // Verify that the exception is thrown
+        assertThrows(RuntimeException.class, () -> wikidataService.getPlantInfo("tomato"));
     }
 
 }
