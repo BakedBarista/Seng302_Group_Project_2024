@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.NZ_FORMAT_DATE;
+
 /**
  * Controller for handling API requests related to updating and setting plant status
  */
@@ -100,7 +102,7 @@ public class PlantStatusApiController {
 
         Map<String, Object> response = new HashMap<>();
         response.put(STATUS, "success");
-        response.put("harvestedDate", existingPlant.getHarvestedDate());
+        response.put("harvestedDate", existingPlant.getHarvestedDate().format(NZ_FORMAT_DATE));
 
         return ResponseEntity.ok().body(response);
     }

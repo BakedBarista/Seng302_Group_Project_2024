@@ -68,15 +68,15 @@
         <section class="py-3 px-3">
           <ul class="timeline-with-icons">
 <!--              Link up one of these cards with the backend and use thymeleaf to make as many as their are records.-->
-            <li class="timeline-item mb-5">
+            <li class="timeline-item mb-5" th:if="${showHarvestCard}">
               <span class="timeline-icon">
                 <img class="mx-1" th:src="@{/icons/harvest.svg}" alt="" width="25" height="25" />
               </span>
 
               <p class="fw-bold">Harvested</p>
-              <p class="text-muted mb-2 fw-bold">11 March 2020</p>
+              <p class="text-muted mb-2 fw-bold" th:text="${dateFormatter.format(plant.harvestedDate, NZ_FORMAT_DATE)}"></p>
               <p class="text-muted">
-                  My tomatoes were ready to go today! So yummy!
+                  You harvested your <span th:text="${plant.name}"></span>'s.
               </p>
             </li>
 

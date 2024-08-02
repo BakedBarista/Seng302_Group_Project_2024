@@ -615,3 +615,14 @@ h1, h2, h3, h4, h5, h6 {
     align-items: center;
     justify-content: center;
 }
+
+.hover-plant {
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.hover-plant:hover {
+    transform: translateY(-3px) scale(1.005);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}

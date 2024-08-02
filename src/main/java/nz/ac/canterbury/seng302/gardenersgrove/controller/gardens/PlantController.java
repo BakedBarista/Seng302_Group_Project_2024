@@ -2,10 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.gardens;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.PlantHistoryItem;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantHistoryItemDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
@@ -27,6 +24,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant.PlantStatus.HARVESTED;
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.NZ_FORMAT_DATE;
 
 /**
@@ -369,12 +367,21 @@ public class PlantController {
             Plant plantItem =  plant.get();
             LocalDate timestamp = LocalDate.now();
 
-            if (plantHistoryService.historyExists(plantItem, timestamp)) {
+            if (plantHistoryService.historyExists(plantItem, timestamp) || plantItem.getStatus().equals(HARVESTED)) {
                 logger.warn("Update already exists today");
                 model.addAttribute("disabledRecordButton", true);
             } else {
                 model.addAttribute("disabledRecordButton", false);
             }
+
+            if (plantItem.getStatus().equals(HARVESTED)) {
+                logger.warn("Plant harvested");
+                model.addAttribute("showHarvestCard", true);
+            } else {
+                model.addAttribute("showHarvestCard", false);
+            }
+
+
 
             List <PlantHistoryItem> plantHistory = plantHistoryService.getPlantHistory(plantItem);
             model.addAttribute("plantHistory", plantHistory);
