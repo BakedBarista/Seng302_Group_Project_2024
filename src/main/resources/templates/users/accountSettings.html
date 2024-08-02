@@ -12,13 +12,15 @@
         <main class="main-container" style = "margin-top: 10%;">
             <div class="card p-5">
                 <h1>Account Settings</h1>
-                <img
-                    class="mb-3 text-center"
-                    th:src="@{'/users/' + ${userId} + '/profile-picture'}"
-                    width="150"
-                    height="150"
-                    alt="profile picture"
-                />
+                <div class="d-flex justify-content-center my-3">
+                    <img
+                            class="mb-3 text-center"
+                            th:src="@{'/users/' + ${userId} + '/profile-picture'}"
+                            width="200"
+                            height="200"
+                            alt="Profile Picture"
+                    />
+                </div>
                 <h4>First Name</h4>
                 <p>[[${fname}]]</p>
                 <h4>Last Name</h4>

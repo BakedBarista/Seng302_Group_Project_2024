@@ -3,7 +3,7 @@
     <div class="position-relative d-inline">
         <label for="image" class="position-absolute top-0 end-0" style="cursor: pointer;"><img th:src="@{/icons/trans-plus.svg}" alt="+" /></label>
         <input id="image" name="image" class="d-none" type="file" accept=".png,.jpg,.jpeg,.svg"/>
-        <img id="preview" th:src="@{'/users/' + ${userId} + '/profile-picture'}" alt="Plant Picture" class="profile-picture-large" style="width: 200px;" />
+        <img id="preview" th:src="@{'/users/' + ${userId} + '/profile-picture'}" alt="Plant Picture" style="width: 200px;" />
         <span id="editProfilePictureError" class="invalid-feedback text-center"></span>
     </div>
 </div>

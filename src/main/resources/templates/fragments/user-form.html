@@ -9,9 +9,9 @@
     <input type="text" th:class="'form-control ' + ${#fields.hasErrors('lname') ? 'is-invalid' : ''}" th:name="lname" th:value="*{lname}" id="lname">
     <div class="invalid-feedback" th:if="${#fields.hasErrors('lname')}" th:errors="*{lname}"></div>
   </div>
-  <label class="form-check">
-    <input type="checkbox" class="form-check-input" th:name="noLname" th:value="*{noLname}" th:checked="*{noLname}" id="noLname"> I have no surname
-  </label>
+  <div class="mb-3">
+    <label class="form-check"><input type="checkbox" class="form-check-input" th:name="noLname" th:value="*{noLname}" th:checked="*{noLname}" id="noLname" />I have no surname  </label>
+  </div>
   <div class="mb-3">
     <label for="email" th:class="'required-field form-label ' + ${#fields.hasErrors('email') ? 'is-invalid' : ''}">Email</label>
     <input id="email" type="text" th:class="'form-control ' + ${#fields.hasErrors('email') ? 'is-invalid' : ''}" th:name="email" th:value="*{email}" inputmode="email">
