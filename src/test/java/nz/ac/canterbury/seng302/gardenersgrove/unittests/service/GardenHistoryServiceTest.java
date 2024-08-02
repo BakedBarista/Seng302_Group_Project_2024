@@ -57,6 +57,7 @@ class GardenHistoryServiceTest {
         plant3.setPlantedDate(day3);
         Plant plant4 = new Plant();
         plant4.setPlantedDate(day1);
+        plant4.setHarvestedDate(day3);
         Plant plant5 = new Plant();
         plant5.setPlantedDate(day1);
         Garden garden = new Garden();
@@ -83,9 +84,12 @@ class GardenHistoryServiceTest {
         assertEquals(day2, day2History.get(0).getDate());
 
         var day3History = gardenHistory.get(day3);
-        assertEquals(1, day3History.size());
+        assertEquals(2, day3History.size());
         assertEquals(plant3, day3History.get(0).getPlant());
         assertEquals(Action.PLANTED, day3History.get(0).getAction());
         assertEquals(day3, day3History.get(0).getDate());
+        assertEquals(plant4, day3History.get(1).getPlant());
+        assertEquals(Action.HARVESTED, day3History.get(1).getAction());
+        assertEquals(day3, day3History.get(1).getDate());
     }
 }
