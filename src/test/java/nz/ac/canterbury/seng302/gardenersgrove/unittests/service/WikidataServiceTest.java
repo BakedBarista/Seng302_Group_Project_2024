@@ -40,7 +40,7 @@ class WikidataServiceTest {
         when(restTemplate.exchange(Mockito.contains("wbsearchentities"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
                 .thenReturn(searchEntity);
 
-        String entityResponse = "{\"entities\":{\"Q235\":{\"claims\":{\"P18\":[{\"mainsnak\":{\"datavalue\":{\"value\":\"Tomato.jpg\"}}}]}}}}";
+        String entityResponse = "{\"entities\":{\"Q235\":{\"claims\":{\"P18\":[{\"mainsnak\":{\"datavalue\":{\"value\":\"Tomato.jpg\"}}}],\"P279\":[{\"mainsnak\":{\"datavalue\":{\"value\":{\"entity-type\":\"item\",\"numeric-id\":11004,\"id\":\"Q11004\"}}}}]}}}}";
         ResponseEntity<String> entityEntity = ResponseEntity.ok(entityResponse);
         when(restTemplate.exchange(Mockito.contains("wbgetentities"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
                 .thenReturn(entityEntity);
