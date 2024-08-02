@@ -10,11 +10,11 @@
 <body>
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 <main class="main-container" style = "margin-top: 10%;">
-    <div class="card">
+    <div class="card border-top-0">
         <img
-                class="card-img-top img-fluid fixed-height mb-4"
-                th:src="@{'/users/' + ${userId} + '/profile-banner'}"
-                alt="profile picture"
+            class="card-img-top img-fluid fixed-height mb-4"
+            th:src="@{'/users/' + ${userId} + '/profile-banner'}"
+            alt="profile banner"
         />
         <div class="m-4 mt-0">
             <div class="d-flex justify-content-between">
@@ -22,7 +22,7 @@
                     <div class="d-flex justify-content-start">
                         <h1>My Profile</h1>
                         <p class="ms-4 pt-1 ">
-                            <a th:href="@{/users/edit}" class="btn btn-primary">Edit</a>
+                            <a th:href="@{/change/me/later}" class="btn btn-primary">Edit</a>
                         </p>
                     </div>
                     <h4>My Name is...</h4>

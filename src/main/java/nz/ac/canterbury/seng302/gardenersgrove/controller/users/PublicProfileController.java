@@ -24,7 +24,7 @@ public class PublicProfileController {
 
     private final GardenUserService userService;
 
-    private static final String DEFAULT_PROFILE_BANNER_URL = "/img/default-profile.svg";
+    private static final String DEFAULT_PROFILE_BANNER_URL = "/img/default-banner.svg";
 
     @Autowired
     public PublicProfileController(GardenUserService userService) {
