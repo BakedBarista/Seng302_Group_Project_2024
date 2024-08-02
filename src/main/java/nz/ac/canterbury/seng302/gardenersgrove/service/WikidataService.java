@@ -69,8 +69,8 @@ public class WikidataService {
             }
             return "[" + result + "]";
         } catch (IOException e) {
-            logger.error("Error processing response", e);
-            return "Error processing response";
+            logger.info("{}", e.toString());
+            return "";
         }
     }
 
@@ -100,7 +100,7 @@ public class WikidataService {
                 }
             }
         } catch (IOException e) {
-            logger.error("Error checking subclass", e);
+            logger.info("{}", e.toString());
         }
         return false;
     }
