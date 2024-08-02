@@ -10,8 +10,7 @@ plugins {
 
 group = 'nz.ac.canterbury.seng302.team-800'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '21'
-targetCompatibility = '21'
+sourceCompatibility = '17'
 
 repositories {
 	mavenCentral()
