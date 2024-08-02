@@ -1,19 +1,15 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.controller;
 
-import com.sun.jna.platform.win32.WinNT;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.EditUserController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditPasswordDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
@@ -21,13 +17,12 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
+import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-
-import java.io.IOException;
-import java.util.logging.Logger;
 
 class EditUserControllerTest {
 
@@ -77,7 +72,7 @@ class EditUserControllerTest {
         //Edit user details
         String result = controller.submitUser(editUser, bindingResult, file, authentication, dateValidStr, model);
 
-        assertEquals("redirect:/users/user", result); // Verify that the returned view name is correct
+        assertEquals("redirect:/users/settings", result); // Verify that the returned view name is correct
     }
 
     @Test
@@ -217,7 +212,7 @@ class EditUserControllerTest {
         when(bindingResult.hasErrors()).thenReturn(false);
 
         String result = controller.submitUser(editUser, bindingResult, file, authentication, dateValidStr, model);
-        assertEquals("redirect:/users/user", result);
+        assertEquals("redirect:/users/settings", result);
         assertTrue(editUser.isNoLname());
         assertNull(editUser.getLname());
         assertNull(user.getLname());
@@ -241,7 +236,7 @@ class EditUserControllerTest {
 
         String result = controller.submitUser(editUser, bindingResult, file, authentication, dateValidStr, model);
 
-        assertEquals("redirect:/users/user", result);
+        assertEquals("redirect:/users/settings", result);
         assertFalse(editUser.isNoLname());
         assertEquals("Dough", editUser.getLname());
         assertEquals("Dough", user.getLname());
