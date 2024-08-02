@@ -23,7 +23,6 @@ import java.io.IOException;
 
 @Controller
 public class PublicProfileController {
-
     private final Logger logger = LoggerFactory.getLogger(PublicProfileController.class);
 
     private final GardenUserService userService;
@@ -51,14 +50,15 @@ public class PublicProfileController {
         return "users/public-profile";
     }
 
-    /**
-     * returns a given user's banner
+        /**
+     * returns a given user's banner - this is useful for the public profile view and edit page
      *
      * @param id the id of the user
      * @return ResponseEntity with the profile banner bytes or a redirect to a default profile banner URL
      */
     @GetMapping("users/{id}/profile-banner")
-    public ResponseEntity<byte[]> getProfileBanner(@PathVariable("id") Long id, HttpServletRequest request) {
+    public ResponseEntity<byte[]> getPublicProfileBanner(@PathVariable("id") Long id, HttpServletRequest request) {
+        logger.info("GET /users/" + id + "/profile-banner");
 
         GardenUser user = userService.getUserById(id);
         if (user.getProfileBanner() == null) {
@@ -67,6 +67,7 @@ public class PublicProfileController {
         return ResponseEntity.ok().contentType(MediaType.parseMediaType(user.getProfileBannerContentType()))
                 .body(user.getProfileBanner());
     }
+
 
     /**
      * returns the edit-public-profile page
