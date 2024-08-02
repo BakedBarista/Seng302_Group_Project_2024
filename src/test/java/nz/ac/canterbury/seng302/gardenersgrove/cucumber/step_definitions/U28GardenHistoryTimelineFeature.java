@@ -26,7 +26,6 @@ import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.GardenControll
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.GardenHistoryItemDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 public class U28GardenHistoryTimelineFeature {
