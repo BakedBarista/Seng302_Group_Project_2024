@@ -30,6 +30,11 @@ public class WikidataService {
         this.objectMapper = objectMapper;
     }
 
+    /**
+     * Send search request to API and return parsed responses
+     * @param plantName to be searched
+     * @return Parsed json string
+     */
     public String getPlantInfo(String plantName) {
         String url = SEARCH_ENDPOINT + plantName;
         logger.info("Sending search request...");
@@ -73,7 +78,7 @@ public class WikidataService {
         }
     }
 
-    public boolean isSubclassOfGardenPlants(String entityId) {
+    private boolean isSubclassOfGardenPlants(String entityId) {
         String url = ENTITY_ENDPOINT + entityId;
         HttpHeaders headers = new HttpHeaders();
         headers.set("User-Agent", "Gardener's Grove/0.0; https://csse-seng302-team800.canterbury.ac.nz/prod/; team800.garden@gmail.com");
