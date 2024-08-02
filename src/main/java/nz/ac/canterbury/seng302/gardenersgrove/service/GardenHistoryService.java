@@ -34,7 +34,9 @@ public class GardenHistoryService {
             if (plant.getPlantedDate() != null) {
                 items.add(new GardenHistoryItemDTO(plant, plant.getPlantedDate(), GardenHistoryItemDTO.Action.PLANTED));
             }
-            //TODO implement harvest action
+            if (plant.getHarvestedDate() != null) {
+                items.add(new GardenHistoryItemDTO(plant, plant.getHarvestedDate(), GardenHistoryItemDTO.Action.HARVESTED));
+            }
         }
 
         SortedMap<LocalDate, List<GardenHistoryItemDTO>> history = new TreeMap<>(Comparator.reverseOrder());

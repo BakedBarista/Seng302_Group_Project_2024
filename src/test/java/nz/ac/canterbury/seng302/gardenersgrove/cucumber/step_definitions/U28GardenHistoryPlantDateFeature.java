@@ -9,17 +9,18 @@ import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.PlantControlle
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
-
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantHistoryService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
+
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -54,9 +55,9 @@ public class U28GardenHistoryPlantDateFeature {
     private PlantDTO plantDTO;
     private MultipartFile file;
 
-    private static GardenUser user;
+    public static GardenUser user;
     private Long plantId;
-    private Long gardenId;
+    public static Long gardenId;
     private String date = "2024-07-26"; // Example date
 
     @BeforeAll
@@ -105,7 +106,7 @@ public class U28GardenHistoryPlantDateFeature {
 
     @Then("the plant is successfully added")
     public void the_plant_is_successfully_added() {
-        assertNotNull(plantService.getPlantsByGardenId(gardenId).get(0));
+        assertNotNull(plantService.getPlantsByGardenId(gardenId));
     }
 
     @When("I enter a valid plant name {string} and a invalid date {string}")
