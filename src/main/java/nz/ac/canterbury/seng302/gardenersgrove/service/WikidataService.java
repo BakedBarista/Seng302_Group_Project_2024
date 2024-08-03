@@ -24,7 +24,8 @@ public class WikidataService {
     Logger logger = LoggerFactory.getLogger(WikidataService.class);
     private static final String SEARCH_ENDPOINT = "https://www.wikidata.org/w/api.php?action=wbsearchentities&format=json&language=en&type=item&limit=10&search=";
     private static final String ENTITY_ENDPOINT = "https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=";
-    //IDs refer to category:
+    //IDs refer to category: Fruit, vegetable, shrub, herb, tree, fruit vegetable, table apple, perennial plant(e.g. catnip), tracheophyta(succulent)
+    //This list is not exhaustive as wikidata keeps thousands of different categories of plants
     private static final List<String> CATEGORY_IDS = List.of("Q3314483","Q11004","Q42295","Q207123","Q10884","Q1470762","Q3395974","Q157957","Q27133");
 
     private final RestTemplate restTemplate;
