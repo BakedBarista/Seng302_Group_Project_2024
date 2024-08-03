@@ -124,4 +124,13 @@ public class PlantService {
         return ACCEPTED_FILE_TYPES.contains(plantImage.getContentType())
                 && (plantImage.getSize() <= MAX_FILE_SIZE);
     }
+
+    /**
+     * Saves the updated  plant in the repository
+     * @param plant the plant to be saved
+     * @return the saved plant
+     */
+    public Plant save(Plant plant) {
+        return plantRepository.save(plant);
+    }
 }

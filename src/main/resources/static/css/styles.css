@@ -9,6 +9,11 @@
     --gg-secondary-dark: #8C9D34;
     --gg-secondary-light: #D3DD9D;
     --gg-pale: #FFE0B5;
+    --gg-not-planted:  saddlebrown;
+    --gg-not-planted-hover: #af7244;
+    --gg-harvest: sandybrown;
+    --gg-harvest-hover: #b97f4d;
+    --gg-side-panel: #E2E9CE40;
 
     --gg-white: #F5F5F5;
     --gg-white-rgb: 245, 245, 245;
@@ -31,11 +36,6 @@
     --bs-secondary-bg: var(--gg-white);
 }
 
-body {
-    color: var(--gg-black);
-    background-color: white;
-}
-
 /* Global typography */
 body {
     font-family: "Open Sans", sans-serif;
@@ -44,6 +44,7 @@ body {
     font-style: normal;
     font-variation-settings: "wdth" 100;
     color: var(--gg-black);
+    background-color: white;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -56,6 +57,16 @@ h1, h2, h3, h4, h5, h6 {
     font-family: "Averia Serif Libre", serif;
     font-weight: 700;
     font-style: normal;
+}
+
+@media (min-width: 992px) {
+    .full-height-lg {
+        height: 100vh;
+    }
+
+    .max-full-height-lg {
+        max-height: 100vh;
+    }
 }
 
 
@@ -74,6 +85,35 @@ h1, h2, h3, h4, h5, h6 {
     --bs-btn-disabled-color: white;
     --bs-btn-disabled-bg: var(--gg-pale);
     --bs-btn-disabled-border-color: var(--gg-primary);
+}
+
+.button-not-planted {
+    --bs-btn-color: var(--gg-white);
+    --bs-btn-bg: var(--gg-not-planted);
+    --bs-btn-hover-color: var(--gg-white);
+    --bs-btn-hover-bg: var(--gg-not-planted-hover);
+    --bs-btn-focus-shadow-rgb: var(--gg-primary-rgb);
+    --bs-btn-active-color: var(--gg-white);
+    --bs-btn-active-bg: var(--gg-not-planted-hover);
+}
+.button-growing {
+    --bs-btn-color: var(--gg-white);
+    --bs-btn-bg: var(--gg-primary-light);
+    --bs-btn-hover-color: var(--gg-white);
+    --bs-btn-hover-bg: var(--gg-dark);
+    --bs-btn-hover-border-color: var(--gg-dark);
+    --bs-btn-focus-shadow-rgb: var(--gg-primary-rgb);
+    --bs-btn-active-color: var(--gg-white);
+    --bs-btn-active-bg: var(--gg-dark);
+}
+.button-harvest {
+    --bs-btn-color: var(--gg-white);
+    --bs-btn-bg: var(--gg-harvest);
+    --bs-btn-hover-color: var(--gg-white);
+    --bs-btn-hover-bg: var(--gg-harvest-hover);
+    --bs-btn-focus-shadow-rgb: var(--gg-primary-rgb);
+    --bs-btn-active-color: var(--gg-white);
+    --bs-btn-active-bg: var(--gg-harvest-hover);
 }
 
 .btn-outline-primary {
@@ -452,6 +492,21 @@ h1, h2, h3, h4, h5, h6 {
     --bs-btn-close-hover-opacity: 1.0;
 }
 
+.harvest-badge {
+    background-color: sandybrown;
+    color: white;
+}
+
+.growing-badge {
+    background-color: var(--gg-primary-light);
+    color: white;
+}
+
+.not-planted-badge {
+    background-color: saddlebrown;
+    color: white;
+}
+
 .friend-pending-badge {
     background-color: darkgoldenrod;
     font-size: 14px;
@@ -481,6 +536,57 @@ h1, h2, h3, h4, h5, h6 {
     margin-right: 5px;
 }
 
+
+/* Toast container */
+.toast-container {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    min-width: 250px;
+}
+
+/* Toast styles */
+.toast {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 0.25rem;
+    font-family: var(--gg-body-font);
+}
+
+.toast .btn-close {
+    color: var(--gg-white) !important; /* Ensure the color is applied */
+    opacity: 0.75;
+    font-weight: bold;
+    font-size: 1.25rem;
+    line-height: 1;
+}
+
+.toast .btn-close:hover {
+    opacity: 1;
+}
+
+/* Toast header */
+.toast-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 0.75rem;
+    background-color: var(--gg-primary);
+    color: var(--gg-white);
+    border-top-left-radius: 0.25rem;
+    border-top-right-radius: 0.25rem;
+    border-bottom: 1px solid var(--gg-secondary-dark);
+}
+
+/* Toast body */
+.toast-body {
+    padding: 0.75rem;
+    background-color: var(--gg-secondary-light);
+    color: var(--gg-black);
+    border-bottom-left-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem;
+    font-family: var(--gg-body-font);
+}
+
 /* Plant name on plant cards */
 .overflow-hidden {
     max-width: 200px;
@@ -492,4 +598,34 @@ h1, h2, h3, h4, h5, h6 {
 .fixed-height {
     height: 200px;
     object-fit: cover;
+}
+
+/*Timeline styling*/
+.timeline-with-icons {
+    border-left: 1px solid hsl(0, 0%, 90%);
+    position: relative;
+    list-style: none;
+}
+
+.timeline-with-icons .timeline-item {
+    position: relative;
+}
+
+.timeline-with-icons .timeline-item:after {
+    position: absolute;
+    display: block;
+    top: 0;
+}
+
+.timeline-with-icons .timeline-icon {
+    position: absolute;
+    left: -48px;
+    background-color: #E2E9CE;
+    color: #E2E9CE60;
+    border-radius: 50%;
+    height: 31px;
+    width: 31px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
