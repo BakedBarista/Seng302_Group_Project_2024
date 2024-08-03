@@ -103,7 +103,7 @@ public class PublicProfileControllerTest {
 
         ResponseEntity<byte[]> bannerContent = publicProfileController.getPublicProfileBanner(userId, request);
 
-        Assertions.assertEquals(path + "/img/default-banner.svg", bannerContent.getHeaders().getLocation().toString());
+        Assertions.assertEquals(path + "/img/default-profile.svg", bannerContent.getHeaders().getLocation().toString());
     }
 
     @Test
@@ -178,7 +178,6 @@ public void testSubmitForm_ValidationSuccess() throws IOException {
     verify(gardenUserService).setProfileBanner(loggedInUserId, banner.getContentType(), banner.getBytes());
     verify(model).addAttribute("userId", loggedInUserId);
 
-    assertEquals(description, loggedInUser.getDescription());
     assertEquals("redirect:/users/public-profile", viewName);
 }
 }

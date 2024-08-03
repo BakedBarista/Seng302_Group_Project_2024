@@ -16,7 +16,6 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantHistoryService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -24,7 +23,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
-@SpringBootTest
+
+@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 public class U28GardenHistoryPlantDateFeature {
 
     @Autowired
@@ -53,9 +53,9 @@ public class U28GardenHistoryPlantDateFeature {
     private PlantDTO plantDTO;
     private MultipartFile file;
 
-    private static GardenUser user;
+    public static GardenUser user;
     private Long plantId;
-    private Long gardenId;
+    public static Long gardenId;
     private String date = "2024-07-26"; // Example date
 
     @BeforeAll
@@ -120,13 +120,6 @@ public class U28GardenHistoryPlantDateFeature {
         // make sure to change to assert null when fixed error
         assertNotNull(plantService.getPlantsByGardenId(gardenId));
     }
-
-    @Given("I am browsing my recorded plants")
-    public void iAmBrowsingMyRecordedPlants() {
-//        List<Plant> plants = plantService.getPlantsByGardenId(gardenId);
-//        assertNotNull(plants);
-    }
-
 
     @And("I select a plant {string} that has not been harvested")
     public void iSelectAPlantThatHasNotBeenHarvested(String arg0) {

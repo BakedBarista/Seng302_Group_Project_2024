@@ -15,8 +15,8 @@
             <h1>Edit</h1>
             <form th:action="edit" method="post" enctype="multipart/form-data" th:object="${editUserDTO}" novalidate>
                 <div th:insert="fragments/edit-profile-picture.html"></div>
-                <p><a th:href="@{/users/edit/password}">Change Password</a></p>
                 <th:block th:insert="~{fragments/user-form.html :: formFields}"></th:block>
+                <p><a class="btn btn-primary my-3" th:href="@{/users/edit/password}">Change Password</a></p>
                 <button class="btn btn-primary">Submit</button>
                 <a th:href="@{/users/user}" class="btn btn-outline-secondary">Cancel</a>
             </form>
