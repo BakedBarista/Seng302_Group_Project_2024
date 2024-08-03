@@ -2,6 +2,9 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantInfoDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -12,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -20,6 +24,7 @@ public class WikidataService {
     Logger logger = LoggerFactory.getLogger(WikidataService.class);
     private static final String SEARCH_ENDPOINT = "https://www.wikidata.org/w/api.php?action=wbsearchentities&format=json&language=en&type=item&limit=10&search=";
     private static final String ENTITY_ENDPOINT = "https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=";
+    //IDs refer to category:
     private static final List<String> CATEGORY_IDS = List.of("Q3314483","Q11004","Q42295","Q207123","Q10884","Q1470762","Q3395974","Q157957","Q27133");
 
     private final RestTemplate restTemplate;
@@ -33,41 +38,37 @@ public class WikidataService {
     /**
      * Send search request to API and return parsed responses
      * @param plantName to be searched
-     * @return Parsed json string
+     * @return JsonNode with a list of PlantInfoDTOs
      */
-    public String getPlantInfo(String plantName) {
+    public JsonNode getPlantInfo(String plantName) {
         String url = SEARCH_ENDPOINT + plantName;
         logger.info("Sending search request...");
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("User-Agent", "Gardener's Grove/0.0; https://csse-seng302-team800.canterbury.ac.nz/prod/; team800.garden@gmail.com");
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-        ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, constructEntity(), String.class);
         String response = responseEntity.getBody();
         logger.info("{}", response);
 
         JsonNode jsonNode = readJson(response);
 
-        if (jsonNode.get("search").isEmpty()) {
-            return "[]";
-        }
-
-        StringBuilder result = new StringBuilder();
-        for (JsonNode entityNode : jsonNode.get("search")) {
-            String entityId = entityNode.get("id").asText();
-            if (isSubclassOfGardenPlants(entityId)) {
-                String imageUrl = getImageUrl(entityId);
-                result.append("{")
-                        .append("\"label\":\"").append(entityNode.get("label").asText()).append("\",")
-                        .append("\"description\":\"").append(entityNode.get("description").asText()).append("\",")
-                        .append("\"id\":\"").append(entityId).append("\",")
-                        .append("\"image\":\"").append(imageUrl).append("\"")
-                        .append("},");
+        List<PlantInfoDTO> plantInfoList = new ArrayList<>();
+        if (jsonNode.has("search") && !jsonNode.get("search").isEmpty()) {
+            for (JsonNode entityNode : jsonNode.get("search")) {
+                String entityId = entityNode.get("id").asText();
+                if (isSubclassOfGardenPlants(entityId)) {
+                    String imageUrl = getImageUrl(entityId);
+                    PlantInfoDTO plantInfo = new PlantInfoDTO(
+                            entityNode.get("label").asText(),
+                            entityNode.get("description").asText(),
+                            entityId,
+                            imageUrl
+                    );
+                    plantInfoList.add(plantInfo);
+                }
             }
         }
-        if (!result.isEmpty()) {
-            result.setLength(result.length() - 1);
-        }
-        return "[" + result + "]";
+        JsonNodeFactory factory = JsonNodeFactory.instance;
+        ObjectNode resultNode = factory.objectNode();
+        resultNode.set("plants", objectMapper.valueToTree(plantInfoList));
+        return resultNode;
     }
 
     private JsonNode readJson(String response) {
@@ -78,12 +79,14 @@ public class WikidataService {
         }
     }
 
-    private boolean isSubclassOfGardenPlants(String entityId) {
-        String url = ENTITY_ENDPOINT + entityId;
+    private HttpEntity<String> constructEntity() {
         HttpHeaders headers = new HttpHeaders();
         headers.set("User-Agent", "Gardener's Grove/0.0; https://csse-seng302-team800.canterbury.ac.nz/prod/; team800.garden@gmail.com");
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-        ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+        return new HttpEntity<>(headers);
+    }
+    private boolean isSubclassOfGardenPlants(String entityId) {
+        String url = ENTITY_ENDPOINT + entityId;
+        ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, constructEntity(), String.class);
         String response = responseEntity.getBody();
         JsonNode jsonNode = readJson(response);
         JsonNode claims = jsonNode.path("entities").path(entityId).path("claims").path("P279"); // P279 is the property for subclass of
@@ -102,10 +105,7 @@ public class WikidataService {
 
     private String getImageUrl(String entityId) {
         String url = ENTITY_ENDPOINT + entityId;
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("User-Agent", "Gardener's Grove/0.0; https://csse-seng302-team800.canterbury.ac.nz/prod/; team800.garden@gmail.com");
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-        ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, constructEntity(), String.class);
         String response = responseEntity.getBody();
         JsonNode jsonNode = readJson(response);
         JsonNode claims = jsonNode.path("entities").path(entityId).path("claims").path("P18");
