@@ -2,7 +2,6 @@ package nz.ac.canterbury.seng302.gardenersgrove.unittests.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nz.ac.canterbury.seng302.gardenersgrove.service.ProfanityDetectedException;
 import nz.ac.canterbury.seng302.gardenersgrove.service.WikidataService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,8 +12,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
-
-import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -32,12 +29,12 @@ class WikidataServiceTest {
     @BeforeEach
     void setup() {
         restTemplate = mock(RestTemplate.class);
-        objectMapper = mock(ObjectMapper.class);
-        wikidataService = new WikidataService(restTemplate,objectMapper);
+        objectMapper = new ObjectMapper();
+        wikidataService = new WikidataService(restTemplate, objectMapper);
     }
 
     @Test
-    void givenPlantExists_whenSearchTomato_thenReturnInformationAndImage() throws IOException {
+    void givenPlantExists_whenSearchTomato_thenReturnInformationAndImage() throws Exception {
         String searchResponse = "{\"search\":[{\"id\":\"Q235\",\"label\":\"Tomato\",\"description\":\"A red fruit\"}]}";
         ResponseEntity<String> searchEntity = ResponseEntity.ok(searchResponse);
         when(restTemplate.exchange(Mockito.contains("wbsearchentities"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
@@ -48,14 +45,9 @@ class WikidataServiceTest {
         when(restTemplate.exchange(Mockito.contains("wbgetentities"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
                 .thenReturn(entityEntity);
 
-        JsonNode searchNode = new ObjectMapper().readTree(searchResponse);
-        JsonNode entityNode = new ObjectMapper().readTree(entityResponse);
-        when(objectMapper.readTree(searchResponse)).thenReturn(searchNode);
-        when(objectMapper.readTree(entityResponse)).thenReturn(entityNode);
+        JsonNode result = wikidataService.getPlantInfo("tomato");
 
-        String result = wikidataService.getPlantInfo("tomato");
-
-        String expected = "[{\"label\":\"Tomato\",\"description\":\"A red fruit\",\"id\":\"Q235\",\"image\":\"https://commons.wikimedia.org/wiki/Special:FilePath/Tomato.jpg\"}]";
+        JsonNode expected = objectMapper.readTree("{\"plants\":[{\"label\":\"Tomato\",\"description\":\"A red fruit\",\"id\":\"Q235\",\"image\":\"https://commons.wikimedia.org/wiki/Special:FilePath/Tomato.jpg\"}]}");
 
         assertEquals(expected, result);
 
@@ -67,18 +59,15 @@ class WikidataServiceTest {
     }
 
     @Test
-    void givenPlantNotExist_whenSearchReturnsNoResults_thenReturnEmptyList() throws IOException {
+    void givenPlantNotExist_whenSearchReturnsNoResults_thenReturnEmptyList() throws Exception {
         String searchResponse = "{\"search\":[]}";
         ResponseEntity<String> searchEntity = ResponseEntity.ok(searchResponse);
         when(restTemplate.exchange(Mockito.contains("wbsearchentities"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
                 .thenReturn(searchEntity);
 
-        JsonNode searchNode = new ObjectMapper().readTree(searchResponse);
-        when(objectMapper.readTree(searchResponse)).thenReturn(searchNode);
+        JsonNode result = wikidataService.getPlantInfo("nonexistentplant");
 
-        String result = wikidataService.getPlantInfo("nonexistentplant");
-
-        String expected = "[]";
+        JsonNode expected = objectMapper.readTree("{\"plants\":[]}");
 
         assertEquals(expected, result);
 
@@ -90,18 +79,12 @@ class WikidataServiceTest {
     }
 
     @Test
-    void givenIOException_whenSearchTomato_thenThrowRuntimeException() {
-        // Create mocks
-        RestTemplate restTemplate = mock(RestTemplate.class);
-        ObjectMapper objectMapper = mock(ObjectMapper.class);
-        WikidataService wikidataService = new WikidataService(restTemplate, objectMapper);
-
-        // Set up the mock to throw IOException
+    void givenRuntimeException_whenSearchTomato_thenThrowRuntimeException() {
+        // Set up the mock to throw RuntimeException
         when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.GET), Mockito.any(HttpEntity.class), Mockito.eq(String.class)))
                 .thenThrow(new RuntimeException("Network error"));
 
         // Verify that the exception is thrown
         assertThrows(RuntimeException.class, () -> wikidataService.getPlantInfo("tomato"));
     }
-
 }
