@@ -12,25 +12,28 @@
 
 
 <main class="main-container" style="margin-top: 10%;">
-  <div class="card">
+  <div class="card border-top-0">
       <form th:action="@{/users/edit-public-profile}" method="post" enctype="multipart/form-data" th:object="${editUserDTO}" novalidate>
           <div class="card-img-top img-fluid fixed-height mb-4">
               <div class="position-relative d-inline">
                   <label for="bannerImage" class="position-absolute top-0 end-0" style="cursor: pointer;"><img th:src="@{/icons/trans-plus.svg}" alt="+" /></label>
                   <input id="bannerImage" name="bannerImage" class="d-none" type="file" accept=".png,.jpg,.jpeg,.svg"/>
-                  <img id="bannerPreview" th:src="@{'/users/' + ${userId} + '/profile-banner'}" alt="Profile Banner Picture"/>
+                  <img class="card-img-top img-fluid fixed-height mb-4" th:src="@{'/users/' + ${userId} + '/profile-banner'}" alt="profile banner"/>
                   <span id="editProfileBannerError" class="invalid-feedback text-center"></span>
               </div>
           </div>
-          <div class="mb-3 d-flex justify-content-center">
+          <div class="d-md-none d-flex justify-content-center align-items-center">
               <div class="position-relative d-inline">
                   <label for="image" class="position-absolute top-0 end-0" style="cursor: pointer;"><img th:src="@{/icons/trans-plus.svg}" alt="+" /></label>
                   <input id="image" name="image" class="d-none" type="file" accept=".png,.jpg,.jpeg,.svg"/>
-                  <img id="preview" th:src="@{'/users/' + ${userId} + '/profile-picture'}" alt="Profile Picture" class="profile-picture-large" style="width: 200px;" />
+                  <img class="public-profile-picture position-absolute top-0 public-profile-picture-padding me-2" th:src="@{'/users/' + ${userId} + '/profile-picture'}" width="180" height="180" alt="profile picture"/>
                   <span id="editProfilePictureError" class="invalid-feedback text-center"></span>
               </div>
           </div>
-          <div class="mb-3">
+          <div class="d-none d-md-block">
+            <img class="public-profile-picture position-absolute top-0 end-0 public-profile-picture-padding me-2" th:src="@{'/users/' + ${userId} + '/profile-picture'}" width="200" height="200" alt="profile picture"/>
+          </div>
+          <div class="m-4 mt-5 mt-6">
               <label for="description" th:class="'form-label ' + ${#fields.hasErrors('description') ? 'is-invalid' : ''}">About Me</label>
               <textarea rows="3" id="description" type="text" th:class="'form-control ' + ${#fields.hasErrors('description') ? 'is-invalid' : ''}" th:text="${editUserDTO.description}" th:name="description"></textarea>
               <div class="invalid-feedback" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
