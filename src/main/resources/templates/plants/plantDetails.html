@@ -60,9 +60,15 @@
         <div class="d-flex justify-content-center align-items-center mb-1 sticky-top mt-3 p-3">
             <hr />
             <h1 class="flex-grow-1 text-left text-lg-center m-0">Plant Timeline</h1>
-            <a class="btn btn-primary ms-auto justify-content-end" th:classappend="${disabledRecordButton} ? 'disabled' : ''"  th:if="${currentUser.id == garden.owner.id}" th:href="@{/gardens/{gardenId}/plants/{plantId}/history(gardenId=${garden.id}, plantId=${plant.id})}">
-                <img th:src="@{/icons/add-square-white.svg}" alt="" width="20" height="20" /> Record Update
-            </a>
+            <span class="d-inline-block" tabindex="0" id="recordUpdateButtonTooltip">
+                <a class="btn btn-primary ms-auto justify-content-end" id="recordUpdateButton"
+                   th:classappend="${disabledRecordButton} ? 'disabled' : ''"
+                   th:if="${currentUser.id == garden.owner.id}"
+                   th:href="@{/gardens/{gardenId}/plants/{plantId}/history(gardenId=${garden.id}, plantId=${plant.id})}"
+                >
+                    <img th:src="@{/icons/add-square-white.svg}" alt="" width="20" height="20" /> Record Update
+                </a>
+            </span>
         </div>
 
         <section class="py-3 px-3">
@@ -108,13 +114,31 @@
 </main>
 
 
-
-
-
-
 <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
 </body>
 <script th:src="@{/js/nextFormBox.js}"></script>
 <script th:src="@{/js/plantImageErrorChecking.js}"></script>
 <script th:src="@{/js/dateValidation.js}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const recordUpdateButton = document.getElementById('recordUpdateButton');
+        const recordUpdateButtonTooltip = document.getElementById('recordUpdateButtonTooltip');
+
+        if (recordUpdateButton.classList.contains('disabled')) {
+            recordUpdateButtonTooltip.setAttribute('data-bs-toggle', 'tooltip');
+            recordUpdateButtonTooltip.setAttribute('title', 'Cannot add update after harvesting or after a record is added today');
+
+            const tooltip = new bootstrap.Tooltip(recordUpdateButtonTooltip);
+            tooltip.show();
+        } else {
+            const tooltip = bootstrap.Tooltip.getInstance(recordUpdateButtonTooltip);
+            if (tooltip) {
+                tooltip.dispose();
+            }
+        }
+    });
+
+
+
+</script>
 </html>
