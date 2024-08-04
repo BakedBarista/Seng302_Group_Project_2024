@@ -240,26 +240,6 @@ public class PlantControllerTest {
         Mockito.verify(model).addAttribute("description", plantHistoryDTO);
     }
 
-//    @Test
-//    void givenNonExistingPlant_whenSubmitPlantHistoryForm_thenReturnErrorPage() throws IOException {
-//        long gardenId = testGarden.getId();
-//        long invalidPlantId = 2L;
-//        MockMultipartFile file = new MockMultipartFile("image", "test.png", "image/png", "test".getBytes());
-//        PlantHistoryItemDTO plantHistoryDTO = new PlantHistoryItemDTO("Test Description");
-//        BindingResult bindingResult = Mockito.mock(BindingResult.class);
-//        Mockito.when(bindingResult.hasErrors()).thenReturn(false); // No binding errors
-//        Model model = Mockito.mock(Model.class);
-//
-//        PlantService plantService = Mockito.mock(PlantService.class);
-//        Mockito.when(plantService.getPlantById(invalidPlantId)).thenReturn(Optional.empty());
-//
-//        String result = plantController.submitPlantHistoryForm(gardenId, invalidPlantId, file, plantHistoryDTO.getDescription(), plantHistoryDTO, bindingResult, model);
-//
-//        Assertions.assertEquals("redirect:/gardens/" + gardenId + "/plants/" + invalidPlantId, result);
-//
-//        Mockito.verify(model, Mockito.never()).addAttribute(Mockito.anyString(), Mockito.any());
-//    }
-
 
     @Test
     void givenInvalidUser_whenAccessUnauthorizedPlant_thenAccessDenied() {
@@ -271,7 +251,7 @@ public class PlantControllerTest {
     }
 
     @Test
-    void whenAccessingPlantHistoryPage_whenPlantExists_thenRedirectToPlantDetailsPage() {
+    void givenPlantExists_whenAccessingPlantHistoryPage_thenRedirectToPlantDetailsPage() {
         Model model = Mockito.mock(Model.class);
         long gardenId = testGarden.getId();
         long plantId = testPlant.getId();
@@ -279,11 +259,6 @@ public class PlantControllerTest {
         String result = plantController.getPlantTimeline(gardenId, plantId, model);
 
         Assertions.assertEquals("plants/plantDetails", result);
-
-    }
-
-    @Test
-    void whenHistoryExists_thenDisabledRecordButtonIsTrue() {
 
     }
 
@@ -347,20 +322,4 @@ public class PlantControllerTest {
 
     }
 
-//    @Test
-//    void whenPlantDoesNotExist_returnDefaultImage() {
-//        HttpServletRequest mockRequest = new MockHttpServletRequest();
-//        Plant plant = new Plant();
-//        LocalDate date = LocalDate.of(1970, 1, 1);
-//        PlantHistoryItem plantHistoryItem = new PlantHistoryItem(plant, date);
-//
-//        when(plantService.getPlantById(1L)).thenReturn(Optional.of(plant));
-//        when(plantHistoryService.getPlantHistoryById(1L)).thenReturn(Optional.of(plantHistoryItem));
-//
-//        ResponseEntity<byte[]> response = plantController.historyImage(1L, plantHistoryItem.getId(), mockRequest);
-//        assertEquals(HttpStatus.FOUND, response.getStatusCode());
-//        assertEquals("/img/default-plant.svg", response.getHeaders().getFirst(HttpHeaders.LOCATION));
-//    }
-
-
-    }
+}

@@ -337,7 +337,9 @@ public class PlantController {
     }
 
     /**
-     * Controller for the plant detail page
+     * Controller for the plant history page
+     *
+     * @param plantId plant id
      * @param model representation of results
      * @return redirect to plant detail page
      */
@@ -408,9 +410,11 @@ public class PlantController {
     }
 
     /**
-     * Gets a plant image from database
-     * @param id plant id
-     * @return ResponseEntity as bytes and content type
+     * Gets plant history image from the database
+     *
+     * @param plantId plant ID
+     * @param recordId plant record ID
+     * @return Response entity
      */
     @GetMapping("plants/{plantId}/history/{recordId}/image")
     public ResponseEntity<byte[]> historyImage(@PathVariable("plantId") Long plantId, @PathVariable("recordId") Long recordId, HttpServletRequest request) {
