@@ -25,13 +25,13 @@ import jakarta.transaction.Transactional;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.GardenController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.GardenHistoryItemDTO;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 public class U28GardenHistoryTimelineFeature {
 
     @Autowired
-    private GardenService gardenService;
+    private GardenRepository gardenRepository;
 
     @Autowired
     private GardenController gardenController;
@@ -48,14 +48,9 @@ public class U28GardenHistoryTimelineFeature {
 
     @Given("I am on the garden detials page for {string}")
     public void i_am_on_the_garden_detials_page_for(String name) {
-        // Assume that the most recently created garden is the one we're after
-        // It is difficult to get a garden by name as we don't have a method to do so
-        Long gardenId = U28GardenHistoryPlantDateFeature.gardenId;
-        Long userId = U28GardenHistoryPlantDateFeature.user.getId();
+        garden = gardenRepository.findByName(name).get(0);
+        Long userId = garden.getOwner().getId();
         when(authentication.getPrincipal()).thenReturn(userId);
-
-        garden = gardenService.getGardenById(gardenId).get();
-        assertEquals(name, garden.getName());
     }
 
     @When("I view my gardens timeline")
