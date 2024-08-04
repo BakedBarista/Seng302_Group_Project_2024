@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.NZ_FORMAT_DATE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -95,7 +96,7 @@ class PlantStatusApiControllerTests {
         verify(plantService, times(1)).save(any(Plant.class));
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals(harvestedDate, responseBody.get("harvestedDate"));
+        assertEquals(harvestedDate.format(NZ_FORMAT_DATE), responseBody.get("harvestedDate"));
 
     }
 

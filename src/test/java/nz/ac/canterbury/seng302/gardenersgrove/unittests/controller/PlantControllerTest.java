@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.unittests.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.PlantController;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
@@ -34,6 +35,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant.PlantStatus.HARVESTED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.*;
@@ -76,6 +78,8 @@ class PlantControllerTest {
     private long currentUserIdTimeline = 1L;
     private long gardenIdTimeline = 1L;
     private long plantIdTimeline = 1L;
+
+    private final BasePlant.PlantStatus plantStatus = HARVESTED;
 
     @BeforeEach
     public void setUp() {
@@ -495,6 +499,7 @@ class PlantControllerTest {
        when(mockGardenTimeline.getPlants()).thenReturn(List.of(mockPlantTimeline));
        when(mockPlantTimeline.getId()).thenReturn(plantIdTimeline);
        when(mockPlantTimeline.getGarden()).thenReturn(mockGardenTimeline);
+       when(mockPlantTimeline.getStatus()).thenReturn(plantStatus);
 
        // Define the behavior of the services
        when(gardenUserService.getCurrentUser()).thenReturn(currentUserTimeline);
