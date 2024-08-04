@@ -41,10 +41,16 @@ public class WikidataService {
      * @param plantName to be searched
      * @return JsonNode with a list of PlantInfoDTOs
      */
-    public JsonNode getPlantInfo(String plantName) {
+    public JsonNode getPlantInfo(String plantName) throws ExternalServiceException{
         String url = SEARCH_ENDPOINT + plantName;
         logger.info("Sending search request...");
-        ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, constructEntity(), String.class);
+        ResponseEntity<String> responseEntity;
+        try {
+            responseEntity = restTemplate.exchange(url, HttpMethod.GET, constructEntity(), String.class);
+        } catch (Exception e) {
+            throw new ExternalServiceException("Unable to fetch plant info from Wikidata");
+        }
+
         String response = responseEntity.getBody();
         logger.info("{}", response);
 
@@ -85,9 +91,15 @@ public class WikidataService {
         headers.set("User-Agent", "Gardener's Grove/0.0; https://csse-seng302-team800.canterbury.ac.nz/prod/; team800.garden@gmail.com");
         return new HttpEntity<>(headers);
     }
-    private boolean isSubclassOfGardenPlants(String entityId) {
+    private boolean isSubclassOfGardenPlants(String entityId) throws ExternalServiceException{
         String url = ENTITY_ENDPOINT + entityId;
-        ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, constructEntity(), String.class);
+        ResponseEntity<String> responseEntity;
+        try {
+            responseEntity = restTemplate.exchange(url, HttpMethod.GET, constructEntity(), String.class);
+        } catch (Exception e) {
+            throw new ExternalServiceException("Unable to fetch entity info from Wikidata");
+        }
+
         String response = responseEntity.getBody();
         JsonNode jsonNode = readJson(response);
         JsonNode claims = jsonNode.path("entities").path(entityId).path("claims").path("P279"); // P279 is the property for subclass of
@@ -104,9 +116,15 @@ public class WikidataService {
         return false;
     }
 
-    private String getImageUrl(String entityId) {
+    private String getImageUrl(String entityId) throws ExternalServiceException{
         String url = ENTITY_ENDPOINT + entityId;
-        ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, constructEntity(), String.class);
+        ResponseEntity<String> responseEntity;
+        try{
+            responseEntity = restTemplate.exchange(url, HttpMethod.GET, constructEntity(), String.class);
+        } catch (Exception e) {
+            throw new ExternalServiceException("Unable to fetch image URL from Wikidata");
+        }
+
         String response = responseEntity.getBody();
         JsonNode jsonNode = readJson(response);
         JsonNode claims = jsonNode.path("entities").path(entityId).path("claims").path("P18");

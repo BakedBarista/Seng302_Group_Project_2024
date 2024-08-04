@@ -1,6 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import nz.ac.canterbury.seng302.gardenersgrove.service.ExternalServiceException;
 import nz.ac.canterbury.seng302.gardenersgrove.service.WikidataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,9 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class WikiDataAPIController {
     Logger logger = LoggerFactory.getLogger(WikiDataAPIController.class);
     private final WikidataService wikidataService;
+    private final ObjectMapper objectMapper;
 
-    public WikiDataAPIController(WikidataService wikidataService) {
+    public WikiDataAPIController(WikidataService wikidataService, ObjectMapper objectMapper) {
+
         this.wikidataService = wikidataService;
+        this.objectMapper = objectMapper;
     }
 
     /**
@@ -33,7 +38,12 @@ public class WikiDataAPIController {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
-        JsonNode plantInfo = wikidataService.getPlantInfo(search);
-        return ResponseEntity.ok(plantInfo);
+        try {
+            JsonNode plantInfo = wikidataService.getPlantInfo(search);
+            return ResponseEntity.ok(plantInfo);
+        } catch (ExternalServiceException e) {
+            JsonNode errorMessage = objectMapper.createObjectNode().put("error", "Plant information service is unavailable at the moment, please try again later");
+            return ResponseEntity.status(503).body(errorMessage);
+        }
     }
 }

@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.unittests.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import nz.ac.canterbury.seng302.gardenersgrove.service.ExternalServiceException;
 import nz.ac.canterbury.seng302.gardenersgrove.service.WikidataService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -85,6 +86,6 @@ class WikidataServiceTest {
                 .thenThrow(new RuntimeException("Network error"));
 
         // Verify that the exception is thrown
-        assertThrows(RuntimeException.class, () -> wikidataService.getPlantInfo("tomato"));
+        assertThrows(ExternalServiceException.class, () -> wikidataService.getPlantInfo("tomato"));
     }
 }
