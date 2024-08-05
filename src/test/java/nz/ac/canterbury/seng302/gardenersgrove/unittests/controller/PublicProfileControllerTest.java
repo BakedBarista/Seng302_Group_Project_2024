@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -45,6 +46,10 @@ public class PublicProfileControllerTest {
 
     static Long loggedInUserId = 1L;
     static GardenUser loggedInUser;
+
+    private BindingResult bindingResult;
+
+    private EditUserDTO editUserDTO;
 
     @BeforeAll
     static void setup() {
@@ -129,29 +134,7 @@ public void testEditForm() {
 
     assertEquals("users/edit-public-profile", result);
 }
-//
-//    // @Test
-//    // public void testSubmitForm_ValidationFailure() throws IOException {
-//    //     // Arrange
-//    //     String invalidDescription = "";  // Assume empty description is invalid
-//    //     MultipartFile profilePic = mock(MultipartFile.class);
-//    //     MultipartFile banner = mock(MultipartFile.class);
-//
-//    //     doThrow(new IOException("Simulated IOException")).when(publicProfileController).editProfilePicture(loggedInUserId, profilePic);
-//
-//    //     // Act
-//    //     String viewName = publicProfileController.publicProfileEditSubmit(
-//    //         authentication,
-//    //         profilePic,
-//    //         banner,
-//    //         invalidDescription,
-//    //         mock(Model.class)
-//    //     );
-//
-//    //     // Assert
-//    //     assertEquals("redirect:/users/public-profile", viewName);
-//    // }
-//
+
 @Test
 public void testSubmitForm_ValidationSuccess() throws IOException {
     Model model = mock(Model.class);
@@ -172,7 +155,7 @@ public void testSubmitForm_ValidationSuccess() throws IOException {
         "banner content".getBytes()
     );
 
-    String viewName = publicProfileController.publicProfileEditSubmit(authentication, profilePic, banner, description, model);
+    String viewName = publicProfileController.publicProfileEditSubmit(authentication, profilePic, banner, description, editUserDTO, bindingResult, model);
 
     verify(gardenUserService).setProfilePicture(loggedInUserId, profilePic.getContentType(), profilePic.getBytes());
     verify(gardenUserService).setProfileBanner(loggedInUserId, banner.getContentType(), banner.getBytes());

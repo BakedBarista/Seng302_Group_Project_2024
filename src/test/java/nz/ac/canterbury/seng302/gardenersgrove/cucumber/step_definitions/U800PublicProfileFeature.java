@@ -1,82 +1,138 @@
 package nz.ac.canterbury.seng302.gardenersgrove.cucumber.step_definitions;
 
+import io.cucumber.java.BeforeAll;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.users.EditUserController;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.users.PublicProfileController;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditPasswordDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.core.Authentication;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.mockito.Mockito.*;
 
 public class U800PublicProfileFeature {
 
-    // @Given("I am on my edit profile page")
-    // public void i_am_on_my_edit_profile_page() {
-    //     // Write code here that turns the phrase above into concrete actions
-    //     throw new io.cucumber.java.PendingException();
-    // }
-    // @When("I enter a valid description \\(that is not longer than {int} characters)")
-    // public void i_enter_a_valid_description_that_is_not_longer_than_characters_about_myself(Integer int1) {
-    //     // Write code here that turns the phrase above into concrete actions
-    //     throw new io.cucumber.java.PendingException();
-    // }
+    private static GardenUserRepository userRepository;
+    private static BindingResult bindingResult;
+    private EditUserDTO editUserDTO;
+    private static Model model;
+    private static Authentication authentication;
 
-    // @When("I click {string}")
-    // public void i_click(String string) {
-    //     // Write code here that turns the phrase above into concrete actions
-    //     throw new io.cucumber.java.PendingException();
-    // }
+    private static GardenUserService userService;
+    private static PublicProfileController publicProfileController;
 
-    // @Then("the description is displayed on my profile page")
-    // public void the_description_is_displayed_on_my_profile_page() {
-    //     // Write code here that turns the phrase above into concrete actions
-    //     throw new io.cucumber.java.PendingException();
-    // }
+    String invalidDescription;
+    private GardenUser user;
+    String validDescription = "I love gardening!";
 
-    // @When("I enter a description that is longer than {int} characters")
-    // public void i_enter_a_description_that_is_longer_than_characters(Integer int1) {
-    //     // Write code here that turns the phrase above into concrete actions
-    //     throw new io.cucumber.java.PendingException();
-    // }
-    // @Then("an error message tells me “Your description must be less than {int} characters”")
-    // public void an_error_message_tells_me_your_description_must_be_less_than_characters(Integer int1) {
-    //     // Write code here that turns the phrase above into concrete actions
-    //     throw new io.cucumber.java.PendingException();
-    // }
+    MultipartFile profilePic = new MockMultipartFile(
+            "image",
+            "profile.png",
+            "image/png",
+            "profile picture content".getBytes()
+    );
 
-    // @When("I choose a new cover photo of type \\(.jpg, .jpeg, .png, .svg) and less than 10MB")
-    // public void i_choose_a_new_cover_photo_of_type_jpg_jpeg_png_svg_and_less_than_10mb() {
-    //     // Write code here that turns the phrase above into concrete actions
-    //     throw new io.cucumber.java.PendingException();
-    // }
-    // @Then("the photo displays in the cover photo section behind my profile picture \\(e.g. like a LinkedIn profile)")
-    // public void the_photo_displays_in_the_cover_photo_section_behind_my_profile_picture_e_g_like_a_linked_in_profile() {
-    //     // Write code here that turns the phrase above into concrete actions
-    //     throw new io.cucumber.java.PendingException();
-    // }
+    MultipartFile banner = new MockMultipartFile(
+            "bannerImage",
+            "banner.png",
+            "image/png",
+            "banner content".getBytes()
+    );
 
-    // @When("I submit a file that is not either a png, jpg or svg")
-    // public void i_submit_a_file_that_is_not_either_a_png_jpg_or_svg() {
-    //     // Write code here that turns the phrase above into concrete actions
-    //     throw new io.cucumber.java.PendingException();
-    // }
-    // @Then("an error message tells me “Image must be of type png, jpg or svg”")
-    // public void an_error_message_tells_me_image_must_be_of_type_png_jpg_or_svg() {
-    //     // Write code here that turns the phrase above into concrete actions
-    //     throw new io.cucumber.java.PendingException();
-    // }
+    MultipartFile newBanner = new MockMultipartFile(
+            "bannerImage",
+            "newBanner.png",
+            "image/png",
+            "banner content".getBytes()
+    );
 
-    // @When("I submit a valid file with a size of more than 10MB")
-    // public void i_submit_a_valid_file_with_a_size_of_more_than_10mb() {
-    //     // Write code here that turns the phrase above into concrete actions
-    //     throw new io.cucumber.java.PendingException();
-    // }
-    // @Then("an error message tells me “Image must be less than 10MB”")
-    // public void an_error_message_tells_me_image_must_be_less_than_10mb() {
-    //     // Write code here that turns the phrase above into concrete actions
-    //     throw new io.cucumber.java.PendingException();
-    // }
+    MultipartFile invaildBanner;
+    @BeforeAll
+    public static void beforeAll() {
+        userRepository = mock(GardenUserRepository.class);
+        bindingResult = mock(BindingResult.class);
+        model = mock(Model.class);
+        authentication = mock(Authentication.class);
 
-    // @Then("the previous profile banner is overwritten and cannot be accessed anymore")
-    // public void the_previous_profile_banner_is_overwritten_and_cannot_be_accessed_anymore() {
-    //     // Write code here that turns the phrase above into concrete actions
-    //     throw new io.cucumber.java.PendingException();
-    // }
+        userService = new GardenUserService(userRepository);
+
+        publicProfileController = new PublicProfileController(userService);
+    }
+
+     @Given("I am on my edit profile page")
+     public void i_am_on_edit_profile_page() {
+         user = U2LogInFeature.user;
+         editUserDTO = new EditUserDTO();
+     }
+     @When("I enter a valid description")
+     public void i_enter_a_valid_description() { user.setDescription(validDescription); }
+
+     @When("I click {string}")
+     public void i_submit_or_cancel_form(String formBtn) throws IOException {
+         when(authentication.getPrincipal()).thenReturn((Long) 1L);
+         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+         if (formBtn.equals("Submit")) {
+             publicProfileController.publicProfileEditSubmit(authentication, banner, profilePic, validDescription, editUserDTO, bindingResult, model);
+         }
+         else {
+             publicProfileController.viewPublicProfile(authentication, model);
+         }
+     }
+
+     @Then("the description is displayed on my profile page")
+     public void the_description_is_displayed_on_my_profile_page() {
+         assertEquals(user.getDescription(), validDescription);
+     }
+
+     @When("I enter an invalid description that is too long")
+     public void i_enter_a_description_that_is_too_long() { invalidDescription = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis ut purus sagittis turpis aliquet sagittis. Nulla accumsan purus massa, ut porttitor nisl laoreet vel. Duis efficitur commodo turpis vel luctus. Morbi facilisis dui vitae dignissim vehicula. Nam rutrum urna sit amet tellus facilisis blandit. Suspendisse bibendum sagittis odio. Nam quis porta diam, vel rhoncus eros. Sed at justo vel turpis faucibus fermentum quis ac eros. Etiam luctus eros a nulla gravida facilisis nec a ipsum. Aliquam malesuada porttitor.";
+     }
+
+     @Then("an error message tells me “Your description must be less than 512 characters”")
+     public void an_error_message_for_description_appears() throws IOException {
+         // Act
+         when(authentication.getPrincipal()).thenReturn(1L);
+         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+         when(bindingResult.hasFieldErrors("description")).thenReturn(true);
+         publicProfileController.publicProfileEditSubmit(authentication, banner, profilePic, invalidDescription, editUserDTO, bindingResult, model);
+
+         // Assert
+         verify(model).addAttribute("editUserDTO", editUserDTO);
+
+     }
+    @Given("I have a current cover photo")
+    public void i_have_a_current_cover_photo() throws IOException {
+        user.setProfileBanner(banner.getContentType(), banner.getBytes());
+    }
+     @When("I choose a new, valid cover photo")
+     public void i_choose_a_new_valid_cover_photo() throws IOException {
+         user.setProfileBanner(newBanner.getContentType(), newBanner.getBytes());
+     }
+     @Then("the photo displays on my profile")
+     public void the_photo_displays_on_my_profile() throws IOException {
+         assertEquals(user.getProfileBanner(), newBanner.getBytes());
+     }
+
+
+     @Then("the previous profile banner is overwritten and cannot be accessed anymore")
+     public void previous_profile_banner_not_there() throws IOException {
+         assertNotEquals(user.getProfileBanner(), banner.getBytes());
+     }
 
 }

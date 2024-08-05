@@ -1,8 +1,10 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.GardenDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,10 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -75,8 +75,7 @@ public class PublicProfileController {
      * @return A redirection to the "/users/edit-public-profile"
      */
     @GetMapping("users/edit-public-profile")
-    public String editPublicProfile(Authentication authentication,
-                                    Model model) {
+    public String editPublicProfile(Authentication authentication, Model model) {
 
         Long userId = (Long) authentication.getPrincipal();
         GardenUser user = userService.getUserById(userId);
@@ -99,28 +98,34 @@ public class PublicProfileController {
      */
 
     @PostMapping("users/edit-public-profile")
-    public String publicProfileEditSubmit(Authentication authentication, 
-        @RequestParam("image") MultipartFile profilePic,
-        @RequestParam("bannerImage") MultipartFile banner,
-        @RequestParam("description") String description,
-        Model model) throws IOException {
+    public String publicProfileEditSubmit(
+            Authentication authentication,
+            @RequestParam("image") MultipartFile profilePic,
+            @RequestParam("bannerImage") MultipartFile banner,
+            @RequestParam("description") String description,
+            @Valid @ModelAttribute("editUserDTO") EditUserDTO editUserDTO,
+            BindingResult bindingResult,
+            Model model) throws IOException {
 
         Long userId = (Long) authentication.getPrincipal();
         GardenUser user = userService.getUserById(userId);
-
-        EditUserDTO editUserDTO = new EditUserDTO();
-        model.addAttribute("editUserDTO", editUserDTO);
         model.addAttribute(USER_ID_ATTRIBUTE, userId);
-        
+
+        if (bindingResult.hasFieldErrors("description")) {
+            model.addAttribute("editUserDTO", editUserDTO);
+            return "users/edit-public-profile";
+        }
+
+
         // for submission of profile picture
         editProfilePicture(userId, profilePic);
-        
+
         // for submission of banner
         editProfileBanner(userId, banner);
-        
 
         user.setDescription(description);
         userService.addUser(user);
+
         return "redirect:/users/public-profile";
     }
     
