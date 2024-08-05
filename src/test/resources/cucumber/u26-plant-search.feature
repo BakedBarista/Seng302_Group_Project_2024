@@ -5,10 +5,10 @@ Feature: U26 - As Lei, I want to be able to look up information about various pl
     And My email is "Inaya@gmail.com"
     And My password is "P@ssw0rd"
 
-  # Scenario: AC1 - From anywhere on the system there is a link to a form where I can search for plant information by name.
-  #   Given I am anywhere on the system
-  #   When I click on a link to search for a plant
-  #   Then I am taken to a page where I can search for plant information by name
+   Scenario: AC1 - From anywhere on the system there is a link to a form where I can search for plant information by name.
+     Given I am anywhere on the system
+     When I click on a link to search for a plant
+     Then I am taken to a page where I can search for plant information by name
 
   Scenario: AC2 - When I enter a plant name, different names that match my input are shown as autocomplete options I can click on.
     Given I am on the plant search page
@@ -20,10 +20,10 @@ Feature: U26 - As Lei, I want to be able to look up information about various pl
   #   When I search a plant name with no autocomplete
   #   Then plants with similar names pop up
 
-  # Scenario: AC4 - When I search for a plant that exists, then I see meaningful information about the plant, including an image.
-  #   Given I am on the plant search page
-  #   When I search a plant that exists
-  #   Then meaningful information about that plant pops up
+   Scenario: AC4 - When I search for a plant that exists, then I see meaningful information about the plant, including an image.
+     Given I am on the plant search page
+     When I search a plant name "tomato"
+     Then meaningful information about that plant pops up
 
   # Scenario: AC5 - Given I search for a common plant name and the service is unavailable, when I finish typing the plant name, then there is an error message telling me "The plant information service is unavailable at the moment, please try again later" inside the drop down box.
   #   Given I search for a common plant name and the service is unavailable
