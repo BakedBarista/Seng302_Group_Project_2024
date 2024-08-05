@@ -49,7 +49,7 @@ public class WikidataService {
      * @return JsonNode with a list of PlantInfoDTOs
      */
     public JsonNode getPlantInfo(String plantName) {
-        String url = SEARCH_ENDPOINT + plantName;
+        String url = String.format("%s%s", SEARCH_ENDPOINT, plantName);
         logger.info("Sending search request...");
         ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, constructEntity(), String.class);
         String response = responseEntity.getBody();
