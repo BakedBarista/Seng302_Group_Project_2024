@@ -54,8 +54,9 @@ public class PlantInfoDTO {
      */
     public String getFormatted() {
         StringBuilder sb = new StringBuilder();
+        sb.append("<strong>");
         sb.append(HtmlUtils.htmlEscape(label));
-        sb.append(" &ndash; <em>");
+        sb.append("</strong> &ndash; <em>");
         sb.append(HtmlUtils.htmlEscape(description));
         sb.append("</em>");
         return sb.toString();
