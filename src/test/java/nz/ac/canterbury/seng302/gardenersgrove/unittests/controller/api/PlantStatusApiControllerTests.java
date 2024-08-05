@@ -6,10 +6,12 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantHarvestedDateDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
+import nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.http.HttpStatus;
+import nz.ac.canterbury.seng302.gardenersgrove.service.ThymeLeafDateFormatter;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -32,6 +34,7 @@ class PlantStatusApiControllerTests {
     private PlantService plantService;
 
     private PlantStatusApiController plantStatusApiController;
+    private final ThymeLeafDateFormatter dateFormatter = new ThymeLeafDateFormatter();
 
 
     private Plant plant;
@@ -95,7 +98,8 @@ class PlantStatusApiControllerTests {
         verify(plantService, times(1)).save(any(Plant.class));
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals(harvestedDate, responseBody.get("harvestedDate"));
+        assertEquals(dateFormatter.format(harvestedDate, DateTimeFormats.NZ_FORMAT_DATE), responseBody.get("harvestedDate"));
+
 
     }
 
