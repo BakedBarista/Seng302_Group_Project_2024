@@ -124,44 +124,44 @@ public class PublicProfileControllerTest {
         Assertions.assertEquals(imageBytes, bannerContent.getBody());
     }
 
-@Test
-public void testEditForm() {
-    Model model = mock(Model.class);
-    when(authentication.getPrincipal()).thenReturn(loggedInUserId);
-    String result = publicProfileController.editPublicProfile(authentication, model);
+    @Test
+    void testEditForm() {
+        Model model = mock(Model.class);
+        when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+        String result = publicProfileController.editPublicProfile(authentication, model);
 
-    verify(model).addAttribute("userId", loggedInUserId);
-    verify(model).addAttribute(eq("editUserDTO"), any(EditUserDTO.class));
+        verify(model).addAttribute("userId", loggedInUserId);
+        verify(model).addAttribute(eq("editUserDTO"), any(EditUserDTO.class));
 
-    assertEquals("users/edit-public-profile", result);
-}
+        assertEquals("users/edit-public-profile", result);
+    }
 
-@Test
-public void testSubmitForm_ValidationSuccess() throws IOException {
-    Model model = mock(Model.class);
+    @Test
+    void testSubmitForm_ValidationSuccess() throws IOException {
+        Model model = mock(Model.class);
 
-    MultipartFile profilePic = new MockMultipartFile(
-        "image",
-        "profile.png",
-        "image/png",
-        "profile picture content".getBytes()
-    );
+        MultipartFile profilePic = new MockMultipartFile(
+            "image",
+            "profile.png",
+            "image/png",
+            "profile picture content".getBytes()
+        );
 
-    String description = "New Description";
+        String description = "New Description";
 
-    MultipartFile banner = new MockMultipartFile(
-        "bannerImage",
-        "banner.png",
-        "image/png",
-        "banner content".getBytes()
-    );
+        MultipartFile banner = new MockMultipartFile(
+            "bannerImage",
+            "banner.png",
+            "image/png",
+            "banner content".getBytes()
+        );
 
-    String viewName = publicProfileController.publicProfileEditSubmit(authentication, profilePic, banner, description, editUserDTO, bindingResult, model);
+        String viewName = publicProfileController.publicProfileEditSubmit(authentication, profilePic, banner, description, editUserDTO, bindingResult, model);
 
-    verify(gardenUserService).setProfilePicture(loggedInUserId, profilePic.getContentType(), profilePic.getBytes());
-    verify(gardenUserService).setProfileBanner(loggedInUserId, banner.getContentType(), banner.getBytes());
-    verify(model).addAttribute("userId", loggedInUserId);
+        verify(gardenUserService).setProfilePicture(loggedInUserId, profilePic.getContentType(), profilePic.getBytes());
+        verify(gardenUserService).setProfileBanner(loggedInUserId, banner.getContentType(), banner.getBytes());
+        verify(model).addAttribute("userId", loggedInUserId);
 
-    assertEquals("redirect:/users/public-profile", viewName);
-}
+        assertEquals("redirect:/users/public-profile", viewName);
+    }
 }
