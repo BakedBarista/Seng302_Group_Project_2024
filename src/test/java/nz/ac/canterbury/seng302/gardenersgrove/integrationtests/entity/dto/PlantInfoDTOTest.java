@@ -12,7 +12,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class PlantInfoDTOTest {
+class PlantInfoDTOTest {
     private static Validator validator;
     private PlantInfoDTO plantInfoDTO;
 

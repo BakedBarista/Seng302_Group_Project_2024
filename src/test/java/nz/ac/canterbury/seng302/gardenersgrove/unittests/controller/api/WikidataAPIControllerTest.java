@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
 
-public class WikidataAPIControllerTest {
+class WikidataAPIControllerTest {
     private WikidataService wikidataService;
     private WikiDataAPIController wikiDataAPIController;
     private ObjectMapper objectMapper;
