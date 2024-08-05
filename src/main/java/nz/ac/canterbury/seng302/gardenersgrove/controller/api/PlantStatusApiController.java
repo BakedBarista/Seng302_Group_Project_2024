@@ -32,6 +32,8 @@ public class PlantStatusApiController {
     private static final String STATUS = "status";
     private static final String ERROR = "error";
 
+    private static final String ERRORS = "errors";
+
     private final ThymeLeafDateFormatter dateFormatter = new ThymeLeafDateFormatter();
 
 
@@ -80,7 +82,7 @@ public class PlantStatusApiController {
             List<String> errors = result.getAllErrors().stream()
                     .map(ObjectError::getDefaultMessage)
                     .toList();
-            response.put("errors", errors);
+            response.put(ERRORS, errors);
             return ResponseEntity.badRequest().body(response);
         }
 
@@ -103,7 +105,7 @@ public class PlantStatusApiController {
             else {
                 Map<String, Object> response = new HashMap<>();
                 response.put(STATUS, ERROR);
-                response.put("errors", List.of("Harvested date must be after planted date"));
+                response.put(ERRORS, List.of("Harvested date must be after planted date"));
                 return ResponseEntity.badRequest().body(response);
             }
 
@@ -111,7 +113,7 @@ public class PlantStatusApiController {
         } catch (DateTimeParseException e) {
             Map<String, Object> response = new HashMap<>();
             response.put(STATUS,ERROR);
-            response.put("errors", List.of("Invalid date format"));
+            response.put(ERRORS, List.of("Invalid date format"));
             return ResponseEntity.badRequest().body(response);
         }
 
