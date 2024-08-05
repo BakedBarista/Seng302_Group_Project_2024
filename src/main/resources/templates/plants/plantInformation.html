@@ -13,6 +13,7 @@
         <div class="card p-5">
             <h2 class="mb-3">Search Plants</h2>
             <form class="input-group d-flex" action="#" th:action="@{/plantInformation}" method="get" id="searchForm">
+
                 <div class="flex-grow-1" id="plant-search-autocomplete-container"></div>
                 <div class="input-group-append d-flex">
                     <button class="btn btn-outline-secondary d-flex align-items-center" type="submit" id="button-addon">
@@ -20,10 +21,45 @@
                     </button>
                 </div>
             </form>
+
+
             <script th:src="@{/js/autocomplete.js}"></script>
             <script th:src="@{/js/plantSearchAutocomplete.js}"></script>
         </div>
+<!--cards for each plant-->
+        <div id="plantCardsContainer" class="container mt-4">
+            <div th:each="info : ${plantInfo}">
+<!--                <span th:text=${info}> </span>-->
+
+            </div>
+        </div>
+
+
     </main>
     <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
+
+
+    <!-- Plant information modal clicked from autocomplete-->
+    <div class="modal fade" id="plantInfoModal" tabindex="0" aria-labelledby="plantInfoModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="plantInfoModalLabel">Plant Information</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h2 id="plantLabel"></h2>
+                    <p id="plantDescription"></p>
+                    <img id="plantImage" src="" alt=" " style="width: 100%; max-height: 200px; object-fit: cover;">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Add</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>

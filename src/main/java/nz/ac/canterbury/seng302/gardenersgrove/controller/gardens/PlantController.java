@@ -1,5 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.gardens;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
@@ -7,6 +10,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantHistoryItemDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantInfoDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +42,8 @@ public class PlantController {
     private final GardenService gardenService;
     private final PlantHistoryService plantHistoryService;
 
+    private final WikidataService wikidataService;
+
     private static final String PLANT_SUCCESSFULLY_SAVED_LOG = "Saved new plant to Garden ID: {}";
     private static final String PLANT_UNSUCCESSFULLY_SAVED_LOG = "Failed to save new plant to garden ID: {}";
     private static final String GARDEN_ID = "gardenId";
@@ -48,11 +54,12 @@ public class PlantController {
 
 
     @Autowired
-    public PlantController(PlantService plantService, GardenService gardenService, GardenUserService gardenUserService, PlantHistoryService plantHistoryService) {
+    public PlantController(PlantService plantService, GardenService gardenService, GardenUserService gardenUserService, PlantHistoryService plantHistoryService, WikidataService wikidataService) {
         this.plantService = plantService;
         this.gardenService = gardenService;
         this.gardenUserService = gardenUserService;
         this.plantHistoryService = plantHistoryService;
+        this.wikidataService = wikidataService;
     }
 
     /**
