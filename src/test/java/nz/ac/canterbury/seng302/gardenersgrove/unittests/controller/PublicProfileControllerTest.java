@@ -47,13 +47,14 @@ public class PublicProfileControllerTest {
     static Long loggedInUserId = 1L;
     static GardenUser loggedInUser;
 
-    private BindingResult bindingResult;
+    private static BindingResult bindingResult;
 
     private EditUserDTO editUserDTO;
 
     @BeforeAll
     static void setup() {
         userId = 1L;
+        bindingResult = mock(BindingResult.class);
         gardenUserService = Mockito.mock(GardenUserService.class);
         authentication = Mockito.mock(Authentication.class);
         user = new GardenUser();
