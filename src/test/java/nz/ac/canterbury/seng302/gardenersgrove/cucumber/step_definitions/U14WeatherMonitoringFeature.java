@@ -93,7 +93,7 @@ public class U14WeatherMonitoringFeature {
         ProfanityService profanityService = mock(ProfanityService.class);
         TagService tagService = mock(TagService.class);
         LocationService locationService = mock(LocationService.class);
-        gardenController = new GardenController(gardenService, plantService, userService, weatherAPIService, tagService, friendService, mockedModerationService, profanityService, locationService);
+        gardenController = new GardenController(gardenService, null, plantService, userService, weatherAPIService, tagService, friendService, mockedModerationService, profanityService, locationService);
 
         GardenUser user = new GardenUser();
         user.setId(1L);

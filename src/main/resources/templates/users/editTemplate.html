@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"  lang="">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="">
 <head>
     <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
     <title>Edit Profile | Gardener's Grove</title>
@@ -11,14 +11,14 @@
     <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 
     <main class="main-container" style = "margin-top: 10%;">
-        <div class="card p-5">
-            <h1>Edit</h1>
+        <div class="p-5 card">
+            <h1>Edit Account Settings</h1>
             <form th:action="edit" method="post" enctype="multipart/form-data" th:object="${editUserDTO}" novalidate>
                 <div th:insert="fragments/edit-profile-picture.html"></div>
-                <p><a th:href="@{/users/edit/password}">Change Password</a></p>
                 <th:block th:insert="~{fragments/user-form.html :: formFields}"></th:block>
+                <p><a class="btn btn-primary my-3" th:href="@{/users/edit/password}">Change Password</a></p>
                 <button class="btn btn-primary">Submit</button>
-                <a th:href="@{/users/user}" class="btn btn-outline-secondary">Cancel</a>
+                <a th:href="@{/users/settings}" class="btn btn-outline-secondary">Cancel</a>
             </form>
         </div>
 

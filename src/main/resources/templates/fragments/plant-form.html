@@ -40,7 +40,7 @@
         </div>
         <div>
             <button class="btn btn-primary" type="submit" onclick="return validateDate()">Submit!</button>
-            <a type="button" class="btn btn-outline-secondary" th:href="@{/gardens/{id}(id=${gardenId})}">Cancel</a>
+            <a type="button" class="btn btn-outline-secondary" onclick="history.back()">Cancel</a>
         </div>
     </form>
 </div>
