@@ -72,6 +72,39 @@ public class WikidataService {
         return resultNode;
     }
 
+    /**
+     * Send search request to API and return partial parsed responses
+     * @param plantName to be searched
+     * @return JsonNode with a list of PlantInfoDTOs
+     */
+    public JsonNode getPlantInfoAutocomplete(String plantName) {
+        String url = SEARCH_ENDPOINT + plantName;
+        ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, constructEntity(), String.class);
+        String response = responseEntity.getBody();
+
+        JsonNode jsonNode = readJson(response);
+
+        List<PlantInfoDTO> plantInfoList = new ArrayList<>();
+        if (jsonNode.has("search") && !jsonNode.get("search").isEmpty()) {
+            for (JsonNode entityNode : jsonNode.get("search")) {
+                String entityId = entityNode.get("id").asText();
+                if (isSubclassOfGardenPlants(entityId)) {
+                    PlantInfoDTO plantInfo = new PlantInfoDTO(
+                            entityNode.get("label").asText(),
+                            entityNode.get("description").asText(),
+                            entityId,
+                            null
+                    );
+                    plantInfoList.add(plantInfo);
+                }
+            }
+        }
+        JsonNodeFactory factory = JsonNodeFactory.instance;
+        ObjectNode resultNode = factory.objectNode();
+        resultNode.set("plants", objectMapper.valueToTree(plantInfoList));
+        return resultNode;
+    }
+
     private JsonNode readJson(String response) {
         try {
             return objectMapper.readTree(response);
@@ -85,6 +118,7 @@ public class WikidataService {
         headers.set("User-Agent", "Gardener's Grove/0.0; https://csse-seng302-team800.canterbury.ac.nz/prod/; team800.garden@gmail.com");
         return new HttpEntity<>(headers);
     }
+
     private boolean isSubclassOfGardenPlants(String entityId) {
         String url = ENTITY_ENDPOINT + entityId;
         ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, constructEntity(), String.class);

@@ -21,7 +21,7 @@ public class WikiDataAPIController {
     }
 
     /**
-     *
+     * Searches for plants with the given name
      * @param search plant name to be searched
      * @return parsed json data from response
      */
@@ -34,6 +34,23 @@ public class WikiDataAPIController {
             Thread.currentThread().interrupt();
         }
         JsonNode plantInfo = wikidataService.getPlantInfo(search);
+        return ResponseEntity.ok(plantInfo);
+    }
+
+    /**
+     * Autocomplete search for plants with the given name
+     * @param currentValue plant name to be searched
+     * @return parsed json data from response
+     */
+    @GetMapping("/search-plant-autocomplete")
+    public ResponseEntity<JsonNode> searchPlantAutocomplete(@RequestParam String currentValue) {
+        logger.info("Autocompleting {}", currentValue);
+        try {
+            Thread.sleep(300);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        JsonNode plantInfo = wikidataService.getPlantInfoAutocomplete(currentValue);
         return ResponseEntity.ok(plantInfo);
     }
 }
