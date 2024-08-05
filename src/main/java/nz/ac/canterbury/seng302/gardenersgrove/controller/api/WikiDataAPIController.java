@@ -30,15 +30,13 @@ public class WikiDataAPIController {
      */
     @GetMapping("/search-plant")
     public ResponseEntity<JsonNode> searchPlant(@RequestParam String search) {
-        logger.info("Searching {}", search);
+        logger.info("Searching wikidata plants", search);
         try {
             Thread.sleep(300);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
         JsonNode plantInfo = wikidataService.getPlantInfo(search);
-        ObjectNode results = JsonNodeFactory.instance.objectNode();
-        results.set("results", plantInfo.get("plants"));
         return ResponseEntity.ok(plantInfo);
     }
 
@@ -49,13 +47,15 @@ public class WikiDataAPIController {
      */
     @GetMapping("/search-plant-autocomplete")
     public ResponseEntity<JsonNode> searchPlantAutocomplete(@RequestParam String currentValue) {
-        logger.info("Autocompleting {}", currentValue);
+        logger.info("Autocompleting plant search", currentValue);
         try {
             Thread.sleep(300);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
         JsonNode plantInfo = wikidataService.getPlantInfo(currentValue);
-        return ResponseEntity.ok(plantInfo);
+        ObjectNode results = JsonNodeFactory.instance.objectNode();
+        results.set("results", plantInfo.get("plants"));
+        return ResponseEntity.ok(results);
     }
 }
