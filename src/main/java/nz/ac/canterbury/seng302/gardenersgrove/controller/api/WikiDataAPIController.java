@@ -1,6 +1,9 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import nz.ac.canterbury.seng302.gardenersgrove.service.WikidataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +37,8 @@ public class WikiDataAPIController {
             Thread.currentThread().interrupt();
         }
         JsonNode plantInfo = wikidataService.getPlantInfo(search);
+        ObjectNode results = JsonNodeFactory.instance.objectNode();
+        results.set("results", plantInfo.get("plants"));
         return ResponseEntity.ok(plantInfo);
     }
 
@@ -50,7 +55,7 @@ public class WikiDataAPIController {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
-        JsonNode plantInfo = wikidataService.getPlantInfoAutocomplete(currentValue);
+        JsonNode plantInfo = wikidataService.getPlantInfo(currentValue);
         return ResponseEntity.ok(plantInfo);
     }
 }
