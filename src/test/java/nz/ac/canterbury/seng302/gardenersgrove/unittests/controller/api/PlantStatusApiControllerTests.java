@@ -140,6 +140,28 @@ class PlantStatusApiControllerTests {
         assertEquals(ResponseEntity.badRequest().body(expectedResponse), response);
     }
 
+    @Test
+    void givenHarvestDateBeforePlantedDate_whenUpdateHarvestDate_thenReturnBadResponse() {
+        Long plantId = 1L;
+        PlantHarvestedDateDTO request = new PlantHarvestedDateDTO();
+        request.setHarvestedDate("2021-01-01");
+
+        Plant plant = new Plant();
+        plant.setPlantedDate(LocalDate.of(2021, 1, 2));
+
+        when(plantService.getPlantById(plantId)).thenReturn(Optional.of(plant));
+        when(bindingResult.hasErrors()).thenReturn(false);
+
+        ResponseEntity<Map<String, Object>> response = plantStatusApiController.updateHarvestedDate(plantId, request, bindingResult);
+
+        Map<String, Object> expectedResponse = new HashMap<>();
+        expectedResponse.put("status", "error");
+        expectedResponse.put("errors", List.of("Harvested date must be after planted date"));
+
+        assertEquals(ResponseEntity.badRequest().body(expectedResponse), response);
+    }
+
+
 
 
 
