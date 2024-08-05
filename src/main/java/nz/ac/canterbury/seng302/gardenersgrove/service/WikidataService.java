@@ -60,15 +60,22 @@ public class WikidataService {
         if (jsonNode.has("search") && !jsonNode.get("search").isEmpty()) {
             for (JsonNode entityNode : jsonNode.get("search")) {
                 String entityId = entityNode.get("id").asText();
-                if (isSubclassOfGardenPlants(entityId)) {
-                    String imageUrl = getImageUrl(entityId);
-                    PlantInfoDTO plantInfo = new PlantInfoDTO(
-                            entityNode.get("label").asText(),
-                            entityNode.get("description").asText(),
-                            entityId,
-                            imageUrl
-                    );
-                    plantInfoList.add(plantInfo);
+                try{
+                    if (isSubclassOfGardenPlants(entityId)) {
+                        String imageUrl = getImageUrl(entityId);
+                        PlantInfoDTO plantInfo = new PlantInfoDTO(
+                                entityNode.get("label").asText(),
+                                entityNode.get("description").asText(),
+                                entityId,
+                                imageUrl
+                        );
+                        plantInfoList.add(plantInfo);
+                }
+            } catch (ExternalServiceException e) {
+                    JsonNodeFactory factory = JsonNodeFactory.instance;
+                    ObjectNode resultNode = factory.objectNode();
+                    resultNode.put("error", "Plant information service unavailable, please try again later");
+                    return resultNode;
                 }
             }
         }

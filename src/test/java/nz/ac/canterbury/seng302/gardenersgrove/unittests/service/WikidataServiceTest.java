@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unittests.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nz.ac.canterbury.seng302.gardenersgrove.service.ExternalServiceException;
@@ -88,4 +89,25 @@ class WikidataServiceTest {
         // Verify that the exception is thrown
         assertThrows(ExternalServiceException.class, () -> wikidataService.getPlantInfo("tomato"));
     }
+
+    @Test
+    void givenExternalServiceException_whenGetPlantInfo_thenReturnErrorMessage() throws ExternalServiceException, JsonProcessingException {
+        String plantName = "tomato";
+        String searchResponse = "{\"search\":[{\"id\":\"Q235\",\"label\":\"Tomato\",\"description\":\"A red fruit\"}]}";
+        ResponseEntity<String> searchEntity = ResponseEntity.ok(searchResponse);
+        when(restTemplate.exchange(Mockito.contains("wbsearchentities"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
+                .thenReturn(searchEntity);
+
+        when(restTemplate.exchange(Mockito.contains("wbgetentities"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
+                .thenThrow(new RuntimeException("Service unavailable"));
+
+        JsonNode result = wikidataService.getPlantInfo(plantName);
+
+        String expected = "{\"error\":\"Plant information service unavailable, please try again later\"}";
+        JsonNode expectedJson = objectMapper.readTree(expected);
+
+        assertEquals(expectedJson, result);
+    }
+
+
 }
