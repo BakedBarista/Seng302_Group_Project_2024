@@ -49,7 +49,7 @@ public class WikidataService {
      * @param plantName to be searched
      * @return JsonNode with a list of PlantInfoDTOs
      */
-    public JsonNode getPlantInfo(String plantName) {
+    public List<PlantInfoDTO> getPlantInfo(String plantName) {
         String url = SEARCH_ENDPOINT + UriUtils.encode(plantName, "utf8");
         logger.info("Sending search request...");
         ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, constructEntity(), String.class);
@@ -75,10 +75,7 @@ public class WikidataService {
                 }
             }
         }
-        JsonNodeFactory factory = JsonNodeFactory.instance;
-        ObjectNode resultNode = factory.objectNode();
-        resultNode.set("plants", objectMapper.valueToTree(plantInfoList));
-        return resultNode;
+        return plantInfoList;
     }
 
     private JsonNode readJson(String response) {

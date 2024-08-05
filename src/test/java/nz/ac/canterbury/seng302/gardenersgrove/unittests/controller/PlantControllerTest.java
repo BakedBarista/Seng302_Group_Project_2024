@@ -555,14 +555,7 @@ class PlantControllerTest {
     @Test
     void testPlantInformationForm_ReturnsToPlantInformation() {
         String expectedReturnPage = "plants/plantInformation";
-        String returnPage = plantController.plantInformationForm(model);
-        assertEquals(expectedReturnPage, returnPage);
-    }
-
-    @Test
-    void testPlantInformationSubmitForm_ReturnsToPlantInformation() {
-        String expectedReturnPage = "plants/plantInformation";
-        String returnPage = plantController.plantInformationSubmit(1, model);
+        String returnPage = plantController.plantInformationForm(null, model);
         assertEquals(expectedReturnPage, returnPage);
     }
 }

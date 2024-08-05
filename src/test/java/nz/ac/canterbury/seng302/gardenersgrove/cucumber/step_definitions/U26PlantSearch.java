@@ -3,8 +3,11 @@ package nz.ac.canterbury.seng302.gardenersgrove.cucumber.step_definitions;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -13,6 +16,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.api.WikiDataAPIController;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.PlantController;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantInfoDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.WikidataService;
 
 public class U26PlantSearch {
@@ -30,14 +34,15 @@ public class U26PlantSearch {
 
     @Given("I am on the plant search page")
     public void i_am_on_the_plant_search_page() {
-        plantController.plantInformationForm(null);
+        plantController.plantInformationForm(null, null);
     }
 
     @When("I search a plant name {string}")
     public void i_search_a_plant_name(String name) throws Exception {
-        String plantInfo = "{\"plants\":[{\"label\":\"Tomato\",\"description\":\"A red fruit\",\"id\":\"Q235\",\"image\":\"https://commons.wikimedia.org/wiki/Special:FilePath/Tomato.jpg\"}]}";
-        JsonNode plantInfoJson = objectMapper.readTree(plantInfo);
-        when(wikidataService.getPlantInfo(name)).thenReturn(plantInfoJson);
+        String plantInfo = "[{\"label\":\"Tomato\",\"description\":\"A red fruit\",\"id\":\"Q235\",\"image\":\"https://commons.wikimedia.org/wiki/Special:FilePath/Tomato.jpg\"}]";
+        List<PlantInfoDTO> plantInfoList = objectMapper.readValue(plantInfo, new TypeReference<List<PlantInfoDTO>>() {
+        });
+        when(wikidataService.getPlantInfo(name)).thenReturn(plantInfoList);
 
         autocompleteData = wikidataAPIController.searchPlantAutocomplete(name).getBody();
     }

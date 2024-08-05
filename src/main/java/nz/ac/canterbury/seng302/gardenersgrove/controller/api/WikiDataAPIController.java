@@ -1,10 +1,15 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantInfoDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.WikidataService;
+
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -18,26 +23,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class WikiDataAPIController {
     Logger logger = LoggerFactory.getLogger(WikiDataAPIController.class);
     private final WikidataService wikidataService;
+    private final ObjectMapper objectMapper;
 
-    public WikiDataAPIController(WikidataService wikidataService) {
+    public WikiDataAPIController(WikidataService wikidataService, ObjectMapper objectMapper) {
         this.wikidataService = wikidataService;
-    }
-
-    /**
-     * Searches for plants with the given name
-     * @param search plant name to be searched
-     * @return parsed json data from response
-     */
-    @GetMapping("/search-plant")
-    public ResponseEntity<JsonNode> searchPlant(@RequestParam String search) {
-        logger.info("Searching wikidata plants");
-        try {
-            Thread.sleep(300);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-        JsonNode plantInfo = wikidataService.getPlantInfo(search);
-        return ResponseEntity.ok(plantInfo);
+        this.objectMapper = objectMapper;
     }
 
     /**
@@ -53,9 +43,9 @@ public class WikiDataAPIController {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
-        JsonNode plantInfo = wikidataService.getPlantInfo(currentValue);
+        List<PlantInfoDTO> plantInfo = wikidataService.getPlantInfo(currentValue);
         ObjectNode results = JsonNodeFactory.instance.objectNode();
-        results.set("results", plantInfo.get("plants"));
+        results.set("results", objectMapper.valueToTree(plantInfo));
         return ResponseEntity.ok(results);
     }
 }

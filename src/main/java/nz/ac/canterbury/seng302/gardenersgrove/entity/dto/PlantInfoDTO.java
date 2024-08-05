@@ -8,6 +8,9 @@ public class PlantInfoDTO {
     private String id;
     private String image;
 
+    public PlantInfoDTO() {
+    }
+
     public PlantInfoDTO(String label, String description, String id, String image) {
         this.label = label;
         this.description = description;

@@ -382,20 +382,13 @@ public class PlantController {
      */
     @GetMapping("/plantInformation")
     public String plantInformationForm(
-                            Model model) {
-        return "plants/plantInformation";
-    }
+            @RequestParam(required = false) String q,
+            Model model) {
+        if (q != null) {
+            List<PlantInfoDTO> plants = wikidataService.getPlantInfo(q);
+            model.addAttribute("plants", plants);
+        }
 
-    /**
-     *
-     * @param plantId the id of the plant being looked into
-     * @param model representation of results
-     * @return returns to the same plant information page with results from search
-     */
-    @PostMapping("/plantInformation")
-    public String plantInformationSubmit(
-                                      @PathVariable(PLANT_ID) long plantId,
-                                      Model model) {
         return "plants/plantInformation";
     }
 }

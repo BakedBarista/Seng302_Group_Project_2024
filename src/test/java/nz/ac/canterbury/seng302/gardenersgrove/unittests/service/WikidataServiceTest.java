@@ -2,6 +2,8 @@ package nz.ac.canterbury.seng302.gardenersgrove.unittests.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantInfoDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.WikidataService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,10 +17,13 @@ import org.springframework.web.client.RestTemplate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import java.util.List;
 
 class WikidataServiceTest {
 
@@ -45,11 +50,14 @@ class WikidataServiceTest {
         when(restTemplate.exchange(Mockito.contains("wbgetentities"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
                 .thenReturn(entityEntity);
 
-        JsonNode result = wikidataService.getPlantInfo("tomato");
+        List<PlantInfoDTO> result = wikidataService.getPlantInfo("tomato");
 
-        JsonNode expected = objectMapper.readTree("{\"plants\":[{\"label\":\"Tomato\",\"description\":\"A red fruit\",\"id\":\"Q235\",\"image\":\"https://commons.wikimedia.org/wiki/Special:FilePath/Tomato.jpg\",\"formatted\":\"<strong>Tomato</strong> &ndash; <em>A red fruit</em>\"}]}");
-
-        assertEquals(expected, result);
+        assertEquals(1, result.size());
+        assertEquals("Tomato", result.get(0).getLabel());
+        assertEquals("A red fruit", result.get(0).getDescription());
+        assertEquals("Q235", result.get(0).getId());
+        assertEquals("https://commons.wikimedia.org/wiki/Special:FilePath/Tomato.jpg", result.get(0).getImage());
+        assertEquals("<strong>Tomato</strong> &ndash; <em>A red fruit</em>", result.get(0).getFormatted());
 
         ArgumentCaptor<HttpEntity> entityCaptor = ArgumentCaptor.forClass(HttpEntity.class);
         Mockito.verify(restTemplate).exchange(Mockito.contains("wbsearchentities"), eq(HttpMethod.GET), entityCaptor.capture(), eq(String.class));
@@ -65,11 +73,8 @@ class WikidataServiceTest {
         when(restTemplate.exchange(Mockito.contains("wbsearchentities"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
                 .thenReturn(searchEntity);
 
-        JsonNode result = wikidataService.getPlantInfo("nonexistentplant");
-
-        JsonNode expected = objectMapper.readTree("{\"plants\":[]}");
-
-        assertEquals(expected, result);
+        List<PlantInfoDTO> result = wikidataService.getPlantInfo("nonexistentplant");
+        assertTrue(result.isEmpty());
 
         ArgumentCaptor<HttpEntity> entityCaptor = ArgumentCaptor.forClass(HttpEntity.class);
         Mockito.verify(restTemplate).exchange(Mockito.contains("wbsearchentities"), eq(HttpMethod.GET), entityCaptor.capture(), eq(String.class));
