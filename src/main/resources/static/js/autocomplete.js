@@ -27,6 +27,7 @@ function autocomplete(containerElement, callback, options) {
     inputElement.id = "locationInput";
     inputElement.placeholder = options.placeholder;
     inputElement.className = "form-control";
+    inputElement.autocomplete = "off";
     inputContainerElement.appendChild(inputElement);
 
     // add input field clear button
