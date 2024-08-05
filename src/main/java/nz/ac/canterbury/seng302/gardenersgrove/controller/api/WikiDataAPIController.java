@@ -30,7 +30,7 @@ public class WikiDataAPIController {
      */
     @GetMapping("/search-plant")
     public ResponseEntity<JsonNode> searchPlant(@RequestParam String search) {
-        logger.info("Searching wikidata plants", search);
+        logger.info("Searching wikidata plants");
         try {
             Thread.sleep(300);
         } catch (InterruptedException e) {
@@ -47,7 +47,7 @@ public class WikiDataAPIController {
      */
     @GetMapping("/search-plant-autocomplete")
     public ResponseEntity<JsonNode> searchPlantAutocomplete(@RequestParam String currentValue) {
-        logger.info("Autocompleting plant search", currentValue);
+        logger.info("Autocompleting plant search");
         try {
             Thread.sleep(300);
         } catch (InterruptedException e) {
