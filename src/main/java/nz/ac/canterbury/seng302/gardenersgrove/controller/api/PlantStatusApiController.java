@@ -50,8 +50,10 @@ public class PlantStatusApiController {
         plantService.save(existingPlant);
         Map<String, Object> response = new HashMap<>();
         response.put(STATUS, newStatus.name());
-        if (existingPlant.getHarvestedDate() != null) {
+        if (existingPlant.getHarvestedDate() != null && existingPlant.getPlantedDate().isBefore(existingPlant.getHarvestedDate())) {
             response.put("harvestedDate", existingPlant.getHarvestedDate());
+        } else if (existingPlant.getPlantedDate().isAfter(existingPlant.getHarvestedDate())) {
+
         }
 
         return ResponseEntity.ok().body(response);
