@@ -6,6 +6,10 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantHarvestedDateDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 
+import nz.ac.canterbury.seng302.gardenersgrove.service.ThymeLeafDateFormatter;
+
+
+import nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +30,8 @@ import java.util.Optional;
 public class PlantStatusApiController {
     private final PlantService plantService;
     private static final String STATUS = "status";
+
+    private final ThymeLeafDateFormatter dateFormatter = new ThymeLeafDateFormatter();
 
 
     public PlantStatusApiController(PlantService plantService) {
@@ -50,11 +56,8 @@ public class PlantStatusApiController {
         plantService.save(existingPlant);
         Map<String, Object> response = new HashMap<>();
         response.put(STATUS, newStatus.name());
-        if (existingPlant.getHarvestedDate() != null && existingPlant.getPlantedDate().isBefore(existingPlant.getHarvestedDate())) {
-            response.put("harvestedDate", existingPlant.getHarvestedDate());
-        } else if (existingPlant.getPlantedDate().isAfter(existingPlant.getHarvestedDate())) {
 
-        }
+        response.put("harvestedDate", existingPlant.getHarvestedDate());
 
         return ResponseEntity.ok().body(response);
     }
@@ -88,9 +91,22 @@ public class PlantStatusApiController {
         Plant existingPlant = plant.get();
         String harvestedDateString = request.getHarvestedDate();
 
+
         try {
             LocalDate harvestedDate = LocalDate.parse(harvestedDateString);
-            existingPlant.setHarvestedDate(harvestedDate);
+            if (existingPlant.getPlantedDate() !=null && existingPlant.getPlantedDate().isBefore(harvestedDate)) {
+                existingPlant.setHarvestedDate(harvestedDate);
+            } else if(existingPlant.getPlantedDate() == null) {
+                existingPlant.setHarvestedDate(harvestedDate);
+            }
+            else {
+                Map<String, Object> response = new HashMap<>();
+                response.put(STATUS, "error");
+                response.put("errors", List.of("Harvested date must be after planted date"));
+                return ResponseEntity.badRequest().body(response);
+            }
+
+
         } catch (DateTimeParseException e) {
             Map<String, Object> response = new HashMap<>();
             response.put(STATUS, "error");
@@ -102,7 +118,7 @@ public class PlantStatusApiController {
 
         Map<String, Object> response = new HashMap<>();
         response.put(STATUS, "success");
-        response.put("harvestedDate", existingPlant.getHarvestedDate());
+        response.put("harvestedDate", dateFormatter.format(existingPlant.getHarvestedDate(), DateTimeFormats.NZ_FORMAT_DATE));
 
         return ResponseEntity.ok().body(response);
     }
