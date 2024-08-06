@@ -139,14 +139,9 @@ public class PublicProfileController {
         }
 
 
-        // for submission of profile picture
-        editProfilePicture(userId, profilePic);
-
-        // for submission of banner
-        editProfileBanner(userId, banner);
-
-
-        user.setDescription(description);
+        if(!editProfilePicture(userId, profilePic) || !editProfileBanner(userId, banner)){
+            return "users/edit-public-profile";
+        }
 
         userService.addUser(user);
 
@@ -159,11 +154,13 @@ public class PublicProfileController {
      * @param file the MultipartFile containing the new profile picture
      */
     
-     public void editProfilePicture(Long userId, MultipartFile file) throws IOException{
+     public Boolean editProfilePicture(Long userId, MultipartFile file) throws IOException{
         logger.info("POST /users/profile-picture");
         if(file.getSize() != 0 && validateImage(file)){
             userService.setProfilePicture(userId, file.getContentType(), file.getBytes());
+            return true;
         }
+        return false;
     }
 
     /**
@@ -173,12 +170,14 @@ public class PublicProfileController {
      * @throws IOException
      */
     
-     public void editProfileBanner(Long userId, MultipartFile file) throws IOException{
+     public Boolean editProfileBanner(Long userId, MultipartFile file) throws IOException{
         logger.info("POST /users/edit-banner-picture");
         logger.info("" + validateImage(file));
         if(file.getSize() != 0 && validateImage(file)){
             userService.setProfileBanner(userId, file.getContentType(), file.getBytes());
+            return true;
         }
+        return false;
     }
 
     /**
