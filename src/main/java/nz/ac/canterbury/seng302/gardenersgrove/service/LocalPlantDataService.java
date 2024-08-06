@@ -63,9 +63,9 @@ public class LocalPlantDataService {
     public JsonNode getSimilarPlantInfo(String userSearch) {
         List<String> similarPlantNames = new ArrayList<>();
         int additionalThreshold = 0;
-        while (similarPlantNames.isEmpty()) {
+        while (similarPlantNames.isEmpty() && additionalThreshold <= 3) {
             similarPlantNames = stringDistanceService.getSimilarStrings(plantNames, userSearch, additionalThreshold);
-            additionalThreshold += 2;
+            additionalThreshold += 1;
         }
 
         ArrayList<PlantInfoDTO> plantInfoList = new ArrayList<>();
