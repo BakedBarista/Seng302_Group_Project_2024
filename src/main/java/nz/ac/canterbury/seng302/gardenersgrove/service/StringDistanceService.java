@@ -11,20 +11,21 @@ import java.util.List;
 @Service
 public class StringDistanceService {
 
-    private static final Integer DISTANCE_THRESHOLD = 3;
-
     /**
-     * Take a list of strings and return a list of strings that are similar to the input string
+     * Take a list of strings and return a list of strings that are similar to the input string (at least half similar)
      * @param strings list of strings to compare against
      * @param input input string
-     * @param additionalDistanceThreshold additional threshold that can be increased if no matches
      * @return list of strings that are similar to input
      */
-    public List<String> getSimilarStrings(List<String> strings, String input, int additionalDistanceThreshold) {
+    public List<String> getSimilarStrings(List<String> strings, String input) {
         List<String> closeStrings = new ArrayList<>();
 
         for (String string : strings) {
-            if (findDistance(input, string) <= DISTANCE_THRESHOLD + additionalDistanceThreshold) {
+            if (input.contains(string)) {
+                closeStrings.add(string);
+            } else if (string.contains(input)) {
+                closeStrings.add(string);
+            } else if (findDistance(input, string) <= (string.length() / 2)) {
                 closeStrings.add(string);
             }
         }

@@ -43,7 +43,7 @@ public class LocalPlantDataService {
         this.stringDistanceService = stringDistanceService;
 
         loadDefault();
-        this.plantNames = localPlants.stream().map(PlantInfoDTO::getLabel).toList();
+        this.plantNames = localPlants.stream().map(PlantInfoDTO::getLabel).map(String::toLowerCase).toList();
     }
 
     /**
@@ -52,7 +52,7 @@ public class LocalPlantDataService {
      * @return PlantInfoDTO that matches name (label)
      */
     public PlantInfoDTO getMatchingPlantInfoFromFile(String plantName) {
-        return localPlants.stream().filter(plantInfoDTO -> plantInfoDTO.getLabel().equals(plantName)).findFirst().get();
+        return localPlants.stream().filter(plantInfoDTO -> plantInfoDTO.getLabel().equalsIgnoreCase(plantName)).findFirst().get();
     }
 
     /**
@@ -62,10 +62,8 @@ public class LocalPlantDataService {
      */
     public JsonNode getSimilarPlantInfo(String userSearch) {
         List<String> similarPlantNames = new ArrayList<>();
-        int additionalThreshold = 0;
-        while (similarPlantNames.isEmpty() && additionalThreshold <= 3) {
-            similarPlantNames = stringDistanceService.getSimilarStrings(plantNames, userSearch, additionalThreshold);
-            additionalThreshold += 1;
+        while (similarPlantNames.isEmpty()) {
+            similarPlantNames = stringDistanceService.getSimilarStrings(plantNames, userSearch);
         }
 
         ArrayList<PlantInfoDTO> plantInfoList = new ArrayList<>();
