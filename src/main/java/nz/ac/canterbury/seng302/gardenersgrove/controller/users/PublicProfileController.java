@@ -5,6 +5,9 @@ import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.ProfanityDetectedException;
+import nz.ac.canterbury.seng302.gardenersgrove.service.ProfanityService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +37,11 @@ public class PublicProfileController {
     private static final Set<String> ACCEPTED_FILE_TYPES = Set.of("image/jpeg", "image/jpg", "image/png", "image/svg");
 
     private static final int MAX_FILE_SIZE = 10 * 1024 * 1024;
+
+    @Autowired
+    private ProfanityService profanityService;
+
+
     @Autowired
     public PublicProfileController(GardenUserService userService) {
         this.userService = userService;
@@ -114,8 +122,19 @@ public class PublicProfileController {
         GardenUser user = userService.getUserById(userId);
         model.addAttribute(USER_ID_ATTRIBUTE, userId);
 
-        if (bindingResult.hasFieldErrors("description")) {
+        Boolean errorFlag = false;
+
+        try {
+            isValidDescription(description);
+        } catch (ProfanityDetectedException e) {
+            errorFlag = true;
+        }
+
+        if (bindingResult.hasFieldErrors("description")) {errorFlag = true;}
+
+        if (errorFlag) {
             model.addAttribute("editUserDTO", editUserDTO);
+            // model.addAttribute("profanity", errorFlag)
             return "users/edit-public-profile";
         }
 
@@ -125,6 +144,7 @@ public class PublicProfileController {
 
         // for submission of banner
         editProfileBanner(userId, banner);
+
 
         user.setDescription(description);
 
@@ -164,12 +184,26 @@ public class PublicProfileController {
     /**
      * Validate an image on the server side to be > 10MB
      * and a valid file type (png, svg, jpg, jpeg
-     * @param plantImage image to be validated
+     * @param image image to be validated
      * @return true if it is valid
      */
-    public boolean validateImage(MultipartFile plantImage) {
-        return ACCEPTED_FILE_TYPES.contains(plantImage.getContentType())
-                && (plantImage.getSize() <= MAX_FILE_SIZE);
+    public boolean validateImage(MultipartFile image) {
+        return ACCEPTED_FILE_TYPES.contains(image.getContentType())
+                && (image.getSize() <= MAX_FILE_SIZE);
     }
     
+    /**
+     * Validates the tag if it contains invalid characters and checks the length
+     *
+     * @param name The name of the tag.
+     * @return True if name is valid, otherwise false
+     */
+    public boolean isValidDescription(String description) throws ProfanityDetectedException {
+        boolean profanityExists = !(profanityService.badWordsFound(description).isEmpty());
+
+        if (profanityExists) {
+            throw new ProfanityDetectedException();
+        }
+        return true;
+    }
 }
