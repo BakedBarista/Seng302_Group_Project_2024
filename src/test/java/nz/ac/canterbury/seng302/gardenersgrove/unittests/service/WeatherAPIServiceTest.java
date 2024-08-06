@@ -19,6 +19,8 @@ import org.mockito.Mockito;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
@@ -194,7 +196,7 @@ class WeatherAPIServiceTest {
         when(restTemplate.getForEntity(anyString(), eq(String.class))).thenReturn(ResponseEntity.ok(jsonResponse));
         when(objectMapper.readValue(anyString(), eq(WeatherAPIResponse.class))).thenReturn(forecastResponse);
         when(objectMapper.readValue(anyString(), eq(WeatherAPIResponse.class))).thenReturn(historyResponse);
-        doReturn(gardenWeather).when(weatherAPIService).saveWeather(anyDouble(), anyDouble(), any(Garden.class), any(WeatherAPIResponse.class), anyList());
+        doReturn(gardenWeather).when(weatherAPIService).saveWeather(any(GardenWeather.class), anyDouble(), anyDouble(), any(Garden.class), any(WeatherAPIResponse.class), anyList());
 
         GardenWeather result = weatherAPIService.getWeatherData(gardenId, lat, lng);
 
@@ -259,9 +261,9 @@ class WeatherAPIServiceTest {
     @CsvSource({
             "400, Bad Request",
             "403, Forbidden",
-            "500, Internal server error"
+            "500, Internal Server Error",
     })
-    void RequestApi_BadLatAndLng_ReturnNoResponse(String errorCode, String errorMessage) {
+    void RequestApi_BadRequests_ReturnNoResponse(String errorCode, String errorMessage) {
         String url = "fakeurl";
         HttpClientErrorException badRequestException = HttpClientErrorException.create(HttpStatusCode.valueOf(Integer.parseInt(errorCode)) ,errorMessage , null, null, null);
 
@@ -270,6 +272,32 @@ class WeatherAPIServiceTest {
 
         assertEquals("No Response", response);
 
+        // API should only call once
+        verify(restTemplate, times(1)).getForEntity(anyString(), eq(String.class));
+    }
+
+    @Test
+    void RequestApi_WeatherProviderServerError_ReturnNoResponse() {
+        String url = "fakeurl";
+        HttpServerErrorException badRequestException = HttpServerErrorException.create(HttpStatusCode.valueOf(502) ,"Bad Gateway" , null, null, null);
+
+        doThrow(badRequestException).when(restTemplate).getForEntity(anyString(), eq(String.class));
+        String response = weatherAPIService.requestAPI(url);
+
+        assertEquals("No Response", response);
+
+        // API should only call once
+        verify(restTemplate, times(1)).getForEntity(anyString(), eq(String.class));
+    }
+
+    // TODO: Finish this test
+    @Test
+    void RequestApi_ResourceAccessError_ReturnNoResponse() {
+        String url = "fakeurl";
+        when(restTemplate.getForEntity(url, String.class)).thenThrow(new ResourceAccessException("Service unavailable"));
+        String response = weatherAPIService.requestAPI(url);
+
+        assertEquals("No Response", response);
         // API should only call once
         verify(restTemplate, times(1)).getForEntity(anyString(), eq(String.class));
     }
@@ -322,6 +350,64 @@ class WeatherAPIServiceTest {
         GardenWeather gardenWeather = weatherAPIService.saveWeather(lat, lng, garden, forecastResponse, historyResponses);
 
         assertEquals(mockGardenWeather, gardenWeather);
+    }
+    @Test
+    void saveWeather_ValidOldWeatherInput_WeatherUpdated() {
+        double lat = -43.53;
+        double lng = 172.63;
+        Garden garden = new Garden();
+        garden.setId(1L);
+
+        // Create an 'old' weather response
+        GardenWeather oldGardenWeather = new GardenWeather();
+        oldGardenWeather.setId(1L);
+        oldGardenWeather.setGarden(garden);
+        oldGardenWeather.setLat(lat);
+        oldGardenWeather.setLng(lng);
+        oldGardenWeather.setLastUpdated(LocalDate.now().minusDays(1).toString());
+
+        // Create forecastResponse and historyResponses
+        WeatherAPIResponse forecastResponse = new WeatherAPIResponse();
+        WeatherAPIResponse historyResponse = new WeatherAPIResponse();
+
+        // More set up
+        Location location = new Location();
+        location.setLocationName("Christchurch");
+        forecastResponse.setLocation(location);
+        historyResponse.setLocation(location);
+
+        // Create fake weather data
+        Forecast forecast = new Forecast();
+        ForecastDay forecastDay = new ForecastDay();
+        forecastDay.setDate("09/08/2003");
+        Day day = new Day();
+        Condition condition = new Condition();
+        condition.setConditions("Sunny");
+        condition.setIconUrl("//cdn.weatherapi.com/weather/64x64/day/116.png");
+        day.setCondition(condition);
+        day.setHumidity(10);
+        day.setUv(10);
+        day.setMaxTemp(15);
+        day.setPrecipitation(10);
+        day.setMinTemp(5);
+        day.setWindSpeed(10);
+        forecastDay.setDay(day);
+        List<ForecastDay> forecastDays = new ArrayList<>();
+        forecastDays.add(forecastDay);
+        forecast.setForecastDays(forecastDays);
+        forecastResponse.setForecast(forecast);
+        historyResponse.setForecast(forecast);
+        List<WeatherAPIResponse> historyResponses = List.of(historyResponse);
+
+        when(gardenWeatherService.addWeather(any(GardenWeather.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        GardenWeather updatedGardenWeather = weatherAPIService.saveWeather(oldGardenWeather, lat, lng, garden, forecastResponse, historyResponses);
+
+        // Verify that the oldGardenWeather object has been updated with new data
+        assertNotNull(updatedGardenWeather);
+        assertEquals(lat, updatedGardenWeather.getLat());
+        assertEquals(lng, updatedGardenWeather.getLng());
+        assertEquals(LocalDate.now().toString(), updatedGardenWeather.getLastUpdated());
+        assertEquals(garden, updatedGardenWeather.getGarden());
     }
 
     @Test

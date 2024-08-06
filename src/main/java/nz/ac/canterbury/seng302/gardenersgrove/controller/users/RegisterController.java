@@ -14,12 +14,15 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.RegisterDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.URLService;
+
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
@@ -34,6 +37,7 @@ public class RegisterController {
     private GardenUserService userService;
     private TokenService tokenService;
     private EmailSenderService emailSenderService;
+    private URLService urlService;
 
     /**
      * Constructs a new RegisterController
@@ -43,10 +47,11 @@ public class RegisterController {
      * @param emailSenderService The EmailSenderService to use
      */
     public RegisterController(GardenUserService userService, TokenService tokenService,
-            EmailSenderService emailSenderService) {
+            EmailSenderService emailSenderService, URLService urlService) {
         this.userService = userService;
         this.tokenService = tokenService;
         this.emailSenderService = emailSenderService;
+        this.urlService = urlService;
     }
 
     /**
@@ -68,6 +73,7 @@ public class RegisterController {
      */
     @PostMapping("/users/register")
     public String submitRegister(
+            HttpServletRequest request,
             @Valid @ModelAttribute("registerDTO") RegisterDTO registerDTO,
             BindingResult bindingResult,
             @RequestParam(value = "dateError", required = false) String dateValidity) {
@@ -90,8 +96,13 @@ public class RegisterController {
         }
 
         if (registerDTO.isNoLname()) {
+            // Checking if noLname checkbox is ticked but a lastname is supplied. 
+            if (registerDTO.getLname() != null && !registerDTO.getLname().isEmpty()){
+                bindingResult.rejectValue("lname", null, "Cannot have a last name while no surname box ticked.");
+            }
             registerDTO.setLname(null);
         }
+
         if ((registerDTO.getLname() == null || registerDTO.getLname().isEmpty()) && !registerDTO.isNoLname()) {
             bindingResult.rejectValue("lname", null, "Last name cannot be empty");
         }
@@ -116,9 +127,10 @@ public class RegisterController {
         tokenService.addEmailTokenAndTimeToUser(user, token);
         userService.addUser(user);
 
-        sendRegisterEmail(user, token);
+        sendRegisterEmail(request, user, token);
 
-        return "redirect:/users/user/" + user.getId() + "/authenticate-email";
+        String obfuscatedEmail = userService.obfuscateEmail(user.getEmail());
+        return "redirect:/users/user/" + obfuscatedEmail + "/authenticate-email";
     }
 
     /**
@@ -127,16 +139,18 @@ public class RegisterController {
     @PostConstruct
     public void createDummy() {
         try {
-            GardenUser user = new GardenUser("John", "Doe", "john.doe@gmail.com", "password",
+            var password = "password";
+
+            GardenUser user = new GardenUser("John", "Doe", "john.doe@gmail.com", password,
                     LocalDate.of(1970, 1, 1));
             userService.addUser(user);
-            GardenUser user1 = new GardenUser("Immy", null, "immy@gmail.com", "password",
+            GardenUser user1 = new GardenUser("Immy", null, "immy@gmail.com", password,
                     LocalDate.of(1970, 1, 1));
             userService.addUser(user1);
-            GardenUser user2 = new GardenUser("Liam", "Doe", "liam@gmail.com", "password",
+            GardenUser user2 = new GardenUser("Liam", "Doe", "liam@gmail.com", password,
                     LocalDate.of(1970, 1, 1));
             userService.addUser(user2);
-            GardenUser user3 = new GardenUser("Liam", "Doe", "liam2@gmail.com", "password",
+            GardenUser user3 = new GardenUser("Liam", "Doe", "liam2@gmail.com", password,
                     LocalDate.of(1970, 1, 1));
             userService.addUser(user3);
 
@@ -151,11 +165,20 @@ public class RegisterController {
      * @param user
      * @param token
      */
-    public void sendRegisterEmail(GardenUser user, String token) {
-        emailSenderService.sendEmail(user, "Welcome to Gardener's Grove",
-                "Your account has been created!\n\n"
-                        + "Your token is: " + token + "\n\n"
-                        + "If this was not you, you can ignore this message and the account will be deleted after 10 minutes.");
+    public void sendRegisterEmail(HttpServletRequest request, GardenUser user, String token) {
+        String obfuscatedEmail = userService.obfuscateEmail(user.getEmail());
+        String url = urlService.generateAuthenticateEmailUrlString(request, obfuscatedEmail);
+
+        StringBuilder body = new StringBuilder();
+        body.append("Your account has been created!\n\n");
+        body.append("Your token is: ").append(token).append("\n\n");
+        body.append(
+                "You should have been redirected when you registered. If you were not, please visit the following link to authenticate your email: ")
+                .append(url).append("\n\n");
+        body.append(
+                "If this was not you, you can ignore this message and the account will be deleted after 10 minutes.");
+
+        emailSenderService.sendEmail(user, "Welcome to Gardener's Grove", body.toString());
 
     }
 }

@@ -75,7 +75,7 @@ public class GardenControllerMVCTests {
         plantService = mock(PlantService.class);
         moderationService = mock(ModerationService.class);
         profanityService = mock(ProfanityService.class);
-        gardenController = new GardenController(gardenService, plantService, gardenUserService, weatherAPIService, tagService,friendService, moderationService, profanityService, locationService);
+        gardenController = new GardenController(gardenService, null, plantService, gardenUserService, weatherAPIService, tagService,friendService, moderationService, profanityService, locationService);
         locationService = mock(LocationService.class);
 
         emptyGarden = new Garden();

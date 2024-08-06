@@ -3,7 +3,8 @@
         <div>
             <!-- Garden Name Field -->
             <div class="mb-3">
-                <label for="name" th:class="'required-field form-label' + ${#fields.hasErrors('name') ? 'is-invalid' : ''}">
+                <label for="name"
+                       th:class="'required-field form-label' + ${#fields.hasErrors('name') ? 'is-invalid' : ''}">
                     Garden Name:
                 </label>
                 <input type="text"
@@ -17,121 +18,122 @@
                      th:errors="*{name}">
                 </div>
             </div>
-<!--             Garden Location Field-->
+            <!--             Garden Location Field-->
             <div class="mb-3">
-                <label for="location-autocomplete-container" class="form-label"> Garden Location: </label>
+                <label for="location-autocomplete-container" class="form-label">Search Address:</label>
                 <div class="d-xl-flex">
-                    <div class="col-xl-10 col-12">
+                    <div class="col-xl-12 col-12">
                         <div class="autocomplete-container" id="location-autocomplete-container"></div>
                         <div class="invalid-feedback" th:if="locationError != null" th:text="${locationError}"></div>
-                    </div>
-                    <div class="col-xl-2 col-12 d-flex justify-content-xl-end justify-content-center p-3 p-xl-0">
-                        <button id="toggleButton" class="btn btn-primary" type="button" th:text="${locationError} ? 'Hide Manual' : 'Show Manual'" onclick="handleToggle()">Show Manual</button>
                     </div>
                 </div>
             </div>
 
             <div class="col">
-                <div th:classappend="${locationError} ? ' show' : ''" class="collapse multi-collapse" id="multiCollapse1">
-                    <!-- Street Number Field -->
-                    <div class="mb-3 row p-0">
-                        <div class="mb-3">
-                            <p>Note: Manual entry of address may result in location-based services not working.</p>
-                        </div>
-                        <div class="col-lg-3 col-12">
-                            <label for="streetNumber" th:class="'form-label' + ${#fields.hasErrors('streetNumber') ? 'is-invalid' : ''}">
-                                Street Number:
-                            </label>
-                            <input type="text"
-                                   th:class="'form-control ' + ${#fields.hasErrors('streetNumber') ? 'is-invalid' : ''}"
-                                   id="streetNumber"
-                                   th:name="streetNumber"
-                                   th:value="${garden.streetNumber}"
-                                   data-cy="streetNumber">
-                            <div class="invalid-feedback"
-                                 th:if="${#fields.hasErrors('streetNumber')}"
-                                 th:errors="*{streetNumber}">
-                            </div>
-                        </div>
-                        <!-- Street Name Field -->
-                        <div class="col-lg-9 col-12">
-                            <label for="streetName" th:class="'form-label' + ${#fields.hasErrors('streetName') ? 'is-invalid' : ''}">
-                                Street Name:
-                            </label>
-                            <div class="sname" id="sname"></div>
-                            <input type="text"
-                                   th:class="'form-control ' + ${#fields.hasErrors('streetName') ? 'is-invalid' : ''}"
-                                   id="streetName"
-                                   th:name="streetName"
-                                   th:value="${garden.streetName}"
-                                   data-cy="streetName">
-                            <div class="invalid-feedback text-danger"
-                                 th:if="${#fields.hasErrors('streetName')}"
-                                 th:errors="*{streetName}">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mb-3 row">
-                        <div class="col-xl-4 col-12">
-                            <label for="suburb" th:class="'form-label' + ${#fields.hasErrors('suburb') ? 'is-invalid' : ''}">
-                                Suburb:
-                            </label>
-                            <input type="text"
-                                   th:class="'form-control ' + ${#fields.hasErrors('suburb') ? 'is-invalid' : ''}"
-                                   id="suburb"
-                                   th:name="suburb"
-                                   th:value="${garden.suburb}"
-                                   data-cy="suburb">
-                            <div class="invalid-feedback text-danger"
-                                 th:if="${#fields.hasErrors('suburb')}"
-                                 th:errors="*{suburb}">
-                            </div>
-                        </div>
-                        <div class="col-xl-4 col-12">
-                            <label for="city" th:class="'form-label required-field ' + ${#fields.hasErrors('city') ? 'is-invalid' : ''}">
-                                City:
-                            </label>
-                            <input type="text"
-                                   th:class="'form-control ' + ${#fields.hasErrors('city') ? 'is-invalid' : ''}"
-                                   id="city"
-                                   th:name="city"
-                                   th:value="${garden.city}"
-                                   data-cy="city">
-                            <div class="invalid-feedback text-danger"
-                                 th:if="${#fields.hasErrors('city')}"
-                                 th:errors="*{city}">
-                            </div>
-                        </div>
-                        <div class="col-xl-4 col-12">
-                            <label for="postCode" th:class="'form-label' + ${#fields.hasErrors('postCode') ? 'is-invalid' : ''}">
-                                Postcode:
-                            </label>
-                            <input type="text"
-                                   th:class="'form-control ' + ${#fields.hasErrors('postCode') ? 'is-invalid' : ''}"
-                                   id="postCode"
-                                   th:name="postCode"
-                                   th:value="${garden.postCode}"
-                                   data-cy="postCode">
-                            <div class="invalid-feedback"
-                                 th:if="${#fields.hasErrors('postCode')}"
-                                 th:errors="*{postCode}">
-                            </div>
-                        </div>
-                    </div>
+                <!-- Street Number Field -->
+                <div class="mb-3 row p-0">
                     <div class="mb-3">
-                        <label for="country" th:class="'form-label required-field ' + ${#fields.hasErrors('country') ? 'is-invalid' : ''}">
-                            Country:
+                        <p>Note: Manual entry of address may result in location-based services not working.</p>
+                    </div>
+                    <div class="col-lg-3 col-12">
+                        <label for="streetNumber"
+                               th:class="'form-label' + ${#fields.hasErrors('streetNumber') ? 'is-invalid' : ''}">
+                            Street Number:
                         </label>
                         <input type="text"
-                               th:class="'form-control ' + ${#fields.hasErrors('country') ? 'is-invalid' : ''}"
-                               id="country"
-                               th:name="country"
-                               th:value="${garden.country}"
-                               data-cy="country">
+                               th:class="'form-control ' + ${#fields.hasErrors('streetNumber') ? 'is-invalid' : ''}"
+                               id="streetNumber"
+                               th:name="streetNumber"
+                               th:value="${garden.streetNumber}"
+                               data-cy="streetNumber">
                         <div class="invalid-feedback"
-                             th:if="${#fields.hasErrors('country')}"
-                             th:errors="*{country}">
+                             th:if="${#fields.hasErrors('streetNumber')}"
+                             th:errors="*{streetNumber}">
                         </div>
+                    </div>
+                    <!-- Street Name Field -->
+                    <div class="col-lg-9 col-12">
+                        <label for="streetName"
+                               th:class="'form-label' + ${#fields.hasErrors('streetName') ? 'is-invalid' : ''}">
+                            Street Name:
+                        </label>
+                        <div class="sname" id="sname"></div>
+                        <input type="text"
+                               th:class="'form-control ' + ${#fields.hasErrors('streetName') ? 'is-invalid' : ''}"
+                               id="streetName"
+                               th:name="streetName"
+                               th:value="${garden.streetName}"
+                               data-cy="streetName">
+                        <div class="invalid-feedback text-danger"
+                             th:if="${#fields.hasErrors('streetName')}"
+                             th:errors="*{streetName}">
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <div class="col-xl-4 col-12">
+                        <label for="suburb"
+                               th:class="'form-label' + ${#fields.hasErrors('suburb') ? 'is-invalid' : ''}">
+                            Suburb:
+                        </label>
+                        <input type="text"
+                               th:class="'form-control ' + ${#fields.hasErrors('suburb') ? 'is-invalid' : ''}"
+                               id="suburb"
+                               th:name="suburb"
+                               th:value="${garden.suburb}"
+                               data-cy="suburb">
+                        <div class="invalid-feedback text-danger"
+                             th:if="${#fields.hasErrors('suburb')}"
+                             th:errors="*{suburb}">
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-12">
+                        <label for="city"
+                               th:class="'form-label required-field ' + ${#fields.hasErrors('city') ? 'is-invalid' : ''}">
+                            City:
+                        </label>
+                        <input type="text"
+                               th:class="'form-control ' + ${#fields.hasErrors('city') ? 'is-invalid' : ''}"
+                               id="city"
+                               th:name="city"
+                               th:value="${garden.city}"
+                               data-cy="city">
+                        <div class="invalid-feedback text-danger"
+                             th:if="${#fields.hasErrors('city')}"
+                             th:errors="*{city}">
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-12">
+                        <label for="postCode"
+                               th:class="'form-label' + ${#fields.hasErrors('postCode') ? 'is-invalid' : ''}">
+                            Postcode:
+                        </label>
+                        <input type="text"
+                               th:class="'form-control ' + ${#fields.hasErrors('postCode') ? 'is-invalid' : ''}"
+                               id="postCode"
+                               th:name="postCode"
+                               th:value="${garden.postCode}"
+                               data-cy="postCode">
+                        <div class="invalid-feedback"
+                             th:if="${#fields.hasErrors('postCode')}"
+                             th:errors="*{postCode}">
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="country"
+                           th:class="'form-label required-field ' + ${#fields.hasErrors('country') ? 'is-invalid' : ''}">
+                        Country:
+                    </label>
+                    <input type="text"
+                           th:class="'form-control ' + ${#fields.hasErrors('country') ? 'is-invalid' : ''}"
+                           id="country"
+                           th:name="country"
+                           th:value="${garden.country}"
+                           data-cy="country">
+                    <div class="invalid-feedback"
+                         th:if="${#fields.hasErrors('country')}"
+                         th:errors="*{country}">
                     </div>
                 </div>
             </div>
@@ -161,7 +163,8 @@
             </div>
             <!-- Garden Description -->
             <div class="mb-3">
-                <label for="description" th:class="'form-label' + ${#fields.hasErrors('description') ? 'is-invalid' : ''}" >Description:</label>
+                <label for="description"
+                       th:class="'form-label' + ${#fields.hasErrors('description') ? 'is-invalid' : ''}">Description:</label>
                 <div class="input-group">
                     <textarea
                             th:class="'form-control ' + ${(#fields.hasErrors('description') || profanity != null) ? 'is-invalid' : ''}"
@@ -171,7 +174,8 @@
                             data-cy="size"
                             maxlength="512"
                             autofocus></textarea>
-                    <span class = "numberOfCharactersText input-group-text justify-content-end" id = "numberOfCharactersText"></span>
+                    <span class="numberOfCharactersText input-group-text justify-content-end"
+                          id="numberOfCharactersText"></span>
                     <div class="invalid-feedback"
                          th:if="${#fields.hasErrors('description')}"
                          th:errors="*{description}">
@@ -188,30 +192,12 @@
             </div>
         </div>
     </form>
-    <script>
-        /**
-         * Change the text of the button for hide and show
-         */
-        function handleToggle() {
-            var collapseOne = document.getElementById("multiCollapse1");
-            var toggleButton = document.getElementById("toggleButton");
-
-            if (toggleButton.textContent.includes("Show Manual")) {
-                collapseOne.classList.add('show');
-                toggleButton.textContent = "Hide Manual";
-            } else {
-                collapseOne.classList.remove('show');
-                toggleButton.textContent = "Show Manual";
-            }
-        }
-    </script>
     <script th:src="@{/js/nextFormBox.js}"></script>
     <script th:src="@{/js/autocomplete.js}"></script>
     <script th:src="@{/js/locationAutocomplete.js}"></script>
-    <script th:src="@{/js/toggleSubform.js}"></script>
     <script>
         // Makes sure the cancel button goes to the previous page
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const currentPath = '/gardens/create';
             const referrer = document.referrer;
 
@@ -222,7 +208,7 @@
             }
 
             const cancelButton = document.querySelector('.btn-cancel');
-            cancelButton.addEventListener('click', function() {
+            cancelButton.addEventListener('click', function () {
                 window.location.href = sessionStorage.getItem('referrer');
             });
         });

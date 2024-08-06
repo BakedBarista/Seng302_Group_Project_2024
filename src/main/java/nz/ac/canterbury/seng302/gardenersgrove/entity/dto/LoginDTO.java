@@ -1,6 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity.dto;
 
-import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationConstants.*;
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationConstants.*;
 
 import jakarta.validation.constraints.Pattern;
 

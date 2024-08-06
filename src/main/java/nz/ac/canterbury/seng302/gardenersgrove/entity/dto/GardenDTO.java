@@ -1,13 +1,20 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity.dto;
 
 import jakarta.persistence.Column;
-import nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidEuropeanDecimal;
+import jakarta.validation.constraints.Size;
+import nz.ac.canterbury.seng302.gardenersgrove.validation.ValidGardenSizeString;
+import nz.ac.canterbury.seng302.gardenersgrove.validation.ValidEuropeanDecimal;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.BaseGarden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationMessages.INVALID_GARDEN_SIZE_MESSAGE;
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationMessages.MAX_GARDEN_SIZE_LENGTH_MESSAGE;
+
 public class GardenDTO extends BaseGarden {
 
-    @ValidEuropeanDecimal(message = "Garden size must be a valid positive number (only allows numbers and a single period or comma)")
+    @ValidEuropeanDecimal(message = INVALID_GARDEN_SIZE_MESSAGE)
+    @Size(max = 50, message = MAX_GARDEN_SIZE_LENGTH_MESSAGE)
+    @ValidGardenSizeString()
     @Column(nullable = true)
     private String size;
 

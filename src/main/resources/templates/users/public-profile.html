@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="">
+<head>
+    <meta http-equiv="Content-Type" context="text/html; charset=UTF-8" />
+    <title>My Public Profile | Gardener's Grove</title>
+    <!-- This needs to be here for Bootstrap and general CSS imports -->
+    <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
+</head>
+<body>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+<main class="main-container" style = "margin-top: 10%;">
+    <div class="card border-top-0">
+        <img
+            class="card-img-top img-fluid fixed-height mb-4"
+            th:src="@{'/users/' + ${userId} + '/profile-banner'}"
+            alt="profile banner"
+        />
+        <div class="d-md-none d-flex justify-content-center align-items-center">
+            <img
+                    class="public-profile-picture position-absolute top-0 public-profile-picture-padding me-2"
+                    th:src="@{'/users/' + ${userId} + '/profile-picture'}"
+                    width="180"
+                    height="180"
+                    alt="profile picture"
+            />
+        </div>
+        <div class="d-none d-md-block">
+            <img
+                    class="public-profile-picture position-absolute top-0 end-0 public-profile-picture-padding me-2"
+                    th:src="@{'/users/' + ${userId} + '/profile-picture'}"
+                    width="200"
+                    height="200"
+                    alt="profile picture"
+            />
+        </div>
+        <div class="m-4 mt-0">
+            <div class="d-flex flex-column">
+                <div class="d-flex align-items-center">
+                    <h1 class="d-none d-md-block">My Profile</h1>
+                    <p class="ms-4 pt-1 d-none d-md-block">
+                        <a th:href="@{/change/me/later}" class="btn btn-primary">Edit</a>
+                    </p>
+                    <p class="d-md-none ms-auto">
+                        <a th:href="@{/change/me/later}" class="btn btn-primary">Edit</a>
+                    </p>
+                </div>
+                <h4>My Name is...</h4>
+                <p>[[${name}]]</p>
+                <h4>About me...</h4>
+                <p>[[${description}]]</p>
+            </div>
+        </div>
+    </div>
+</main>
+<th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
+</body>
+</html>

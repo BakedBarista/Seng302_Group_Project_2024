@@ -137,7 +137,7 @@ public class EditUserController {
         }
         userService.addUser(user);
 
-        return "redirect:/users/user";
+        return "redirect:/users/settings";
 
     }
 
@@ -192,8 +192,8 @@ public class EditUserController {
 
         user.setPassword(newPassword);
         userService.addUser(user);
-        emailSenderService.sendEmail(user, "Password Changed", "Your password has been updated");
-        return "redirect:/users/user";
+        emailSenderService.sendEmail(user, "Password Changed", "Your password has been updated. If this was not you, contact the Gardeners Grove administrators at team800.garden@gmail.com");
+        return "redirect:/users/settings";
 
     }
 

@@ -5,7 +5,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationConstants.GARDEN_REGEX;
+import java.time.LocalDate;
+
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationConstants.GARDEN_REGEX;
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationConstants.POSITIVE_WHOLE_NUMBER_REGEX;
 
 /**
  * Acts as a skeleton for Plant and PlantDTO, which share a lot of the same fields and methods
@@ -16,9 +19,10 @@ public abstract class BasePlant {
     @NotBlank(message = "Plant name cannot by empty and must only include letters, numbers, spaces, dots, commas, hyphens or apostrophes")
     @Pattern(regexp = GARDEN_REGEX, message = "Plant name cannot by empty and must only include letters, numbers, spaces, dots, commas, hyphens or apostrophes")
     @Column(nullable = false)
+    @Size(max = 256, message = "Plant name must be less than 256 characters")
     protected String name;
 
-    @Pattern(regexp = "^[0-9]*$", message = "Plant count must be a positive number")
+    @Pattern(regexp = POSITIVE_WHOLE_NUMBER_REGEX, message = "Plant count must be a positive whole number")
     @Column(nullable = false)
     protected String count;
 
@@ -30,10 +34,33 @@ public abstract class BasePlant {
     @JoinColumn
     protected Garden garden;
 
+    @Enumerated(EnumType.STRING)
+    private PlantStatus status = PlantStatus.NOT_GROWING;
+
+    @Column()
+    protected LocalDate harvestedDate;
+
     // Getters and setters
 
     public String getName() {
         return name;
+    }
+
+    /**
+     * The status of the plant, whether it is currently growing, harvested, or not growing.
+     */
+    public enum PlantStatus {
+        NOT_GROWING,
+        CURRENTLY_GROWING,
+        HARVESTED,
+    }
+
+    public LocalDate getHarvestedDate() {
+        return harvestedDate;
+    }
+
+    public void setHarvestedDate(LocalDate date) {
+        this.harvestedDate = date;
     }
 
     public void setName(String name) {
@@ -56,11 +83,30 @@ public abstract class BasePlant {
         this.description = description;
     }
 
+    public void setStatus(BasePlant.PlantStatus status) {
+         this.status = status;
+    }
+
+    public BasePlant.PlantStatus getStatus() {
+        return status;
+    }
+
     public Garden getGarden() {
         return garden;
     }
 
     public void setGarden(Garden garden) {
         this.garden = garden;
+    }
+
+    /**
+     * Removes extraneous information (such as weird decimals) from the plant object.
+     *
+     * Should be called before persisting changes to the DB.
+     */
+    public void normalize() {
+        if (this.count != null && this.count.contains(".")) {
+            this.count = this.count.substring(0, this.count.indexOf("."));
+        }
     }
 }
