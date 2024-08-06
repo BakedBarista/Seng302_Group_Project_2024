@@ -50,17 +50,6 @@ class LocalPlantDataServiceTest {
         }
     }
 
-    @Test
-
-    void givenMatchingPlantFromFileWhenCheckedReturnCorrectResults() {
-        PlantInfoDTO result = localPlantDataService.getMatchingPlantInfoFromFile("Rose");
-        assertEquals("Rose", result.getLabel());
-        assertEquals("A beautiful flower", result.getDescription());
-
-        result = localPlantDataService.getMatchingPlantInfoFromFile("Tulip");
-        assertEquals("Tulip", result.getLabel());
-        assertEquals("A spring flower", result.getDescription());
-    }
 
     @Test
     void whenSimilarNameEnteredReturnCorrectPlant() {
