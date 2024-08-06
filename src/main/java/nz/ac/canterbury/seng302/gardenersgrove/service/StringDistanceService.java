@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Service class for getting similar strings to a given string
@@ -18,19 +19,24 @@ public class StringDistanceService {
      * @return list of strings that are similar to input
      */
     public List<String> getSimilarStrings(List<String> strings, String input) {
-        List<String> closeStrings = new ArrayList<>();
-
-        for (String string : strings) {
-            if (input.contains(string)) {
-                closeStrings.add(string);
-            } else if (string.contains(input)) {
-                closeStrings.add(string);
-            } else if (findDistance(input, string) <= (string.length() / 2)) {
-                closeStrings.add(string);
-            }
+        if (input == null || input.length() < 3 || input.isBlank()) {
+            return new ArrayList<>();
         }
 
-        return closeStrings;
+        return strings
+                .stream()
+                .filter(string -> isCloseMatch(input.toLowerCase(), string.toLowerCase()))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Method for determining if there is a close match between input and string
+     * @param input string
+     * @param other other string
+     * @return true if they are a close match
+     */
+    private static boolean isCloseMatch(String input, String other) {
+        return input.contains(other) || other.contains(input) || findDistance(input, other) <= (other.length() / 2);
     }
 
     /**
