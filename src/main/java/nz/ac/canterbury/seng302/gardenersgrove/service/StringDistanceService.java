@@ -35,7 +35,7 @@ public class StringDistanceService {
      * @param other other string
      * @return true if they are a close match
      */
-    private static boolean isCloseMatch(String input, String other) {
+    private boolean isCloseMatch(String input, String other) {
         return input.contains(other) || other.contains(input) || findDistance(input, other) <= (other.length() / 2);
     }
 
@@ -49,7 +49,7 @@ public class StringDistanceService {
      * @param other other string
      * @return distance between the two strings
      */
-    public static int findDistance(String string, String other) {
+    public int findDistance(String string, String other) {
         return findRecursiveDistance(string, string.length(), other, other.length());
     }
 
@@ -65,7 +65,7 @@ public class StringDistanceService {
      * @param otherLength other length
      * @return distance of strings
      */
-    private static int findRecursiveDistance(String string, int stringLength, String other, int otherLength) {
+    private int findRecursiveDistance(String string, int stringLength, String other, int otherLength) {
         if (stringLength == 0) {
             return otherLength;
         }

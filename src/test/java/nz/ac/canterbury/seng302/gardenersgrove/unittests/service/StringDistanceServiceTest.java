@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.unittests.service;
 import nz.ac.canterbury.seng302.gardenersgrove.service.StringDistanceService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -58,5 +59,26 @@ public class StringDistanceServiceTest {
         List<String> result = stringDistanceService.getSimilarStrings(strings, input);
 
         Assertions.assertEquals(1, result.size());
+    }
+
+    @Test
+    void givenTwoWordsWithThreeInsertions_whenIFindTheDistance_thenTheirDistanceIsReturned() {
+        int distance = stringDistanceService.findDistance("xAAAxx", "AAA");
+
+        Assertions.assertEquals(3, distance);
+    }
+
+    @Test
+    void givenTwoWordsWithThreeSubstitutions_whenIFindTheDistance_thenTheirDistanceIsReturned() {
+        int distance = stringDistanceService.findDistance("BCD", "xBCDxx");
+
+        Assertions.assertEquals(3, distance);
+    }
+
+    @Test
+    void givenTwoWordsWithThreeDeletions_whenIFindTheDistance_thenTheirDistanceIsReturned() {
+        int distance = stringDistanceService.findDistance("AAA", "xAxAxA");
+
+        Assertions.assertEquals(3, distance);
     }
 }
