@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import nz.ac.canterbury.seng302.gardenersgrove.exceptions.JsonProcessingException;
 import org.springframework.web.util.UriComponentsBuilder;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantInfoDTO;
 import org.slf4j.Logger;
@@ -38,6 +39,8 @@ public class WikidataService {
 
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
+
+    private static final String SEARCH = "search";
 
     public WikidataService(RestTemplate restTemplate,
                            ObjectMapper objectMapper) {
@@ -78,9 +81,9 @@ public class WikidataService {
         JsonNode jsonNode = readJson(response);
 
         List<PlantInfoDTO> plantInfoList = new ArrayList<>();
-        if (jsonNode.has("search") && !jsonNode.get("search").isEmpty()) {
-            Map<String, JsonNode> metadata = getMetadataForEntities(jsonNode.get("search"));
-            for (JsonNode entityNode : jsonNode.get("search")) {
+        if (jsonNode.has(SEARCH) && !jsonNode.get(SEARCH).isEmpty()) {
+            Map<String, JsonNode> metadata = getMetadataForEntities(jsonNode.get(SEARCH));
+            for (JsonNode entityNode : jsonNode.get(SEARCH)) {
                 String entityId = entityNode.get("id").asText();
                 JsonNode entityMetadata = metadata.get(entityId);
                 if (isSubclassOfGardenPlants(entityMetadata)) {
@@ -103,7 +106,7 @@ public class WikidataService {
         try {
             return objectMapper.readTree(response);
         } catch (IOException e) {
-            throw new RuntimeException("Error processing response", e);
+            throw new JsonProcessingException("Error processing response", e);
         }
     }
 

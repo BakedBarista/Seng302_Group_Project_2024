@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng302.gardenersgrove.service;
+package nz.ac.canterbury.seng302.gardenersgrove.exceptions;
 
 /**
  * Exception thrown when profanity is detected

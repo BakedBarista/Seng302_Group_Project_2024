@@ -29,6 +29,7 @@ public class LocalPlantDataService {
      * this is used by this class when we want to get data for an input string
      */
     private void loadDefault() {
+        logger.info("loading local plant information for LocalPlantDataService.class...");
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("local_plant_data.json")) {
             localPlants = objectMapper.readValue(
                     inputStream,
@@ -36,6 +37,10 @@ public class LocalPlantDataService {
             );
         } catch (IOException e) {
             logger.error("LocalPlantDataService failed to load default local plant data");
+        }
+
+        if (!localPlants.isEmpty()) {
+            logger.info("successfully loaded local plant information for LocalPlantDataService.class");
         }
     }
 
@@ -53,6 +58,7 @@ public class LocalPlantDataService {
      * @return PlantInfoDTO that matches name (label)
      */
     public PlantInfoDTO getMatchingPlantInfoFromFile(String plantName) {
+        logger.info("adding similar plant info for " + plantName);
         Optional<PlantInfoDTO> plant = localPlants
                 .stream()
                 .filter(plantInfoDTO -> plantInfoDTO.getLabel().equalsIgnoreCase(plantName))
@@ -67,6 +73,8 @@ public class LocalPlantDataService {
      * @return JsonNode with a list of PlantInfoDTOs
      */
     public JsonNode getSimilarPlantInfo(String userSearch) {
+        logger.info("API returned no results - attempting to find similar plant info from local sources");
+
         List<String> similarPlantNames = stringDistanceService.getSimilarStrings(plantNames, userSearch);
 
         ArrayList<PlantInfoDTO> plantInfoList = new ArrayList<>();
