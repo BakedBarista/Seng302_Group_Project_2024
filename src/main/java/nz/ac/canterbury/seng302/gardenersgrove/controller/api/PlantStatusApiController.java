@@ -6,6 +6,8 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantHarvestedDateDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 
+
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.NZ_FORMAT_DATE;
+
 /**
  * Controller for handling API requests related to updating and setting plant status
  */
@@ -26,6 +30,10 @@ import java.util.Optional;
 public class PlantStatusApiController {
     private final PlantService plantService;
     private static final String STATUS = "status";
+    private static final String ERROR = "error";
+
+    private static final String ERRORS = "errors";
+
 
 
     public PlantStatusApiController(PlantService plantService) {
@@ -50,9 +58,8 @@ public class PlantStatusApiController {
         plantService.save(existingPlant);
         Map<String, Object> response = new HashMap<>();
         response.put(STATUS, newStatus.name());
-        if (existingPlant.getHarvestedDate() != null) {
-            response.put("harvestedDate", existingPlant.getHarvestedDate());
-        }
+
+        response.put("harvestedDate", existingPlant.getHarvestedDate());
 
         return ResponseEntity.ok().body(response);
     }
@@ -70,11 +77,11 @@ public class PlantStatusApiController {
                                                                    BindingResult result) {
         if (result.hasErrors()) {
             Map<String, Object> response = new HashMap<>();
-            response.put(STATUS, "error");
+            response.put(STATUS, ERROR);
             List<String> errors = result.getAllErrors().stream()
                     .map(ObjectError::getDefaultMessage)
                     .toList();
-            response.put("errors", errors);
+            response.put(ERRORS, errors);
             return ResponseEntity.badRequest().body(response);
         }
 
@@ -86,13 +93,26 @@ public class PlantStatusApiController {
         Plant existingPlant = plant.get();
         String harvestedDateString = request.getHarvestedDate();
 
+
         try {
             LocalDate harvestedDate = LocalDate.parse(harvestedDateString);
-            existingPlant.setHarvestedDate(harvestedDate);
+            if (existingPlant.getPlantedDate() != null && (existingPlant.getPlantedDate().isBefore(harvestedDate) || existingPlant.getPlantedDate().isEqual(harvestedDate))) {
+                existingPlant.setHarvestedDate(harvestedDate);
+            } else if(existingPlant.getPlantedDate() == null) {
+                existingPlant.setHarvestedDate(harvestedDate);
+            }
+            else {
+                Map<String, Object> response = new HashMap<>();
+                response.put(STATUS, ERROR);
+                response.put(ERRORS, List.of("Harvested date must be after planted date"));
+                return ResponseEntity.badRequest().body(response);
+            }
+
+
         } catch (DateTimeParseException e) {
             Map<String, Object> response = new HashMap<>();
-            response.put(STATUS, "error");
-            response.put("errors", List.of("Invalid date format"));
+            response.put(STATUS,ERROR);
+            response.put(ERRORS, List.of("Invalid date format"));
             return ResponseEntity.badRequest().body(response);
         }
 
@@ -100,7 +120,7 @@ public class PlantStatusApiController {
 
         Map<String, Object> response = new HashMap<>();
         response.put(STATUS, "success");
-        response.put("harvestedDate", existingPlant.getHarvestedDate());
+        response.put("harvestedDate", existingPlant.getHarvestedDate().format(NZ_FORMAT_DATE));
 
         return ResponseEntity.ok().body(response);
     }

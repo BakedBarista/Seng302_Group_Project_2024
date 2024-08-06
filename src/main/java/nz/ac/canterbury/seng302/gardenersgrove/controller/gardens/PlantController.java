@@ -377,7 +377,7 @@ public class PlantController {
      * take user to search plant information form
      * @return redirect to a more detailed page about a specific plant
      */
-    @GetMapping("/plantInformation")
+    @GetMapping("/plant-information")
     public String plantInformationForm(
             @RequestParam(required = false) String q,
             Model model) {

@@ -6,14 +6,17 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantHarvestedDateDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
+import nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.http.HttpStatus;
+import nz.ac.canterbury.seng302.gardenersgrove.service.ThymeLeafDateFormatter;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.NZ_FORMAT_DATE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -32,6 +35,7 @@ class PlantStatusApiControllerTests {
     private PlantService plantService;
 
     private PlantStatusApiController plantStatusApiController;
+    private final ThymeLeafDateFormatter dateFormatter = new ThymeLeafDateFormatter();
 
 
     private Plant plant;
@@ -95,7 +99,7 @@ class PlantStatusApiControllerTests {
         verify(plantService, times(1)).save(any(Plant.class));
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals(harvestedDate, responseBody.get("harvestedDate"));
+        assertEquals(harvestedDate.format(NZ_FORMAT_DATE), responseBody.get("harvestedDate"));
 
     }
 
@@ -135,6 +139,28 @@ class PlantStatusApiControllerTests {
 
         assertEquals(ResponseEntity.badRequest().body(expectedResponse), response);
     }
+
+    @Test
+    void givenHarvestDateBeforePlantedDate_whenUpdateHarvestDate_thenReturnBadResponse() {
+        Long plantId = 1L;
+        PlantHarvestedDateDTO request = new PlantHarvestedDateDTO();
+        request.setHarvestedDate("2021-01-01");
+
+        Plant plant = new Plant();
+        plant.setPlantedDate(LocalDate.of(2021, 1, 2));
+
+        when(plantService.getPlantById(plantId)).thenReturn(Optional.of(plant));
+        when(bindingResult.hasErrors()).thenReturn(false);
+
+        ResponseEntity<Map<String, Object>> response = plantStatusApiController.updateHarvestedDate(plantId, request, bindingResult);
+
+        Map<String, Object> expectedResponse = new HashMap<>();
+        expectedResponse.put("status", "error");
+        expectedResponse.put("errors", List.of("Harvested date must be after planted date"));
+
+        assertEquals(ResponseEntity.badRequest().body(expectedResponse), response);
+    }
+
 
 
 
