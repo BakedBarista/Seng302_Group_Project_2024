@@ -64,10 +64,12 @@ public class WikidataService {
                 String entityId = entityNode.get("id").asText();
                 JsonNode entityMetadata = metadata.get(entityId);
                 if (isSubclassOfGardenPlants(entityMetadata)) {
+                    String label = entityNode.get("label").asText();
+                    String description = entityNode.get("description").asText();
                     String imageUrl = getImageUrl(entityMetadata);
                     PlantInfoDTO plantInfo = new PlantInfoDTO(
-                            entityNode.get("label").asText(),
-                            entityNode.get("description").asText(),
+                            capitalize(label),
+                            capitalize(description),
                             entityId,
                             imageUrl
                     );
@@ -134,5 +136,12 @@ public class WikidataService {
             return "https://commons.wikimedia.org/wiki/Special:FilePath/" + imageFilename;
         }
         return "";
+    }
+
+    private String capitalize(String string) {
+        if (string == null || string.isEmpty()) {
+            return string;
+        }
+        return string.substring(0, 1).toUpperCase() + string.substring(1);
     }
 }
