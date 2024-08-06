@@ -4,7 +4,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Service class for getting similar strings to a given string
@@ -26,7 +25,7 @@ public class StringDistanceService {
         return strings
                 .stream()
                 .filter(string -> isCloseMatch(input.toLowerCase(), string.toLowerCase()))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**

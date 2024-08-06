@@ -11,7 +11,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StringDistanceServiceTest {
+class StringDistanceServiceTest {
 
     private static StringDistanceService stringDistanceService;
 
