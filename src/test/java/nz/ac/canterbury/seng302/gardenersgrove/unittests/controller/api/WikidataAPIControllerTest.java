@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
 
-public class WikidataControllerTest {
+class WikidataAPIControllerTest {
     private WikidataService wikidataService;
     private WikiDataAPIController wikiDataAPIController;
     private ObjectMapper objectMapper;
@@ -28,7 +28,7 @@ public class WikidataControllerTest {
 
     @Test
     void givenPlantExists_whenSearchTomato_thenReturnInformationAndImage() throws Exception {
-        String plantInfo = "[{\"label\":\"Tomato\",\"description\":\"A red fruit\",\"id\":\"Q235\",\"image\":\"https://commons.wikimedia.org/wiki/Special:FilePath/Tomato.jpg\"}]";
+        String plantInfo = "{\"plants\":[{\"label\":\"Tomato\",\"description\":\"A red fruit\",\"id\":\"Q235\",\"image\":\"https://commons.wikimedia.org/wiki/Special:FilePath/Tomato.jpg\"}]}";
         JsonNode plantInfoJson = objectMapper.readTree(plantInfo);
         Mockito.when(wikidataService.getPlantInfo("tomato")).thenReturn(plantInfoJson);
 
@@ -38,11 +38,37 @@ public class WikidataControllerTest {
 
     @Test
     void givenPlantNotExist_whenSearchReturnsNoResults_thenReturnEmptyList() throws Exception {
-        String plantInfo = "[]";
+        String plantInfo = "{\"plants\":[]}";
         JsonNode plantInfoJson = objectMapper.readTree(plantInfo);
         Mockito.when(wikidataService.getPlantInfo("nonexistentplant")).thenReturn(plantInfoJson);
 
         ResponseEntity<JsonNode> response = wikiDataAPIController.searchPlant("nonexistentplant");
         assertEquals(response.getBody(), plantInfoJson);
+    }
+
+    @Test
+    void givenPlantExists_whenAutocompleteTomato_thenReturnInformationAndImage() throws Exception {
+        String plantInfo = "{\"plants\":[{\"label\":\"Tomato\",\"description\":\"A red fruit\",\"id\":\"Q235\",\"image\":\"https://commons.wikimedia.org/wiki/Special:FilePath/Tomato.jpg\"}]}";
+        JsonNode plantInfoJson = objectMapper.readTree(plantInfo);
+        Mockito.when(wikidataService.getPlantInfo("tomato")).thenReturn(plantInfoJson);
+
+        ResponseEntity<JsonNode> response = wikiDataAPIController.searchPlantAutocomplete("tomato");
+
+        String expected = "{\"results\":[{\"label\":\"Tomato\",\"description\":\"A red fruit\",\"id\":\"Q235\",\"image\":\"https://commons.wikimedia.org/wiki/Special:FilePath/Tomato.jpg\"}]}";
+        JsonNode expectedJson = objectMapper.readTree(expected);
+        assertEquals(expectedJson, response.getBody());
+    }
+
+    @Test
+    void givenPlantNotExist_whenAutocompleteReturnsNoResults_thenReturnEmptyList() throws Exception {
+        String plantInfo = "{\"plants\":[]}";
+        JsonNode plantInfoJson = objectMapper.readTree(plantInfo);
+        Mockito.when(wikidataService.getPlantInfo("nonexistentplant")).thenReturn(plantInfoJson);
+
+        ResponseEntity<JsonNode> response = wikiDataAPIController.searchPlantAutocomplete("nonexistentplant");
+
+        String expected = "{\"results\":[]}";
+        JsonNode expectedJson = objectMapper.readTree(expected);
+        assertEquals(expectedJson, response.getBody());
     }
 }

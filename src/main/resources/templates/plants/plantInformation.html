@@ -12,15 +12,16 @@
     <main class="main-container">
         <div class="card p-5">
             <h2 class="mb-3">Search Plants</h2>
-            <form class="input-group w-100" action="#" th:action="@{/plantInformation}" method="get" id="searchForm">
-                <input type="text" class="form-control" placeholder="Search Plant repository" id="searchField"
-                       aria-label="Search Plant repository" aria-describedby="button-addon" name="search" th:value="${previousSearch}">
-                <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="submit" id="button-addon">
+            <form class="input-group d-flex" action="#" th:action="@{/plant-information}" method="get" id="searchForm">
+                <div class="flex-grow-1" id="plant-search-autocomplete-container"></div>
+                <div class="input-group-append d-flex">
+                    <button class="btn btn-outline-secondary d-flex align-items-center" type="submit" id="button-addon">
                         <img th:src="@{/icons/search-icon.svg}" alt="" width="20" height="25" />
                     </button>
                 </div>
             </form>
+            <script th:src="@{/js/autocomplete.js}"></script>
+            <script th:src="@{/js/plantSearchAutocomplete.js}"></script>
         </div>
     </main>
     <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
