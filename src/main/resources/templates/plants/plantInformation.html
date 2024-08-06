@@ -32,7 +32,7 @@
 
 
         <div id="plantCardsContainer" class="container mt-4">
-            <div th:each="plant : ${plants}">
+            <div th:each="plant : ${plants}" id="plantCard">
                 <a class="link-hover plant-result">
                     <h2 th:text="${plant.label}" id="plantCardLabel"></h2>
                 </a>
@@ -70,18 +70,22 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            const plantCard = document.querySelectorAll(".plant-result");
+            const plantCard = document.querySelectorAll("#plantCard");
 
             plantCard.forEach(card => card.addEventListener('click', function (event) {
                 event.preventDefault();
 
-                const modalLabel = document.getElementById('plantCardLabel');
-                const modalDescription = document.getElementById('plantCardDescription');
-                const modalImage = document.getElementById('plantCardImage');
+                const modalLabel = document.getElementById('plantLabel');
+                const modalDescription = document.getElementById('plantDescription');
+                const modalImage = document.getElementById('plantImage');
 
-                modalLabel.textContent = modalLabel.getAttribute('text');
-                // modalDescription.textContent = plant.description || 'No description';
-                // modalImage.src = plant.image || 'No image';
+                const plantCardLabel = card.querySelector('#plantCardLabel');
+                const plantCardDescription = card.querySelector('#plantCardDescription');
+                const plantCardImage = card.querySelector('#plantCardImage');
+
+                modalLabel.textContent = plantCardLabel.textContent;
+                modalDescription.textContent = plantCardDescription.textContent;
+                modalImage.src = plantCardImage.src;
 
                 const modal = new bootstrap.Modal(document.getElementById('plantInfoModal'));
                 modal.show();
