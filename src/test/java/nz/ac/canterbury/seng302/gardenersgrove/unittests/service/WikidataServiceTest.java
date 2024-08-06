@@ -37,7 +37,7 @@ class WikidataServiceTest {
 
         objectMapper = new ObjectMapper();
 
-        wikidataService = new WikidataService(restTemplate, objectMapper, plantService, stringDistanceService);
+        wikidataService = new WikidataService(restTemplate, objectMapper);
     }
 
     @Test
