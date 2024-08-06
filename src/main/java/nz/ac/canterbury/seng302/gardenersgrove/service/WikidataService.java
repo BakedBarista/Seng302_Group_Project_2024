@@ -81,6 +81,19 @@ public class WikidataService {
         return resultNode;
     }
 
+    /**
+     * Send request to API to get similar plants when no results are found
+     * @param plantName plant name to be searched
+     * @return JsonNode with a list of PlantInfoDTOs
+     */
+    public JsonNode getSimilarPlantInfo(String plantName, JsonNode similarPlant) {
+        while (similarPlant.get("plants").isEmpty() && plantName.length() > 1) {
+            plantName = plantName.substring(0, plantName.length() - 1);
+            similarPlant = getPlantInfo(plantName);
+        }
+        return similarPlant;
+    }
+
     private JsonNode readJson(String response) {
         try {
             return objectMapper.readTree(response);
@@ -138,4 +151,6 @@ public class WikidataService {
         }
         return "";
     }
+
+
 }

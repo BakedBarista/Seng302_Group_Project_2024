@@ -54,6 +54,9 @@ public class WikiDataAPIController {
             Thread.currentThread().interrupt();
         }
         JsonNode plantInfo = wikidataService.getPlantInfo(currentValue);
+        if(plantInfo.get("plants").isEmpty()) {
+            plantInfo =wikidataService.getSimilarPlantInfo(currentValue, plantInfo);
+        }
         ObjectNode results = JsonNodeFactory.instance.objectNode();
         results.set("results", plantInfo.get("plants"));
         return ResponseEntity.ok(results);
