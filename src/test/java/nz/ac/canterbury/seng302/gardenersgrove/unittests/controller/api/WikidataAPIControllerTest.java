@@ -59,6 +59,16 @@ class WikidataAPIControllerTest {
     }
 
     @Test
+    void givenExternalServiceException_whenAutoComplete_thenReturnServiceUnavailableMessage() throws ExternalServiceException {
+        when(wikidataService.getPlantInfo("tomato")).thenThrow(new ExternalServiceException("Service unavailable"));
+
+        ResponseEntity<JsonNode> response = wikiDataAPIController.searchPlantAutocomplete("tomato");
+
+        assertEquals(HttpStatus.SERVICE_UNAVAILABLE, response.getStatusCode());
+        assertEquals("{\"error\":\"Plant information service is unavailable at the moment, please try again later\"}", response.getBody().toString());
+    }
+
+    @Test
     void givenPlantExists_whenAutocompleteTomato_thenReturnInformationAndImage() throws Exception {
         String plantInfo = "{\"plants\":[{\"label\":\"Tomato\",\"description\":\"A red fruit\",\"id\":\"Q235\",\"image\":\"https://commons.wikimedia.org/wiki/Special:FilePath/Tomato.jpg\"}]}";
         JsonNode plantInfoJson = objectMapper.readTree(plantInfo);
