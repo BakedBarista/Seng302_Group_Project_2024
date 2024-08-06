@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import nz.ac.canterbury.seng302.gardenersgrove.exceptions.JsonProcessingException;
+import org.springframework.web.util.UriComponentsBuilder;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantInfoDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +15,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,14 +24,14 @@ import java.util.Map;
 
 /**
  * Service for fetching plant information from Wikidata API.
- * 
+ *
  * API Reference: https://www.wikidata.org/w/api.php
  */
 @Service
 public class WikidataService {
 
     Logger logger = LoggerFactory.getLogger(WikidataService.class);
-    private static final String SEARCH_ENDPOINT = "https://www.wikidata.org/w/api.php?action=wbsearchentities&format=json&language=en&type=item&limit=10&search=";
+    private static final String SEARCH_ENDPOINT = "https://www.wikidata.org/w/api.php?action=wbsearchentities&format=json&language=en&type=item&limit=20&search=";
     private static final String ENTITY_ENDPOINT = "https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=";
     //IDs refer to category: Fruit, vegetable, shrub, herb, tree, fruit vegetable, table apple, perennial plant(e.g. catnip), tracheophyta(succulent)
     //This list is not exhaustive as wikidata keeps thousands of different categories of plants
@@ -39,7 +40,10 @@ public class WikidataService {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
-    public WikidataService(RestTemplate restTemplate, ObjectMapper objectMapper) {
+    private static final String SEARCH = "search";
+
+    public WikidataService(RestTemplate restTemplate,
+                           ObjectMapper objectMapper) {
         this.restTemplate = restTemplate;
         this.objectMapper = objectMapper;
     }
@@ -50,7 +54,26 @@ public class WikidataService {
      * @return JsonNode with a list of PlantInfoDTOs
      */
     public JsonNode getPlantInfo(String plantName) {
-        String url = SEARCH_ENDPOINT + UriUtils.encode(plantName, "utf8");
+        List<PlantInfoDTO> plantInfoList = getMatchingPlantInfo(plantName);
+
+        JsonNodeFactory factory = JsonNodeFactory.instance;
+        ObjectNode resultNode = factory.objectNode();
+        resultNode.set("plants", objectMapper.valueToTree(plantInfoList));
+        return resultNode;
+    }
+
+    /**
+     * Get a list of PlantInfoDTOs for a string input
+     * @param plantName string name of plant
+     * @return list of PlantInfoDTOs
+     */
+    public List<PlantInfoDTO> getMatchingPlantInfo(String plantName) {
+        String url = UriComponentsBuilder
+                .fromHttpUrl(SEARCH_ENDPOINT)
+                .queryParam("plantName", plantName)
+                .encode()
+                .toUriString();
+
         logger.info("Sending search request...");
         ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, constructEntity(), String.class);
         String response = responseEntity.getBody();
@@ -58,9 +81,9 @@ public class WikidataService {
         JsonNode jsonNode = readJson(response);
 
         List<PlantInfoDTO> plantInfoList = new ArrayList<>();
-        if (jsonNode.has("search") && !jsonNode.get("search").isEmpty()) {
-            Map<String, JsonNode> metadata = getMetadataForEntities(jsonNode.get("search"));
-            for (JsonNode entityNode : jsonNode.get("search")) {
+        if (jsonNode.has(SEARCH) && !jsonNode.get(SEARCH).isEmpty()) {
+            Map<String, JsonNode> metadata = getMetadataForEntities(jsonNode.get(SEARCH));
+            for (JsonNode entityNode : jsonNode.get(SEARCH)) {
                 String entityId = entityNode.get("id").asText();
                 JsonNode entityMetadata = metadata.get(entityId);
                 if (isSubclassOfGardenPlants(entityMetadata)) {
@@ -75,17 +98,15 @@ public class WikidataService {
                 }
             }
         }
-        JsonNodeFactory factory = JsonNodeFactory.instance;
-        ObjectNode resultNode = factory.objectNode();
-        resultNode.set("plants", objectMapper.valueToTree(plantInfoList));
-        return resultNode;
+
+        return plantInfoList;
     }
 
     private JsonNode readJson(String response) {
         try {
             return objectMapper.readTree(response);
         } catch (IOException e) {
-            throw new RuntimeException("Error processing response", e);
+            throw new JsonProcessingException("Error processing response", e);
         }
     }
 
@@ -138,4 +159,6 @@ public class WikidataService {
         }
         return "";
     }
+
+
 }
