@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant;
+import org.springframework.web.util.UriComponentsBuilder;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantInfoDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +14,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -66,7 +65,12 @@ public class WikidataService {
      * @return list of PlantInfoDTOs
      */
     public List<PlantInfoDTO> getMatchingPlantInfo(String plantName) {
-        String url = SEARCH_ENDPOINT + UriUtils.encode(plantName, "utf8");
+        String url = UriComponentsBuilder
+                .fromHttpUrl(SEARCH_ENDPOINT)
+                .queryParam("plantName", plantName)
+                .encode()
+                .toUriString();
+
         logger.info("Sending search request...");
         ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, constructEntity(), String.class);
         String response = responseEntity.getBody();

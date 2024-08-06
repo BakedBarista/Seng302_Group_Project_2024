@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class LocalPlantDataService {
@@ -52,7 +53,12 @@ public class LocalPlantDataService {
      * @return PlantInfoDTO that matches name (label)
      */
     public PlantInfoDTO getMatchingPlantInfoFromFile(String plantName) {
-        return localPlants.stream().filter(plantInfoDTO -> plantInfoDTO.getLabel().equalsIgnoreCase(plantName)).findFirst().get();
+        Optional<PlantInfoDTO> plant = localPlants
+                .stream()
+                .filter(plantInfoDTO -> plantInfoDTO.getLabel().equalsIgnoreCase(plantName))
+                .findFirst();
+
+        return plant.orElse(null);
     }
 
     /**
