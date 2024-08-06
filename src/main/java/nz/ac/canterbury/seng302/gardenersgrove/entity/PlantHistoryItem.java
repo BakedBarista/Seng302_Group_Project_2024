@@ -1,16 +1,9 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
-import java.time.LocalDate;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
+
+import java.time.LocalDate;
 
 /**
  * Item in the plant history table. History items are created by the user to
@@ -33,10 +26,10 @@ public class PlantHistoryItem {
     @Column(nullable = true, length = 512)
     protected String description;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String imageContentType;
 
-    @Column(nullable = false, columnDefinition = "MEDIUMBLOB")
+    @Column(nullable = true, columnDefinition = "MEDIUMBLOB")
     @Lob
     private byte[] image;
 

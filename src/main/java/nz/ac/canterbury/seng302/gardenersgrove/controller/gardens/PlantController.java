@@ -23,6 +23,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant.PlantStatus.HARVESTED;
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.NZ_FORMAT_DATE;
@@ -37,7 +38,8 @@ public class PlantController {
     private final GardenUserService gardenUserService;
     private final GardenService gardenService;
     private final PlantHistoryService plantHistoryService;
-
+    private static final Set<String> ACCEPTED_FILE_TYPES = Set.of("image/jpeg", "image/jpg", "image/png", "image/svg", "image/svg+xml");
+    private static final int MAX_FILE_SIZE = 10 * 1024 * 1024;
     private static final String PLANT_SUCCESSFULLY_SAVED_LOG = "Saved new plant to Garden ID: {}";
     private static final String PLANT_UNSUCCESSFULLY_SAVED_LOG = "Failed to save new plant to garden ID: {}";
     private static final String GARDEN_ID = "gardenId";
@@ -273,7 +275,7 @@ public class PlantController {
         GardenUser owner = gardenUserService.getCurrentUser();
         Optional<Garden> garden = gardenService.getGardenById(gardenId);
         if (!garden.isPresent() || !garden.get().getOwner().getId().equals(owner.getId())) {
-            return "/error/accessDenied";
+            return "error/accessDenied";
         }
 
         Optional<Plant> existingPlant = plantService.getPlantById(plantId);
@@ -324,10 +326,12 @@ public class PlantController {
         Optional<Plant> existingPlant = plantService.getPlantById(plantId);
 
         if (existingPlant.isPresent()){
-
             try {
-                plantHistoryService.addHistoryItem(existingPlant.get(), file.getContentType(), file.getBytes(), description);
+                boolean validImage = ACCEPTED_FILE_TYPES.contains(file.getContentType()) && (file.getSize() <= MAX_FILE_SIZE);
 
+                if (!file.isEmpty() && validImage) {
+                    plantHistoryService.addHistoryItem(existingPlant.get(), file.getContentType(), file.getBytes(), description);
+                }
             } catch (IOException e) {
                 logger.info("Exception {}",e.toString());
             }

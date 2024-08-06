@@ -1,14 +1,14 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
-import java.time.Clock;
-import java.time.LocalDate;
-import java.util.*;
-
-import org.springframework.stereotype.Service;
-
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.PlantHistoryItem;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantHistoryRepository;
+import org.springframework.stereotype.Service;
+
+import java.time.Clock;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Service to access plant history items
@@ -71,8 +71,5 @@ public class PlantHistoryService {
      */
     public Optional<PlantHistoryItem> getPlantHistoryById(Long id) {
         return plantHistoryRepository.findById(id);
-
     }
-
-
 }
