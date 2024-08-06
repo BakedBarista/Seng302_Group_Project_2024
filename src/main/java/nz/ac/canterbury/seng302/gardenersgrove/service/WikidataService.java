@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantInfoDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,10 +39,12 @@ public class WikidataService {
 
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
+    private final PlantService plantService;
 
-    public WikidataService(RestTemplate restTemplate, ObjectMapper objectMapper) {
+    public WikidataService(RestTemplate restTemplate, ObjectMapper objectMapper, PlantService plantService) {
         this.restTemplate = restTemplate;
         this.objectMapper = objectMapper;
+        this.plantService = plantService;
     }
 
     /**
@@ -50,6 +53,20 @@ public class WikidataService {
      * @return JsonNode with a list of PlantInfoDTOs
      */
     public JsonNode getPlantInfo(String plantName) {
+        List<PlantInfoDTO> plantInfoList = getMatchingPlantInfo(plantName);
+
+        JsonNodeFactory factory = JsonNodeFactory.instance;
+        ObjectNode resultNode = factory.objectNode();
+        resultNode.set("plants", objectMapper.valueToTree(plantInfoList));
+        return resultNode;
+    }
+
+    /**
+     * Get a list of PlantInfoDTOs for a string input
+     * @param plantName string name of plant
+     * @return list of PlantInfoDTOs
+     */
+    public List<PlantInfoDTO> getMatchingPlantInfo(String plantName) {
         String url = SEARCH_ENDPOINT + UriUtils.encode(plantName, "utf8");
         logger.info("Sending search request...");
         ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, constructEntity(), String.class);
@@ -75,23 +92,34 @@ public class WikidataService {
                 }
             }
         }
-        JsonNodeFactory factory = JsonNodeFactory.instance;
-        ObjectNode resultNode = factory.objectNode();
-        resultNode.set("plants", objectMapper.valueToTree(plantInfoList));
-        return resultNode;
+
+        return plantInfoList;
     }
 
     /**
      * Send request to API to get similar plants when no results are found
-     * @param plantName plant name to be searched
+     * @param userSearch plant name to be searched
      * @return JsonNode with a list of PlantInfoDTOs
      */
-    public JsonNode getSimilarPlantInfo(String plantName, JsonNode similarPlant) {
-        while (similarPlant.get("plants").isEmpty() && plantName.length() > 1) {
-            plantName = plantName.substring(0, plantName.length() - 1);
-            similarPlant = getPlantInfo(plantName);
+    public JsonNode getSimilarPlantInfo(String userSearch) {
+        List<String> plantNames = plantService
+                .getAllPlants()
+                .stream()
+                .map(BasePlant::getName)
+                .filter(plantName -> plantName.length() < 10)
+                .distinct()
+                .toList();
+        List<String> similarPlantNames = StringDistanceService.getSimilarStrings(plantNames, userSearch);
+        ArrayList<PlantInfoDTO> plantInfoList = new ArrayList<>();
+
+        for (String similarPlantName : similarPlantNames) {
+            plantInfoList.addAll(getMatchingPlantInfo(similarPlantName));
         }
-        return similarPlant;
+
+        JsonNodeFactory factory = JsonNodeFactory.instance;
+        ObjectNode resultNode = factory.objectNode();
+        resultNode.set("plants", objectMapper.valueToTree(plantInfoList));
+        return resultNode;
     }
 
     private JsonNode readJson(String response) {

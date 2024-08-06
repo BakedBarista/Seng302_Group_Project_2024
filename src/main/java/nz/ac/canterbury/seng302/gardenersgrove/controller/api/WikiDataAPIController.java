@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Handles fetching plant data from WikiData API
+ */
 @RestController
 @RequestMapping("/api")
 public class WikiDataAPIController {
@@ -55,7 +58,7 @@ public class WikiDataAPIController {
         }
         JsonNode plantInfo = wikidataService.getPlantInfo(currentValue);
         if(plantInfo.get("plants").isEmpty()) {
-            plantInfo =wikidataService.getSimilarPlantInfo(currentValue, plantInfo);
+            plantInfo =wikidataService.getSimilarPlantInfo(currentValue);
         }
         ObjectNode results = JsonNodeFactory.instance.objectNode();
         results.set("results", plantInfo.get("plants"));
