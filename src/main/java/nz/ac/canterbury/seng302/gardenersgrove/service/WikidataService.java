@@ -13,11 +13,19 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+/**
+ * Service for fetching plant information from Wikidata API.
+ * 
+ * API Reference: https://www.wikidata.org/w/api.php
+ */
 @Service
 public class WikidataService {
 
@@ -42,20 +50,21 @@ public class WikidataService {
      * @return JsonNode with a list of PlantInfoDTOs
      */
     public JsonNode getPlantInfo(String plantName) {
-        String url = SEARCH_ENDPOINT + plantName;
+        String url = SEARCH_ENDPOINT + UriUtils.encode(plantName, "utf8");
         logger.info("Sending search request...");
         ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, constructEntity(), String.class);
         String response = responseEntity.getBody();
-        logger.info("{}", response);
 
         JsonNode jsonNode = readJson(response);
 
         List<PlantInfoDTO> plantInfoList = new ArrayList<>();
         if (jsonNode.has("search") && !jsonNode.get("search").isEmpty()) {
+            Map<String, JsonNode> metadata = getMetadataForEntities(jsonNode.get("search"));
             for (JsonNode entityNode : jsonNode.get("search")) {
                 String entityId = entityNode.get("id").asText();
-                if (isSubclassOfGardenPlants(entityId)) {
-                    String imageUrl = getImageUrl(entityId);
+                JsonNode entityMetadata = metadata.get(entityId);
+                if (isSubclassOfGardenPlants(entityMetadata)) {
+                    String imageUrl = getImageUrl(entityMetadata);
                     PlantInfoDTO plantInfo = new PlantInfoDTO(
                             entityNode.get("label").asText(),
                             entityNode.get("description").asText(),
@@ -85,12 +94,29 @@ public class WikidataService {
         headers.set("User-Agent", "Gardener's Grove/0.0; https://csse-seng302-team800.canterbury.ac.nz/prod/; team800.garden@gmail.com");
         return new HttpEntity<>(headers);
     }
-    private boolean isSubclassOfGardenPlants(String entityId) {
-        String url = ENTITY_ENDPOINT + entityId;
+
+    private Map<String, JsonNode> getMetadataForEntities(JsonNode entities) {
+        List<String> entityIds = new ArrayList<>(entities.size());
+        for (JsonNode entityNode : entities) {
+            String entityId = entityNode.get("id").asText();
+            entityIds.add(entityId);
+        }
+
+        // Fetch entity metadata in bulk to reduce number of requests
+        String url = ENTITY_ENDPOINT + String.join("|", entityIds);
         ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, constructEntity(), String.class);
         String response = responseEntity.getBody();
-        JsonNode jsonNode = readJson(response);
-        JsonNode claims = jsonNode.path("entities").path(entityId).path("claims").path("P279"); // P279 is the property for subclass of
+        JsonNode entityMetadata = readJson(response).get("entities");
+
+        Map<String, JsonNode> metadata = new HashMap<>();
+        for (String entityId : entityIds) {
+            metadata.put(entityId, entityMetadata.get(entityId));
+        }
+        return metadata;
+    }
+
+    private boolean isSubclassOfGardenPlants(JsonNode entityMetadata) {
+        JsonNode claims = entityMetadata.path("claims").path("P279"); // P279 is the property for subclass of
 
         if (claims.isArray()) {
             for (JsonNode claim : claims) {
@@ -104,12 +130,8 @@ public class WikidataService {
         return false;
     }
 
-    private String getImageUrl(String entityId) {
-        String url = ENTITY_ENDPOINT + entityId;
-        ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, constructEntity(), String.class);
-        String response = responseEntity.getBody();
-        JsonNode jsonNode = readJson(response);
-        JsonNode claims = jsonNode.path("entities").path(entityId).path("claims").path("P18");
+    private String getImageUrl(JsonNode entityMetadata) {
+        JsonNode claims = entityMetadata.path("claims").path("P18");
         if (claims.isArray() && !claims.isEmpty()) {
             String imageFilename = claims.get(0).path("mainsnak").path("datavalue").path("value").asText();
             return "https://commons.wikimedia.org/wiki/Special:FilePath/" + imageFilename;
