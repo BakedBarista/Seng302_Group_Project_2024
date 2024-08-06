@@ -21,8 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class U800PublicProfileFeature {
@@ -62,6 +61,8 @@ public class U800PublicProfileFeature {
     );
 
     MultipartFile invaildBanner;
+    MultipartFile invalidProfile;
+
     @BeforeAll
     public static void beforeAll() {
         userRepository = mock(GardenUserRepository.class);
@@ -135,4 +136,45 @@ public class U800PublicProfileFeature {
          assertNotEquals(user.getProfileBanner(), banner.getBytes());
      }
 
+    @When("I submit a file that is not either a png, jpg or svg")
+    public void iSubmitAFileThatIsNotEitherAPngJpgOrSvg() {
+        invaildBanner = new MockMultipartFile(
+                "bannerImage",
+                "newBanner.pdf",
+                "image/pdf",
+                "banner content".getBytes()
+        );
+    }
+
+
+    @Then("the banner is not submitted")
+    public void theBannerIsNotSubmitted() throws IOException {
+        when(authentication.getPrincipal()).thenReturn(1L);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(bindingResult.hasFieldErrors("description")).thenReturn(false);
+        publicProfileController.publicProfileEditSubmit(authentication, profilePic, invaildBanner, validDescription, editUserDTO, bindingResult, model);
+        assertNull(user.getProfileBanner());
+    }
+
+
+    @Then("the profile picture is not submitted")
+    public void theProfilePictureIsNotSubmitted() throws IOException {
+        when(authentication.getPrincipal()).thenReturn(1L);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(bindingResult.hasFieldErrors("description")).thenReturn(false);
+        publicProfileController.publicProfileEditSubmit(authentication, invalidProfile, banner, validDescription, editUserDTO, bindingResult, model);
+        assertNull(user.getProfilePicture());
+    }
+
+    @When("I submit a valid file with a size thats to large")
+    public void iSubmitAValidFileWithASizeThatsToLarge() {
+        int size = 10 * 1024 * 1024 + 1;
+        byte[] largeContent = new byte[size];
+        invalidProfile = new MockMultipartFile(
+                "bannerImage",
+                "newBanner.pdf",
+                "image/pdf",
+                largeContent
+        );
+    }
 }

@@ -20,8 +20,15 @@ Feature: U800.1.1 As Lei, I want to personalise and customise my profile page to
         When I choose a new, valid cover photo
         Then the photo displays on my profile
 
+    Scenario: AC5 - profile banner of wrong file type
+        When I submit a file that is not either a png, jpg or svg
+        Then the banner is not submitted
 
-    Scenario: AC5 - previous profile banner overwritten
+    Scenario: AC6 - profile picture file too large
+        When I submit a valid file with a size thats to large
+        Then the profile picture is not submitted
+
+    Scenario: AC7 - previous profile banner overwritten
         Given I have a current cover photo
         When I choose a new, valid cover photo
         And I click "Submit"

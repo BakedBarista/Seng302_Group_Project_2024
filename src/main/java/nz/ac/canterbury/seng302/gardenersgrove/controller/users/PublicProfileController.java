@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Set;
 
 @Controller
 public class PublicProfileController {
@@ -30,6 +31,9 @@ public class PublicProfileController {
     
     private static final String USER_ID_ATTRIBUTE = "userId";
 
+    private static final Set<String> ACCEPTED_FILE_TYPES = Set.of("image/jpeg", "image/jpg", "image/png", "image/svg");
+
+    private static final int MAX_FILE_SIZE = 10 * 1024 * 1024;
     @Autowired
     public PublicProfileController(GardenUserService userService) {
         this.userService = userService;
@@ -123,6 +127,7 @@ public class PublicProfileController {
         editProfileBanner(userId, banner);
 
         user.setDescription(description);
+
         userService.addUser(user);
 
         return "redirect:/users/public-profile";
@@ -136,7 +141,7 @@ public class PublicProfileController {
     
      public void editProfilePicture(Long userId, MultipartFile file) throws IOException{
         logger.info("POST /users/profile-picture");
-        if(file.getSize() != 0){
+        if(file.getSize() != 0 && validateImage(file)){
             userService.setProfilePicture(userId, file.getContentType(), file.getBytes());
         }
     }
@@ -150,8 +155,21 @@ public class PublicProfileController {
     
      public void editProfileBanner(Long userId, MultipartFile file) throws IOException{
         logger.info("POST /users/edit-banner-picture");
-        if(file.getSize() != 0){
+        logger.info("" + validateImage(file));
+        if(file.getSize() != 0 && validateImage(file)){
             userService.setProfileBanner(userId, file.getContentType(), file.getBytes());
         }
     }
+
+    /**
+     * Validate an image on the server side to be > 10MB
+     * and a valid file type (png, svg, jpg, jpeg
+     * @param plantImage image to be validated
+     * @return true if it is valid
+     */
+    public boolean validateImage(MultipartFile plantImage) {
+        return ACCEPTED_FILE_TYPES.contains(plantImage.getContentType())
+                && (plantImage.getSize() <= MAX_FILE_SIZE);
+    }
+    
 }
