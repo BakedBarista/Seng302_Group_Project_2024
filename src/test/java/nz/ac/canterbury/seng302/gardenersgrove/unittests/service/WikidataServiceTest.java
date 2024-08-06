@@ -93,20 +93,14 @@ class WikidataServiceTest {
     @Test
     void givenExternalServiceException_whenGetPlantInfo_thenReturnErrorMessage() throws ExternalServiceException, JsonProcessingException {
         String plantName = "tomato";
-        String searchResponse = "{\"search\":[{\"id\":\"Q235\",\"label\":\"Tomato\",\"description\":\"A red fruit\"}]}";
-        ResponseEntity<String> searchEntity = ResponseEntity.ok(searchResponse);
         when(restTemplate.exchange(Mockito.contains("wbsearchentities"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
-                .thenReturn(searchEntity);
-
-        when(restTemplate.exchange(Mockito.contains("wbgetentities"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
                 .thenThrow(new RuntimeException("Service unavailable"));
 
-        JsonNode result = wikidataService.getPlantInfo(plantName);
+        ExternalServiceException exception = assertThrows(ExternalServiceException.class, () -> {
+            wikidataService.getPlantInfo(plantName);
+        });
 
-        String expected = "{\"error\":\"Plant information service unavailable, please try again later\"}";
-        JsonNode expectedJson = objectMapper.readTree(expected);
-
-        assertEquals(expectedJson, result);
+        assertEquals("Unable to fetch plant info from Wikidata", exception.getMessage());
     }
 
 

@@ -30,9 +30,6 @@ class WikidataAPIControllerTest {
     void givenPlantExists_whenSearchTomato_thenReturnInformationAndImage() throws Exception {
         JsonNode plantInfoJson = objectMapper.readTree("{\"plants\":[{\"label\":\"Tomato\",\"description\":\"A red fruit\",\"id\":\"Q235\",\"image\":\"https://commons.wikimedia.org/wiki/Special:FilePath/Tomato.jpg\"}]}");
         when(wikidataService.getPlantInfo("tomato")).thenReturn(plantInfoJson);
-        String plantInfo = "{\"plants\":[{\"label\":\"Tomato\",\"description\":\"A red fruit\",\"id\":\"Q235\",\"image\":\"https://commons.wikimedia.org/wiki/Special:FilePath/Tomato.jpg\"}]}";
-        JsonNode plantInfoJson = objectMapper.readTree(plantInfo);
-        Mockito.when(wikidataService.getPlantInfo("tomato")).thenReturn(plantInfoJson);
 
         ResponseEntity<JsonNode> response = wikiDataAPIController.searchPlant("tomato");
 
@@ -44,9 +41,6 @@ class WikidataAPIControllerTest {
     void givenPlantNotExist_whenSearchReturnsNoResults_thenReturnEmptyList() throws Exception {
         JsonNode plantInfoJson = objectMapper.readTree("{\"plants\":[]}");
         when(wikidataService.getPlantInfo("nonexistentplant")).thenReturn(plantInfoJson);
-        String plantInfo = "{\"plants\":[]}";
-        JsonNode plantInfoJson = objectMapper.readTree(plantInfo);
-        Mockito.when(wikidataService.getPlantInfo("nonexistentplant")).thenReturn(plantInfoJson);
 
         ResponseEntity<JsonNode> response = wikiDataAPIController.searchPlant("nonexistentplant");
 
@@ -68,7 +62,7 @@ class WikidataAPIControllerTest {
     void givenPlantExists_whenAutocompleteTomato_thenReturnInformationAndImage() throws Exception {
         String plantInfo = "{\"plants\":[{\"label\":\"Tomato\",\"description\":\"A red fruit\",\"id\":\"Q235\",\"image\":\"https://commons.wikimedia.org/wiki/Special:FilePath/Tomato.jpg\"}]}";
         JsonNode plantInfoJson = objectMapper.readTree(plantInfo);
-        Mockito.when(wikidataService.getPlantInfo("tomato")).thenReturn(plantInfoJson);
+        when(wikidataService.getPlantInfo("tomato")).thenReturn(plantInfoJson);
 
         ResponseEntity<JsonNode> response = wikiDataAPIController.searchPlantAutocomplete("tomato");
 
@@ -81,7 +75,7 @@ class WikidataAPIControllerTest {
     void givenPlantNotExist_whenAutocompleteReturnsNoResults_thenReturnEmptyList() throws Exception {
         String plantInfo = "{\"plants\":[]}";
         JsonNode plantInfoJson = objectMapper.readTree(plantInfo);
-        Mockito.when(wikidataService.getPlantInfo("nonexistentplant")).thenReturn(plantInfoJson);
+        when(wikidataService.getPlantInfo("nonexistentplant")).thenReturn(plantInfoJson);
 
         ResponseEntity<JsonNode> response = wikiDataAPIController.searchPlantAutocomplete("nonexistentplant");
 

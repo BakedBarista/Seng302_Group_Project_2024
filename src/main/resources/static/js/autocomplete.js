@@ -116,7 +116,12 @@ function autocomplete(containerElement, callback, options) {
                         } else {
                             response.json().then(data => reject(data));
                         }
+                    }).catch(() => {
+                    reject({
+                        status: 503,
+                        message: "Service is unavailable, please try again later."
                     });
+                });
             }, DEBOUNCE_DELAY);
         });
 
@@ -167,6 +172,17 @@ function autocomplete(containerElement, callback, options) {
             }
         }, (err) => {
             if (!err.cancelled) {
+                const autocompleteItemsElement = document.createElement("div");
+                autocompleteItemsElement.className = "autocomplete-items";
+                inputContainerElement.appendChild(autocompleteItemsElement);
+
+                const errorMessage = document.createElement("div");
+                if (err.status === 503) {
+                    errorMessage.innerHTML = err.message;
+                } else {
+                    errorMessage.innerHTML = "Plant information service is unavailable at the moment, please try again later";
+                }
+                autocompleteItemsElement.appendChild(errorMessage);
                 console.log(err);
             }
         });

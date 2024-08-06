@@ -63,9 +63,14 @@ public class WikiDataAPIController {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
-        JsonNode plantInfo = wikidataService.getPlantInfo(currentValue);
-        ObjectNode results = JsonNodeFactory.instance.objectNode();
-        results.set("results", plantInfo.get("plants"));
-        return ResponseEntity.ok(results);
+        try {
+            JsonNode plantInfo = wikidataService.getPlantInfo(currentValue);
+            ObjectNode results = JsonNodeFactory.instance.objectNode();
+            results.set("results", plantInfo.get("plants"));
+            return ResponseEntity.ok(results);
+        } catch (ExternalServiceException e) {
+            JsonNode errorMessage = objectMapper.createObjectNode().put("error", "Plant information service is unavailable at the moment, please try again later");
+            return ResponseEntity.status(503).body(errorMessage);
+        }
     }
 }

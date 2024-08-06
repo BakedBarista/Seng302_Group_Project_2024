@@ -68,7 +68,6 @@ public class WikidataService {
             Map<String, JsonNode> metadata = getMetadataForEntities(jsonNode.get("search"));
             for (JsonNode entityNode : jsonNode.get("search")) {
                 String entityId = entityNode.get("id").asText();
-                try {
                 JsonNode entityMetadata = metadata.get(entityId);
                 if (isSubclassOfGardenPlants(entityMetadata)) {
                     String imageUrl = getImageUrl(entityMetadata);
@@ -79,12 +78,6 @@ public class WikidataService {
                             imageUrl
                     );
                     plantInfoList.add(plantInfo);
-                }
-            } catch (ExternalServiceException e) {
-                    JsonNodeFactory factory = JsonNodeFactory.instance;
-                    ObjectNode resultNode = factory.objectNode();
-                    resultNode.put("error", "Plant information service unavailable, please try again later");
-                    return resultNode;
                 }
             }
         }
@@ -108,7 +101,7 @@ public class WikidataService {
         return new HttpEntity<>(headers);
     }
 
-    private Map<String, JsonNode> getMetadataForEntities(JsonNode entities) {
+    private Map<String, JsonNode> getMetadataForEntities(JsonNode entities) throws ExternalServiceException {
         List<String> entityIds = new ArrayList<>(entities.size());
         for (JsonNode entityNode : entities) {
             String entityId = entityNode.get("id").asText();
@@ -117,7 +110,12 @@ public class WikidataService {
 
         // Fetch entity metadata in bulk to reduce number of requests
         String url = ENTITY_ENDPOINT + String.join("|", entityIds);
-        ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, constructEntity(), String.class);
+        ResponseEntity<String> responseEntity;
+        try {
+            responseEntity = restTemplate.exchange(url, HttpMethod.GET, constructEntity(), String.class);
+        } catch (Exception e) {
+            throw new ExternalServiceException("Unable to fetch entity info from Wikidata");
+        }
         String response = responseEntity.getBody();
         JsonNode entityMetadata = readJson(response).get("entities");
 
