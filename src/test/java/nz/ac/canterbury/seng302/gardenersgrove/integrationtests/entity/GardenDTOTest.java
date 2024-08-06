@@ -529,4 +529,10 @@ class GardenDTOTest {
         garden.getTags().addAll(tags("tag1", "tag2"));
         assertEquals("tag1,tag2", garden.getTagsString());
     }
+
+    @Test
+    void givenUniqueToken_whenSettingToken_thenTokenSaved() {
+        garden.setSubmissionToken("NewToken");
+        assertTrue(validator.validate(garden).isEmpty());
+    }
 }
