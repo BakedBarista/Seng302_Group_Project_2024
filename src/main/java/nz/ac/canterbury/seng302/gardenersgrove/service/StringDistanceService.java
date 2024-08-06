@@ -11,7 +11,7 @@ import java.util.List;
 @Service
 public class StringDistanceService {
 
-    private static final Integer DISTANCE_THRESHOLD = 3;
+    private static final Integer DISTANCE_THRESHOLD = 4;
 
     /**
      * Take a list of strings and return a list of strings that are similar to the input string
@@ -19,7 +19,7 @@ public class StringDistanceService {
      * @param input input string
      * @return list of strings that are similar to input
      */
-    public static List<String> getSimilarStrings(List<String> strings, String input) {
+    public List<String> getSimilarStrings(List<String> strings, String input) {
         List<String> closeStrings = new ArrayList<>();
 
         for (String string : strings) {

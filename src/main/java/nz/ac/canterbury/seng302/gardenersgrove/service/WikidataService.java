@@ -24,14 +24,14 @@ import java.util.Map;
 
 /**
  * Service for fetching plant information from Wikidata API.
- * 
+ *
  * API Reference: https://www.wikidata.org/w/api.php
  */
 @Service
 public class WikidataService {
 
     Logger logger = LoggerFactory.getLogger(WikidataService.class);
-    private static final String SEARCH_ENDPOINT = "https://www.wikidata.org/w/api.php?action=wbsearchentities&format=json&language=en&type=item&limit=10&search=";
+    private static final String SEARCH_ENDPOINT = "https://www.wikidata.org/w/api.php?action=wbsearchentities&format=json&language=en&type=item&limit=20&search=";
     private static final String ENTITY_ENDPOINT = "https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=";
     //IDs refer to category: Fruit, vegetable, shrub, herb, tree, fruit vegetable, table apple, perennial plant(e.g. catnip), tracheophyta(succulent)
     //This list is not exhaustive as wikidata keeps thousands of different categories of plants
@@ -39,12 +39,11 @@ public class WikidataService {
 
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
-    private final PlantService plantService;
 
-    public WikidataService(RestTemplate restTemplate, ObjectMapper objectMapper, PlantService plantService) {
+    public WikidataService(RestTemplate restTemplate,
+                           ObjectMapper objectMapper) {
         this.restTemplate = restTemplate;
         this.objectMapper = objectMapper;
-        this.plantService = plantService;
     }
 
     /**
@@ -94,32 +93,6 @@ public class WikidataService {
         }
 
         return plantInfoList;
-    }
-
-    /**
-     * Send request to API to get similar plants when no results are found
-     * @param userSearch plant name to be searched
-     * @return JsonNode with a list of PlantInfoDTOs
-     */
-    public JsonNode getSimilarPlantInfo(String userSearch) {
-        List<String> plantNames = plantService
-                .getAllPlants()
-                .stream()
-                .map(BasePlant::getName)
-                .filter(plantName -> plantName.length() < 10)
-                .distinct()
-                .toList();
-        List<String> similarPlantNames = StringDistanceService.getSimilarStrings(plantNames, userSearch);
-        ArrayList<PlantInfoDTO> plantInfoList = new ArrayList<>();
-
-        for (String similarPlantName : similarPlantNames) {
-            plantInfoList.addAll(getMatchingPlantInfo(similarPlantName));
-        }
-
-        JsonNodeFactory factory = JsonNodeFactory.instance;
-        ObjectNode resultNode = factory.objectNode();
-        resultNode.set("plants", objectMapper.valueToTree(plantInfoList));
-        return resultNode;
     }
 
     private JsonNode readJson(String response) {

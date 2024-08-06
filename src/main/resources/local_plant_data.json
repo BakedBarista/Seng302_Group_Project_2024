@@ -1,0 +1,598 @@
+[
+  {
+    "label": "Tomato",
+    "description": "A popular garden vegetable known for its juicy, red fruit."
+  },
+  {
+    "label": "Cucumber",
+    "description": "A vining plant producing long, green fruits."
+  },
+  {
+    "label": "Bell Pepper",
+    "description": "A versatile vegetable with sweet, colorful fruit."
+  },
+  {
+    "label": "Carrot",
+    "description": "A root vegetable known for its crunchy, orange taproot."
+  },
+  {
+    "label": "Lettuce",
+    "description": "A leafy green vegetable used in salads."
+  },
+  {
+    "label": "Spinach",
+    "description": "A leafy green vegetable rich in iron and vitamins."
+  },
+  {
+    "label": "Zucchini",
+    "description": "A summer squash with tender, green skin."
+  },
+  {
+    "label": "Strawberry",
+    "description": "A sweet, red fruit often grown in home gardens."
+  },
+  {
+    "label": "Blueberry",
+    "description": "A small, sweet, blue fruit often grown on shrubs."
+  },
+  {
+    "label": "Raspberry",
+    "description": "A sweet, red or black fruit grown on bramble bushes."
+  },
+  {
+    "label": "Pumpkin",
+    "description": "A large, orange fruit often used for pies and decorations."
+  },
+  {
+    "label": "Watermelon",
+    "description": "A large, juicy fruit with a green rind and red flesh."
+  },
+  {
+    "label": "Eggplant",
+    "description": "A glossy, purple fruit used in various culinary dishes."
+  },
+  {
+    "label": "Broccoli",
+    "description": "A green vegetable with a large flowering head."
+  },
+  {
+    "label": "Cauliflower",
+    "description": "A white vegetable with a large flowering head."
+  },
+  {
+    "label": "Green Beans",
+    "description": "A vegetable with long, slender pods."
+  },
+  {
+    "label": "Peas",
+    "description": "A legume with sweet, green seeds inside a pod."
+  },
+  {
+    "label": "Radish",
+    "description": "A root vegetable with a peppery flavor."
+  },
+  {
+    "label": "Beet",
+    "description": "A root vegetable known for its deep red color."
+  },
+  {
+    "label": "Kale",
+    "description": "A leafy green vegetable known for its nutritional value."
+  },
+  {
+    "label": "Swiss Chard",
+    "description": "A leafy green with colorful stems."
+  },
+  {
+    "label": "Cabbage",
+    "description": "A leafy green vegetable with a dense head."
+  },
+  {
+    "label": "Onion",
+    "description": "A bulb vegetable with a strong flavor and aroma."
+  },
+  {
+    "label": "Garlic",
+    "description": "A bulb vegetable known for its pungent flavor."
+  },
+  {
+    "label": "Potato",
+    "description": "A starchy tuber vegetable."
+  },
+  {
+    "label": "Sweet Potato",
+    "description": "A sweet, orange-fleshed tuber."
+  },
+  {
+    "label": "Corn",
+    "description": "A tall plant producing ears of sweet kernels."
+  },
+  {
+    "label": "Peach",
+    "description": "A sweet, juicy fruit with fuzzy skin."
+  },
+  {
+    "label": "Apple",
+    "description": "A popular fruit known for its crisp texture and sweet flavor."
+  },
+  {
+    "label": "Cherry",
+    "description": "A small, sweet or tart fruit with a pit."
+  },
+  {
+    "label": "Pear",
+    "description": "A sweet, juicy fruit with a grainy texture."
+  },
+  {
+    "label": "Plum",
+    "description": "A sweet, juicy fruit with smooth skin and a pit."
+  },
+  {
+    "label": "Apricot",
+    "description": "A small, sweet fruit with a velvety skin."
+  },
+  {
+    "label": "Grape",
+    "description": "A small, sweet fruit often grown in clusters on vines."
+  },
+  {
+    "label": "Orange",
+    "description": "A citrus fruit known for its sweet, juicy segments."
+  },
+  {
+    "label": "Lemon",
+    "description": "A citrus fruit with a tart, acidic flavor."
+  },
+  {
+    "label": "Lime",
+    "description": "A small, green citrus fruit with a tart flavor."
+  },
+  {
+    "label": "Herbs",
+    "description": "Common garden herbs include basil, parsley, thyme, and rosemary."
+  },
+  {
+    "label": "Celery",
+    "description": "A crunchy vegetable with long, fibrous stalks."
+  },
+  {
+    "label": "Asparagus",
+    "description": "A perennial vegetable known for its tender shoots."
+  },
+  {
+    "label": "Artichoke",
+    "description": "A thistle-like plant with edible flower buds."
+  },
+  {
+    "label": "Rhubarb",
+    "description": "A vegetable with tart, edible stalks often used in desserts."
+  },
+  {
+    "label": "Mint",
+    "description": "A fragrant herb often used in cooking and beverages."
+  },
+  {
+    "label": "Basil",
+    "description": "A fragrant herb commonly used in cooking."
+  },
+  {
+    "label": "Oregano",
+    "description": "A flavorful herb often used in Mediterranean cuisine."
+  },
+  {
+    "label": "Parsley",
+    "description": "A versatile herb used as a garnish or in cooking."
+  },
+  {
+    "label": "Cilantro",
+    "description": "A pungent herb used in many culinary dishes."
+  },
+  {
+    "label": "Dill",
+    "description": "A fragrant herb often used in pickling and cooking."
+  },
+  {
+    "label": "Rosemary",
+    "description": "A woody herb with needle-like leaves used in cooking."
+  },
+  {
+    "label": "Arugula",
+    "description": "A peppery leafy green often used in salads."
+  },
+  {
+    "label": "Bok Choy",
+    "description": "A type of Chinese cabbage with crunchy stalks and tender leaves."
+  },
+  {
+    "label": "Brussels Sprouts",
+    "description": "Small, leafy green buds that grow along a stalk."
+  },
+  {
+    "label": "Butternut Squash",
+    "description": "A winter squash with sweet, nutty flesh."
+  },
+  {
+    "label": "Cantaloupe",
+    "description": "A sweet melon with orange flesh and a netted rind."
+  },
+  {
+    "label": "Chard",
+    "description": "A leafy green with colorful stems and veins."
+  },
+  {
+    "label": "Collard Greens",
+    "description": "A leafy green vegetable with thick, slightly bitter leaves."
+  },
+  {
+    "label": "Cranberry",
+    "description": "A tart red fruit often used in sauces and juices."
+  },
+  {
+    "label": "Fennel",
+    "description": "A vegetable with a bulbous base and feathery leaves, known for its anise flavor."
+  },
+  {
+    "label": "Gooseberry",
+    "description": "A small, tart fruit often used in desserts and jams."
+  },
+  {
+    "label": "Ginger",
+    "description": "A root vegetable known for its spicy flavor."
+  },
+  {
+    "label": "Grapefruit",
+    "description": "A citrus fruit known for its tangy and slightly bitter flavor."
+  },
+  {
+    "label": "Honeydew Melon",
+    "description": "A sweet melon with pale green flesh and a smooth rind."
+  },
+  {
+    "label": "Horseradish",
+    "description": "A root vegetable used for its pungent flavor in sauces and condiments."
+  },
+  {
+    "label": "Jerusalem Artichoke",
+    "description": "A tuber vegetable also known as sunchoke, with a nutty flavor."
+  },
+  {
+    "label": "Kohlrabi",
+    "description": "A vegetable with a swollen stem that tastes like a mild, sweet turnip."
+  },
+  {
+    "label": "Leek",
+    "description": "A vegetable with a mild onion flavor, often used in soups and stews."
+  },
+  {
+    "label": "Lettuce",
+    "description": "A leafy green vegetable used in salads."
+  },
+  {
+    "label": "Mango",
+    "description": "A sweet tropical fruit with orange flesh and a large pit."
+  },
+  {
+    "label": "Mulberry",
+    "description": "A sweet fruit that grows on trees, similar in appearance to blackberries."
+  },
+  {
+    "label": "Nectarine",
+    "description": "A smooth-skinned variety of peach."
+  },
+  {
+    "label": "Papaya",
+    "description": "A tropical fruit with sweet, orange flesh and black seeds."
+  },
+  {
+    "label": "Parsnip",
+    "description": "A root vegetable similar to a carrot but with a sweeter, nutty flavor."
+  },
+  {
+    "label": "Pawpaw",
+    "description": "A tropical fruit with a custard-like flavor, native to North America."
+  },
+  {
+    "label": "Pea Shoots",
+    "description": "Tender young shoots of the pea plant, often used in salads and stir-fries."
+  },
+  {
+    "label": "Pomegranate",
+    "description": "A fruit with a tough outer skin and sweet, juicy seeds inside."
+  },
+  {
+    "label": "Quince",
+    "description": "A fruit similar to a pear, often used in jams and jellies."
+  },
+  {
+    "label": "Rutabaga",
+    "description": "A root vegetable that is a cross between a cabbage and a turnip."
+  },
+  {
+    "label": "Shallot",
+    "description": "A type of onion with a milder flavor, often used in gourmet cooking."
+  },
+  {
+    "label": "Sorrel",
+    "description": "A leafy green with a tart, lemony flavor."
+  },
+  {
+    "label": "Sugar Snap Peas",
+    "description": "A sweet, edible-pod pea that is eaten whole."
+  },
+  {
+    "label": "Taro",
+    "description": "A starchy root vegetable often used in Asian cuisine."
+  },
+  {
+    "label": "Turnip",
+    "description": "A root vegetable with a slightly peppery flavor."
+  },
+  {
+    "label": "Watercress",
+    "description": "A leafy green with a peppery flavor, often used in salads."
+  },
+  {
+    "label": "Yam",
+    "description": "A starchy tuber similar to a sweet potato, often used in African cuisine."
+  },
+  {
+    "label": "Zucchini",
+    "description": "A summer squash with tender, green skin."
+  },
+  {
+    "label": "Almond",
+    "description": "A nut tree that produces edible seeds known as almonds."
+  },
+  {
+    "label": "Avocado",
+    "description": "A fruit with creamy, green flesh and a large pit, often used in guacamole."
+  },
+  {
+    "label": "Blackberry",
+    "description": "A sweet, dark purple fruit that grows on brambles."
+  },
+  {
+    "label": "Currant",
+    "description": "A small, tart berry often used in jams and jellies."
+  },
+  {
+    "label": "Fig",
+    "description": "A sweet fruit with a soft, chewy texture and tiny seeds."
+  },
+  {
+    "label": "Guava",
+    "description": "A tropical fruit with sweet, fragrant flesh and edible seeds."
+  },
+  {
+    "label": "Hazelnut",
+    "description": "A nut tree that produces edible seeds known as hazelnuts or filberts."
+  },
+  {
+    "label": "Kiwi",
+    "description": "A small, brown fruit with bright green flesh and tiny black seeds."
+  },
+  {
+    "label": "Lime",
+    "description": "A small, green citrus fruit with a tart flavor."
+  },
+  {
+    "label": "Mulberry",
+    "description": "A sweet fruit that grows on trees, similar in appearance to blackberries."
+  },
+  {
+    "label": "Olive",
+    "description": "A fruit tree that produces small, bitter fruits often used to make olive oil."
+  },
+  {
+    "label": "Pecan",
+    "description": "A nut tree that produces edible seeds known as pecans."
+  },
+  {
+    "label": "Pineapple",
+    "description": "A tropical fruit with sweet, juicy flesh and a tough, spiky exterior."
+  },
+  {
+    "label": "Raspberry",
+    "description": "A sweet, red or black fruit grown on bramble bushes."
+  },
+  {
+    "label": "Alfalfa",
+    "description": "A perennial flowering plant often used as forage crop and cover crop."
+  },
+  {
+    "label": "Amaranth",
+    "description": "A group of annual or short-lived perennial plants used for their grains and leaves."
+  },
+  {
+    "label": "Asparagus Pea",
+    "description": "A flowering plant producing small pods that taste like asparagus."
+  },
+  {
+    "label": "Bamboo Shoots",
+    "description": "Young, edible shoots of bamboo plants, often used in Asian cuisine."
+  },
+  {
+    "label": "Bitter Melon",
+    "description": "A tropical and subtropical vine known for its edible, bitter fruit."
+  },
+  {
+    "label": "Broad Bean",
+    "description": "Also known as fava beans, these are large, flat beans eaten fresh or dried."
+  },
+  {
+    "label": "Cassava",
+    "description": "A woody shrub with starchy tuberous roots used as a food staple in tropical regions."
+  },
+  {
+    "label": "Chayote",
+    "description": "A type of squash with edible fruit, leaves, roots, and seeds."
+  },
+  {
+    "label": "Chickpea",
+    "description": "A legume known for its round, beige seeds used in various dishes like hummus."
+  },
+  {
+    "label": "Cress",
+    "description": "A fast-growing, edible herb with a peppery taste, often used in salads."
+  },
+  {
+    "label": "Dandelion",
+    "description": "A common weed with edible leaves and roots, often used in salads and teas."
+  },
+  {
+    "label": "Endive",
+    "description": "A leafy vegetable with a slightly bitter taste, often used in salads."
+  },
+  {
+    "label": "Feijoa",
+    "description": "A fruit-bearing shrub producing sweet, aromatic fruit."
+  },
+  {
+    "label": "Fenugreek",
+    "description": "An herb with edible seeds and leaves, often used in cooking and medicine."
+  },
+  {
+    "label": "Gourd",
+    "description": "A group of plants producing hard-shelled fruits used for decoration or utensils."
+  },
+  {
+    "label": "Hops",
+    "description": "Climbing plants used primarily as a flavoring and stability agent in beer."
+  },
+  {
+    "label": "Hyacinth Bean",
+    "description": "A vine producing colorful flowers and edible beans, often used in Asian cuisine."
+  },
+  {
+    "label": "Jicama",
+    "description": "A root vegetable with a crunchy texture and slightly sweet flavor."
+  },
+  {
+    "label": "Kiwano",
+    "description": "Also known as horned melon, it is a fruit with spiky orange skin and green, jelly-like flesh."
+  },
+  {
+    "label": "Kumquat",
+    "description": "A small, orange-like fruit with sweet skin and tart flesh."
+  },
+  {
+    "label": "Loquat",
+    "description": "A fruit tree producing small, yellow, tangy fruits."
+  },
+  {
+    "label": "Lychee",
+    "description": "A tropical fruit with sweet, white flesh and a rough, reddish skin."
+  },
+  {
+    "label": "Marrow",
+    "description": "A type of summer squash with a mild flavor."
+  },
+  {
+    "label": "Mustard Greens",
+    "description": "A leafy green with a peppery flavor, often used in salads and cooking."
+  },
+  {
+    "label": "Napa Cabbage",
+    "description": "A type of Chinese cabbage with a mild flavor and crunchy texture."
+  },
+  {
+    "label": "Okra",
+    "description": "A green, pod-like vegetable often used in soups and stews."
+  },
+  {
+    "label": "Persimmon",
+    "description": "A sweet, orange fruit that is typically eaten fresh or dried."
+  },
+  {
+    "label": "Pigeon Pea",
+    "description": "A legume used as food and fodder, known for its drought resistance."
+  },
+  {
+    "label": "Purslane",
+    "description": "A succulent plant with edible leaves, often used in salads."
+  },
+  {
+    "label": "Quinoa",
+    "description": "A grain crop grown for its edible seeds, known for its high protein content."
+  },
+  {
+    "label": "Radicchio",
+    "description": "A leafy vegetable with a bitter and spicy taste, often used in salads."
+  },
+  {
+    "label": "Rambutan",
+    "description": "A tropical fruit with hairy skin and sweet, juicy flesh."
+  },
+  {
+    "label": "Red Currant",
+    "description": "A small, tart berry often used in jellies and desserts."
+  },
+  {
+    "label": "Romanesco",
+    "description": "A type of broccoli with a distinct fractal shape and mild flavor."
+  },
+  {
+    "label": "Salsify",
+    "description": "A root vegetable with a flavor similar to oysters."
+  },
+  {
+    "label": "Sea Kale",
+    "description": "A coastal plant with edible leaves and roots, often used in salads and cooking."
+  },
+  {
+    "label": "Seakale",
+    "description": "A perennial plant with edible leaves and flower shoots."
+  },
+  {
+    "label": "Serviceberry",
+    "description": "A shrub producing sweet, edible berries."
+  },
+  {
+    "label": "Sorghum",
+    "description": "A cereal grain used for food, fodder, and the production of alcoholic beverages."
+  },
+  {
+    "label": "Soursop",
+    "description": "A tropical fruit with a sweet and tangy flavor, often used in beverages and desserts."
+  },
+  {
+    "label": "Spaghetti Squash",
+    "description": "A winter squash with stringy flesh that resembles spaghetti when cooked."
+  },
+  {
+    "label": "Tamarillo",
+    "description": "A tree tomato with tangy, sweet-tart flesh."
+  },
+  {
+    "label": "Tomatillo",
+    "description": "A small, green fruit with a papery husk, often used in Mexican cuisine."
+  },
+  {
+    "label": "Turnip Greens",
+    "description": "The leafy tops of turnip plants, often used in cooking."
+  },
+  {
+    "label": "Upland Cress",
+    "description": "A leafy green with a peppery flavor, similar to watercress."
+  },
+  {
+    "label": "Wax Bean",
+    "description": "A type of green bean with a yellow or waxy pod."
+  },
+  {
+    "label": "Winter Squash",
+    "description": "A group of squashes harvested in the fall with hard, thick rinds."
+  },
+  {
+    "label": "Yardlong Bean",
+    "description": "A legume producing long, slender pods, often used in Asian cuisine."
+  },
+  {
+    "label": "Youngberry",
+    "description": "A type of blackberry with sweet, juicy berries."
+  },
+  {
+    "label": "Ziziphus",
+    "description": "A shrub or small tree producing sweet, edible fruits known as jujubes."
+  }
+]
