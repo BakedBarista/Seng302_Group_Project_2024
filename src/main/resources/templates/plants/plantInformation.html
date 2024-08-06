@@ -31,7 +31,7 @@
             <div th:each="plant : ${plants}" id="plantCard" class="mt-4 card p-4">
                 <h2 th:text="${plant.label}" id="plantCardLabel"></h2>
                 <p th:text="${plant.description}" id="plantCardDescription"></p>
-               <img th:src="${plant.image}" id="plantCardImage" style="width: 100%; height: 200px; object-fit: cover;"></img>
+               <img th:src="${plant.image}" alt="Plant image" id="plantCardImage"></img>
             </div>
             <h3 class="text-center" th:if="${plants == null || plants.isEmpty()}">Cannot find the plant you entered</h3>
         </div>
@@ -52,7 +52,7 @@
                 <div class="modal-body">
                     <h2 id="plantLabel"></h2>
                     <p id="plantDescription"></p>
-                    <img id="plantImage" src="" alt=" " style="width: 100%; max-height: 200px; object-fit: cover;">
+                    <img id="plantModalImage" src="" alt="Plant image">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -72,7 +72,7 @@
 
                 const modalLabel = document.getElementById('plantLabel');
                 const modalDescription = document.getElementById('plantDescription');
-                const modalImage = document.getElementById('plantImage');
+                const modalImage = document.getElementById('plantModalImage');
 
                 const plantCardLabel = card.querySelector('#plantCardLabel');
                 const plantCardDescription = card.querySelector('#plantCardDescription');
