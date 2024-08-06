@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
+    <title>Plant Details</title>
+
+    <!-- This needs to be here for Bootstrap and general CSS imports -->
+    <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
+</head>
+<body class="vh-100 overflow-x-hidden vw-100">
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+<main class="row mx-0">
+    <div class="col-lg-4 px-5 justify-content-center d-flex full-height-lg" style="background-color: var(--gg-side-panel)">
+        <div class="text-center py-5">
+            <div class="pb-3 d-flex justify-content-start">
+                <a class="btn btn-outline-primary" type="button" th:href="@{/gardens/{id}(id=${gardenId})}"><img th:src="@{/icons/back.svg}" alt="" width="20" height="20" /></a>
+            </div>
+            <img th:src="@{'/plants/' + ${plant.id} + '/plant-image'}" alt="Plant Picture" class="w-100 rounded d-block" style="width: 300px; height: 300px;" />
+            <div class="d-flex">
+                <div class="overflow-hidden">
+                    <h1 class="fw-bold text-truncate" th:text="${plant.name}">Plant Name</h1>
+                </div>
+                <div class="d-flex align-items-center justify-content-left ps-3">
+                    <a class="ms-auto justify-content-end"  th:if="${currentUser.id == garden.owner.id}" th:href="@{/gardens/{gardenId}/plants/{plantId}/edit(gardenId=${garden.id}, plantId=${plant.id})}">
+                        <img class="mx-1" th:src="@{/icons/edit.svg}" alt="" width="25" height="25" />
+                    </a>
+                </div>
+            </div>
+            <div class="text-start">
+<!--                Display the harvested field at a later date when it's implemented here-->
+                <div class="d-flex mb-1">
+                    <img th:src="@{/icons/calendar-03-stroke-rounded.svg}"
+                         alt=""
+                         width="20"
+                         height="20" />
+                    <p class="ms-1 my-0" th:text="${dateFormatter.format(plant.plantedDate, NZ_FORMAT_DATE)}">Planted Date</p>
+                </div>
+                <div class="d-flex">
+                    <div class="d-flex">
+                        <img th:src="@{/icons/natural-food-stroke-rounded.svg}"
+                             alt=""
+                             width="20"
+                             height="20" />
+                        <p class="mb-0"><span class="mx-1" th:text="${plant.count}">Plant Count</span> planted</p>
+                    </div>
+                </div>
+                <div class="pt-3">
+                    <p class="fw-bold mb-1">
+                        Description:
+                    </p>
+                    <div>
+                        <p class="m-0" th:text="${plant.description}"><!--Plant Description goes here--></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8 pb-5 px-5 overflow-y-auto overflow-x-hidden max-full-height-lg">
+        <div class="d-flex justify-content-center align-items-center mb-1 sticky-top bg-white p-5">
+            <h1 class="flex-grow-1 text-center m-0">Plant Timeline</h1>
+        </div>
+
+        <section class="py-3 px-3">
+          <ul class="timeline-with-icons">
+<!--              Link up one of these cards with the backend and use thymeleaf to make as many as their are records.-->
+            <li class="timeline-item mb-5">
+              <span class="timeline-icon">
+                <img class="mx-1" th:src="@{/icons/harvest.svg}" alt="" width="25" height="25" />
+              </span>
+
+              <p class="fw-bold">Harvested</p>
+              <p class="text-muted mb-2 fw-bold">11 March 2020</p>
+              <p class="text-muted">
+                  My tomatoes were ready to go today! So yummy!
+              </p>
+            </li>
+
+            <li class="timeline-item mb-5">
+              <span class="timeline-icon">
+                <img class="mx-1" th:src="@{/icons/record.svg}" alt="" width="25" height="25" />
+              </span>
+              <p class="fw-bold">Update</p>
+<!--                This image needs to be linked up-->
+                <img class="pb-3" th:src="@{/img/plant.png}" width="200" height="200" alt="plant"/>
+              <p class="text-muted mb-2 fw-bold">19 March 2020</p>
+              <p class="text-muted">
+                  My tomato bush grew 3cm!
+              </p>
+            </li>
+
+            <li class="timeline-item mb-5">
+              <span class="timeline-icon">
+                <img class="mx-1" th:src="@{/icons/first-planted.svg}" alt="" width="25" height="25" />
+              </span>
+              <p class="fw-bold">First Planted!</p>
+              <p class="text-muted mb-2 fw-bold">24 June 2020</p>
+              <p class="text-muted">
+                  The day this plant was first planted.
+              </p>
+            </li>
+          </ul>
+        </section>
+    </div>
+</main>
+<th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
+</body>
+<script th:src="@{/js/nextFormBox.js}"></script>
+<script th:src="@{/js/plantImageErrorChecking.js}"></script>
+<script th:src="@{/js/dateValidation.js}"></script>
+</html>

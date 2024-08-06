@@ -1,5 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity.dto;
 
+import org.springframework.web.util.HtmlUtils;
+
 public class PlantInfoDTO {
     private String label;
     private String description;
@@ -43,5 +45,20 @@ public class PlantInfoDTO {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+
+    /**
+     * Gets a formatted HTML string, suitable for autocomplete suggestions.
+     * @return An HTML string.
+     */
+    public String getFormatted() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<strong>");
+        sb.append(HtmlUtils.htmlEscape(label));
+        sb.append("</strong> &ndash; <em>");
+        sb.append(HtmlUtils.htmlEscape(description));
+        sb.append("</em>");
+        return sb.toString();
     }
 }
