@@ -69,7 +69,7 @@ Feature: U28, As Kaia, I want to keep track of planting history recording when I
 #        Then the record has no description
 
     Scenario: AC10 - garden timeline
-        Given I am on the garden detials page for "garden1"
+        Given I am on the garden details page for "garden1"
         When I view my gardens timeline
         Then there is a record of plant history for "garden1"
 

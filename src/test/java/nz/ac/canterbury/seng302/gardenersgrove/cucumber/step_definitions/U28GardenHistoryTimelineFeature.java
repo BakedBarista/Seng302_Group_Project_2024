@@ -46,8 +46,8 @@ public class U28GardenHistoryTimelineFeature {
         model = mock(Model.class);
     }
 
-    @Given("I am on the garden detials page for {string}")
-    public void i_am_on_the_garden_detials_page_for(String name) {
+    @Given("I am on the garden details page for {string}")
+    public void i_am_on_the_garden_details_page_for(String name) {
         garden = gardenRepository.findByName(name).get(0);
         Long userId = garden.getOwner().getId();
         when(authentication.getPrincipal()).thenReturn(userId);

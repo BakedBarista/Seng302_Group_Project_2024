@@ -15,12 +15,17 @@ Feature: U26 - As Lei, I want to be able to look up information about various pl
     When I search a plant name "tomato"
     Then different autocomplete suggestions pop up matching my search
 
-  # Scenario: AC3 - If I search for a plant name that wasn't autocompleted and can't be found, then plants with similar names to what my input are shown.
-  #   Given I am on the plant search page
-  #   When I search a plant name with no autocomplete
-  #   Then plants with similar names pop up
+   Scenario Outline: AC3 - If I search for a plant name that wasn't autocompleted and can't be found, then plants with similar names to what my input are shown.
+     Given I am on the plant search page
+     When I search a plant name <input> with no autocomplete
+     Then plants with similar name <similar name> pops up
+     Examples:
+       | input        | similar name |
+       | "Sillantrow" | "Cilantro"  |
+       | "Bananer"    | "Banana"     |
+       | "Lettis"     | "Lettuce"    |
 
-   Scenario: AC4 - When I search for a plant that exists, then I see meaningful information about the plant, including an image.
+  Scenario: AC4 - When I search for a plant that exists, then I see meaningful information about the plant, including an image.
      Given I am on the plant search page
      When I search a plant name "tomato"
      Then meaningful information about that plant pops up
