@@ -29,6 +29,7 @@ public class PublicProfileController {
     private final Logger logger = LoggerFactory.getLogger(PublicProfileController.class);
 
     private final GardenUserService userService;
+    private final ProfanityService profanityService;
 
     private static final String DEFAULT_PROFILE_BANNER_URL = "/img/default-profile.svg";
     
@@ -38,13 +39,12 @@ public class PublicProfileController {
 
     private static final int MAX_FILE_SIZE = 10 * 1024 * 1024;
 
-    @Autowired
-    private ProfanityService profanityService;
 
 
     @Autowired
-    public PublicProfileController(GardenUserService userService) {
+    public PublicProfileController(GardenUserService userService, ProfanityService profanityService) {
         this.userService = userService;
+        this.profanityService = profanityService;
     }
 
     @GetMapping("/users/public-profile")
@@ -134,7 +134,7 @@ public class PublicProfileController {
 
         if (errorFlag) {
             model.addAttribute("editUserDTO", editUserDTO);
-            // model.addAttribute("profanity", errorFlag)
+            model.addAttribute("profanity", "There cannot be any profanity in about me");
             return "users/edit-public-profile";
         }
 
@@ -195,7 +195,7 @@ public class PublicProfileController {
     /**
      * Validates the tag if it contains invalid characters and checks the length
      *
-     * @param name The name of the tag.
+     * @param description The name of the tag.
      * @return True if name is valid, otherwise false
      */
     public boolean isValidDescription(String description) throws ProfanityDetectedException {
