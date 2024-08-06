@@ -27,13 +27,13 @@
             <script th:src="@{/js/plantSearchAutocomplete.js}"></script>
         </div>
 
-        <div id="plantCardsContainer" class="mt-4">
+        <div id="plantCardsContainer" class="mt-4" th:if="${plants != null}">
             <div th:each="plant : ${plants}" id="plantCard" class="mt-4 card p-4">
                 <h2 th:text="${plant.label}" id="plantCardLabel"></h2>
                 <p th:text="${plant.description}" id="plantCardDescription"></p>
                <img th:src="${plant.image}" alt="Plant image" id="plantCardImage"></img>
             </div>
-            <h3 class="text-center" th:if="${plants == null || plants.isEmpty()}">Cannot find the plant you entered</h3>
+            <h3 class="text-center" th:if="${plants.isEmpty()}">Cannot find the plant you entered</h3>
         </div>
 
 
