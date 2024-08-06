@@ -26,12 +26,18 @@
             <script th:src="@{/js/autocomplete.js}"></script>
             <script th:src="@{/js/plantSearchAutocomplete.js}"></script>
         </div>
-<!--cards for each plant-->
+
+<!--        <a class="link-hover" th:href="@{/gardens/{gardenId}/plants/{plantId}(gardenId=${garden.id}, plantId=${plant.id})}">-->
+<!--            <span class="fw-bold text-truncate" style="font-size: 14pt" th:text="${plant.name}">Plant Name</span>-->
+
+
         <div id="plantCardsContainer" class="container mt-4">
             <div th:each="plant : ${plants}">
-               <h2 th:text="${plant.label}"></h2>
-               <p th:text="${plant.description}"></p>
-               <img th:src="${plant.image}" style="width: 100%; max-height: 200px; object-fit: cover;"></img>
+                <a class="link-hover plant-result">
+                    <h2 th:text="${plant.label}" id="plantCardLabel"></h2>
+                </a>
+                <p th:text="${plant.description}" id="plantCardDescription"></p>
+               <img th:src="${plant.image}" id="plantCardImage" style="width: 80%; max-height: 200px; object-fit: cover;"></img>
             </div>
         </div>
 
@@ -61,6 +67,28 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const plantCard = document.querySelectorAll(".plant-result");
+
+            plantCard.forEach(card => card.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                const modalLabel = document.getElementById('plantCardLabel');
+                const modalDescription = document.getElementById('plantCardDescription');
+                const modalImage = document.getElementById('plantCardImage');
+
+                modalLabel.textContent = modalLabel.getAttribute('text');
+                // modalDescription.textContent = plant.description || 'No description';
+                // modalImage.src = plant.image || 'No image';
+
+                const modal = new bootstrap.Modal(document.getElementById('plantInfoModal'));
+                modal.show();
+
+            }))
+        })
+    </script>
 
 </body>
 </html>
