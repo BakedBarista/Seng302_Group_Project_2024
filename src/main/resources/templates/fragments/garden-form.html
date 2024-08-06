@@ -1,5 +1,6 @@
 <div th:fragment="garden-form">
     <form id="garden-form" action="#" th:action="@{${action}}" th:object="${garden}" method="post">
+        <input type="hidden" name="submissionToken" th:value="${submissionToken}" />
         <div>
             <!-- Garden Name Field -->
             <div class="mb-3">
@@ -187,7 +188,7 @@
                 </div>
             </div>
             <div class="mb-3">
-                <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+                <button type="submit" id="submit-button" class="btn btn-primary btn-sm">Submit</button>
                 <button type="button" class="btn btn-outline-secondary btn-sm btn-cancel">Cancel</button>
             </div>
         </div>
@@ -222,5 +223,11 @@
         descriptionTextBox.addEventListener("input", () => {
             numberOfCharactersText.innerText = descriptionTextBox.value.length + "/512";
         })
+    </script>
+    <script>
+        document.getElementById('garden-form').addEventListener('submit', function(event) {
+            const submitButton = document.getElementById('submit-button');
+            submitButton.disabled = true;
+        });
     </script>
 </div>

@@ -81,6 +81,9 @@
                             <span id="gardenTagsError" class="error gardenTagsError" style="color:red"></span>
                         </div>
                         <div class="col-md-12 mb-4" id="tag-container"></div>
+                        <div class="col-md-12 mb-4" th:if="${currentUser.id != garden.owner.id}">
+                            <span th:each="tag : ${garden.tags}" class="tag" th:text="${tag.name}"></span>
+                        </div>
                     </div>
                     <script th:src="@{/js/autocomplete.js}"></script>
                     <script th:src="@{/js/tagAutocomplete.js}"></script>

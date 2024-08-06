@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
@@ -112,7 +113,8 @@ public class U14WeatherMonitoringFeature {
     public void i_create_a_garden(String gardenName, String streetNumber, String streetName, String suburb, String city, String country, String lat, String lon) {
         GardenUser user = gardenUserRepository.findById(1L).get();
         garden = gardenRepository.findById(1L).get();
-
+        HttpSession session = mock(HttpSession.class);
+        when(session.getAttribute("submissionToken")).thenReturn("mockToken123");
         garden.setName(gardenName);
         garden.setStreetNumber(streetNumber);
         garden.setStreetName(streetName);
@@ -127,7 +129,7 @@ public class U14WeatherMonitoringFeature {
         when(mockedModerationService.checkIfDescriptionIsFlagged("")).thenReturn(false);
         when(gardenRepository.save(garden)).thenReturn(garden);
 
-        gardenController.submitCreateGardenForm(new GardenDTO(garden), bindingResult, authentication, model);
+        gardenController.submitCreateGardenForm(new GardenDTO(garden), bindingResult, authentication, model,session);
         assertNotNull(gardenRepository.findByOwnerId(user.getId()));
         assertNotNull(gardenRepository.findById(garden.getId()));
     }

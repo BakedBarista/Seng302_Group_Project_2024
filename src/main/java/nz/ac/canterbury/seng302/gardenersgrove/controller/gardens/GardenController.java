@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.gardens;
 
 
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.GardenDTO;
@@ -29,11 +30,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.SortedMap;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.HISTORY_FORMAT_DATE;
@@ -89,8 +86,11 @@ public class GardenController {
      * @return gardenFormTemplate
      */
     @GetMapping("/gardens/create")
-    public String getCreateGardenForm(Model model) {
+    public String getCreateGardenForm(Model model, HttpSession session) {
         logger.info("GET /gardens/create - display the new garden form");
+        String submissionToken = UUID.randomUUID().toString();
+        session.setAttribute("submissionToken",submissionToken);
+        model.addAttribute("submissionToken",submissionToken);
         model.addAttribute("garden", new GardenDTO());
         GardenUser owner = gardenUserService.getCurrentUser();
 
@@ -110,11 +110,18 @@ public class GardenController {
     public String submitCreateGardenForm(@Valid @ModelAttribute("garden") GardenDTO gardenDTO,
                                          BindingResult bindingResult,
                                          Authentication authentication,
-                                         Model model) {
+                                         Model model,
+                                         HttpSession session) {
         logger.info("POST /gardens - submit the new garden form");
 
         logger.info(gardenDTO.toString());
-
+        String tokenFromForm = gardenDTO.getSubmissionToken();
+        String sessionToken = (String) session.getAttribute("submissionToken");
+        if (sessionToken == null || !sessionToken.equals(tokenFromForm)) {
+            model.addAttribute("error", "Form has already been submitted or is invalid.");
+            return "gardens/createGarden";
+        }
+        session.removeAttribute("submissionToken");
         checkGardenDTOError(model, bindingResult, gardenDTO);
         if (bindingResult.hasErrors() || model.containsAttribute(PROFANITY)) {
             model.addAttribute("garden", gardenDTO);
@@ -132,16 +139,20 @@ public class GardenController {
             gardenDTO.setLat(null);
             gardenDTO.setLon(null);
         }
+        try {
+            Garden garden = gardenDTO.toGarden();
+            Long userId = (Long) authentication.getPrincipal();
+            GardenUser owner = gardenUserService.getUserById(userId);
+            garden.setOwner(owner);
 
-        Garden garden = gardenDTO.toGarden();
-        Long userId = (Long) authentication.getPrincipal();
-        GardenUser owner = gardenUserService.getUserById(userId);
-        garden.setOwner(owner);
+            logger.info(garden.toString());
 
-        logger.info(garden.toString());
-
-        Garden savedGarden = gardenService.addGarden(garden);
-        return "redirect:/gardens/" + savedGarden.getId();
+            Garden savedGarden = gardenService.addGarden(garden);
+            return "redirect:/gardens/" + savedGarden.getId();
+        } catch (IllegalArgumentException e) {
+            bindingResult.rejectValue("size", "error.garden", e.getMessage());
+            return "gardens/createGarden";
+        }
     }
 
     /**
@@ -552,7 +563,7 @@ public class GardenController {
             for (int i = 0; i < gardenNames.size(); i++) {
                 String gardenName = gardenNames.get(i);
                 String streetNumber = Integer.toString(i + 1);
-                GardenDTO gardenDTO = new GardenDTO(gardenName, streetNumber, "Ilam Road", "Ilam", "Christchurch", "New Zealand", "8041", -43.53, 172.63, "Test Garden", (String.valueOf(1000 + (i * 50))));
+                GardenDTO gardenDTO = new GardenDTO();
                 Garden garden = gardenDTO.toGarden();
                 garden.setOwner(user);
                 garden.setPublic(true);

@@ -5,6 +5,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import jakarta.servlet.http.HttpSession;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.GardenController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
@@ -132,6 +133,8 @@ public class U8CreateNewGardenFeature {
 
     @And("I submit create garden form")
     public void iSubmitCreateGardenForm() {
+        HttpSession session = mock(HttpSession.class);
+        when(session.getAttribute("submissionToken")).thenReturn("mockToken123");
         when(authentication.getPrincipal()).thenReturn(1L);
 
         when(mockedModerationService.checkIfDescriptionIsFlagged("")).thenReturn(false);
@@ -140,7 +143,7 @@ public class U8CreateNewGardenFeature {
         when(gardenRepository.save(Mockito.any())).thenReturn(garden);
         when(locationService.getLatLng(anyString())).thenReturn(new ArrayList<>());
 
-        gardenController.submitCreateGardenForm(new GardenDTO(garden), bindingResult, authentication, model);
+        gardenController.submitCreateGardenForm(new GardenDTO(garden), bindingResult, authentication, model, session);
     }
 
     @Then("A garden with that information is created")
