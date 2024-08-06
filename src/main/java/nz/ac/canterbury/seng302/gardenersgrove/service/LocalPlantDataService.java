@@ -28,7 +28,7 @@ public class LocalPlantDataService {
      * Loads default data from a text file (label and description of plants),
      * this is used by this class when we want to get data for an input string
      */
-    public void loadDefault() {
+    private void loadDefault() {
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("local_plant_data.json")) {
             localPlants = objectMapper.readValue(
                     inputStream,
@@ -67,13 +67,9 @@ public class LocalPlantDataService {
      * @return JsonNode with a list of PlantInfoDTOs
      */
     public JsonNode getSimilarPlantInfo(String userSearch) {
-        List<String> similarPlantNames = new ArrayList<>();
-        while (similarPlantNames.isEmpty()) {
-            similarPlantNames = stringDistanceService.getSimilarStrings(plantNames, userSearch);
-        }
+        List<String> similarPlantNames = stringDistanceService.getSimilarStrings(plantNames, userSearch);
 
         ArrayList<PlantInfoDTO> plantInfoList = new ArrayList<>();
-
         for (String similarPlantName : similarPlantNames) {
             plantInfoList.add(getMatchingPlantInfoFromFile(similarPlantName));
         }
