@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -24,6 +23,10 @@ public class LocalPlantDataService {
     private final ObjectMapper objectMapper;
     private final StringDistanceService stringDistanceService;
 
+    /**
+     * Loads default data from a text file (label and description of plants),
+     * this is used by this class when we want to get data for an input string
+     */
     public void loadDefault() {
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("local_plant_data.json")) {
             localPlants = objectMapper.readValue(
@@ -43,8 +46,13 @@ public class LocalPlantDataService {
         this.plantNames = localPlants.stream().map(PlantInfoDTO::getLabel).toList();
     }
 
-    public PlantInfoDTO getMatchingPlantInfoFromFile(String similarPlantName) {
-        return localPlants.stream().filter(plantInfoDTO -> plantInfoDTO.getLabel().equals(similarPlantName)).findFirst().get();
+    /**
+     * Gets the matching PlantInfoDTO for the plant name that is deemed similar.
+     * @param plantName plant name to find PlantInfoDTO for
+     * @return PlantInfoDTO that matches name (label)
+     */
+    public PlantInfoDTO getMatchingPlantInfoFromFile(String plantName) {
+        return localPlants.stream().filter(plantInfoDTO -> plantInfoDTO.getLabel().equals(plantName)).findFirst().get();
     }
 
     /**
@@ -53,7 +61,13 @@ public class LocalPlantDataService {
      * @return JsonNode with a list of PlantInfoDTOs
      */
     public JsonNode getSimilarPlantInfo(String userSearch) {
-        List<String> similarPlantNames = stringDistanceService.getSimilarStrings(plantNames, userSearch);
+        List<String> similarPlantNames = new ArrayList<>();
+        int additionalThreshold = 0;
+        while (similarPlantNames.isEmpty()) {
+            similarPlantNames = stringDistanceService.getSimilarStrings(plantNames, userSearch, additionalThreshold);
+            additionalThreshold += 2;
+        }
+
         ArrayList<PlantInfoDTO> plantInfoList = new ArrayList<>();
 
         for (String similarPlantName : similarPlantNames) {
