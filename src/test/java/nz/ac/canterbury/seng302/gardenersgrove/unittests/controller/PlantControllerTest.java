@@ -105,7 +105,7 @@ class PlantControllerTest {
         long gardenId = 0;
         String expectedReturnPage = "plants/addPlant";
 
-        String returnPage = plantController.addPlantForm(gardenId, model);
+        String returnPage = plantController.addPlantForm(gardenId, false, model, null);
         assertEquals(expectedReturnPage, returnPage);
     }
 
@@ -115,7 +115,7 @@ class PlantControllerTest {
         String expectedReturnPage = "error/accessDenied";
 
         when(gardenService.getGardenById(gardenId)).thenReturn(Optional.empty());
-        String returnPage = plantController.addPlantForm(gardenId, model);
+        String returnPage = plantController.addPlantForm(gardenId, false, model, null);
         assertEquals(expectedReturnPage, returnPage);
     }
 
@@ -133,7 +133,7 @@ class PlantControllerTest {
         when(gardenService.getGardenById(gardenId) ).thenReturn(Optional.of(garden));
         when(gardenUserService.getCurrentUser()).thenReturn(new GardenUser());
 
-        String returnPage = plantController.addPlantForm(gardenId, model);
+        String returnPage = plantController.addPlantForm(gardenId, false, model, null);
         assertEquals(expectedReturnPage, returnPage);
 
     }

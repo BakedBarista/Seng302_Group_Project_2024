@@ -55,7 +55,12 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-
+                    <form th:action="@{/plant-information/add-to-garden}" method="post">
+                        <input type="hidden" name="label" id="plantLabelInput">
+                        <input type="hidden" name="description" id="plantDescriptionInput">
+                        <input type="hidden" name="image" id="plantImageInput">
+                        <button type="submit" class="btn btn-secondary">Add To Garden</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -79,6 +84,14 @@
                 modalLabel.textContent = plantCardLabel.textContent;
                 modalDescription.textContent = plantCardDescription.textContent;
                 modalImage.src = plantCardImage.src;
+
+                const plantLabelInput = document.querySelector('#plantLabelInput');
+                const plantDescriptionInput = document.querySelector('#plantDescriptionInput');
+                const plantImageInput = document.querySelector('#plantImageInput');
+
+                plantLabelInput.value = plantCardLabel.textContent;
+                plantDescriptionInput.value = plantCardDescription.textContent;
+                plantImageInput.value = plantCardImage.src;
 
                 const modal = new bootstrap.Modal(document.getElementById('plantInfoModal'));
                 modal.show();
