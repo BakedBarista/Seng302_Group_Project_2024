@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantInfoDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.StringDistanceService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.WikidataService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,15 +28,20 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 
 class WikidataServiceTest {
-
     private RestTemplate restTemplate;
     private ObjectMapper objectMapper;
     private WikidataService wikidataService;
+    private PlantService plantService;
+    private StringDistanceService stringDistanceService;
 
     @BeforeEach
     void setup() {
         restTemplate = mock(RestTemplate.class);
+        plantService = mock(PlantService.class);
+        stringDistanceService = mock(StringDistanceService.class);
+
         objectMapper = new ObjectMapper();
+
         wikidataService = new WikidataService(restTemplate, objectMapper);
     }
 

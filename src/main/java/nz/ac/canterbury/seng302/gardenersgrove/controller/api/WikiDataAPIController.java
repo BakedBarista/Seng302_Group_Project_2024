@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantInfoDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.service.LocalPlantDataService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.WikidataService;
 
 import java.util.List;
@@ -18,15 +19,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Handles fetching plant data from WikiData API
+ */
 @RestController
 @RequestMapping("/api")
 public class WikiDataAPIController {
     Logger logger = LoggerFactory.getLogger(WikiDataAPIController.class);
     private final WikidataService wikidataService;
+    private final LocalPlantDataService localPlantDataService;
     private final ObjectMapper objectMapper;
 
-    public WikiDataAPIController(WikidataService wikidataService, ObjectMapper objectMapper) {
+    public WikiDataAPIController(WikidataService wikidataService, LocalPlantDataService localPlantDataService, ObjectMapper objectMapper) {
         this.wikidataService = wikidataService;
+        this.localPlantDataService = localPlantDataService;
         this.objectMapper = objectMapper;
     }
 
@@ -44,6 +50,9 @@ public class WikiDataAPIController {
             Thread.currentThread().interrupt();
         }
         List<PlantInfoDTO> plantInfo = wikidataService.getPlantInfo(currentValue);
+        if(plantInfo.isEmpty()) {
+            plantInfo = localPlantDataService.getSimilarPlantInfo(currentValue);
+        }
         ObjectNode results = JsonNodeFactory.instance.objectNode();
         results.set("results", objectMapper.valueToTree(plantInfo));
         return ResponseEntity.ok(results);

@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unittests.controller.api;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -8,7 +9,6 @@ import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.http.ResponseEntity;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -17,19 +17,22 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.api.WikiDataAPIController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantInfoDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.service.LocalPlantDataService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.WikidataService;
 
 
 class WikidataAPIControllerTest {
     private WikidataService wikidataService;
     private WikiDataAPIController wikiDataAPIController;
+    private LocalPlantDataService localPlantDataService;
     private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {
         wikidataService = mock(WikidataService.class);
+        localPlantDataService = mock(LocalPlantDataService.class);
         objectMapper = new ObjectMapper();
-        wikiDataAPIController = new WikiDataAPIController(wikidataService, objectMapper);
+        wikiDataAPIController = new WikiDataAPIController(wikidataService, localPlantDataService, objectMapper);
 
     }
 
@@ -51,6 +54,8 @@ class WikidataAPIControllerTest {
         String plantInfo = "[]";
         List<PlantInfoDTO> plantInfoList = objectMapper.readValue(plantInfo, new TypeReference<List<PlantInfoDTO>>() {
         });
+
+        when(localPlantDataService.getSimilarPlantInfo(anyString())).thenReturn(plantInfoList);
         when(wikidataService.getPlantInfo("tomato")).thenReturn(plantInfoList);
 
         ResponseEntity<JsonNode> response = wikiDataAPIController.searchPlantAutocomplete("nonexistentplant");

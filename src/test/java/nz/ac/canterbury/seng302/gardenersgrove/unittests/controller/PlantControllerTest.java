@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.unittests.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.PlantController;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
@@ -32,12 +33,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant.PlantStatus.HARVESTED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 class PlantControllerTest {
+
     @Mock
     private PlantService plantService;
 
@@ -77,6 +80,8 @@ class PlantControllerTest {
     private long currentUserIdTimeline = 1L;
     private long gardenIdTimeline = 1L;
     private long plantIdTimeline = 1L;
+
+    private final BasePlant.PlantStatus plantStatus = HARVESTED;
 
     @BeforeEach
     public void setUp() {
@@ -417,15 +422,18 @@ class PlantControllerTest {
         Plant plant = new Plant();
         long gardenId = 0;
         long plantId = 0;
-        String expectedReturnPage = "redirect:/gardens/" + gardenId;
+        String expectedReturnPage = "redirect:/gardens/" + gardenId + "/plants/" + plantId;
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
         when(plantService.getPlantById(plantId)).thenReturn(Optional.of(plant));
+        MultipartFile file = mock(MultipartFile.class);
+        when(file.getContentType()).thenReturn("image/jpeg");
+        when(file.getSize()).thenReturn(1L);
         try {
             String returnPage = plantController.submitPlantHistoryForm(gardenId, plantId, file, dateValidStr, validHistoryPlantDTO, bindingResult, model);
             assertEquals(expectedReturnPage, returnPage);
-            verify(plantHistoryService, times(1)).addHistoryItem(plant, null, null, "");
+            verify(plantHistoryService, times(1)).addHistoryItem(plant, file.getContentType(), file.getBytes(), "");
         } catch (IOException e) {
             fail("IOException occurred during test: " + e.getMessage());
         }
@@ -437,7 +445,7 @@ class PlantControllerTest {
         Plant plant = new Plant();
         long gardenId = 0;
         long plantId = 0;
-        String expectedReturnPage = "redirect:/gardens/" + gardenId;
+        String expectedReturnPage = "redirect:/gardens/" + gardenId + "/plants/" + plantId;
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
@@ -496,6 +504,7 @@ class PlantControllerTest {
        when(mockGardenTimeline.getPlants()).thenReturn(List.of(mockPlantTimeline));
        when(mockPlantTimeline.getId()).thenReturn(plantIdTimeline);
        when(mockPlantTimeline.getGarden()).thenReturn(mockGardenTimeline);
+       when(mockPlantTimeline.getStatus()).thenReturn(plantStatus);
 
        // Define the behavior of the services
        when(gardenUserService.getCurrentUser()).thenReturn(currentUserTimeline);

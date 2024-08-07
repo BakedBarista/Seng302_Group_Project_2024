@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.cucumber.step_definitions;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
@@ -20,7 +21,9 @@ import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.PlantControlle
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantInfoDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.WikidataService;
 
+@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 public class U26PlantSearch {
+
     @Autowired
     private PlantController plantController;
 
@@ -60,7 +63,6 @@ public class U26PlantSearch {
 
         autocompleteData = wikidataAPIController.searchPlantAutocomplete(name).getBody();
         System.out.println(autocompleteData.get("results"));
-
     }
 
     @Then("different autocomplete suggestions pop up matching my search")
@@ -79,4 +81,25 @@ public class U26PlantSearch {
         });
     }
 
+    @When("I search a plant name {string} with no autocomplete")
+    public void i_search_a_plant_name_with_no_autocomplete(String plantName) throws Exception {
+        when(wikidataService.getPlantInfo(plantName)).thenReturn(List.of());
+
+        autocompleteData = wikidataAPIController.searchPlantAutocomplete(plantName).getBody();
+    }
+
+    @Then("plants with similar name {string} pops up")
+    public void plants_with_similar_name_pops_up(String similarName) {
+        boolean hasSimilarName = false;
+        for (JsonNode result : autocompleteData.get("results")) {
+            if (result.get("label").asText().equals(similarName)) {
+                hasSimilarName = true;
+                break;
+            }
+        }
+
+        assertEquals(similarName, autocompleteData.get("results").get(0).get("label").toString().replace("\"", ""));
+        assertTrue(hasSimilarName);
+        assertTrue(autocompleteData.get("results").get(0).has("description"));
+    }
 }
