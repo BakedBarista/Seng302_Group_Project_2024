@@ -490,7 +490,8 @@ public class PlantController {
     }
 
     /**
-     * TODO
+     * Asks the user to select a garden to import the plant to
+     * @return a page to select a garden
      */
     @PostMapping("/plant-information/add-to-garden")
     public String plantInformationAddToGarden(
