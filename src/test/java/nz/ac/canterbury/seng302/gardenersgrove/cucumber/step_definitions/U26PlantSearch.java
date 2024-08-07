@@ -1,12 +1,15 @@
 package nz.ac.canterbury.seng302.gardenersgrove.cucumber.step_definitions;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
-import io.cucumber.core.internal.com.fasterxml.jackson.databind.node.ArrayNode;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -15,10 +18,12 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.api.WikiDataAPIController;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.PlantController;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantInfoDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.WikidataService;
-import org.springframework.web.servlet.ModelAndView;
 
+@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 public class U26PlantSearch {
+
     @Autowired
     private PlantController plantController;
 
@@ -38,26 +43,26 @@ public class U26PlantSearch {
 
     @When("I click on a link to search for a plant")
     public void i_click_on_a_link_to_search_for_a_plant() {
-        plantController.plantInformationForm(null);
+        plantController.plantInformationForm(null, null);
     }
     @Then("I am taken to a page where I can search for plant information by name")
     public void i_am_taken_to_a_page_where_i_can_search_for_plant_information_by_name() {
-        assertFalse(plantController.plantInformationForm(null).contains("plantSearch"));
+        assertFalse(plantController.plantInformationForm(null, null).contains("plantSearch"));
     }
     @Given("I am on the plant search page")
     public void i_am_on_the_plant_search_page() {
-        plantController.plantInformationForm(null);
+        plantController.plantInformationForm(null, null);
     }
 
     @When("I search a plant name {string}")
     public void i_search_a_plant_name(String name) throws Exception {
-        String plantInfo = "{\"plants\":[{\"label\":\"Tomato\",\"description\":\"A red fruit\",\"id\":\"Q235\",\"image\":\"https://commons.wikimedia.org/wiki/Special:FilePath/Tomato.jpg\"}]}";
-        JsonNode plantInfoJson = objectMapper.readTree(plantInfo);
-        when(wikidataService.getPlantInfo(name)).thenReturn(plantInfoJson);
+        String plantInfo = "[{\"label\":\"Tomato\",\"description\":\"A red fruit\",\"id\":\"Q235\",\"image\":\"https://commons.wikimedia.org/wiki/Special:FilePath/Tomato.jpg\"}]";
+        List<PlantInfoDTO> plantInfoList = objectMapper.readValue(plantInfo, new TypeReference<List<PlantInfoDTO>>() {
+        });
+        when(wikidataService.getPlantInfo(name)).thenReturn(plantInfoList);
 
         autocompleteData = wikidataAPIController.searchPlantAutocomplete(name).getBody();
         System.out.println(autocompleteData.get("results"));
-
     }
 
     @Then("different autocomplete suggestions pop up matching my search")
@@ -76,4 +81,25 @@ public class U26PlantSearch {
         });
     }
 
+    @When("I search a plant name {string} with no autocomplete")
+    public void i_search_a_plant_name_with_no_autocomplete(String plantName) throws Exception {
+        when(wikidataService.getPlantInfo(plantName)).thenReturn(List.of());
+
+        autocompleteData = wikidataAPIController.searchPlantAutocomplete(plantName).getBody();
+    }
+
+    @Then("plants with similar name {string} pops up")
+    public void plants_with_similar_name_pops_up(String similarName) {
+        boolean hasSimilarName = false;
+        for (JsonNode result : autocompleteData.get("results")) {
+            if (result.get("label").asText().equals(similarName)) {
+                hasSimilarName = true;
+                break;
+            }
+        }
+
+        assertEquals(similarName, autocompleteData.get("results").get(0).get("label").toString().replace("\"", ""));
+        assertTrue(hasSimilarName);
+        assertTrue(autocompleteData.get("results").get(0).has("description"));
+    }
 }

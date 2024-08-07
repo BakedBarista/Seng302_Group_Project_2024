@@ -10,8 +10,9 @@
     <meta name="_isOurs" th:content="${currentUser.id == garden.owner.id}" />
     <style>
         .link-hover {
-           color: black;
+            color: black;
             text-decoration: none;
+            display: block;
         }
 
         .link-hover:hover {
@@ -23,8 +24,8 @@
 <body>
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 <main class="py-5">
-    <div class="mx-5">
-        <div class="d-flex flex-column flex-xl-row gap-3">
+    <div class="mx-3">
+        <div class="d-flex flex-column flex-xl-row gap-2">
             <div class="card col-xl-6 col-12 p-4">
                 <div class="d-flex">
                     <h1 class="pb-4 pe-5" th:text="${garden.name}">GARDEN NAME</h1>
@@ -181,10 +182,11 @@
             </div>
         </div>
     </div>
-    <div class="d-flex justify-content-center align-items-center mb-1 sticky-top bg-light mt-3 p-3 rounded-3">
+    <div class="d-flex justify-content-center align-items-center mb-1 sticky-top bg-light mt-3 p-3">
         <hr />
         <h2 class="flex-grow-1 text-center m-0">  Your Plants</h2>
-        <a type="button" th:if="${currentUser.id == garden.owner.id}" th:href="@{/gardens/{id}/add-plant(id=${garden.id})}" class="btn btn-primary ms-auto"><img th:src="@{/icons/add-square-white.svg}" alt="" width="20" height="20" /> New Plant</a>
+        <a type="button" th:if="${currentUser.id == garden.owner.id}" th:href="@{/gardens/{id}/add-plant(id=${garden.id})}" class="btn btn-primary ms-auto">
+            <img th:src="@{/icons/add-square-white.svg}" alt="" width="20" height="20" /> New Plant</a>
     </div>
     <div class="mx-4">
         <div th:if="${plants.empty}">
@@ -214,10 +216,12 @@
                                            class="imageSmall d-none"
                                            type="file"
                                            accept=".png,.jpg,.jpeg,.svg"/>
-                                    <img th:src="@{'/plants/' + ${plant.id} + '/plant-image'}"
-                                         alt="Plant Picture"
-                                         class="w-100 rounded mx-auto d-block h-auto"
-                                         style="max-width: 300px; max-height: 300px;" />
+                                    <a class="link-hover" th:href="@{/gardens/{gardenId}/plants/{plantId}(gardenId=${garden.id}, plantId=${plant.id})}">
+                                        <img th:src="@{'/plants/' + ${plant.id} + '/plant-image'}"
+                                             alt="Plant Picture"
+                                             class="w-100 rounded mx-auto d-block h-auto"
+                                             style="max-width: 300px; max-height: 300px;" />
+                                    </a>
                                     <span id="plantImageErrorSmall"
                                           class="plantImageErrorSmall invalid-feedback text-center position-absolute bottom-0 end-0">
                                     </span>
@@ -259,17 +263,11 @@
                                         </a>
                                     </div>
                                 </div>
-                                <p class="fw-bold mb-1">
-                                    Description:
-                                </p>
-                                <div class="overflow-y-scroll" style="min-height: 144px; max-height: 200px">
-                                    <p class="m-0" th:text="${plant.description}"><!--Plant Description goes here--></p>
-                                </div>
-                                <div class="dropdown d-flex justify-content-end" th:if="${currentUser.id == garden.owner.id}">
+                                <div class="dropdown d-flex justify-content-start"  th:if="${currentUser.id == garden.owner.id}">
                                     <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).NOT_GROWING}" class="btn button-not-planted dropdown-toggle"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButtonSmall' + plant.id}">Not Growing</span>
                                     <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).CURRENTLY_GROWING}" class="btn button-growing dropdown-toggle"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButtonSmall' + plant.id}">Growing</span>
                                     <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).HARVESTED}" class="btn button-harvest dropdown-toggle"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButtonSmall' + plant.id}">Harvested</span>
-                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButtonSmall">
+                                    <div class="dropdown-menu"  aria-labelledby="dropdownMenuButtonSmall">
                                         <button type="button" class="dropdown-item" th:onclick="'updateStatus(' + ${plant.id} + ', \'NOT_GROWING\')'">
                                             <span class="badge not-planted-badge">Not Growing</span>
                                         </button>
@@ -281,6 +279,12 @@
                                         </button>
                                     </div>
                                 </div>
+                                <p class="fw-bold mb-1">
+                                    Description:
+                                </p>
+                                <div class="overflow-y-scroll" style="min-height: 144px; max-height: 200px">
+                                    <p class="m-0" th:text="${plant.description}"><!--Plant Description goes here--></p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -290,6 +294,8 @@
                 <div th:each="plant : ${plants}"
                      class="card shadow-sm rounded-2 p-0 m-0 col-xxl-3 col-xl-3 col-lg-6 col-12 d-none d-lg-block"
                      style="max-width: 300px;">
+                    <a class="link-hover" th:href="@{/gardens/{gardenId}/plants/{plantId}(gardenId=${garden.id}, plantId=${plant.id})}">
+
                     <div class="card-header m-0 p-0 bg-transparent rounded-2" style="max-height: 300px;">
                         <div class="d-inline">
                             <form class="plantImageForm" th:action="@{'/plants/' + ${plant.id} + '/plant-image'}" method="post" enctype="multipart/form-data" novalidate >
@@ -303,17 +309,15 @@
                     <div class="card-body m-0 p-3">
                         <div class="d-flex">
                             <div class="overflow-hidden">
-                                <a class="link-hover" th:href="@{/gardens/{gardenId}/plants/{plantId}(gardenId=${garden.id}, plantId=${plant.id})}">
+
                                     <span class="fw-bold text-truncate" style="font-size: 14pt" th:text="${plant.name}">Plant Name</span>
-                                </a>
+
                             </div>
                             <div class="d-flex justify-content-end ms-auto">
                                 <a class="ms-auto justify-content-end" th:if="${currentUser.id == garden.owner.id}" th:href="@{/gardens/{gardenId}/plants/{plantId}/edit(gardenId=${garden.id}, plantId=${plant.id})}">
                                     <img class="mx-1" th:src="@{/icons/edit.svg}" alt="" width="20" height="20" />
                                 </a>
-                                <a class="ms-auto justify-content-end"   th:if="${currentUser.id == garden.owner.id}" th:href="@{/gardens/{gardenId}/plants/{plantId}/history(gardenId=${garden.id}, plantId=${plant.id})}">
-                                    <img class="mx-1" th:src="@{/icons/plant-record.svg}" alt="" width="20" height="20" />
-                                </a>
+
                             </div>
                         </div>
                         <div class="d-flex mb-1">
@@ -327,6 +331,7 @@
                                 <span th:text="${plant.count}">Plant Count</span>
                                 planted
                             </p>
+
                         </div>
                         <p class="fw-bold mb-0">
                             Description:
@@ -338,6 +343,7 @@
                         </div >
                         <div th:if="${currentUser.id == garden.owner.id}" th:replace="~{fragments/plant-status-dropdown :: plant-status-dropdown(plantId=${plant.id})}"></div>
                     </div>
+                    </a>
                 </div>
 
                 <!-- Harvested Date Modal -->
@@ -360,6 +366,9 @@
                                 <button type="button" class="btn btn-primary" onclick="saveHarvestedDate()">Save date</button>
                             </div>
                         </div>
+
+
+
                     </div>
                 </div>
 

@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<!--added lang, chatgpt said to do so to fix sonar qube issue -->
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
     <title>Add Plant Record</title>
@@ -42,6 +41,26 @@
         </div>
     </main>
     <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
+    <script>
+        const historyForm = document.getElementById("addPlantForm");
+        const historyImage = document.getElementById("image");
+
+        historyForm.addEventListener("submit", (event) => {
+            const file = historyImage.files[0];
+
+            if (!file) {
+                console.log("NO IMAGE");
+                event.preventDefault();
+                plantImageError.style.display = "block";
+                plantImageError.textContent = "Image is required for a plant update.";
+            } else {
+                console.log(" IMAGE");
+                plantImageError.style.display = "none";
+                plantImageError.textContent = "";
+
+            }
+        })
+    </script>
+    <script th:src="@{/js/plantImageErrorChecking.js}"></script>
 </body>
-<script th:src="@{/js/plantImageErrorChecking.js}"></script>
 </html>

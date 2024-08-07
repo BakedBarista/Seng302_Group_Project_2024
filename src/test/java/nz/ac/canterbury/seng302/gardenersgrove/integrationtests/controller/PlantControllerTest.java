@@ -1,33 +1,42 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.PlantController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.PlantHistoryItem;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantHistoryItemDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantHistoryRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantHistoryService;
-import org.junit.jupiter.api.*;
+import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.security.core.Authentication;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
-import static org.mockito.Mockito.mock;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -44,6 +53,12 @@ public class PlantControllerTest {
 
     @Autowired
     private PlantController plantController;
+
+    @Autowired
+    private PlantService plantService;
+
+    @Autowired
+    private PlantHistoryRepository plantHistoryRepository;
 
     @MockBean
     private GardenUserService userService;
@@ -191,7 +206,7 @@ public class PlantControllerTest {
         GardenUser notOwner = new GardenUser();
         when(userService.getCurrentUser()).thenReturn(notOwner);
         String result = plantController.addPlantHistoryForm(testGarden.getId(),testPlant.getId(),model);
-        Assertions.assertEquals("/error/accessDenied",result);
+        Assertions.assertEquals("error/accessDenied",result);
     }
 
     @Test
@@ -204,7 +219,7 @@ public class PlantControllerTest {
         Model model = Mockito.mock(Model.class);
         Mockito.doNothing().when(plantHistoryService).addHistoryItem(Mockito.any(Plant.class),Mockito.anyString(),Mockito.any(byte[].class),Mockito.anyString());
         String result = plantController.submitPlantHistoryForm(gardenId, plantId, file, plantHistoryDTO.getDescription(), plantHistoryDTO,bindingResult, model);
-        Assertions.assertEquals("redirect:/gardens/" + gardenId, result);
+        Assertions.assertEquals("redirect:/gardens/" + gardenId + "/plants/" + plantId, result);
     }
 
     @Test
@@ -219,6 +234,88 @@ public class PlantControllerTest {
         String result = plantController.submitPlantHistoryForm(gardenId, plantId, file, plantHistoryDTO.getDescription(),plantHistoryDTO, bindingResult, model);
         Assertions.assertEquals("plants/plantHistory", result);
         Mockito.verify(model).addAttribute("description", plantHistoryDTO);
+    }
+
+
+    @Test
+    void givenInvalidUser_whenAccessUnauthorizedPlant_thenAccessDenied() {
+        Model model = Mockito.mock(Model.class);
+        GardenUser notOwner = new GardenUser();
+        when(userService.getCurrentUser()).thenReturn(notOwner);
+        String result = plantController.getPlantTimeline(testGarden.getId(),testPlant.getId(),model);
+        Assertions.assertEquals("error/accessDenied",result);
+    }
+
+    @Test
+    void givenPlantExists_whenAccessingPlantHistoryPage_thenRedirectToPlantDetailsPage() {
+        Model model = Mockito.mock(Model.class);
+        long gardenId = testGarden.getId();
+        long plantId = testPlant.getId();
+
+        String result = plantController.getPlantTimeline(gardenId, plantId, model);
+
+        Assertions.assertEquals("plants/plantDetails", result);
+
+    }
+
+    @Test
+    void whenPlantHistoryImageExists_returnPlantHistoryImage() {
+        HttpServletRequest mockRequest = new MockHttpServletRequest();
+        String imagePath = "static/img/plant.png";
+        try (InputStream inputStream = nz.ac.canterbury.seng302.gardenersgrove.integrationtests.controller.PlantControllerTest.class.getClassLoader().getResourceAsStream(imagePath)) {
+            if (inputStream == null) {
+                throw new IOException("Image not found: " + imagePath);
+            }
+            byte[] image = inputStream.readAllBytes();
+            String contentType = "image/png";
+            Plant plant = new Plant();
+
+            LocalDate date = LocalDate.of(1970, 1, 1);
+            PlantHistoryItem plantHistoryItem = new PlantHistoryItem(plant, date);
+            plantHistoryItem.setImage(contentType, image);
+            plant.setPlantImage(contentType,image);
+
+            when(plantHistoryService.getPlantHistoryById(1L)).thenReturn(Optional.of(plantHistoryItem));
+
+            ResponseEntity<byte[]> response = plantController.historyImage(1L, 1L, mockRequest);
+            assertEquals(HttpStatus.OK, response.getStatusCode());
+            assertEquals(contentType, response.getHeaders().getContentType().toString());
+            assertEquals(image, response.getBody());
+
+        } catch (IOException e) {
+            System.out.println("Error with resource file " + e.getMessage());
+        }
+    }
+
+
+    @Test
+    void whenHistoryDoesNotExist_returnDefaultImage() {
+        HttpServletRequest mockRequest = new MockHttpServletRequest();
+        String imagePath = "static/img/plant.png";
+
+        try (InputStream inputStream = nz.ac.canterbury.seng302.gardenersgrove.integrationtests.controller.PlantControllerTest.class.getClassLoader().getResourceAsStream(imagePath)) {
+            if (inputStream == null) {
+                throw new IOException("Image not found: " + imagePath);
+            }
+            byte[] image = inputStream.readAllBytes();
+            String contentType = "image/png";
+            Plant plant = new Plant();
+
+            LocalDate date = LocalDate.of(1970, 1, 1);
+            PlantHistoryItem plantHistoryItem = new PlantHistoryItem(plant, date);
+            plantHistoryItem.setImage(contentType, image);
+            plant.setPlantImage(contentType,image);
+
+            when(plantHistoryService.getPlantHistoryById(1L)).thenReturn(Optional.of(plantHistoryItem));
+
+            ResponseEntity<byte[]> response = plantController.historyImage(1L, plantHistoryItem.getId(), mockRequest);
+            assertEquals(HttpStatus.FOUND, response.getStatusCode());
+            assertEquals("/img/default-plant.svg", response.getHeaders().getFirst(HttpHeaders.LOCATION));
+        } catch (IOException e) {
+            System.out.println("Error with resource file " + e.getMessage());
+        }
+
+
     }
 
 }
