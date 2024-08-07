@@ -3,6 +3,8 @@ package nz.ac.canterbury.seng302.gardenersgrove.unittests.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -60,7 +62,7 @@ public class GardenServiceTest {
         String gardenDescription = "Test Description";
 
         Garden garden = new Garden(gardenName, streetNumber,streetName,suburb,city,country,postCode,lon,lat, gardenDescription, gardenSize);
-        Mockito.when(gardenRepository.save(Mockito.any(Garden.class))).thenReturn(garden);
+        Mockito.when(gardenRepository.save(any(Garden.class))).thenReturn(garden);
 
         Garden gardenReturned = gardenService.addGarden(garden);
 
