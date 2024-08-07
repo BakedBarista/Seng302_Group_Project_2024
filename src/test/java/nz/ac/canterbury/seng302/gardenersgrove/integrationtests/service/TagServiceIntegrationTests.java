@@ -9,7 +9,7 @@ import static org.mockito.Mockito.verify;
 import java.time.LocalDate;
 import java.util.List;
 
-import nz.ac.canterbury.seng302.gardenersgrove.service.ProfanityDetectedException;
+import nz.ac.canterbury.seng302.gardenersgrove.exceptions.ProfanityDetectedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

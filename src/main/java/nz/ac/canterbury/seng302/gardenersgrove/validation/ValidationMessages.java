@@ -15,6 +15,7 @@ public class ValidationMessages {
             "numbers, spaces, dots, commas, hyphens, or apostrophes";
     public static final String INVALID_GARDEN_DESCRIPTION = "Description must be 512 characters or " +
             "less and contain some text";
+    public static final String INVALID_PLANT_RECORD_DESCRIPTION = "Description must be 512 characters or less.";
     public static final String GARDEN_STREET_NUMBER_MESSAGE = "Please enter a valid street number";
     public static final String GARDEN_STREET_NAME_MESSAGE = "Please enter a valid street name";
     public static final String GARDEN_SUBURB_MESSAGE = "Please enter a valid suburb";

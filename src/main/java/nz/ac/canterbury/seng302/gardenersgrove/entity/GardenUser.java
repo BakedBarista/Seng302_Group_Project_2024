@@ -2,7 +2,6 @@ package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
-import org.hibernate.validator.constraints.Length;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -48,7 +47,6 @@ public class GardenUser {
     @Lob
     private byte[] profilePicture;
 
-    @Column(nullable = true)
     @Size(max = MAX_USER_DESCRIPTION_LENGTH)
     private String description;
 
@@ -283,6 +281,7 @@ public class GardenUser {
      */
     public String getProfileBannerContentType() {
         return profileBannerContentType;
+
     }
 
     /**
