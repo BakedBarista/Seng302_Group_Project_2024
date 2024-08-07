@@ -1,57 +1,40 @@
 package nz.ac.canterbury.seng302.gardenersgrove.cucumber.step_definitions;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import org.junit.jupiter.api.Assertions;
-import org.springframework.security.core.Authentication;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.client.RestTemplate;
-
 import io.cucumber.java.BeforeAll;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import jakarta.servlet.http.HttpSession;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.GardenController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.GardenDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.WeatherData;
-import nz.ac.canterbury.seng302.gardenersgrove.model.weather.Condition;
-import nz.ac.canterbury.seng302.gardenersgrove.model.weather.Current;
-import nz.ac.canterbury.seng302.gardenersgrove.model.weather.Day;
-import nz.ac.canterbury.seng302.gardenersgrove.model.weather.Forecast;
-import nz.ac.canterbury.seng302.gardenersgrove.model.weather.ForecastDay;
-import nz.ac.canterbury.seng302.gardenersgrove.model.weather.Location;
-import nz.ac.canterbury.seng302.gardenersgrove.model.weather.WeatherAPICurrentResponse;
-import nz.ac.canterbury.seng302.gardenersgrove.model.weather.WeatherAPIResponse;
+import nz.ac.canterbury.seng302.gardenersgrove.model.weather.*;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.FriendsRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.weather.GardenWeatherRepository;
-import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.LocationService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.ModerationService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.ProfanityService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weather.GardenWeatherService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weather.WeatherAPIService;
+import org.junit.jupiter.api.Assertions;
+import org.springframework.security.core.Authentication;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.client.RestTemplate;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class U14WeatherMonitoringFeature {
     private static Authentication authentication;
@@ -93,7 +76,7 @@ public class U14WeatherMonitoringFeature {
         ProfanityService profanityService = mock(ProfanityService.class);
         TagService tagService = mock(TagService.class);
         LocationService locationService = mock(LocationService.class);
-        gardenController = new GardenController(gardenService, null, plantService, userService, weatherAPIService, tagService, friendService, mockedModerationService, profanityService, locationService);
+        gardenController = new GardenController(gardenService, null, plantService, userService, weatherAPIService, friendService, mockedModerationService, profanityService, locationService);
 
         GardenUser user = new GardenUser();
         user.setId(1L);
@@ -112,7 +95,8 @@ public class U14WeatherMonitoringFeature {
     public void i_create_a_garden(String gardenName, String streetNumber, String streetName, String suburb, String city, String country, String lat, String lon) {
         GardenUser user = gardenUserRepository.findById(1L).get();
         garden = gardenRepository.findById(1L).get();
-
+        HttpSession session = mock(HttpSession.class);
+        when(session.getAttribute("submissionToken")).thenReturn("mockToken123");
         garden.setName(gardenName);
         garden.setStreetNumber(streetNumber);
         garden.setStreetName(streetName);
@@ -127,7 +111,7 @@ public class U14WeatherMonitoringFeature {
         when(mockedModerationService.checkIfDescriptionIsFlagged("")).thenReturn(false);
         when(gardenRepository.save(garden)).thenReturn(garden);
 
-        gardenController.submitCreateGardenForm(new GardenDTO(garden), bindingResult, authentication, model);
+        gardenController.submitCreateGardenForm(new GardenDTO(garden), bindingResult, authentication, model,session);
         assertNotNull(gardenRepository.findByOwnerId(user.getId()));
         assertNotNull(gardenRepository.findById(garden.getId()));
     }

@@ -52,7 +52,12 @@ public class GardenService {
      * @param garden object to save.
      * @return the saved garden object.
      */
-    public Garden addGarden(Garden garden) { return gardenRepository.save(garden);}
+    public Garden addGarden(Garden garden) {
+        if (garden.getSize() != null && garden.getSize() <= 0) {
+            throw new IllegalArgumentException("Garden size must be greater than 0");
+        }
+        return gardenRepository.save(garden);
+    }
 
     /**
      * Get garden details by id
