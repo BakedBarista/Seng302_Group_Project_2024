@@ -12,12 +12,11 @@
 
 
 <main class="main-container">
-  <h1 class="text-center mt-2 mb-4">Edit My Profile</h1>
-  <div class="card">
+  <div class="card border-top-0">
       <form th:action="@{/users/edit-public-profile}" method="post" enctype="multipart/form-data" th:object="${editUserDTO}" novalidate>
-          <div class="card-img-top img-fluid fixed-height mb-4 position-relative p-3">
+          <div class="card-img-top img-fluid fixed-height mb-4 position-relative">
               <div class="position-relative">
-                  <label for="bannerImage" class="position-absolute top-0 end-0" style="cursor: pointer;">
+                  <label for="bannerImage" class="position-absolute top-0 end-0 p-2" style="cursor: pointer;">
                       <img th:src="@{/icons/trans-plus.svg}" alt="+" />
                   </label>
                   <input id="bannerImage" name="bannerImage" class="d-none" type="file" accept=".png,.jpg,.jpeg,.svg"/>
@@ -25,31 +24,46 @@
                   <span id="editProfileBannerError" class="invalid-feedback"></span>
               </div>
           </div>
-
-          <div class="mb-3 d-flex justify-content-center position-relative">
-              <div class="position-relative d-inline">
-                  <label for="image" class="position-absolute top-0 end-0" style="cursor: pointer;">
-                      <img th:src="@{/icons/trans-plus.svg}" alt="+" />
-                  </label>
-                  <input id="image" name="image" class="d-none" type="file" accept=".png,.jpg,.jpeg,.svg"/>
-                  <img id="preview" th:src="@{'/users/' + ${userId} + '/profile-picture'}" alt="Profile Picture" class="profile-picture-large" style="width: 200px;" />
-                  <span id="editProfilePictureError" class="invalid-feedback text-center"></span>
-              </div>
+          <div>
+              <label for="image" class="position-absolute top-0 end-0 public-profile-picture-plus-button-padding me-2" style="cursor: pointer;">
+                  <img th:src="@{/icons/trans-plus.svg}" alt="+" />
+              </label>
+              <input id="image" name="image" class="d-none" type="file" accept=".png,.jpg,.jpeg,.svg"/>
+              <img id="preview"
+                   class="public-profile-picture position-absolute top-0 end-0 justify-content-md-center public-profile-picture-padding me-2"
+                   th:src="@{'/users/' + ${userId} + '/profile-picture'}"
+                   width="200"
+                   height="200"
+                   alt="Profile Picture"/>
+              <span id="editProfilePictureError" class="invalid-feedback text-center"></span>
           </div>
 
-        <div class="m-4 mt-5 mt-6">
-            <label for="description" class="form-label"
-                   th:classappend="${#fields.hasErrors('description')} or ${profanity != null} ? ' is-invalid'">
-                About Me
-            </label>
-            <textarea rows="3" id="description" type="text" class="form-control"
-                      th:classappend="${#fields.hasErrors('description')} or ${profanity != null} ? ' is-invalid'"
-                      th:text="${editUserDTO.description}" th:name="description"></textarea>
-            <div class="invalid-feedback">
-                <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
-                <div th:if="${profanity != null}" th:text="${profanity}"></div>
-            </div>
-        </div>
+          <div class="m-4 mt-0">
+              <div class="d-flex flex-column">
+                  <div class="m-2 mt-3">
+                      <span th:if="${name != null && name.length() >= 12}"><span class="d-sm-none d-flex mt-5"></span></span>
+                      <h2>[[${name}]]</h2>
+                      <h4>
+                          <label for="description"
+                                 class="form-label"
+                                 th:classappend="${#fields.hasErrors('description')} or ${profanity != null} ? ' is-invalid'">
+                              About Me...
+                          </label>
+                      </h4>
+                      <textarea rows="3"
+                                id="description"
+                                type="text"
+                                class="form-control"
+                                th:classappend="${#fields.hasErrors('description')} or ${profanity != null} ? ' is-invalid'"
+                                th:text="${editUserDTO.description}" th:name="description">
+                      </textarea>
+                      <div class="invalid-feedback">
+                          <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+                          <div th:if="${profanity != null}" th:text="${profanity}"></div>
+                      </div>
+                  </div>
+              </div>
+          </div>
         
         <!-- Button Container with Adjusted Spacing -->
         <div class="d-flex justify-content-end px-4 mb-4">

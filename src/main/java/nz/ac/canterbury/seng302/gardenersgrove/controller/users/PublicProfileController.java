@@ -31,7 +31,7 @@ public class PublicProfileController {
     private final GardenUserService userService;
     private final ProfanityService profanityService;
 
-    private static final String DEFAULT_PROFILE_BANNER_URL = "/img/default-profile.svg";
+    private static final String DEFAULT_PROFILE_BANNER_URL = "/img/default-banner.svg";
     
     private static final String USER_ID_ATTRIBUTE = "userId";
 
@@ -93,6 +93,7 @@ public class PublicProfileController {
         EditUserDTO editUserDTO = new EditUserDTO();
 
         model.addAttribute(USER_ID_ATTRIBUTE, userId);
+        model.addAttribute("name", user.getFname() + " " + user.getLname());
         editUserDTO.setDescription(user.getDescription());
         model.addAttribute("editUserDTO", editUserDTO);
 
@@ -133,6 +134,7 @@ public class PublicProfileController {
         if (bindingResult.hasFieldErrors("description")) {errorFlag = true;}
 
         if (errorFlag) {
+            model.addAttribute("name", user.getFname() + " " + user.getLname());
             model.addAttribute("editUserDTO", editUserDTO);
             model.addAttribute("profanity", "There cannot be any profanity in the 'About me' section");
             return "users/edit-public-profile";
