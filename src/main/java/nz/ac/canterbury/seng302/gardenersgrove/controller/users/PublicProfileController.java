@@ -134,6 +134,7 @@ public class PublicProfileController {
         if (bindingResult.hasFieldErrors("description")) {errorFlag = true;}
 
         if (errorFlag) {
+            model.addAttribute("name", user.getFname() + " " + user.getLname());
             model.addAttribute("editUserDTO", editUserDTO);
             model.addAttribute("profanity", "There cannot be any profanity in the 'About me' section");
             return "users/edit-public-profile";
