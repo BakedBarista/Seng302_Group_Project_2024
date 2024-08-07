@@ -563,14 +563,14 @@ class PlantControllerTest {
     }
 
     @Test
-    void givenNoSearch_whenGetPlantInfo_returnsExpectedPage() {
+    void givenNoSearch_whenGetPlantInfo_returnsExpectedPage() throws ExternalServiceException {
         String returnPage = plantController.plantInformationForm(null, model);
 
         assertEquals("plants/plantInformation", returnPage);
     }
 
     @Test
-    void givenSearch_whenGetPlantInfo_returnsResults() {
+    void givenSearch_whenGetPlantInfo_returnsResults() throws ExternalServiceException {
         PlantInfoDTO plantInfo = new PlantInfoDTO();
         plantInfo.setLabel("Tomato");
         when(wikidataService.getPlantInfo("tomato")).thenReturn(List.of(plantInfo));

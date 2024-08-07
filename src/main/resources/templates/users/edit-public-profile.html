@@ -42,14 +42,14 @@
               <div class="d-flex flex-column">
                   <div class="m-2 mt-3">
                       <span th:if="${name != null && name.length() >= 12}"><span class="d-sm-none d-flex mt-5"></span></span>
-                      <h2>[[${name}]]</h2>
-                      <h4>
+                      <h2 class="mb-3">[[${name}]]</h2>
+                      <h5 class="mb-1 about-me">
                           <label for="description"
                                  class="form-label"
                                  th:classappend="${#fields.hasErrors('description')} or ${profanity != null} ? ' is-invalid'">
                               About Me...
                           </label>
-                      </h4>
+                      </h5>
                       <textarea rows="3"
                                 id="description"
                                 type="text"

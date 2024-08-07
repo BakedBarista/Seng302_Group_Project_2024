@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantInfoDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.service.ExternalServiceException;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.StringDistanceService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.WikidataService;
@@ -97,11 +98,11 @@ class WikidataServiceTest {
                 .thenThrow(new RuntimeException("Network error"));
 
         // Verify that the exception is thrown
-        assertThrows(RuntimeException.class, () -> wikidataService.getPlantInfo("tomato"));
+        assertThrows(ExternalServiceException.class, () -> wikidataService.getPlantInfo("tomato"));
     }
 
     @Test
-    void givenEmptyFields_whenSearchTomato_thenReturnEmptyFields() {
+    void givenEmptyFields_whenSearchTomato_thenReturnEmptyFields() throws ExternalServiceException {
         String searchResponse = "{\"search\":[{\"id\":\"Q235\",\"label\":\"\",\"description\":\"\"}]}";
         ResponseEntity<String> searchEntity = ResponseEntity.ok(searchResponse);
         when(restTemplate.exchange(Mockito.contains("wbsearchentities"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
@@ -122,7 +123,7 @@ class WikidataServiceTest {
     }
 
     @Test
-    void givenNotAPlant_whenSearchCar_thenReturnNoPlants() {
+    void givenNotAPlant_whenSearchCar_thenReturnNoPlants() throws ExternalServiceException {
         String searchResponse = "{\"search\":[{\"id\":\"Q1420\",\"label\":\"motor car\",\"description\":\"motorized road vehicle designed to carry one to eight people rather than primarily goods\"}]}";
         ResponseEntity<String> searchEntity = ResponseEntity.ok(searchResponse);
         when(restTemplate.exchange(Mockito.contains("wbsearchentities"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
