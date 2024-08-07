@@ -59,6 +59,8 @@ public class GardenController {
 
     private final ProfanityService profanityService;
     private final String PROFANITY = "profanity";
+    private final String SUBMISSION_TOKEN = "submissionToken";
+    private final String CREATE_GARDEN_PAGE = "gardens/createGarden";
 
     @Value("${geoapify.api.key}")
     private String location_apiKey;
@@ -89,14 +91,14 @@ public class GardenController {
     public String getCreateGardenForm(Model model, HttpSession session) {
         logger.info("GET /gardens/create - display the new garden form");
         String submissionToken = UUID.randomUUID().toString();
-        session.setAttribute("submissionToken",submissionToken);
-        model.addAttribute("submissionToken",submissionToken);
+        session.setAttribute(SUBMISSION_TOKEN,submissionToken);
+        model.addAttribute(SUBMISSION_TOKEN,submissionToken);
         model.addAttribute("garden", new GardenDTO());
         GardenUser owner = gardenUserService.getCurrentUser();
 
         List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
         model.addAttribute("gardens", gardens);
-        return "gardens/createGarden";
+        return CREATE_GARDEN_PAGE;
     }
 
     /**
@@ -116,16 +118,17 @@ public class GardenController {
 
         logger.info(gardenDTO.toString());
         String tokenFromForm = gardenDTO.getSubmissionToken();
-        String sessionToken = (String) session.getAttribute("submissionToken");
+        String sessionToken = (String) session.getAttribute(SUBMISSION_TOKEN);
         if (sessionToken == null || !sessionToken.equals(tokenFromForm)) {
             model.addAttribute("error", "Form has already been submitted or is invalid.");
-            return "gardens/createGarden";
+            model.addAttribute("garden", new GardenDTO());
+            return CREATE_GARDEN_PAGE;
         }
-        session.removeAttribute("submissionToken");
         checkGardenDTOError(model, bindingResult, gardenDTO);
         if (bindingResult.hasErrors() || model.containsAttribute(PROFANITY)) {
+            model.addAttribute(SUBMISSION_TOKEN, tokenFromForm);
             model.addAttribute("garden", gardenDTO);
-            return "gardens/createGarden";
+            return CREATE_GARDEN_PAGE;
         }
 
         // Request API
@@ -148,10 +151,13 @@ public class GardenController {
             logger.info(garden.toString());
 
             Garden savedGarden = gardenService.addGarden(garden);
+            session.removeAttribute(SUBMISSION_TOKEN);
             return "redirect:/gardens/" + savedGarden.getId();
         } catch (IllegalArgumentException e) {
             bindingResult.rejectValue("size", "error.garden", e.getMessage());
-            return "gardens/createGarden";
+            model.addAttribute(SUBMISSION_TOKEN,tokenFromForm);
+            model.addAttribute("garden", gardenDTO);
+            return CREATE_GARDEN_PAGE;
         }
     }
 
@@ -325,7 +331,6 @@ public class GardenController {
     public String updatePublicStatus(@PathVariable(name = "id") Long id,
                                      @RequestParam(name = "isPublic", defaultValue = "false") Boolean isPublic) {
         logger.info("POST /gardens/id - update garden public status");
-        logger.info(String.valueOf(isPublic));
         Optional<Garden> garden = gardenService.getGardenById(id);
         if (garden.isPresent()) {
             garden.get().setPublic(isPublic);
@@ -399,9 +404,15 @@ public class GardenController {
                 existingGarden.get().setLat(null);
                 existingGarden.get().setLon(null);
             }
-
-            existingGarden.get().setGardenWeather(null);
-            gardenService.addGarden(existingGarden.get());
+            try {
+                existingGarden.get().setGardenWeather(null);
+                gardenService.addGarden(existingGarden.get());
+            } catch (IllegalArgumentException e) {
+                result.rejectValue("size", "error.garden", e.getMessage());
+                model.addAttribute("id",id);
+                model.addAttribute("garden", gardenDTO);
+                return "gardens/editGarden";
+            }
         }
         return "redirect:/gardens/" + id;
     }
@@ -533,7 +544,7 @@ public class GardenController {
         try {
             logger.info("Adding test data");
 
-            // Create user
+            // Create users
             GardenUser user = new GardenUser("Jan", "Doe", "jan.doe@gmail.com", "password", LocalDate.of(1970, 1, 1));
             gardenUserService.addUser(user);
 
@@ -563,11 +574,30 @@ public class GardenController {
             for (int i = 0; i < gardenNames.size(); i++) {
                 String gardenName = gardenNames.get(i);
                 String streetNumber = Integer.toString(i + 1);
-                GardenDTO gardenDTO = new GardenDTO(gardenName, streetNumber, "Ilam Road", "Ilam", "Christchurch", "New Zealand", "8041", -43.53, 172.63, "Test Garden", String.valueOf(1000 + (i * 50)), null);
+
+                // Create GardenDTO
+                GardenDTO gardenDTO = new GardenDTO(
+                        gardenName,
+                        streetNumber,
+                        "Main Street",
+                        "Suburb",
+                        "City",
+                        "Country",
+                        "12345",
+                        null,
+                        null,
+                        "A lovely garden",
+                        "100.0",
+                        "token"
+                );
+
+                // Convert DTO to Garden entity
                 Garden garden = gardenDTO.toGarden();
                 garden.setOwner(user);
                 garden.setPublic(true);
-                gardenService.addGarden(garden);
+
+                // Save Garden
+                Garden savedGarden = gardenService.addGarden(garden);
 
                 logger.info("Garden {} added", gardenName);
 
@@ -576,18 +606,28 @@ public class GardenController {
                     String[] plantDetail = plantsDetails.get(j);
                     String plantName = plantDetail[0];
                     String plantDescription = plantDetail[1];
-                    PlantDTO plant = new PlantDTO(plantName, "15", plantDescription, "2024-03-%02d".formatted(j % 5 + 1));
-                    Plant savedPlant = plantService.createPlant(plant, garden.getId());
 
+                    // Create PlantDTO
+                    PlantDTO plantDTO = new PlantDTO(
+                            plantName,
+                            "15",
+                            plantDescription,
+                            "2024-03-%02d".formatted(j % 5 + 1)
+                    );
+
+                    // Save Plant and associate with Garden
+                    Plant savedPlant = plantService.createPlant(plantDTO, savedGarden.getId());
                     plants.add(savedPlant);
                 }
 
-                garden.setPlants(plants);
-                gardenService.addGarden(garden);
+                // Set plants and save garden again
+                savedGarden.setPlants(plants);
+                gardenService.addGarden(savedGarden);
             }
         } catch (Exception e) {
             logger.info("Failed to add garden", e);
         }
     }
+
 
 }
