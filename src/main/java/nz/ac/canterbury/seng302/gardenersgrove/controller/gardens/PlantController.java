@@ -454,7 +454,7 @@ public class PlantController {
     @GetMapping("/plant-information")
     public String plantInformationForm(
             @RequestParam(required = false) String q,
-            Model model) {
+            Model model) throws ExternalServiceException {
         if (q != null) {
             List<PlantInfoDTO> plants = wikidataService.getPlantInfo(q);
             model.addAttribute("plants", plants);

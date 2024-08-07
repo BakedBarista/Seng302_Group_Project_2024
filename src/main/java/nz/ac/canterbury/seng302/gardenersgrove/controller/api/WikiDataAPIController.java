@@ -52,13 +52,13 @@ public class WikiDataAPIController {
             Thread.currentThread().interrupt();
         }
         try {
-        List<PlantInfoDTO> plantInfo = wikidataService.getPlantInfo(currentValue);
-        if(plantInfo.isEmpty()) {
-            plantInfo = localPlantDataService.getSimilarPlantInfo(currentValue);
-        }
-        ObjectNode results = JsonNodeFactory.instance.objectNode();
-        results.set("results", objectMapper.valueToTree(plantInfo));
-        return ResponseEntity.ok(results);
+            List<PlantInfoDTO> plantInfo = wikidataService.getPlantInfo(currentValue);
+            if (plantInfo.isEmpty()) {
+                plantInfo = localPlantDataService.getSimilarPlantInfo(currentValue);
+            }
+            ObjectNode results = JsonNodeFactory.instance.objectNode();
+            results.set("results", objectMapper.valueToTree(plantInfo));
+            return ResponseEntity.ok(results);
         } catch (ExternalServiceException e) {
             JsonNode errorMessage = objectMapper.createObjectNode().put("error", "Plant information service is unavailable at the moment, please try again later");
             return ResponseEntity.status(503).body(errorMessage);

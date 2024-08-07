@@ -53,7 +53,7 @@ public class WikidataService {
      * @param plantName to be searched
      * @return JsonNode with a list of PlantInfoDTOs
      */
-    public List<PlantInfoDTO> getPlantInfo(String plantName) {
+    public List<PlantInfoDTO> getPlantInfo(String plantName) throws ExternalServiceException {
         String url = SEARCH_ENDPOINT + UriUtils.encode(plantName, "utf8");
         logger.info("Sending search request...");
         ResponseEntity<String> responseEntity;
@@ -104,7 +104,7 @@ public class WikidataService {
         return new HttpEntity<>(headers);
     }
 
-    private Map<String, JsonNode> getMetadataForEntities(JsonNode entities) {
+    private Map<String, JsonNode> getMetadataForEntities(JsonNode entities) throws ExternalServiceException {
         List<String> entityIds = new ArrayList<>(entities.size());
         for (JsonNode entityNode : entities) {
             String entityId = entityNode.get("id").asText();
