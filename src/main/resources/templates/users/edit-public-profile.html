@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang='en' xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit My Profile | Pollinat*r</title>
+
+  <!-- This needs to be here for Bootstrap and general CSS imports -->
+  <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
+</head>
+<body>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+
+<main class="main-container">
+  <h1 class="text-center mt-2 mb-4">Edit My Profile</h1>
+  <div class="card">
+      <form th:action="@{/users/edit-public-profile}" method="post" enctype="multipart/form-data" th:object="${editUserDTO}" novalidate>
+          <div class="card-img-top img-fluid fixed-height mb-4 position-relative p-3">
+              <div class="position-relative">
+                  <label for="bannerImage" class="position-absolute top-0 end-0" style="cursor: pointer;">
+                      <img th:src="@{/icons/trans-plus.svg}" alt="+" />
+                  </label>
+                  <input id="bannerImage" name="bannerImage" class="d-none" type="file" accept=".png,.jpg,.jpeg,.svg"/>
+                  <img id="bannerPreview" class="card-img-top img-fluid fixed-height mb-4" th:src="@{'/users/' + ${userId} + '/profile-banner'}" alt="profile banner"/>
+                  <span id="editProfileBannerError" class="invalid-feedback"></span>
+              </div>
+          </div>
+
+          <div class="mb-3 d-flex justify-content-center position-relative">
+              <div class="position-relative d-inline">
+                  <label for="image" class="position-absolute top-0 end-0" style="cursor: pointer;">
+                      <img th:src="@{/icons/trans-plus.svg}" alt="+" />
+                  </label>
+                  <input id="image" name="image" class="d-none" type="file" accept=".png,.jpg,.jpeg,.svg"/>
+                  <img id="preview" th:src="@{'/users/' + ${userId} + '/profile-picture'}" alt="Profile Picture" class="profile-picture-large" style="width: 200px;" />
+                  <span id="editProfilePictureError" class="invalid-feedback text-center"></span>
+              </div>
+          </div>
+
+        <div class="m-4 mt-5 mt-6">
+            <label for="description" class="form-label"
+                   th:classappend="${#fields.hasErrors('description')} or ${profanity != null} ? ' is-invalid'">
+                About Me
+            </label>
+            <textarea rows="3" id="description" type="text" class="form-control"
+                      th:classappend="${#fields.hasErrors('description')} or ${profanity != null} ? ' is-invalid'"
+                      th:text="${editUserDTO.description}" th:name="description"></textarea>
+            <div class="invalid-feedback">
+                <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+                <div th:if="${profanity != null}" th:text="${profanity}"></div>
+            </div>
+        </div>
+        
+        <!-- Button Container with Adjusted Spacing -->
+        <div class="d-flex justify-content-end px-4 mb-4">
+          <a th:href="@{/users/public-profile}" class="btn btn-outline-secondary me-2">Cancel</a>
+          <button class="btn btn-primary">Submit</button>
+        </div>
+      </form>
+  </div>
+</main>
+<th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
+
+<script>
+  /** @type {HTMLInputElement} */
+  const editProfileImageInput = document.getElementById("image");
+  /** @type {HTMLSpanElement} */
+  const editProfilePictureError = document.getElementById("editProfilePictureError");
+  /** @type {HTMLInputElement} */
+  const bannerImageInput = document.getElementById("bannerImage");
+  /** @type {HTMLSpanElement} */
+  const bannerImageError = document.getElementById("editProfileBannerError");
+
+  const VALID_MIME_TYPES = ["image/png", "image/jpeg", "image/svg+xml"];
+  const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+
+  /**
+   * Validates the selected file and updates the preview.
+   * @param {HTMLInputElement} inputElement - The input element for file selection.
+   * @param {HTMLImageElement} previewElement - The image element for preview.
+   * @param {HTMLSpanElement} errorElement - The span element for displaying error messages.
+   */
+  function handleFileSelection(inputElement, previewElement, errorElement) {
+    const file = inputElement.files[0];
+    let hasError = false;
+
+    if (!file) {
+      return;
+    }
+
+    errorElement.textContent = "";
+    errorElement.style.display = "none";
+
+    if (!VALID_MIME_TYPES.includes(file.type)) {
+      errorElement.style.display = "block";
+      errorElement.textContent = "Image must be of type png, jpg or svg";
+      hasError = true;
+      inputElement.value = null;
+      return;
+    }
+
+    if (file.size > MAX_FILE_SIZE) {
+      errorElement.style.display = "block";
+      errorElement.textContent = "File size must be less than 10MB";
+      hasError = true;
+      inputElement.value = null;
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function () {
+      previewElement.src = reader.result;
+      previewElement.style.display = "block";
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // Apply the function to profile picture input
+  editProfileImageInput.addEventListener("change", () => {
+    handleFileSelection(editProfileImageInput, document.getElementById("preview"), editProfilePictureError);
+  });
+
+  // Apply the function to banner image input
+  bannerImageInput.addEventListener("change", () => {
+    handleFileSelection(bannerImageInput, document.getElementById("bannerPreview"), bannerImageError);
+  });
+</script>
+</body>
+
+</html>

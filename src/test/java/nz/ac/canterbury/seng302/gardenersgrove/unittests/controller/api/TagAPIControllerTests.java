@@ -11,12 +11,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import nz.ac.canterbury.seng302.gardenersgrove.exceptions.ProfanityDetectedException;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.Mockito;
 import org.springframework.security.core.Authentication;
 import org.springframework.http.ResponseEntity;
 

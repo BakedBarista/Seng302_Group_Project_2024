@@ -142,6 +142,20 @@ class GardenUserServiceTest {
     }
 
     @Test
+    void givenSetBannerCalled_thenUpdatesBanner() {
+        var id = 1L;
+        var contentType = "text/plain";
+        var banner = "banner".getBytes();
+        Mockito.when(mockRepository.findById(id)).thenReturn(Optional.of(testUser1));
+
+        gardenUserService.setProfileBanner(id, contentType, banner);
+
+        Mockito.verify(mockRepository).save(testUser1);
+        assertEquals(contentType, testUser1.getProfileBannerContentType());
+        assertEquals(banner, testUser1.getProfileBanner());
+    }
+
+    @Test
     void givenSetProfilePictureCalledWithInvalidId_thenDoesNothing() {
         var id = 1L;
         var contentType = "text/plain";

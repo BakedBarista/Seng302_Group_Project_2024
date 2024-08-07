@@ -445,7 +445,7 @@ public class PlantController {
      * take user to search plant information form
      * @return redirect to a more detailed page about a specific plant
      */
-    @GetMapping("/plantInformation")
+    @GetMapping("/plant-information")
     public String plantInformationForm(
                             Model model) {
         return "plants/plantInformation";
@@ -457,7 +457,7 @@ public class PlantController {
      * @param model representation of results
      * @return returns to the same plant information page with results from search
      */
-    @PostMapping("/plantInformation")
+    @PostMapping("/plant-information")
     public String plantInformationSubmit(
                                       @PathVariable(PLANT_ID) long plantId,
                                       Model model) {

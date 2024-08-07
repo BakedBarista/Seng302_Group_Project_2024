@@ -55,9 +55,9 @@ public class U28GardenHistoryPlantDateFeature {
     private PlantDTO plantDTO;
     private MultipartFile file;
 
-    public static GardenUser user;
+    private static GardenUser user;
     private Long plantId;
-    public static Long gardenId;
+    private Long gardenId;
     private String date = "2024-07-26"; // Example date
 
     @BeforeAll

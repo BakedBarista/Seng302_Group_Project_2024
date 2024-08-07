@@ -276,6 +276,15 @@ h1, h2, h3, h4, h5, h6 {
     box-shadow: #333 0 0 8px -3px;
 }
 
+.public-profile-picture {
+    border-radius: 999px;
+    border: 10px white solid;
+}
+
+.public-profile-picture-padding {
+    margin-top: 100px;
+}
+
 @media (max-width: 752px) {
     .main-container {
         margin: 0;
@@ -584,6 +593,11 @@ h1, h2, h3, h4, h5, h6 {
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+}
+
+.fixed-height {
+    height: 200px;
+    object-fit: cover;
 }
 
 /*Timeline styling*/
