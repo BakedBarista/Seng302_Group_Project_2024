@@ -180,7 +180,7 @@ function autocomplete(containerElement, callback, options) {
                 if (err.status === 503) {
                     errorMessage.innerHTML = err.message;
                 } else {
-                    errorMessage.innerHTML = "Plant information service is unavailable at the moment, please try again later";
+                    errorMessage.innerHTML = "Service is unavailable at the moment, please try again later";
                 }
                 autocompleteItemsElement.appendChild(errorMessage);
                 console.log(err);
