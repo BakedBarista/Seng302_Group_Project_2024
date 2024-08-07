@@ -122,7 +122,7 @@ public class PublicProfileController {
         GardenUser user = userService.getUserById(userId);
         model.addAttribute(USER_ID_ATTRIBUTE, userId);
 
-        Boolean errorFlag = false;
+        boolean errorFlag = false;
 
         try {
             isValidDescription(description);
@@ -134,14 +134,13 @@ public class PublicProfileController {
 
         if (errorFlag) {
             model.addAttribute("editUserDTO", editUserDTO);
-            model.addAttribute("profanity", "There cannot be any profanity in about me");
+            model.addAttribute("profanity", "There cannot be any profanity in the 'About me' section");
             return "users/edit-public-profile";
         }
 
-
-        if(!editProfilePicture(userId, profilePic) || !editProfileBanner(userId, banner)){
-            return "users/edit-public-profile";
-        }
+        user.setDescription(description);
+        editProfilePicture(userId, profilePic);
+        editProfileBanner(userId, banner);
 
         userService.addUser(user);
 
@@ -152,15 +151,13 @@ public class PublicProfileController {
      * Handles the submission of profile picture edits
      * @param userId id of the user to update picture
      * @param file the MultipartFile containing the new profile picture
+     * @throws IOException
      */
-    
-     public Boolean editProfilePicture(Long userId, MultipartFile file) throws IOException{
+     public void editProfilePicture(Long userId, MultipartFile file) throws IOException{
         logger.info("POST /users/profile-picture");
-        if(file.getSize() != 0 && validateImage(file)){
+         if(file.getSize() != 0 && validateImage(file)){
             userService.setProfilePicture(userId, file.getContentType(), file.getBytes());
-            return true;
         }
-        return false;
     }
 
     /**
@@ -169,15 +166,11 @@ public class PublicProfileController {
      * @param file the MultipartFile containing the new profile picture
      * @throws IOException
      */
-    
-     public Boolean editProfileBanner(Long userId, MultipartFile file) throws IOException{
+     public void editProfileBanner(Long userId, MultipartFile file) throws IOException{
         logger.info("POST /users/edit-banner-picture");
-        logger.info("" + validateImage(file));
         if(file.getSize() != 0 && validateImage(file)){
             userService.setProfileBanner(userId, file.getContentType(), file.getBytes());
-            return true;
         }
-        return false;
     }
 
     /**
@@ -195,14 +188,11 @@ public class PublicProfileController {
      * Validates the tag if it contains invalid characters and checks the length
      *
      * @param description The name of the tag.
-     * @return True if name is valid, otherwise false
      */
-    public boolean isValidDescription(String description) throws ProfanityDetectedException {
+    public void isValidDescription(String description) throws ProfanityDetectedException {
         boolean profanityExists = !(profanityService.badWordsFound(description).isEmpty());
-
         if (profanityExists) {
             throw new ProfanityDetectedException();
         }
-        return true;
     }
 }
