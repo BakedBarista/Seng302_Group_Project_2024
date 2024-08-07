@@ -563,7 +563,7 @@ public class GardenController {
             for (int i = 0; i < gardenNames.size(); i++) {
                 String gardenName = gardenNames.get(i);
                 String streetNumber = Integer.toString(i + 1);
-                GardenDTO gardenDTO = new GardenDTO();
+                GardenDTO gardenDTO = new GardenDTO(gardenName, streetNumber, "Ilam Road", "Ilam", "Christchurch", "New Zealand", "8041", -43.53, 172.63, "Test Garden", String.valueOf(1000 + (i * 50)), null);
                 Garden garden = gardenDTO.toGarden();
                 garden.setOwner(user);
                 garden.setPublic(true);
