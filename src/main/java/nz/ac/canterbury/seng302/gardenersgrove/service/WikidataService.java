@@ -53,10 +53,16 @@ public class WikidataService {
      * @param plantName to be searched
      * @return JsonNode with a list of PlantInfoDTOs
      */
-    public List<PlantInfoDTO> getPlantInfo(String plantName) {
+    public List<PlantInfoDTO> getPlantInfo(String plantName) throws ExternalServiceException {
         String url = SEARCH_ENDPOINT + UriUtils.encode(plantName, "utf8");
         logger.info("Sending search request...");
-        ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, constructEntity(), String.class);
+        ResponseEntity<String> responseEntity;
+        try {
+            responseEntity = restTemplate.exchange(url, HttpMethod.GET, constructEntity(), String.class);
+        } catch (Exception e) {
+            throw new ExternalServiceException("Unable to fetch plant info from Wikidata");
+        }
+
         String response = responseEntity.getBody();
 
         JsonNode jsonNode = readJson(response);
@@ -105,7 +111,7 @@ public class WikidataService {
         return new HttpEntity<>(headers);
     }
 
-    private Map<String, JsonNode> getMetadataForEntities(JsonNode entities) {
+    private Map<String, JsonNode> getMetadataForEntities(JsonNode entities) throws ExternalServiceException {
         List<String> entityIds = new ArrayList<>(entities.size());
         for (JsonNode entityNode : entities) {
             String entityId = entityNode.get("id").asText();
@@ -114,7 +120,12 @@ public class WikidataService {
 
         // Fetch entity metadata in bulk to reduce number of requests
         String url = ENTITY_ENDPOINT + String.join("|", entityIds);
-        ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, constructEntity(), String.class);
+        ResponseEntity<String> responseEntity;
+        try {
+            responseEntity = restTemplate.exchange(url, HttpMethod.GET, constructEntity(), String.class);
+        } catch (Exception e) {
+            throw new ExternalServiceException("Unable to fetch entity info from Wikidata");
+        }
         String response = responseEntity.getBody();
         JsonNode entityMetadata = readJson(response).get("entities");
 

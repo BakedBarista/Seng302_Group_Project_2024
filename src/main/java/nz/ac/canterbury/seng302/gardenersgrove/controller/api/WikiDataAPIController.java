@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import nz.ac.canterbury.seng302.gardenersgrove.service.ExternalServiceException;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -49,12 +50,17 @@ public class WikiDataAPIController {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
-        List<PlantInfoDTO> plantInfo = wikidataService.getPlantInfo(currentValue);
-        if(plantInfo.isEmpty()) {
-            plantInfo = localPlantDataService.getSimilarPlantInfo(currentValue);
+        try {
+            List<PlantInfoDTO> plantInfo = wikidataService.getPlantInfo(currentValue);
+            if (plantInfo.isEmpty()) {
+                plantInfo = localPlantDataService.getSimilarPlantInfo(currentValue);
+            }
+            ObjectNode results = JsonNodeFactory.instance.objectNode();
+            results.set("results", objectMapper.valueToTree(plantInfo));
+            return ResponseEntity.ok(results);
+        } catch (ExternalServiceException e) {
+            JsonNode errorMessage = objectMapper.createObjectNode().put("error", "Plant information service is unavailable at the moment, please try again later");
+            return ResponseEntity.status(503).body(errorMessage);
         }
-        ObjectNode results = JsonNodeFactory.instance.objectNode();
-        results.set("results", objectMapper.valueToTree(plantInfo));
-        return ResponseEntity.ok(results);
     }
 }

@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 
+import nz.ac.canterbury.seng302.gardenersgrove.service.ExternalServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -42,15 +43,15 @@ public class U26PlantSearch {
     }
 
     @When("I click on a link to search for a plant")
-    public void i_click_on_a_link_to_search_for_a_plant() {
+    public void i_click_on_a_link_to_search_for_a_plant() throws ExternalServiceException {
         plantController.plantInformationForm(null, null);
     }
     @Then("I am taken to a page where I can search for plant information by name")
-    public void i_am_taken_to_a_page_where_i_can_search_for_plant_information_by_name() {
+    public void i_am_taken_to_a_page_where_i_can_search_for_plant_information_by_name() throws ExternalServiceException {
         assertFalse(plantController.plantInformationForm(null, null).contains("plantSearch"));
     }
     @Given("I am on the plant search page")
-    public void i_am_on_the_plant_search_page() {
+    public void i_am_on_the_plant_search_page() throws ExternalServiceException {
         plantController.plantInformationForm(null, null);
     }
 
