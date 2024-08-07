@@ -72,19 +72,16 @@ public class LocalPlantDataService {
      * @param userSearch plant name to be searched
      * @return JsonNode with a list of PlantInfoDTOs
      */
-    public JsonNode getSimilarPlantInfo(String userSearch) {
+    public List<PlantInfoDTO> getSimilarPlantInfo(String userSearch) {
         logger.info("API returned no results - attempting to find similar plant info from local sources");
 
         List<String> similarPlantNames = stringDistanceService.getSimilarStrings(plantNames, userSearch);
 
-        ArrayList<PlantInfoDTO> plantInfoList = new ArrayList<>();
+        List<PlantInfoDTO> plantInfoList = new ArrayList<>();
         for (String similarPlantName : similarPlantNames) {
             plantInfoList.add(getMatchingPlantInfoFromFile(similarPlantName));
         }
 
-        JsonNodeFactory factory = JsonNodeFactory.instance;
-        ObjectNode resultNode = factory.objectNode();
-        resultNode.set("plants", objectMapper.valueToTree(plantInfoList));
-        return resultNode;
+        return plantInfoList;
     }
 }

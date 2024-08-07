@@ -1,25 +1,25 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unittests.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantInfoDTO;
-import nz.ac.canterbury.seng302.gardenersgrove.service.LocalPlantDataService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.StringDistanceService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantInfoDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.service.LocalPlantDataService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.StringDistanceService;
 
 class LocalPlantDataServiceTest {
 
@@ -66,10 +66,10 @@ class LocalPlantDataServiceTest {
             return Collections.emptyList();
         });
 
-        JsonNode result = localPlantDataService.getSimilarPlantInfo("Ros");
+        List<PlantInfoDTO> result = localPlantDataService.getSimilarPlantInfo("Ros");
 
-        //assertEquals(2, result.get("plants").size());
-        assertEquals("Rose", result.get("plants").get(0).get("label").asText());
-        assertEquals("Sunflower", result.get("plants").get(1).get("label").asText());
+        assertEquals(2, result.size());
+        assertEquals("Rose", result.get(0).getLabel());
+        assertEquals("Sunflower", result.get(1).getLabel());
     }
 }

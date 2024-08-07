@@ -8,6 +8,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.PlantHistoryItem;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantHistoryItemDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantInfoDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +42,8 @@ public class PlantController {
     private final GardenUserService gardenUserService;
     private final GardenService gardenService;
     private final PlantHistoryService plantHistoryService;
+
+    private final WikidataService wikidataService;
     private static final Set<String> ACCEPTED_FILE_TYPES = Set.of("image/jpeg", "image/jpg", "image/png", "image/svg", "image/svg+xml");
     private static final int MAX_FILE_SIZE = 10 * 1024 * 1024;
     private static final String PLANT_SUCCESSFULLY_SAVED_LOG = "Saved new plant to Garden ID: {}";
@@ -55,11 +58,12 @@ public class PlantController {
 
 
     @Autowired
-    public PlantController(PlantService plantService, GardenService gardenService, GardenUserService gardenUserService, PlantHistoryService plantHistoryService) {
+    public PlantController(PlantService plantService, GardenService gardenService, GardenUserService gardenUserService, PlantHistoryService plantHistoryService, WikidataService wikidataService) {
         this.plantService = plantService;
         this.gardenService = gardenService;
         this.gardenUserService = gardenUserService;
         this.plantHistoryService = plantHistoryService;
+        this.wikidataService = wikidataService;
     }
 
     /**
@@ -449,20 +453,13 @@ public class PlantController {
      */
     @GetMapping("/plant-information")
     public String plantInformationForm(
-                            Model model) {
-        return "plants/plantInformation";
-    }
+            @RequestParam(required = false) String q,
+            Model model) {
+        if (q != null) {
+            List<PlantInfoDTO> plants = wikidataService.getPlantInfo(q);
+            model.addAttribute("plants", plants);
+        }
 
-    /**
-     *
-     * @param plantId the id of the plant being looked into
-     * @param model representation of results
-     * @return returns to the same plant information page with results from search
-     */
-    @PostMapping("/plant-information")
-    public String plantInformationSubmit(
-                                      @PathVariable(PLANT_ID) long plantId,
-                                      Model model) {
         return "plants/plantInformation";
     }
 }

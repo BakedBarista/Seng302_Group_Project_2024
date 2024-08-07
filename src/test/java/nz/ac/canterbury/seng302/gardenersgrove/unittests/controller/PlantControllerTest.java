@@ -8,10 +8,8 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantHistoryItemDTO;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.PlantHistoryService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantInfoDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -60,6 +58,9 @@ class PlantControllerTest {
 
     @Mock
     private GardenUserService gardenUserService;
+
+    @Mock
+    private WikidataService wikidataService;
 
     private Model model;
 
@@ -562,16 +563,23 @@ class PlantControllerTest {
     }
 
     @Test
-    void testPlantInformationForm_ReturnsToPlantInformation() {
-        String expectedReturnPage = "plants/plantInformation";
-        String returnPage = plantController.plantInformationForm(model);
-        assertEquals(expectedReturnPage, returnPage);
+    void givenNoSearch_whenGetPlantInfo_returnsExpectedPage() {
+        String returnPage = plantController.plantInformationForm(null, model);
+
+        assertEquals("plants/plantInformation", returnPage);
     }
 
     @Test
-    void testPlantInformationSubmitForm_ReturnsToPlantInformation() {
-        String expectedReturnPage = "plants/plantInformation";
-        String returnPage = plantController.plantInformationSubmit(1, model);
-        assertEquals(expectedReturnPage, returnPage);
+    void givenSearch_whenGetPlantInfo_returnsResults() {
+        PlantInfoDTO plantInfo = new PlantInfoDTO();
+        plantInfo.setLabel("Tomato");
+        when(wikidataService.getPlantInfo("tomato")).thenReturn(List.of(plantInfo));
+
+        String returnPage = plantController.plantInformationForm("tomato", model);
+
+        assertEquals("plants/plantInformation", returnPage);
+        verify(model).addAttribute(eq("plants"), assertArg((List<PlantInfoDTO> plants) -> {
+            assertEquals("Tomato", plants.get(0).getLabel());
+        }));
     }
 }

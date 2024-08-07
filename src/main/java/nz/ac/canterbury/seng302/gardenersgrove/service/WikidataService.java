@@ -1,12 +1,11 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import nz.ac.canterbury.seng302.gardenersgrove.exceptions.JsonProcessingException;
-import org.springframework.web.util.UriComponentsBuilder;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantInfoDTO;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -15,12 +14,13 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriUtils;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantInfoDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.exceptions.JsonProcessingException;
 
 /**
  * Service for fetching plant information from Wikidata API.
@@ -53,27 +53,8 @@ public class WikidataService {
      * @param plantName to be searched
      * @return JsonNode with a list of PlantInfoDTOs
      */
-    public JsonNode getPlantInfo(String plantName) {
-        List<PlantInfoDTO> plantInfoList = getMatchingPlantInfo(plantName);
-
-        JsonNodeFactory factory = JsonNodeFactory.instance;
-        ObjectNode resultNode = factory.objectNode();
-        resultNode.set("plants", objectMapper.valueToTree(plantInfoList));
-        return resultNode;
-    }
-
-    /**
-     * Get a list of PlantInfoDTOs for a string input
-     * @param plantName string name of plant
-     * @return list of PlantInfoDTOs
-     */
-    public List<PlantInfoDTO> getMatchingPlantInfo(String plantName) {
-        String url = UriComponentsBuilder
-                .fromHttpUrl(SEARCH_ENDPOINT)
-                .queryParam("plantName", plantName)
-                .encode()
-                .toUriString();
-
+    public List<PlantInfoDTO> getPlantInfo(String plantName) {
+        String url = SEARCH_ENDPOINT + UriUtils.encode(plantName, "utf8");
         logger.info("Sending search request...");
         ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, constructEntity(), String.class);
         String response = responseEntity.getBody();
@@ -87,10 +68,12 @@ public class WikidataService {
                 String entityId = entityNode.get("id").asText();
                 JsonNode entityMetadata = metadata.get(entityId);
                 if (isSubclassOfGardenPlants(entityMetadata)) {
+                    String label = entityNode.get("label").asText();
+                    String description = entityNode.get("description").asText();
                     String imageUrl = getImageUrl(entityMetadata);
                     PlantInfoDTO plantInfo = new PlantInfoDTO(
-                            entityNode.get("label").asText(),
-                            entityNode.get("description").asText(),
+                            capitalize(label),
+                            capitalize(description),
                             entityId,
                             imageUrl
                     );
@@ -98,7 +81,6 @@ public class WikidataService {
                 }
             }
         }
-
         return plantInfoList;
     }
 
@@ -160,5 +142,10 @@ public class WikidataService {
         return "";
     }
 
-
+    private String capitalize(String string) {
+        if (string == null || string.isEmpty()) {
+            return string;
+        }
+        return string.substring(0, 1).toUpperCase() + string.substring(1);
+    }
 }
