@@ -43,23 +43,6 @@
                         <p class="mb-0"><span class="mx-1" th:text="${plant.count}">Plant Count</span> planted</p>
                     </div>
                 </div>
-<!--                TODO: I AM STILL FIXING THIS-->
-<!--                <div class="dropdown d-flex justify-content-end" th:if="${currentUser.id == garden.owner.id}">-->
-<!--                    <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).NOT_GROWING}" class="btn button-not-planted dropdown-toggle"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButtonSmall' + plant.id}">Not Growing</span>-->
-<!--                    <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).CURRENTLY_GROWING}" class="btn button-growing dropdown-toggle"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButtonSmall' + plant.id}">Growing</span>-->
-<!--                    <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).HARVESTED}" class="btn button-harvest dropdown-toggle"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButtonSmall' + plant.id}">Harvested</span>-->
-<!--                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButtonSmall">-->
-<!--                        <button type="button" class="dropdown-item" th:onclick="'updateStatus(' + ${plant.id} + ', \'NOT_GROWING\')'">-->
-<!--                            <span class="badge not-planted-badge">Not Growing</span>-->
-<!--                        </button>-->
-<!--                        <button type="button" class="dropdown-item" th:onclick="'updateStatus(' + ${plant.id} + ', \'CURRENTLY_GROWING\')'">-->
-<!--                            <span class="badge growing-badge">Growing</span>-->
-<!--                        </button>-->
-<!--                        <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#harvestedDateModal" th:attr="onclick='setPlantId(' + ${plant.id} + ')'">-->
-<!--                            <span class="badge harvest-badge">Harvested</span>-->
-<!--                        </button>-->
-<!--                    </div>-->
-<!--                </div>-->
                 <div class="pt-3">
                     <p class="fw-bold mb-1">
                         Description:
@@ -126,33 +109,6 @@
             </li>
           </ul>
         </section>
-    </div>
-
-<!--    TODO: I AM STILL FIXING THIS-->
-<!--    &lt;!&ndash; Harvested Date Modal &ndash;&gt;-->
-<!--    <div class="modal fade" id="harvestedDateModal" tabindex="-1" aria-labelledby="harvestedDateModalLabel" aria-hidden="true" th:if="${currentUser.id == garden.owner.id}">-->
-<!--        <div class="modal-dialog modal-dialog-centered modal-sm">-->
-<!--            <div class="modal-content">-->
-<!--                <div class="modal-header">-->
-<!--                    <h4 class="modal-title mx-2" id="harvestedDateModalLabel">Harvested Date</h4>-->
-<!--                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
-<!--                </div>-->
-<!--                <div class="modal-body mx-2">-->
-<!--                    <label>Date:-->
-<!--                        <input type="date" id="harvestedDateInput">-->
-<!--                    </label>-->
-<!--                    <div id="errorContainer" class="text-danger mt-2"></div>-->
-<!--                    <input type="hidden" id="currentPlantId">-->
-<!--                </div>-->
-<!--                <div class="modal-footer">-->
-<!--                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
-<!--                    <button type="button" class="btn btn-primary" onclick="handleSaveHarvest()">Save date</button>-->
-<!--                </div>-->
-<!--            </div>-->
-
-
-
-<!--        </div>-->
     </div>
 </main>
 
