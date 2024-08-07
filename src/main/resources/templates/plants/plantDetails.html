@@ -27,7 +27,6 @@
                 </div>
             </div>
             <div class="text-start">
-<!--                Display the harvested field at a later date when it's implemented here-->
                 <div class="d-flex mb-1">
                     <img th:src="@{/icons/calendar-03-stroke-rounded.svg}"
                          alt=""
@@ -55,35 +54,45 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-8 pb-5 px-5 overflow-y-auto overflow-x-hidden max-full-height-lg">
-        <div class="d-flex justify-content-center align-items-center mb-1 sticky-top bg-white p-5">
-            <h1 class="flex-grow-1 text-center m-0">Plant Timeline</h1>
+    <div class="col-lg-8 pb-5 px-5 overflow-y-auto overflow-x-hidden" style="max-height: 100vh;">
+
+        <div class="d-flex justify-content-center align-items-center mb-1 sticky-top mt-3 p-3">
+            <hr />
+            <h1 class="flex-grow-1 text-left text-lg-center m-0">Plant Timeline</h1>
+            <span class="d-inline-block" tabindex="0" id="recordUpdateButtonTooltip">
+                <a class="btn btn-primary ms-auto justify-content-end" id="recordUpdateButton"
+                   th:classappend="${disabledRecordButton} ? 'disabled' : ''"
+                   th:if="${currentUser.id == garden.owner.id}"
+                   th:href="@{/gardens/{gardenId}/plants/{plantId}/history(gardenId=${garden.id}, plantId=${plant.id})}"
+                >
+                    <img th:src="@{/icons/add-square-white.svg}" alt="" width="20" height="20" /> Record Update
+                </a>
+            </span>
         </div>
 
         <section class="py-3 px-3">
           <ul class="timeline-with-icons">
 <!--              Link up one of these cards with the backend and use thymeleaf to make as many as their are records.-->
-            <li class="timeline-item mb-5">
+            <li class="timeline-item mb-5" th:if="${showHarvestCard}">
               <span class="timeline-icon">
                 <img class="mx-1" th:src="@{/icons/harvest.svg}" alt="" width="25" height="25" />
               </span>
 
               <p class="fw-bold">Harvested</p>
-              <p class="text-muted mb-2 fw-bold">11 March 2020</p>
+              <p class="text-muted mb-2 fw-bold" th:text="${dateFormatter.format(plant.harvestedDate, NZ_FORMAT_DATE)}"></p>
               <p class="text-muted">
-                  My tomatoes were ready to go today! So yummy!
+                  You harvested your <span th:text="${plant.name}"></span>'s.
               </p>
             </li>
 
-            <li class="timeline-item mb-5">
+            <li th:each="history : ${plantHistory}" class="timeline-item mb-5">
               <span class="timeline-icon">
                 <img class="mx-1" th:src="@{/icons/record.svg}" alt="" width="25" height="25" />
               </span>
               <p class="fw-bold">Update</p>
-<!--                This image needs to be linked up-->
-                <img class="pb-3" th:src="@{/img/plant.png}" width="200" height="200" alt="plant"/>
-              <p class="text-muted mb-2 fw-bold">19 March 2020</p>
-              <p class="text-muted">
+                <img class="pb-3" th:src="@{'/plants/' + ${plant.id} + '/history/' + ${history.id} + '/image'}" width="200" height="200" alt="plant"/>
+                <p th:text="${dateFormatter.format(history.timestamp, NZ_FORMAT_DATE)}" class="text-muted mb-2 fw-bold">19 March 2020</p>
+              <p th:text="${history.description}" class="text-muted">
                   My tomato bush grew 3cm!
               </p>
             </li>
@@ -93,7 +102,7 @@
                 <img class="mx-1" th:src="@{/icons/first-planted.svg}" alt="" width="25" height="25" />
               </span>
               <p class="fw-bold">First Planted!</p>
-              <p class="text-muted mb-2 fw-bold">24 June 2020</p>
+              <p th:text="${dateFormatter.format(plant.getPlantedDate, NZ_FORMAT_DATE)}" class="text-muted mb-2 fw-bold">24 June 2020</p>
               <p class="text-muted">
                   The day this plant was first planted.
               </p>
@@ -102,9 +111,36 @@
         </section>
     </div>
 </main>
+
+<script>
+   const handleSaveHarvest = async () => {
+       saveHarvestedDate();
+   }
+</script>
+
 <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
-</body>
 <script th:src="@{/js/nextFormBox.js}"></script>
 <script th:src="@{/js/plantImageErrorChecking.js}"></script>
 <script th:src="@{/js/dateValidation.js}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const recordUpdateButton = document.getElementById('recordUpdateButton');
+        const recordUpdateButtonTooltip = document.getElementById('recordUpdateButtonTooltip');
+
+        if (recordUpdateButton.classList.contains('disabled')) {
+            recordUpdateButtonTooltip.setAttribute('data-bs-toggle', 'tooltip');
+            recordUpdateButtonTooltip.setAttribute('title', 'Cannot add update after harvesting or after a record is added today');
+
+            const tooltip = new bootstrap.Tooltip(recordUpdateButtonTooltip);
+            tooltip.show();
+        } else {
+            const tooltip = bootstrap.Tooltip.getInstance(recordUpdateButtonTooltip);
+            if (tooltip) {
+                tooltip.dispose();
+            }
+        }
+    });
+</script>
+<script th:src="@{/js/plantStatus.js}"></script>
+</body>
 </html>

@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.PlantHistoryItem;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantHistoryItemDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
@@ -21,11 +22,14 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
-import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.NZ_FORMAT_DATE;
+import static nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant.PlantStatus.HARVESTED;
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.HISTORY_FORMAT_DATE;
 
 /**
  * Controller for Plant related activities
@@ -37,7 +41,8 @@ public class PlantController {
     private final GardenUserService gardenUserService;
     private final GardenService gardenService;
     private final PlantHistoryService plantHistoryService;
-
+    private static final Set<String> ACCEPTED_FILE_TYPES = Set.of("image/jpeg", "image/jpg", "image/png", "image/svg", "image/svg+xml");
+    private static final int MAX_FILE_SIZE = 10 * 1024 * 1024;
     private static final String PLANT_SUCCESSFULLY_SAVED_LOG = "Saved new plant to Garden ID: {}";
     private static final String PLANT_UNSUCCESSFULLY_SAVED_LOG = "Failed to save new plant to garden ID: {}";
     private static final String GARDEN_ID = "gardenId";
@@ -45,6 +50,8 @@ public class PlantController {
     private static final String PLANT = "plant";
     private static final String ACCESS_DENIED = "error/accessDenied";
     private static final String GARDENS_REDIRECT = "redirect:/gardens/";
+    private static final String ERROR_404 = "error/404";
+
 
 
     @Autowired
@@ -273,8 +280,21 @@ public class PlantController {
         GardenUser owner = gardenUserService.getCurrentUser();
         Optional<Garden> garden = gardenService.getGardenById(gardenId);
         if (!garden.isPresent() || !garden.get().getOwner().getId().equals(owner.getId())) {
-            return "/error/accessDenied";
+            return ACCESS_DENIED;
         }
+
+        Optional<Plant> existingPlant = plantService.getPlantById(plantId);
+
+        if (existingPlant.isPresent()){
+            Plant plant = existingPlant.get();
+            LocalDate timestamp = LocalDate.now();
+
+            if (plantHistoryService.historyExists(plant, timestamp)) {
+                logger.warn("Update already exists today");
+                return ERROR_404;
+            }
+        }
+
         model.addAttribute(GARDEN_ID, gardenId);
         model.addAttribute(PLANT_ID, plantId);
         model.addAttribute(PLANT, new Plant("", "", "", null));
@@ -312,17 +332,23 @@ public class PlantController {
 
         if (existingPlant.isPresent()){
             try {
-                plantHistoryService.addHistoryItem(existingPlant.get(), file.getContentType(), file.getBytes(), description);
+                boolean validImage = ACCEPTED_FILE_TYPES.contains(file.getContentType()) && (file.getSize() <= MAX_FILE_SIZE);
+
+                if (!file.isEmpty() && validImage) {
+                    plantHistoryService.addHistoryItem(existingPlant.get(), file.getContentType(), file.getBytes(), description);
+                }
             } catch (IOException e) {
                 logger.info("Exception {}",e.toString());
             }
         }
 
-        return GARDENS_REDIRECT+gardenId;
+        return GARDENS_REDIRECT + gardenId + "/plants/" + plantId;
     }
 
     /**
-     * Controller for the plant detail page
+     * Controller for the plant history page
+     *
+     * @param plantId plant id
      * @param model representation of results
      * @return redirect to plant detail page
      */
@@ -348,25 +374,73 @@ public class PlantController {
                 return ACCESS_DENIED;
             }
 
-            if (plant.isEmpty() || !garden.get().getPlants().contains(plant.get())) {
-                logger.warn("User tried to access a non-existent plant for that garden, returning 404.");
-                return "error/404";
+        if (plant.isPresent()) {
+            Plant plantItem =  plant.get();
+            LocalDate timestamp = LocalDate.now();
+
+            if (plantHistoryService.historyExists(plantItem, timestamp) || plantItem.getStatus().equals(HARVESTED)) {
+                logger.warn("Update already exists today");
+                model.addAttribute("disabledRecordButton", true);
+            } else {
+                model.addAttribute("disabledRecordButton", false);
             }
+
+            if (plantItem.getStatus().equals(HARVESTED)) {
+                logger.warn("Plant harvested");
+                model.addAttribute("showHarvestCard", true);
+            } else {
+                model.addAttribute("showHarvestCard", false);
+            }
+
+
+
+            List <PlantHistoryItem> plantHistory = plantHistoryService.getPlantHistory(plantItem);
+            model.addAttribute("plantHistory", plantHistory);
+            model.addAttribute("dateFormatter", new ThymeLeafDateFormatter());
+            model.addAttribute("NZ_FORMAT_DATE", HISTORY_FORMAT_DATE);
 
             model.addAttribute("garden", garden.get());
             model.addAttribute("owner", owner);
             model.addAttribute("currentUser", currentUser);
         } else {
             logger.warn("User tried to access a non-existant garden, returning 404.");
-            return "error/404";
+            return ERROR_404;
         }
 
         model.addAttribute(GARDEN_ID, gardenId);
         model.addAttribute(PLANT_ID, plantId);
         model.addAttribute(PLANT, plant.orElse(null));
-        model.addAttribute("dateFormatter", new ThymeLeafDateFormatter());
-        model.addAttribute("NZ_FORMAT_DATE", NZ_FORMAT_DATE);
+
         return "plants/plantDetails";
+
+        }
+
+        return ERROR_404;
+    }
+
+    /**
+     * Gets plant history image from the database
+     *
+     * @param plantId plant ID
+     * @param recordId plant record ID
+     * @return Response entity
+     */
+    @GetMapping("plants/{plantId}/history/{recordId}/image")
+    public ResponseEntity<byte[]> historyImage(@PathVariable("plantId") Long plantId, @PathVariable("recordId") Long recordId, HttpServletRequest request) {
+        logger.info("GET /plants/{}/history/{}/image", plantId, recordId);
+
+        Optional<Plant> plant = plantService.getPlantById(plantId);
+        Optional<PlantHistoryItem> historyItem = plantHistoryService.getPlantHistoryById(recordId);
+
+        if (plant.isEmpty() || historyItem.isEmpty()) {
+            logger.info("Returning default plant image");
+            return ResponseEntity.status(302).header(HttpHeaders.LOCATION, request.getContextPath() + "/img/default-plant.svg").build();
+        }
+
+        // Return the saved image from DB
+        logger.info("Returning the plants saved image from DB");
+        return ResponseEntity.ok().contentType(MediaType.parseMediaType(historyItem.get().getImageContentType()))
+                .body(historyItem.get().getImage());
     }
 
     /**
