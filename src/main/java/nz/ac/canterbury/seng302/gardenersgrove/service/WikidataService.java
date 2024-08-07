@@ -65,6 +65,13 @@ public class WikidataService {
         if (jsonNode.has(SEARCH) && !jsonNode.get(SEARCH).isEmpty()) {
             Map<String, JsonNode> metadata = getMetadataForEntities(jsonNode.get(SEARCH));
             for (JsonNode entityNode : jsonNode.get(SEARCH)) {
+                // verify that entity node has an id, label and description before presenting it to the user
+                if (entityNode.get("id") == null
+                        || entityNode.get("label") == null
+                        || entityNode.get("description") == null) {
+                    continue;
+                }
+
                 String entityId = entityNode.get("id").asText();
                 JsonNode entityMetadata = metadata.get(entityId);
                 if (isSubclassOfGardenPlants(entityMetadata)) {
