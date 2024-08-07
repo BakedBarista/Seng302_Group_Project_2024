@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.gardens;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
@@ -74,11 +75,17 @@ public class PlantController {
      * @return redirect to add plant form
      */
     @GetMapping("/gardens/{id}/add-plant")
-    public String addPlantForm(@PathVariable("id") Long gardenId, Model model){
+    public String addPlantForm(@PathVariable("id") Long gardenId, @RequestParam(required = false) boolean importPlant, Model model, HttpSession session){
 
         logger.info("GET /gardens/${id}/add-plant - display the new plant form");
         model.addAttribute(GARDEN_ID, gardenId);
-        model.addAttribute(PLANT, new Plant("","","",null));
+
+        Plant plant = new Plant("", "", "", null);
+        if (importPlant) {
+            plant.setName((String) session.getAttribute("plantLabel"));
+            plant.setDescription((String) session.getAttribute("plantDescription"));
+        }
+        model.addAttribute(PLANT, plant);
 
         GardenUser owner = gardenUserService.getCurrentUser();
         Optional<Garden> garden = gardenService.getGardenById(gardenId);
@@ -461,5 +468,26 @@ public class PlantController {
         }
 
         return "plants/plantInformation";
+    }
+
+    /**
+     * TODO
+     */
+    @PostMapping("/plant-information/add-to-garden")
+    public String plantInformationAddToGarden(
+            @RequestParam String label,
+            @RequestParam String description,
+            @RequestParam String image,
+            HttpSession session,
+            Model model) {
+        // Save info to add to the plant
+        session.setAttribute("plantLabel", label);
+        session.setAttribute("plantDescription", description);
+        session.setAttribute("plantImage", image);
+
+        List<Garden> gardens = gardenService.getGardensByOwnerId(gardenUserService.getCurrentUser().getId());
+        model.addAttribute("gardens", gardens);
+
+        return "plants/plantInformationAddToGarden";
     }
 }
