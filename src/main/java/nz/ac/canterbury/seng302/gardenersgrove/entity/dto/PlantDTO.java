@@ -11,7 +11,7 @@ import java.time.LocalDate;
  */
 public class PlantDTO extends BasePlant {
 
-    @ValidDate()
+    @ValidDate(message="Date is not in valid format, DD/MM/YYYY, or is not within the valid range of dates (1901-present)")
     private String plantedDate;
 
     public PlantDTO(String name, String count, String description, String plantedDate) {
