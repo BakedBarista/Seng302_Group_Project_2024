@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import nz.ac.canterbury.seng302.gardenersgrove.service.ExternalServiceException;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantInfoDTO;

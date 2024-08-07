@@ -10,44 +10,26 @@
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 <main class="main-container" style = "margin-top: 10%;">
     <div class="card border-top-0">
+        <p class="end-0 bottom-0 m-2 mt-3 position-absolute">
+            <a th:href="@{edit-public-profile}" class="btn btn-primary">Edit</a>
+        </p>
         <img
             class="card-img-top img-fluid fixed-height mb-4"
             th:src="@{'/users/' + ${userId} + '/profile-banner'}"
             alt="profile banner"
         />
-        <div class="d-md-none d-flex justify-content-center align-items-center">
-            <img
-                    class="public-profile-picture position-absolute top-0 public-profile-picture-padding me-2"
-                    th:src="@{'/users/' + ${userId} + '/profile-picture'}"
-                    width="180"
-                    height="180"
-                    alt="profile picture"
-            />
-        </div>
-        <div class="d-none d-md-block">
-            <img
-                    class="public-profile-picture position-absolute top-0 end-0 public-profile-picture-padding me-2"
-                    th:src="@{'/users/' + ${userId} + '/profile-picture'}"
-                    width="200"
-                    height="200"
-                    alt="profile picture"
-            />
-        </div>
+        <img
+                class="public-profile-picture position-absolute top-0 end-0 public-profile-picture-padding me-2"
+                th:src="@{'/users/' + ${userId} + '/profile-picture'}"
+                width="180"
+                height="180"
+                alt="profile picture"
+        />
         <div class="m-4 mt-0">
-
             <div class="d-flex flex-column">
-                <div class="d-flex align-items-center">
-                    <h1 class="d-none d-md-block">My Profile</h1>
-                    <p class="ms-4 pt-1 d-none d-md-block">
-                        <a th:href="@{edit-public-profile}" class="btn btn-primary">Edit</a>
-                    </p>
-                    <p class="d-md-none ms-auto">
-                        <a th:href="@{edit-public-profile}" class="btn btn-primary">Edit</a>
-                    </p>
-                </div>
-                <h4>My Name is...</h4>
-                <p>[[${name}]]</p>
-                <h4>About me...</h4>
+                <span th:if="${name.length() >= 12}"><span class="d-sm-none d-flex mt-5"></span></span>
+                <h2 class="mb-3">[[${name}]]</h2>
+                <h5 class="mb-1 about-me">About me...</h5>
                 <p>[[${description}]]</p>
             </div>
         </div>
