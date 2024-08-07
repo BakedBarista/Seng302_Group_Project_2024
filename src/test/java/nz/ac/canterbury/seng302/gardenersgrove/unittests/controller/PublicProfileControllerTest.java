@@ -45,7 +45,6 @@ public class PublicProfileControllerTest {
     private static Model model;
     private static Authentication authentication;
     private static Long userId;
-
     private static ProfanityService profanityService;
 
     static Long loggedInUserId = 1L;
@@ -113,7 +112,7 @@ public class PublicProfileControllerTest {
 
         ResponseEntity<byte[]> bannerContent = publicProfileController.getPublicProfileBanner(userId, request);
 
-        Assertions.assertEquals(path + "/img/default-profile.svg", bannerContent.getHeaders().getLocation().toString());
+        Assertions.assertEquals(path + "/img/default-banner.svg", bannerContent.getHeaders().getLocation().toString());
     }
 
     @Test
