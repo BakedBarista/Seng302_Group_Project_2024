@@ -248,22 +248,6 @@
                                         <p class="mb-0"><span class="mx-1" th:text="${plant.count}">Plant Count</span> planted</p>
                                     </div>
                                 </div>
-                                <div class="dropdown d-flex justify-content-end"  th:if="${currentUser.id == garden.owner.id}">
-                                    <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).NOT_GROWING}" class="btn button-not-planted dropdown-toggle"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButtonSmall' + plant.id}">Not Growing</span>
-                                    <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).CURRENTLY_GROWING}" class="btn button-growing dropdown-toggle"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButtonSmall' + plant.id}">Growing</span>
-                                    <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).HARVESTED}" class="btn button-harvest dropdown-toggle"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButtonSmall' + plant.id}">Harvested</span>
-                                    <div class="dropdown-menu"  aria-labelledby="dropdownMenuButtonSmall">
-                                        <button type="button" class="dropdown-item" th:onclick="'updateStatus(' + ${plant.id} + ', \'NOT_GROWING\')'">
-                                            <span class="badge not-planted-badge">Not Growing</span>
-                                        </button>
-                                        <button type="button" class="dropdown-item" th:onclick="'updateStatus(' + ${plant.id} + ', \'CURRENTLY_GROWING\')'">
-                                            <span class="badge growing-badge">Growing</span>
-                                        </button>
-                                        <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#harvestedDateModal" th:attr="onclick='setPlantId(' + ${plant.id} + ')'">
-                                            <span class="badge harvest-badge">Harvested</span>
-                                        </button>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                         <div class="col-8">
@@ -278,6 +262,22 @@
                                         <a class="ms-auto justify-content-end"  th:if="${currentUser.id == garden.owner.id}" th:href="@{/gardens/{gardenId}/plants/{plantId}/edit(gardenId=${garden.id}, plantId=${plant.id})}">
                                             <img class="mx-1" th:src="@{/icons/edit.svg}" alt="" width="20" height="20" />
                                         </a>
+                                    </div>
+                                </div>
+                                <div class="dropdown d-flex justify-content-start"  th:if="${currentUser.id == garden.owner.id}">
+                                    <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).NOT_GROWING}" class="btn button-not-planted dropdown-toggle"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButtonSmall' + plant.id}">Not Growing</span>
+                                    <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).CURRENTLY_GROWING}" class="btn button-growing dropdown-toggle"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButtonSmall' + plant.id}">Growing</span>
+                                    <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).HARVESTED}" class="btn button-harvest dropdown-toggle"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButtonSmall' + plant.id}">Harvested</span>
+                                    <div class="dropdown-menu"  aria-labelledby="dropdownMenuButtonSmall">
+                                        <button type="button" class="dropdown-item" th:onclick="'updateStatus(' + ${plant.id} + ', \'NOT_GROWING\')'">
+                                            <span class="badge not-planted-badge">Not Growing</span>
+                                        </button>
+                                        <button type="button" class="dropdown-item" th:onclick="'updateStatus(' + ${plant.id} + ', \'CURRENTLY_GROWING\')'">
+                                            <span class="badge growing-badge">Growing</span>
+                                        </button>
+                                        <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#harvestedDateModal" th:attr="onclick='setPlantId(' + ${plant.id} + ')'">
+                                            <span class="badge harvest-badge">Harvested</span>
+                                        </button>
                                     </div>
                                 </div>
                                 <p class="fw-bold mb-1">
