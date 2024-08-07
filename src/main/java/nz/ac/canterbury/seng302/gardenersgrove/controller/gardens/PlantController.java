@@ -2,7 +2,10 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.gardens;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.PlantHistoryItem;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantHistoryItemDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
@@ -26,7 +29,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant.PlantStatus.HARVESTED;
-import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.NZ_FORMAT_DATE;
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.HISTORY_FORMAT_DATE;
 
 /**
  * Controller for Plant related activities
@@ -392,7 +395,7 @@ public class PlantController {
             List <PlantHistoryItem> plantHistory = plantHistoryService.getPlantHistory(plantItem);
             model.addAttribute("plantHistory", plantHistory);
             model.addAttribute("dateFormatter", new ThymeLeafDateFormatter());
-            model.addAttribute("NZ_FORMAT_DATE", NZ_FORMAT_DATE);
+            model.addAttribute("NZ_FORMAT_DATE", HISTORY_FORMAT_DATE);
 
             model.addAttribute("garden", garden.get());
             model.addAttribute("owner", owner);
