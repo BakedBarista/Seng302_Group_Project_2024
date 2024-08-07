@@ -91,11 +91,10 @@ public class PlantController {
             plant.setDescription((String) session.getAttribute("plantDescription"));
 
             String image = (String) session.getAttribute("plantImage");
-            if (image != null) {
+            if (image != null && image.startsWith(WikidataService.IMAGE_URL_PREFIX)) {
                 try {
                     var conn = new URL(image).openConnection();
-                    byte[] base64Image
-                    = Base64.encodeBase64(conn.getInputStream().readAllBytes(), false);
+                    byte[] base64Image = Base64.encodeBase64(conn.getInputStream().readAllBytes(), false);
                     model.addAttribute("importImage", new String(base64Image));
                     model.addAttribute("importImageType", conn.getContentType());
                 } catch (IOException e) {

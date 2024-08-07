@@ -34,6 +34,7 @@ public class WikidataService {
     Logger logger = LoggerFactory.getLogger(WikidataService.class);
     private static final String SEARCH_ENDPOINT = "https://www.wikidata.org/w/api.php?action=wbsearchentities&format=json&language=en&type=item&limit=20&search=";
     private static final String ENTITY_ENDPOINT = "https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=";
+    public static final String IMAGE_URL_PREFIX = "https://commons.wikimedia.org/wiki/Special:FilePath/";
     //IDs refer to category: Fruit, vegetable, shrub, herb, tree, fruit vegetable, table apple, perennial plant(e.g. catnip), tracheophyta(succulent)
     //This list is not exhaustive as wikidata keeps thousands of different categories of plants
     private static final List<String> CATEGORY_IDS = List.of("Q3314483","Q11004","Q42295","Q207123","Q10884","Q1470762","Q3395974","Q157957","Q27133");
@@ -145,7 +146,7 @@ public class WikidataService {
         JsonNode claims = entityMetadata.path("claims").path("P18");
         if (claims.isArray() && !claims.isEmpty()) {
             String imageFilename = claims.get(0).path("mainsnak").path("datavalue").path("value").asText();
-            return "https://commons.wikimedia.org/wiki/Special:FilePath/" + imageFilename;
+            return IMAGE_URL_PREFIX + imageFilename;
         }
         return "";
     }
