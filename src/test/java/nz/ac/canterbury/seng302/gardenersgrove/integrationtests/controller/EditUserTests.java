@@ -4,13 +4,12 @@ import nz.ac.canterbury.seng302.gardenersgrove.controller.users.EditUserControll
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditPasswordDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
@@ -18,13 +17,12 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
+import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-
-import java.io.IOException;
-import java.util.logging.Logger;
 
 class EditUserControllerTest {
 
@@ -74,7 +72,7 @@ class EditUserControllerTest {
         //Edit user details
         String result = controller.submitUser(editUser, bindingResult, file, authentication, dateValidStr, model);
 
-        assertEquals("redirect:/users/user", result); // Verify that the returned view name is correct
+        assertEquals("redirect:/users/settings", result); // Verify that the returned view name is correct
     }
 
     @Test
@@ -195,5 +193,96 @@ class EditUserControllerTest {
         } catch (IOException e) {
             System.out.println("IOException was thrown as expected");
         }
+    }
+
+    @Test
+    void whenNoLnameChecked_lnameIsDisabled() throws IOException {
+        GardenUser user = new GardenUser("John", "Doe", "john@email.com", "P#ssw0rd", LocalDate.of(2000, 10, 10));
+        when(userService.getUserById(userId)).thenReturn(user);
+        when(authentication.getPrincipal()).thenReturn(userId);
+
+        EditUserDTO editUser = new EditUserDTO();
+        editUser.setFname("Jane");
+        editUser.setLname("");
+        editUser.setNoLname(true);
+        editUser.setEmail("jane@email.com");
+        editUser.setDateOfBirth("1970-01-01");
+
+        BindingResult bindingResult = mock(BindingResult.class);
+        when(bindingResult.hasErrors()).thenReturn(false);
+
+        String result = controller.submitUser(editUser, bindingResult, file, authentication, dateValidStr, model);
+        assertEquals("redirect:/users/settings", result);
+        assertTrue(editUser.isNoLname());
+        assertNull(editUser.getLname());
+        assertNull(user.getLname());
+    }
+
+    @Test
+    void whenNoLnameUnchecked_lnameIsEnabled() throws IOException {
+        GardenUser user = new GardenUser("John", "Doe", "john@email.com", "P#ssw0rd", LocalDate.of(2000, 10, 10));
+        when(userService.getUserById(userId)).thenReturn(user);
+        when(authentication.getPrincipal()).thenReturn(userId);
+
+        EditUserDTO editUser = new EditUserDTO();
+        editUser.setFname("Jane");
+        editUser.setLname("Dough");
+        editUser.setNoLname(false);
+        editUser.setEmail("jane@email.com");
+        editUser.setDateOfBirth("1970-01-01");
+
+        BindingResult bindingResult = mock(BindingResult.class);
+        when(bindingResult.hasErrors()).thenReturn(false);
+
+        String result = controller.submitUser(editUser, bindingResult, file, authentication, dateValidStr, model);
+
+        assertEquals("redirect:/users/settings", result);
+        assertFalse(editUser.isNoLname());
+        assertEquals("Dough", editUser.getLname());
+        assertEquals("Dough", user.getLname());
+    }
+
+    @Test
+    void whenLnameIsEmpty_lnameIsRejected() throws IOException {
+        GardenUser user = new GardenUser("John", "Doe", "john@email.com", "P#ssw0rd", LocalDate.of(2000, 10, 10));
+        when(userService.getUserById(userId)).thenReturn(user);
+        when(authentication.getPrincipal()).thenReturn(userId);
+
+        EditUserDTO editUser = new EditUserDTO();
+        editUser.setFname("Jane");
+        editUser.setLname("");
+        editUser.setNoLname(false);
+        editUser.setEmail("jane@email.com");
+        editUser.setDateOfBirth("1970-01-01");
+
+        BindingResult bindingResult = mock(BindingResult.class);
+        when(bindingResult.hasErrors()).thenReturn(true);
+
+        String result = controller.submitUser(editUser, bindingResult, file, authentication, dateValidStr, model);
+
+        verify(bindingResult).rejectValue("lname", null, "Last name cannot be empty");
+        assertEquals("users/editTemplate", result);
+    }
+
+    @Test
+    void whenLnameIsNull_lnameIsDisabled(){
+        GardenUser user = new GardenUser("John", null, "john@email.com", "P#ssw0rd", LocalDate.of(2000, 10, 10));
+        when(authentication.getPrincipal()).thenReturn(userId);
+        when(userService.getUserById(userId)).thenReturn(user);
+        String result = controller.edit(authentication, model);
+        verify(authentication, times(1)).getPrincipal();
+        verify(userService, times(1)).getUserById(userId);
+        verify(model, times(1)).addAttribute("userId", userId);
+        ArgumentCaptor<EditUserDTO> captor = ArgumentCaptor.forClass(EditUserDTO.class);
+        verify(model, times(1)).addAttribute(eq("editUserDTO"), captor.capture());
+
+        EditUserDTO editUserDTO = captor.getValue();
+        assertEquals("John", editUserDTO.getFname());
+        assertNull(editUserDTO.getLname());
+        assertTrue(editUserDTO.isNoLname());
+        assertEquals("john@email.com", editUserDTO.getEmail());
+        assertEquals("2000-10-10", editUserDTO.getDateOfBirth());
+
+        assertEquals("users/editTemplate", result);
     }
 }

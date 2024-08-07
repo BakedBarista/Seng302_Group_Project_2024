@@ -1,9 +1,11 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.api;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.exceptions.ProfanityDetectedException;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +51,7 @@ public class TagAPIController {
     @PutMapping("/gardens/{gardenId}/tags")
     public ResponseEntity<String> setGardenTags(
             @PathVariable Long gardenId,
-            @RequestBody List<String> tags,
+                @RequestBody List<String> tags,
             Authentication authentication) {
         logger.info("Setting tags for garden {}", gardenId);
         GardenUser user = gardenUserService.getUserById((Long) authentication.getPrincipal());
@@ -64,13 +66,22 @@ public class TagAPIController {
             return ResponseEntity.status(403).build();
         }
 
+        String message;
+        List<String> strippedTags = new ArrayList<>();
+        for (String tag : tags) {
+            String strippedTag = tag.strip();
+            if (tag.isBlank()) {
+                message = "Tag cannot be blank";
+                return ResponseEntity.status(422).body(message);
+            }
+            strippedTags.add(strippedTag);
+        }
         try {
-            tagService.updateGardenTags(garden, tags);
+            tagService.updateGardenTags(garden, strippedTags);
         } catch (ProfanityDetectedException e) {
             logger.info("profanity detected in tag");
             StrikeService.AddStrikeResult result = strikeService.addStrike(user);
 
-            String message;
             switch (result) {
                 case WARNING:
                     message = "You have added an inappropriate tag for the fifth time. One more strike and your account will be blocked.";

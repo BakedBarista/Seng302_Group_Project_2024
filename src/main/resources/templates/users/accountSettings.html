@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta http-equiv="Content-Type" context="text/html; charset=UTF-8" />
+        <title>My Profile | Gardener's Grove</title>
+
+        <!-- This needs to be here for Bootstrap and general CSS imports -->
+        <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
+    </head>
+    <body>
+        <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+        <main class="main-container" style = "margin-top: 10%;">
+            <div class="card p-5">
+                <h1>Account Settings</h1>
+                <div class="d-flex justify-content-center my-3">
+                    <img
+                            class="mb-3 text-center"
+                            th:src="@{'/users/' + ${userId} + '/profile-picture'}"
+                            width="200"
+                            height="200"
+                            alt="Profile Picture"
+                    />
+                </div>
+                <h4>First Name</h4>
+                <p>[[${fname}]]</p>
+                <h4>Last Name</h4>
+                <p th:if="${lname != null}">[[${lname}]]</p>
+                <p th:if="${lname == null}">&mdash;</p>
+                <h4>Email</h4>
+                <p>[[${email}]]</p>
+                <h4>Date of Birth</h4>
+                <p th:if="${dateOfBirth != null}">[[${dateOfBirth}]]</p>
+                <p th:if="${dateOfBirth == null}">&mdash;</p>
+                <p>
+                    <a th:href="@{/users/edit}" class="btn btn-primary">Edit</a>
+                </p>
+            </div>
+        </main>
+        <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
+    </body>
+</html>

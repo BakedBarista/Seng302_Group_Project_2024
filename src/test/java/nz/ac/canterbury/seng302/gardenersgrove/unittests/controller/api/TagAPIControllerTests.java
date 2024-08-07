@@ -11,10 +11,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import nz.ac.canterbury.seng302.gardenersgrove.exceptions.ProfanityDetectedException;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.security.core.Authentication;
 import org.springframework.http.ResponseEntity;
 
@@ -167,5 +167,45 @@ class TagAPIControllerTests {
 
         assertEquals(401, response.getStatusCode().value());
         verify(tagService, times(1)).updateGardenTags(any(), any());
+    }
+
+
+    @Test
+    void givenTagIsBlank_whenAddTags_thenReturnErrorMessage() {
+        when(authentication.getPrincipal()).thenReturn(1L);
+        when(gardenService.getGardenById(1L)).thenReturn(Optional.of(garden));
+        ResponseEntity<String> response = controller.setGardenTags(1L, List.of(" "), authentication);
+
+        assertEquals(422, response.getStatusCode().value());
+        assertEquals("Tag cannot be blank", response.getBody());
+    }
+
+    @Test
+    void givenMultipleTagsWithBlank_whenAddTags_thenReturnErrorMessage() {
+        when(authentication.getPrincipal()).thenReturn(1L);
+        when(gardenService.getGardenById(1L)).thenReturn(Optional.of(garden));
+        ResponseEntity<String> response = controller.setGardenTags(1L, List.of("fruit"," ", "banana"), authentication);
+
+        assertEquals(422, response.getStatusCode().value());
+        assertEquals("Tag cannot be blank", response.getBody());
+    }
+
+    @Test
+    void givenMultipleBlankTags_whenAddTags_thenReturnErrorMessage() {
+        when(authentication.getPrincipal()).thenReturn(1L);
+        when(gardenService.getGardenById(1L)).thenReturn(Optional.of(garden));
+        ResponseEntity<String> response = controller.setGardenTags(1L, List.of(" "," ", " "), authentication);
+
+        assertEquals(422, response.getStatusCode().value());
+        assertEquals("Tag cannot be blank", response.getBody());
+    }
+
+    @Test
+    void givenTagWithLeadingSpaces_whenAddTags_thenReturnOK() {
+        when(authentication.getPrincipal()).thenReturn(1L);
+        when(gardenService.getGardenById(1L)).thenReturn(Optional.of(garden));
+        ResponseEntity<String> response = controller.setGardenTags(1L, List.of(" fruit"," dwmkw mkdwkmd", "banana "), authentication);
+
+        assertEquals(200, response.getStatusCode().value());
     }
 }

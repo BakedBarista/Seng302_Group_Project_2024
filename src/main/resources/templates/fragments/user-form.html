@@ -1,0 +1,54 @@
+<th:block th:fragment="formFields">
+  <div class="mb-3">
+    <label for="fname" th:class="'required-field form-label ' + ${#fields.hasErrors('fname') ? 'is-invalid' : ''}">First Name</label>
+    <input id="fname" type="text" th:class="'form-control ' + ${#fields.hasErrors('fname') ? 'is-invalid' : ''}" th:name="fname" th:value="*{fname}">
+    <div class="invalid-feedback" th:if="${#fields.hasErrors('fname')}" th:errors="*{fname}"></div>
+  </div>
+  <div class="mb-3">
+    <label id="lnameLabel" for="lname" th:class="'required-field form-label ' + ${#fields.hasErrors('lname') ? 'is-invalid' : ''}">Last Name</label>
+    <input type="text" th:class="'form-control ' + ${#fields.hasErrors('lname') ? 'is-invalid' : ''}" th:name="lname" th:value="*{lname}" id="lname">
+    <div class="invalid-feedback" th:if="${#fields.hasErrors('lname')}" th:errors="*{lname}"></div>
+  </div>
+  <div class="mb-3">
+    <label class="form-check"><input type="checkbox" class="form-check-input" th:name="noLname" th:value="*{noLname}" th:checked="*{noLname}" id="noLname" />I have no surname  </label>
+  </div>
+  <div class="mb-3">
+    <label for="email" th:class="'required-field form-label ' + ${#fields.hasErrors('email') ? 'is-invalid' : ''}">Email</label>
+    <input id="email" type="text" th:class="'form-control ' + ${#fields.hasErrors('email') ? 'is-invalid' : ''}" th:name="email" th:value="*{email}" inputmode="email">
+    <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+  </div>
+  <div class="mb-3">
+    <label for="datePicker" th:class="'form-label ' + ${#fields.hasErrors('dateOfBirth') ? 'is-invalid' : ''}">Date of Birth</label>
+    <input id="datePicker" type="date" placeholder="DD/MM/YYYY" th:class="'form-control ' + ${#fields.hasErrors('dateOfBirth') ? 'is-invalid' : ''}" th:name="dateOfBirth" th:value="*{dateOfBirth}">
+    <div class="invalid-feedback" th:if="${#fields.hasErrors('dateOfBirth')}" th:errors="*{dateOfBirth}"></div>
+    <input type="hidden" name="dateError" id="dateError" value="">
+  </div>
+</th:block>
+
+<!-- JavaScript for Handling No Last Name Checkbox -->
+<th:block th:fragment="handleNoLnameCheckbox">
+  <script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+      const noLname = document.getElementById('noLname');
+      const lname = document.getElementById('lname');
+      const lnameLabel = document.getElementById('lnameLabel');
+
+      function checkNoLnameState() {
+        lname.disabled = noLname.checked;
+        if (noLname.checked) {
+          lname.value = '';
+          lnameLabel.classList.remove('required-field');
+        } else {
+          lnameLabel.classList.add('required-field');
+        }
+      }
+
+      noLname.addEventListener('input', (ev) => {
+        noLname.value = noLname.checked;
+        checkNoLnameState();
+      });
+
+      checkNoLnameState();
+    });
+  </script>
+</th:block>

@@ -1,33 +1,57 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unittests.controller;
 
+
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.GardenController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.GardenDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.GardenHistoryItemDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weather.WeatherAPIService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDate;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
-class GardenControllerTest {
+public class GardenControllerTest {
+
+    String EXPECTED_MODERATION_ERROR_MESSAGE = "The description does not match the language standards of the app.";
+    String LOCATION_ERROR_MESSAGE = "Location name must only include letters, numbers, spaces, dots, hyphens or apostrophes";
+
     @Mock
     private GardenService gardenService;
 
     @Mock
+    private GardenHistoryService gardenHistoryService;
+
+    @Mock
     private PlantService plantService;
+
+    @Mock
+    private TagService tagService;
+
+    @Mock
+    private ModerationService moderationService;
 
     @Mock
     private WeatherAPIService weatherAPIService;
@@ -36,82 +60,430 @@ class GardenControllerTest {
     private GardenUserService gardenUserService;
 
     @Mock
-    private FriendService friendService;
-
-    @Mock
-    private ModerationService moderationService;
-
-    @Mock
     private ProfanityService profanityService;
-
     @Mock
     private LocationService locationService;
 
-    @Mock
-    private BindingResult bindingResult;
-
-    @Mock
-    private Authentication authentication;
-
-    @Mock
-    private Model model;
-
-    @Mock
-    private TagService tagService;
-
+    @InjectMocks
     private GardenController gardenController;
 
+    private static Authentication authentication;
+
+    private static GardenRepository gardenRepository;
+    private Garden mockGarden;
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        gardenController = new GardenController(gardenService,plantService,gardenUserService,weatherAPIService,tagService, friendService,moderationService,profanityService, locationService);
+        gardenRepository = mock(GardenRepository.class);
+        GardenUser mockUser = mock(GardenUser.class);
+        when(mockUser.getId()).thenReturn(1L);
+        when(gardenUserService.getCurrentUser()).thenReturn(mockUser);
+        when(gardenService.getGardensByOwnerId(1L)).thenReturn(Collections.emptyList());
+
+        mockGarden = new Garden();
+        mockGarden.setOwner(mockUser);
+        when(gardenService.getGardenById(0L)).thenReturn(Optional.of(mockGarden));
+
+        authentication = mock(Authentication.class);
     }
 
     @Test
-    void SubmitForm_LatLngReturnedProperly_LatLngSaved() {
-        Garden garden = new Garden();
-        garden.setStreetNumber("2");
-        garden.setStreetName("Janet Street");
-        garden.setSuburb("Upper Riccarton");
-        garden.setCity("Christchurch");
-        garden.setPostCode("8041");
-        garden.setCountry("New Zealand");
+    public void testForm() {
+        Model model = mock(Model.class);
+        String result = gardenController.getCreateGardenForm(model);
 
-        GardenUser gardenUser = new GardenUser();
-        gardenUser.setId(1L);
+        verify(model).addAttribute(eq("garden"), any(GardenDTO.class));
+        verify(model).addAttribute(eq("gardens"), anyList());
 
-        when(authentication.getPrincipal()).thenReturn(1L);
-        when(gardenUserService.getUserById(1L)).thenReturn(gardenUser);
-        when(locationService.getLatLng(anyString())).thenReturn(List.of(-43.53, 172.63));
-        when(gardenService.addGarden(any(Garden.class))).thenReturn(garden);
-
-        gardenController.submitForm(garden, bindingResult, authentication, model);
-
-        assertEquals(-43.53, garden.getLat());
-        assertEquals(172.63, garden.getLon());
+        assertEquals("gardens/createGarden", result);
     }
 
     @Test
-    void SubmitForm_LatLngReturnedEmpty_LatLngNull() {
-        Garden garden = new Garden();
-        garden.setStreetNumber("2");
-        garden.setStreetName("Janet Street");
-        garden.setSuburb("Upper Riccarton");
-        garden.setCity("Christchurch");
-        garden.setPostCode("8041");
-        garden.setCountry("New Zealand");
+    public void testSubmitForm_ValidationFailure() {
+        Model model = mock(Model.class);
+        GardenDTO invalidGarden = new GardenDTO("","","","","","","",0.0,0.0,"",null);
+        BindingResult bindingResult = mock(BindingResult.class);
+        when(bindingResult.hasErrors()).thenReturn(true);
 
-        GardenUser gardenUser = new GardenUser();
-        gardenUser.setId(1L);
+        when(authentication.getPrincipal()).thenReturn((Long) 1L);
+        when(profanityService.badWordsFound(anyString())).thenReturn(new ArrayList<>());
+        String result = gardenController.submitCreateGardenForm(invalidGarden, bindingResult, authentication, model);
+
+        assertEquals("gardens/createGarden", result);
+    }
+
+    @Test
+    public void testSubmitForm_ValidationSuccess() {
+        Model model = mock(Model.class);
+        GardenDTO validGardenDTO = new GardenDTO("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"test description", "100");
+        validGardenDTO.setId((long) 1);
+        Garden validGarden = validGardenDTO.toGarden();
+
+        BindingResult bindingResult = mock(BindingResult.class);
+        when(bindingResult.hasErrors()).thenReturn(false);
+        when(gardenService.addGarden(Mockito.any())).thenReturn(validGarden);
 
         when(authentication.getPrincipal()).thenReturn(1L);
-        when(gardenUserService.getUserById(1L)).thenReturn(gardenUser);
-        when(locationService.getLatLng(anyString())).thenReturn(new ArrayList<>());
-        when(gardenService.addGarden(any(Garden.class))).thenReturn(garden);
+        when(profanityService.badWordsFound(anyString())).thenReturn(new ArrayList<>());
 
-        gardenController.submitForm(garden, bindingResult, authentication, model);
+        Mockito.when(moderationService.moderateDescription(anyString())).thenReturn(ResponseEntity.ok().build());
+        String result = gardenController.submitCreateGardenForm(validGardenDTO, bindingResult, authentication, model);
+        assertEquals("redirect:/gardens/1", result);
+    }
 
-        assertNull(garden.getLat());
-        assertNull(garden.getLon());
+    @Test
+    public void testResponses() {
+        Model model = mock(Model.class);
+        when(gardenService.getAllGardens()).thenReturn(Collections.emptyList());
+
+        String result = gardenController.responses(model);
+        assertEquals("gardens/viewGardens", result);
+        verify(model).addAttribute("gardens", Collections.emptyList());
+    }
+
+    @Test
+    public void testGardenDetail() {
+        Model model = mock(Model.class);
+        GardenDTO gardenDTO = new GardenDTO("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"test description","100");
+        Garden garden = gardenDTO.toGarden();
+        when(gardenService.getGardenById(1L)).thenReturn(Optional.of(garden));
+        when(plantService.getPlantsByGardenId(1L)).thenReturn(Collections.emptyList());
+        GardenUser owner = new GardenUser();
+        owner.setId(1L);
+        garden.setOwner(owner);
+        when(gardenUserService.getCurrentUser()).thenReturn(owner);
+
+
+        String result = gardenController.gardenDetail(1L, model);
+        assertEquals("gardens/gardenDetails", result);
+        verify(model).addAttribute("garden", garden);
+        verify(plantService).getPlantsByGardenId(1L);
+    }
+
+    @Test
+    public void testGetGarden() {
+        Model model = mock(Model.class);
+        GardenUser owner = new GardenUser();
+        owner.setId(1L);
+        GardenDTO gardenDTO = new GardenDTO("Test Garden", "1", "test", "test suburb", "test city", "test country", "1234", 0.0, 0.0, "test description", "100");
+        Garden garden = gardenDTO.toGarden();
+        garden.setOwner(owner);
+
+        when(gardenService.getGardenById(1L)).thenReturn(Optional.of(garden));
+        when(gardenUserService.getCurrentUser()).thenReturn(owner);
+        when(gardenService.getGardensByOwnerId(owner.getId())).thenReturn(Collections.singletonList(garden));
+
+        String result = gardenController.getGarden(1L, model);
+
+        assertEquals("gardens/editGarden", result);
+        verify(model).addAttribute("garden", garden);
+        verify(model).addAttribute("gardens", Collections.singletonList(garden));
+    }
+
+    @Test
+    public void testUpdateGarden() {
+        Model model = mock(Model.class);
+        GardenDTO gardenDTO = new GardenDTO("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"test description", "100");
+        when(gardenService.getGardenById(1)).thenReturn(Optional.of(gardenDTO.toGarden()));
+        BindingResult bindingResult = mock(BindingResult.class);
+        when(bindingResult.hasErrors()).thenReturn(false);
+        String result = gardenController.updateGarden(1, gardenDTO, bindingResult, model);
+        Garden garden = gardenService.getGardenById(1).get();
+
+        assertEquals("redirect:/gardens/1", result);
+        assertEquals("Test Garden", garden.getName());
+        assertEquals("1", garden.getStreetNumber());
+        assertEquals("test", garden.getStreetName());
+        assertEquals("test suburb", garden.getSuburb());
+        assertEquals("test city", garden.getCity());
+        assertEquals("test country", garden.getCountry());
+        assertEquals("1234",garden.getPostCode());
+        assertEquals("test description", garden.getDescription());
+        assertEquals(100L, garden.getSize());
+    }
+
+    @Test
+    void testGetGarden_GardenNotPresent_ReturnsAccessDenied() {
+        Model model = mock(Model.class);
+        when(gardenService.getGardenById(0L)).thenReturn(Optional.empty());
+        String result = gardenController.getGarden(0L, model);
+        assertEquals("error/accessDenied", result);
+    }
+
+    @Test
+    public void setUpdateStatusTrueQueryDatabaseReturnTrue() {
+        when(gardenService.getGardenById(1L)).thenReturn(Optional.of(new Garden()));
+        when(gardenService.addGarden(any())).thenReturn(new Garden());
+        String result = gardenController.updatePublicStatus(1L, true);
+        assertEquals(gardenService.getGardenById(1L).get().getIsPublic(), true);
+        assertEquals("redirect:/gardens/1", result);
+    }
+    @Test
+    public void setUpdateStatusFalseQueryDatabaseReturnFalse() {
+        when(gardenService.getGardenById(1L)).thenReturn(Optional.of(new Garden()));
+        when(gardenService.addGarden(any())).thenReturn(new Garden());
+        String result = gardenController.updatePublicStatus(1L, false);
+        assertEquals(gardenService.getGardenById(1L).get().getIsPublic(), false);
+        assertEquals("redirect:/gardens/1", result);
+    }
+
+    @Test
+    public void testWhenImMakingAGarden_AndIHaveAGardenErrorAndAProfanityError_ThenTheModelHasProfanityError() {
+        Model model = mock(Model.class);
+        String description = "some really nasty words";
+        GardenDTO invalidGardenDTO = new GardenDTO("","","","","","","",0.0,0.0,description,"");
+        Garden invalidGarden = invalidGardenDTO.toGarden();
+        gardenService.addGarden(invalidGarden);
+        BindingResult bindingResult = mock(BindingResult.class);
+        when(bindingResult.hasErrors()).thenReturn(true);
+
+
+        when(gardenRepository.save(invalidGarden)).thenReturn(invalidGarden);
+        when(gardenUserService.getUserById(1L)).thenReturn(new GardenUser());
+        when(profanityService.badWordsFound(anyString())).thenReturn(new ArrayList<>());
+        when(moderationService.checkIfDescriptionIsFlagged(description)).thenReturn(true);
+        when(authentication.getPrincipal()).thenReturn(1L);
+        when(gardenService.addGarden(any())).thenReturn(invalidGarden);
+        gardenController.submitCreateGardenForm(invalidGardenDTO, bindingResult, authentication, model);
+
+        verify(model).addAttribute("profanity", EXPECTED_MODERATION_ERROR_MESSAGE);
+        verify(model).addAttribute("garden", invalidGardenDTO);
+    }
+
+    @Test
+    public void testWhenImEditingAGarden_AndIHaveAGardenErrorAndAProfanityError_ThenTheModelHasProfanityError() {
+        Model model = mock(Model.class);
+        long id = 0;
+        String description = "some really nasty words";
+        GardenDTO invalidGarden = new GardenDTO("","","","","","","",0.0,0.0,description,null);
+        BindingResult bindingResult = mock(BindingResult.class);
+
+        when(bindingResult.hasErrors()).thenReturn(true);
+        when(moderationService.checkIfDescriptionIsFlagged(description)).thenReturn(true);
+        gardenController.updateGarden(id, invalidGarden, bindingResult, model);
+
+        verify(model).addAttribute("profanity", EXPECTED_MODERATION_ERROR_MESSAGE);
+        verify(model).addAttribute("garden", invalidGarden);
+    }
+
+    @Test
+    public void testGetGardenId() {
+        Model model = mock(Model.class);
+        Garden garden = new Garden("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"test description",null);
+        GardenUser owner = new GardenUser();
+        owner.setId(1L);
+        garden.setOwner(owner);
+        when(gardenUserService.getCurrentUser()).thenReturn(owner);
+        when(gardenService.getGardenById(1)).thenReturn(Optional.of(garden));
+        GardenWeather weatherResult = new GardenWeather();
+        when(weatherAPIService.getWeatherData(1, 0.0, 0.0)).thenReturn(weatherResult);
+        String result = gardenController.gardenDetail(1L, model);
+        assertEquals("gardens/gardenDetails", result);
+        verify(model).addAttribute("garden", garden);
+    }
+
+    @Test
+    public void testGardenDetail_WithNullLatLon() {
+        Model model = mock(Model.class);
+        GardenDTO gardenDTO = new GardenDTO("Test Garden","1","test","test suburb","test city","test country","1234",null,null,"100","test description");
+        Garden garden = gardenDTO.toGarden();
+        GardenUser owner = new GardenUser();
+        owner.setId(1L);
+        garden.setOwner(owner);
+        when(gardenUserService.getCurrentUser()).thenReturn(owner);
+        when(gardenService.getGardenById(1L)).thenReturn(Optional.of(garden));
+
+
+        String result = gardenController.gardenDetail(1L, model);
+
+        assertEquals("gardens/gardenDetails", result);
+        verify(model).addAttribute("garden", garden);
+        verify(weatherAPIService, never()).getWeatherData(anyLong(), anyDouble(), anyDouble());
+
+    }
+
+    @Test
+    void testCheckGardenError_WithProfanity() {
+        Model model = mock(Model.class);
+        BindingResult bindingResult = mock(BindingResult.class);
+        GardenDTO garden = new GardenDTO();
+        ArrayList<String> profanity = new ArrayList<>();
+        profanity.add("badword");
+        garden.setDescription("badword");
+
+        when(bindingResult.hasErrors()).thenReturn(false);
+        when(profanityService.badWordsFound("badword")).thenReturn(profanity);
+        when(moderationService.checkIfDescriptionIsFlagged(anyString())).thenReturn(false);
+
+        gardenController.checkGardenDTOError(model, bindingResult, garden);
+
+        verify(model).addAttribute("profanity", "The description does not match the language standards of the app.");
+        verify(model, never()).addAttribute(eq("locationError"), anyString());
+    }
+
+    @Test
+    void testCheckGardenError_WithModerationFlagged() {
+        Model model = mock(Model.class);
+        BindingResult bindingResult = mock(BindingResult.class);
+        GardenDTO garden = new GardenDTO();
+        garden.setDescription("suspicious description");
+
+        when(bindingResult.hasErrors()).thenReturn(false);
+        when(profanityService.badWordsFound("suspicious description")).thenReturn(new ArrayList<>());
+        when(moderationService.checkIfDescriptionIsFlagged("suspicious description")).thenReturn(true);
+
+        gardenController.checkGardenDTOError(model, bindingResult, garden);
+
+        verify(model).addAttribute("profanity", "The description does not match the language standards of the app.");
+        verify(model, never()).addAttribute(eq("locationError"), anyString());
+    }
+
+    @Test
+    void testCheckGardenError_NoErrors() {
+        Model model = mock(Model.class);
+        BindingResult bindingResult = mock(BindingResult.class);
+        GardenDTO garden = new GardenDTO();
+        garden.setDescription("good description");
+
+        when(bindingResult.hasErrors()).thenReturn(false);
+        when(profanityService.badWordsFound("good description")).thenReturn(new ArrayList<>());
+        when(moderationService.checkIfDescriptionIsFlagged("good description")).thenReturn(false);
+
+        gardenController.checkGardenDTOError(model, bindingResult, garden);
+
+        verify(model, never()).addAttribute(eq("profanity"), anyString());
+        verify(model, never()).addAttribute(eq("locationError"), anyString());
+    }
+
+    @Test
+    void testCheckGardenError_WithLocationError() {
+        Model model = mock(Model.class);
+        BindingResult bindingResult = mock(BindingResult.class);
+        GardenDTO garden = new GardenDTO();
+
+        FieldError fieldError = new FieldError("garden", "city", null,false, new String[]{"Pattern"},null,null);
+        when(bindingResult.hasErrors()).thenReturn(true);
+        when(bindingResult.getFieldErrors()).thenReturn(List.of(fieldError));
+        when(profanityService.badWordsFound(anyString())).thenReturn(new ArrayList<>());
+        when(moderationService.checkIfDescriptionIsFlagged(anyString())).thenReturn(false);
+
+        gardenController.checkGardenDTOError(model, bindingResult, garden);
+
+        verify(model).addAttribute("locationError", "Location name must only include letters, numbers, spaces, dots, hyphens or apostrophes");
+        verify(model, never()).addAttribute(eq("profanity"), anyString());
+    }
+
+    @Test
+    void testSearchPublicGardens_WithInvalidTag() {
+        Model model = mock(Model.class);
+
+        String tags = "validTag,invalidTag";
+        when(tagService.getTag("validTag")).thenReturn(new Tag("validTag"));
+        when(tagService.getTag("invalidTag")).thenReturn(null);
+
+
+        Pageable pageable = mock(Pageable.class);
+        when(gardenService.findGardensBySearchAndTags(anyString(), anyList(), any(Pageable.class)))
+                .thenReturn(null);
+
+
+        String viewName = gardenController.searchPublicGardens(0, 10, "", tags, model);
+
+        verify(model).addAttribute("tagString", tags);
+        assertEquals("gardens/publicGardens", viewName);
+    }
+
+    @Test
+    void testAccessPrivateGardensIfNotOwner_thenAccessDenied() {
+        Model model = mock(Model.class);
+        Garden garden = new Garden();
+
+        GardenUser owner = new GardenUser();
+        owner.setId(1L);
+        garden.setOwner(owner);
+
+        GardenUser currentUser = new GardenUser();
+        currentUser.setId(2L);
+
+
+        when(gardenService.getGardenById(1L)).thenReturn(Optional.of(garden));
+        when(gardenUserService.getCurrentUser()).thenReturn(currentUser);
+
+        String result = gardenController.gardenDetail(1L, model);
+
+        assertEquals("error/accessDenied", result);
+    }
+
+    @Test
+    void givenIGoToTheGardenHistoryPage_whenThereIsAGardenWithHistory_thenTheGardenHistoryIsAddedToTheModel() {
+        Model model = mock(Model.class);
+        when(authentication.getPrincipal()).thenReturn(1L);
+        LocalDate expectedDate = LocalDate.of(1999, 1, 1);
+        Long gardenId = 0L;
+        List<Plant> plants = new ArrayList<>();
+        Plant plant = new Plant("test", "1", "test", expectedDate);
+        plants.add(plant);
+        mockGarden.setPlants(plants);
+
+        GardenHistoryItemDTO expectedDTO = new GardenHistoryItemDTO(plant, plant.getPlantedDate(), GardenHistoryItemDTO.Action.PLANTED);
+        SortedMap<LocalDate, List<GardenHistoryItemDTO>> expectedHistory = new TreeMap<>(Comparator.reverseOrder());
+        expectedHistory.put(expectedDate, List.of(expectedDTO));
+        when(gardenHistoryService.getGardenHistory(mockGarden)).thenReturn(expectedHistory);
+
+        String result = gardenController.gardenHistory(authentication, gardenId, model);
+
+        verify(model).addAttribute("history", expectedHistory);
+        Assertions.assertEquals("gardens/gardenHistory", result);
+    }
+
+    @Test
+    void givenIGoToTheGardenHistoryPage_whenThereIsNoGardenWithHistory_thenReturnAnEmptyMap() {
+        Model model = mock(Model.class);
+        when(authentication.getPrincipal()).thenReturn(1L);
+        LocalDate expectedDate = LocalDate.of(1999, 1, 1);
+        Long gardenId = 0L;
+        List<Plant> plants = new ArrayList<>();
+        mockGarden.setPlants(plants);
+
+        SortedMap<LocalDate, List<GardenHistoryItemDTO>> expectedHistory = new TreeMap<>(Comparator.reverseOrder());
+        expectedHistory.put(expectedDate, List.of());
+        when(gardenHistoryService.getGardenHistory(mockGarden)).thenReturn(expectedHistory);
+
+        String result = gardenController.gardenHistory(authentication, gardenId, model);
+
+        verify(model).addAttribute("history", expectedHistory);
+        Assertions.assertEquals("gardens/gardenHistory", result);
+    }
+
+    @Test
+    void givenIGoToTheGardenHistoryPage_whenThereIsNoGarden_thenRedirectTo404() {
+        Model model = mock(Model.class);
+        when(authentication.getPrincipal()).thenReturn(1L);
+        LocalDate expectedDate = LocalDate.of(1999, 1, 1);
+        Long gardenId = 999L;
+        List<Plant> plants = new ArrayList<>();
+        mockGarden.setPlants(plants);
+
+        SortedMap<LocalDate, List<GardenHistoryItemDTO>> expectedHistory = new TreeMap<>(Comparator.reverseOrder());
+        expectedHistory.put(expectedDate, List.of());
+        when(gardenHistoryService.getGardenHistory(mockGarden)).thenReturn(expectedHistory);
+
+        String result = gardenController.gardenHistory(authentication, gardenId, model);
+
+        Assertions.assertEquals("error/404", result);
+    }
+
+    @Test
+    void givenIGoToTheGardenHistoryPage_whenTheGardenIsNotMine_andItIsNotPublic_thenDontAuthenticate() {
+        Model model = mock(Model.class);
+        when(authentication.getPrincipal()).thenReturn(2L);
+        mockGarden.setPublic(false);
+
+        SortedMap<LocalDate, List<GardenHistoryItemDTO>> expectedHistory = new TreeMap<>(Comparator.reverseOrder());
+        when(gardenHistoryService.getGardenHistory(mockGarden)).thenReturn(expectedHistory);
+
+        String result = gardenController.gardenHistory(authentication, 0L, model);
+
+        Assertions.assertEquals("error/accessDenied", result);
     }
 }

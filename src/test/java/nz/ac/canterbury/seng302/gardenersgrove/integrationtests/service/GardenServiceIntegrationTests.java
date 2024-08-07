@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.service;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
@@ -51,13 +52,13 @@ public class GardenServiceIntegrationTests {
         GardenUser gardenUser = new GardenUser("John", "Doe", "john.doe@gmail.com", "password", LocalDate.of(2000, 10, 10));
         gardenUserService.addUser(gardenUser);
 
-        garden = new Garden("Garden Name", "1","Test Street","Test Suburb","Test City","Test Country","1000",0.55,0.55, "100", "Garden Description");
+        garden = new Garden("Garden Name", "1","Test Street","Test Suburb","Test City","Test Country","1000",0.55,0.55, "Garden Description", null);
         garden.setPublic(true);
         garden.setOwner(gardenUser);
         gardenService.addGarden(garden);
 
-        plant = new Plant("Plant Name", "1", "Plant Description", LocalDate.of(2000, 2, 1));
-        plantService.addPlant(plant, garden.getId());
+        PlantDTO plantDTO = new PlantDTO("Plant Name", "1", "Plant Description", "2000-02-01");
+        plant = plantService.createPlant(plantDTO, garden.getId());
     }
 
     @Test

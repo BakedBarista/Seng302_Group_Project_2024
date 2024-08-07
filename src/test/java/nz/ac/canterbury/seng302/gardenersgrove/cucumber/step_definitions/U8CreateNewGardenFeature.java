@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng302.gardenersgrove.cucumber.step_definitions;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.BeforeAll;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -9,10 +8,12 @@ import io.cucumber.java.en.When;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.GardenController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.GardenDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weather.GardenWeatherService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weather.WeatherAPIService;
+import org.mockito.Mockito;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -40,7 +41,7 @@ public class U8CreateNewGardenFeature {
     private static GardenUserRepository gardenUserRepository;
 
     private static WeatherAPIService weatherAPIService;
-    private static  RestTemplate restTemplate;
+    private static RestTemplate restTemplate;
 
     private static LocationService locationService;
     private static FriendService friendService;
@@ -56,11 +57,9 @@ public class U8CreateNewGardenFeature {
     private static GardenController gardenController;
     private static GardenWeatherService gardenWeatherService;
 
-    private static Garden gardenMock;
     @BeforeAll
     public static void beforeAll() {
         bindingResult = mock(BindingResult.class);
-        gardenMock = mock(Garden.class);
         model = mock(Model.class);
         authentication = mock(Authentication.class);
         friendsRepository = mock(FriendsRepository.class);
@@ -79,7 +78,7 @@ public class U8CreateNewGardenFeature {
         moderationService = new ModerationService();
         mockedModerationService = mock(ModerationService.class);
         locationService = mock(LocationService.class);
-        gardenController = new GardenController(gardenService, plantService, userService, weatherAPIService, tagService, friendService, moderationService, profanityService, locationService);
+        gardenController = new GardenController(gardenService, null, plantService, userService, weatherAPIService, tagService, friendService, moderationService, profanityService, locationService);
     }
 
 
@@ -133,15 +132,15 @@ public class U8CreateNewGardenFeature {
 
     @And("I submit create garden form")
     public void iSubmitCreateGardenForm() {
-        when(authentication.getPrincipal()).thenReturn((Long) 1L);
+        when(authentication.getPrincipal()).thenReturn(1L);
 
         when(mockedModerationService.checkIfDescriptionIsFlagged("")).thenReturn(false);
 
         when(gardenUserRepository.findById(1L)).thenReturn(Optional.of(user));
-        when(gardenRepository.save(garden)).thenReturn(garden);
+        when(gardenRepository.save(Mockito.any())).thenReturn(garden);
         when(locationService.getLatLng(anyString())).thenReturn(new ArrayList<>());
 
-        gardenController.submitForm(garden, bindingResult, authentication, model);
+        gardenController.submitCreateGardenForm(new GardenDTO(garden), bindingResult, authentication, model);
     }
 
     @Then("A garden with that information is created")

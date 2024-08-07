@@ -67,17 +67,17 @@
          loggedInUser.setId(loggedInUserId);
          loggedInUser.setEmail("logged.in@gmail.com");
          loggedInUser.setFname("Current");
-         loggedInUser.setFname("User");
+         loggedInUser.setLname("User");
 
          otherUser.setId(otherUserId);
          otherUser.setEmail("john.doe@gmail.com");
          otherUser.setFname("John");
-         otherUser.setFname("Doe");
+         otherUser.setLname("Doe");
 
          thirdUser.setId(thirdUserId);
          thirdUser.setEmail("charlie.brown@gmail.com");
          thirdUser.setFname("Charlie");
-         thirdUser.setFname("Brown");
+         thirdUser.setLname("Brown");
      }
 
      /**

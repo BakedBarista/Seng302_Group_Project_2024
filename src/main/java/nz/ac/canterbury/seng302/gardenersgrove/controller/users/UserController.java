@@ -2,6 +2,8 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
 
 import jakarta.servlet.http.HttpServletRequest;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,16 +12,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
-
-import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.DateTimeFormats.NZ_FORMAT_DATE;
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.NZ_FORMAT_DATE;
 
 @Controller
 public class UserController {
@@ -40,7 +38,7 @@ public class UserController {
      * @param model Thymeleaf model
      * @return view name for the user profile page
      */
-    @GetMapping("users/user")
+    @GetMapping("users/settings")
     public String view(Authentication authentication, Model model) {
         logger.info("GET /users/user");
 
@@ -58,7 +56,7 @@ public class UserController {
             model.addAttribute("dateOfBirth", dobString);
         }
 
-        return "users/user";
+        return "users/accountSettings";
     }
 
 

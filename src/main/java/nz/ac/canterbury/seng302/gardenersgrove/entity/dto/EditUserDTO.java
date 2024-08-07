@@ -4,10 +4,10 @@ import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import nz.ac.canterbury.seng302.gardenersgrove.customValidation.AgeRange;
-import nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidDate;
+import nz.ac.canterbury.seng302.gardenersgrove.validation.AgeRange;
+import nz.ac.canterbury.seng302.gardenersgrove.validation.ValidDate;
 
-import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationConstants.*;
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationConstants.*;
 
 /**
  * Data transfer object for the edit user form
@@ -27,12 +27,17 @@ public class EditUserDTO {
     private boolean noLname;
 
     @Pattern(regexp = EMAIL_REGEX, message = "Email address must be in the form ‘jane@doe.nz’")
+    @Pattern(regexp = EMAIL_LENGTH_REGEX, message = "Local part(before @) should be less than 64 characters and the domain part(after @) should be less than 255 characters")
+    @Size(max = 320, message = "Email address length exceeds max length of 320 characters")
     private String email;
 
     @ValidDate()
     @AgeRange(minAge = USER_MIN_AGE, message = "You must be 13 years or older to create an account")
     @AgeRange(maxAge = USER_MAX_AGE, message = "The maximum age allowed is 120 years")
     private String dateOfBirth;
+
+    @Size(max = 512, message = "Description cannot be longer than 512 characters")
+    private String description;
 
     public String getFname() {
         return fname;
@@ -47,12 +52,7 @@ public class EditUserDTO {
     }
 
     public void setLname(String lname) {
-        if (lname != null && lname.isEmpty()) {
-            lname = null;
-        }
-
         this.lname = lname;
-        this.noLname = lname == null;
     }
 
     public boolean isNoLname() {
@@ -60,12 +60,7 @@ public class EditUserDTO {
     }
 
     public void setNoLname(boolean noLname) {
-        if (noLname) {
-            this.noLname = true;
-            this.lname = null;
-        } else {
-            this.noLname = lname == null;
-        }
+        this.noLname = noLname;
     }
 
     public String getEmail() {
@@ -83,4 +78,8 @@ public class EditUserDTO {
     public void setDateOfBirth(String dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
+
+    public String getDescription() {return description;}
+    public void setDescription(String description) { this.description = description;}
+
 }

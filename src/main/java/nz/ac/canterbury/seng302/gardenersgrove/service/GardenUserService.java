@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -164,6 +165,23 @@ public class GardenUserService {
     }
 
     /**
+     * Sets the profile banner of the user with the given ID.
+     *
+     * @param id ID of the user whose profile banner is to be set
+     * @param contentType contentType The content type of the profile banner
+     * @param profileBanner profileBanner The byte array representing the profile banner
+     */
+    public void setProfileBanner(long id, String contentType, byte[] profileBanner) {
+        var user = gardenUserRepository.findById(id);
+        if (user.isEmpty()) {
+            return;
+        }
+
+        user.get().setProfileBanner(contentType, profileBanner);
+        gardenUserRepository.save(user.get());
+    }
+
+    /**
      * Gets the currently authenticated user
      *
      * @return The currently authenticated user
@@ -189,6 +207,28 @@ public class GardenUserService {
         }
         var user = gardenUserRepository.findByResetPasswordToken(token);
         return user.orElse(null);
+    }
+
+    /**
+     * Obfuscates an email address by base64 encoding it
+     *
+     * @param email The email address to obfuscate
+     * @return The email encoded in base64
+     */
+    public String obfuscateEmail(String email) {
+        byte[] bytes = email.getBytes();
+        return Base64.getEncoder().encodeToString(bytes);
+    }
+
+    /**
+     * Deobfuscates an email address by base64 decoding it
+     *
+     * @param obfuscatedEmail The obfuscated email address
+     * @return The email decoded from base64
+     */
+    public String deobfuscateEmail(String obfuscatedEmail) {
+        byte[] bytes = Base64.getDecoder().decode(obfuscatedEmail);
+        return new String(bytes);
     }
 
 }

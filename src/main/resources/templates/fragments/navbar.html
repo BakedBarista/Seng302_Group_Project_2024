@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th="http://thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="">
 <head>
   <meta charset="UTF-8">
+  <title></title>
 </head>
 <body>
 <div th:fragment="navbar">
@@ -52,6 +53,12 @@
           </a>
         </li>
         <li>
+          <a th:href="@{/plant-information}">
+            <img class="link-icon" th:src="@{/icons/plant-information.svg}" width="24" height="24" aria-hidden alt="plant information" />
+            Search Plants
+          </a>
+        </li>
+        <li>
           <a th:href="@{/users/manage-friends}">
             <img class="link-icon" th:src="@{/icons/user-multiple-02-stroke-rounded-white.svg}" width="24" height="24" aria-hidden alt="Friends" />
             Friends
@@ -70,9 +77,13 @@
       <section class="collapse" id="profileOptions">
         <ul class="pt-3">
           <li>
-            <a th:href="@{/users/user}">
-              <img class="link-icon" th:src="@{/icons/task-02-stroke-rounded-white.svg}" width="24" height="24" aria-hidden alt="Profile" />
-              My Profile
+            <a th:href="@{/users/settings}">
+              <img class="link-icon" th:src="@{/icons/account-settings.svg}" width="24" height="24" aria-hidden alt="Account Settings" />
+             Account Settings
+            </a>
+            <a th:href="@{/users/public-profile}">
+              <img class="link-icon" th:src="@{/icons/user-circle-stroke-rounded.svg}" width="24" height="24" aria-hidden alt="Profile" />
+              My Public Profile
             </a>
           </li>
           <li>

@@ -1,19 +1,19 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
-import jakarta.validation.Valid;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.ResetPasswordDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.ResetPasswordCallbackDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.ResetPasswordDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.URLService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,18 +23,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class ResetPasswordController {
-    private Logger logger = LoggerFactory.getLogger(LoginController.class);
+    private final Logger logger = LoggerFactory.getLogger(ResetPasswordController.class);
 
-    private TokenService tokenService;
+    private final TokenService tokenService;
 
-    private GardenUserService userService;
+    private final GardenUserService userService;
 
-    private EmailSenderService emailSenderService;
+    private final EmailSenderService emailSenderService;
+    private final URLService urlService;
 
-    public ResetPasswordController(GardenUserService userService, EmailSenderService emailSenderService, TokenService tokenService) {
+    @Autowired
+    public ResetPasswordController(GardenUserService userService, EmailSenderService emailSenderService, TokenService tokenService, URLService urlService) {
         this.userService = userService;
         this.emailSenderService = emailSenderService;
         this.tokenService = tokenService;
+        this.urlService = urlService;
     }
 
     /**
@@ -76,8 +79,8 @@ public class ResetPasswordController {
         boolean emailExists = user != null;
         if (emailExists) {
             String token = tokenService.createAuthenticationToken();
-            String resetPasswordLink = generateUrlString(request, token);
-            logger.info("Reset password link: " + resetPasswordLink);
+            String resetPasswordLink = urlService.generateResetPasswordUrlString(request, token);
+            logger.info("Reset password link: {}", resetPasswordLink);
 
             tokenService.addResetPasswordTokenAndTimeToUser(user, token);
             userService.addUser(user);
@@ -93,7 +96,6 @@ public class ResetPasswordController {
 
     /**
      * Shows the reset password callback page
-     *
      * This is the link that is included in the reset password email
      *
      * @param token the token that was sent in the reset password email
@@ -161,21 +163,5 @@ public class ResetPasswordController {
         emailSenderService.sendEmail(user, "Password Changed", "Your password has been updated");
 
         return "redirect:/users/login";
-    }
-
-    /**
-     * Generates a URL string for the reset password link
-     * @param request the HTTP request
-     * @return the URL string
-     */
-    public String generateUrlString(HttpServletRequest request, String token) {
-
-        String baseUrl = request.getScheme() + "://" + request.getServerName();
-        if (request.getServerPort() != 80 && request.getServerPort() != 443) {
-            baseUrl += ":" + request.getServerPort();
-        }
-        baseUrl += "/users/reset-password/callback?token=" + token;
-        return baseUrl;
-
     }
 }

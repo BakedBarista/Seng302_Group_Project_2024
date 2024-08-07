@@ -1,6 +1,16 @@
 package nz.ac.canterbury.seng302.gardenersgrove.cucumber.step_definitions;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.Optional;
+
+import org.springframework.ui.Model;
+import org.springframework.web.client.RestTemplate;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.cucumber.java.BeforeAll;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -10,25 +20,25 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.FriendsRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.TagRepository;
-import nz.ac.canterbury.seng302.gardenersgrove.service.*;
+import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.LocationService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.ModerationService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.ProfanityService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weather.GardenWeatherService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weather.WeatherAPIService;
-import org.springframework.ui.Model;
-import org.springframework.web.client.RestTemplate;
-
-import java.util.Optional;
-
-import static org.mockito.Mockito.*;
 
 public class U19MakeGardenPublicFeature {
     private static RestTemplate restTemplate;
     private static FriendsRepository friendRepository;
+    private static TagRepository tagRepository;
     private static PlantRepository plantRepository;
     private static GardenRepository gardenRepository;
-    private static GardenUserRepository gardenUserRepository;
 
     private static GardenService gardenService;
     private static PlantService plantService;
@@ -38,7 +48,6 @@ public class U19MakeGardenPublicFeature {
     private static ModerationService moderationService;
     private static ProfanityService profanityService;
     private static TagService tagService;
-    private static TagRepository tagRepository;
     private static LocationService locationService;
     private static ObjectMapper objectMapper;
 
@@ -54,11 +63,10 @@ public class U19MakeGardenPublicFeature {
     public static void beforeAll() {
         plantRepository = mock(PlantRepository.class);
         gardenRepository = mock(GardenRepository.class);
-        gardenUserRepository = mock(GardenUserRepository.class);
         restTemplate = mock(RestTemplate.class);
         friendRepository = mock(FriendsRepository.class);
         tagRepository = mock(TagRepository.class);
-        tagService = new TagService(null, gardenService, profanityService);
+        tagService = new TagService(tagRepository, gardenService, profanityService);
         objectMapper = mock(ObjectMapper.class);
 
         friendService = new FriendService(friendRepository);
@@ -72,12 +80,12 @@ public class U19MakeGardenPublicFeature {
         locationService = new LocationService(restTemplate, objectMapper);
         model = mock(Model.class);
 
-        gardenController = new GardenController(gardenService, plantService, gardenUserService, weatherAPIService, tagService,  friendService, moderationService, profanityService, locationService);
+        gardenController = new GardenController(gardenService, null, plantService, gardenUserService, weatherAPIService, tagService,  friendService, moderationService, profanityService, locationService);
         gardenUser = new GardenUser();
         gardenUser.setId(1L);
         gardenUser.setFname("testUser");
 
-        garden = new Garden("Test Garden", "1", "test", "test suburb", "test city", "test country", "1234", 0.0, 0.0, "100", "test description");
+        garden = new Garden("Test Garden", "1", "test", "test suburb", "test city", "test country", "1234", 0.0, 0.0, "test description", 100D);
         garden.setId(1L);
         garden.setOwner(gardenUser);
 
@@ -97,7 +105,7 @@ public class U19MakeGardenPublicFeature {
         GardenUser anotherGardenUser = new GardenUser();
         anotherGardenUser.setId(2L);
 
-        Garden garden = new Garden("Test Garden", "1", "test", "test suburb", "test city", "test country", "1234", 0.0, 0.0, "100", "test description");
+        Garden garden = new Garden("Test Garden", "1", "test", "test suburb", "test city", "test country", "1234", 0.0, 0.0, "test description", 100D);
         garden.setId(2L);
         garden.setOwner(anotherGardenUser);
         when(gardenRepository.findById(2L)).thenReturn(Optional.of(garden));
@@ -128,6 +136,6 @@ public class U19MakeGardenPublicFeature {
         Garden savedGarden = gardenService.getGardenById(2L).orElseThrow(() -> new RuntimeException("Garden not found"));
         assert savedGarden.getName().equals("Test Garden");
         String returnPage = gardenController.getGarden(2L, model);
-        assert returnPage.equals("/error/accessDenied");
+        assert returnPage.equals("error/accessDenied");
     }
 }

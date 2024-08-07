@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="">
 <head>
     <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
     <title>Garden Details</title>
@@ -8,6 +8,16 @@
     <meta name="_gardenId" th:content="${garden.id}" />
     <meta name="_tags" th:content="${garden.tagsString}" />
     <meta name="_isOurs" th:content="${currentUser.id == garden.owner.id}" />
+    <style>
+        .link-hover {
+           color: black;
+            text-decoration: none;
+        }
+
+        .link-hover:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 
 <body>
@@ -19,16 +29,22 @@
                 <div class="d-flex">
                     <h1 class="pb-4 pe-5" th:text="${garden.name}">GARDEN NAME</h1>
                     <div class="ms-auto">
+                        <a class="btn btn-secondary mt-1" th:href="@{/gardens/{id}/history(id=${garden.id})}">
+                            <img th:src="@{/icons/calendar-03-stroke-rounded-white.svg}"
+                                 aria-hidden
+                                 alt="history"
+                                 width="20"
+                                 height="20" /> View History</a>
                         <a class="btn btn-primary mt-1"
                            th:href="@{/gardens/{id}/edit(id=${garden.id})}" th:if="${currentUser.id == garden.owner.id}">
                             <img th:src="@{/icons/edit-white.svg}"
+                                 aria-hidden
                                  alt="edit"
                                  width="20"
-                                 height="20" />Edit</a>
+                                 height="20" /> Edit</a>
                     </div>
                 </div>
                 <div>
-                    <!--<h3>Info:</h3>-->
                     <div class="d-flex">
                         <img th:src="@{/icons/location-04-stroke-rounded.svg}" alt="" width="30" height="30" />
                         <div class="mt-1 d-flex">
@@ -99,7 +115,7 @@
                                 <div class="text-center w-50 pt-2">
                                     <img th:src="@{'/icons/weatherIcons/' + ${currentWeather.icon}}" alt="Sunny" width="50" height="50">
                                     <p class="m-0" style="font-size: 16pt;"><strong th:text="${currentWeather.conditions}">Conditions</strong></p>
-                                    <p style="font-size: 10pt; color: #1E1E1E70;" th:text="${currentWeather.date.format(WEATHER_CARD_FORMAT_DATE)}">Date</p>
+                                    <p style="font-size: 10pt; color: #1E1E1E70;" th:text="${dateFormatter.format(currentWeather.date, WEATHER_CARD_FORMAT_DATE)}">Date</p>
                                 </div>
                                 <div class="d-flex align-items-center w-25 text-center" style="font-size: 22pt;">
                                     <p class="m-0">
@@ -130,8 +146,8 @@
                             <div class="d-flex">
                                 <div class="text-center w-50 pt-2">
                                     <img th:src="@{'/icons/weatherIcons/' + ${daysWeather.icon}}" alt="Sunny" width="50" height="50">
-                                    <p class="m-0" style="font-size: 16pt;"><strong th:text="${daysWeather.conditions}">Conditions</strong></p>
-                                    <p style="font-size: 10pt; color: #1E1E1E70;" th:text="${daysWeather.date.format(WEATHER_CARD_FORMAT_DATE)}">Date</p>
+                                    <p class="m-0" style="font-size: 16pt;"><strong th:text="${daysWeather.getConditions()}">Conditions</strong></p>
+                                    <p style="font-size: 10pt; color: #1E1E1E70;" th:text="${dateFormatter.format(daysWeather.date, WEATHER_CARD_FORMAT_DATE)}">Date</p>
                                 </div>
                                 <div class="d-flex align-items-center w-25 text-center" style="font-size: 22pt;">
                                     <p class="m-0">
@@ -183,11 +199,28 @@
                     <div class="row g-0">
                         <div class="col-4 py-2">
                             <div class="d-inline">
-                                <form class="plantImageFormSmall position-relative"  th:action="@{'/plants/' + ${plant.id} + '/plant-image'}"  method="post" enctype="multipart/form-data" novalidate>
-                                    <label th:for="${plant.id} + 'Small'" class="position-absolute top-0 end-0 mt-1 me-1"   th:if="${currentUser.id == garden.owner.id}" style=" cursor: pointer;" ><img th:src="@{/icons/trans-plus.svg}" alt="+" width="26px" height="26px"/></label>
-                                    <input th:id="${plant.id} + 'Small'" name="image" class="imageSmall d-none" type="file" accept=".png,.jpg,.jpeg,.svg"/>
-                                    <img th:src="@{'/plants/' + ${plant.id} + '/plant-image'}" alt="Plant Picture" class="w-100 rounded mx-auto d-block h-auto" style="max-width: 300px; max-height: 300px;" />
-                                    <span id="plantImageErrorSmall" class="plantImageErrorSmall invalid-feedback text-center position-absolute bottom-0 end-0"></span>
+                                <form class="plantImageFormSmall position-relative"
+                                      th:action="@{'/plants/' + ${plant.id} + '/plant-image'}"
+                                      method="post"
+                                      enctype="multipart/form-data"
+                                      novalidate>
+                                    <label th:for="${plant.id} + 'Small'"
+                                           class="position-absolute top-0 end-0 mt-1 me-1"
+                                           th:if="${currentUser.id == garden.owner.id}" style=" cursor: pointer;" >
+                                        <img th:src="@{/icons/trans-plus.svg}" alt="+" width="26px" height="26px"/>
+                                    </label>
+                                    <input th:id="${plant.id} + 'Small'"
+                                           name="image"
+                                           class="imageSmall d-none"
+                                           type="file"
+                                           accept=".png,.jpg,.jpeg,.svg"/>
+                                    <img th:src="@{'/plants/' + ${plant.id} + '/plant-image'}"
+                                         alt="Plant Picture"
+                                         class="w-100 rounded mx-auto d-block h-auto"
+                                         style="max-width: 300px; max-height: 300px;" />
+                                    <span id="plantImageErrorSmall"
+                                          class="plantImageErrorSmall invalid-feedback text-center position-absolute bottom-0 end-0">
+                                    </span>
                                 </form>
                             </div>
                             <div class="pt-2">
@@ -199,7 +232,7 @@
                                          alt=""
                                          width="20"
                                          height="20" />
-                                    <p class="mx-1 my-0" th:text="${plant.plantedDate.format(NZ_FORMAT_DATE)}">Planted Date</p>
+                                    <p class="mx-1 my-0" th:text="${dateFormatter.format(plant.plantedDate, NZ_FORMAT_DATE)}">Planted Date</p>
                                 </div>
                                 <div class="d-flex">
                                     <div class="d-flex">
@@ -215,8 +248,10 @@
                         <div class="col-8">
                             <div class="card-body pt-2">
                                 <div class="d-flex">
-                                    <div class="fw-bold mb-1">
-                                        <span class="fw-bold" style="font-size: 16pt;" th:text="${plant.name}">Plant Name</span>
+                                    <div class="overflow-hidden">
+                                        <a class="link-hover" th:href="@{/gardens/{gardenId}/plants/{plantId}(gardenId=${garden.id}, plantId=${plant.id})}">
+                                            <span class="fw-bold text-truncate" style="font-size: 16pt" th:text="${plant.name}">Plant Name</span>
+                                        </a>
                                     </div>
                                     <div class="d-flex justify-content-left ps-2 pt-1">
                                         <a class="ms-auto justify-content-end"  th:if="${currentUser.id == garden.owner.id}" th:href="@{/gardens/{gardenId}/plants/{plantId}/edit(gardenId=${garden.id}, plantId=${plant.id})}">
@@ -229,6 +264,22 @@
                                 </p>
                                 <div class="overflow-y-scroll" style="min-height: 144px; max-height: 200px">
                                     <p class="m-0" th:text="${plant.description}"><!--Plant Description goes here--></p>
+                                </div>
+                                <div class="dropdown d-flex justify-content-end" th:if="${currentUser.id == garden.owner.id}">
+                                    <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).NOT_GROWING}" class="btn button-not-planted dropdown-toggle"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButtonSmall' + plant.id}">Not Growing</span>
+                                    <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).CURRENTLY_GROWING}" class="btn button-growing dropdown-toggle"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButtonSmall' + plant.id}">Growing</span>
+                                    <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).HARVESTED}" class="btn button-harvest dropdown-toggle"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButtonSmall' + plant.id}">Harvested</span>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButtonSmall">
+                                        <button type="button" class="dropdown-item" th:onclick="'updateStatus(' + ${plant.id} + ', \'NOT_GROWING\')'">
+                                            <span class="badge not-planted-badge">Not Growing</span>
+                                        </button>
+                                        <button type="button" class="dropdown-item" th:onclick="'updateStatus(' + ${plant.id} + ', \'CURRENTLY_GROWING\')'">
+                                            <span class="badge growing-badge">Growing</span>
+                                        </button>
+                                        <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#harvestedDateModal" th:attr="onclick='setPlantId(' + ${plant.id} + ')'">
+                                            <span class="badge harvest-badge">Harvested</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -245,26 +296,32 @@
                                 <label th:for="${plant.id}" class="position-absolute top-0 end-0 mt-1 me-1"  th:if="${currentUser.id == garden.owner.id}"  style="cursor: pointer;"><img th:src="@{/icons/trans-plus.svg}" alt="+" /></label>
                                 <input th:id="${plant.id}" name="image" class="image d-none" type="file" accept=".png,.jpg,.jpeg,.svg"/>
                                 <img th:src="@{'/plants/' + ${plant.id} + '/plant-image'}" alt="Plant Picture" class="w-100 rounded mx-auto d-block" style="width: 300px; height: 300px;" />
-                                <span id="plantImageError" class="plantImageError invalid-feedback text-center position-absolute bottom-0 start-0"></span>
+                                <span id="plantImageError" class="plantImageError invalid-feedback text-center position-absolute top-0 start-0 mb-3"></span>
                             </form>
                         </div>
                     </div>
                     <div class="card-body m-0 p-3">
                         <div class="d-flex">
-                            <div class="fw-bold mb-1">
-                                <span class="fw-bold" style="font-size: 14pt;" th:text="${plant.name}">Plant Name</span>
+                            <div class="overflow-hidden">
+                                <a class="link-hover" th:href="@{/gardens/{gardenId}/plants/{plantId}(gardenId=${garden.id}, plantId=${plant.id})}">
+                                    <span class="fw-bold text-truncate" style="font-size: 14pt" th:text="${plant.name}">Plant Name</span>
+                                </a>
                             </div>
                             <div class="d-flex justify-content-end ms-auto">
-                                <a class="ms-auto justify-content-end"   th:if="${currentUser.id == garden.owner.id}" th:href="@{/gardens/{gardenId}/plants/{plantId}/edit(gardenId=${garden.id}, plantId=${plant.id})}">
+                                <a class="ms-auto justify-content-end" th:if="${currentUser.id == garden.owner.id}" th:href="@{/gardens/{gardenId}/plants/{plantId}/edit(gardenId=${garden.id}, plantId=${plant.id})}">
                                     <img class="mx-1" th:src="@{/icons/edit.svg}" alt="" width="20" height="20" />
+                                </a>
+                                <a class="ms-auto justify-content-end"   th:if="${currentUser.id == garden.owner.id}" th:href="@{/gardens/{gardenId}/plants/{plantId}/history(gardenId=${garden.id}, plantId=${plant.id})}">
+                                    <img class="mx-1" th:src="@{/icons/plant-record.svg}" alt="" width="20" height="20" />
                                 </a>
                             </div>
                         </div>
                         <div class="d-flex mb-1">
                             <img class="my-0 py-0 pt-1" th:src="@{/icons/calendar-03-stroke-rounded.svg}" alt="" width="22" height="22" />
-                            <p class="ms-1 my-0" th:text="${plant.plantedDate.format(NZ_FORMAT_DATE)}">Planted Date</p>
+                            <p class="ms-1 my-0" th:text="${dateFormatter.format(plant.plantedDate, NZ_FORMAT_DATE)}">Planted Date</p>
                         </div>
                         <div class="d-flex mb-0">
+
                             <img class="my-0 py-0 pt-1" th:src="@{/icons/natural-food-stroke-rounded.svg}" alt="" width="22" height="22" />
                             <p class="ms-1 my-1">
                                 <span th:text="${plant.count}">Plant Count</span>
@@ -278,24 +335,89 @@
                             <div class="overflow-auto" style="max-height: 50px">
                                 <p class="m-0" th:text="${plant.description}"><!--Plant Description goes here--></p>
                             </div>
+                        </div >
+                        <div th:if="${currentUser.id == garden.owner.id}" th:replace="~{fragments/plant-status-dropdown :: plant-status-dropdown(plantId=${plant.id})}"></div>
+                    </div>
+                </div>
+
+                <!-- Harvested Date Modal -->
+                <div class="modal fade" id="harvestedDateModal" tabindex="-1" aria-labelledby="harvestedDateModalLabel" aria-hidden="true" th:if="${currentUser.id == garden.owner.id}">
+                    <div class="modal-dialog modal-dialog-centered modal-sm">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title mx-2" id="harvestedDateModalLabel">Harvested Date</h4>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body mx-2">
+                                <label>Date:
+                                    <input type="date" id="harvestedDateInput">
+                                </label>
+                                <div id="errorContainer" class="text-danger mt-2"></div>
+                                <input type="hidden" id="currentPlantId">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" onclick="saveHarvestedDate()">Save date</button>
+                            </div>
                         </div>
                     </div>
-
                 </div>
+
+
+
             </div>
         </div>
     </div>
+    <div class="toast-container">
+        <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto">Gardeners Grove</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body" id="toastBody">
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
 </main>
 <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
-</body>
 <script>
+    $(document).ready(function() {
+        $('#harvestedDateModal').on('show.bs.modal', function (event) {
+            const today = new Date().toISOString().split('T')[0];
+            $('#harvestedDateInput').val(today);
+            $('#errorContainer').text('');
+        });
+    });
+    function setPlantId(plantId) {
+        document.getElementById('currentPlantId').value = plantId;
+    }
+
     (function () {
-        const VALID_MIME_TYPES = ["image/png", "image/jpeg", "image/svg+xml"];
+        const VALID_MIME_TYPES = ["image/png", "image/jpeg", "image/jpg", "image/svg+xml"];
         const plantImageForms = document.querySelectorAll(".plantImageForm");
         const plantImageFormsSmall = document.querySelectorAll(".plantImageFormSmall");
 
-        function handleInputImageChange(plantImageInput, plantImageError, form) {
+        function clearErrorMessages() {
+            document.querySelectorAll(".plantImageError").forEach((errorElement) => {
+                errorElement.style.display = "none";
+                errorElement.textContent = "";
+            });
+            document.querySelectorAll(".plantImageErrorSmall").forEach((errorElement) => {
+                errorElement.style.display = "none";
+                errorElement.textContent = "";
+            });
+        }
+
+        function handleImageInputChange(plantImageInput, plantImageError, form) {
             plantImageInput.addEventListener("change", (e) => {
+                clearErrorMessages()
                 const file = plantImageInput.files[0];
                 if (!file) {
                     return;
@@ -317,7 +439,7 @@
             });
         }
 
-        plantImageForms.forEach(function(plantImageForm) {
+        plantImageForms.forEach(function (plantImageForm) {
             const plantImageInput = plantImageForm.querySelector(".image");
             const plantImageError = plantImageForm.querySelector(".plantImageError");
             handleImageInputChange(plantImageInput, plantImageError, plantImageForm);
@@ -330,4 +452,6 @@
         });
     })();
 </script>
+<script th:src="@{/js/plantStatus.js}"></script>
+</body>
 </html>

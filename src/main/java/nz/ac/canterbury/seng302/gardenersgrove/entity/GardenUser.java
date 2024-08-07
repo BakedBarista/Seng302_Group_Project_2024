@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -10,6 +11,8 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationConstants.MAX_USER_DESCRIPTION_LENGTH;
 
 
 /**
@@ -28,7 +31,7 @@ public class GardenUser {
     @Column(nullable = true)
     private String lname;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, length = 320)
     private String email;
 
     @Column(nullable = false)
@@ -44,6 +47,16 @@ public class GardenUser {
     @Lob
     private byte[] profilePicture;
 
+    @Size(max = MAX_USER_DESCRIPTION_LENGTH)
+    private String description;
+
+    @Column(nullable = true)
+    private String profileBannerContentType;
+
+    @Column(nullable = true, columnDefinition = "MEDIUMBLOB")
+    @Lob
+    private byte[] profileBanner;
+
     // these are a set of friendships in the friends table where the user is sender
     @OneToMany(mappedBy = "sender")
     private Set<Friends> friendshipsAsSender = new HashSet<>();
@@ -51,7 +64,6 @@ public class GardenUser {
     // these are a set of friendships in the friends table where the user is receiver
     @OneToMany(mappedBy = "receiver")
     private Set<Friends> friendshipsAsReceiver = new HashSet<>();
-
 
     @Column(nullable = true)
     private String emailValidationToken;
@@ -80,7 +92,7 @@ public class GardenUser {
     public GardenUser() {}
 
     /**
-     * Createsimport java.util.HashSet; a new GardenUser object
+     * Creates import java.util.HashSet; a new GardenUser object
      *
      * @param fname first name of user
      * @param lname last name of user 
@@ -165,6 +177,22 @@ public class GardenUser {
     }
 
     /**
+     * Get the user's public description
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * set the user's public description
+     * @param description public description
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    /**
      * Setter for the user's email
      *
      * @param email the user's email
@@ -240,6 +268,23 @@ public class GardenUser {
     }
 
     /**
+     * get the bytes that represent the users public profile banner
+     * @return byte array for profile banner
+     */
+    public byte[] getProfileBanner() {
+        return profileBanner;
+    }
+
+    /**
+     * get the content type for the users public profile banner
+     * @return content type for profile banner
+     */
+    public String getProfileBannerContentType() {
+        return profileBannerContentType;
+
+    }
+
+    /**
      * Sets the profile picture of the user
      *
      * @param contentType contentType The content type of the profile picture
@@ -248,6 +293,16 @@ public class GardenUser {
     public void setProfilePicture(String contentType, byte[] profilePicture) {
         this.profilePictureContentType = contentType;
         this.profilePicture = profilePicture;
+    }
+
+    /**
+     * Sets the public profile banner and the content type of the banner for the user
+     * @param contentType the content type of the banner
+     * @param profileBanner the byte array representing the banner
+     */
+    public void setProfileBanner(String contentType, byte[] profileBanner) {
+        this.profileBannerContentType = contentType;
+        this.profileBanner = profileBanner;
     }
 
     /**

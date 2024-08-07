@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="">
 <head>
     <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
     <title>Edit Profile | Gardener's Grove</title>
@@ -11,68 +11,19 @@
     <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 
     <main class="main-container" style = "margin-top: 10%;">
-        <div class="card p-5">
-            <h1>Edit</h1>
+        <div class="p-5 card">
+            <h1>Edit Account Settings</h1>
             <form th:action="edit" method="post" enctype="multipart/form-data" th:object="${editUserDTO}" novalidate>
                 <div th:insert="fragments/edit-profile-picture.html"></div>
-                <p><a th:href="@{/users/edit/password}">Change Password</a></p>
-                <div class="mb-3"> 
-                    <label th:class="'form-group ' + ${#fields.hasErrors('fname') ? 'form-group-error' : ''}">First Name</label>
-                    <input type="text" th:name="fname" th:value="*{fname}" th:class="'form-control ' + ${#fields.hasErrors('fname') ? 'is-invalid' : ''}">
-                    <div class="invalid-feedback" th:if="${#fields.hasErrors('fname')}" th:errors="*{fname}"></div>
-                </div>
-                <div class="mb-3"> 
-                    <label th:class="'form-group ' + ${#fields.hasErrors('lname') ? 'form-group-error' : ''}">Last Name</label>
-                    <input type="text" th:name="lname" th:value="*{lname}" id="lname" th:class="'form-control ' + ${#fields.hasErrors('lname') ? 'is-invalid' : ''}">
-                    <div class="invalid-feedback"  th:if="${#fields.hasErrors('lname')}" th:errors="*{lname}"></div>
-                </div>
-                <div class="mb-3"> 
-                <label class="form-checkbox"> I have no surname</label>
-                    <input type="checkbox" th:name="noLname" th:value="*{noLname}" th:checked="*{noLname}" id="noLname">
-                </div>
-                <div class="mb-3"> 
-                    <label th:class="'form-group ' + ${#fields.hasErrors('email') ? 'form-group-error' : ''}">Email</label>
-                    <input type="text" th:name="email" th:value="*{email}" inputmode="email" th:class="'form-control ' + ${#fields.hasErrors('email') ? 'is-invalid' : ''}">
-                    <div class="invalid-feedback"  th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
-                </div>
-                <div class="mb-3">
-                    <label for="datePicker" th:class="'form-label ' + ${#fields.hasErrors('dateOfBirth') ? 'is-invalid' : ''}">Date of Birth</label>
-                    <input id="datePicker"
-                           type="date"
-                           placeholder="DD/MM/YYYY"
-                           th:class="'form-control ' + ${#fields.hasErrors('dateOfBirth') ? 'is-invalid' : ''}"
-                           th:name="dateOfBirth" th:value="*{dateOfBirth}">
-                    <div class="invalid-feedback" th:if="${#fields.hasErrors('dateOfBirth')}" th:errors="*{dateOfBirth}"></div>
-                    <!--      dateError is the flag for when the date is not filled in correctly (e.g. 10/mm/2001)      -->
-                    <input type="hidden" name="dateError" id="dateError" value="">
-                </div>
-    
+                <th:block th:insert="~{fragments/user-form.html :: formFields}"></th:block>
+                <p><a class="btn btn-primary my-3" th:href="@{/users/edit/password}">Change Password</a></p>
                 <button class="btn btn-primary">Submit</button>
-                <a th:href="@{/users/user}" class="btn btn-outline-secondary">Cancel</a>
+                <a th:href="@{/users/settings}" class="btn btn-outline-secondary">Cancel</a>
             </form>
         </div>
 
     </main>
-    <script>
-        document.addEventListener('DOMContentLoaded', (event) => {
-            const noLname = document.getElementById('noLname');
-            const lname = document.getElementById('lname');
-    
-            // Function to check the initial state of noLname
-            function checkNoLnameState() {
-                lname.disabled = noLname.checked;
-            }
-    
-            // Event listener for changes in noLname
-            noLname.addEventListener('input', (ev) => {
-                noLname.value = noLname.checked;
-                checkNoLnameState();
-            });
-    
-            // Check the initial state when the page loads
-            checkNoLnameState();
-        });
-    </script>
+    <th:block th:insert="~{fragments/user-form.html :: handleNoLnameCheckbox}"></th:block>
     <script th:src="@{/js/dateValidation.js}"></script>
     <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
 </body>

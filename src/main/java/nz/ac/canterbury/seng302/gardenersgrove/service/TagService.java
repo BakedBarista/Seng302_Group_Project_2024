@@ -3,14 +3,15 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 import java.util.List;
 import java.util.Optional;
 
+import nz.ac.canterbury.seng302.gardenersgrove.exceptions.ProfanityDetectedException;
 import org.springframework.stereotype.Service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.TagRepository;
 
-import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationConstants.TAG_MAX_LEN;
-import static nz.ac.canterbury.seng302.gardenersgrove.customValidation.ValidationConstants.TAG_REGEX;
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationConstants.TAG_MAX_LEN;
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationConstants.TAG_REGEX;
 
 /**
  * Service to retrieve and manipulate tags.
@@ -84,7 +85,7 @@ public class TagService {
             throw new ProfanityDetectedException();
         }
 
-        return (name.matches(TAG_REGEX) && name.length() < TAG_MAX_LEN);
+        return (name.matches(TAG_REGEX) && name.length() <= TAG_MAX_LEN);
     }
 
     /**
