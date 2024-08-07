@@ -50,6 +50,8 @@ public class PlantController {
     private static final String PLANT = "plant";
     private static final String ACCESS_DENIED = "error/accessDenied";
     private static final String GARDENS_REDIRECT = "redirect:/gardens/";
+    private static final String ERROR_404 = "error/404";
+
 
 
     @Autowired
@@ -278,7 +280,7 @@ public class PlantController {
         GardenUser owner = gardenUserService.getCurrentUser();
         Optional<Garden> garden = gardenService.getGardenById(gardenId);
         if (!garden.isPresent() || !garden.get().getOwner().getId().equals(owner.getId())) {
-            return "error/accessDenied";
+            return ACCESS_DENIED;
         }
 
         Optional<Plant> existingPlant = plantService.getPlantById(plantId);
@@ -289,7 +291,7 @@ public class PlantController {
 
             if (plantHistoryService.historyExists(plant, timestamp)) {
                 logger.warn("Update already exists today");
-                return "error/404";
+                return ERROR_404;
             }
         }
 
@@ -340,7 +342,7 @@ public class PlantController {
             }
         }
 
-        return "redirect:/gardens/" + gardenId + "/plants/" + plantId;
+        return GARDENS_REDIRECT + gardenId + "/plants/" + plantId;
     }
 
     /**
@@ -402,18 +404,18 @@ public class PlantController {
             model.addAttribute("currentUser", currentUser);
         } else {
             logger.warn("User tried to access a non-existant garden, returning 404.");
-            return "error/404";
+            return ERROR_404;
         }
 
-        model.addAttribute("gardenId", gardenId);
-        model.addAttribute("plantId", plantId);
-        model.addAttribute("plant", plant.orElse(null));
+        model.addAttribute(GARDEN_ID, gardenId);
+        model.addAttribute(PLANT_ID, plantId);
+        model.addAttribute(PLANT, plant.orElse(null));
 
         return "plants/plantDetails";
 
         }
 
-        return "error/404";
+        return ERROR_404;
     }
 
     /**
@@ -425,7 +427,7 @@ public class PlantController {
      */
     @GetMapping("plants/{plantId}/history/{recordId}/image")
     public ResponseEntity<byte[]> historyImage(@PathVariable("plantId") Long plantId, @PathVariable("recordId") Long recordId, HttpServletRequest request) {
-        logger.info("GET /plants/" + plantId + "/history/" + recordId + "/image");
+        logger.info("GET /plants/{}/history/{}/image", plantId, recordId);
 
         Optional<Plant> plant = plantService.getPlantById(plantId);
         Optional<PlantHistoryItem> historyItem = plantHistoryService.getPlantHistoryById(recordId);
