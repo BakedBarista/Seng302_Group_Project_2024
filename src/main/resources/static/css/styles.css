@@ -285,6 +285,12 @@ h1, h2, h3, h4, h5, h6 {
     margin-top: 100px;
 }
 
+.public-profile-picture-plus-button-padding {
+    margin-top: 110px;
+    padding-right: 20px;
+    z-index: 999;
+}
+
 @media (max-width: 752px) {
     .main-container {
         margin: 0;
