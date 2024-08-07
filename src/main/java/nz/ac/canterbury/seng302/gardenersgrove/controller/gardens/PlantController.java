@@ -99,8 +99,7 @@ public class PlantController {
                     model.addAttribute("importImage", new String(base64Image));
                     model.addAttribute("importImageType", conn.getContentType());
                 } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    logger.error("Unable to fetch plant image for import");
                 }
             }
         }
