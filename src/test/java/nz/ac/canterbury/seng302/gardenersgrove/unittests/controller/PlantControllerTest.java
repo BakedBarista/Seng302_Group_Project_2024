@@ -2,15 +2,14 @@ package nz.ac.canterbury.seng302.gardenersgrove.unittests.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.PlantController;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantHistoryItemDTO;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.PlantHistoryService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantInfoDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -34,12 +33,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant.PlantStatus.HARVESTED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 class PlantControllerTest {
+
     @Mock
     private PlantService plantService;
 
@@ -57,6 +58,9 @@ class PlantControllerTest {
 
     @Mock
     private GardenUserService gardenUserService;
+
+    @Mock
+    private WikidataService wikidataService;
 
     private Model model;
 
@@ -76,6 +80,8 @@ class PlantControllerTest {
     private long currentUserIdTimeline = 1L;
     private long gardenIdTimeline = 1L;
     private long plantIdTimeline = 1L;
+
+    private final BasePlant.PlantStatus plantStatus = HARVESTED;
 
     @BeforeEach
     public void setUp() {
@@ -416,15 +422,18 @@ class PlantControllerTest {
         Plant plant = new Plant();
         long gardenId = 0;
         long plantId = 0;
-        String expectedReturnPage = "redirect:/gardens/" + gardenId;
+        String expectedReturnPage = "redirect:/gardens/" + gardenId + "/plants/" + plantId;
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
         when(plantService.getPlantById(plantId)).thenReturn(Optional.of(plant));
+        MultipartFile file = mock(MultipartFile.class);
+        when(file.getContentType()).thenReturn("image/jpeg");
+        when(file.getSize()).thenReturn(1L);
         try {
             String returnPage = plantController.submitPlantHistoryForm(gardenId, plantId, file, dateValidStr, validHistoryPlantDTO, bindingResult, model);
             assertEquals(expectedReturnPage, returnPage);
-            verify(plantHistoryService, times(1)).addHistoryItem(plant, null, null, "");
+            verify(plantHistoryService, times(1)).addHistoryItem(plant, file.getContentType(), file.getBytes(), "");
         } catch (IOException e) {
             fail("IOException occurred during test: " + e.getMessage());
         }
@@ -436,7 +445,7 @@ class PlantControllerTest {
         Plant plant = new Plant();
         long gardenId = 0;
         long plantId = 0;
-        String expectedReturnPage = "redirect:/gardens/" + gardenId;
+        String expectedReturnPage = "redirect:/gardens/" + gardenId + "/plants/" + plantId;
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
@@ -495,6 +504,7 @@ class PlantControllerTest {
        when(mockGardenTimeline.getPlants()).thenReturn(List.of(mockPlantTimeline));
        when(mockPlantTimeline.getId()).thenReturn(plantIdTimeline);
        when(mockPlantTimeline.getGarden()).thenReturn(mockGardenTimeline);
+       when(mockPlantTimeline.getStatus()).thenReturn(plantStatus);
 
        // Define the behavior of the services
        when(gardenUserService.getCurrentUser()).thenReturn(currentUserTimeline);
@@ -553,16 +563,23 @@ class PlantControllerTest {
     }
 
     @Test
-    void testPlantInformationForm_ReturnsToPlantInformation() {
-        String expectedReturnPage = "plants/plantInformation";
-        String returnPage = plantController.plantInformationForm(model);
-        assertEquals(expectedReturnPage, returnPage);
+    void givenNoSearch_whenGetPlantInfo_returnsExpectedPage() throws ExternalServiceException {
+        String returnPage = plantController.plantInformationForm(null, model);
+
+        assertEquals("plants/plantInformation", returnPage);
     }
 
     @Test
-    void testPlantInformationSubmitForm_ReturnsToPlantInformation() {
-        String expectedReturnPage = "plants/plantInformation";
-        String returnPage = plantController.plantInformationSubmit(1, model);
-        assertEquals(expectedReturnPage, returnPage);
+    void givenSearch_whenGetPlantInfo_returnsResults() throws ExternalServiceException {
+        PlantInfoDTO plantInfo = new PlantInfoDTO();
+        plantInfo.setLabel("Tomato");
+        when(wikidataService.getPlantInfo("tomato")).thenReturn(List.of(plantInfo));
+
+        String returnPage = plantController.plantInformationForm("tomato", model);
+
+        assertEquals("plants/plantInformation", returnPage);
+        verify(model).addAttribute(eq("plants"), assertArg((List<PlantInfoDTO> plants) -> {
+            assertEquals("Tomato", plants.get(0).getLabel());
+        }));
     }
 }

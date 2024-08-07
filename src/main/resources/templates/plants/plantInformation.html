@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="">
 <head>
     <meta charset="UTF-8">
-    <title>Edit Plant</title>
+    <title>Search Plants</title>
 
     <!-- This needs to be here for Bootstrap and general CSS imports -->
     <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
@@ -20,10 +20,72 @@
                     </button>
                 </div>
             </form>
+
+
             <script th:src="@{/js/autocomplete.js}"></script>
             <script th:src="@{/js/plantSearchAutocomplete.js}"></script>
         </div>
+
+        <div id="plantCardsContainer" class="mt-4" th:if="${plants != null}">
+            <div th:each="plant : ${plants}" id="plantCard" class="mt-4 card p-4">
+                <h2 th:text="${plant.label}" id="plantCardLabel"></h2>
+                <p th:text="${plant.description}" id="plantCardDescription"></p>
+               <img th:src="${plant.image}" alt="Plant image" id="plantCardImage"></img>
+            </div>
+            <h3 class="text-center" th:if="${plants.isEmpty()}">Cannot find the plant you entered</h3>
+        </div>
+
+
     </main>
     <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
+
+
+    <!-- Plant information modal clicked from autocomplete-->
+    <div class="modal fade" id="plantInfoModal" tabindex="0" aria-labelledby="plantInfoModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="plantInfoModalLabel">Plant Information</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h2 id="plantLabel"></h2>
+                    <p id="plantDescription"></p>
+                    <img id="plantModalImage" src="" alt="Plant image">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const plantCard = document.querySelectorAll("#plantCard");
+
+            plantCard.forEach(card => card.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                const modalLabel = document.getElementById('plantLabel');
+                const modalDescription = document.getElementById('plantDescription');
+                const modalImage = document.getElementById('plantModalImage');
+
+                const plantCardLabel = card.querySelector('#plantCardLabel');
+                const plantCardDescription = card.querySelector('#plantCardDescription');
+                const plantCardImage = card.querySelector('#plantCardImage');
+
+                modalLabel.textContent = plantCardLabel.textContent;
+                modalDescription.textContent = plantCardDescription.textContent;
+                modalImage.src = plantCardImage.src;
+
+                const modal = new bootstrap.Modal(document.getElementById('plantInfoModal'));
+                modal.show();
+
+            }))
+        })
+    </script>
+
 </body>
 </html>
