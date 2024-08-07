@@ -42,6 +42,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 class PlantControllerTest {
+
     @Mock
     private PlantService plantService;
 
@@ -425,10 +426,13 @@ class PlantControllerTest {
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
         when(plantService.getPlantById(plantId)).thenReturn(Optional.of(plant));
+        MultipartFile file = mock(MultipartFile.class);
+        when(file.getContentType()).thenReturn("image/jpeg");
+        when(file.getSize()).thenReturn(1L);
         try {
             String returnPage = plantController.submitPlantHistoryForm(gardenId, plantId, file, dateValidStr, validHistoryPlantDTO, bindingResult, model);
             assertEquals(expectedReturnPage, returnPage);
-            verify(plantHistoryService, times(1)).addHistoryItem(plant, null, null, "");
+            verify(plantHistoryService, times(1)).addHistoryItem(plant, file.getContentType(), file.getBytes(), "");
         } catch (IOException e) {
             fail("IOException occurred during test: " + e.getMessage());
         }

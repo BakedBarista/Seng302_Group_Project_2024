@@ -12,11 +12,9 @@ import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantHistoryRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantHistoryService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
-import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,7 +27,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
@@ -40,7 +37,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -210,7 +206,7 @@ public class PlantControllerTest {
         GardenUser notOwner = new GardenUser();
         when(userService.getCurrentUser()).thenReturn(notOwner);
         String result = plantController.addPlantHistoryForm(testGarden.getId(),testPlant.getId(),model);
-        Assertions.assertEquals("/error/accessDenied",result);
+        Assertions.assertEquals("error/accessDenied",result);
     }
 
     @Test
