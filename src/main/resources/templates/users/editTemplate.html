@@ -17,7 +17,8 @@
                 <div th:insert="fragments/edit-profile-picture.html"></div>
                 <th:block th:insert="~{fragments/user-form.html :: formFields}"></th:block>
                 <p><a class="btn btn-primary my-3" th:href="@{/users/edit/password}">Change Password</a></p>
-                <button class="btn btn-primary">Submit</button>
+                <button class="btn btn-primary" type="submit" onclick="return validateDate()">Submit</button>
+
                 <a th:href="@{/users/settings}" class="btn btn-outline-secondary">Cancel</a>
             </form>
         </div>
