@@ -10,8 +10,9 @@
     <meta name="_isOurs" th:content="${currentUser.id == garden.owner.id}" />
     <style>
         .link-hover {
-           color: black;
+            color: black;
             text-decoration: none;
+            display: block;
         }
 
         .link-hover:hover {
@@ -196,8 +197,8 @@
         <div class="flex">
             <div class="row gap-2 justify-content-center">
                 <!-- small plant card -->
-                <div th:each="plant: ${plants}" class="card mb-3 d-lg-none hover-plant" style="max-width: 540px;">
-                    <a class="link-hover" th:href="@{/gardens/{gardenId}/plants/{plantId}(gardenId=${garden.id}, plantId=${plant.id})}">
+                <div th:each="plant: ${plants}" class="card mb-3 d-lg-none" style="max-width: 540px;">
+<!--                    <a class="link-hover" th:href="@{/gardens/{gardenId}/plants/{plantId}(gardenId=${garden.id}, plantId=${plant.id})}">-->
                     <div class="row g-0">
                         <div class="col-4 py-2">
                             <div class="d-inline">
@@ -216,10 +217,12 @@
                                            class="imageSmall d-none"
                                            type="file"
                                            accept=".png,.jpg,.jpeg,.svg"/>
-                                    <img th:src="@{'/plants/' + ${plant.id} + '/plant-image'}"
-                                         alt="Plant Picture"
-                                         class="w-100 rounded mx-auto d-block h-auto"
-                                         style="max-width: 300px; max-height: 300px;" />
+                                    <a class="link-hover" th:href="@{/gardens/{gardenId}/plants/{plantId}(gardenId=${garden.id}, plantId=${plant.id})}">
+                                        <img th:src="@{'/plants/' + ${plant.id} + '/plant-image'}"
+                                             alt="Plant Picture"
+                                             class="w-100 rounded mx-auto d-block h-auto"
+                                             style="max-width: 300px; max-height: 300px;" />
+                                    </a>
                                     <span id="plantImageErrorSmall"
                                           class="plantImageErrorSmall invalid-feedback text-center position-absolute bottom-0 end-0">
                                     </span>
@@ -245,6 +248,22 @@
                                         <p class="mb-0"><span class="mx-1" th:text="${plant.count}">Plant Count</span> planted</p>
                                     </div>
                                 </div>
+                                <div class="dropdown d-flex justify-content-end"  th:if="${currentUser.id == garden.owner.id}">
+                                    <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).NOT_GROWING}" class="btn button-not-planted dropdown-toggle"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButtonSmall' + plant.id}">Not Growing</span>
+                                    <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).CURRENTLY_GROWING}" class="btn button-growing dropdown-toggle"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButtonSmall' + plant.id}">Growing</span>
+                                    <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).HARVESTED}" class="btn button-harvest dropdown-toggle"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButtonSmall' + plant.id}">Harvested</span>
+                                    <div class="dropdown-menu"  aria-labelledby="dropdownMenuButtonSmall">
+                                        <button type="button" class="dropdown-item" th:onclick="'updateStatus(' + ${plant.id} + ', \'NOT_GROWING\')'">
+                                            <span class="badge not-planted-badge">Not Growing</span>
+                                        </button>
+                                        <button type="button" class="dropdown-item" th:onclick="'updateStatus(' + ${plant.id} + ', \'CURRENTLY_GROWING\')'">
+                                            <span class="badge growing-badge">Growing</span>
+                                        </button>
+                                        <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#harvestedDateModal" th:attr="onclick='setPlantId(' + ${plant.id} + ')'">
+                                            <span class="badge harvest-badge">Harvested</span>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="col-8">
@@ -267,31 +286,15 @@
                                 <div class="overflow-y-scroll" style="min-height: 144px; max-height: 200px">
                                     <p class="m-0" th:text="${plant.description}"><!--Plant Description goes here--></p>
                                 </div>
-                                <div class="dropdown d-flex justify-content-end" th:if="${currentUser.id == garden.owner.id}">
-                                    <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).NOT_GROWING}" class="btn button-not-planted dropdown-toggle"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButtonSmall' + plant.id}">Not Growing</span>
-                                    <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).CURRENTLY_GROWING}" class="btn button-growing dropdown-toggle"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButtonSmall' + plant.id}">Growing</span>
-                                    <span th:if="${plant.status == T(nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant$PlantStatus).HARVESTED}" class="btn button-harvest dropdown-toggle"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:id="${'dropdownMenuButtonSmall' + plant.id}">Harvested</span>
-                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButtonSmall">
-                                        <button type="button" class="dropdown-item" th:onclick="'updateStatus(' + ${plant.id} + ', \'NOT_GROWING\')'">
-                                            <span class="badge not-planted-badge">Not Growing</span>
-                                        </button>
-                                        <button type="button" class="dropdown-item" th:onclick="'updateStatus(' + ${plant.id} + ', \'CURRENTLY_GROWING\')'">
-                                            <span class="badge growing-badge">Growing</span>
-                                        </button>
-                                        <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#harvestedDateModal" th:attr="onclick='setPlantId(' + ${plant.id} + ')'">
-                                            <span class="badge harvest-badge">Harvested</span>
-                                        </button>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
-                <a class="link-hover" th:href="@{/gardens/{gardenId}/plants/{plantId}(gardenId=${garden.id}, plantId=${plant.id})}">
+<!--                    </a>-->
                 </div>
 
                 <!-- big plant card -->
                 <div th:each="plant : ${plants}"
-                     class="card shadow-sm rounded-2 p-0 m-0 col-xxl-3 col-xl-3 col-lg-6 col-12 d-none d-lg-block hover-plant"
+                     class="card shadow-sm rounded-2 p-0 m-0 col-xxl-3 col-xl-3 col-lg-6 col-12 d-none d-lg-block"
                      style="max-width: 300px;">
                     <a class="link-hover" th:href="@{/gardens/{gardenId}/plants/{plantId}(gardenId=${garden.id}, plantId=${plant.id})}">
 
