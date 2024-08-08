@@ -605,4 +605,18 @@ class PlantControllerTest {
 
         verify(model).addAttribute("gardens", List.of());
     }
+
+    @Test
+    void whenAddToGarden_andGardenSelected_thenFormPrefilled() {
+        when(session.getAttribute("plantLabel")).thenReturn("Tomato");
+        when(session.getAttribute("plantDescription")).thenReturn("Red fruit");
+        when(session.getAttribute("plantImage")).thenReturn("");
+
+        plantController.addPlantForm(1L, true, model, session);
+
+        verify(model).addAttribute(eq("plant"), assertArg((Plant plant) -> {
+            assertEquals("Tomato", plant.getName());
+            assertEquals("Red fruit", plant.getDescription());
+        }));
+    }
 }
