@@ -47,6 +47,11 @@ public class PublicProfileController {
         this.profanityService = profanityService;
     }
 
+    /**
+     * gets the current user's public profile
+     *
+     * @return Returns the current user's public profile
+     */
     @GetMapping("/users/public-profile")
     public String viewPublicProfile(Authentication authentication, Model model) {
         logger.info("GET /users/public-profile");
@@ -55,6 +60,34 @@ public class PublicProfileController {
         GardenUser user = userService.getUserById(userId);
 
         model.addAttribute(USER_ID_ATTRIBUTE, userId);
+        model.addAttribute("name", user.getFname() + " " + user.getLname());
+        model.addAttribute("description", user.getDescription());
+
+        return "users/public-profile";
+    }
+
+    /**
+     * gets the current user's public profile
+     *
+     * @return Returns the current user's public profile
+     */
+    @GetMapping("/users/public-profile/{id}")
+    public String viewOtherPublicProfile(@PathVariable("id") Long id, Authentication authentication, Model model) {
+        logger.info("GET /users/public-profile/" + id + " - display user's public profile");
+
+        GardenUser user = userService.getUserById(id);
+        Long loggedInUserId = (Long) authentication.getPrincipal();
+        boolean isCurrentUser = loggedInUserId.equals(id);
+
+        // redirects to the logged-in user's profile if the id doesn't exist
+        // or if they are going to their own profile
+        if (user == null || isCurrentUser) {
+            return viewPublicProfile(authentication, model);
+        }
+
+
+        model.addAttribute(USER_ID_ATTRIBUTE, id);
+        model.addAttribute("currentUser", loggedInUserId);
         model.addAttribute("name", user.getFname() + " " + user.getLname());
         model.addAttribute("description", user.getDescription());
 
