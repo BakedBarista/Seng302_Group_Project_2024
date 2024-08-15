@@ -12,6 +12,12 @@ public class MessageController {
 
     }
 
+    /**
+     * Method to return the message page
+     * @param id friend's id to send message to
+     * @param model may not need one
+     * @return message page
+     */
     @GetMapping("users/message")
     public String messageFriend(@RequestParam("id") Long id,
                                 Model model) {
