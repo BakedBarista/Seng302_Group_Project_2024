@@ -170,8 +170,13 @@ public class GardenController {
                 }
             }
 
-            session.removeAttribute(SUBMISSION_TOKEN);
-            return REDIRECT_GARDENS + savedGarden.getId();
+            if (savedGarden != null) {
+                session.removeAttribute(SUBMISSION_TOKEN);
+                return REDIRECT_GARDENS + savedGarden.getId();
+            } else {
+                return REDIRECT_GARDENS;
+            }
+           
         } catch (IllegalArgumentException e) {
             bindingResult.rejectValue("size", "error.garden", e.getMessage());
             model.addAttribute(SUBMISSION_TOKEN,tokenFromForm);
