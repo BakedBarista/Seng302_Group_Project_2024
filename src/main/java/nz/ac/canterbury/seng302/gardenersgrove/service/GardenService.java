@@ -6,9 +6,11 @@ import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Service class for GardenFormResults
@@ -16,6 +18,8 @@ import java.util.Optional;
 @Service
 public class GardenService {
     private final GardenRepository gardenRepository;
+    private static final Set<String> ACCEPTED_FILE_TYPES = Set.of("image/jpeg", "image/jpg", "image/png", "image/svg");
+    private static final int MAX_FILE_SIZE = 10 * 1024 * 1024;
 
     public GardenService(GardenRepository gardenRepository) {this.gardenRepository = gardenRepository;}
 
@@ -124,6 +128,37 @@ public class GardenService {
         } else {
             return gardenRepository.findGardensBySearchAndTags(search, tags, pageable);
         }
+    }
+
+    /**
+     * Sets the image of the garden with given ID.
+     * @param id ID of the garden which image is to be set
+     * @param gardenImage multipart file for the garden image
+     */
+    public void setGardenImage(long id, MultipartFile gardenImage) {
+        if (validateImage(gardenImage)) {
+            var garden = gardenRepository.findById(id);
+            if (garden.isEmpty()) {
+                return;
+            }
+
+            try {
+                garden.get().setGardenImage(gardenImage.getContentType(), gardenImage.getBytes());
+                gardenRepository.save(garden.get());
+            } catch (Exception e) {
+            }
+        }
+    }
+
+    /**
+     * Validate an image on the server side to be > 10MB
+     * and a valid file type (png, svg, jpg, jpeg
+     * @param gardenImage image to be validated
+     * @return true if it is valid
+     */
+    public boolean validateImage(MultipartFile gardenImage) {
+        return ACCEPTED_FILE_TYPES.contains(gardenImage.getContentType())
+                && (gardenImage.getSize() <= MAX_FILE_SIZE);
     }
 }
 

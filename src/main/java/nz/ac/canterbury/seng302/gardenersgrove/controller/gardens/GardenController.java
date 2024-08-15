@@ -27,6 +27,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -113,6 +114,7 @@ public class GardenController {
     @PostMapping("/gardens/create")
     public String submitCreateGardenForm(@Valid @ModelAttribute(GARDEN) GardenDTO gardenDTO,
                                          BindingResult bindingResult,
+                                         @RequestParam("image") MultipartFile file,
                                          Authentication authentication,
                                          Model model,
                                          HttpSession session) {
@@ -130,6 +132,7 @@ public class GardenController {
         if (bindingResult.hasErrors() || model.containsAttribute(PROFANITY)) {
             model.addAttribute(SUBMISSION_TOKEN, tokenFromForm);
             model.addAttribute(GARDEN, gardenDTO);
+            logger.error("Validation error in Garden Form.");
             return CREATE_GARDEN_PAGE;
         }
 
@@ -150,9 +153,16 @@ public class GardenController {
             GardenUser owner = gardenUserService.getUserById(userId);
             garden.setOwner(owner);
 
+            if (garden != null) {
+                try {
+                    gardenService.setGardenImage(garden.getId(), file);
+                } catch (Exception e) {}
+            }
+
             logger.info(garden.toString());
 
             Garden savedGarden = gardenService.addGarden(garden);
+
             session.removeAttribute(SUBMISSION_TOKEN);
             return REDIRECT_GARDENS + savedGarden.getId();
         } catch (IllegalArgumentException e) {

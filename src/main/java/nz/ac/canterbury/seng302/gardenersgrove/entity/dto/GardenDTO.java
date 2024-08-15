@@ -21,11 +21,7 @@ public class GardenDTO extends BaseGarden {
 
     private String submissionToken;
 
-
-    private byte[] gardenImage;
-    private String gardenImageContentType;
-
-
+    
     public GardenDTO() {
         super();
     }
