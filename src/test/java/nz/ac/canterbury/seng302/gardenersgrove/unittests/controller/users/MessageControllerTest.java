@@ -6,7 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.ui.Model;
 
-public class MessageControllerTest {
+class MessageControllerTest {
 
     private MessageController messageController;
     private Model model;
