@@ -76,7 +76,7 @@
                                 <span th:if="${friend.lname != null}" th:text="${friend.lname}"></span>
                             </td>
                             <td class="align-middle">
-                                <a th:href="@{{id}/message.html(id=${friend.id})}" class="btn btn-primary btn-sm mr-2">Message</a>
+                                <a th:href="@{/users/message(id=${friend.id})}" class="btn btn-primary btn-sm mr-2">Message</a>
                             </td>
                             <td class="align-middle">
                                 <a th:href="@{/viewFriendGardens/{id}(id=${friend.id})}">View gardens</a>
