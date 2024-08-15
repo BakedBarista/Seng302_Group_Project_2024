@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.gardens;
 
 
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
@@ -21,6 +22,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -175,6 +179,37 @@ public class GardenController {
             return CREATE_GARDEN_PAGE;
         }
     }
+
+    /**
+     * Gets a garden image from database
+     * @param id garden id
+     * @return ResponseEntity as bytes and content type
+     */
+    @GetMapping("gardens/{id}/garden-image")
+    public ResponseEntity<byte[]> gardenImage(@PathVariable("id") long id,
+        HttpServletRequest request) {
+
+        logger.info("GET /gardens/" + id + "/garden-image");
+      
+        Optional<Garden> garden = gardenService.getGardenById(id);
+        Garden  existingGarden = new Garden();
+
+        if (garden.isPresent()) {
+            existingGarden = garden.get();
+        }
+        // Return the default image if nothing specified
+        if (existingGarden.getGardenImage() == null || existingGarden.getGardenImageContentType() == null) {
+            logger.info("Returning default plant image");
+            return ResponseEntity.status(302).header(HttpHeaders.LOCATION, request.getContextPath() + "/img/default-plant.svg").build();
+        }
+
+        // Return the saved image from DB
+        logger.info("Returning the plants saved image from DB");
+        return ResponseEntity.ok().contentType(MediaType.parseMediaType(existingGarden.getGardenImageContentType()))
+                .body(existingGarden.getGardenImage());
+
+    }
+
 
     /**
      * Gets all garden details

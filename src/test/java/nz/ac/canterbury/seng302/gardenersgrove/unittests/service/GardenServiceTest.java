@@ -58,8 +58,9 @@ public class GardenServiceTest {
         Double lat = 2.0;
         Double gardenSize = 100D;
         String gardenDescription = "Test Description";
-
-        Garden garden = new Garden(gardenName, streetNumber,streetName,suburb,city,country,postCode,lon,lat, gardenDescription, gardenSize);
+        byte[] gardenImage = null;
+        String gardenImageContent = null;
+        Garden garden = new Garden(gardenName, streetNumber,streetName,suburb,city,country,postCode,lon,lat, gardenDescription, gardenSize, gardenImage, gardenImageContent);
         Mockito.when(gardenRepository.save(Mockito.any(Garden.class))).thenReturn(garden);
 
         Garden gardenReturned = gardenService.addGarden(garden);
@@ -79,8 +80,8 @@ public class GardenServiceTest {
     @Test
     public void getAllGardens_ReturnsAllGardens() {
         List<Garden> mockGardens = Arrays.asList(
-                new Garden("Garden1", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041",1.0,2.0, "Big", null),
-                new Garden("Garden2", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041", 1.0,2.0,"Small", null)
+                new Garden("Garden1", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041",1.0,2.0, "Big", null, null, null),
+                new Garden("Garden2", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041", 1.0,2.0,"Small", null, null, null)
         );
         when(gardenRepository.findAll()).thenReturn(mockGardens);
 
@@ -92,7 +93,7 @@ public class GardenServiceTest {
 
     @Test
     public void getGardenById_ReturnsGarden() {
-        Garden garden = new Garden("Garden", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041",1.0,2.0, "Big", null);
+        Garden garden = new Garden("Garden", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041",1.0,2.0, "Big", null, null, null);
 
         when(gardenRepository.findById(1L)).thenReturn(java.util.Optional.of(garden));
 
@@ -119,8 +120,8 @@ public class GardenServiceTest {
     @Test
     public void getGardensByOwnerId_ReturnsGardens() {
         List<Garden> mockGardens = Arrays.asList(
-                new Garden("Garden 1", "1","Test Road","Test Suburb","Test City","Test Country","1000",0.55,0.55, "small", null),
-                new Garden("Garden 2", "2","Test Road","Test Suburb","Test City","Test Country","1000",0.55,0.55, "small", null)
+                new Garden("Garden 1", "1","Test Road","Test Suburb","Test City","Test Country","1000",0.55,0.55, "small", null, null, null),
+                new Garden("Garden 2", "2","Test Road","Test Suburb","Test City","Test Country","1000",0.55,0.55, "small", null, null, null)
         );
         Mockito.when(gardenRepository.findByOwnerId(1L)).thenReturn(mockGardens);
 

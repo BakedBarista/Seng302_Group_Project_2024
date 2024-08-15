@@ -22,9 +22,11 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.validation.FieldError;
 
 import java.time.LocalDate;
@@ -68,6 +70,7 @@ public class GardenControllerTest {
     @InjectMocks
     private GardenController gardenController;
 
+    private MultipartFile file;
     private static Authentication authentication;
 
     private static GardenRepository gardenRepository;
@@ -84,6 +87,7 @@ public class GardenControllerTest {
         mockGarden = new Garden();
         mockGarden.setOwner(mockUser);
         when(gardenService.getGardenById(0L)).thenReturn(Optional.of(mockGarden));
+        file = new MockMultipartFile("file", "filename.txt", "text/plain", "Some file content".getBytes());
 
         authentication = mock(Authentication.class);
     }
@@ -106,13 +110,13 @@ public class GardenControllerTest {
         Model model = mock(Model.class);
         HttpSession session = mock(HttpSession.class);
         when(session.getAttribute("submissionToken")).thenReturn("mockToken123");
-        GardenDTO invalidGarden = new GardenDTO("","","","","","","",0.0,0.0,"",null,"Token123");
+        GardenDTO invalidGarden = new GardenDTO("","","","","","","",0.0,0.0,"",null,"Token123", null, null);
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
 
         when(authentication.getPrincipal()).thenReturn((Long) 1L);
         when(profanityService.badWordsFound(anyString())).thenReturn(new ArrayList<>());
-        String result = gardenController.submitCreateGardenForm(invalidGarden, bindingResult, authentication, model,session);
+        String result = gardenController.submitCreateGardenForm(invalidGarden, bindingResult, file, authentication, model,session);
 
         assertEquals("gardens/createGarden", result);
     }
@@ -122,7 +126,7 @@ public class GardenControllerTest {
         Model model = mock(Model.class);
         HttpSession session = mock(HttpSession.class);
         when(session.getAttribute("submissionToken")).thenReturn("mockToken123");
-        GardenDTO validGardenDTO = new GardenDTO("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"test description", "100","mockToken123");
+        GardenDTO validGardenDTO = new GardenDTO("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"test description", "100","mockToken123", null, null);
         validGardenDTO.setId((long) 1);
         Garden validGarden = validGardenDTO.toGarden();
 
@@ -134,7 +138,7 @@ public class GardenControllerTest {
         when(profanityService.badWordsFound(anyString())).thenReturn(new ArrayList<>());
 
         Mockito.when(moderationService.moderateDescription(anyString())).thenReturn(ResponseEntity.ok().build());
-        String result = gardenController.submitCreateGardenForm(validGardenDTO, bindingResult, authentication, model, session);
+        String result = gardenController.submitCreateGardenForm(validGardenDTO, bindingResult, file, authentication, model, session);
         assertEquals("redirect:/gardens/1", result);
     }
 
@@ -151,7 +155,7 @@ public class GardenControllerTest {
     @Test
     public void testGardenDetail() {
         Model model = mock(Model.class);
-        GardenDTO gardenDTO = new GardenDTO("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"test description","100","Token123");
+        GardenDTO gardenDTO = new GardenDTO("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"test description","100","Token123", null, null);
         Garden garden = gardenDTO.toGarden();
         when(gardenService.getGardenById(1L)).thenReturn(Optional.of(garden));
         when(plantService.getPlantsByGardenId(1L)).thenReturn(Collections.emptyList());
@@ -172,7 +176,7 @@ public class GardenControllerTest {
         Model model = mock(Model.class);
         GardenUser owner = new GardenUser();
         owner.setId(1L);
-        GardenDTO gardenDTO = new GardenDTO("Test Garden", "1", "test", "test suburb", "test city", "test country", "1234", 0.0, 0.0, "test description", "100","Token123");
+        GardenDTO gardenDTO = new GardenDTO("Test Garden", "1", "test", "test suburb", "test city", "test country", "1234", 0.0, 0.0, "test description", "100","Token123", null, null);
         Garden garden = gardenDTO.toGarden();
         garden.setOwner(owner);
 
@@ -190,7 +194,7 @@ public class GardenControllerTest {
     @Test
     public void testUpdateGarden() {
         Model model = mock(Model.class);
-        GardenDTO gardenDTO = new GardenDTO("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"test description", "100","Token123");
+        GardenDTO gardenDTO = new GardenDTO("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"test description", "100","Token123", null, null);
         when(gardenService.getGardenById(1)).thenReturn(Optional.of(gardenDTO.toGarden()));
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
@@ -240,7 +244,7 @@ public class GardenControllerTest {
         HttpSession session = mock(HttpSession.class);
         when(session.getAttribute("submissionToken")).thenReturn("mockToken123");
         String description = "some really nasty words";
-        GardenDTO invalidGardenDTO = new GardenDTO("","","","","","","",0.0,0.0,description,"","mockToken123");
+        GardenDTO invalidGardenDTO = new GardenDTO("","","","","","","",0.0,0.0,description,"","mockToken123", null, null);
         Garden invalidGarden = invalidGardenDTO.toGarden();
         gardenService.addGarden(invalidGarden);
         BindingResult bindingResult = mock(BindingResult.class);
@@ -253,7 +257,7 @@ public class GardenControllerTest {
         when(moderationService.checkIfDescriptionIsFlagged(description)).thenReturn(true);
         when(authentication.getPrincipal()).thenReturn(1L);
         when(gardenService.addGarden(any())).thenReturn(invalidGarden);
-        gardenController.submitCreateGardenForm(invalidGardenDTO, bindingResult, authentication, model,session);
+        gardenController.submitCreateGardenForm(invalidGardenDTO, bindingResult, file, authentication, model,session);
 
         verify(model).addAttribute("profanity", EXPECTED_MODERATION_ERROR_MESSAGE);
         verify(model).addAttribute("garden", invalidGardenDTO);
@@ -264,7 +268,7 @@ public class GardenControllerTest {
         Model model = mock(Model.class);
         long id = 0;
         String description = "some really nasty words";
-        GardenDTO invalidGarden = new GardenDTO("","","","","","","",0.0,0.0,description,null,"");
+        GardenDTO invalidGarden = new GardenDTO("","","","","","","",0.0,0.0,description,null,"", null, null);
         BindingResult bindingResult = mock(BindingResult.class);
 
         when(bindingResult.hasErrors()).thenReturn(true);
@@ -278,7 +282,7 @@ public class GardenControllerTest {
     @Test
     public void testGetGardenId() {
         Model model = mock(Model.class);
-        Garden garden = new Garden("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"test description",null);
+        Garden garden = new Garden("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"test description",null, null, null);
         GardenUser owner = new GardenUser();
         owner.setId(1L);
         garden.setOwner(owner);
@@ -294,7 +298,7 @@ public class GardenControllerTest {
     @Test
     public void testGardenDetail_WithNullLatLon() {
         Model model = mock(Model.class);
-        GardenDTO gardenDTO = new GardenDTO("Test Garden","1","test","test suburb","test city","test country","1234",null,null,"100","test description","");
+        GardenDTO gardenDTO = new GardenDTO("Test Garden","1","test","test suburb","test city","test country","1234",null,null,"100","test description","", null, null);
         Garden garden = gardenDTO.toGarden();
         GardenUser owner = new GardenUser();
         owner.setId(1L);

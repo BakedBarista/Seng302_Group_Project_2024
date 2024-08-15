@@ -1,5 +1,5 @@
 <div th:fragment="garden-form">
-    <form id="garden-form" action="#" th:action="@{${action}}" th:object="${garden}" method="post" enctype="multipart/form-data">
+    <form id="garden-form" th:action="@{${action}}" th:object="${garden}" method="post" enctype="multipart/form-data" novalidate>
         <input type="hidden" name="submissionToken" th:value="${submissionToken}" />
         <div>
 

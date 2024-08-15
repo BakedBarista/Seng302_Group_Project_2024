@@ -10,9 +10,11 @@
         <main class="main-container" style="max-width: 1000px">
             <div class="card p-5">
                 <h2 class="mb-3">Edit Garden</h2>
-                <div th:replace="~{fragments/garden-form :: garden-form(action='/gardens/' + ${id} + '/edit', cancelUrl='/gardens/' + ${id})}"></div>
+                <div th:replace="~{fragments/garden-form :: garden-form(action='/gardens/' + ${gardenId} + '/edit', imgSrc='/gardens/' + ${gardenId} + '/garden-image', cancelUrl='/gardens/' + ${id})}"></div>
             </div>
         </main>
         <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
     </body>
+    <script th:src="@{/js/plantImageErrorChecking.js}"></script>
+    
 </html>
