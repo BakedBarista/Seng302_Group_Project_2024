@@ -3,6 +3,9 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -17,6 +20,8 @@ import java.util.Set;
  */
 @Service
 public class GardenService {
+    Logger logger = LoggerFactory.getLogger(GardenService.class);
+
     private final GardenRepository gardenRepository;
     private static final Set<String> ACCEPTED_FILE_TYPES = Set.of("image/jpeg", "image/jpg", "image/png", "image/svg");
     private static final int MAX_FILE_SIZE = 10 * 1024 * 1024;

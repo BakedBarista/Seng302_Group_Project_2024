@@ -153,15 +153,18 @@ public class GardenController {
             GardenUser owner = gardenUserService.getUserById(userId);
             garden.setOwner(owner);
 
-            if (garden != null) {
-                try {
-                    gardenService.setGardenImage(garden.getId(), file);
-                } catch (Exception e) {}
-            }
-
             logger.info(garden.toString());
 
             Garden savedGarden = gardenService.addGarden(garden);
+
+            if (savedGarden != null) {
+                try {
+                    gardenService.setGardenImage(savedGarden.getId(), file);
+                } catch (Exception e) {
+                    logger.error("Failed to set image for garden: " + savedGarden.getId(), e);
+
+                }
+            }
 
             session.removeAttribute(SUBMISSION_TOKEN);
             return REDIRECT_GARDENS + savedGarden.getId();
