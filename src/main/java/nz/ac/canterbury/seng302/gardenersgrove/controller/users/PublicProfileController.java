@@ -34,6 +34,7 @@ public class PublicProfileController {
     private static final String DEFAULT_PROFILE_BANNER_URL = "/img/default-banner.svg";
     
     private static final String USER_ID_ATTRIBUTE = "userId";
+    private static final String DESCRIPTION = "description";
 
     private static final Set<String> ACCEPTED_FILE_TYPES = Set.of("image/jpeg", "image/jpg", "image/png", "image/svg");
 
@@ -62,7 +63,7 @@ public class PublicProfileController {
         model.addAttribute(USER_ID_ATTRIBUTE, userId);
         model.addAttribute("currentUser", userId);
         model.addAttribute("name", user.getFullName());
-        model.addAttribute("description", user.getDescription());
+        model.addAttribute(DESCRIPTION, user.getDescription());
 
         return "users/public-profile";
     }
@@ -74,7 +75,7 @@ public class PublicProfileController {
      */
     @GetMapping("/users/public-profile/{id}")
     public String viewOtherPublicProfile(@PathVariable("id") Long id, Authentication authentication, Model model) {
-        logger.info("GET /users/public-profile/" + id + " - display user's public profile");
+        logger.info("GET /users/public-profile/{} - display user's public profile", id);
 
         GardenUser user = userService.getUserById(id);
         // returns a 404 if id does not exist
@@ -91,7 +92,7 @@ public class PublicProfileController {
         model.addAttribute(USER_ID_ATTRIBUTE, id);
         model.addAttribute("currentUser", loggedInUserId);
         model.addAttribute("name", user.getFullName());
-        model.addAttribute("description", user.getDescription());
+        model.addAttribute(DESCRIPTION, user.getDescription());
 
         return "users/public-profile";
     }
@@ -104,7 +105,7 @@ public class PublicProfileController {
      */
     @GetMapping("users/{id}/profile-banner")
     public ResponseEntity<byte[]> getPublicProfileBanner(@PathVariable("id") Long id, HttpServletRequest request) {
-        logger.info("GET /users/" + id + "/profile-banner");
+        logger.info("GET /users/{}/profile-banner", id);
 
         GardenUser user = userService.getUserById(id);
         if (user.getProfileBanner() == null) {
@@ -122,7 +123,7 @@ public class PublicProfileController {
      */
     @GetMapping("users/edit-public-profile")
     public String editPublicProfile(Authentication authentication, Model model) {
-
+        logger.info("GET /users/edit-public-profile");
         Long userId = (Long) authentication.getPrincipal();
         GardenUser user = userService.getUserById(userId);
         EditUserDTO editUserDTO = new EditUserDTO();
@@ -149,11 +150,11 @@ public class PublicProfileController {
             Authentication authentication,
             @RequestParam("image") MultipartFile profilePic,
             @RequestParam("bannerImage") MultipartFile banner,
-            @RequestParam("description") String description,
+            @RequestParam(DESCRIPTION) String description,
             @Valid @ModelAttribute("editUserDTO") EditUserDTO editUserDTO,
             BindingResult bindingResult,
             Model model) throws IOException {
-
+        logger.info("POST /users/edit-public-profile");
         Long userId = (Long) authentication.getPrincipal();
         GardenUser user = userService.getUserById(userId);
         model.addAttribute(USER_ID_ATTRIBUTE, userId);
@@ -166,7 +167,7 @@ public class PublicProfileController {
             errorFlag = true;
         }
 
-        if (bindingResult.hasFieldErrors("description")) {errorFlag = true;}
+        if (bindingResult.hasFieldErrors(DESCRIPTION)) {errorFlag = true;}
 
         if (errorFlag) {
             model.addAttribute("name", user.getFullName());
