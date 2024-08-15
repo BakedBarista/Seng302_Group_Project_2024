@@ -61,7 +61,7 @@ public class PublicProfileController {
 
         model.addAttribute(USER_ID_ATTRIBUTE, userId);
         model.addAttribute("currentUser", userId);
-        model.addAttribute("name", user.getFname() + " " + user.getLname());
+        model.addAttribute("name", user.getFullName());
         model.addAttribute("description", user.getDescription());
 
         return "users/public-profile";
@@ -77,19 +77,20 @@ public class PublicProfileController {
         logger.info("GET /users/public-profile/" + id + " - display user's public profile");
 
         GardenUser user = userService.getUserById(id);
+        // returns a 404 if id does not exist
+        if (user == null) {
+            return "error/404";
+        }
+
         Long loggedInUserId = (Long) authentication.getPrincipal();
         boolean isCurrentUser = loggedInUserId.equals(id);
-
-        // redirects to the logged-in user's profile if the id doesn't exist
-        // or if they are going to their own profile
-        if (user == null || isCurrentUser) {
+        if (isCurrentUser) {
             return viewPublicProfile(authentication, model);
         }
 
-
         model.addAttribute(USER_ID_ATTRIBUTE, id);
         model.addAttribute("currentUser", loggedInUserId);
-        model.addAttribute("name", user.getFname() + " " + user.getLname());
+        model.addAttribute("name", user.getFullName());
         model.addAttribute("description", user.getDescription());
 
         return "users/public-profile";

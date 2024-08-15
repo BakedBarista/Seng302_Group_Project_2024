@@ -37,8 +37,6 @@ import org.springframework.http.ResponseEntity;
 
 @ExtendWith(MockitoExtension.class)
 public class PublicProfileControllerTest {
-
-
     private static PublicProfileController publicProfileController;
     private static GardenUserService gardenUserService;
     private static GardenUser user;
@@ -49,6 +47,8 @@ public class PublicProfileControllerTest {
 
     static Long loggedInUserId = 1L;
     static GardenUser loggedInUser;
+    static Long otherUserId = 1L;
+    static GardenUser otherUser;
 
     private static BindingResult bindingResult;
 
@@ -71,6 +71,13 @@ public class PublicProfileControllerTest {
         loggedInUser.setDescription("This is a description");
         when(gardenUserService.getUserById(loggedInUserId)).thenReturn(loggedInUser);
         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+
+        otherUser = new GardenUser();
+        otherUser.setId(loggedInUserId);
+        otherUser.setEmail("other.user@gmail.com");
+        otherUser.setFname("Other");
+        otherUser.setLname("User");
+        otherUser.setDescription("This is a description for another user");
     }
 
     @ParameterizedTest
@@ -100,6 +107,33 @@ public class PublicProfileControllerTest {
         String page = publicProfileController.viewPublicProfile(authentication, model);
 
         Assertions.assertEquals("users/public-profile", page);
+    }
+
+    @Test
+    void whenIViewOtherUsersPublicProfile_thenIAmTakenToTheirPublicProfile() {
+        model = Mockito.mock(Model.class);
+        Mockito.when(gardenUserService.getUserById(otherUserId)).thenReturn(otherUser);
+        Mockito.when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+
+
+        String page = publicProfileController.viewOtherPublicProfile(otherUserId, authentication, model);
+        Mockito.verify(model).addAttribute("userId", otherUserId);
+        Mockito.verify(model).addAttribute("currentUser", loggedInUserId);
+        Mockito.verify(model).addAttribute("name", "Other User");
+        Mockito.verify(model).addAttribute("description", otherUser.getDescription());
+
+        Assertions.assertEquals("users/public-profile", page);
+    }
+
+    @Test
+    void whenIViewPublicProfileThatDoesNotExist_thenIAmTakenToThe404() {
+        model = Mockito.mock(Model.class);
+        Mockito.when(gardenUserService.getUserById(otherUserId)).thenReturn(null);
+        Mockito.when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+
+        String page = publicProfileController.viewOtherPublicProfile(otherUserId, authentication, model);
+
+        Assertions.assertEquals("error/404", page);
     }
 
     @Test
