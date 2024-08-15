@@ -69,9 +69,9 @@ public class PublicProfileController {
     }
 
     /**
-     * gets the current user's public profile
-     *
-     * @return Returns the current user's public profile
+     * gets a user's public profile
+     * @param id the requested user's id
+     * @return Returns the selected user's public profile
      */
     @GetMapping("/users/public-profile/{id}")
     public String viewOtherPublicProfile(@PathVariable("id") Long id, Authentication authentication, Model model) {
