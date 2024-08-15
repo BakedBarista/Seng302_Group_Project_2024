@@ -1,7 +1,18 @@
 <div th:fragment="garden-form">
-    <form id="garden-form" action="#" th:action="@{${action}}" th:object="${garden}" method="post">
+    <form id="garden-form" action="#" th:action="@{${action}}" th:object="${garden}" method="post" enctype="multipart/form-data">
         <input type="hidden" name="submissionToken" th:value="${submissionToken}" />
         <div>
+
+            <!-- Image Upload Field -->
+            <div class="mb-3 d-flex justify-content-center">
+                <div class="position-relative d-inline">
+                    <label for="image" class="position-absolute top-0 end-0" style="cursor: pointer;"><img th:src="@{/icons/trans-plus.svg}" alt="+" /></label>
+                    <input id="image" name="image" class="d-none" type="file" accept=".png,.jpg,.jpeg,.svg"/>
+                    <img id="preview" th:src="@{${imgSrc}}" alt="Garden Picture" class="rounded mx-auto d-block h-auto" style="width: 300px;" />
+                    <span id="plantImageError" class="invalid-feedback text-center"></span>
+                </div>
+            </div>
+
             <!-- Garden Name Field -->
             <div class="mb-3">
                 <label for="name"

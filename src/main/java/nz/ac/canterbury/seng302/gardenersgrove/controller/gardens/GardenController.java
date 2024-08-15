@@ -576,7 +576,6 @@ public class GardenController {
             for (int i = 0; i < gardenNames.size(); i++) {
                 String gardenName = gardenNames.get(i);
                 String streetNumber = Integer.toString(i + 1);
-
                 // Create GardenDTO
                 GardenDTO gardenDTO = new GardenDTO(
                         gardenName,
@@ -590,7 +589,10 @@ public class GardenController {
                         null,
                         "A lovely garden",
                         "100.0",
-                        "token"
+                        "token",
+                        null,
+                        null
+
                 );
 
                 // Convert DTO to Garden entity

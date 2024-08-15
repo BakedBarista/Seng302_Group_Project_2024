@@ -10,6 +10,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationMessages.INVALID_GARDEN_SIZE_MESSAGE;
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationMessages.MAX_GARDEN_SIZE_LENGTH_MESSAGE;
 
+
 public class GardenDTO extends BaseGarden {
 
     @ValidEuropeanDecimal(message = INVALID_GARDEN_SIZE_MESSAGE)
@@ -19,6 +20,11 @@ public class GardenDTO extends BaseGarden {
     private String size;
 
     private String submissionToken;
+
+
+    private byte[] gardenImage;
+    private String gardenImageContentType;
+
 
     public GardenDTO() {
         super();
@@ -51,10 +57,13 @@ public class GardenDTO extends BaseGarden {
      * @param gardenSize size of the garden, can be a decimal
      */
     public GardenDTO(String name, String streetNumber, String streetName, String suburb, String city, String country,
-                     String postCode, Double lat, Double lon, String description, String gardenSize, String submissionToken) {
-        super(name, streetNumber, streetName, suburb, city, country, postCode, lat, lon, description);
+                     String postCode, Double lat, Double lon, String description, String gardenSize, String submissionToken, byte[] gardenImage, 
+                     String gardenImageContentType) {
+        super(name, streetNumber, streetName, suburb, city, country, postCode, lat, lon, description, gardenImage, gardenImageContentType);
         this.size = gardenSize;
         this.submissionToken = submissionToken;
+        this.gardenImage = gardenImage;
+        this.gardenImageContentType = gardenImageContentType;
     }
 
     public Garden toGarden() {
