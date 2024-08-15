@@ -22,7 +22,7 @@ import java.util.List;
 import static org.mockito.Mockito.mock;
 
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-public class git U28GardenHistoryHarvestDateFeature {
+public class U28GardenHistoryHarvestDateFeature {
 
     @Autowired
     private PlantService plantService;
