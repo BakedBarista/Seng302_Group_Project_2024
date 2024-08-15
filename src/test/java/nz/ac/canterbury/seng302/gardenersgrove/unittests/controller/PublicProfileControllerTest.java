@@ -137,6 +137,22 @@ public class PublicProfileControllerTest {
     }
 
     @Test
+    void whenOtherUserIdIsMyId_thenIAmTakenToMyPublicProfile() {
+        model = Mockito.mock(Model.class);
+        Mockito.when(gardenUserService.getUserById(loggedInUserId)).thenReturn(loggedInUser);
+        Mockito.when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+
+
+        String page = publicProfileController.viewOtherPublicProfile(loggedInUserId, authentication, model);
+        Mockito.verify(model).addAttribute("userId", loggedInUserId);
+        Mockito.verify(model).addAttribute("currentUser", loggedInUserId);
+        Mockito.verify(model).addAttribute("name", "Current User");
+        Mockito.verify(model).addAttribute("description", loggedInUser.getDescription());
+
+        Assertions.assertEquals("users/public-profile", page);
+    }
+
+    @Test
     void givenThatIHaveABanner_whenIRequestMyBanner_thenMyBannerIsSentInAResponseEntity() {
         String path = "/my/path";
         user.setProfileBanner(null, null);
