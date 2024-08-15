@@ -3,7 +3,10 @@ package nz.ac.canterbury.seng302.gardenersgrove.unittests.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -11,6 +14,7 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,8 +27,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 
@@ -159,6 +166,41 @@ public class GardenServiceTest {
     }
 
 
+    @Test
+    void setGardenImageWithValidId_imageSaved() {
+        long id = 1L;
+
+        String filename = "test";
+        String originalFilename = "test.png";
+        byte[] imageBytes = {};
+        String contentType = "image/png";
+
+        MockMultipartFile file = new MockMultipartFile(filename, originalFilename, contentType, imageBytes);
+        Garden garden = new Garden();
+        garden.setId(id);
+        Mockito.when(gardenRepository.findById(id)).thenReturn(Optional.of(garden));
+
+        gardenService.setGardenImage(id, file);
+
+        verify(gardenRepository, times(1)).save(garden);
+        assertEquals(contentType, garden.getGardenImageContentType());
+        assertEquals(imageBytes, garden.getGardenImage());
+    }
+
+    @Test
+    void setPlantImageWithNonExistentId_imageNotSaved() {
+        long id = 1L;
+        byte[] image = {};
+        String contentType = "image/svg";
+        String name = "plant.png";
+        String originalFilename = "plant.png";
+        MultipartFile file = new MockMultipartFile(name,originalFilename,contentType,image);
+
+        Mockito.when(gardenRepository.findById(id)).thenReturn(Optional.empty());
+
+        gardenService.setGardenImage(id, file);
+        verify(gardenRepository, never()).save(any());
+    }
 
 
 
