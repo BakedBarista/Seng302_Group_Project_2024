@@ -1,8 +1,10 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unittests.controller;
 
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.GardenController;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.PlantController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
@@ -21,7 +23,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
@@ -29,6 +34,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.validation.FieldError;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -40,6 +47,7 @@ public class GardenControllerTest {
 
     String EXPECTED_MODERATION_ERROR_MESSAGE = "The description does not match the language standards of the app.";
     String LOCATION_ERROR_MESSAGE = "Location name must only include letters, numbers, spaces, dots, hyphens or apostrophes";
+
 
     @Mock
     private GardenService gardenService;
@@ -498,5 +506,40 @@ public class GardenControllerTest {
         String result = gardenController.gardenHistory(authentication, 0L, model);
 
         Assertions.assertEquals("error/accessDenied", result);
+    }
+
+    @Test
+    void whenGardenImageExists_returnGardenImage() {
+        HttpServletRequest mockRequest = new MockHttpServletRequest();
+        String imagePath = "static/img/garden.png";
+        try (InputStream inputStream = GardenControllerTest.class.getClassLoader().getResourceAsStream(imagePath)) {
+            if (inputStream == null) {
+                throw new IOException("Image not found: " + imagePath);
+            }
+            byte[] image = inputStream.readAllBytes();
+            String contentType = "image/png";
+            Garden garden = new Garden();
+            garden.setGardenImage(contentType, image);
+            when(gardenService.getGardenById(1L)).thenReturn(Optional.of(garden));
+            System.out.println("image " + garden.getGardenImage());
+            System.out.println("content " + garden.getGardenImageContentType());
+            ResponseEntity<byte[]> response = gardenController.gardenImage(1L, mockRequest);
+            assertEquals(HttpStatus.OK, response.getStatusCode());
+            assertEquals(contentType, response.getHeaders().getContentType().toString());
+            assertEquals(image, response.getBody());
+
+        } catch (IOException e) {
+            System.out.println("Error with resource file " + e.getMessage());
+        }
+    }
+
+    @Test
+    void whenGardenImageNotExist_returnGardenImage() {
+        HttpServletRequest mockRequest = new MockHttpServletRequest();
+        Garden garden = new Garden();
+        when(gardenService.getGardenById(1L)).thenReturn(Optional.of(garden));
+        ResponseEntity<byte[]> response = gardenController.gardenImage(1L, mockRequest);
+        assertEquals(HttpStatus.FOUND, response.getStatusCode());
+        assertEquals("/img/default-plant.svg", response.getHeaders().getFirst(HttpHeaders.LOCATION));
     }
 }

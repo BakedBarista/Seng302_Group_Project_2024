@@ -129,6 +129,10 @@ public class Garden extends BaseGarden {
         return gardenImage;
     }
 
+    public String getGardenImageContentType() {
+        return gardenImageContentType;
+    }
+
     public void setGardenImage(String contentType, byte[] gardenImage) {
         this.gardenImageContentType = contentType;
         this.gardenImage = gardenImage;
