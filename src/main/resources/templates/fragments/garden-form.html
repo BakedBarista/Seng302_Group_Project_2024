@@ -1,6 +1,7 @@
 <div th:fragment="garden-form">
     <form id="garden-form" action="#" th:action="@{${action}}" th:object="${garden}" method="post">
         <input type="hidden" name="submissionToken" th:value="${submissionToken}" />
+        <input type="hidden" id="refererInput" name="Referer" value="" />
         <div>
             <!-- Garden Name Field -->
             <div class="mb-3">
@@ -211,5 +212,11 @@
             const submitButton = document.getElementById('submit-button');
             submitButton.disabled = true;
         });
+
+        function setReferer() {
+            document.getElementById("refererInput").value = window.location.href;
+        }
+
+
     </script>
 </div>

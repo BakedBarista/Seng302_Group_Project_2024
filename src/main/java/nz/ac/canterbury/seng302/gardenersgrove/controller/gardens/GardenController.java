@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.gardens;
 
 
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
@@ -90,7 +91,9 @@ public class GardenController {
      * @return gardenFormTemplate
      */
     @GetMapping("/gardens/create")
-    public String getCreateGardenForm(Model model, HttpSession session) {
+    public String getCreateGardenForm(Model model,
+                                      HttpSession session
+                                      /*,HttpServletRequest request*/) {
         logger.info("GET /gardens/create - display the new garden form");
         String submissionToken = UUID.randomUUID().toString();
         session.setAttribute(SUBMISSION_TOKEN,submissionToken);
@@ -100,6 +103,8 @@ public class GardenController {
 
         List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
         model.addAttribute(GARDENS, gardens);
+        /*model.addAttribute("referer",request.getHeader("Referer"));
+        logger.info("{}", request.getHeader("Referer"));*/
         return CREATE_GARDEN_PAGE;
     }
 
