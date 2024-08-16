@@ -61,6 +61,9 @@ public class TestWebSocketHandler extends TextWebSocketHandler {
 				counter++;
 				broadcastState();
 				break;
+			default:
+				logger.error("Unknown message type: {}", message.get("type").asText());
+				break;
 		}
 	}
 
@@ -100,7 +103,6 @@ public class TestWebSocketHandler extends TextWebSocketHandler {
 			session.sendMessage(wsMessage);
 		} catch (IOException e) {
 			logger.error("Error sending message", e);
-			return;
 		}
 	}
 
