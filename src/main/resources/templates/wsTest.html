@@ -8,14 +8,34 @@
         <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
     </head>
     <body>
+        <p>
+            Counter: <span id="counter"></span>
+        </p>
+        <p>
+            <button onclick="increment()">Increment</button>
+        </p>
         <script>
             const origin = location.origin.replace('http', 'ws');
             const url = `${origin}${apiBaseUrl}/ws-test`;
 
             const ws = new WebSocket(url);
             ws.addEventListener('open', () => {
-                ws.send('Hello, world');
+                ws.send(JSON.stringify({ type: 'subscribe' }));
             });
+
+            const counter = document.getElementById('counter');
+            ws.addEventListener('message', (ev) => {
+                const message = JSON.parse(ev.data);
+                switch (message.type) {
+                    case 'value':
+                        counter.textContent = message.value;
+                        break;
+                }
+            });
+
+            function increment() {
+                ws.send(JSON.stringify({ type: 'increment' }));
+            }
         </script>
     </body>
 </html>
