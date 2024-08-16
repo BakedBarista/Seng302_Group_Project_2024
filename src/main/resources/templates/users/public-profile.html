@@ -2,7 +2,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="">
 <head>
     <meta http-equiv="Content-Type" context="text/html; charset=UTF-8" />
-    <title>My Public Profile | Gardener's Grove</title>
+    <title th:if="${currentUser == userId}">My Public Profile | Pollinat*r</title>
+    <title th:if="${currentUser != userId}">[[${name}]] | Pollinat*r</title>
     <!-- This needs to be here for Bootstrap and general CSS imports -->
     <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
 </head>
@@ -11,7 +12,7 @@
 <main class="main-container" style = "margin-top: 10%;">
     <div class="card border-top-0">
         <p class="end-0 bottom-0 m-2 mt-3 position-absolute">
-            <a th:href="@{edit-public-profile}" class="btn btn-primary">Edit</a>
+            <a th:if="${currentUser == userId}" th:href="@{edit-public-profile}" class="btn btn-primary">Edit</a>
         </p>
         <img
             class="card-img-top img-fluid fixed-height mb-4"
