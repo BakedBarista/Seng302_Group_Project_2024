@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.databind.node.JsonNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.TextMessage;
@@ -41,6 +42,11 @@ public class TestWebSocketHandler extends TextWebSocketHandler {
 			message = objectMapper.readTree(wsMessage.getPayload());
 		} catch (JacksonException e) {
 			logger.error("Error decoding message", e);
+			return;
+		}
+
+		if (!message.has("type") || message.get("type").getNodeType() != JsonNodeType.STRING) {
+			logger.error("Message is missing type field");
 			return;
 		}
 
