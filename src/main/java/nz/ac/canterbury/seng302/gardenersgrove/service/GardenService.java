@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -141,18 +142,29 @@ public class GardenService {
      * @param gardenImage multipart file for the garden image
      */
     public void setGardenImage(long id, MultipartFile gardenImage) {
+        var garden = gardenRepository.findById(id);
         if (validateImage(gardenImage)) {
-            var garden = gardenRepository.findById(id);
             if (garden.isEmpty()) {
                 return;
             }
 
             try {
-                garden.get().setGardenImage(gardenImage.getContentType(), gardenImage.getBytes());
-                gardenRepository.save(garden.get());
+                if (gardenImage != null && !gardenImage.isEmpty() && validateImage(gardenImage)) {
+                    garden.get().setGardenImage(gardenImage.getContentType(), gardenImage.getBytes());
+                } 
+                
+            } catch (Exception e) {
+            }
+        } else {
+            try{
+                InputStream defaultImageStream = getClass().getResourceAsStream("/static/img/defaultgarden.jpg");
+                if (defaultImageStream != null) {
+                    garden.get().setGardenImage("image/jpg", defaultImageStream.readAllBytes());
+                }
             } catch (Exception e) {
             }
         }
+        gardenRepository.save(garden.get());
     }
 
     /**

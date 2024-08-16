@@ -68,18 +68,9 @@
                         <!-- Plant images grid -->
                         <div class="card-img-top bg-success card-img-top-fixed d-flex align-items-center">
                             <div class="row g-0 img-row">
-                                <th:block th:if="${garden.getPlants().isEmpty()}">
-                                    <div class="col-12">
-                                        <div class="plant-img" title="Default Garden Image" th:style="|background-image: url('@{/img/defaultgarden.jpg}')|"></div>
-                                    </div>
-                                </th:block>
-                                <th:block th:each="plant, iterStat : ${garden.getPlants()}">
-                                    <div class="col" th:class="${#lists.size(garden.getPlants()) == 1 ? 'col-12' :
-                                              #lists.size(garden.getPlants()) == 2 ? 'col-6' :
-                                              'col-6 col-sm-4 col-lg-6'}" th:if="${iterStat.index < 4}">
-                                        <div class="plant-img" th:style="|background-image: url('@{/plants/{plantId}/plant-image(plantId=${plant.id})}')|"></div>
-                                    </div>
-                                </th:block>
+                                <div class="col-12">
+                                    <div class="plant-img" title="Default Garden Image" th:style="|background-image: url('@{/gardens/{id}/garden-image(id=${garden.id})}')|"></div>
+                                </div>
                             </div>
                         </div>
                         <div class="card-footer">

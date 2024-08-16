@@ -163,6 +163,7 @@ public class GardenController {
 
             if (savedGarden != null) {
                 try {
+                    logger.info("hgere");
                     gardenService.setGardenImage(savedGarden.getId(), file);
                 } catch (Exception e) {
                     logger.error("Failed to set image for garden: " + savedGarden.getId(), e);
