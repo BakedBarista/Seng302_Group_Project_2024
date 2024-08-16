@@ -16,6 +16,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+/**
+ * An example WebSocketHandler for testing purposes.
+ */
 public class TestWebSocketHandler extends TextWebSocketHandler {
     private final Logger logger = LoggerFactory.getLogger(TestWebSocketHandler.class);
 
@@ -27,6 +30,9 @@ public class TestWebSocketHandler extends TextWebSocketHandler {
 		this.objectMapper = objectMapper;
 	}
 
+	/**
+	 * Handles an incoming WebSocket message.
+	 */
 	@Override
 	public void handleTextMessage(WebSocketSession session, TextMessage wsMessage) {
 		JsonNode message;
@@ -51,6 +57,9 @@ public class TestWebSocketHandler extends TextWebSocketHandler {
 		}
 	}
 
+	/**
+	 * Broadcasts the current counter value to all active sessions.
+	 */
 	private void broadcastState() {
 		for (WebSocketSession session : Set.copyOf(activeSessions)) {
 			if (session.isOpen()) {
@@ -61,6 +70,10 @@ public class TestWebSocketHandler extends TextWebSocketHandler {
 		}
 	}
 
+	/**
+	 * Sends the current counter value to a given session.
+	 * @param session the session to send the value to
+	 */
 	private void sendState(WebSocketSession session) {
 		ObjectNode message = JsonNodeFactory.instance.objectNode();
 		message.put("type", "value");
