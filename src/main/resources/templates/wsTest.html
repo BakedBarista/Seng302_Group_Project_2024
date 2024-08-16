@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="">
+    <head>
+        <title>Gardener's Grove</title>
+
+        <meta http-equiv="Content-Type" context="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
+    </head>
+    <body>
+        <script>
+            const origin = location.origin.replace('http', 'ws');
+            const url = `${origin}${apiBaseUrl}/ws-test`;
+
+            const ws = new WebSocket(url);
+            ws.addEventListener('open', () => {
+                ws.send('Hello, world');
+            });
+        </script>
+    </body>
+</html>

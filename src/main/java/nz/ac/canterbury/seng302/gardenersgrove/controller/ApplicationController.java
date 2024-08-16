@@ -48,4 +48,9 @@ public class ApplicationController {
         }
         return "home";
     }
+
+    @GetMapping("/ws-test")
+    public String wsTest() {
+        return "wsTest";
+    }
 }
