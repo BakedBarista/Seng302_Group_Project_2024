@@ -35,6 +35,7 @@ public class TestWebSocketHandler extends TextWebSocketHandler {
 	 */
 	@Override
 	public void handleTextMessage(WebSocketSession session, TextMessage wsMessage) {
+		logger.info("Received message: {}", wsMessage.getPayload());
 		JsonNode message;
 		try {
 			message = objectMapper.readTree(wsMessage.getPayload());
@@ -88,6 +89,7 @@ public class TestWebSocketHandler extends TextWebSocketHandler {
 		}
 
 		TextMessage wsMessage = new TextMessage(jsonMessage);
+		logger.info("Sending message: {}", wsMessage.getPayload());
 		try {
 			session.sendMessage(wsMessage);
 		} catch (IOException e) {
