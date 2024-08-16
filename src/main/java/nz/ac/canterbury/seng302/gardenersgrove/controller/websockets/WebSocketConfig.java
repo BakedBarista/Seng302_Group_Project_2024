@@ -13,7 +13,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Configuration
 @EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
-
     private ObjectMapper objectMapper;
 
     public WebSocketConfig(ObjectMapper objectMapper) {
@@ -26,10 +25,8 @@ public class WebSocketConfig implements WebSocketConfigurer {
         			.addInterceptors(new HttpSessionHandshakeInterceptor());
 	}
 
-
     @Bean
     public WebSocketHandler testWebSocketHandler() {
         return new TestWebSocketHandler(objectMapper);
     }
-
 }
