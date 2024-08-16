@@ -1,6 +1,6 @@
 /* Colors */
 :root {
-    --gg-dark: #2C430D;
+    --gg-dark: #E8CB67;
     --gg-primary: #395C0A;
     --gg-primary-rgb: 57, 92, 10;
     --gg-primary-light: #608530;
@@ -682,12 +682,40 @@ h1, h2, h3, h4, h5, h6 {
     object-fit: cover;
 }
 
-.public-profile-plant-card-empty {
-    width: 30%; background-color: #e7d6a8
+.public-profile-plant-card {
+    width: 200px;
+    height: 180px;
 }
 
-.public-profile-plant-card-full {
-    width: 30%; background-color: #E8CB67
+.bg-primary-temp {
+    /*fix this later*/
+    background-color: #E8CB67;
+}
+
+.bg-primary-grey {
+    background-color: #e7d6a8
+}
+
+@keyframes wiggle {
+    0% { transform: rotate(3deg); }
+    10% { transform: rotate(-3deg); }
+    20% { transform: rotate(3deg); }
+    30% { transform: rotate(-3deg); }
+    40% { transform: rotate(3deg); }
+    50% { transform: rotate(-3deg); }
+    60% { transform: rotate(3deg); }
+    70% { transform: rotate(-3deg); }
+    80% { transform: rotate(3deg); }
+    90% { transform: rotate(-3deg); }
+    100% { transform: rotate(0deg); }
+}
+
+.card-wiggle {
+    animation: none;
+}
+
+.card-wiggle:hover {
+    animation: wiggle 2s infinite;
 }
 
 .hover-plant {
