@@ -1,9 +1,9 @@
 /* Colors */
 :root {
-    --gg-dark: #2C430D;
-    --gg-primary: #395C0A;
+    --gg-dark: #b89006;
+    --gg-primary: #CB9F03;
     --gg-primary-rgb: 57, 92, 10;
-    --gg-primary-light: #608530;
+    --gg-primary-light: #b89006;
     --gg-secondary: #A4AF69;
     --gg-secondary-rgb: 164, 175, 105;
     --gg-secondary-dark: #8C9D34;
@@ -283,6 +283,12 @@ h1, h2, h3, h4, h5, h6 {
 .public-profile-picture {
     border-radius: 999px;
     border: 10px white solid;
+}
+
+.suggest-user-picture {
+    border-radius: 999px;
+    border: 10px white solid;
+    width:80%;
 }
 
 .public-profile-picture-padding {
