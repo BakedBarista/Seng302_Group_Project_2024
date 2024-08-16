@@ -50,11 +50,12 @@
                         <img th:src="@{/icons/location-04-stroke-rounded.svg}" alt="" width="30" height="30" />
                         <div class="mt-1 d-flex">
                             <p class="mx-1"><strong>Location:</strong>
-                                <span th:text="${garden.streetNumber}"></span>
+                                <!-- <span th:text="${garden.streetNumber}"></span>
                                 <span th:text="${garden.streetName}"></span><span th:if="${garden.streetName}">,</span>
                                 <span th:text="${garden.suburb}"></span><span th:if="${garden.suburb}">,</span>
                                 <span th:text="${garden.city}"></span><span th:if="${garden.city}">,</span>
-                                <span th:text="${garden.country}"></span>
+                                <span th:text="${garden.country}"></span> -->
+                                <span th:text="${garden.address}"></span>
                             </p>
                         </div>
                     </div>
