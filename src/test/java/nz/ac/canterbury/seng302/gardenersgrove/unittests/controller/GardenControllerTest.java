@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unittests.controller;
 
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.GardenController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
@@ -92,12 +93,14 @@ public class GardenControllerTest {
     public void testForm() {
         Model model = mock(Model.class);
         HttpSession session = mock(HttpSession.class);
+        HttpServletRequest request = mock(HttpServletRequest.class);
         when(session.getAttribute("submissionToken")).thenReturn("mockToken123");
-        String result = gardenController.getCreateGardenForm(model,session);
+        when(request.getHeader("Referer")).thenReturn("");
+        String result = gardenController.getCreateGardenForm(model,session,request);
 
         verify(model).addAttribute(eq("garden"), any(GardenDTO.class));
         verify(model).addAttribute(eq("gardens"), anyList());
-
+        verify(model).addAttribute(eq("referer"), anyString());
         assertEquals("gardens/createGarden", result);
     }
 

@@ -92,19 +92,19 @@ public class GardenController {
      */
     @GetMapping("/gardens/create")
     public String getCreateGardenForm(Model model,
-                                      HttpSession session
-                                      /*,HttpServletRequest request*/) {
+                                      HttpSession session,
+                                      HttpServletRequest request) {
         logger.info("GET /gardens/create - display the new garden form");
         String submissionToken = UUID.randomUUID().toString();
         session.setAttribute(SUBMISSION_TOKEN,submissionToken);
+        session.setAttribute("referer",request.getHeader("Referer"));
         model.addAttribute(SUBMISSION_TOKEN,submissionToken);
         model.addAttribute(GARDEN, new GardenDTO());
         GardenUser owner = gardenUserService.getCurrentUser();
-
         List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
         model.addAttribute(GARDENS, gardens);
-        /*model.addAttribute("referer",request.getHeader("Referer"));
-        logger.info("{}", request.getHeader("Referer"));*/
+        model.addAttribute("referer",request.getHeader("Referer"));
+        logger.info("{}", request.getHeader("Referer"));
         return CREATE_GARDEN_PAGE;
     }
 
@@ -124,17 +124,20 @@ public class GardenController {
         logger.info("POST /gardens - submit the new garden form");
 
         logger.info(gardenDTO.toString());
+        String referer = (String) session.getAttribute("referer");
         String tokenFromForm = gardenDTO.getSubmissionToken();
         String sessionToken = (String) session.getAttribute(SUBMISSION_TOKEN);
         if (sessionToken == null || !sessionToken.equals(tokenFromForm)) {
             model.addAttribute("error", "Form has already been submitted or is invalid.");
             model.addAttribute(GARDEN, new GardenDTO());
+            model.addAttribute("referer",referer);
             return CREATE_GARDEN_PAGE;
         }
         checkGardenDTOError(model, bindingResult, gardenDTO);
         if (bindingResult.hasErrors() || model.containsAttribute(PROFANITY)) {
             model.addAttribute(SUBMISSION_TOKEN, tokenFromForm);
             model.addAttribute(GARDEN, gardenDTO);
+            model.addAttribute("referer",referer);
             return CREATE_GARDEN_PAGE;
         }
 
@@ -159,11 +162,13 @@ public class GardenController {
 
             Garden savedGarden = gardenService.addGarden(garden);
             session.removeAttribute(SUBMISSION_TOKEN);
+            session.removeAttribute("referer");
             return REDIRECT_GARDENS + savedGarden.getId();
         } catch (IllegalArgumentException e) {
             bindingResult.rejectValue("size", "error.garden", e.getMessage());
             model.addAttribute(SUBMISSION_TOKEN,tokenFromForm);
             model.addAttribute(GARDEN, gardenDTO);
+            model.addAttribute("referer",referer);
             return CREATE_GARDEN_PAGE;
         }
     }
