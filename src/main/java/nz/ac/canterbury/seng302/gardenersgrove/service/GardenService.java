@@ -143,15 +143,16 @@ public class GardenService {
      */
     public void setGardenImage(long id, MultipartFile gardenImage) {
         var garden = gardenRepository.findById(id);
+        if (garden.isEmpty()) {
+            return;
+        }
         logger.info(String.valueOf(gardenImage.isEmpty()));
         if (validateImage(gardenImage)) {
-            if (garden.isEmpty()) {
-                return;
-            }
+
             try {
-                if (gardenImage != null && !gardenImage.isEmpty()) {
+                if (!gardenImage.isEmpty()) {
                     garden.get().setGardenImage(gardenImage.getContentType(), gardenImage.getBytes());
-                } 
+                }
                 
             } catch (Exception e) {
             }
