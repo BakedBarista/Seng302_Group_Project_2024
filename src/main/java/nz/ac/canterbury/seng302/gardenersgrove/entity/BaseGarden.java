@@ -210,7 +210,12 @@ public abstract class BaseGarden {
         if (suburb != null && !suburb.isEmpty()) {
             sb.append(suburb).append(", ");
         }
-        sb.append(city).append(", ").append(country);
+        if (city != null && !city.isEmpty()) {
+            sb.append(city).append(", ");
+        }
+        if (country != null && !country.isEmpty()) {
+            sb.append(country);
+        }
         return sb.toString();
     }
 
