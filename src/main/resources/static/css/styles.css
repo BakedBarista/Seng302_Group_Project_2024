@@ -682,6 +682,14 @@ h1, h2, h3, h4, h5, h6 {
     object-fit: cover;
 }
 
+.public-profile-plant-card-empty {
+    width: 30%; background-color: #e7d6a8
+}
+
+.public-profile-plant-card-full {
+    width: 30%; background-color: #E8CB67
+}
+
 .hover-plant {
     transition:
         transform 0.3s ease,

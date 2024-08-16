@@ -86,6 +86,10 @@ public class GardenUser {
     @Column(nullable = true)
     private Instant accountDisabledExpiryInstant;
 
+    @Column()
+    @OneToMany(mappedBy = "favourite")
+    private List<Plant> favouritePlants;
+
     /**
      * JPA required no-args constructor
      */
@@ -434,5 +438,13 @@ public class GardenUser {
      */
     public void setAccountDisabledExpiryInstant(Instant accountDisabledExpiryInstant) {
         this.accountDisabledExpiryInstant = accountDisabledExpiryInstant;
+    }
+
+    /**
+     * Gets the favourite plants of this user
+     * @return list of favourite plants
+     */
+    public List<Plant> getFavouritePlants() {
+        return favouritePlants;
     }
 }

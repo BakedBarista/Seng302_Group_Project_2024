@@ -40,7 +40,6 @@ public class PublicProfileController {
     private static final int MAX_FILE_SIZE = 10 * 1024 * 1024;
 
 
-
     @Autowired
     public PublicProfileController(GardenUserService userService, ProfanityService profanityService) {
         this.userService = userService;
@@ -57,11 +56,12 @@ public class PublicProfileController {
         model.addAttribute(USER_ID_ATTRIBUTE, userId);
         model.addAttribute("name", user.getFname() + " " + user.getLname());
         model.addAttribute("description", user.getDescription());
+        model.addAttribute("favouritePlants", user.getFavouritePlants());
 
         return "users/public-profile";
     }
 
-        /**
+    /**
      * returns a given user's banner - this is useful for the public profile view and edit page
      *
      * @param id the id of the user
