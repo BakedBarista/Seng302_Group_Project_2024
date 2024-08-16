@@ -28,7 +28,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
      */
 	@Override
 	public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(testWebSocketHandler(), "/api/ws-test")
+        registry.addHandler(testWebSocketHandler(), "/api/messages")
         			.addInterceptors(new HttpSessionHandshakeInterceptor());
 	}
 
