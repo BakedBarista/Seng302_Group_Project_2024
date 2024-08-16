@@ -172,7 +172,7 @@ public class GardenServiceTest {
 
         String filename = "test";
         String originalFilename = "test.png";
-        byte[] imageBytes = {};
+        byte[] imageBytes = "test".getBytes();
         String contentType = "image/png";
 
         MockMultipartFile file = new MockMultipartFile(filename, originalFilename, contentType, imageBytes);
