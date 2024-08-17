@@ -146,7 +146,6 @@ public class GardenService {
         if (garden.isEmpty()) {
             return;
         }
-        logger.info(String.valueOf(gardenImage.isEmpty()));
         if (validateImage(gardenImage)) {
 
             try {
