@@ -40,10 +40,10 @@ public class MessageController {
         GardenUser sentToUser = userService.getUserById(requestedUserId);
 
         // we could add so they can send themselves messsages
-        boolean requestingMyself = loggedInUserId.equals(requestedUserId);
-        if (requestingMyself) {
-            return "redirect:/users/manage-friends";
-        }
+//        boolean requestingMyself = loggedInUserId.equals(requestedUserId);
+//        if (requestingMyself) {
+//            return "redirect:/users/manage-friends";
+//        }
 
         // need to be friends to send a message
         Friends isFriend = friendService.getFriendship(loggedInUserId, requestedUserId);
