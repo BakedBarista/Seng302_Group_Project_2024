@@ -35,15 +35,10 @@ public class MessageController {
      */
     @GetMapping("users/message")
     public String messageFriend(@RequestParam("id") Long requestedUserId, Authentication authentication,Model model) {
-        
+
         Long loggedInUserId = (Long) authentication.getPrincipal();
         GardenUser sentToUser = userService.getUserById(requestedUserId);
 
-        // we could add so they can send themselves messsages
-//        boolean requestingMyself = loggedInUserId.equals(requestedUserId);
-//        if (requestingMyself) {
-//            return "redirect:/users/manage-friends";
-//        }
 
         // need to be friends to send a message
         Friends isFriend = friendService.getFriendship(loggedInUserId, requestedUserId);
