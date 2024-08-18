@@ -26,6 +26,7 @@ public class U800MessageFeature {
     private static Model model;
 
     private String result;
+
     @Autowired
     private GardenUserService gardenUserService;
 
