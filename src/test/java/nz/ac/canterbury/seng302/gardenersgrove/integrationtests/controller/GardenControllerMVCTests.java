@@ -1,11 +1,9 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.GardenController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.TagRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
-import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.GardenController;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weather.WeatherAPIService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,15 +17,13 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.client.RestTemplate;
-
 
 import java.util.Collections;
 
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.mock;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension .class)
@@ -75,7 +71,7 @@ public class GardenControllerMVCTests {
         plantService = mock(PlantService.class);
         moderationService = mock(ModerationService.class);
         profanityService = mock(ProfanityService.class);
-        gardenController = new GardenController(gardenService, null, plantService, gardenUserService, weatherAPIService, tagService,friendService, moderationService, profanityService, locationService);
+        gardenController = new GardenController(gardenService, null, plantService, gardenUserService, weatherAPIService, friendService, moderationService, profanityService, locationService);
         locationService = mock(LocationService.class);
 
         emptyGarden = new Garden();

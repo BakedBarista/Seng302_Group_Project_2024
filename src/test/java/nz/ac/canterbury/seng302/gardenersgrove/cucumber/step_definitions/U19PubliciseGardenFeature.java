@@ -77,7 +77,7 @@ public class U19PubliciseGardenFeature {
         bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
         gardenService = mock(GardenService.class);
-        gardenController = new GardenController(gardenService, null,plantService,gardenUserService,weatherAPIService,tagService, friendService,moderationService,profanityService, locationService);
+        gardenController = new GardenController(gardenService, null,plantService,gardenUserService,weatherAPIService, friendService,moderationService,profanityService, locationService);
     }
 
     @When("Description contains profanity")

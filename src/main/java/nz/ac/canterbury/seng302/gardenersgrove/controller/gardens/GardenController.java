@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.gardens;
 
 
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.GardenDTO;
@@ -29,13 +30,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.SortedMap;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.HISTORY_FORMAT_DATE;
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.NZ_FORMAT_DATE;
@@ -53,8 +49,6 @@ public class GardenController {
     private final PlantService plantService;
     private final WeatherAPIService weatherAPIService;
 
-    private final TagService tagService;
-
     private final ModerationService moderationService;
 
     private final GardenUserService gardenUserService;
@@ -62,22 +56,28 @@ public class GardenController {
     private final LocationService locationService;
 
     private final ProfanityService profanityService;
-    private final String PROFANITY = "profanity";
+    private static final String PROFANITY = "profanity";
+    private static final String SUBMISSION_TOKEN = "submissionToken";
+    private static final String CREATE_GARDEN_PAGE = "gardens/createGarden";
+    private static final String GARDEN = "garden";
+    private static final String GARDENS = "gardens";
+    private static final String EDIT_GARDEN = "gardens/editGarden";
+    private static final String REDIRECT_GARDENS = "redirect:/gardens/";
+    private static final String ACCESS_DENIED = "error/accessDenied";
 
     @Value("${geoapify.api.key}")
-    private String location_apiKey;
+    private String locationApiKey;
 
     @Autowired
     public GardenController(GardenService gardenService, GardenHistoryService gardenHistoryService,
             PlantService plantService, GardenUserService gardenUserService, WeatherAPIService weatherAPIService,
-            TagService tagService, FriendService friendService, ModerationService moderationService,
+            FriendService friendService, ModerationService moderationService,
             ProfanityService profanityService, LocationService locationService) {
         this.gardenService = gardenService;
         this.gardenHistoryService = gardenHistoryService;
         this.plantService = plantService;
         this.gardenUserService = gardenUserService;
         this.weatherAPIService = weatherAPIService;
-        this.tagService = tagService;
         this.friendService = friendService;
         this.moderationService = moderationService;
         this.profanityService = profanityService;
@@ -90,14 +90,17 @@ public class GardenController {
      * @return gardenFormTemplate
      */
     @GetMapping("/gardens/create")
-    public String getCreateGardenForm(Model model) {
+    public String getCreateGardenForm(Model model, HttpSession session) {
         logger.info("GET /gardens/create - display the new garden form");
-        model.addAttribute("garden", new GardenDTO());
+        String submissionToken = UUID.randomUUID().toString();
+        session.setAttribute(SUBMISSION_TOKEN,submissionToken);
+        model.addAttribute(SUBMISSION_TOKEN,submissionToken);
+        model.addAttribute(GARDEN, new GardenDTO());
         GardenUser owner = gardenUserService.getCurrentUser();
 
         List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
-        model.addAttribute("gardens", gardens);
-        return "gardens/createGarden";
+        model.addAttribute(GARDENS, gardens);
+        return CREATE_GARDEN_PAGE;
     }
 
     /**
@@ -108,18 +111,26 @@ public class GardenController {
      * @return gardenForm
      */
     @PostMapping("/gardens/create")
-    public String submitCreateGardenForm(@Valid @ModelAttribute("garden") GardenDTO gardenDTO,
+    public String submitCreateGardenForm(@Valid @ModelAttribute(GARDEN) GardenDTO gardenDTO,
                                          BindingResult bindingResult,
                                          Authentication authentication,
-                                         Model model) {
+                                         Model model,
+                                         HttpSession session) {
         logger.info("POST /gardens - submit the new garden form");
 
         logger.info(gardenDTO.toString());
-
+        String tokenFromForm = gardenDTO.getSubmissionToken();
+        String sessionToken = (String) session.getAttribute(SUBMISSION_TOKEN);
+        if (sessionToken == null || !sessionToken.equals(tokenFromForm)) {
+            model.addAttribute("error", "Form has already been submitted or is invalid.");
+            model.addAttribute(GARDEN, new GardenDTO());
+            return CREATE_GARDEN_PAGE;
+        }
         checkGardenDTOError(model, bindingResult, gardenDTO);
         if (bindingResult.hasErrors() || model.containsAttribute(PROFANITY)) {
-            model.addAttribute("garden", gardenDTO);
-            return "gardens/createGarden";
+            model.addAttribute(SUBMISSION_TOKEN, tokenFromForm);
+            model.addAttribute(GARDEN, gardenDTO);
+            return CREATE_GARDEN_PAGE;
         }
 
         // Request API
@@ -133,41 +144,37 @@ public class GardenController {
             gardenDTO.setLat(null);
             gardenDTO.setLon(null);
         }
+        try {
+            Garden garden = gardenDTO.toGarden();
+            Long userId = (Long) authentication.getPrincipal();
+            GardenUser owner = gardenUserService.getUserById(userId);
+            garden.setOwner(owner);
 
-        Garden garden = gardenDTO.toGarden();
-        Long userId = (Long) authentication.getPrincipal();
-        GardenUser owner = gardenUserService.getUserById(userId);
-        garden.setOwner(owner);
+            logger.info(garden.toString());
 
-        logger.info(garden.toString());
-
-        Garden savedGarden = gardenService.addGarden(garden);
-        return "redirect:/gardens/" + savedGarden.getId();
+            Garden savedGarden = gardenService.addGarden(garden);
+            session.removeAttribute(SUBMISSION_TOKEN);
+            return REDIRECT_GARDENS + savedGarden.getId();
+        } catch (IllegalArgumentException e) {
+            bindingResult.rejectValue("size", "error.garden", e.getMessage());
+            model.addAttribute(SUBMISSION_TOKEN,tokenFromForm);
+            model.addAttribute(GARDEN, gardenDTO);
+            return CREATE_GARDEN_PAGE;
+        }
     }
 
     /**
      * Gets all garden details
      * @param model representation of results
-     * @param page
      * @return viewGardenTemplate
      */
     @GetMapping("/gardens")
-    public String responses(Model model,
-                            @RequestParam(defaultValue = "0") int page,
-                            @RequestParam(defaultValue = "10") int size) {
+    public String responses(Model model) {
         logger.info("Get /gardens - display all gardens");
         GardenUser currentUser = gardenUserService.getCurrentUser();
-        if (currentUser != null) {
-            Page<Garden> gardenPage = gardenService.getGardensByOwnerId(currentUser.getId(), PageRequest.of(page, size));
-            model.addAttribute("gardenPage", gardenPage);
-
-            int totalPages = gardenPage.getTotalPages();
-            if (totalPages > 0) {
-                List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
-                        .boxed()
-                        .collect(Collectors.toList());
-                model.addAttribute("pageNumbers", pageNumbers);
-            }
+        if(currentUser != null) {
+            List<Garden> userGardens = gardenService.getGardensByOwnerId(currentUser.getId());
+            model.addAttribute(GARDENS, userGardens);
         }
 
         return "gardens/viewGardens";
@@ -190,14 +197,14 @@ public class GardenController {
 
         if(gardenOpt.isPresent()) {
             Garden garden = gardenOpt.get();
-            model.addAttribute("garden", garden);
+            model.addAttribute(GARDEN, garden);
             model.addAttribute("owner", garden.getOwner());
             GardenUser currentUser = gardenUserService.getCurrentUser();
             boolean isNotOwner = !garden.getOwner().getId().equals(currentUser.getId());
             boolean isNotPublic = !garden.getIsPublic();
 
             if (isNotOwner && isNotPublic){
-                return "error/accessDenied";
+                return ACCESS_DENIED;
             }
             model.addAttribute("NZ_FORMAT_DATE", NZ_FORMAT_DATE);
             model.addAttribute("plants", plantService.getPlantsByGardenId(id));
@@ -205,7 +212,7 @@ public class GardenController {
             logger.info("Getting weather information for Garden: {}", id);
             Double lat = garden.getLat();
             Double lng = garden.getLon();
-            WeatherAPICurrentResponse currentResponse = new WeatherAPICurrentResponse();
+            WeatherAPICurrentResponse currentResponse;
             CurrentWeather currentWeather = new CurrentWeather();
             List<WeatherData> forecastWeather = new ArrayList<>();
             boolean wateringRecommendation = false;
@@ -251,7 +258,7 @@ public class GardenController {
 
             List<Garden> gardens = gardenService.getGardensByOwnerId(currentUser.getId());
             model.addAttribute("currentUser", currentUser);
-            model.addAttribute("gardens", gardens);
+            model.addAttribute(GARDENS, gardens);
             return "gardens/gardenDetails";
         }
         return "error/404";
@@ -271,14 +278,14 @@ public class GardenController {
 
         if(gardenOpt.isPresent()) {
             Garden garden = gardenOpt.get();
-            model.addAttribute("garden", garden);
+            model.addAttribute(GARDEN, garden);
             model.addAttribute("owner", garden.getOwner());
             Long userId = (Long) authentication.getPrincipal();
             boolean isNotOwner = !garden.getOwner().getId().equals(userId);
             boolean isNotPublic = !garden.getIsPublic();
 
             if (isNotOwner && isNotPublic){
-                return "error/accessDenied";
+                return ACCESS_DENIED;
             }
 
             model.addAttribute("NZ_FORMAT_DATE", NZ_FORMAT_DATE);
@@ -313,7 +320,7 @@ public class GardenController {
             garden.setWeatherAlertHidden(LocalDate.now());
             gardenService.addGarden(garden);
         }
-        return "redirect:/gardens/" + id;
+        return REDIRECT_GARDENS + id;
     }
 
     /**
@@ -326,13 +333,12 @@ public class GardenController {
     public String updatePublicStatus(@PathVariable(name = "id") Long id,
                                      @RequestParam(name = "isPublic", defaultValue = "false") Boolean isPublic) {
         logger.info("POST /gardens/id - update garden public status");
-        logger.info(String.valueOf(isPublic));
         Optional<Garden> garden = gardenService.getGardenById(id);
         if (garden.isPresent()) {
             garden.get().setPublic(isPublic);
             gardenService.addGarden(garden.get());
         }
-        return "redirect:/gardens/" + id;
+        return REDIRECT_GARDENS + id;
     }
 
 
@@ -346,14 +352,14 @@ public class GardenController {
         logger.info("Get /garden/{}", id);
         Optional<Garden> garden = gardenService.getGardenById(id);
         logger.info(String.valueOf(garden));
-        model.addAttribute("garden", garden.orElse(null));
+        model.addAttribute(GARDEN, garden.orElse(null));
         GardenUser owner = gardenUserService.getCurrentUser();
         if (!garden.isPresent() || !garden.get().getOwner().getId().equals(owner.getId())) {
-            return "error/accessDenied";
+            return ACCESS_DENIED;
         }
         List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
-        model.addAttribute("gardens", gardens);
-        return "gardens/editGarden";
+        model.addAttribute(GARDENS, gardens);
+        return EDIT_GARDEN;
     }
 
 
@@ -367,15 +373,15 @@ public class GardenController {
      */
     @PostMapping("/gardens/{id}/edit")
     public String updateGarden(@PathVariable(name = "id") long id,
-                               @Valid @ModelAttribute("garden") GardenDTO gardenDTO,
+                               @Valid @ModelAttribute(GARDEN) GardenDTO gardenDTO,
                                BindingResult result,
                                Model model) {
 
         checkGardenDTOError(model, result, gardenDTO);
         if (result.hasErrors() || model.containsAttribute(PROFANITY)) {
-            model.addAttribute("garden", gardenDTO);
+            model.addAttribute(GARDEN, gardenDTO);
             model.addAttribute("id", id);
-            return "gardens/editGarden";
+            return EDIT_GARDEN;
         }
 
         List<Double> latAndLng = locationService.getLatLng(gardenDTO.getLocation());
@@ -400,11 +406,17 @@ public class GardenController {
                 existingGarden.get().setLat(null);
                 existingGarden.get().setLon(null);
             }
-
-            existingGarden.get().setGardenWeather(null);
-            gardenService.addGarden(existingGarden.get());
+            try {
+                existingGarden.get().setGardenWeather(null);
+                gardenService.addGarden(existingGarden.get());
+            } catch (IllegalArgumentException e) {
+                result.rejectValue("size", "error.garden", e.getMessage());
+                model.addAttribute("id",id);
+                model.addAttribute(GARDEN, gardenDTO);
+                return EDIT_GARDEN;
+            }
         }
-        return "redirect:/gardens/" + id;
+        return REDIRECT_GARDENS + id;
     }
 
     /**
@@ -422,7 +434,7 @@ public class GardenController {
         Page<Garden> gardenPage = gardenService.getPageForPublicGardens(pageable);
         model.addAttribute("gardenPage", gardenPage);
         List<Garden> gardens = gardenService.getGardensByOwnerId(gardenUserService.getCurrentUser().getId());
-        model.addAttribute("gardens", gardens);
+        model.addAttribute(GARDENS, gardens);
         List<Garden> gardensWithPlants = gardenPage.getContent().stream()
                 .map(garden -> {
                     List<Plant> plants = plantService.getPlantsByGardenId(garden.getId());
@@ -534,14 +546,16 @@ public class GardenController {
         try {
             logger.info("Adding test data");
 
-            // Create user
+            // Create users
             GardenUser user = new GardenUser("Jan", "Doe", "jan.doe@gmail.com", "password", LocalDate.of(1970, 1, 1));
             gardenUserService.addUser(user);
 
             GardenUser user1 = new GardenUser("Luke", "Stynes", "stynesluke@gmail.com", "password", LocalDate.of(1970, 1, 1));
             gardenUserService.addUser(user1);
 
-            logger.info("User " + user.getFullName() + " added");
+            Friends friendship = new Friends(user,user1, Friends.Status.ACCEPTED);
+            friendService.save(friendship);
+            logger.info("User {} added",user.getFullName() );
 
             // Garden names
             List<String> gardenNames = Arrays.asList(
@@ -564,11 +578,30 @@ public class GardenController {
             for (int i = 0; i < gardenNames.size(); i++) {
                 String gardenName = gardenNames.get(i);
                 String streetNumber = Integer.toString(i + 1);
-                GardenDTO gardenDTO = new GardenDTO(gardenName, streetNumber, "Ilam Road", "Ilam", "Christchurch", "New Zealand", "8041", -43.53, 172.63, "Test Garden", (String.valueOf(1000 + (i * 50))));
+
+                // Create GardenDTO
+                GardenDTO gardenDTO = new GardenDTO(
+                        gardenName,
+                        streetNumber,
+                        "Main Street",
+                        "Suburb",
+                        "City",
+                        "Country",
+                        "12345",
+                        null,
+                        null,
+                        "A lovely garden",
+                        "100.0",
+                        "token"
+                );
+
+                // Convert DTO to Garden entity
                 Garden garden = gardenDTO.toGarden();
                 garden.setOwner(user);
                 garden.setPublic(true);
-                gardenService.addGarden(garden);
+
+                // Save Garden
+                Garden savedGarden = gardenService.addGarden(garden);
 
                 logger.info("Garden {} added", gardenName);
 
@@ -577,18 +610,28 @@ public class GardenController {
                     String[] plantDetail = plantsDetails.get(j);
                     String plantName = plantDetail[0];
                     String plantDescription = plantDetail[1];
-                    PlantDTO plant = new PlantDTO(plantName, "15", plantDescription, "2024-03-%02d".formatted(j % 5 + 1));
-                    Plant savedPlant = plantService.createPlant(plant, garden.getId());
 
+                    // Create PlantDTO
+                    PlantDTO plantDTO = new PlantDTO(
+                            plantName,
+                            "15",
+                            plantDescription,
+                            "2024-03-%02d".formatted(j % 5 + 1)
+                    );
+
+                    // Save Plant and associate with Garden
+                    Plant savedPlant = plantService.createPlant(plantDTO, savedGarden.getId());
                     plants.add(savedPlant);
                 }
 
-                garden.setPlants(plants);
-                gardenService.addGarden(garden);
+                // Set plants and save garden again
+                savedGarden.setPlants(plants);
+                gardenService.addGarden(savedGarden);
             }
         } catch (Exception e) {
             logger.info("Failed to add garden", e);
         }
     }
+
 
 }

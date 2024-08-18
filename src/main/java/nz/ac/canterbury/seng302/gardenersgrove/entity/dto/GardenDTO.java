@@ -18,6 +18,8 @@ public class GardenDTO extends BaseGarden {
     @Column(nullable = true)
     private String size;
 
+    private String submissionToken;
+
     public GardenDTO() {
         super();
     }
@@ -49,9 +51,10 @@ public class GardenDTO extends BaseGarden {
      * @param gardenSize size of the garden, can be a decimal
      */
     public GardenDTO(String name, String streetNumber, String streetName, String suburb, String city, String country,
-                  String postCode, Double lat, Double lon, String description, String gardenSize) {
+                     String postCode, Double lat, Double lon, String description, String gardenSize, String submissionToken) {
         super(name, streetNumber, streetName, suburb, city, country, postCode, lat, lon, description);
         this.size = gardenSize;
+        this.submissionToken = submissionToken;
     }
 
     public Garden toGarden() {
@@ -79,5 +82,13 @@ public class GardenDTO extends BaseGarden {
      */
     public void setSize(String size) {
         this.size = size.replace(',', '.');
+    }
+
+    public String getSubmissionToken() {
+        return submissionToken;
+    }
+
+    public void setSubmissionToken(String submissionToken) {
+        this.submissionToken = submissionToken;
     }
 }

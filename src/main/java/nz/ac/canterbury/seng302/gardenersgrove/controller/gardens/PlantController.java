@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.gardens;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
@@ -10,6 +11,9 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantHistoryItemDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantInfoDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
+
+import org.apache.logging.log4j.util.Base64Util;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +24,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
@@ -74,11 +80,30 @@ public class PlantController {
      * @return redirect to add plant form
      */
     @GetMapping("/gardens/{id}/add-plant")
-    public String addPlantForm(@PathVariable("id") Long gardenId, Model model){
+    public String addPlantForm(@PathVariable("id") Long gardenId, @RequestParam(required = false) boolean importPlant, Model model, HttpSession session){
 
         logger.info("GET /gardens/${id}/add-plant - display the new plant form");
         model.addAttribute(GARDEN_ID, gardenId);
-        model.addAttribute(PLANT, new Plant("","","",null));
+
+        Plant plant = new Plant("", "", "", null);
+        if (importPlant) {
+            plant.setName((String) session.getAttribute("plantLabel"));
+            plant.setDescription((String) session.getAttribute("plantDescription"));
+
+            String image = (String) session.getAttribute("plantImage");
+            if (image != null) {
+                try {
+                    var conn = new URL(image).openConnection();
+                    byte[] base64Image
+                    = Base64.encodeBase64(conn.getInputStream().readAllBytes(), false);
+                    model.addAttribute("importImage", new String(base64Image));
+                    model.addAttribute("importImageType", conn.getContentType());
+                } catch (IOException e) {
+                    logger.error("Unable to fetch plant image for import");
+                }
+            }
+        }
+        model.addAttribute(PLANT, plant);
 
         GardenUser owner = gardenUserService.getCurrentUser();
         Optional<Garden> garden = gardenService.getGardenById(gardenId);
@@ -461,5 +486,27 @@ public class PlantController {
         }
 
         return "plants/plantInformation";
+    }
+
+    /**
+     * Asks the user to select a garden to import the plant to
+     * @return a page to select a garden
+     */
+    @PostMapping("/plant-information/add-to-garden")
+    public String plantInformationAddToGarden(
+            @RequestParam String label,
+            @RequestParam String description,
+            @RequestParam String image,
+            HttpSession session,
+            Model model) {
+        // Save info to add to the plant
+        session.setAttribute("plantLabel", label);
+        session.setAttribute("plantDescription", description);
+        session.setAttribute("plantImage", image);
+
+        List<Garden> gardens = gardenService.getGardensByOwnerId(gardenUserService.getCurrentUser().getId());
+        model.addAttribute("gardens", gardens);
+
+        return "plants/plantInformationAddToGarden";
     }
 }

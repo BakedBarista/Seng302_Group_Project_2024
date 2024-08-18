@@ -6,6 +6,9 @@
 
     <!-- This needs to be here for Bootstrap and general CSS imports -->
     <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
+
+    <meta name="_importImage" th:content="${importImage}" />
+    <meta name="_importImageType" th:content="${importImageType}" />
 </head>
 <body>
     <nav th:replace="~{fragments/navbar :: navbar}"></nav>
@@ -20,4 +23,32 @@
 <script th:src="@{/js/nextFormBox.js}"></script>
 <script th:src="@{/js/plantImageErrorChecking.js}"></script>
 <script th:src="@{/js/dateValidation.js}"></script>
+<script>
+    const importImage = getMeta('_importImage');
+    const importImageType = getMeta('_importImageType');
+
+    if (importImage) {
+        document.getElementById('preview').src = 'data:' + importImageType + ';base64,' + importImage;
+
+        const imageInput = document.getElementById('image');
+
+        // Create a new file object
+        const fileContent = [atob(importImage)];
+        const fileName = 'file.' + importImageType.split('/')[1];
+        const file = new File(fileContent, fileName);
+        file.type = importImageType;
+
+        // Create a data transfer object. Similar to what you get from a `drop` event as `event.dataTransfer`
+        const dataTransfer = new DataTransfer();
+
+        // Add your file to the file list of the object
+        dataTransfer.items.add(file);
+
+        // Save the file list to a new variable
+        const fileList = dataTransfer.files;
+
+        // Set your input `files` to the file list
+        imageInput.files = fileList;
+    }
+</script>
 </html>

@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unittests.controller;
 
 
+import jakarta.servlet.http.HttpSession;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.GardenController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
@@ -94,7 +95,9 @@ public class GardenControllerTest {
     @Test
     public void testForm() {
         Model model = mock(Model.class);
-        String result = gardenController.getCreateGardenForm(model);
+        HttpSession session = mock(HttpSession.class);
+        when(session.getAttribute("submissionToken")).thenReturn("mockToken123");
+        String result = gardenController.getCreateGardenForm(model,session);
 
         verify(model).addAttribute(eq("garden"), any(GardenDTO.class));
         verify(model).addAttribute(eq("gardens"), anyList());
@@ -105,13 +108,15 @@ public class GardenControllerTest {
     @Test
     public void testSubmitForm_ValidationFailure() {
         Model model = mock(Model.class);
-        GardenDTO invalidGarden = new GardenDTO("","","","","","","",0.0,0.0,"",null);
+        HttpSession session = mock(HttpSession.class);
+        when(session.getAttribute("submissionToken")).thenReturn("mockToken123");
+        GardenDTO invalidGarden = new GardenDTO("","","","","","","",0.0,0.0,"",null,"Token123");
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
 
         when(authentication.getPrincipal()).thenReturn((Long) 1L);
         when(profanityService.badWordsFound(anyString())).thenReturn(new ArrayList<>());
-        String result = gardenController.submitCreateGardenForm(invalidGarden, bindingResult, authentication, model);
+        String result = gardenController.submitCreateGardenForm(invalidGarden, bindingResult, authentication, model,session);
 
         assertEquals("gardens/createGarden", result);
     }
@@ -119,7 +124,9 @@ public class GardenControllerTest {
     @Test
     public void testSubmitForm_ValidationSuccess() {
         Model model = mock(Model.class);
-        GardenDTO validGardenDTO = new GardenDTO("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"test description", "100");
+        HttpSession session = mock(HttpSession.class);
+        when(session.getAttribute("submissionToken")).thenReturn("mockToken123");
+        GardenDTO validGardenDTO = new GardenDTO("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"test description", "100","mockToken123");
         validGardenDTO.setId((long) 1);
         Garden validGarden = validGardenDTO.toGarden();
 
@@ -131,7 +138,7 @@ public class GardenControllerTest {
         when(profanityService.badWordsFound(anyString())).thenReturn(new ArrayList<>());
 
         Mockito.when(moderationService.moderateDescription(anyString())).thenReturn(ResponseEntity.ok().build());
-        String result = gardenController.submitCreateGardenForm(validGardenDTO, bindingResult, authentication, model);
+        String result = gardenController.submitCreateGardenForm(validGardenDTO, bindingResult, authentication, model, session);
         assertEquals("redirect:/gardens/1", result);
     }
 
@@ -148,7 +155,7 @@ public class GardenControllerTest {
     @Test
     public void testGardenDetail() {
         Model model = mock(Model.class);
-        GardenDTO gardenDTO = new GardenDTO("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"test description","100");
+        GardenDTO gardenDTO = new GardenDTO("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"test description","100","Token123");
         Garden garden = gardenDTO.toGarden();
         when(gardenService.getGardenById(1L)).thenReturn(Optional.of(garden));
         when(plantService.getPlantsByGardenId(1L)).thenReturn(Collections.emptyList());
@@ -169,7 +176,7 @@ public class GardenControllerTest {
         Model model = mock(Model.class);
         GardenUser owner = new GardenUser();
         owner.setId(1L);
-        GardenDTO gardenDTO = new GardenDTO("Test Garden", "1", "test", "test suburb", "test city", "test country", "1234", 0.0, 0.0, "test description", "100");
+        GardenDTO gardenDTO = new GardenDTO("Test Garden", "1", "test", "test suburb", "test city", "test country", "1234", 0.0, 0.0, "test description", "100","Token123");
         Garden garden = gardenDTO.toGarden();
         garden.setOwner(owner);
 
@@ -187,7 +194,7 @@ public class GardenControllerTest {
     @Test
     public void testUpdateGarden() {
         Model model = mock(Model.class);
-        GardenDTO gardenDTO = new GardenDTO("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"test description", "100");
+        GardenDTO gardenDTO = new GardenDTO("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"test description", "100","Token123");
         when(gardenService.getGardenById(1)).thenReturn(Optional.of(gardenDTO.toGarden()));
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
@@ -234,8 +241,10 @@ public class GardenControllerTest {
     @Test
     public void testWhenImMakingAGarden_AndIHaveAGardenErrorAndAProfanityError_ThenTheModelHasProfanityError() {
         Model model = mock(Model.class);
+        HttpSession session = mock(HttpSession.class);
+        when(session.getAttribute("submissionToken")).thenReturn("mockToken123");
         String description = "some really nasty words";
-        GardenDTO invalidGardenDTO = new GardenDTO("","","","","","","",0.0,0.0,description,"");
+        GardenDTO invalidGardenDTO = new GardenDTO("","","","","","","",0.0,0.0,description,"","mockToken123");
         Garden invalidGarden = invalidGardenDTO.toGarden();
         gardenService.addGarden(invalidGarden);
         BindingResult bindingResult = mock(BindingResult.class);
@@ -248,7 +257,7 @@ public class GardenControllerTest {
         when(moderationService.checkIfDescriptionIsFlagged(description)).thenReturn(true);
         when(authentication.getPrincipal()).thenReturn(1L);
         when(gardenService.addGarden(any())).thenReturn(invalidGarden);
-        gardenController.submitCreateGardenForm(invalidGardenDTO, bindingResult, authentication, model);
+        gardenController.submitCreateGardenForm(invalidGardenDTO, bindingResult, authentication, model,session);
 
         verify(model).addAttribute("profanity", EXPECTED_MODERATION_ERROR_MESSAGE);
         verify(model).addAttribute("garden", invalidGardenDTO);
@@ -259,7 +268,7 @@ public class GardenControllerTest {
         Model model = mock(Model.class);
         long id = 0;
         String description = "some really nasty words";
-        GardenDTO invalidGarden = new GardenDTO("","","","","","","",0.0,0.0,description,null);
+        GardenDTO invalidGarden = new GardenDTO("","","","","","","",0.0,0.0,description,null,"");
         BindingResult bindingResult = mock(BindingResult.class);
 
         when(bindingResult.hasErrors()).thenReturn(true);
@@ -289,7 +298,7 @@ public class GardenControllerTest {
     @Test
     public void testGardenDetail_WithNullLatLon() {
         Model model = mock(Model.class);
-        GardenDTO gardenDTO = new GardenDTO("Test Garden","1","test","test suburb","test city","test country","1234",null,null,"100","test description");
+        GardenDTO gardenDTO = new GardenDTO("Test Garden","1","test","test suburb","test city","test country","1234",null,null,"100","test description","");
         Garden garden = gardenDTO.toGarden();
         GardenUser owner = new GardenUser();
         owner.setId(1L);

@@ -701,3 +701,63 @@ h1, h2, h3, h4, h5, h6 {
 #recordUpdateButtonTooltip {
     background-color: #E2E9CE;
 }
+.tag {
+    display: inline-block;
+    background-color: #e0e0e0;
+    color: #333;
+    padding: 5px 10px;
+    margin: 5px;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.friend-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.friend-info img {
+    margin-right: 10px;
+}
+
+.message-button {
+    margin-top: 5px;
+    margin-left: 20px;
+}
+
+.friend-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    margin-top: 5px;
+}
+
+.friend-container.friend-name {
+    margin-left: 20px;
+}
+
+
+@media (max-width: 768px) {
+    .friend-info {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .message-button {
+        margin-left: 0;
+        margin-top: 10px;
+    }
+
+    .friend-container {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .friend-container .friend-name {
+        margin-left: 0;
+        margin-top: 5px;
+    }
+}
+

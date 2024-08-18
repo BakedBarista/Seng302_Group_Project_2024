@@ -60,7 +60,7 @@
                     </div>
                     <div class="d-flex">
                         <img th:src="@{/icons/aspect-ratio-stroke-rounded.svg}" alt="" width="30" height="30" />
-                        <p class="mx-1 mt-1 fw-bold">Size: </p><span class="mt-1"><span th:text="${garden.size}"></span> m&sup2;</span>
+                        <p class="mx-1 mt-1 fw-bold">Size: </p><span class="mt-1"><span th:text="${garden.size}"></span> <span th:if="${garden.size}">m&sup2;</span></span>
                     </div>
                     <form th:action="@{/gardens/{id}(id=${garden.id})}" method="post" th:if="${currentUser.id == garden.owner.id}">
                         <p>
@@ -82,6 +82,9 @@
                             <span id="gardenTagsError" class="error gardenTagsError" style="color:red"></span>
                         </div>
                         <div class="col-md-12 mb-4" id="tag-container"></div>
+                        <div class="col-md-12 mb-4" th:if="${currentUser.id != garden.owner.id}">
+                            <span th:each="tag : ${garden.tags}" class="tag" th:text="${tag.name}"></span>
+                        </div>
                     </div>
                     <script th:src="@{/js/autocomplete.js}"></script>
                     <script th:src="@{/js/tagAutocomplete.js}"></script>

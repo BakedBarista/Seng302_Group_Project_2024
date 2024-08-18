@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.entity;
 
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -12,6 +13,8 @@ import org.junit.jupiter.api.Test;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationMessages.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
@@ -28,7 +31,7 @@ class GardenDTOTest {
 
     @BeforeEach
     void makeGarden() {
-        garden = new GardenDTO("Garden","1","Ilam Road","Ilam","Christchurch","New Zealand","8041",0.24,3.66,"big",null);
+        garden = new GardenDTO("Garden","1","Ilam Road","Ilam","Christchurch","New Zealand","8041",0.24,3.66,"big",null,"Token123");
     }
 
     /**
@@ -525,5 +528,11 @@ class GardenDTOTest {
     void whenGetTagsStringCalled_thenReturnsCommaSeparatedString() {
         garden.getTags().addAll(tags("tag1", "tag2"));
         assertEquals("tag1,tag2", garden.getTagsString());
+    }
+
+    @Test
+    void givenUniqueToken_whenSettingToken_thenTokenSaved() {
+        garden.setSubmissionToken("NewToken");
+        assertTrue(validator.validate(garden).isEmpty());
     }
 }
