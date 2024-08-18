@@ -147,9 +147,9 @@ public class GardenControllerTest {
         Model model = mock(Model.class);
         when(gardenService.getAllGardens()).thenReturn(Collections.emptyList());
 
-        String result = gardenController.responses(model, 0, 10);
+        String result = gardenController.responses(model);
         assertEquals("gardens/viewGardens", result);
-        verify(model).addAttribute(any(String.class), any(Page.class));
+        verify(model).addAttribute("gardens",Collections.emptyList());
     }
 
     @Test
