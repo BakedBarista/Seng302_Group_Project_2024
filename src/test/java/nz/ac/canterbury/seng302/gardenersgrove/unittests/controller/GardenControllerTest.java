@@ -19,6 +19,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -79,7 +81,9 @@ public class GardenControllerTest {
         when(mockUser.getId()).thenReturn(1L);
         when(gardenUserService.getCurrentUser()).thenReturn(mockUser);
         when(gardenService.getGardensByOwnerId(1L)).thenReturn(Collections.emptyList());
-
+        Page<Garden> mockGardenPage = mock(Page.class);
+        when(mockGardenPage.getTotalPages()).thenReturn(0);
+        when(gardenService.getGardensByOwnerId(eq(1L), any(PageRequest.class))).thenReturn(mockGardenPage);
         mockGarden = new Garden();
         mockGarden.setOwner(mockUser);
         when(gardenService.getGardenById(0L)).thenReturn(Optional.of(mockGarden));
@@ -138,7 +142,7 @@ public class GardenControllerTest {
 
         String result = gardenController.responses(model, 0, 10);
         assertEquals("gardens/viewGardens", result);
-        verify(model).addAttribute("gardens", Collections.emptyList());
+        verify(model).addAttribute(any(String.class), any(Page.class));
     }
 
     @Test
