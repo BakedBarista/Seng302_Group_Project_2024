@@ -16,7 +16,7 @@ import org.springframework.ui.Model;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class SuggestedUserControllerTest {
+class SuggestedUserControllerTest {
 
     private static SuggestedUserController suggestedUserController;
     private static GardenUserService gardenUserService;
