@@ -29,6 +29,7 @@ class SuggestedUserControllerTest {
     @BeforeAll
     static void setup() {
         gardenUserService = Mockito.mock(GardenUserService.class);
+        gardenService = Mockito.mock(GardenService.class);
         authentication = Mockito.mock(Authentication.class);
         suggestedUserController = new SuggestedUserController(gardenService, gardenUserService);
         loggedInUser = new GardenUser();
