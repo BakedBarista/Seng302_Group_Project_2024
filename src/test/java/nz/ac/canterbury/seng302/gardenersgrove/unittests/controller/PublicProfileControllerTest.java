@@ -37,8 +37,6 @@ import org.springframework.http.ResponseEntity;
 
 @ExtendWith(MockitoExtension.class)
 public class PublicProfileControllerTest {
-
-
     private static PublicProfileController publicProfileController;
     private static GardenUserService gardenUserService;
     private static GardenUser user;

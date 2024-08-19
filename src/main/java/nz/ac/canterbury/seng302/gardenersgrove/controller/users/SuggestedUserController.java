@@ -8,9 +8,11 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -19,13 +21,12 @@ import java.util.List;
 @Controller
 public class SuggestedUserController {
 
-    private static Logger logger = LoggerFactory.getLogger(ApplicationController.class);
+    private static final Logger logger = LoggerFactory.getLogger(ApplicationController.class);
 
-    private GardenService gardenService;
-    private GardenUserService gardenUserService;
-    private static String password = "password";
-
-    private GardenUser user4 = new GardenUser("Max", "Doe", "max@gmail.com", password,
+    private final GardenService gardenService;
+    private final GardenUserService gardenUserService;
+    private static final String password = "password";
+    private final GardenUser user4 = new GardenUser("Max", "Doe", "max@gmail.com", password,
             LocalDate.of(1970, 1, 1));
 
     @Autowired
@@ -39,19 +40,19 @@ public class SuggestedUserController {
      * @return the home page
      */
     @GetMapping("/")
-    public String home( Model model) {
+    public String home(Authentication authentication, Model model) {
         logger.info("GET /");
         try {
-            //hard-coding a mock user for the card
+            //  hard-coding a mock user for the card
             gardenUserService.addUser(user4);
             user4.setDescription("I am here to meet some handsome young men who love gardening as much as I do! My passion is growing carrots and eggplants. In my spare time, I like to thrift, ice skate and hang out with my kid, Liana. She's three, and the love of my life. The baby daddy is my former sugar daddy, John Doe. He died of a heart attack on his yacht in Italy last summer");
             List<GardenUser> suggestedUsers = new ArrayList<>();
             suggestedUsers.add(user4);
 
-            GardenUser owner = gardenUserService.getCurrentUser();
-            if(owner.getId() != null) {
-                List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
-                model.addAttribute("gardens", gardens);
+            Long userId = (Long) authentication.getPrincipal();
+            GardenUser user = gardenUserService.getUserById(userId);
+
+            if(user.getId() != null) {
                 model.addAttribute("userId", suggestedUsers.get(0).getId());
                 model.addAttribute("name", suggestedUsers.get(0).getFullName());
                 model.addAttribute("description", suggestedUsers.get(0).getDescription());
