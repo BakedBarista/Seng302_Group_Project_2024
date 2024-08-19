@@ -202,11 +202,17 @@ public class GardenControllerTest {
     @Test
     public void testUpdateGarden() {
         Model model = mock(Model.class);
+        MultipartFile file = new MockMultipartFile(
+                "image",
+                "profile.png",
+                "image/png",
+                "profile picture content".getBytes()
+        );
         GardenDTO gardenDTO = new GardenDTO("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"test description", "100","Token123", null, null);
         when(gardenService.getGardenById(1)).thenReturn(Optional.of(gardenDTO.toGarden()));
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
-        String result = gardenController.updateGarden(1, gardenDTO, bindingResult, model);
+        String result = gardenController.updateGarden(1, gardenDTO, file, bindingResult, model);
         Garden garden = gardenService.getGardenById(1).get();
 
         assertEquals("redirect:/gardens/1", result);
@@ -275,13 +281,19 @@ public class GardenControllerTest {
     public void testWhenImEditingAGarden_AndIHaveAGardenErrorAndAProfanityError_ThenTheModelHasProfanityError() {
         Model model = mock(Model.class);
         long id = 0;
+        MultipartFile file = new MockMultipartFile(
+                "image",
+                "profile.png",
+                "image/png",
+                "profile picture content".getBytes()
+        );
         String description = "some really nasty words";
         GardenDTO invalidGarden = new GardenDTO("","","","","","","",0.0,0.0,description,null,"", null, null);
         BindingResult bindingResult = mock(BindingResult.class);
 
         when(bindingResult.hasErrors()).thenReturn(true);
         when(moderationService.checkIfDescriptionIsFlagged(description)).thenReturn(true);
-        gardenController.updateGarden(id, invalidGarden, bindingResult, model);
+        gardenController.updateGarden(id, invalidGarden, file, bindingResult, model);
 
         verify(model).addAttribute("profanity", EXPECTED_MODERATION_ERROR_MESSAGE);
         verify(model).addAttribute("garden", invalidGarden);
@@ -540,7 +552,7 @@ public class GardenControllerTest {
         when(gardenService.getGardenById(1L)).thenReturn(Optional.of(garden));
         ResponseEntity<byte[]> response = gardenController.gardenImage(1L, mockRequest);
         assertEquals(HttpStatus.FOUND, response.getStatusCode());
-        assertEquals("/img/default-plant.svg", response.getHeaders().getFirst(HttpHeaders.LOCATION));
+        assertEquals("/img/default-garden.svg", response.getHeaders().getFirst(HttpHeaders.LOCATION));
     }
 
 
