@@ -1,8 +1,10 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.controller;
 
+import jakarta.servlet.http.HttpSession;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.GardenController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.GardenDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weather.WeatherAPIService;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,20 +14,27 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Collections;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 @ExtendWith(MockitoExtension .class)
 public class GardenControllerMVCTests {
     @Mock
@@ -56,6 +65,9 @@ public class GardenControllerMVCTests {
     @Mock
     private LocationService locationService;
 
+    private MockHttpSession mockHttpSession;
+
+
 
 
     private static Garden emptyGarden;
@@ -73,6 +85,7 @@ public class GardenControllerMVCTests {
         profanityService = mock(ProfanityService.class);
         gardenController = new GardenController(gardenService, null, plantService, gardenUserService, weatherAPIService, friendService, moderationService, profanityService, locationService);
         locationService = mock(LocationService.class);
+        mockHttpSession = new MockHttpSession();
 
         emptyGarden = new Garden();
         patternGarden = new Garden();
@@ -105,5 +118,44 @@ public class GardenControllerMVCTests {
                 .andExpect(model().attributeExists("gardenPage"))
                 .andExpect(model().attribute("gardenPage", expectedGardens));
     }
+
+    @Test
+    void whenGetCreateGardenForm_thenRefererIsAdded() throws Exception {
+        //Simulate navigating to create garden page
+        MvcResult createPageResult = mockMvc.perform(get("/gardens/create")
+                .header("Referer","/previousPage"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("referer"))
+                .andExpect(model().attribute("referer","/previousPage"))
+                .andExpect(view().name("gardens/createGarden"))
+                .andReturn();
+        //Verify that referer is stored in the session
+        HttpSession session = createPageResult.getRequest().getSession();
+        String referer = (String) session.getAttribute("referer");
+        assertNotNull(referer);
+        assertTrue(referer.contains("/previousPage"));
+
+        //Simulate submitting invalid form
+        GardenDTO invalidGardenDTO = new GardenDTO();
+        invalidGardenDTO.setSubmissionToken((String) session.getAttribute("submissionToken"));
+        invalidGardenDTO.setName("");
+
+        mockMvc.perform(post("/gardens/create")
+                .session((MockHttpSession) session)
+                .flashAttr("garden",invalidGardenDTO))
+                .andExpect(status().isOk())
+                .andExpect(view().name("gardens/createGarden"))
+                .andExpect(model().attributeHasFieldErrors("garden","name"))
+                .andReturn();
+
+        //Check referer still exists in session
+        assertNotNull(session.getAttribute("referer"));
+        assertTrue(session.getAttribute("referer").toString().contains("/previousPage"));
+    }
+
+
+
+
+
 
 }
