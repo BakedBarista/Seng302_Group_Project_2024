@@ -34,6 +34,10 @@ public class Plant extends BasePlant {
     @OneToMany(mappedBy = "plant")
     private Set<PlantHistoryItem> history = new HashSet<>();
 
+    @ManyToOne
+    @JoinColumn(name = "favourite")
+    private GardenUser favourite;
+
     public Plant(String name, String count, String description, LocalDate plantedDate) {
         this.name = name;
         this.count = count;

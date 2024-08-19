@@ -45,7 +45,7 @@ public class PublicProfileControllerTest {
     private static Long userId;
     private static ProfanityService profanityService;
 
-    static Long loggedInUserId = 1L;
+    static Long loggedInUserId = 2L;
     static GardenUser loggedInUser;
     static Long otherUserId = 1L;
     static GardenUser otherUser;
@@ -115,7 +115,6 @@ public class PublicProfileControllerTest {
         Mockito.when(gardenUserService.getUserById(otherUserId)).thenReturn(otherUser);
         Mockito.when(authentication.getPrincipal()).thenReturn(loggedInUserId);
 
-
         String page = publicProfileController.viewOtherPublicProfile(otherUserId, authentication, model);
         Mockito.verify(model).addAttribute("userId", otherUserId);
         Mockito.verify(model).addAttribute("currentUser", loggedInUserId);
@@ -145,7 +144,6 @@ public class PublicProfileControllerTest {
 
         String page = publicProfileController.viewOtherPublicProfile(loggedInUserId, authentication, model);
         Mockito.verify(model).addAttribute("userId", loggedInUserId);
-        Mockito.verify(model).addAttribute("currentUser", loggedInUserId);
         Mockito.verify(model).addAttribute("name", "Current User");
         Mockito.verify(model).addAttribute("description", loggedInUser.getDescription());
 

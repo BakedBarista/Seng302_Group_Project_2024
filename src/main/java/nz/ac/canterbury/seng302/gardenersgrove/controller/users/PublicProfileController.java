@@ -34,13 +34,12 @@ public class PublicProfileController {
     private static final String DEFAULT_PROFILE_BANNER_URL = "/img/default-banner.svg";
     
     private static final String USER_ID_ATTRIBUTE = "userId";
+
     private static final String DESCRIPTION = "description";
 
     private static final Set<String> ACCEPTED_FILE_TYPES = Set.of("image/jpeg", "image/jpg", "image/png", "image/svg");
 
     private static final int MAX_FILE_SIZE = 10 * 1024 * 1024;
-
-
 
     @Autowired
     public PublicProfileController(GardenUserService userService, ProfanityService profanityService) {
@@ -61,9 +60,9 @@ public class PublicProfileController {
         GardenUser user = userService.getUserById(userId);
 
         model.addAttribute(USER_ID_ATTRIBUTE, userId);
-        model.addAttribute("currentUser", userId);
         model.addAttribute("name", user.getFullName());
         model.addAttribute(DESCRIPTION, user.getDescription());
+        model.addAttribute("favouritePlants", user.getFavouritePlants());
 
         return "users/public-profile";
     }
@@ -97,7 +96,7 @@ public class PublicProfileController {
         return "users/public-profile";
     }
 
-        /**
+    /**
      * returns a given user's banner - this is useful for the public profile view and edit page
      *
      * @param id the id of the user
