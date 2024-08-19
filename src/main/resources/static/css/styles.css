@@ -286,9 +286,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .suggest-user-picture {
-    border-radius: 999px;
-    border: 10px white solid;
-    width:80%;
+    width:100%;
 }
 
 .public-profile-picture-padding {
