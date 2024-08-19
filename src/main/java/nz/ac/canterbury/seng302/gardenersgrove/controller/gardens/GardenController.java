@@ -163,7 +163,6 @@ public class GardenController {
 
             if (savedGarden != null) {
                 try {
-                    logger.info("hgere");
                     gardenService.setGardenImage(savedGarden.getId(), file);
                 } catch (Exception e) {
                     logger.error("Failed to set image for garden: " + savedGarden.getId(), e);
@@ -206,7 +205,7 @@ public class GardenController {
         // Return the default image if nothing specified
         if (existingGarden.getGardenImage() == null || existingGarden.getGardenImageContentType() == null) {
             logger.info("Returning default plant image");
-            return ResponseEntity.status(302).header(HttpHeaders.LOCATION, request.getContextPath() + "/img/default-plant.svg").build();
+            return ResponseEntity.status(302).header(HttpHeaders.LOCATION, request.getContextPath() + "/img/default-garden.svg").build();
         }
 
         // Return the saved image from DB
@@ -404,14 +403,17 @@ public class GardenController {
     @GetMapping("/gardens/{id}/edit")
     public String getGarden(@PathVariable(name = "id") long id, Model model) {
         logger.info("Get /garden/{}", id);
+        
         Optional<Garden> garden = gardenService.getGardenById(id);
-        logger.info(String.valueOf(garden));
-        model.addAttribute(GARDEN, garden.orElse(null));
         GardenUser owner = gardenUserService.getCurrentUser();
+        List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
+
+        model.addAttribute(GARDEN, garden.orElse(null));
+        
         if (!garden.isPresent() || !garden.get().getOwner().getId().equals(owner.getId())) {
             return ACCESS_DENIED;
         }
-        List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
+
         model.addAttribute(GARDENS, garden);
         model.addAttribute(GARDENS, gardens);
         return EDIT_GARDEN;
@@ -429,6 +431,7 @@ public class GardenController {
     @PostMapping("/gardens/{id}/edit")
     public String updateGarden(@PathVariable(name = "id") long id,
                                @Valid @ModelAttribute(GARDEN) GardenDTO gardenDTO,
+                               @RequestParam("image") MultipartFile file,
                                BindingResult result,
                                Model model) {
 
@@ -462,6 +465,14 @@ public class GardenController {
                 existingGarden.get().setLon(null);
             }
             try {
+                if (existingGarden != null) {
+                    try {
+                        gardenService.setGardenImage(existingGarden.get().getId(), file);
+                    } catch (Exception e) {
+                        logger.error("Failed to set image for garden: " + existingGarden.get().getId(), e);
+        
+                    }
+                }
                 existingGarden.get().setGardenWeather(null);
                 gardenService.addGarden(existingGarden.get());
             } catch (IllegalArgumentException e) {

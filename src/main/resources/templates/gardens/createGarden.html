@@ -13,7 +13,7 @@
             <div class="card p-5">
                 <h2 class="mb-3">Create Garden</h2>
             
-                <div th:replace="~{fragments/garden-form :: garden-form(action='/gardens/create', imgSrc='/img/default-plant.svg', cancelUrl='/')}"></div>
+                <div th:replace="~{fragments/garden-form :: garden-form(action='/gardens/create', imgSrc='/img/default-garden.svg', cancelUrl='/')}"></div>
             </div>
         </main>
         <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>

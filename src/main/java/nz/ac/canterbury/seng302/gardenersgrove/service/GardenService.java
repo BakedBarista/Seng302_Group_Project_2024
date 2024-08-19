@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
@@ -140,31 +141,20 @@ public class GardenService {
      * Sets the image of the garden with given ID.
      * @param id ID of the garden which image is to be set
      * @param gardenImage multipart file for the garden image
+     * @throws IOException 
      */
-    public void setGardenImage(long id, MultipartFile gardenImage) {
+    public void setGardenImage(long id, MultipartFile gardenImage) throws IOException {
         var garden = gardenRepository.findById(id);
         if (garden.isEmpty()) {
             return;
         }
+        
         if (validateImage(gardenImage)) {
-
-            try {
-                if (!gardenImage.isEmpty()) {
-                    garden.get().setGardenImage(gardenImage.getContentType(), gardenImage.getBytes());
-                }
-                
-            } catch (Exception e) {
+            if (!gardenImage.isEmpty()) {
+                garden.get().setGardenImage(gardenImage.getContentType(), gardenImage.getBytes());
+                gardenRepository.save(garden.get());
             }
-        } else {
-            try{
-                InputStream defaultImageStream = getClass().getResourceAsStream("/static/img/defaultgarden.jpg");
-                if (defaultImageStream != null) {
-                    garden.get().setGardenImage("image/jpg", defaultImageStream.readAllBytes());
-                }
-            } catch (Exception e) {
-            }
-        }
-        gardenRepository.save(garden.get());
+        } 
     }
 
     /**

@@ -39,7 +39,7 @@ import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -542,4 +542,6 @@ public class GardenControllerTest {
         assertEquals(HttpStatus.FOUND, response.getStatusCode());
         assertEquals("/img/default-plant.svg", response.getHeaders().getFirst(HttpHeaders.LOCATION));
     }
+
+
 }

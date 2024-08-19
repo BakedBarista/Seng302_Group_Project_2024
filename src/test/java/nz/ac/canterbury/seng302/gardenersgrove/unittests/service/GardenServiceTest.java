@@ -2,7 +2,9 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unittests.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -11,6 +13,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -167,7 +170,7 @@ public class GardenServiceTest {
 
 
     @Test
-    void setGardenImageWithValidId_imageSaved() {
+    void setGardenImageWithValidId_imageSaved() throws IOException {
         long id = 1L;
 
         String filename = "test";
@@ -188,7 +191,7 @@ public class GardenServiceTest {
     }
 
     @Test
-    void setPlantImageWithNonExistentId_imageNotSaved() {
+    void setPlantImageWithNonExistentId_imageNotSaved() throws IOException {
         long id = 1L;
         byte[] image = {};
         String contentType = "image/svg";
@@ -202,7 +205,34 @@ public class GardenServiceTest {
         verify(gardenRepository, never()).save(any());
     }
 
+    @Test
+    public void validateImage_withValidImage_shouldReturnTrue() {
+        long id = 1L;
+        byte[] image = {};
+        String contentType = "image/svg";
+        String name = "plant.png";
+        String originalFilename = "plant.png";
+        MultipartFile file = new MockMultipartFile(name,originalFilename,contentType,image);
 
+        boolean result = gardenService.validateImage(file);
+
+        assertTrue(result);
+    }
+
+    @Test
+    public void validateImage_withInvalidFileType_shouldReturnFalse() {
+      
+        long id = 1L;
+        byte[] image = {};
+        String contentType = "image/gif";
+        String name = "plant.png";
+        String originalFilename = "plant.png";
+        MultipartFile file = new MockMultipartFile(name,originalFilename,contentType,image);
+
+        boolean result = gardenService.validateImage(file);
+
+        assertFalse(result);
+    }
 
 
 }
