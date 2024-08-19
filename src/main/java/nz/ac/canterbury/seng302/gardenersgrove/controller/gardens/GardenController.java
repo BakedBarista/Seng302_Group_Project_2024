@@ -412,7 +412,7 @@ public class GardenController {
             return ACCESS_DENIED;
         }
         List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
-        model.addAttribute(GARDENS, gardens);
+        model.addAttribute(GARDENS, garden);
         return EDIT_GARDEN;
     }
 
