@@ -413,6 +413,7 @@ public class GardenController {
         }
         List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
         model.addAttribute(GARDENS, garden);
+        model.addAttribute(GARDENS, gardens);
         return EDIT_GARDEN;
     }
 
