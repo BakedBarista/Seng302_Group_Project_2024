@@ -60,11 +60,9 @@ public class PublicProfileController {
         GardenUser user = userService.getUserById(userId);
 
         model.addAttribute(USER_ID_ATTRIBUTE, userId);
-        model.addAttribute("currentUser", userId);
         model.addAttribute("name", user.getFullName());
-        model.addAttribute("description", user.getDescription());
-        model.addAttribute("favouritePlants", user.getFavouritePlants());
         model.addAttribute(DESCRIPTION, user.getDescription());
+        model.addAttribute("favouritePlants", user.getFavouritePlants());
 
         return "users/public-profile";
     }
