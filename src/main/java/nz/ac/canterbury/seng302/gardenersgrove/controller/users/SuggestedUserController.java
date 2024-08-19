@@ -1,7 +1,5 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
-import nz.ac.canterbury.seng302.gardenersgrove.controller.ApplicationController;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
@@ -12,7 +10,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -21,12 +18,12 @@ import java.util.List;
 @Controller
 public class SuggestedUserController {
 
-    private static final Logger logger = LoggerFactory.getLogger(ApplicationController.class);
+    private static final Logger logger = LoggerFactory.getLogger(SuggestedUserController.class);
 
     private final GardenService gardenService;
     private final GardenUserService gardenUserService;
-    private static final String password = "password";
-    private final GardenUser user4 = new GardenUser("Max", "Doe", "max@gmail.com", password,
+    private static final String PASSWORD = "password";
+    private final GardenUser user4 = new GardenUser("Max", "Doe", "max@gmail.com", PASSWORD,
             LocalDate.of(1970, 1, 1));
 
     @Autowired
