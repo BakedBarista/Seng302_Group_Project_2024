@@ -109,6 +109,7 @@
                         <thead>
                         <tr>
                             <th scope="col">Name</th>
+                            <th scope="col">Profile</th>
                             <th scope="col"></th>
                         </tr>
                         </thead>
@@ -127,6 +128,9 @@
                                 <span th:text="${friend.sender.fname}"> </span>
                                 <span th:if="${friend.sender != null}"
                                       th:text="${friend.sender.lname}"></span>
+                            </td>
+                            <td class="align-middle">
+                                <a th:href="@{/users/public-profile/{id}(id=${friend.sender.id})}" class="btn btn-secondary btn-sm mr-2">View Profile</a>
                             </td>
                             <td>
                                 <form th:action="@{/users/manage-friends/accept}" method="post" class="d-inline">
@@ -153,6 +157,7 @@
                         <thead>
                         <tr>
                             <th scope="col">Name</th>
+                            <th scope="col">Profile</th>
                             <th scope="col">Status</th>
                             <th></th>
                         </tr>
@@ -171,6 +176,9 @@
                                 <span th:text="${friend.receiver.fname}"> </span>
                                 <span th:if="${friend.receiver != null}"
                                       th:text="${friend.receiver.lname}"></span>
+                            </td>
+                            <td class="align-middle">
+                                <a th:href="@{/users/public-profile/{id}(id=${friend.receiver.id})}" class="btn btn-secondary btn-sm mr-2">View Profile</a>
                             </td>
                             <td class="align-middle">
                                 <span th:text="${friend.status}" th:classappend="${friend.status.name() == 'PENDING'} ? 'friend-pending-badge' : 'friend-declined-badge'" class="badge-pill badge"></span>
