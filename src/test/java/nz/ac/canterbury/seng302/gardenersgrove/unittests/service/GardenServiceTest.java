@@ -3,6 +3,8 @@ package nz.ac.canterbury.seng302.gardenersgrove.unittests.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -60,7 +62,7 @@ public class GardenServiceTest {
         String gardenDescription = "Test Description";
 
         Garden garden = new Garden(gardenName, streetNumber,streetName,suburb,city,country,postCode,lon,lat, gardenDescription, gardenSize);
-        Mockito.when(gardenRepository.save(Mockito.any(Garden.class))).thenReturn(garden);
+        Mockito.when(gardenRepository.save(any(Garden.class))).thenReturn(garden);
 
         Garden gardenReturned = gardenService.addGarden(garden);
 
@@ -128,6 +130,18 @@ public class GardenServiceTest {
 
         assertEquals(2, returnedGardens.size());
         assertEquals(mockGardens, returnedGardens);
+    }
+
+    @Test
+    void getGardensPagesByOwnerId_ReturnsGardensPage() {
+        List<Garden> mockGardens = Arrays.asList(
+                new Garden("Garden 1", "1","Test Road","Test Suburb","Test City","Test Country","1000",0.55,0.55, "small", null),
+                new Garden("Garden 2", "2","Test Road","Test Suburb","Test City","Test Country","1000",0.55,0.55, "small", null)
+        );
+        Page<Garden> mockPage = new PageImpl<>(mockGardens, PageRequest.of(0, 10), 10);
+        when(gardenService.getGardensByOwnerId(eq(1L), any(PageRequest.class))).thenReturn(mockPage);
+        Page<Garden> page = gardenService.getGardensByOwnerId(1L,PageRequest.of(0,10));
+        assertEquals(mockPage,page);
     }
 
     @Test
