@@ -23,7 +23,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 
-public class ApplicationControllerTest {
+class ApplicationControllerTest {
     
     @Mock
     private GardenUserService gardenUserService;
@@ -45,7 +45,7 @@ public class ApplicationControllerTest {
     private Friends friendRequest;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
 
         loggedInUser = new GardenUser();
@@ -62,7 +62,7 @@ public class ApplicationControllerTest {
     }
 
     @Test
-    public void testAcceptFriendRequest_requestStatusAccept() {
+    void testAcceptFriendRequest_requestStatusAccept() {
         List<Friends> receivedRequests = new ArrayList<>();
         receivedRequests.add(friendRequest);
 
