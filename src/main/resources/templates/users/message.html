@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <title>Message</title>
-
     <meta http-equiv="Content-Type" context="text/html; charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
@@ -23,6 +22,17 @@
             <!-- message will be displayed here -->
             <p>messages here</p>
         </div>
+
+
+        <!-- message and send message box-->
+        <form th:action="@{/users/{id}/send-message(id=${sentToUser.id})}" method="post" th:object="${messageDTO}">
+            <div class="d-flex">
+                <label for="message"></label>
+                <input id="message" th:name="message" th:class="form-control" placeholder="Message here..." autofocus>
+                <button type="submit" class="btn btn-primary">Send -></button>
+            </div>
+        </form>
+
     </div>
     <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
 </body>

@@ -49,7 +49,7 @@ public class U800MessageFeature {
 
     @Given("I am viewing my friends list")
     public void i_am_viewing_my_friends_list() {
-        messageController = new MessageController(gardenUserService, mockedFriendService);
+        messageController = new MessageController(gardenUserService, mockedFriendService, null);
     }
 
     @When("I click the {string} button next to one of my friends")

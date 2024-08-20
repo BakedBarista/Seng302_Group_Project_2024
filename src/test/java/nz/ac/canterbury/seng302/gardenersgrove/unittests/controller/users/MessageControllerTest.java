@@ -4,7 +4,6 @@ import nz.ac.canterbury.seng302.gardenersgrove.controller.users.MessageControlle
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,7 +33,7 @@ class MessageControllerTest {
     public void setup() {
         gardenUserService = mock(GardenUserService.class);
         mockedFriendService = mock(FriendService.class);
-        messageController = new MessageController(gardenUserService, mockedFriendService);
+        messageController = new MessageController(gardenUserService, mockedFriendService, null);
 
         model = mock(Model.class);
         authentication = mock(Authentication.class);
