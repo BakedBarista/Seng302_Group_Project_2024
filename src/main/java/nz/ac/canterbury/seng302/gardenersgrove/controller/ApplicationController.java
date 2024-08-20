@@ -61,7 +61,7 @@ public class ApplicationController {
      * @return the home page
      */
     @PostMapping("/")
-    public String homeAceept(@RequestParam(name = "action") String action, 
+    public String homeAccept(@RequestParam(name = "action") String action, 
         @RequestParam(name = "id") Long requestedId,  
         Authentication authentication,
         Model model) {
@@ -72,20 +72,18 @@ public class ApplicationController {
         GardenUser loggedInUser = gardenUserService.getUserById(loggedInUserId);
         GardenUser requestedUser = gardenUserService.getUserById(requestedId);
 
-        List<GardenUser> allUsers = gardenUserService.getUser();
-        List<GardenUser> friends = friendService.getAllFriends(loggedInUserId);
         List<Friends> sentRequests = friendService.getSentRequests(loggedInUserId);
         List<Friends> receivedRequests = friendService.getReceivedRequests(loggedInUserId);
         
         if ("accept".equals(action)) {
             // accepting a already sent friend request
             for (Friends receivedRequest : receivedRequests) {
-                if (receivedRequest.getSender().getId() == requestedId) {
+                if (receivedRequest.getSender().getId().equals(requestedId)) {
                     receivedRequest.setStatus(Friends.Status.ACCEPTED);
                     friendService.save(receivedRequest);
                     // return or do something here
-                    break;
-                }
+                    return "home";
+                } 
             }
 
             boolean requestAlreadySent = false;
@@ -102,7 +100,6 @@ public class ApplicationController {
                 //sending a new request to 
                 Friends newRequest = new Friends(loggedInUser, requestedUser, Friends.Status.PENDING);
                 friendService.save(newRequest);
-                logger.info("Friend request sent to " + requestedUser.getFullName());
             }
         }
 
