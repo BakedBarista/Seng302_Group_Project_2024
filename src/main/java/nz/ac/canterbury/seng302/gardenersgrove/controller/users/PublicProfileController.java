@@ -2,9 +2,13 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.exceptions.ProfanityDetectedException;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.ProfanityService;
 
@@ -22,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 
 @Controller
@@ -30,6 +35,8 @@ public class PublicProfileController {
 
     private final GardenUserService userService;
     private final ProfanityService profanityService;
+    private final GardenService gardenService;
+    private final PlantService plantService;
 
     private static final String DEFAULT_PROFILE_BANNER_URL = "/img/default-banner.svg";
     
@@ -42,9 +49,11 @@ public class PublicProfileController {
     private static final int MAX_FILE_SIZE = 10 * 1024 * 1024;
 
     @Autowired
-    public PublicProfileController(GardenUserService userService, ProfanityService profanityService) {
+    public PublicProfileController(GardenUserService userService, ProfanityService profanityService, GardenService gardenService, PlantService plantService) {
         this.userService = userService;
         this.profanityService = profanityService;
+        this.gardenService = gardenService;
+        this.plantService = plantService;
     }
 
     /**
@@ -231,5 +240,14 @@ public class PublicProfileController {
         if (profanityExists) {
             throw new ProfanityDetectedException();
         }
+    }
+
+    @PostMapping("/")
+    public String addPlantToFavourite(Model model)
+    {
+        List<Garden> gardenList = gardenService.getGardensByOwnerId(userService.getCurrentUser().getId());
+        List<Plant> plants = plantService.getPlantsByGardenId(1L);
+        model.addAttribute("gardens", gardenList);
+        return "/";
     }
 }

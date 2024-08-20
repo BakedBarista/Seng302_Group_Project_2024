@@ -20,6 +20,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <input type="text" class="form-control" id="search-plant">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -141,12 +142,13 @@
 
 <script>
     openPlantSelectorModal = (index) => {
+
         const modal = new bootstrap.Modal(document.getElementById("plantSelectorModal"))
         modal.show()
     }
 
-  /** @type {HTMLInputElement} */
-  const editProfileImageInput = document.getElementById("image");
+    /** @type {HTMLInputElement} */
+    const editProfileImageInput = document.getElementById("image");
   /** @type {HTMLSpanElement} */
   const editProfilePictureError = document.getElementById("editProfilePictureError");
   /** @type {HTMLInputElement} */
