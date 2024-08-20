@@ -293,8 +293,9 @@ h1, h2, h3, h4, h5, h6 {
     border: 10px white solid;
 }
 
-.suggest-user-picture {
-    width:100%;
+.text-truncate-multiline {
+    overflow-y: auto;
+    height: 4.5em;
 }
 
 .public-profile-picture-padding {
