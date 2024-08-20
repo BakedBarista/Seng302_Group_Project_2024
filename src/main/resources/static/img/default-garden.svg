@@ -1,16 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" width = "300" height="300" viewBox="0 0 300 300"  color="#395C0A" fill="none">
-    <rect width="300" height="300" fill="#EDEDED"/>
-    <g clip-path="url(#clip0_148_26)">
-
-    <path d="M14.5 11.5C14.5 11.5 12 13.5 12 17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-    <path d="M10.063 9.06301C11.3123 7.8137 11.3123 5.78815 10.063 4.53884C8.17794 2.65376 4.03078 3.03078 4.03078 3.03078C4.03078 3.03078 3.65376 7.17794 5.53884 9.06301C6.78815 10.3123 8.8137 10.3123 10.063 9.06301Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-    <path d="M14.8031 11.1969C15.874 12.2677 17.6102 12.2677 18.681 11.1969C20.2968 9.58109 19.9736 6.02638 19.9736 6.02638C19.9736 6.02638 16.4189 5.70322 14.8031 7.319C13.7323 8.38985 13.7323 10.126 14.8031 11.1969Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-    <path d="M10 9.5C10 9.5 12 12 12 16.9993" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-    <path d="M21 21C18.8012 18.5471 15.5841 17 12 17C8.41592 17 5.19883 18.5471 3 21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-    <defs>
-<clipPath id="clip0_148_26">
-<rect width="75" height="75" fill="white" transform="translate(98.2739 136.774) rotate(-30)"/>
-</clipPath>
-</defs>
-
+<svg width="300" height="300" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="300" height="300" fill="#EDEDED"/>
+<path d="M160 134C160 134 150 141.273 150 154" stroke="#395C0A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M143.386 125.52C148.205 120.88 148.205 113.356 143.386 108.716C136.115 101.714 120.119 103.114 120.119 103.114C120.119 103.114 118.664 118.518 125.936 125.52C130.754 130.16 138.567 130.16 143.386 125.52Z" stroke="#395C0A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M161.079 133.055C165.184 136.982 171.839 136.982 175.944 133.055C182.138 127.131 180.899 114.097 180.899 114.097C180.899 114.097 167.272 112.912 161.079 118.836C156.974 122.763 156.974 129.129 161.079 133.055Z" stroke="#395C0A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M143 127C143 127 150 136.001 150 154" stroke="#395C0A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M185 169C176.571 159.802 164.239 154 150.5 154C136.761 154 124.429 159.802 116 169" stroke="#395C0A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
