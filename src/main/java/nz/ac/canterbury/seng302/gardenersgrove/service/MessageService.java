@@ -6,6 +6,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.repository.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -16,10 +17,12 @@ import java.util.Optional;
 public class MessageService {
 
     private final MessageRepository messageRepository;
+    private final Clock clock;
 
     @Autowired
-    public MessageService(MessageRepository messageRepository) {
+    public MessageService(MessageRepository messageRepository, Clock clock) {
         this.messageRepository = messageRepository;
+        this.clock = clock;
     }
 
     /**
@@ -30,7 +33,7 @@ public class MessageService {
      * @return the message that was sent
      */
     public Message sendMessage(Long sender, Long receiver, MessageDTO messageDTO) {
-        LocalDateTime timestamp = LocalDateTime.now();
+        LocalDateTime timestamp = clock.instant().atZone(clock.getZone()).toLocalDateTime();
         Message message = new Message(sender, receiver, timestamp, messageDTO.getMessage());
         messageRepository.save(message);
         return message;
