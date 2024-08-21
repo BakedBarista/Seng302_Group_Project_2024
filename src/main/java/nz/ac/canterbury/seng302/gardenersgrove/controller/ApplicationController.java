@@ -78,7 +78,7 @@ public class ApplicationController {
         if ("accept".equals(action)) {
             // accepting a already sent friend request
             for (Friends receivedRequest : receivedRequests) {
-                if (receivedRequest.getSender().getId().equals(requestedId)) {
+                if (receivedRequest.getReceiver().getId().equals(requestedId)) {
                     receivedRequest.setStatus(Friends.Status.ACCEPTED);
                     friendService.save(receivedRequest);
                     // return or do something here

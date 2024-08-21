@@ -65,14 +65,13 @@ class ApplicationControllerTest {
     void testAcceptFriendRequest_requestStatusAccept() {
         List<Friends> receivedRequests = new ArrayList<>();
         receivedRequests.add(friendRequest);
-
+        System.out.println(receivedRequests);
         when(friendService.getReceivedRequests(loggedInUser.getId())).thenReturn(receivedRequests);
 
         String result = applicationController.homeAccept("accept", requestedUser.getId(), authentication, model);
 
         assertEquals("home", result);
-        //doesnt currently work!!
-        // assertEquals(Friends.Status.ACCEPTED, friendRequest.getStatus());
+         assertEquals(Friends.Status.ACCEPTED, friendRequest.getStatus());
     }
 
     @Test
@@ -83,10 +82,9 @@ class ApplicationControllerTest {
         when(friendService.getReceivedRequests(loggedInUser.getId())).thenReturn(receivedRequests);
         when(friendService.getSentRequests(loggedInUser.getId())).thenReturn(sentRequests);
 
-        String result = applicationController.homeAccept("send", requestedUser.getId(), authentication, model);
+        String result = applicationController.homeAccept("accept", requestedUser.getId(), authentication, model);
 
         assertEquals("home", result);
-        // this odnt work either :(
-        // verify(friendService, times(1)).save(any(Friends.class));
+        verify(friendService, times(1)).save(any(Friends.class));
     }
 }
