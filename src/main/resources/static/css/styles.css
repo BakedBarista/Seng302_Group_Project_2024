@@ -686,6 +686,9 @@ h1, h2, h3, h4, h5, h6 {
     width: 200px;
     height: 180px;
 }
+.public-profile-garden-card {
+    height: 180px;
+}
 
 .bg-primary-temp {
     /*fix this later*/

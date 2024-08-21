@@ -15,9 +15,9 @@
             <a th:if="${currentUser == userId}" th:href="@{edit-public-profile}" class="btn btn-primary">Edit</a>
         </p>
         <img
-            class="card-img-top img-fluid fixed-height mb-4"
-            th:src="@{'/users/' + ${userId} + '/profile-banner'}"
-            alt="profile banner"
+                class="card-img-top img-fluid fixed-height mb-4"
+                th:src="@{'/users/' + ${userId} + '/profile-banner'}"
+                alt="profile banner"
         />
         <img
                 class="public-profile-picture position-absolute top-0 end-0 public-profile-picture-padding me-2"
@@ -40,13 +40,53 @@
         </p>
 
         <div class="card m-4 p-4 mt-1 border-0 rounded-3 shadow-sm" style="background-color: #F9EFCC">
-            <h4>My Favourite Plants...</h4>
+            <h4>My Favourite Garden</h4>
+            <div class="card d-flex flex-wrap flex-md-nowrap shadow-sm bg-primary-temp" style="padding: 0;">
+                <div class="row w-100 py-3">
+                    <div class="col-12 col-md-6 object-fit-cover ps-4" style="height: 180px;">
+                        <img
+                                class="border-0 rounded-3 shadow-sm"
+                                th:src="@{'/plants/10/plant-image'}"
+                                style="width: 100%; height: 100%; object-fit: cover;"
+                                alt="profile picture"
+                        />
+                    </div>
+                    <!-- Text Column -->
+                    <div class="col-12 col-md-6   d-flex flex-column justify-content-center p-3 text-start" >
+                        <h5 class="pt-2">Blue Oasis</h5>
+                        <div>
+                            <div class="d-flex align-items-center mb-2">
+                                <img th:src="@{/icons/location-04-stroke-rounded.svg}" alt="" width="20" height="25" />
+                                <p class="mb-0 mx-2">Christchurch NZ</p>
+                            </div>
+                            <div class="d-flex align-items-center mb-2">
+                                <img th:src="@{/icons/aspect-ratio-stroke-rounded.svg}" alt="" width="20" height="25" />
+                                <p class="mb-0 mx-2">2 m<sup>2</sup></p>
+                            </div>
+                            <div class="d-flex">
+                                <strong>Description: </strong>
+                                <div class="overflow-y-auto" style="max-height: 40px;">
+                                    <p class="mb-0 mx-2">
+                                        Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah
+                                    </p>
+                                </div>
 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="card m-4 p-4 mt-1 border-0 rounded-3 shadow-sm" style="background-color: #F9EFCC">
+            <h4>My Favourite Plants...</h4>
             <div class="ms-5 me-5">
                 <div class="d-flex flex-wrap flex-md-nowrap">
-                    <!-- Non-empty card -->
+                    <!-- for each on favourite plants-->
+                    <!-- non-empty card -->
                     <div class="card p-2 me-3 mb-3 border-0 rounded-3 d-flex shadow-sm public-profile-plant-card bg-primary-temp">
-                        <!-- Placeholder image -->
                         <img
                                 class="mx-auto d-block pt-1"
                                 th:src="@{'/plants/10/plant-image'}"
@@ -57,12 +97,14 @@
                         <h4 class="pt-2 ps-2">Banana</h4>
                     </div>
 
-                    <!-- Empty card -->
-                    <div class="card p-2 me-3 mb-3 border-0 rounded-3 shadow-sm public-profile-plant-card justify-content-center bg-primary-grey">
+                    <!-- empty card -->
+                    <div class="card p-2 me-3 mb-3 border-0 rounded-3 shadow-sm public-profile-plant-card justify-content-center card-wiggle bg-primary-grey" onclick="openPlantSelectorModal(1)">
+                        <img th:src="@{/icons/create-mustard-grey.svg}" class="mx-auto d-block" aria-hidden="true" alt="empty-favourite" width="50" height="50" />
                     </div>
 
-                    <!-- Empty card -->
-                    <div class="card p-2 me-3 mb-3 border-0 rounded-3 shadow-sm public-profile-plant-card justify-content-center bg-primary-grey">
+                    <!-- empty card -->
+                    <div class="card p-2 me-3 mb-3 border-0 rounded-3 shadow-sm public-profile-plant-card justify-content-center card-wiggle bg-primary-grey" onclick="openPlantSelectorModal(1)">
+                        <img th:src="@{/icons/create-mustard-grey.svg}" class="mx-auto d-block" aria-hidden="true" alt="empty-favourite" width="50" height="50" />
                     </div>
                 </div>
             </div>
