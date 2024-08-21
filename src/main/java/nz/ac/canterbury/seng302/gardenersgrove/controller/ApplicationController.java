@@ -97,7 +97,7 @@ public class ApplicationController {
             }
             
             if(!requestAlreadySent){
-                //sending a new request to 
+                //sending a new request to
                 Friends newRequest = new Friends(loggedInUser, requestedUser, Friends.Status.PENDING);
                 friendService.save(newRequest);
             }

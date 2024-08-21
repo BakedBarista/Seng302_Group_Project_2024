@@ -87,4 +87,34 @@ class ApplicationControllerTest {
         assertEquals("home", result);
         verify(friendService, times(1)).save(any(Friends.class));
     }
+
+    @Test
+    public void testAcceptRequest_WhenNotReceived() {
+        List<Friends> receivedRequests = new ArrayList<>();
+        List<Friends> sentRequests = new ArrayList<>();
+        sentRequests.add(friendRequest);
+
+        when(friendService.getReceivedRequests(loggedInUser.getId())).thenReturn(receivedRequests);
+        when(friendService.getSentRequests(loggedInUser.getId())).thenReturn(sentRequests);
+
+        String result = applicationController.homeAccept("accept", requestedUser.getId(), authentication, model);
+
+        assertEquals("home", result);
+        verify(friendService, times(0)).save(any(Friends.class));
+    }
+
+    @Test
+    public void testAcceptRequest_WhenNotReceivedOrSent() {
+        List<Friends> receivedRequests = new ArrayList<>();
+        List<Friends> sentRequests = new ArrayList<>();
+
+        when(friendService.getReceivedRequests(loggedInUser.getId())).thenReturn(receivedRequests);
+        when(friendService.getSentRequests(loggedInUser.getId())).thenReturn(sentRequests);
+
+        String result = applicationController.homeAccept("accept", requestedUser.getId(), authentication, model);
+
+        assertEquals("home", result);
+        verify(friendService, times(1)).save(any(Friends.class));
+    }
+
 }
