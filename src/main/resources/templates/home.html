@@ -27,7 +27,10 @@
             <p>Garden management reimagined</p>
 
             <form action="@{/}" method="POST">
-                <button name="action" value="accept" type="submit" class="btn btn-primary">Accept</button>
+                <input type="hidden" name="action" value="accept"/>
+                <button type="submit" class="btn p-0">
+                    <img th:src="@{/icons/heart.svg}" alt="Accept" class="heart-icon" />
+                </button>
             </form>
         </main>
         <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
