@@ -150,16 +150,21 @@ public class PublicProfileController {
     public String searchPublicGardens(@RequestParam(name = "search", required = false, defaultValue = "") String search,
                                       Model model) {
 
+        List<Garden> gardens = gardenService.getGardensByOwnerId(userService.getCurrentUser().getId());
 
-        Optional<Plant> plants = plantService.getPlantByName(search);
-        if (plants.isPresent()) {
+        List<Plant> plants = gardens.stream()
+                .flatMap(garden -> garden.getPlants().stream())
+                .filter(plant -> plant.getName().toLowerCase().contains(search.toLowerCase()))
+                .toList();
+
+        if (!plants.isEmpty()) {
+            logger.info("Matching plants found: {}", plants);
             model.addAttribute("plants", plants);
-            logger.info("Plants found: {}", plants.get());
         } else {
             logger.info("No plants found for search term: {}", search);
         }
-        model.addAttribute("previousSearch", search);
 
+        model.addAttribute("previousSearch", search);
 
         return "users/edit-public-profile";
     }
