@@ -29,7 +29,10 @@
             <div class="d-flex">
                 <label for="message"></label>
                 <input id="message" th:name="message" th:class="form-control" placeholder="Message here..." autofocus>
-                <button type="submit" class="btn btn-primary">Send -></button>
+                <button type="submit" class="btn btn-primary">
+                    Send
+                    <img th:src="@{/icons/sent-stroke-rounded.svg}" alt=" ">
+                </button>
             </div>
         </form>
 
