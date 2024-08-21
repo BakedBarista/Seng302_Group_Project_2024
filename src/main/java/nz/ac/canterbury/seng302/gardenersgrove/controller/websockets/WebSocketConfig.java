@@ -29,7 +29,8 @@ public class WebSocketConfig implements WebSocketConfigurer {
 	@Override
 	public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(testWebSocketHandler(), "/api/messages")
-        			.addInterceptors(new HttpSessionHandshakeInterceptor());
+                .setAllowedOrigins("http://localhost:8080", "http://localhost", "https://csse-seng302-team800.canterbury.ac.nz")
+                .addInterceptors(new HttpSessionHandshakeInterceptor());
 	}
 
     /**
