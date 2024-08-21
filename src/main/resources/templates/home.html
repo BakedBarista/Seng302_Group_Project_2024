@@ -32,7 +32,34 @@
                     <img th:src="@{/icons/heart.svg}" alt="Accept" class="heart-icon" />
                 </button>
             </form>
+
+            <div class="toast-container position-fixed bottom-0 end-0 p-3">
+                <div id="acceptToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-header">
+                        <strong class="me-auto">Gardeners Grove</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body" id="toastBody">
+                        Your action was successful!
+                    </div>
+                </div>
+            </div>
+
         </main>
         <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var toastTrigger = document.querySelector('button[type="submit"]');
+                var toastElement = document.getElementById('acceptToast');
+                var toast = new bootstrap.Toast(toastElement);
+
+                if (toastTrigger) {
+                    toastTrigger.addEventListener('click', function(event) {
+                        event.preventDefault(); // this needs a rework!!!
+                        toast.show();
+                    });
+                }
+            });
+        </script>
     </body>
 </html>
