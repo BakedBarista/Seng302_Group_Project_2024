@@ -47,19 +47,6 @@
 
         </main>
         <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                var toastTrigger = document.querySelector('button[type="submit"]');
-                var toastElement = document.getElementById('acceptToast');
-                var toast = new bootstrap.Toast(toastElement);
-
-                if (toastTrigger) {
-                    toastTrigger.addEventListener('click', function(event) {
-                        event.preventDefault(); // this needs a rework!!!
-                        toast.show();
-                    });
-                }
-            });
-        </script>
+        <script th:src="@{/js/connection.js}"></script>
     </body>
 </html>
