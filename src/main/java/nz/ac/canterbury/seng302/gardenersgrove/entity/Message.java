@@ -25,6 +25,12 @@ public class Message {
     @Column(length = 512)
     private String messageContent;
 
+    /**
+     * For the JPA thing
+     */
+    public Message() {
+    }
+
     public Message(Long sender, Long receiver, LocalDateTime timestamp, String message) {
         this.sender = sender;
         this.receiver = receiver;
