@@ -20,7 +20,7 @@
     --gg-black: #1E1E1E;
     --gg-black-rgb: 30, 30, 30;
 
-    --gg-heading-font: "DM Serif Display", serif;
+    --gg-heading-font: "Montserrat", sans-serif;
     --gg-body-font: "Open Sans", sans-serif;
 
 
@@ -48,13 +48,21 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-    font-family: "DM Serif Display", serif;
-    font-weight: 400;
+    font-family: "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
     font-style: normal;
 }
 
 .about-me {
     font-size: 18px;
+}
+
+.montserrat-heading {
+     font-family: "Montserrat", sans-serif;
+     font-optical-sizing: auto;
+     font-weight: 600;
+     font-style: normal;
 }
 
 .averia-serif-libre-bold {
