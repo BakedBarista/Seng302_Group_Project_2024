@@ -3,8 +3,10 @@ package nz.ac.canterbury.seng302.gardenersgrove.unittests.controller.users;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.MessageController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.MessageDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.MessageService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,6 +28,7 @@ class MessageControllerTest {
     @Autowired
     private GardenUserService gardenUserService;
     private static FriendService mockedFriendService;
+    private static MessageService mockedMessageService;
 
     private static Authentication authentication;
 
@@ -33,7 +36,8 @@ class MessageControllerTest {
     public void setup() {
         gardenUserService = mock(GardenUserService.class);
         mockedFriendService = mock(FriendService.class);
-        messageController = new MessageController(gardenUserService, mockedFriendService, null);
+        mockedMessageService = mock(MessageService.class);
+        messageController = new MessageController(gardenUserService, mockedFriendService, mockedMessageService);
 
         model = mock(Model.class);
         authentication = mock(Authentication.class);
@@ -47,5 +51,33 @@ class MessageControllerTest {
 
         String result = messageController.messageFriend(1L, authentication,  model);
         Assertions.assertEquals("users/message", result);
+    }
+
+    @Test
+    void whenClickSendMessageButton_thenReturnMessagePage() {
+        Long sender = 1L;
+        Long receiver = 2L;
+        MessageDTO messageDTO = new MessageDTO("Hello");
+
+        Mockito.when(authentication.getPrincipal()).thenReturn(sender);
+        Mockito.when(mockedFriendService.getFriendship(any(), any())).thenReturn(new Friends());
+        Mockito.when(gardenUserService.getUserById(sender)).thenReturn(new GardenUser());
+
+        String result = messageController.sendMessage(receiver, messageDTO, authentication,  model);
+        Assertions.assertEquals("users/message", result);
+    }
+
+    @Test
+    void whenClickSendMessageButton_thenMessageSaved() {
+        Long sender = 1L;
+        Long receiver = 2L;
+        MessageDTO messageDTO = new MessageDTO("Hello");
+
+        Mockito.when(authentication.getPrincipal()).thenReturn(sender);
+        Mockito.when(mockedFriendService.getFriendship(any(), any())).thenReturn(new Friends());
+        Mockito.when(gardenUserService.getUserById(sender)).thenReturn(new GardenUser());
+
+        messageController.sendMessage(receiver, messageDTO, authentication,  model);
+        Mockito.verify(mockedMessageService).sendMessage(sender, receiver, messageDTO);
     }
 }
