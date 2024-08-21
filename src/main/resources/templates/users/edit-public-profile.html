@@ -20,7 +20,27 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="text" class="form-control" id="search-plant">
+                    <form class="input-group w-100" th:action="@{/users/edit-public-profile/search}" method="get" id="searchForm">
+                        <input type="text" class="form-control" placeholder="Search plant" id="searchField"
+                               aria-label="Search plants" aria-describedby="button-addon" name="search" th:value="${previousSearch}">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="submit" id="button-addon">
+                                <img th:src="@{/icons/search-icon.svg}" alt="" width="20" height="25" />
+                            </button>
+                        </div>
+                    </form>
+
+                    <div id="searchResults" class="mt-3">
+                        <h2> Results </h2>
+                        <ul class="list-group">
+                            <li th:each="plant : ${plants}" class="list-group-item" th:text="${plant.name}">
+                            </li>
+                        </ul>
+                    </div>
+
+                    <script th:src="@{/js/autocomplete.js}"></script>
+                    <script th:src="@{/js/plantSearchAutocomplete.js}"></script>
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -28,7 +48,6 @@
             </div>
         </div>
     </div>
-
 
   <div class="card border-top-0">
       <form th:action="@{/users/edit-public-profile}" method="post" enctype="multipart/form-data" th:object="${editUserDTO}" novalidate>
@@ -141,11 +160,21 @@
 <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
 
 <script>
-    openPlantSelectorModal = (index) => {
 
-        const modal = new bootstrap.Modal(document.getElementById("plantSelectorModal"))
-        modal.show()
-    }
+    document.getElementById('searchForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const searchTerm = document.getElementById('searchField').value;
+        console.log("Searching for:", searchTerm);
+        this.submit();
+    });
+
+openPlantSelectorModal = (index) => {
+
+
+    const modal = new bootstrap.Modal(document.getElementById("plantSelectorModal"))
+    modal.show()
+}
+
 
     /** @type {HTMLInputElement} */
     const editProfileImageInput = document.getElementById("image");

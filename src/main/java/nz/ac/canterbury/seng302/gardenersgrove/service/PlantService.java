@@ -133,4 +133,8 @@ public class PlantService {
     public Plant save(Plant plant) {
         return plantRepository.save(plant);
     }
+
+    public Optional<Plant> getPlantByName(String plantName) {
+        return plantRepository.findByName(plantName);
+    }
 }

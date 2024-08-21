@@ -15,6 +15,9 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.ProfanityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,8 +29,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Controller
 public class PublicProfileController {
@@ -144,6 +146,24 @@ public class PublicProfileController {
         return "users/edit-public-profile";
     }
 
+    @GetMapping("users/edit-public-profile/search")
+    public String searchPublicGardens(@RequestParam(name = "search", required = false, defaultValue = "") String search,
+                                      Model model) {
+
+
+        Optional<Plant> plants = plantService.getPlantByName(search);
+        if (plants.isPresent()) {
+            model.addAttribute("plants", plants);
+            logger.info("Plants found: {}", plants.get());
+        } else {
+            logger.info("No plants found for search term: {}", search);
+        }
+        model.addAttribute("previousSearch", search);
+
+
+        return "users/edit-public-profile";
+    }
+
     /**
      * returns the edit-public-profile page
      *
@@ -242,12 +262,4 @@ public class PublicProfileController {
         }
     }
 
-    @PostMapping("/")
-    public String addPlantToFavourite(Model model)
-    {
-        List<Garden> gardenList = gardenService.getGardensByOwnerId(userService.getCurrentUser().getId());
-        List<Plant> plants = plantService.getPlantsByGardenId(1L);
-        model.addAttribute("gardens", gardenList);
-        return "/";
-    }
 }

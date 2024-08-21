@@ -18,4 +18,6 @@ public interface PlantRepository extends CrudRepository<Plant, Long> {
     List<Plant> findAll();
 
     List<Plant> findByGardenId(long gardenId);
+
+    Optional<Plant> findByName(String plantName);
 }
