@@ -8,10 +8,6 @@ public class MessageDTO {
         this.message = message;
     }
 
-    /**
-     * Get the stored message
-     * @return the stored message
-     */
     public String getMessage() {
         return message;
     }

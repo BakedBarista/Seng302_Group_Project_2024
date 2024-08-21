@@ -23,13 +23,13 @@ public class Message {
     private LocalDateTime timestamp;
 
     @Column(length = 512)
-    private String message;
+    private String messageContent;
 
     public Message(Long sender, Long receiver, LocalDateTime timestamp, String message) {
         this.sender = sender;
         this.receiver = receiver;
         this.timestamp = timestamp;
-        this.message = message;
+        this.messageContent = message;
     }
 
     public Long getId() {
@@ -64,11 +64,11 @@ public class Message {
         this.timestamp = timestamp;
     }
 
-    public String getMessage() {
-        return message;
+    public String getMessageContent() {
+        return messageContent;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setMessageContent(String messageContent) {
+        this.messageContent = messageContent;
     }
 }
