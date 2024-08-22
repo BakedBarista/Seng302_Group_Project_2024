@@ -15,7 +15,6 @@ let hasError = false;
 plantImageInput.addEventListener("change", (ev) => {
     const file = plantImageInput.files[0];
     hasError = false;
-    console.log("hi")
     if (!file) {
         return;
     }
