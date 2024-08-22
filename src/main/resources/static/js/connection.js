@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var buttonClick = document.querySelector('button[type="submit"]');
     var toastDivs = document.getElementById('acceptToast');
     var toast = new bootstrap.Toast(toastDivs);
+
     if (buttonClick) {
         buttonClick.addEventListener('click', function(event) {
             event.preventDefault();
@@ -16,16 +17,25 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 body: formData
             })
-                .then(response => {
-                    if (response.ok) {
-                        toast.show();
-                    } else {
-                        console.error('Network response was not ok.');
-                    }
-                })
-                .catch(error => {
-                    console.error('There was a problem with the fetch operation:', error);
-                });
+            .then(response => {
+                console.log('Raw response:', response);
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Network response was not ok.');
+                }
+            })
+            .then(data => {
+                console.log('Response data:', data);
+                if (data.success) {
+                    toast.show();
+                } else {
+                    console.error('Request failed or no matching request found.');
+                }
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
         });
     }
 });

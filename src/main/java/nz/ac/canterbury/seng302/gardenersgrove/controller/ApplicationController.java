@@ -9,6 +9,8 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,7 +18,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This controller defines the base application end points.
@@ -61,11 +65,11 @@ public class ApplicationController {
      * @return the home page
      */
     @PostMapping("/")
-    public String homeAccept(@RequestParam(name = "action") String action, 
+    public ResponseEntity<Map<String, Object>> homeAccept(
+        @RequestParam(name = "action") String action, 
         @RequestParam(name = "id") Long requestedId,  
         Authentication authentication,
         Model model) {
-
         logger.info("Post /");
         Long loggedInUserId = (Long) authentication.getPrincipal();
         GardenUser loggedInUser = gardenUserService.getUserById(loggedInUserId);
@@ -73,36 +77,39 @@ public class ApplicationController {
 
         List<Friends> sentRequests = friendService.getSentRequests(loggedInUserId);
         List<Friends> receivedRequests = friendService.getReceivedRequests(loggedInUserId);
-        
+        Map<String, Object> response = new HashMap<>();
+        boolean success = false;
+
         if ("accept".equals(action)) {
             // accepting a already sent friend request
             for (Friends receivedRequest : receivedRequests) {
-                if (receivedRequest.getReceiver().getId().equals(requestedId)) {
+                if (receivedRequest.getSender().getId().equals(requestedId)) {
                     receivedRequest.setStatus(Friends.Status.ACCEPTED);
                     friendService.save(receivedRequest);
                     // return or do something here
-                    return "home";
+                    success = true;
+                    break;
                 } 
             }
 
-            boolean requestAlreadySent = false;
-        
-            // Check if a request has already been sent
-            for (Friends sentRequest : sentRequests) {
-                if (sentRequest.getReceiver().getId().equals(requestedId)) {
-                    requestAlreadySent = true;
-                    break;
+            if (!success) {
+                boolean requestAlreadySent = false;
+            
+                for (Friends sentRequest : sentRequests) {
+                    if (sentRequest.getReceiver().getId().equals(requestedId)) {
+                        requestAlreadySent = true;
+                        break;
+                    }
+                }
+                
+                if (!requestAlreadySent) {
+                    Friends newRequest = new Friends(loggedInUser, requestedUser, Friends.Status.PENDING);
+                    friendService.save(newRequest);
                 }
             }
-            
-            if(!requestAlreadySent){
-                //sending a new request to
-                Friends newRequest = new Friends(loggedInUser, requestedUser, Friends.Status.PENDING);
-                friendService.save(newRequest);
-            }
         }
-
-        return "home";
+        response.put("success", success);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
 

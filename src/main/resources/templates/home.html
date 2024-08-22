@@ -28,8 +28,9 @@
 
             <form action="@{/}" method="POST">
                 <input type="hidden" name="action" value="accept"/>
-                <button type="submit" class="btn p-0">
-                    <img th:src="@{/icons/heart.svg}" alt="Accept" class="heart-icon" />
+                <button type="submit" class="btn p-0" id="heartButton">
+                    <img th:src="@{/icons/heart.svg}" alt="Accept" class="heart-icon" id="heartIcon" />
+                    <img th:src="@{/icons/heart-filled.svg}" alt="Accept" class="heart-icon heart-icon-filled" id="heartIconFilled" />
                 </button>
             </form>
 
