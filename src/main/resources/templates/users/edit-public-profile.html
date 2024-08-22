@@ -20,11 +20,11 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form class="input-group w-100" th:action="@{/users/edit-public-profile/search}" method="get" id="searchForm">
+                    <form class="input-group w-100" th:action="@{/users/edit-public-profile/search}" method="post" id="searchForm">
                         <input type="text" class="form-control" placeholder="Search plant" id="searchField"
                                aria-label="Search plants" aria-describedby="button-addon" name="search" th:value="${previousSearch}">
                         <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="submit" id="button-addon">
+                            <button class="btn btn-outline-secondary" type="submit" id="button-addon" onclick="showSearchResults()">
                                 <img th:src="@{/icons/search-icon.svg}" alt="" width="20" height="25" />
                             </button>
                         </div>
@@ -40,6 +40,7 @@
 
                     <script th:src="@{/js/autocomplete.js}"></script>
                     <script th:src="@{/js/plantSearchAutocomplete.js}"></script>
+                    <script th:src="@{/js/searchPlantFavourite.js}"></script>
 
                 </div>
                 <div class="modal-footer">
@@ -161,16 +162,18 @@
 
 <script>
 
-    document.getElementById('searchForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-        const searchTerm = document.getElementById('searchField').value;
-        console.log("Searching for:", searchTerm);
-        this.submit();
-    });
+
+
+document.getElementById('searchForm').addEventListener('submit', function(event) {
+ event.preventDefault();
+const searchTerm = document.getElementById('searchField').value;
+console.log("Searching for:", searchTerm);
+this.submit();
+});
+
+
 
 openPlantSelectorModal = (index) => {
-
-
     const modal = new bootstrap.Modal(document.getElementById("plantSelectorModal"))
     modal.show()
 }

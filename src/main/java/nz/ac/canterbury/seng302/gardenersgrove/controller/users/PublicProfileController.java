@@ -146,27 +146,42 @@ public class PublicProfileController {
         return "users/edit-public-profile";
     }
 
-    @GetMapping("users/edit-public-profile/search")
-    public String searchPublicGardens(@RequestParam(name = "search", required = false, defaultValue = "") String search,
-                                      Model model) {
+//    @GetMapping("users/edit-public-profile/search")
+//    public String searchPublicGardens(@RequestParam(name = "search", required = false, defaultValue = "") String search,
+//                                      Model model) {
+//
+//        List<Garden> gardens = gardenService.getGardensByOwnerId(userService.getCurrentUser().getId());
+//
+//        List<Plant> plants = gardens.stream()
+//                .flatMap(garden -> garden.getPlants().stream())
+//                .filter(plant -> plant.getName().toLowerCase().contains(search.toLowerCase()))
+//                .toList();
+//
+//        if (!plants.isEmpty()) {
+//            logger.info("Matching plants found: {}", plants);
+//            model.addAttribute("plants", plants);
+//        } else {
+//            logger.info("No plants found for search term: {}", search);
+//        }
+//
+//        model.addAttribute("previousSearch", search);
+//
+//        return "users/edit-public-profile";
+//    }
+
+    @PostMapping("users/edit-public-profile/search")
+    public ResponseEntity<List<Plant>> searchPublicGardens(@RequestParam(name = "search", required = false, defaultValue = "") String search) {
 
         List<Garden> gardens = gardenService.getGardensByOwnerId(userService.getCurrentUser().getId());
 
         List<Plant> plants = gardens.stream()
                 .flatMap(garden -> garden.getPlants().stream())
                 .filter(plant -> plant.getName().toLowerCase().contains(search.toLowerCase()))
+                .map(plant -> new Plant(plant.getName(), plant.getCount(), plant.getDescription(), plant.getPlantedDate()))  // Assuming PlantDTO is a simple DTO class
                 .toList();
+        logger.info("Searching for {}", search);
 
-        if (!plants.isEmpty()) {
-            logger.info("Matching plants found: {}", plants);
-            model.addAttribute("plants", plants);
-        } else {
-            logger.info("No plants found for search term: {}", search);
-        }
-
-        model.addAttribute("previousSearch", search);
-
-        return "users/edit-public-profile";
+        return ResponseEntity.ok(plants);
     }
 
     /**
@@ -205,7 +220,6 @@ public class PublicProfileController {
         if (errorFlag) {
             model.addAttribute("name", user.getFullName());
             model.addAttribute("editUserDTO", editUserDTO);
-            model.addAttribute("profanity", "There cannot be any profanity in the 'About me' section");
             return "users/edit-public-profile";
         }
 
