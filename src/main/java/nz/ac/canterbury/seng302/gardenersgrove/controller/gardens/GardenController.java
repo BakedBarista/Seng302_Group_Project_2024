@@ -465,14 +465,12 @@ public class GardenController {
                 existingGarden.get().setLon(null);
             }
             try {
-                if (existingGarden != null) {
-                    try {
-                        gardenService.setGardenImage(existingGarden.get().getId(), file);
-                    } catch (Exception e) {
-                        logger.error("Failed to set image for garden: " + existingGarden.get().getId(), e);
-        
-                    }
+                try {
+                    gardenService.setGardenImage(existingGarden.get().getId(), file);
+                } catch (Exception e) {
+                    logger.error("Failed to set image for garden: " + existingGarden.get().getId(), e);
                 }
+                
                 existingGarden.get().setGardenWeather(null);
                 gardenService.addGarden(existingGarden.get());
             } catch (IllegalArgumentException e) {

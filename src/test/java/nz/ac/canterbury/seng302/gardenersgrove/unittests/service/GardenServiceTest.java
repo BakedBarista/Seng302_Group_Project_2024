@@ -206,7 +206,7 @@ public class GardenServiceTest {
     }
 
     @Test
-    public void validateImage_withValidImage_shouldReturnTrue() {
+    void validateImage_withValidImage_shouldReturnTrue() {
         long id = 1L;
         byte[] image = {};
         String contentType = "image/svg";
@@ -220,7 +220,7 @@ public class GardenServiceTest {
     }
 
     @Test
-    public void validateImage_withInvalidFileType_shouldReturnFalse() {
+    void validateImage_withInvalidFileType_shouldReturnFalse() {
       
         long id = 1L;
         byte[] image = {};

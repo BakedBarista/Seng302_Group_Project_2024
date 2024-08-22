@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -149,12 +148,11 @@ public class GardenService {
             return;
         }
         
-        if (validateImage(gardenImage)) {
-            if (!gardenImage.isEmpty()) {
-                garden.get().setGardenImage(gardenImage.getContentType(), gardenImage.getBytes());
-                gardenRepository.save(garden.get());
-            }
-        } 
+        if (validateImage(gardenImage) && !gardenImage.isEmpty()) {
+            garden.get().setGardenImage(gardenImage.getContentType(), gardenImage.getBytes());
+            gardenRepository.save(garden.get());
+        }
+        
     }
 
     /**
