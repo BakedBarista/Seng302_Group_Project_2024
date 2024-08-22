@@ -67,7 +67,6 @@ public class ApplicationController {
         Model model) {
 
         logger.info("Post /");
-
         Long loggedInUserId = (Long) authentication.getPrincipal();
         GardenUser loggedInUser = gardenUserService.getUserById(loggedInUserId);
         GardenUser requestedUser = gardenUserService.getUserById(requestedId);

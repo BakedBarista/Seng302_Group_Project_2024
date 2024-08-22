@@ -9,8 +9,11 @@ document.addEventListener('DOMContentLoaded', function() {
             formData.append('action', 'accept');
             formData.append('id', 1); // this needs to be the id of user.
 
-            fetch(`${apiBaseUrl}/`, {
+            fetch(`${baseUrl}`, {
                 method: 'POST',
+                headers: {
+                    [csrfHeader]: csrf,
+                },
                 body: formData
             })
                 .then(response => {
