@@ -1,6 +1,6 @@
 /* Colors */
 :root {
-    --gg-dark: #2C430D;
+    --gg-dark: #E8CB67;
     --gg-primary: #395C0A;
     --gg-primary-rgb: 57, 92, 10;
     --gg-primary-light: #608530;
@@ -20,7 +20,7 @@
     --gg-black: #1E1E1E;
     --gg-black-rgb: 30, 30, 30;
 
-    --gg-heading-font: "DM Serif Display", serif;
+    --gg-heading-font: "Montserrat", sans-serif;
     --gg-body-font: "Open Sans", sans-serif;
 
 
@@ -48,13 +48,21 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-    font-family: "DM Serif Display", serif;
-    font-weight: 400;
+    font-family: "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
     font-style: normal;
 }
 
 .about-me {
     font-size: 18px;
+}
+
+.montserrat-heading {
+     font-family: "Montserrat", sans-serif;
+     font-optical-sizing: auto;
+     font-weight: 600;
+     font-style: normal;
 }
 
 .averia-serif-libre-bold {
@@ -680,6 +688,42 @@ h1, h2, h3, h4, h5, h6 {
     width: 100%;
     height: 200px;
     object-fit: cover;
+}
+
+.public-profile-plant-card {
+    width: 200px;
+    height: 180px;
+}
+
+.bg-primary-temp {
+    /*fix this later*/
+    background-color: #E8CB67;
+}
+
+.bg-primary-grey {
+    background-color: #e7d6a8
+}
+
+@keyframes wiggle {
+    0% { transform: rotate(3deg); }
+    10% { transform: rotate(-3deg); }
+    20% { transform: rotate(3deg); }
+    30% { transform: rotate(-3deg); }
+    40% { transform: rotate(3deg); }
+    50% { transform: rotate(-3deg); }
+    60% { transform: rotate(3deg); }
+    70% { transform: rotate(-3deg); }
+    80% { transform: rotate(3deg); }
+    90% { transform: rotate(-3deg); }
+    100% { transform: rotate(0deg); }
+}
+
+.card-wiggle {
+    animation: none;
+}
+
+.card-wiggle:hover {
+    animation: wiggle 2s infinite;
 }
 
 .hover-plant {

@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.HISTORY_FORMAT_DATE;
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.NZ_FORMAT_DATE;
@@ -169,12 +170,22 @@ public class GardenController {
      * @return viewGardenTemplate
      */
     @GetMapping("/gardens")
-    public String responses(Model model) {
+    public String responses(Model model,
+                            @RequestParam(defaultValue = "0") int page,
+                            @RequestParam(defaultValue = "10") int size) {
         logger.info("Get /gardens - display all gardens");
         GardenUser currentUser = gardenUserService.getCurrentUser();
-        if(currentUser != null) {
-            List<Garden> userGardens = gardenService.getGardensByOwnerId(currentUser.getId());
-            model.addAttribute(GARDENS, userGardens);
+        if (currentUser != null) {
+            Page<Garden> gardenPage = gardenService.getGardensByOwnerId(currentUser.getId(), PageRequest.of(page, size));
+            model.addAttribute("gardenPage", gardenPage);
+
+            int totalPages = gardenPage.getTotalPages();
+            if (totalPages > 0) {
+                List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+                        .boxed()
+                        .collect(Collectors.toList());
+                model.addAttribute("pageNumbers", pageNumbers);
+            }
         }
 
         return "gardens/viewGardens";
@@ -223,7 +234,6 @@ public class GardenController {
                 logger.info("Garden ID: {} has no Lat and Lng, no weather will be displayed.", id);
             } else {
                 GardenWeather gardenWeather = weatherAPIService.getWeatherData(id, lat, lng);
-                logger.info("garden weather shit");
                 // Check that the weather returned isn't null
                  if (gardenWeather == null) {
                      logger.error("Garden weather was returned as null, can't display");
