@@ -12,6 +12,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.ProfanityService;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
@@ -35,6 +36,8 @@ public class U800PublicProfileFeature {
 
     private static GardenUserService userService;
     private static ProfanityService profanityService;
+
+    private static PlantService plantService;
     private static PublicProfileController publicProfileController;
 
     String invalidDescription;
@@ -74,7 +77,7 @@ public class U800PublicProfileFeature {
 
         userService = new GardenUserService(userRepository);
         profanityService = new ProfanityService();
-        publicProfileController = new PublicProfileController(userService, profanityService);
+        publicProfileController = new PublicProfileController(userService, profanityService,plantService);
     }
 
      @Given("I am on my edit profile page")

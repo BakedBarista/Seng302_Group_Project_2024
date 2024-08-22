@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import org.springframework.stereotype.Service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
@@ -28,13 +29,16 @@ public class PlantService {
     private final PlantRepository plantRepository;
     private final GardenRepository gardenRepository;
 
+    private final GardenUserService userService;
+
     /**
      * Constructor of PlantService, takes an instance of plantRepository
      * @param plantRepository an instance of PlantRepository
      */
-    public PlantService(PlantRepository plantRepository, GardenRepository gardenRepository) {
+    public PlantService(PlantRepository plantRepository, GardenRepository gardenRepository, GardenUserService userService) {
         this.plantRepository = plantRepository;
         this.gardenRepository = gardenRepository;
+        this.userService = userService;
     }
 
     /**
@@ -132,5 +136,21 @@ public class PlantService {
      */
     public Plant save(Plant plant) {
         return plantRepository.save(plant);
+    }
+
+
+
+    public List<Plant> getFavouritePlants(GardenUser user) {
+        return plantRepository.findByFavourite(user);
+    }
+
+    public void addFavouritePlant(Long userId, Long plantId) {
+        GardenUser user = userService.getUserById(userId);
+        Optional<Plant> plant = plantRepository.findById(plantId);
+        if(plant.isPresent()) {
+            Plant existingPlant = plant.get();
+            user.getFavouritePlants().add(existingPlant);
+            userService.addUser(user);
+        }
     }
 }

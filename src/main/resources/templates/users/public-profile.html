@@ -45,24 +45,20 @@
             <div class="ms-5 me-5">
                 <div class="d-flex flex-wrap flex-md-nowrap">
                     <!-- Non-empty card -->
-                    <div class="card p-2 me-3 mb-3 border-0 rounded-3 d-flex shadow-sm public-profile-plant-card bg-primary-temp">
-                        <!-- Placeholder image -->
+                    <div th:each="plant : ${favouritePlants}" class="card p-2 me-3 mb-3 border-0 rounded-3 d-flex shadow-sm public-profile-plant-card bg-primary-temp">
                         <img
                                 class="mx-auto d-block pt-1"
-                                th:src="@{'/plants/10/plant-image'}"
+                                th:src="@{'/plants/' + ${plant.id} + '/plant-image'}"
                                 width="120"
                                 height="120"
-                                alt="profile picture"
+                                alt="plant image"
                         />
-                        <h4 class="pt-2 ps-2">Banana</h4>
+                        <h5 class="pt-2 ps-2" th:text="${plant.name}">Plant Name</h5>
                     </div>
 
-                    <!-- Empty card -->
-                    <div class="card p-2 me-3 mb-3 border-0 rounded-3 shadow-sm public-profile-plant-card justify-content-center bg-primary-grey">
-                    </div>
-
-                    <!-- Empty card -->
-                    <div class="card p-2 me-3 mb-3 border-0 rounded-3 shadow-sm public-profile-plant-card justify-content-center bg-primary-grey">
+                    <div th:unless="${favouritePlants.size() >= 3}"
+                         th:each="i : ${#numbers.sequence(1, 3 - favouritePlants.size())}"
+                         class="card p-2 me-3 mb-3 border-0 rounded-3 shadow-sm public-profile-plant-card justify-content-center bg-primary-grey">
                     </div>
                 </div>
             </div>

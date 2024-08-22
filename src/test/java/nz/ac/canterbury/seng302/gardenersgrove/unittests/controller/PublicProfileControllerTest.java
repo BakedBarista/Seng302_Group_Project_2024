@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 
+import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.ProfanityService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,6 +46,8 @@ public class PublicProfileControllerTest {
     private static Long userId;
     private static ProfanityService profanityService;
 
+    private static PlantService plantService;
+
     static Long loggedInUserId = 2L;
     static GardenUser loggedInUser;
     static Long otherUserId = 1L;
@@ -62,7 +65,7 @@ public class PublicProfileControllerTest {
         profanityService = Mockito.mock(ProfanityService.class);
         authentication = Mockito.mock(Authentication.class);
         user = new GardenUser();
-        publicProfileController = new PublicProfileController(gardenUserService, profanityService);
+        publicProfileController = new PublicProfileController(gardenUserService, profanityService,plantService);
         loggedInUser = new GardenUser();
         loggedInUser.setId(loggedInUserId);
         loggedInUser.setEmail("logged.in@gmail.com");
