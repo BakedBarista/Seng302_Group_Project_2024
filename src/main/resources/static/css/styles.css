@@ -90,6 +90,12 @@ h1, h2, h3, h4, h5, h6 {
     --bs-btn-disabled-bg: var(--gg-pale);
     --bs-btn-disabled-border-color: var(--gg-primary);
 }
+.btn-change {
+    --bs-btn-color: var(--gg-black);
+    --bs-btn-bg:  #E8CB67;
+
+
+}
 
 .button-not-planted {
     --bs-btn-color: var(--gg-white);
