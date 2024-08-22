@@ -24,6 +24,7 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
@@ -396,8 +397,11 @@ public class WeatherAPIService {
         weather.setCity(weatherAPIResponse.getLocation().getLocationName());
 
         Current current = weatherAPIResponse.getCurrent();
+        Location location = weatherAPIResponse.getLocation();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        LocalDate locationSpecificDate = LocalDateTime.parse(location.getLocaltime(), formatter).toLocalDate();
 
-        weather.setDate(LocalDate.now());
+        weather.setDate(locationSpecificDate);
         weather.setTemp(current.getCurrentTemp());
         weather.setHumidity(current.getHumidity());
         weather.setConditions(current.getCondition().getConditions());
