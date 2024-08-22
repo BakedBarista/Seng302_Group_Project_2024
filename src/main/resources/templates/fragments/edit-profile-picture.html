@@ -1,7 +1,7 @@
 <div class="mb-3 d-flex justify-content-center">
     <div class="position-relative d-inline">
-        <label for="image" class="position-absolute top-0 end-0" style="cursor: pointer;"><img th:src="@{/icons/trans-plus.svg}" alt="+" /></label>
-        <input id="image" name="image" class="d-none" type="file" accept=".png,.jpg,.jpeg,.svg"/>
+        <label for="image" class="position-absolute top-0 end-0" style="cursor: pointer;"><img id="image_button_label" th:src="@{/icons/trans-plus.svg}" alt="+" tabindex="0"/></label>
+        <input id="image" name="image" class="d-none" type="file" accept=".png,.jpg,.jpeg,.svg" tabindex="0"/>
         <img id="preview" th:src="@{'/users/' + ${userId} + '/profile-picture'}" alt="Plant Picture" style="width: 200px;" />
         <span id="editProfilePictureError" class="invalid-feedback text-center"></span>
     </div>
@@ -20,6 +20,9 @@ const editProfilePictureError = document.getElementById(
 const VALID_MIME_TYPES = ["image/png", "image/jpeg", "image/svg+xml"];
 let hasError = false;
 
+const label = document.getElementById('image_button_label');
+const fileInput = document.getElementById('image');
+label.addEventListener("keypress", fileInput.click)
 
 editProfileImageInput.addEventListener("change", (ev) => {
     const file = editProfileImageInput.files[0];

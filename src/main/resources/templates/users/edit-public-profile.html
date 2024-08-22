@@ -17,18 +17,31 @@
           <div class="card-img-top img-fluid fixed-height mb-4 position-relative">
               <div class="position-relative">
                   <label for="bannerImage" class="position-absolute top-0 end-0 p-2" style="cursor: pointer;">
-                      <img th:src="@{/icons/trans-plus.svg}" alt="+" />
+                      <img id="banner_image_button_label" th:src="@{/icons/trans-plus.svg}" alt="+" tabindex="1"/>
                   </label>
-                  <input id="bannerImage" name="bannerImage" class="d-none" type="file" accept=".png,.jpg,.jpeg,.svg"/>
-                  <img id="bannerPreview" class="card-img-top img-fluid fixed-height mb-4" th:src="@{'/users/' + ${userId} + '/profile-banner'}" alt="profile banner"/>
+                  <input id="bannerImage"
+                         name="bannerImage"
+                         class="d-none"
+                         type="file"
+                         accept=".png,.jpg,.jpeg,.svg"
+                         tabindex="1"/>
+                  <img id="bannerPreview"
+                       class="card-img-top img-fluid fixed-height mb-4"
+                       th:src="@{'/users/' + ${userId} + '/profile-banner'}"
+                       alt="profile banner"/>
                   <span id="editProfileBannerError" class="invalid-feedback"></span>
               </div>
           </div>
           <div>
               <label for="image" class="position-absolute top-0 end-0 public-profile-picture-plus-button-padding me-2" style="cursor: pointer;">
-                  <img th:src="@{/icons/trans-plus.svg}" alt="+" />
+                  <img id="image_button_label" th:src="@{/icons/trans-plus.svg}" alt="+" tabindex="2"/>
               </label>
-              <input id="image" name="image" class="d-none" type="file" accept=".png,.jpg,.jpeg,.svg"/>
+              <input id="image"
+                     name="image"
+                     class="d-none"
+                     type="file"
+                     accept=".png,.jpg,.jpeg,.svg"
+                     tabindex="2"/>
               <img id="preview"
                    class="public-profile-picture position-absolute top-0 end-0 justify-content-md-center public-profile-picture-padding me-2"
                    th:src="@{'/users/' + ${userId} + '/profile-picture'}"
@@ -54,6 +67,7 @@
                                 id="description"
                                 type="text"
                                 class="form-control"
+                                tabindex="3"
                                 th:classappend="${#fields.hasErrors('description')} or ${profanity != null} ? ' is-invalid'"
                                 th:text="${editUserDTO.description}" th:name="description">
                       </textarea>
@@ -67,8 +81,8 @@
         
         <!-- Button Container with Adjusted Spacing -->
         <div class="d-flex justify-content-end px-4 mb-4">
-          <a th:href="@{/users/public-profile}" class="btn btn-outline-secondary me-2">Cancel</a>
-          <button class="btn btn-primary">Submit</button>
+          <a th:href="@{/users/public-profile}" class="btn btn-outline-secondary me-2" tabindex="4">Cancel</a>
+          <button class="btn btn-primary" tabindex="5">Submit</button>
         </div>
       </form>
   </div>
@@ -87,6 +101,15 @@
 
   const VALID_MIME_TYPES = ["image/png", "image/jpeg", "image/svg+xml"];
   const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+
+  // buttons pressable on tab
+  const bannerLabel = document.getElementById('banner_image_button_label');
+  const bannerFileInput = document.getElementById('bannerImage');
+  bannerLabel.addEventListener("keypress", bannerFileInput.click)
+
+  const label = document.getElementById('image_button_label');
+  const fileInput = document.getElementById('image');
+  label.addEventListener("keypress", fileInput.click)
 
   /**
    * Validates the selected file and updates the preview.
