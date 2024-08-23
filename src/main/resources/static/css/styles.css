@@ -705,6 +705,42 @@ h1, h2, h3, h4, h5, h6 {
     object-fit: cover;
 }
 
+.public-profile-plant-card {
+    width: 200px;
+    height: 180px;
+}
+
+.bg-primary-temp {
+    /*fix this later*/
+    background-color: #E8CB67;
+}
+
+.bg-primary-grey {
+    background-color: #e7d6a8
+}
+
+@keyframes wiggle {
+    0% { transform: rotate(3deg); }
+    10% { transform: rotate(-3deg); }
+    20% { transform: rotate(3deg); }
+    30% { transform: rotate(-3deg); }
+    40% { transform: rotate(3deg); }
+    50% { transform: rotate(-3deg); }
+    60% { transform: rotate(3deg); }
+    70% { transform: rotate(-3deg); }
+    80% { transform: rotate(3deg); }
+    90% { transform: rotate(-3deg); }
+    100% { transform: rotate(0deg); }
+}
+
+.card-wiggle {
+    animation: none;
+}
+
+.card-wiggle:hover {
+    animation: wiggle 2s infinite;
+}
+
 .hover-plant {
     transition:
         transform 0.3s ease,
@@ -732,5 +768,55 @@ h1, h2, h3, h4, h5, h6 {
     margin: 5px;
     border-radius: 5px;
     font-size: 14px;
+}
+
+.friend-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.friend-info img {
+    margin-right: 10px;
+}
+
+.message-button {
+    margin-top: 5px;
+    margin-left: 20px;
+}
+
+.friend-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    margin-top: 5px;
+}
+
+.friend-container.friend-name {
+    margin-left: 20px;
+}
+
+
+@media (max-width: 768px) {
+    .friend-info {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .message-button {
+        margin-left: 0;
+        margin-top: 10px;
+    }
+
+    .friend-container {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .friend-container .friend-name {
+        margin-left: 0;
+        margin-top: 5px;
+    }
 }
 
