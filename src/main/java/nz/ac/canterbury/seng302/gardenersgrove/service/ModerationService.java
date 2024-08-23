@@ -3,13 +3,15 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -20,12 +22,14 @@ public class ModerationService {
 
     private String moderationApiKey;
     private ObjectMapper objectMapper;
+    private RestTemplate restTemplate;
 
     private static final String MODERATION_API_URL = "https://api.openai.com/v1/moderations";
 
-    public ModerationService(@Value("${moderation.api.key}") String moderationApiKey, ObjectMapper objectMapper) {
+    public ModerationService(@Value("${moderation.api.key}") String moderationApiKey, ObjectMapper objectMapper, RestTemplate restTemplate) {
         this.moderationApiKey = moderationApiKey;
         this.objectMapper = objectMapper;
+        this.restTemplate = restTemplate;
     }
 
 
@@ -53,8 +57,6 @@ public class ModerationService {
 
         HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
 
-        RestTemplate restTemplate = new RestTemplate();
-        
         ResponseEntity<String> responseEntity = restTemplate.postForEntity(MODERATION_API_URL, requestEntity, String.class);
 
 
