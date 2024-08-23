@@ -47,7 +47,7 @@ public class ModerationService {
         try {
             requestBody = objectMapper.writeValueAsString(node);
         } catch (JsonProcessingException e) {
-            logger.error("Error serialising json", e);
+            // This should never happen as it is always possible to encode a string using JSON
             return null;
         }
 
