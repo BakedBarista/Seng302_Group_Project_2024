@@ -183,7 +183,7 @@ h1, h2, h3, h4, h5, h6 {
 /* Navbar and drawer specifics */
 :root {
     --gg-nav-drawer-width: 300px;
-    --gg-nav-drawer-padding: 28px;
+    --gg-nav-drawer-padding: 15px;
 }
 
 .nav-drawer {
@@ -250,7 +250,6 @@ h1, h2, h3, h4, h5, h6 {
 
 .nav-drawer li a {
     height: 50px;
-
     display: flex;
     flex-direction: row;
     align-items: center;
