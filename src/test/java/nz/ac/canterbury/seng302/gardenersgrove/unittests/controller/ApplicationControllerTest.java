@@ -1,15 +1,10 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unittests.controller;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
+import nz.ac.canterbury.seng302.gardenersgrove.controller.users.SuggestedUserController;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -20,11 +15,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 
-import nz.ac.canterbury.seng302.gardenersgrove.controller.ApplicationController;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 class ApplicationControllerTest {
     
@@ -41,11 +38,11 @@ class ApplicationControllerTest {
     private Model model;
 
     @InjectMocks
-    private ApplicationController applicationController;
+    private SuggestedUserController suggestedUserController;
 
     private GardenUser loggedInUser;
     private GardenUser requestedUser;
-    private Friends friendRequestRecive;
+    private Friends friendRequestReceive;
     private Friends friendRequestSend;
 
     @BeforeEach
@@ -58,7 +55,7 @@ class ApplicationControllerTest {
         requestedUser = new GardenUser();
         requestedUser.setId(2L);
         //sender-reciver-status
-        friendRequestRecive = new Friends(requestedUser, loggedInUser, Friends.Status.PENDING);
+        friendRequestReceive = new Friends(requestedUser, loggedInUser, Friends.Status.PENDING);
         friendRequestSend = new Friends(loggedInUser, requestedUser, Friends.Status.PENDING);
 
 
@@ -70,14 +67,14 @@ class ApplicationControllerTest {
     @Test
     void testAcceptFriendRequest_requestStatusAccept() {
         List<Friends> receivedRequests = new ArrayList<>();
-        receivedRequests.add(friendRequestRecive);
+        receivedRequests.add(friendRequestReceive);
         System.out.println(receivedRequests);
         when(friendService.getReceivedRequests(loggedInUser.getId())).thenReturn(receivedRequests);
-        ResponseEntity<Map<String, Object>> response = applicationController.homeAccept("accept", requestedUser.getId(), authentication, model);
+        ResponseEntity<Map<String, Object>> response = suggestedUserController.homeAccept("accept", requestedUser.getId(), authentication, model);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         Map<String, Object> responseBody = response.getBody();
         assertEquals(true, responseBody.get("success"));
-        assertEquals(Friends.Status.ACCEPTED, friendRequestRecive.getStatus());
+        assertEquals(Friends.Status.ACCEPTED, friendRequestReceive.getStatus());
     }
 
     @Test
@@ -89,7 +86,7 @@ class ApplicationControllerTest {
         when(friendService.getReceivedRequests(loggedInUser.getId())).thenReturn(receivedRequests);
         when(friendService.getSentRequests(loggedInUser.getId())).thenReturn(sentRequests);
 
-        ResponseEntity<Map<String, Object>> response = applicationController.homeAccept("accept", requestedUser.getId(), authentication, model);
+        ResponseEntity<Map<String, Object>> response = suggestedUserController.homeAccept("accept", requestedUser.getId(), authentication, model);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         Map<String, Object> responseBody = response.getBody();
@@ -105,7 +102,7 @@ class ApplicationControllerTest {
         when(friendService.getReceivedRequests(loggedInUser.getId())).thenReturn(receivedRequests);
         when(friendService.getSentRequests(loggedInUser.getId())).thenReturn(sentRequests);
 
-        ResponseEntity<Map<String, Object>> response = applicationController.homeAccept("accept", requestedUser.getId(), authentication, model);
+        ResponseEntity<Map<String, Object>> response = suggestedUserController.homeAccept("accept", requestedUser.getId(), authentication, model);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         Map<String, Object> responseBody = response.getBody();

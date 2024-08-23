@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.unittests.controller.users;
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.SuggestedUserController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import org.junit.jupiter.api.Assertions;
@@ -23,6 +24,7 @@ class SuggestedUserControllerTest {
     private static Model model;
     private static Authentication authentication;
     private static GardenService gardenService;
+    private static FriendService friendService;
     static Long loggedInUserId = 1L;
     static GardenUser loggedInUser;
 
@@ -31,7 +33,8 @@ class SuggestedUserControllerTest {
         gardenUserService = Mockito.mock(GardenUserService.class);
         gardenService = Mockito.mock(GardenService.class);
         authentication = Mockito.mock(Authentication.class);
-        suggestedUserController = new SuggestedUserController(gardenService, gardenUserService);
+        friendService = Mockito.mock(FriendService.class);
+        suggestedUserController = new SuggestedUserController(gardenService, gardenUserService, friendService);
         loggedInUser = new GardenUser();
         loggedInUser.setId(loggedInUserId);
         loggedInUser.setEmail("logged.in@gmail.com");
