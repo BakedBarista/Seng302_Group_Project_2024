@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
@@ -7,13 +8,22 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.MessageDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.MessageService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.ThymeLeafDateFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.time.LocalDateTime;
+
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.TIMESTAMP_FORMAT;
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.WEATHER_CARD_FORMAT_DATE;
 
 @Controller
 public class MessageController {
@@ -53,6 +63,10 @@ public class MessageController {
             return "redirect:/users/manage-friends";
         }
 
+        model.addAttribute("dateFormatter", new ThymeLeafDateFormatter());
+        model.addAttribute("TIMESTAMP_FORMAT", TIMESTAMP_FORMAT);
+        model.addAttribute("DATE_FORMAT", WEATHER_CARD_FORMAT_DATE);
+
         model.addAttribute("messagesMap", messageService.getMessagesBetweenFriends(loggedInUserId, requestedUserId));
         model.addAttribute("sentToUser", sentToUser);
         return "users/message";
@@ -65,9 +79,9 @@ public class MessageController {
      * @param model the model data in the html request
      * @return Redirects the user to the send message page
      */
-    @PostMapping("users/{id}/send-message")
+    @PostMapping("users/message")
     public String sendMessage(
-            @PathVariable("id") Long receiver,
+            @RequestParam("id") Long receiver,
             @Valid @ModelAttribute("messageDTO") MessageDTO messageDTO,
             Authentication authentication,
             Model model) {
@@ -79,5 +93,21 @@ public class MessageController {
         messageService.sendMessage(sender, receiver, messageDTO);
 
         return messageFriend(receiver, authentication, model);
+    }
+
+    @PostConstruct
+    public void dummyMessages() {
+        GardenUser u1 = userService.getUserByEmail("stynesluke@gmail.com");
+        GardenUser u2 = userService.getUserByEmail("jan.doe@gmail.com");
+        messageService.sendMessageWithTimestamp(u1.getId(), u2.getId(),
+                new MessageDTO("Hello I am Luke Stynes! :)"), LocalDateTime.now().minusDays(2));
+        messageService.sendMessageWithTimestamp(u2.getId(), u1.getId(),
+                new MessageDTO("Hello Luke Stynes, I am Jan Doe."), LocalDateTime.now().minusDays(1));
+        messageService.sendMessageWithTimestamp(u1.getId(), u2.getId(),
+                new MessageDTO("Wow! What great bananas you grow Jan Doe."), LocalDateTime.now().minusDays(1));
+        messageService.sendMessageWithTimestamp(u1.getId(), u2.getId(),
+                new MessageDTO("I'm sending a really really long message here so that Ryan does not have to manually " +
+                        "write in a really long message each time he runs the application locally, it is really " +
+                        "annoying so he asked me to write one that goes past the end of the screen"), LocalDateTime.now());
     }
 }

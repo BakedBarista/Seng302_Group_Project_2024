@@ -35,6 +35,18 @@ public class MessageService {
      */
     public Message sendMessage(Long sender, Long receiver, MessageDTO messageDTO) {
         LocalDateTime timestamp = clock.instant().atZone(clock.getZone()).toLocalDateTime();
+        return sendMessageWithTimestamp(sender, receiver, messageDTO, timestamp);
+    }
+
+    /**
+     * Sends a message between users and saves it to the database - allows the specification of a timestamp.
+     * TODO - test me
+     * @param sender the message sender
+     * @param receiver the person who will receive the message
+     * @param messageDTO the message object
+     * @return the message that was sent
+     */
+    public Message sendMessageWithTimestamp(Long sender, Long receiver, MessageDTO messageDTO, LocalDateTime timestamp) {
         Message message = new Message(sender, receiver, timestamp, messageDTO.getMessage());
         messageRepository.save(message);
         return message;
