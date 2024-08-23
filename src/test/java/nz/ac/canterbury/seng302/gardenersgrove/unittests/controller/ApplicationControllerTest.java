@@ -8,12 +8,15 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 
@@ -42,7 +45,8 @@ class ApplicationControllerTest {
 
     private GardenUser loggedInUser;
     private GardenUser requestedUser;
-    private Friends friendRequest;
+    private Friends friendRequestRecive;
+    private Friends friendRequestSend;
 
     @BeforeEach
     void setUp() {
@@ -53,8 +57,10 @@ class ApplicationControllerTest {
 
         requestedUser = new GardenUser();
         requestedUser.setId(2L);
+        //sender-reciver-status
+        friendRequestRecive = new Friends(requestedUser, loggedInUser, Friends.Status.PENDING);
+        friendRequestSend = new Friends(loggedInUser, requestedUser, Friends.Status.PENDING);
 
-        friendRequest = new Friends(loggedInUser, requestedUser, Friends.Status.PENDING);
 
         when(authentication.getPrincipal()).thenReturn(loggedInUser.getId());
         when(gardenUserService.getUserById(loggedInUser.getId())).thenReturn(loggedInUser);
@@ -64,42 +70,30 @@ class ApplicationControllerTest {
     @Test
     void testAcceptFriendRequest_requestStatusAccept() {
         List<Friends> receivedRequests = new ArrayList<>();
-        receivedRequests.add(friendRequest);
+        receivedRequests.add(friendRequestRecive);
         System.out.println(receivedRequests);
         when(friendService.getReceivedRequests(loggedInUser.getId())).thenReturn(receivedRequests);
-
-        String result = applicationController.homeAccept("accept", requestedUser.getId(), authentication, model);
-
-        assertEquals("home", result);
-         assertEquals(Friends.Status.ACCEPTED, friendRequest.getStatus());
-    }
-
-    @Test
-    public void testSendFriendRequest() {
-        List<Friends> receivedRequests = new ArrayList<>();
-        List<Friends> sentRequests = new ArrayList<>();
-
-        when(friendService.getReceivedRequests(loggedInUser.getId())).thenReturn(receivedRequests);
-        when(friendService.getSentRequests(loggedInUser.getId())).thenReturn(sentRequests);
-
-        String result = applicationController.homeAccept("accept", requestedUser.getId(), authentication, model);
-
-        assertEquals("home", result);
-        verify(friendService, times(1)).save(any(Friends.class));
+        ResponseEntity<Map<String, Object>> response = applicationController.homeAccept("accept", requestedUser.getId(), authentication, model);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        Map<String, Object> responseBody = response.getBody();
+        assertEquals(true, responseBody.get("success"));
+        assertEquals(Friends.Status.ACCEPTED, friendRequestRecive.getStatus());
     }
 
     @Test
     public void testAcceptRequest_WhenNotReceived() {
         List<Friends> receivedRequests = new ArrayList<>();
         List<Friends> sentRequests = new ArrayList<>();
-        sentRequests.add(friendRequest);
+        sentRequests.add(friendRequestSend);
 
         when(friendService.getReceivedRequests(loggedInUser.getId())).thenReturn(receivedRequests);
         when(friendService.getSentRequests(loggedInUser.getId())).thenReturn(sentRequests);
 
-        String result = applicationController.homeAccept("accept", requestedUser.getId(), authentication, model);
+        ResponseEntity<Map<String, Object>> response = applicationController.homeAccept("accept", requestedUser.getId(), authentication, model);
 
-        assertEquals("home", result);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        Map<String, Object> responseBody = response.getBody();
+        assertEquals(false, responseBody.get("success"));
         verify(friendService, times(0)).save(any(Friends.class));
     }
 
@@ -111,9 +105,11 @@ class ApplicationControllerTest {
         when(friendService.getReceivedRequests(loggedInUser.getId())).thenReturn(receivedRequests);
         when(friendService.getSentRequests(loggedInUser.getId())).thenReturn(sentRequests);
 
-        String result = applicationController.homeAccept("accept", requestedUser.getId(), authentication, model);
+        ResponseEntity<Map<String, Object>> response = applicationController.homeAccept("accept", requestedUser.getId(), authentication, model);
 
-        assertEquals("home", result);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        Map<String, Object> responseBody = response.getBody();
+        assertEquals(false, responseBody.get("success"));
         verify(friendService, times(1)).save(any(Friends.class));
     }
 

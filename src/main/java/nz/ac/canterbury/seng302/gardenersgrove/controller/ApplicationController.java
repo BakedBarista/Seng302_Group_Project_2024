@@ -86,7 +86,6 @@ public class ApplicationController {
                 if (receivedRequest.getSender().getId().equals(requestedId)) {
                     receivedRequest.setStatus(Friends.Status.ACCEPTED);
                     friendService.save(receivedRequest);
-                    // return or do something here
                     success = true;
                     break;
                 } 
@@ -94,20 +93,21 @@ public class ApplicationController {
 
             if (!success) {
                 boolean requestAlreadySent = false;
-            
+                // checking if already sent a request
                 for (Friends sentRequest : sentRequests) {
                     if (sentRequest.getReceiver().getId().equals(requestedId)) {
                         requestAlreadySent = true;
                         break;
                     }
                 }
-                
+                //sending a new request
                 if (!requestAlreadySent) {
                     Friends newRequest = new Friends(loggedInUser, requestedUser, Friends.Status.PENDING);
                     friendService.save(newRequest);
                 }
             }
         }
+        // telling us when to trigger the toast, only when we have made a connection!
         response.put("success", success);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

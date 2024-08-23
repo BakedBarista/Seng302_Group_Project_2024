@@ -30,18 +30,18 @@
                 <input type="hidden" name="action" value="accept"/>
                 <button type="submit" class="btn p-0" id="heartButton">
                     <img th:src="@{/icons/heart.svg}" alt="Accept" class="heart-icon" id="heartIcon" />
-                    <img th:src="@{/icons/heart-filled.svg}" alt="Accept" class="heart-icon heart-icon-filled" id="heartIconFilled" />
+                    <img th:src="@{/icons/heart-filled.svg}" alt="Accept" class="heart-icon heart-icon-filled" id="heartIconFilled" /> <!-- not yet working-->
                 </button>
             </form>
 
             <div class="toast-container position-fixed bottom-0 end-0 p-3">
                 <div id="acceptToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
                     <div class="toast-header">
-                        <strong class="me-auto">Gardeners Grove</strong>
+                        <strong class="me-auto">Pollinator</strong>
                         <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
                     </div>
                     <div class="toast-body" id="toastBody">
-                        Your action was successful!
+                        You have a new connection, check the friends tab for more info!
                     </div>
                 </div>
             </div>
