@@ -11,13 +11,13 @@
         <nav th:replace="~{fragments/navbar :: navbar}"></nav>
         <main class="d-flex flex-column align-items-center justify-content-center" style="margin: 10px">
             <h1 class="mt-2  text-center mb-3">Suggested Connections</h1>
-            <div class="mt-4 card" style="width: 25rem; height: 45rem;">
+            <div class="mt-4 card col-lg-5 col-md-10 col-sm-10">
                 <div style="position: relative;">
                     <img
                             class="suggest-user-picture card-img"
                             th:src="@{'/img/gorila.png'}"
                             alt="profile picture"
-                            style="width: 398px; height: 600px; object-fit: cover;"
+                            style="width: 100%; height: 100%; object-fit: cover;"
                     />
                     <div class="position-absolute bottom-0 text-light w-100"
                          style="background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.8));">
