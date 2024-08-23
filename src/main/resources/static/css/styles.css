@@ -1,9 +1,9 @@
 /* Colors */
 :root {
-    --gg-dark: #E8CB67;
-    --gg-primary: #395C0A;
+    --gg-dark: #b89006;
+    --gg-primary: #CB9F03;
     --gg-primary-rgb: 57, 92, 10;
-    --gg-primary-light: #608530;
+    --gg-primary-light: #b89006;
     --gg-secondary: #A4AF69;
     --gg-secondary-rgb: 164, 175, 105;
     --gg-secondary-dark: #8C9D34;
@@ -183,7 +183,7 @@ h1, h2, h3, h4, h5, h6 {
 /* Navbar and drawer specifics */
 :root {
     --gg-nav-drawer-width: 300px;
-    --gg-nav-drawer-padding: 28px;
+    --gg-nav-drawer-padding: 15px;
 }
 
 .nav-drawer {
@@ -207,6 +207,17 @@ h1, h2, h3, h4, h5, h6 {
         width: var(--gg-nav-drawer-width);
         height: 100vh;
         overflow-y: auto;
+    }
+
+    #navbarLogo {
+        width: 100%;
+    }
+}
+
+@media (max-width: 767.98px) {
+    #navbarLogo {
+        max-width: 200px;
+        width:80%;
     }
 }
 
@@ -239,7 +250,6 @@ h1, h2, h3, h4, h5, h6 {
 
 .nav-drawer li a {
     height: 50px;
-
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -291,6 +301,11 @@ h1, h2, h3, h4, h5, h6 {
 .public-profile-picture {
     border-radius: 999px;
     border: 10px white solid;
+}
+
+.text-truncate-multiline {
+    overflow-y: auto;
+    height: 6em;
 }
 
 .public-profile-picture-padding {
