@@ -34,7 +34,26 @@
                     <p class="m-2 text-truncate-multiline">[[${description}]]</p>
                 </div>
             </div>
+            <form action="@{/}" method="POST">
+                <input type="hidden" name="action" value="accept"/>
+                <button type="submit" class="btn p-0" id="heartButton">
+                    <img th:src="@{/icons/heart.svg}" alt="Accept" class="heart-icon" id="heartIcon" />
+                </button>
+            </form>
+            <div class="toast-container position-fixed bottom-0 end-0 p-3">
+
+                <div id="acceptToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-header">
+                        <strong class="me-auto">Pollinator</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body" id="toastBody">
+                        You have a new connection, check the friends tab for more info!
+                </div>
+                    </div>
+            </div>
         </main>
         <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
+        <script th:src="@{/js/connection.js}"></script>
     </body>
 </html>
