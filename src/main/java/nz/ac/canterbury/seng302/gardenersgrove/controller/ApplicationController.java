@@ -30,25 +30,9 @@ public class ApplicationController {
     }
 
     /**
-     * Controls the initial home page controller when navigating to '/'
-     * @return the home page
+     * trivial method
+     * @return's a constant
      */
-    @GetMapping("/")
-    public String home( Model model) {
-        logger.info("GET /");
-        try {
-            GardenUser owner = gardenUserService.getCurrentUser();
-            if(owner.getId() != null) {
-                List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
-                model.addAttribute("gardens", gardens);
-            }
-        }
-        catch (Exception e) {
-        logger.error("Error getting gardens for user");
-        }
-        return "home";
-    }
-
     @GetMapping("/ws-test")
     public String wsTest() {
         return "wsTest";
