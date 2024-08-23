@@ -111,9 +111,6 @@ public class ApplicationController {
                         friendService.save(newRequest);
                     }
                 }
-            } else {
-                // If already friends, set success to false or handle as needed
-                success = false;
             }
         }
         // telling us when to trigger the toast, only when we have made a connection!
