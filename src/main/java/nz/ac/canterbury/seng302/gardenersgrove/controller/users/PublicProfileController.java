@@ -170,16 +170,20 @@ public class PublicProfileController {
 //    }
 
     @PostMapping("users/edit-public-profile/search")
-    public ResponseEntity<List<Plant>> searchPublicGardens(@RequestParam(name = "search", required = false, defaultValue = "") String search) {
+    public ResponseEntity<List<Plant>> searchPublicGardens(@RequestParam(name = "search", required = false, defaultValue = "") String searchTerm) {
+
+        logger.info("Searching for {}", searchTerm);
 
         List<Garden> gardens = gardenService.getGardensByOwnerId(userService.getCurrentUser().getId());
+        logger.info("Gardens owned by {} is {} ", userService.getCurrentUser().getId(), gardens);
 
         List<Plant> plants = gardens.stream()
                 .flatMap(garden -> garden.getPlants().stream())
-                .filter(plant -> plant.getName().toLowerCase().contains(search.toLowerCase()))
-                .map(plant -> new Plant(plant.getName(), plant.getCount(), plant.getDescription(), plant.getPlantedDate()))  // Assuming PlantDTO is a simple DTO class
+                .filter(plant -> plant.getName().toLowerCase().contains(searchTerm.toLowerCase()))
+                .map(plant -> new Plant(plant.getName(), plant.getCount(), plant.getDescription(), plant.getPlantedDate()))
                 .toList();
-        logger.info("Searching for {}", search);
+
+        logger.info("this {}",plants);
 
         return ResponseEntity.ok(plants);
     }
