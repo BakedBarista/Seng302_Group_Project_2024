@@ -80,7 +80,7 @@ public class ApplicationController {
         Map<String, Object> response = new HashMap<>();
         boolean success = false;
 
-        if ("accept".equals(action)) {
+        if ("accept".equals(action) && !requestedId.equals(loggedInUserId)) {
             // accepting a already sent friend request
             for (Friends receivedRequest : receivedRequests) {
                 if (receivedRequest.getSender().getId().equals(requestedId)) {

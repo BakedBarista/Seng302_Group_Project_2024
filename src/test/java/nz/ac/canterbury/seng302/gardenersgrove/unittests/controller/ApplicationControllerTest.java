@@ -81,7 +81,7 @@ class ApplicationControllerTest {
     }
 
     @Test
-    public void testAcceptRequest_WhenNotReceived() {
+    void testAcceptRequest_WhenNotReceived() {
         List<Friends> receivedRequests = new ArrayList<>();
         List<Friends> sentRequests = new ArrayList<>();
         sentRequests.add(friendRequestSend);
@@ -98,7 +98,7 @@ class ApplicationControllerTest {
     }
 
     @Test
-    public void testAcceptRequest_WhenNotReceivedOrSent() {
+    void testAcceptRequest_WhenNotReceivedOrSent() {
         List<Friends> receivedRequests = new ArrayList<>();
         List<Friends> sentRequests = new ArrayList<>();
 

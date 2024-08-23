@@ -1,12 +1,12 @@
 document.addEventListener('DOMContentLoaded', function() {
-    var buttonClick = document.querySelector('button[type="submit"]');
-    var toastDivs = document.getElementById('acceptToast');
-    var toast = new bootstrap.Toast(toastDivs);
+    let buttonClick = document.querySelector('button[type="submit"]');
+    let toastDivs = document.getElementById('acceptToast');
+    let toast = new bootstrap.Toast(toastDivs);
 
     if (buttonClick) {
         buttonClick.addEventListener('click', function(event) {
             event.preventDefault();
-            var formData = new FormData();
+            let formData = new FormData();
             formData.append('action', 'accept');
             formData.append('id', 1); // this needs to be the id of user.
 
