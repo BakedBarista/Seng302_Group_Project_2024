@@ -56,8 +56,6 @@ public class GardenControllerMVCTests {
     @Mock
     private LocationService locationService;
 
-
-
     private static Garden emptyGarden;
     private static Garden patternGarden;
     @BeforeEach

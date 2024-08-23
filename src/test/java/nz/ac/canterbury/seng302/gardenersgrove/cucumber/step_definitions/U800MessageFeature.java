@@ -122,8 +122,7 @@ public class U800MessageFeature {
     @When("I press Send")
     public void i_press_send() {
         Mockito.when(authentication.getPrincipal()).thenReturn(myId);
-        String redirect = messageController.sendMessage(receiverId, messageDTO, authentication, model);
-        Assertions.assertEquals("users/message", redirect);
+        result = messageController.sendMessage(receiverId, messageDTO, authentication, model);
     }
     @Then("The message is sent to that friend.")
     public void the_message_is_sent_to_that_friend() {
