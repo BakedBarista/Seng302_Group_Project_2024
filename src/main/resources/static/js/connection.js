@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    let buttonClick = document.querySelector('button[type="submit"]');
+    let buttonClick = document.getElementById('heartIcon');
     let toastDivs = document.getElementById('acceptToast');
     let toast = new bootstrap.Toast(toastDivs);
 
