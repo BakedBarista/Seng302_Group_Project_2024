@@ -53,6 +53,7 @@ public class MessageController {
             return "redirect:/users/manage-friends";
         }
 
+        model.addAttribute("messagesMap", messageService.getMessagesBetweenFriends(loggedInUserId, requestedUserId));
         model.addAttribute("sentToUser", sentToUser);
         return "users/message";
     }

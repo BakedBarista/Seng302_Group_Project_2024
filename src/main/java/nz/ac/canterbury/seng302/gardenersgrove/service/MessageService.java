@@ -7,8 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Clock;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Service class for handling messaging between users
@@ -46,5 +47,27 @@ public class MessageService {
      */
     public Optional<Message> getMessageById(Long messageId) {
         return messageRepository.findById(messageId);
+    }
+
+    /**
+     * Returns a map of saved messages between user1 and user2
+     * @param user1 any user
+     * @param user2 any user
+     * @return map of messages
+     */
+    public Map<LocalDate, List<Message>> getMessagesBetweenFriends(Long user1, Long user2) {
+        List<Message> messages = messageRepository.findMessagesBetweenUsers(user1, user2);
+        TreeMap<LocalDate, List<Message>> sortedMessageHash = new TreeMap<>();
+
+        for (Message message: messages) {
+            LocalDate date = message.getTimestamp().toLocalDate();
+            if (sortedMessageHash.containsKey(date)) {
+                sortedMessageHash.get(date).add(message);
+            } else {
+                sortedMessageHash.put(date, new ArrayList<>(List.of(message)));
+            }
+        }
+
+        return sortedMessageHash;
     }
 }

@@ -36,8 +36,18 @@
             </div>
             <hr>
             <div class="messages mt-3">
-                <!-- message will be displayed here -->
-                <p>messages here</p>
+                <div th:each="messages: ${messagesMap}">
+                    <div th:each="message : ${messages.value}">
+                        <div th:if="message.sender == sentToUser.id">
+                            [[${message.timestamp}]]
+                            [[${message.messageContent}]]
+                        </div>
+                        <div th:unless="message.sender == sentToUser.id">
+                            [[${message.timestamp}]]
+                            [[${message.messageContent}]]
+                        </div>
+                    </div>
+                </div>
             </div>
 
 
