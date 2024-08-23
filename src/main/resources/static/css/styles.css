@@ -87,7 +87,7 @@ h1, h2, h3, h4, h5, h6 {
     --bs-btn-color: var(--gg-white);
     --bs-btn-bg: var(--gg-primary);
     --bs-btn-border-color: var(--gg-primary);
-    --bs-btn-hover-color: var(--gg-white);
+
     --bs-btn-hover-bg: var(--gg-primary-light);
     --bs-btn-hover-border-color: var(--gg-primary-light);
     --bs-btn-focus-shadow-rgb: var(--gg-primary-rgb);
@@ -97,6 +97,13 @@ h1, h2, h3, h4, h5, h6 {
     --bs-btn-disabled-color: white;
     --bs-btn-disabled-bg: var(--gg-pale);
     --bs-btn-disabled-border-color: var(--gg-primary);
+}
+.btn-change {
+    --bs-btn-bg: #E8CB67;
+    --bs-btn-hover-bg: #ffe58b;
+    --bs-btn-hover-border-color: var(--gg-black);
+    --bs-btn-focus-shadow-rgb: var(--gg-primary-rgb);
+    --bs-btn-color: var(--gg-black);
 }
 
 .button-not-planted {
@@ -692,6 +699,9 @@ h1, h2, h3, h4, h5, h6 {
 
 .public-profile-plant-card {
     width: 200px;
+    height: 180px;
+}
+.public-profile-garden-card {
     height: 180px;
 }
 
