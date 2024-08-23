@@ -791,15 +791,6 @@ h1, h2, h3, h4, h5, h6 {
     transform: scale(1.2);
 }
 
-.heart-icon-filled {
-    display: none;
-}
-.heart-icon.active {
-    display: none;
-}
-.heart-icon-filled.active {
-    display: inline;
-}
 
 @media (max-width: 768px) {
     .friend-info {

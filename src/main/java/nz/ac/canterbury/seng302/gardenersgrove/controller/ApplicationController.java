@@ -75,36 +75,45 @@ public class ApplicationController {
         GardenUser loggedInUser = gardenUserService.getUserById(loggedInUserId);
         GardenUser requestedUser = gardenUserService.getUserById(requestedId);
 
-        List<Friends> sentRequests = friendService.getSentRequests(loggedInUserId);
-        List<Friends> receivedRequests = friendService.getReceivedRequests(loggedInUserId);
+        Friends alreadyFriends = friendService.getAcceptedFriendship(loggedInUserId, requestedId);
         Map<String, Object> response = new HashMap<>();
         boolean success = false;
 
         if ("accept".equals(action) && !requestedId.equals(loggedInUserId)) {
-            // accepting a already sent friend request
-            for (Friends receivedRequest : receivedRequests) {
-                if (receivedRequest.getSender().getId().equals(requestedId)) {
-                    receivedRequest.setStatus(Friends.Status.ACCEPTED);
-                    friendService.save(receivedRequest);
-                    success = true;
-                    break;
-                } 
-            }
+            if (alreadyFriends == null) {
+                // Not already friends
+                List<Friends> sentRequests = friendService.getSentRequests(loggedInUserId);
+                List<Friends> receivedRequests = friendService.getReceivedRequests(loggedInUserId);
 
-            if (!success) {
-                boolean requestAlreadySent = false;
-                // checking if already sent a request
-                for (Friends sentRequest : sentRequests) {
-                    if (sentRequest.getReceiver().getId().equals(requestedId)) {
-                        requestAlreadySent = true;
+                // Attempt to accept an existing friend request
+                for (Friends receivedRequest : receivedRequests) {
+                    if (receivedRequest.getSender().getId().equals(requestedId)) {
+                        receivedRequest.setStatus(Friends.Status.ACCEPTED);
+                        friendService.save(receivedRequest);
+                        success = true;
                         break;
                     }
                 }
-                //sending a new request
-                if (!requestAlreadySent) {
-                    Friends newRequest = new Friends(loggedInUser, requestedUser, Friends.Status.PENDING);
-                    friendService.save(newRequest);
+
+                // If no request was accepted, check if a request was already sent
+                if (!success) {
+                    boolean requestAlreadySent = false;
+                    for (Friends sentRequest : sentRequests) {
+                        if (sentRequest.getReceiver().getId().equals(requestedId)) {
+                            requestAlreadySent = true;
+                            break;
+                        }
+                    }
+
+                    // If no request was already sent, send a new request
+                    if (!requestAlreadySent) {
+                        Friends newRequest = new Friends(loggedInUser, requestedUser, Friends.Status.PENDING);
+                        friendService.save(newRequest);
+                    }
                 }
+            } else {
+                // If already friends, set success to false or handle as needed
+                success = false;
             }
         }
         // telling us when to trigger the toast, only when we have made a connection!
