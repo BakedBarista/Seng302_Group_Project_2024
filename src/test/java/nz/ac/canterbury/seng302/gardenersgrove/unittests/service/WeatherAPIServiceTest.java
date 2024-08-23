@@ -24,6 +24,8 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -433,18 +435,22 @@ class WeatherAPIServiceTest {
         current.setCondition(condition);
 
         Location location = new Location();
+        String apiLocalDate = "2024-08-19 21:09";
+        location.setLocaltime(apiLocalDate);
         location.setLocationName(city);
 
         fakeWeatherAPIResponse.setCurrent(current);
         fakeWeatherAPIResponse.setLocation(location);
 
         CurrentWeather weather = weatherAPIService.extractCurrentWeatherData(fakeWeatherAPIResponse);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        LocalDate localtime = LocalDateTime.parse(apiLocalDate, formatter).toLocalDate();
 
         Assertions.assertEquals(conditions, weather.getConditions());
         Assertions.assertEquals(temp, weather.getTemp());
         Assertions.assertEquals(humidity, weather.getHumidity());
         Assertions.assertEquals(windSpeed, weather.getWindSpeed());
         Assertions.assertEquals(icon, weather.getIcon());
+        Assertions.assertEquals(localtime, weather.getDate());
     }
-
 }

@@ -398,11 +398,17 @@
 <script>
     $(document).ready(function() {
         $('#harvestedDateModal').on('show.bs.modal', function (event) {
-            const today = new Date().toISOString().split('T')[0];
-            $('#harvestedDateInput').val(today);
+            const today = new Date();
+            const localDate = new Intl.DateTimeFormat('en', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            }).format(today).split('/').reverse().join('-');
+            $('#harvestedDateInput').val(localDate);
             $('#errorContainer').text('');
         });
     });
+
     function setPlantId(plantId) {
         document.getElementById('currentPlantId').value = plantId;
     }
