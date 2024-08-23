@@ -1,7 +1,9 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unittests.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.assertArg;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -10,6 +12,7 @@ import static org.mockito.Mockito.when;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
@@ -37,10 +40,12 @@ public class ModerationServiceTest {
 
     @Test
     public void givenQuotesInDescription_EscapesQuotes() {
-        when(restTemplate.postForEntity(any(), any(), any())).thenReturn(ResponseEntity.ok(null));
+        when(restTemplate.postForEntity(anyString(), any(), any())).thenReturn(ResponseEntity.ok(null));
 
         moderationService.checkIfDescriptionIsFlagged("\"organic\"");
 
-        verify(restTemplate).postForEntity(anyString(), eq("{\"input\":\"\\\"organic\\\"\"}"), any());
+        verify(restTemplate).postForEntity(anyString(), assertArg((HttpEntity<String> requestEntity) -> {
+            assertEquals("{\"input\":\"\\\"organic\\\"\"}", requestEntity.getBody());
+        }), any());
     }
 }
