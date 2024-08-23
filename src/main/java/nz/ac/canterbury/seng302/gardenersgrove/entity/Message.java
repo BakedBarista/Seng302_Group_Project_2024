@@ -38,43 +38,20 @@ public class Message {
         this.messageContent = message;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public Long getSender() {
         return sender;
-    }
-
-    public void setSender(Long sender) {
-        this.sender = sender;
     }
 
     public Long getReceiver() {
         return receiver;
     }
 
-    public void setReceiver(Long receiver) {
-        this.receiver = receiver;
-    }
-
     public LocalDateTime getTimestamp() {
         return timestamp;
-    }
-
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
     }
 
     public String getMessageContent() {
         return messageContent;
     }
 
-    public void setMessageContent(String messageContent) {
-        this.messageContent = messageContent;
-    }
 }

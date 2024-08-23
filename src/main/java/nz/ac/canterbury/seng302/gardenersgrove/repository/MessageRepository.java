@@ -16,5 +16,4 @@ public interface MessageRepository extends CrudRepository<Message, Long>{
     Optional<Message> findById(long id);
     @Query("SELECT m FROM Message m WHERE (m.sender = ?1 AND m.receiver = ?2) OR (m.sender = ?2 AND m.receiver = ?1)")
     List<Message> findMessagesBetweenUsers(Long user1, Long user2);
-
 }

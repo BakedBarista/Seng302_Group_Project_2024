@@ -25,7 +25,7 @@ import static org.mockito.Mockito.mock;
 
 @SuppressWarnings("SpringJavaInjectionsPointsAutowiringInspection")
 @SpringBootTest
-public class MessageControllerTest {
+class MessageControllerTest {
 
     @Autowired
     MessageController messageController;
