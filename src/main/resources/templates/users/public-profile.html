@@ -39,9 +39,16 @@
             <a th:href="@{edit-public-profile}" class="btn btn-primary">Edit</a>
         </p>
 
+
+
+        <div class="card m-4 p-4 mt-1 border-0 rounded-3 shadow-sm " style="background-color: #F9EFCC">
+            <h4>My Favourite Garden</h4>
+
+            <th:block th:insert="~{fragments/favourite-garden.html :: favourite-garden}"></th:block>
+        </div>
+
         <div class="card m-4 p-4 mt-1 border-0 rounded-3 shadow-sm" style="background-color: #F9EFCC">
             <h4>My Favourite Plants...</h4>
-
             <div class="ms-5 me-5">
                 <div class="d-flex flex-wrap flex-md-nowrap">
                     <!-- Non-empty card -->

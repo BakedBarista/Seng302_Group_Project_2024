@@ -20,6 +20,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -43,6 +45,7 @@ public class U8CreateNewGardenFeature {
 
     private static WeatherAPIService weatherAPIService;
     private static RestTemplate restTemplate;
+    private static ObjectMapper objectMapper;
 
     private static LocationService locationService;
     private static FriendService friendService;
@@ -70,13 +73,14 @@ public class U8CreateNewGardenFeature {
         profanityService = mock(ProfanityService.class);
         tagRepository = mock(TagRepository.class);
         restTemplate = mock(RestTemplate.class);
+        objectMapper = new ObjectMapper();
         userService = new GardenUserService(gardenUserRepository);
         gardenService = new GardenService(gardenRepository);
         friendService = new FriendService(friendsRepository);
         plantService = new PlantService(plantRepository, gardenRepository,gardenUserRepository);
         tagService = new TagService(tagRepository, gardenService, profanityService);
         weatherAPIService = new WeatherAPIService(restTemplate, gardenService, gardenWeatherService);
-        moderationService = new ModerationService();
+        moderationService = new ModerationService(null, objectMapper, restTemplate);
         mockedModerationService = mock(ModerationService.class);
         locationService = mock(LocationService.class);
         gardenController = new GardenController(gardenService, null, plantService, userService, weatherAPIService, friendService, moderationService, profanityService, locationService);
