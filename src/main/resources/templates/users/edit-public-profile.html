@@ -30,27 +30,19 @@
                         </div>
                     </form>
 
-                    <div id="searchResults" class="mt-3">
-                        <h2>Results</h2>
-                        <ul class="list-group" id="plantList">
-                            <!-- Search results will be dynamically inserted here -->
-                        </ul>
-                    </div>
+                    <div id="searchResults" class="mt-3"></div>
 
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-
-
+                    <button type="submit" id="submit-button" class="btn btn-primary btn-sm">Submit</button>
                 </div>
+
                     <script th:src="@{/js/autocomplete.js}"></script>
-                    <script th:src="@{/js/plantSearchAutocomplete.js}"></script>
+                    <!--<script th:src="@{/js/plantSearchAutocomplete.js}"></script>-->
                     <script th:src="@{/js/searchPlantFavourite.js}"></script>
+                </div>
 
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
             </div>
         </div>
     </div>
@@ -166,18 +158,6 @@
 <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
 
 <script>
-
-
-/*
-document.getElementById('searchForm').addEventListener('submit', function(event) {
- event.preventDefault();
-const searchTerm = document.getElementById('searchField').value;
-console.log("Searching for:", searchTerm);
-this.submit();
-});
-*/
-
-
 
 openPlantSelectorModal = (index) => {
     const modal = new bootstrap.Modal(document.getElementById("plantSelectorModal"))

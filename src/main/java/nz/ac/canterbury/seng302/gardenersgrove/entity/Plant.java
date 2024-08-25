@@ -38,11 +38,12 @@ public class Plant extends BasePlant {
     @JoinColumn(name = "favourite")
     private GardenUser favourite;
 
-    public Plant(String name, String count, String description, LocalDate plantedDate) {
+    public Plant(String name, String count, String description, LocalDate plantedDate, Garden garden) {
         this.name = name;
         this.count = count;
         this.description = description;
         this.plantedDate = plantedDate;
+        this.garden = garden;
     }
 
     public Plant(PlantDTO plantDTO) {
@@ -104,6 +105,7 @@ public class Plant extends BasePlant {
                 ", count='" + this.count + '\'' +
                 ", description='" + this.description + '\'' +
                 ", plantedDate='" + this.plantedDate + '\'' +
+                ", garden='" + this.garden + '\'' +
                 '}';
     }
 }

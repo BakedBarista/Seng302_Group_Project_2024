@@ -6,6 +6,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.exceptions.ProfanityDetectedException;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
@@ -146,44 +147,22 @@ public class PublicProfileController {
         return "users/edit-public-profile";
     }
 
-//    @GetMapping("users/edit-public-profile/search")
-//    public String searchPublicGardens(@RequestParam(name = "search", required = false, defaultValue = "") String search,
-//                                      Model model) {
-//
-//        List<Garden> gardens = gardenService.getGardensByOwnerId(userService.getCurrentUser().getId());
-//
-//        List<Plant> plants = gardens.stream()
-//                .flatMap(garden -> garden.getPlants().stream())
-//                .filter(plant -> plant.getName().toLowerCase().contains(search.toLowerCase()))
-//                .toList();
-//
-//        if (!plants.isEmpty()) {
-//            logger.info("Matching plants found: {}", plants);
-//            model.addAttribute("plants", plants);
-//        } else {
-//            logger.info("No plants found for search term: {}", search);
-//        }
-//
-//        model.addAttribute("previousSearch", search);
-//
-//        return "users/edit-public-profile";
-//    }
-
     @PostMapping("users/edit-public-profile/search")
-    public ResponseEntity<List<Plant>> searchPublicGardens(@RequestParam(name = "search", required = false, defaultValue = "") String searchTerm) {
+    public ResponseEntity<List<PlantDTO>> searchPublicGardens(@RequestParam(name = "search", required = false, defaultValue = "") String searchTerm, PlantDTO plantDTO) {
 
         logger.info("Searching for {}", searchTerm);
 
         List<Garden> gardens = gardenService.getGardensByOwnerId(userService.getCurrentUser().getId());
         logger.info("Gardens owned by {} is {} ", userService.getCurrentUser().getId(), gardens);
 
-        List<Plant> plants = gardens.stream()
-                .flatMap(garden -> garden.getPlants().stream())
-                .filter(plant -> plant.getName().toLowerCase().contains(searchTerm.toLowerCase()))
-                .map(plant -> new Plant(plant.getName(), plant.getCount(), plant.getDescription(), plant.getPlantedDate()))
-                .toList();
+        ;
 
-        logger.info("this {}",plants);
+
+        List<PlantDTO> plants = gardens.stream()
+                .flatMap(garden -> garden.getPlants().stream())
+                .map(plant -> new PlantDTO(plant.getName(), plant.getCount(), plant.getDescription(), plant.getPlantedDate() == null ? null : plant.getPlantedDate().toString(), plant.getGarden().getName()))
+                .filter(plant -> plant.getName().toLowerCase().contains(searchTerm.toLowerCase()))
+                .toList();
 
         return ResponseEntity.ok(plants);
     }

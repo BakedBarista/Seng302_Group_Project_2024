@@ -14,11 +14,14 @@ public class PlantDTO extends BasePlant {
     @ValidDate()
     private String plantedDate;
 
-    public PlantDTO(String name, String count, String description, String plantedDate) {
+    private String gardenName;
+
+    public PlantDTO(String name, String count, String description, String plantedDate, String gardenName) {
         this.name = name;
         this.count = count;
         this.description = description;
         this.plantedDate = plantedDate;
+        this.gardenName = gardenName;
     }
 
     public PlantDTO() {
@@ -27,6 +30,7 @@ public class PlantDTO extends BasePlant {
     public String getPlantedDate() {
         return plantedDate;
     }
+    public String getGardenName() { return gardenName; }
 
     public LocalDate getParsedPlantedDate() {
         if (plantedDate != null && !plantedDate.isEmpty()) {

@@ -627,8 +627,8 @@ public class GardenController {
                             plantName,
                             "15",
                             plantDescription,
-                            "2024-03-%02d".formatted(j % 5 + 1)
-                    );
+                            "2024-03-%02d".formatted(j % 5 + 1),
+                    gardenName);
 
                     // Save Plant and associate with Garden
                     Plant savedPlant = plantService.createPlant(plantDTO, savedGarden.getId());
