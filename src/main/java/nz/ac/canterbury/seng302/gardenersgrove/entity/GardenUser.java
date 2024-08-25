@@ -448,6 +448,8 @@ public class GardenUser {
         return favouritePlants;
     }
 
+    public void setFavouritePlants(List<Plant> favouritePlants) {this.favouritePlants = favouritePlants;}
+
     public void addFavouritePlant(Plant favouritePlant) {
         favouritePlants.add(favouritePlant);
         favouritePlant.setFavourite(this);}

@@ -80,10 +80,4 @@ public class UserController {
         return ResponseEntity.ok().contentType(MediaType.parseMediaType(user.getProfilePictureContentType()))
                 .body(user.getProfilePicture());
     }
-
-    @GetMapping("users/{id}/favourite-plants")
-    public List<Plant> getFavouritePlants(@PathVariable("id") Long id) {
-        GardenUser user = userService.getUserById(id);
-        return user.getFavouritePlants();
-    }
 }

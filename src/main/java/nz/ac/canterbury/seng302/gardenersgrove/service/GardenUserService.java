@@ -10,10 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Service class for GardenUser, defined by the @link{Service} annotation.
@@ -235,6 +232,7 @@ public class GardenUserService {
     public List<Plant> getFavoritePlants(Long userId) {
         GardenUser user = gardenUserRepository.findById(userId)
                 .orElseThrow();
+        System.out.println("Favorite plants: " + user.getFavouritePlants());
 
         return user.getFavouritePlants();
     }

@@ -6,7 +6,6 @@ import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.exceptions.ProfanityDetectedException;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
@@ -35,7 +34,6 @@ public class PublicProfileController {
 
     private final GardenUserService userService;
     private final ProfanityService profanityService;
-    private final PlantService plantService;
 
     private static final String DEFAULT_PROFILE_BANNER_URL = "/img/default-banner.svg";
     
@@ -48,10 +46,9 @@ public class PublicProfileController {
     private static final int MAX_FILE_SIZE = 10 * 1024 * 1024;
 
     @Autowired
-    public PublicProfileController(GardenUserService userService, ProfanityService profanityService,PlantService plantService) {
+    public PublicProfileController(GardenUserService userService, ProfanityService profanityService) {
         this.userService = userService;
         this.profanityService = profanityService;
-        this.plantService = plantService;
     }
 
     /**

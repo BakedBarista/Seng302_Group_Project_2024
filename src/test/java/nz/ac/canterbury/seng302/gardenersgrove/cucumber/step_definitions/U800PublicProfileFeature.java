@@ -77,7 +77,7 @@ public class U800PublicProfileFeature {
 
         userService = new GardenUserService(userRepository);
         profanityService = new ProfanityService();
-        publicProfileController = new PublicProfileController(userService, profanityService,plantService);
+        publicProfileController = new PublicProfileController(userService, profanityService);
     }
 
      @Given("I am on my edit profile page")

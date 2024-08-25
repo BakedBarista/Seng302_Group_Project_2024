@@ -140,12 +140,16 @@ public class PlantService {
         return plantRepository.save(plant);
     }
 
+    //Adding favourite plant for test purpose
+    /*public void addFavouritePlant(Long userId, Long plantId) {
+        Optional<GardenUser> user = gardenUserRepository.findById(userId);
+        Optional<Plant> plant = plantRepository.findById(plantId);
+        if (user.isPresent() && plant.isPresent()) {
+            GardenUser gardenUser = user.get();
+            Plant existingPlant = plant.get();
+            gardenUser.addFavouritePlant(existingPlant);
+            gardenUserRepository.save(gardenUser);
+        }
 
-    public void addFavouritePlant(Long userId, Long plantId) {
-        GardenUser user = gardenUserRepository.findById(userId).orElseThrow();
-        Plant plant = plantRepository.findById(plantId).orElseThrow();
-
-        user.addFavouritePlant(plant);
-        gardenUserRepository.save(user);
-    }
+    }*/
 }
