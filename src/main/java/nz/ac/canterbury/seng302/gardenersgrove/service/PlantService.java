@@ -27,6 +27,7 @@ public class PlantService {
     private static final int MAX_FILE_SIZE = 10 * 1024 * 1024;
     private final PlantRepository plantRepository;
     private final GardenRepository gardenRepository;
+    private final GardenUserRepository gardenUserRepository;
 
     /**
      * Constructor of PlantService, takes an instance of plantRepository
