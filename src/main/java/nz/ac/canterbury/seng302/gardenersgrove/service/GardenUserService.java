@@ -232,7 +232,6 @@ public class GardenUserService {
     public List<Plant> getFavoritePlants(Long userId) {
         GardenUser user = gardenUserRepository.findById(userId)
                 .orElseThrow();
-        System.out.println("Favorite plants: " + user.getFavouritePlants());
 
         return user.getFavouritePlants();
     }
