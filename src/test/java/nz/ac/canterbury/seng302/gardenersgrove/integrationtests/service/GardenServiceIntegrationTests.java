@@ -47,7 +47,7 @@ public class GardenServiceIntegrationTests {
     public void setUp() {
         gardenUserService = new GardenUserService(gardenUserRepository);
         gardenService = new GardenService(gardenRepository);
-        plantService = new PlantService(plantRepository, gardenRepository,gardenUserService);
+        plantService = new PlantService(plantRepository, gardenRepository,gardenUserRepository);
 
         GardenUser gardenUser = new GardenUser("John", "Doe", "john.doe@gmail.com", "password", LocalDate.of(2000, 10, 10));
         gardenUserService.addUser(gardenUser);

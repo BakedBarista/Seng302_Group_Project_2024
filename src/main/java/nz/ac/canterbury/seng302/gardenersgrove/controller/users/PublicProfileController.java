@@ -66,11 +66,13 @@ public class PublicProfileController {
 
         Long userId = (Long) authentication.getPrincipal();
         GardenUser user = userService.getUserById(userId);
+        /*
+        //This block is used for testing by adding some plants
         List<Plant> plants = plantService.getAllPlants();
         for(int i = 0; i < 3;i++) {
             logger.info("Adding {} to {}",plants.get(i).getName(),user.getFullName());
             plantService.addFavouritePlant(user.getId(),plants.get(i).getId());
-        }
+        }*/
         List<Plant> favouritePlants = user.getFavouritePlants();
         logger.info("{}",favouritePlants);
         model.addAttribute(USER_ID_ATTRIBUTE, userId);
@@ -100,11 +102,6 @@ public class PublicProfileController {
         boolean isCurrentUser = loggedInUserId.equals(id);
         if (isCurrentUser) {
             return viewPublicProfile(authentication, model);
-        }
-        List<Plant> plants = plantService.getAllPlants();
-        for(int i = 0; i < 3;i++) {
-            logger.info("Adding {} to {}",plants.get(i).getName(),user.getFullName());
-            plantService.addFavouritePlant(user.getId(),plants.get(i).getId());
         }
         List<Plant> favouritePlants = user.getFavouritePlants();
         logger.info("{}",user.getFavouritePlants());

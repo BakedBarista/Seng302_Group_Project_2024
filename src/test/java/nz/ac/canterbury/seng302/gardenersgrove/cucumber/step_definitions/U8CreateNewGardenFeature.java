@@ -73,7 +73,7 @@ public class U8CreateNewGardenFeature {
         userService = new GardenUserService(gardenUserRepository);
         gardenService = new GardenService(gardenRepository);
         friendService = new FriendService(friendsRepository);
-        plantService = new PlantService(plantRepository, gardenRepository,userService);
+        plantService = new PlantService(plantRepository, gardenRepository,gardenUserRepository);
         tagService = new TagService(tagRepository, gardenService, profanityService);
         weatherAPIService = new WeatherAPIService(restTemplate, gardenService, gardenWeatherService);
         moderationService = new ModerationService();

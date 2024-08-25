@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.unittests.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.PublicProfileController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 
@@ -26,6 +27,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 import java.io.IOException;
+import java.util.List;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Assertions;
@@ -63,6 +65,7 @@ public class PublicProfileControllerTest {
         bindingResult = mock(BindingResult.class);
         gardenUserService = Mockito.mock(GardenUserService.class);
         profanityService = Mockito.mock(ProfanityService.class);
+        plantService = Mockito.mock(PlantService.class);
         authentication = Mockito.mock(Authentication.class);
         user = new GardenUser();
         publicProfileController = new PublicProfileController(gardenUserService, profanityService,plantService);

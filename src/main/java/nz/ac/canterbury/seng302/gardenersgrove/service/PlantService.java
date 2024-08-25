@@ -60,7 +60,7 @@ public class PlantService {
 
     /**
      * Adds a plant to the database.
-     * @param plant the plant data to save in the database.
+     * @param plantDTO plantDTO
      * @param gardenId the garden ID to associate the plant with.
      * @return the saved plant object.
      */
@@ -141,19 +141,11 @@ public class PlantService {
     }
 
 
-
-    public List<Plant> getFavouritePlants(GardenUser user) {
-        return plantRepository.findByFavourite(user);
-    }
-
     public void addFavouritePlant(Long userId, Long plantId) {
-        Optional<GardenUser> user = gardenUserRepository.findById(userId);
-        Optional<Plant> plant = plantRepository.findById(plantId);
-        if(plant.isPresent()&&user.isPresent()) {
-            Plant existingPlant = plant.get();
-            GardenUser gardenUser = user.get();
-            gardenUser.getFavouritePlants().add(existingPlant);
-            gardenUserRepository.save(gardenUser);
-        }
+        GardenUser user = gardenUserRepository.findById(userId).orElseThrow();
+        Plant plant = plantRepository.findById(plantId).orElseThrow();
+
+        user.addFavouritePlant(plant);
+        gardenUserRepository.save(user);
     }
 }
