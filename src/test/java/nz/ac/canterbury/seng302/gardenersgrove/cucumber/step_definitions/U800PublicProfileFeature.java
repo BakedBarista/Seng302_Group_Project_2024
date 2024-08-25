@@ -9,10 +9,10 @@ import nz.ac.canterbury.seng302.gardenersgrove.controller.users.PublicProfileCon
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditPasswordDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
-import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.ProfanityService;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
@@ -28,6 +28,8 @@ import static org.mockito.Mockito.*;
 public class U800PublicProfileFeature {
 
     private static GardenUserRepository userRepository;
+    private static GardenRepository gardenRepository;
+    private static PlantRepository plantRepository;
     private static BindingResult bindingResult;
     private EditUserDTO editUserDTO;
     private static Model model;
@@ -35,6 +37,9 @@ public class U800PublicProfileFeature {
 
     private static GardenUserService userService;
     private static ProfanityService profanityService;
+    private static GardenService gardenService;
+    private static PlantService plantService;
+
     private static PublicProfileController publicProfileController;
 
     String invalidDescription;
@@ -68,13 +73,16 @@ public class U800PublicProfileFeature {
     @BeforeAll
     public static void beforeAll() {
         userRepository = mock(GardenUserRepository.class);
+        gardenRepository = mock(GardenRepository.class);
         bindingResult = mock(BindingResult.class);
         model = mock(Model.class);
         authentication = mock(Authentication.class);
 
         userService = new GardenUserService(userRepository);
+        plantService = new PlantService(plantRepository, gardenRepository);
+        gardenService = new GardenService(gardenRepository);
         profanityService = new ProfanityService();
-        publicProfileController = new PublicProfileController(userService, profanityService);
+        publicProfileController = new PublicProfileController(userService, profanityService, gardenService, plantService);
     }
 
      @Given("I am on my edit profile page")

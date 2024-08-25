@@ -85,7 +85,7 @@ public class PlantController {
         logger.info("GET /gardens/${id}/add-plant - display the new plant form");
         model.addAttribute(GARDEN_ID, gardenId);
 
-        Plant plant = new Plant("", "", "", null, null);
+        Plant plant = new Plant("", "", "", null);
         if (importPlant) {
             plant.setName((String) session.getAttribute("plantLabel"));
             plant.setDescription((String) session.getAttribute("plantDescription"));
@@ -326,7 +326,7 @@ public class PlantController {
 
         model.addAttribute(GARDEN_ID, gardenId);
         model.addAttribute(PLANT_ID, plantId);
-        model.addAttribute(PLANT, new Plant("", "", "", null, null));
+        model.addAttribute(PLANT, new Plant("", "", "", null));
         return "plants/plantHistory";
     }
 

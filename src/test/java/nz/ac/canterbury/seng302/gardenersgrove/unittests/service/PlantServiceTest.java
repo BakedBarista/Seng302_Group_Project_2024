@@ -61,7 +61,7 @@ class PlantServiceTest {
 
     @Test
     void AddPlant_ValidPlantWithGardenId_ReturnsPlantWithCorrectGardenId() {
-        PlantDTO testPlant = new PlantDTO("Rose", "5", "Flower", "1970-01-01");
+        PlantDTO testPlant = new PlantDTO("Rose", "5", "Flower", "1970-01-01", "");
         Garden testGarden = new Garden("Garden", "1","Ilam Road","Ilam",
                 "Christchurch","New Zealand","8041",1.0,2.0, "Big", null);
         Long gardenId = 1L;
@@ -77,7 +77,7 @@ class PlantServiceTest {
 
     @Test
     void AddPlant_InvalidGardenId_ThrowsException() {
-        PlantDTO testPlant = new PlantDTO("Rose", "5", "Flower", "1970-01-01");
+        PlantDTO testPlant = new PlantDTO("Rose", "5", "Flower", "1970-01-01", "");
         Long gardenId = 1L;
 
         Mockito.when(gardenRepository.findById(Mockito.any())).thenReturn(Optional.empty());

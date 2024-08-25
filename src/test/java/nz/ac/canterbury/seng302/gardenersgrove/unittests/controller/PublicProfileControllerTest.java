@@ -3,8 +3,10 @@ package nz.ac.canterbury.seng302.gardenersgrove.unittests.controller;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.PublicProfileController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 
+import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.ProfanityService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,6 +41,8 @@ import org.springframework.http.ResponseEntity;
 public class PublicProfileControllerTest {
     private static PublicProfileController publicProfileController;
     private static GardenUserService gardenUserService;
+    private static GardenService gardenService;
+    private static PlantService plantService;
     private static GardenUser user;
     private static Model model;
     private static Authentication authentication;
@@ -60,9 +64,11 @@ public class PublicProfileControllerTest {
         bindingResult = mock(BindingResult.class);
         gardenUserService = Mockito.mock(GardenUserService.class);
         profanityService = Mockito.mock(ProfanityService.class);
+        plantService = Mockito.mock(PlantService.class);
+        gardenService = Mockito.mock(GardenService.class);
         authentication = Mockito.mock(Authentication.class);
         user = new GardenUser();
-        publicProfileController = new PublicProfileController(gardenUserService, profanityService);
+        publicProfileController = new PublicProfileController(gardenUserService, profanityService, gardenService, plantService);
         loggedInUser = new GardenUser();
         loggedInUser.setId(loggedInUserId);
         loggedInUser.setEmail("logged.in@gmail.com");
