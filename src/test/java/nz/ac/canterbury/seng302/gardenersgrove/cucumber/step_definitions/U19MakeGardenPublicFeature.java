@@ -58,7 +58,7 @@ public class U19MakeGardenPublicFeature {
         friendRepository = mock(FriendsRepository.class);
         tagRepository = mock(TagRepository.class);
         tagService = new TagService(tagRepository, gardenService, profanityService);
-        objectMapper = mock(ObjectMapper.class);
+        objectMapper = new ObjectMapper();
 
         friendService = new FriendService(friendRepository);
         gardenService = new GardenService(gardenRepository);
@@ -66,7 +66,7 @@ public class U19MakeGardenPublicFeature {
         gardenUserService = mock(GardenUserService.class);
         gardenWeatherService = mock(GardenWeatherService.class);
         weatherAPIService = new WeatherAPIService(restTemplate, gardenService, gardenWeatherService);
-        moderationService = new ModerationService();
+        moderationService = new ModerationService(null, objectMapper, restTemplate);
         profanityService = new ProfanityService();
         locationService = new LocationService(restTemplate, objectMapper);
         model = mock(Model.class);

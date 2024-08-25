@@ -1,10 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
     <title>Message</title>
+
+    <meta http-equiv="Content-Type" context="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <!-- This needs to be here for Bootstrap and general CSS imports -->
+    <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
 </head>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
 <body>
-To be implemented
+    <div class="container mt-4">
+        <div class="d-flex align-items-center">
+            <img class="rounded-circle overflow-hidden border border-dark me-2"
+            th:src="@{'/users/' + ${sentToUser.id} + '/profile-picture'}" style="width: 50px; height: 50px;" alt="profile picture">
+            <h5 class="mb-0" th:text="${sentToUser.fname} + ' ' + ${sentToUser.lname}"></h5>
+        </div>
+        <hr>
+        <div class="messages mt-3">
+            <!-- message will be displayed here -->
+            <p>messages here</p>
+        </div>
+    </div>
+    <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
 </body>
 </html>

@@ -234,7 +234,6 @@ public class GardenController {
                 logger.info("Garden ID: {} has no Lat and Lng, no weather will be displayed.", id);
             } else {
                 GardenWeather gardenWeather = weatherAPIService.getWeatherData(id, lat, lng);
-                logger.info("garden weather shit");
                 // Check that the weather returned isn't null
                  if (gardenWeather == null) {
                      logger.error("Garden weather was returned as null, can't display");
