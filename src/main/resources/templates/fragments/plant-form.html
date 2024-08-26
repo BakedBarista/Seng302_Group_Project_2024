@@ -40,11 +40,21 @@
         </div>
         <div>
             <button class="btn btn-primary" type="submit" onclick="return validateDate()">Submit!</button>
-            <a type="button" class="btn btn-outline-secondary" onclick="history.back()">Cancel</a>
+            <a type="button" class="btn btn-outline-secondary" onclick="cancel()">Cancel</a>
         </div>
     </form>
 
     <script>
+        function cancel() {
+            const hasErrors = document.querySelectorAll('.invalid-feedback').length > 0;
+            // go back 2 pages if there are errors (clears the form), otherwise go back 1 page
+            if (hasErrors) {
+                history.go(-2)
+            } else {
+                history.back();
+            }
+
+        }
         const label = document.getElementById('image_button_label');
         const fileInput = document.getElementById('image');
         label.addEventListener("keypress", fileInput.click)
