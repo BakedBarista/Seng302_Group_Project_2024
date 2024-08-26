@@ -205,6 +205,32 @@ public abstract class BaseGarden {
         this.postCode = postCode;
     }
 
+    /**
+     * Gets a string combining the street number, street name, suburb, city and
+     * country
+     *
+     * @return the address of the garden
+     */
+    public String getAddress() {
+        StringBuilder sb = new StringBuilder();
+        if (streetNumber != null && !streetNumber.isEmpty()) {
+            sb.append(streetNumber).append(" ");
+        }
+        if (streetName != null && !streetName.isEmpty()) {
+            sb.append(streetName).append(", ");
+        }
+        if (suburb != null && !suburb.isEmpty()) {
+            sb.append(suburb).append(", ");
+        }
+        if (city != null && !city.isEmpty()) {
+            sb.append(city).append(", ");
+        }
+        if (country != null && !country.isEmpty()) {
+            sb.append(country);
+        }
+        return sb.toString();
+    }
+
     public Double getLon() {
         return lon;
     }

@@ -2,7 +2,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="">
 <head>
     <meta http-equiv="Content-Type" context="text/html; charset=UTF-8" />
-    <title>My Public Profile | Gardener's Grove</title>
+    <title th:if="${currentUser == userId}">My Public Profile | Pollinat*r</title>
+    <title th:if="${currentUser != userId}">[[${name}]] | Pollinat*r</title>
     <!-- This needs to be here for Bootstrap and general CSS imports -->
     <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
 </head>
@@ -11,7 +12,7 @@
 <main class="main-container" style = "margin-top: 10%;">
     <div class="card border-top-0">
         <p class="end-0 bottom-0 m-2 mt-3 position-absolute">
-            <a th:href="@{edit-public-profile}" class="btn btn-primary">Edit</a>
+            <a th:if="${currentUser == userId}" th:href="@{edit-public-profile}" class="btn btn-primary">Edit</a>
         </p>
         <img
             class="card-img-top img-fluid fixed-height mb-4"
@@ -31,6 +32,39 @@
                 <h2 class="mb-3">[[${name}]]</h2>
                 <h5 class="mb-1 about-me">About me...</h5>
                 <p>[[${description}]]</p>
+            </div>
+        </div>
+
+        <p class="m-4 p-2 mb-0 pe-1 d-flex justify-content-end">
+            <a th:href="@{edit-public-profile}" class="btn btn-primary">Edit</a>
+        </p>
+
+        <div class="card m-4 p-4 mt-1 border-0 rounded-3 shadow-sm" style="background-color: #F9EFCC">
+            <h4>My Favourite Plants...</h4>
+
+            <div class="ms-5 me-5">
+                <div class="d-flex flex-wrap flex-md-nowrap">
+                    <!-- Non-empty card -->
+                    <div class="card p-2 me-3 mb-3 border-0 rounded-3 d-flex shadow-sm public-profile-plant-card bg-primary-temp">
+                        <!-- Placeholder image -->
+                        <img
+                                class="mx-auto d-block pt-1"
+                                th:src="@{'/plants/10/plant-image'}"
+                                width="120"
+                                height="120"
+                                alt="profile picture"
+                        />
+                        <h4 class="pt-2 ps-2">Banana</h4>
+                    </div>
+
+                    <!-- Empty card -->
+                    <div class="card p-2 me-3 mb-3 border-0 rounded-3 shadow-sm public-profile-plant-card justify-content-center bg-primary-grey">
+                    </div>
+
+                    <!-- Empty card -->
+                    <div class="card p-2 me-3 mb-3 border-0 rounded-3 shadow-sm public-profile-plant-card justify-content-center bg-primary-grey">
+                    </div>
+                </div>
             </div>
         </div>
     </div>
