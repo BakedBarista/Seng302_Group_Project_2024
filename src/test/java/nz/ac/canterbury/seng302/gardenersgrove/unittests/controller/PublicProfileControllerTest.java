@@ -274,14 +274,9 @@ public class PublicProfileControllerTest {
         testGarden.setPlants(List.of(testPlant1));
         testGarden.setOwner(owner);
         
-        MvcResult result = mockMvc.perform(post("/users/edit-public-profile/search")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(searchTerm)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        System.out.println("Result: " + result);
+        ResponseEntity<List<Map<String, Object>>> response = publicProfileController.searchPlants("tomato");
+        List<Map<String, Object>> list = response.getBody();
+        assertEquals(20, list.size());
 
     }
 
