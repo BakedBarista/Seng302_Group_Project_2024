@@ -79,6 +79,10 @@ public abstract class BaseGarden {
     @JoinTable(name="garden_tags", joinColumns = @JoinColumn(name="garden_id"), inverseJoinColumns = @JoinColumn(name="tag_id"))
     private Set<Tag> tags = new HashSet<>();
 
+    @OneToOne
+    @JoinColumn(name = "favouriteGarden")
+    private GardenUser favouriteGarden;
+
     public BaseGarden(String name, String streetNumber, String streetName, String suburb, String city,
                       String country, String postCode, Double lat, Double lon, String description) {
         this.name = name;
@@ -270,6 +274,8 @@ public abstract class BaseGarden {
     public String getLocation() {
         return streetNumber + " " + streetName + " " + suburb + " " + city + " " + postCode + " " + country;
     }
+
+    public void setFavouriteGarden(GardenUser gardenUser) {this.favouriteGarden = gardenUser;}
 
     @Override
     public String toString() {

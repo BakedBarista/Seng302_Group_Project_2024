@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -16,8 +17,12 @@ import java.util.Optional;
 @Service
 public class GardenService {
     private final GardenRepository gardenRepository;
+    private final GardenUserRepository gardenUserRepository;
 
-    public GardenService(GardenRepository gardenRepository) {this.gardenRepository = gardenRepository;}
+    public GardenService(GardenRepository gardenRepository, GardenUserRepository gardenUserRepository) {
+        this.gardenUserRepository = gardenUserRepository;
+        this.gardenRepository = gardenRepository;
+    }
 
     /**
      * Gets all the gardens currently in the database.
@@ -133,6 +138,18 @@ public class GardenService {
             return gardenRepository.findPageThatContainsQuery(search, pageable);
         } else {
             return gardenRepository.findGardensBySearchAndTags(search, tags, pageable);
+        }
+    }
+
+    public void addFavouriteGarden(Long userId, Long gardenId) {
+        Optional<GardenUser> user = gardenUserRepository.findById(userId);
+        Optional<Garden> garden = gardenRepository.findById(gardenId);
+        if(user.isPresent()&&garden.isPresent()) {
+            GardenUser existingUser = user.get();
+            Garden existingGarden = garden.get();
+
+            existingUser.setFavoriteGarden(existingGarden);
+            gardenUserRepository.save(existingUser);
         }
     }
 }

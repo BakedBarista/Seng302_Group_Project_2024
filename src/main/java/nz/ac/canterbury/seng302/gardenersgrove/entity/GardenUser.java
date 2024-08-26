@@ -90,6 +90,10 @@ public class GardenUser {
     @OneToMany(mappedBy = "favourite")
     private List<Plant> favouritePlants;
 
+    @PrimaryKeyJoinColumn
+    @OneToOne(mappedBy = "favouriteGarden")
+    private Garden favoriteGarden;
+
     /**
      * JPA required no-args constructor
      */
@@ -446,5 +450,12 @@ public class GardenUser {
      */
     public List<Plant> getFavouritePlants() {
         return favouritePlants;
+    }
+
+    public Garden getFavoriteGarden() {return favoriteGarden;}
+
+    public void setFavoriteGarden(Garden garden) {
+        this.favoriteGarden = garden;
+        garden.setFavouriteGarden(this);
     }
 }
