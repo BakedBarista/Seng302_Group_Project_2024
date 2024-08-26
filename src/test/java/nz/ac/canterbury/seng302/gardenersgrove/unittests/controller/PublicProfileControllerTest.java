@@ -47,6 +47,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -262,10 +263,18 @@ public class PublicProfileControllerTest {
         assertFalse(result.toString().isEmpty());
 
         // post request
+//        mockMvc.perform(post("http://localhost:8080/users/edit-public-profile/search")
+//                .content(asJsonString(new ResponseEntity<List<Map<String, Object>>>(HttpStatusCode.valueOf(200))))
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .accept(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isOk());
+
+        // post request
         mockMvc.perform(post("http://localhost:8080/users/edit-public-profile/search")
-                .content(asJsonString(new ResponseEntity<List<Map<String, Object>>>(HttpStatusCode.valueOf(200))))
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
+                        .content(asJsonString(new ResponseEntity<List<Map<String, Object>>>(HttpStatusCode.valueOf(200))))
+                        .content(asJsonString(new HashMap<>()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 
