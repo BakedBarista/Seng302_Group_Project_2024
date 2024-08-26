@@ -269,14 +269,16 @@ public class PublicProfileControllerTest {
         String searchTerm = "Tomato";
         Plant testPlant1 = new Plant("Rose", "5", "Flower", LocalDate.of(1970, 1, 1));
         testPlant1.setName("Tomato");
+        testPlant1.setGarden(testGarden);
         testGarden.setPlants(List.of(testPlant1));
         testGarden.setOwner(owner);
 
+        when(gardenUserService.getCurrentUser()).thenReturn(owner);
         when(plantService.getAllPlants(owner, searchTerm)).thenReturn(List.of(testPlant1));
-        ResponseEntity<List<Map<String, Object>>> response = publicProfileController.searchPlants("rose");
-        System.out.println(response);
+        ResponseEntity<List<Map<String, Object>>> response = publicProfileController.searchPlants("Tomato");
+
         List<Map<String, Object>> list = response.getBody();
-        assertEquals(20, list.size());
+        assertEquals(1, list.size());
 
     }
 
