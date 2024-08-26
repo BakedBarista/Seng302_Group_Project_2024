@@ -833,8 +833,8 @@ h1, h2, h3, h4, h5, h6 {
 /* Flip card */
 
 .flip-card {
-    height: 800px;
-    perspective: 1000px;
+    height: 720px;
+    perspective: 2000px;
 }
 
 .flip-card-inner {
