@@ -74,7 +74,7 @@ public class U24BrowsingGardenByTagFeature {
         } catch(ProfanityDetectedException doNothing){
         }
         testTag1 = tagService.getTag(tag);
-        testGarden1 = new Garden(garden, streetNumber,streetName,suburb,city,country,postCode,lon,lat, gardenDescription, gardenSize);
+        testGarden1 = new Garden(garden, streetNumber,streetName,suburb,city,country,postCode,lon,lat, gardenDescription, gardenSize, null, null);
         gardenService.addGarden(testGarden1);
         testGarden1.getTags().add(testTag1);
         assertTrue(testGarden1.getTags().contains(testTag1));
