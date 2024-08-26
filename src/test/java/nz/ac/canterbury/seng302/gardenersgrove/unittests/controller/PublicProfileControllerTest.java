@@ -69,10 +69,8 @@ public class PublicProfileControllerTest {
     private static PublicProfileController publicProfileController;
     private static GardenUserService gardenUserService;
     private static GardenService gardenService;
-    @Mock
     private static PlantService plantService;
 
-    @Mock
     private static PlantRepository plantRepository;
 
     private static GardenUser user;
@@ -273,20 +271,13 @@ public class PublicProfileControllerTest {
         testPlant1.setName("Tomato");
         testGarden.setPlants(List.of(testPlant1));
         testGarden.setOwner(owner);
-        
-        ResponseEntity<List<Map<String, Object>>> response = publicProfileController.searchPlants("tomato");
+
+        when(plantService.getAllPlants(owner, searchTerm)).thenReturn(List.of(testPlant1));
+        ResponseEntity<List<Map<String, Object>>> response = publicProfileController.searchPlants("rose");
+        System.out.println(response);
         List<Map<String, Object>> list = response.getBody();
         assertEquals(20, list.size());
 
-    }
-
-
-    public static String asJsonString(final Object obj) {
-        try {
-            return new ObjectMapper().writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
 }
