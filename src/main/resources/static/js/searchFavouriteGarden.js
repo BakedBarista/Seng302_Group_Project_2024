@@ -28,6 +28,9 @@ function showGardenSearchResults() {
                         const gardenOption = document.createElement('div');
                         const optionName = document.createElement('span');
                         option.setAttribute('data-id', garden.id);
+                        option.setAttribute('data-location', garden.location);
+                        option.setAttribute('data-description', garden.description);
+                        option.setAttribute('data-size', garden.size);
                         optionName.innerHTML = `${garden.name}`;
                         gardenOption.appendChild(optionName);
                         option.appendChild(gardenOption);
@@ -44,7 +47,6 @@ function showGardenSearchResults() {
                         const selectedOption = gardenSelection.options[gardenSelection.selectedIndex];
                         const gardenId = selectedOption.getAttribute('data-id');
                         document.getElementById('selectedGardenId').value = gardenId;
-                        console.log(gardenId);
                     })
                 } else {
                     searchResultsContainer.innerHTML = '<h2>No results found</h2>';
@@ -57,6 +59,27 @@ function showGardenSearchResults() {
 
 
 }
+
+function previewFavouriteGarden() {
+    const gardenId = document.getElementById('selectedGardenId').value;
+    const selectedOption = document.querySelector("#searchGardenResults select option[data-id='" + gardenId + "']");
+
+    if (selectedOption) {
+        const gardenName = selectedOption.textContent;
+        const gardenLocation = selectedOption.getAttribute('data-location');
+        const gardenDescription = selectedOption.getAttribute('data-description');
+        const gardenSize = selectedOption.getAttribute('data-size');
+
+        // Update the preview in the UI
+        document.getElementById('selectedGardenName').textContent = gardenName;
+        document.getElementById('selectedGardenLocation').textContent = gardenLocation;
+        document.getElementById('selectedGardenDescription').textContent = gardenDescription;
+        document.getElementById('selectedGardenSize').textContent = gardenSize;
+    } else {
+        console.log("No garden selected.");
+    }
+}
+
 
 function updateFavouriteGarden() {
     const gardenId = document.getElementById('selectedGardenId').value;

@@ -60,6 +60,7 @@ public class FavouriteGardenController  {
             gardenService.addFavouriteGarden(currentUser.getId(), existingGarden.getId());
         }
         System.out.println(currentUser.getFavoriteGarden());
+
         return ResponseEntity.ok("Favourite Garden Updated");
     }
 
