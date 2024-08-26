@@ -16,12 +16,11 @@ public class PlantDTO extends BasePlant {
 
     private String gardenName;
 
-    public PlantDTO(String name, String count, String description, String plantedDate, String gardenName) {
+    public PlantDTO(String name, String count, String description, String plantedDate) {
         this.name = name;
         this.count = count;
         this.description = description;
         this.plantedDate = plantedDate;
-        this.gardenName = gardenName;
     }
 
     public PlantDTO() {

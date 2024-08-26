@@ -147,24 +147,31 @@ public class PublicProfileController {
         return "users/edit-public-profile";
     }
 
+    /**
+     * Gets all plant that matches the search input
+     *
+     * @param searchTerm search input
+     * @return response entity
+     */
     @PostMapping("users/edit-public-profile/search")
-    public ResponseEntity<List<PlantDTO>> searchPublicGardens(@RequestParam(name = "search", required = false, defaultValue = "") String searchTerm, PlantDTO plantDTO) {
+    public ResponseEntity<List<Map<String, Object>>> searchPlants(@RequestParam(name = "search", required = false, defaultValue = "") String searchTerm) {
 
         logger.info("Searching for {}", searchTerm);
 
-        List<Garden> gardens = gardenService.getGardensByOwnerId(userService.getCurrentUser().getId());
-        logger.info("Gardens owned by {} is {} ", userService.getCurrentUser().getId(), gardens);
+        List<Plant> allPlants = plantService.getAllPlants(userService.getCurrentUser(), searchTerm)
+                .stream().toList();
 
-        ;
+        List<Map<String, Object>> response = new ArrayList<>();
+        allPlants.forEach(p -> {
+            logger.info("each plant {}", p);
+            Map<String, Object> map = new HashMap<>();
+            map.put("name", p.getName());
+            map.put("gardenName", p.getGarden().getName());
+            response.add(map);
+        });
 
+        return ResponseEntity.ok(response);
 
-        List<PlantDTO> plants = gardens.stream()
-                .flatMap(garden -> garden.getPlants().stream())
-                .map(plant -> new PlantDTO(plant.getName(), plant.getCount(), plant.getDescription(), plant.getPlantedDate() == null ? null : plant.getPlantedDate().toString(), plant.getGarden().getName()))
-                .filter(plant -> plant.getName().toLowerCase().contains(searchTerm.toLowerCase()))
-                .toList();
-
-        return ResponseEntity.ok(plants);
     }
 
     /**

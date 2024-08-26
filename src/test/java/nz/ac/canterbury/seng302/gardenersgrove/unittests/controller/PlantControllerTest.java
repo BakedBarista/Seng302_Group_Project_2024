@@ -141,7 +141,7 @@ class PlantControllerTest {
 
     @Test
     void testSubmitAddPlantForm_DataIsValid_ReturnToGardenDetailPage() throws Exception {
-        PlantDTO validPlantDTO = new PlantDTO("Plant", "10", "Yellow", "2024-11-03", "");
+        PlantDTO validPlantDTO = new PlantDTO("Plant", "10", "Yellow", "2024-11-03");
         long gardenId = 0;
         String expectedReturnPage = "redirect:/gardens/" + gardenId;
 
@@ -153,7 +153,7 @@ class PlantControllerTest {
 
     @Test
     void testSubmitAddPlantForm_DataIsInvalid_ReturnToAddPlantForm() throws Exception {
-        PlantDTO invalidPlantDTO = new PlantDTO("#invalid", "10", "Yellow", "2024-11-03", "");
+        PlantDTO invalidPlantDTO = new PlantDTO("#invalid", "10", "Yellow", "2024-11-03");
         long gardenId = 0;
         String expectedReturnPage = "plants/addPlant";
 
@@ -170,7 +170,7 @@ class PlantControllerTest {
      */
     @Test
     void testSubmitAddPlantForm_PlantedDateInvalidFromJS_ReturnToAddPlantForm() {
-        PlantDTO invalidPlantDTO = new PlantDTO("validName", "1", "Yellow", "", "");
+        PlantDTO invalidPlantDTO = new PlantDTO("validName", "1", "Yellow", "");
         long gardenId = 0;
         long plantId = 0;
         String expectedReturnPage = "plants/editPlant";
@@ -189,7 +189,7 @@ class PlantControllerTest {
      */
     @Test
     void testSubmitAddPlantForm_PlantedDateValidFromJS_ReturnToGardenDetailPage_PlantAddedToRepository() {
-        PlantDTO validPlantDTO = new PlantDTO("validName", "1", "Yellow", "", "");
+        PlantDTO validPlantDTO = new PlantDTO("validName", "1", "Yellow", "");
         long gardenId = 0;
         long plantId = 0;
         String expectedReturnPage = "redirect:/gardens/" + gardenId;
@@ -234,7 +234,7 @@ class PlantControllerTest {
 
     @Test
     public void givenOnSubmitEditPlantForm_whenDataIsValid_thenReturnToEditPlantForm() throws Exception {
-        PlantDTO validPlantDTO = new PlantDTO("Plant", "10", "Yellow", "2024-11-03", "");
+        PlantDTO validPlantDTO = new PlantDTO("Plant", "10", "Yellow", "2024-11-03");
         long gardenId = 0;
         long plantId = 0;
         String expectedReturnPage = "redirect:/gardens/" + gardenId;
@@ -252,7 +252,7 @@ class PlantControllerTest {
 
     @Test
     public void gvenOnSubmitEditPlantForm_whenCountIsInvalid_thenReturnToEditPlantForm() throws Exception {
-        PlantDTO invalidPlant = new PlantDTO("Lotus", "abc", "Yellow", "11/03/2024", "");
+        PlantDTO invalidPlant = new PlantDTO("Lotus", "abc", "Yellow", "11/03/2024");
         long gardenId = 0;
         long plantId = 0;
         String expectedReturnPage = "plants/editPlant";
@@ -271,7 +271,7 @@ class PlantControllerTest {
      */
     @Test
     void testSubmitEditPlantForm_PlantedDateInvalidFromJS_ReturnToEditPlantForm() {
-        PlantDTO invalidPlant = new PlantDTO("validName", "1", "Yellow", "", "");
+        PlantDTO invalidPlant = new PlantDTO("validName", "1", "Yellow", "");
         long gardenId = 0;
         long plantId = 0;
         String expectedReturnPage = "plants/editPlant";
@@ -290,7 +290,7 @@ class PlantControllerTest {
      */
     @Test
     void testSubmitEditPlantForm_PlantedDateValidFromJS_ReturnToGardenDetailPage_PlantAddedToRepository() {
-        PlantDTO validPlantDTO = new PlantDTO("validName", "1", "Yellow", "", "");
+        PlantDTO validPlantDTO = new PlantDTO("validName", "1", "Yellow", "");
         long gardenId = 0;
         long plantId = 0;
         String expectedReturnPage = "redirect:/gardens/" + gardenId;
@@ -307,7 +307,7 @@ class PlantControllerTest {
 
     @Test
     public void testSubmitEditPlantForm_NameIsInvalid_ReturnToEditPlantForm() throws Exception {
-        PlantDTO invalidPlantDTO = new PlantDTO("#invalid", "abc", "Yellow", "2024-11-03", "");
+        PlantDTO invalidPlantDTO = new PlantDTO("#invalid", "abc", "Yellow", "2024-11-03");
         long gardenId = 0;
         long plantId = 0;
         String expectedReturnPage = "plants/editPlant";
@@ -397,7 +397,7 @@ class PlantControllerTest {
     void testSubmitEditPlantFormWithImage() {
         long gardenId = 1L;
         long plantId = 1L;
-        PlantDTO plantDTO = new PlantDTO("Plant", "10", "Yellow", "2024-11-03", "");
+        PlantDTO plantDTO = new PlantDTO("Plant", "10", "Yellow", "2024-11-03");
         BindingResult bindingResult = mock(BindingResult.class);
         Optional<Plant> existingPlant = Optional.of(new Plant());
         existingPlant.get().setId(plantId);
@@ -462,7 +462,7 @@ class PlantControllerTest {
 
     @Test
     void whenDateTooOld_ReturnError() {
-        PlantDTO plantDTO = new PlantDTO("Plant", "10", "Yellow", "1799-11-03", "");
+        PlantDTO plantDTO = new PlantDTO("Plant", "10", "Yellow", "1799-11-03");
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
 
@@ -479,7 +479,7 @@ class PlantControllerTest {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String formattedTomorrow = tomorrow.format(formatter);
 
-        PlantDTO plantDTO = new PlantDTO("Plant", "10", "Yellow", formattedTomorrow, "");
+        PlantDTO plantDTO = new PlantDTO("Plant", "10", "Yellow", formattedTomorrow);
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
 

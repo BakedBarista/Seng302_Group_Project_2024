@@ -28,9 +28,9 @@ function showSearchResults() {
                     plantSelection.size = 10;
                     plantList.appendChild(plantSelection);
 
-                    response.forEach(plant => {
+                    response.forEach(
+                        plant => {
                         console.log(plant.name);
-                        console.log(plant.gardenName);
 
                         const option = document.createElement('option');
 
@@ -68,3 +68,4 @@ function showSearchResults() {
 
 
 }
+

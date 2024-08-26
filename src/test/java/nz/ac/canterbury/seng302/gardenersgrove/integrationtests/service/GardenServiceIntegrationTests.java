@@ -57,7 +57,7 @@ public class GardenServiceIntegrationTests {
         garden.setOwner(gardenUser);
         gardenService.addGarden(garden);
 
-        PlantDTO plantDTO = new PlantDTO("Plant Name", "1", "Plant Description", "2000-02-01", "");
+        PlantDTO plantDTO = new PlantDTO("Plant Name", "1", "Plant Description", "2000-02-01");
         plant = plantService.createPlant(plantDTO, garden.getId());
     }
 

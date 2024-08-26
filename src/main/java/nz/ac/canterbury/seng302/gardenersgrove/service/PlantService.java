@@ -1,9 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import org.springframework.stereotype.Service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
@@ -134,7 +133,13 @@ public class PlantService {
         return plantRepository.save(plant);
     }
 
-    public Optional<Plant> getPlantByName(String plantName) {
-        return plantRepository.findByName(plantName);
+    /**
+     *
+     * @param gardenUser garden owner
+     * @param searchTerm search input
+     * @return list of plants
+     */
+    public  List<Plant> getAllPlants(GardenUser gardenUser, String searchTerm) {
+        return plantRepository.findPlantsFromSearch(gardenUser, searchTerm);
     }
 }

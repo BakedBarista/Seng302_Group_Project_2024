@@ -25,7 +25,7 @@ class PlantTest {
 
     @BeforeEach
     void makeGarden() {
-        plant = new PlantDTO("Plant", "1", "Yellow", "01/01/1970", "");
+        plant = new PlantDTO("Plant", "1", "Yellow", "01/01/1970");
     }
 
     @Test

@@ -69,7 +69,7 @@ class PlantHistoryServiceTest {
         garden.setOwner(user);
         gardenService.addGarden(garden);
 
-        PlantDTO plantDTO = new PlantDTO("Rose", "1", "", null, "");
+        PlantDTO plantDTO = new PlantDTO("Rose", "1", "", null);
         plant = plantService.createPlant(plantDTO, garden.getId());
 
         timestamp = Instant.ofEpochSecond(0);

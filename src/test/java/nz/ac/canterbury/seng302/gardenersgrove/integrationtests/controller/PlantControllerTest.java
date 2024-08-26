@@ -125,7 +125,7 @@ public class PlantControllerTest {
         byte[] imageBytes = "test".getBytes();
         String contentType = "image/png";
         MockMultipartFile file = new MockMultipartFile(filename, originalFilename, contentType, imageBytes);
-        PlantDTO testPlantDTO = new PlantDTO("test", "1", "test", "2003-01-01", "");
+        PlantDTO testPlantDTO = new PlantDTO("test", "1", "test", "2003-01-01");
         BindingResult bindingResult = Mockito.mock(BindingResult.class);
         Model model = Mockito.mock(Model.class);
 
@@ -143,7 +143,7 @@ public class PlantControllerTest {
         byte[] imageBytes = "test".getBytes();
         String contentType = "image/gif";
         MockMultipartFile file = new MockMultipartFile(filename, originalFilename, contentType, imageBytes);
-        PlantDTO testPlantDTO = new PlantDTO("test", "1", "test", "2003-01-01", "");
+        PlantDTO testPlantDTO = new PlantDTO("test", "1", "test", "2003-01-01");
         BindingResult bindingResult = Mockito.mock(BindingResult.class);
         Model model = Mockito.mock(Model.class);
 
@@ -161,7 +161,7 @@ public class PlantControllerTest {
         byte[] imageBytes = "test".getBytes();
         String contentType = "image/png";
         MockMultipartFile file = new MockMultipartFile(filename, originalFilename, contentType, imageBytes);
-        PlantDTO testPlantDTO = new PlantDTO("test", "1", "test", "2003-01-01", "");
+        PlantDTO testPlantDTO = new PlantDTO("test", "1", "test", "2003-01-01");
         BindingResult bindingResult = Mockito.mock(BindingResult.class);
         Model model = Mockito.mock(Model.class);
 
@@ -179,7 +179,7 @@ public class PlantControllerTest {
         byte[] imageBytes = "test".getBytes();
         String contentType = "image/gif";
         MockMultipartFile file = new MockMultipartFile(filename, originalFilename, contentType, imageBytes);
-        PlantDTO testPlantDTO = new PlantDTO("test", "1", "test", "2003-01-01", "");
+        PlantDTO testPlantDTO = new PlantDTO("test", "1", "test", "2003-01-01");
         BindingResult bindingResult = Mockito.mock(BindingResult.class);
         Model model = Mockito.mock(Model.class);
 
