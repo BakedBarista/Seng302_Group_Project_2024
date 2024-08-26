@@ -68,7 +68,7 @@ class ApplicationControllerTest {
     }
 
     @Test
-    void testAcceptFriendRequest_requestStatusAccept() {
+    void requestSent_AcceptFriendRequest_requestStatusAccept() {
         List<Friends> receivedRequests = new ArrayList<>();
         receivedRequests.add(friendRequestRecive);
         System.out.println(receivedRequests);
@@ -81,7 +81,7 @@ class ApplicationControllerTest {
     }
 
     @Test
-    void testAcceptRequest_WhenNotReceived() {
+    void AcceptRequest_WhenNotReceived_SentRequest() {
         List<Friends> receivedRequests = new ArrayList<>();
         List<Friends> sentRequests = new ArrayList<>();
         sentRequests.add(friendRequestSend);
@@ -98,7 +98,7 @@ class ApplicationControllerTest {
     }
 
     @Test
-    void testAcceptRequest_WhenNotReceivedOrSent() {
+    void testAcceptRequest_WhenNotReceivedOrSent_SentRequest() {
         List<Friends> receivedRequests = new ArrayList<>();
         List<Friends> sentRequests = new ArrayList<>();
 
