@@ -1,5 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.gardens;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
@@ -39,8 +42,17 @@ public class FavouriteGardenController  {
     }
 
     @PutMapping("/users/edit-public-profile/favourite-garden")
-    public ResponseEntity<String> updateFavouriteGarden(@RequestParam(name="id") Long id) {
-        Optional<Garden> garden = gardenService.getGardenById(id);
+    public ResponseEntity<String> updateFavouriteGarden(@RequestBody String id) throws JsonProcessingException {
+        System.out.println(id);
+        ObjectMapper mapper = new ObjectMapper();
+        long gardenId;
+        try {
+            Map<String, Object> map = mapper.readValue(id, Map.class);
+            gardenId = Long.parseLong(map.get("id").toString());
+        } catch (JsonProcessingException e) {
+            return ResponseEntity.badRequest().body("Invalid json format");
+        }
+        Optional<Garden> garden = gardenService.getGardenById(gardenId);
         GardenUser currentUser = gardenUserService.getCurrentUser();
         Garden existingGarden = new Garden();
         if (garden.isPresent()) {

@@ -91,7 +91,7 @@ public class GardenUser {
     private List<Plant> favouritePlants;
 
     @PrimaryKeyJoinColumn
-    @OneToOne(mappedBy = "favouriteGarden")
+    @OneToOne(mappedBy = "favouriteGarden", cascade = CascadeType.ALL, orphanRemoval = true)
     private Garden favoriteGarden;
 
     /**

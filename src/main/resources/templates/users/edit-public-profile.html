@@ -36,7 +36,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form class="input-group w-100" th:action="@{/users/edit-public-profile/favourite-garden}" method="post" id="searchGardenForm">
+                    <form class="input-group w-100" id="searchGardenForm">
+                        <input type="hidden" id="selectedGardenId">
                         <input type="text" class="form-control" placeholder="Search Garden" id="searchGardenInput"
                                aria-label="Search gardens" aria-describedby="button-addon" name="search">
                         <div class="input-group-append">
@@ -51,6 +52,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick=updateFavouriteGarden()>Submit</button>
                 </div>
 
                 <script th:src="@{/js/searchFavouriteGarden.js}"></script>
