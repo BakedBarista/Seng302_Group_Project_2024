@@ -1,11 +1,13 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unittests.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.PublicProfileController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 
@@ -23,6 +25,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.web.servlet.MockMvc;
@@ -65,7 +68,12 @@ public class PublicProfileControllerTest {
     private static PublicProfileController publicProfileController;
     private static GardenUserService gardenUserService;
     private static GardenService gardenService;
+    @Mock
     private static PlantService plantService;
+
+    @Mock
+    private static PlantRepository plantRepository;
+
     private static GardenUser user;
     private static Model model;
     private static Authentication authentication;
@@ -92,6 +100,7 @@ public class PublicProfileControllerTest {
         plantService = Mockito.mock(PlantService.class);
         gardenService = Mockito.mock(GardenService.class);
         authentication = Mockito.mock(Authentication.class);
+        plantRepository = Mockito.mock(PlantRepository.class);
         user = new GardenUser();
         publicProfileController = new PublicProfileController(gardenUserService, profanityService, gardenService, plantService);
         loggedInUser = new GardenUser();
@@ -252,15 +261,23 @@ public class PublicProfileControllerTest {
 
     @Test
     void givenISearchAPlant_whenPlantExists_thenResponseReturn() throws Exception {
-        String searchTerm = "Tomato";
-        Plant testPlant1 = new Plant("Tomato", "", "", LocalDate.of(1999, 10, 10));
         Garden testGarden = new Garden("Garden", "1","Ilam Road","Ilam",
                 "Christchurch","New Zealand","8041",1.0,2.0, "Big", null);
+        String searchTerm = "Tomato";
+        Plant testPlant = new Plant();
+        testPlant.setName("Tomato");
+//        testPlant.setGarden(testGarden);
+        testGarden.setPlants(List.of(testPlant));
+        testGarden.setOwner(loggedInUser);
 
-        given(plantService.getAllPlants(user, searchTerm)).willReturn(List.of(testPlant1));
-        ResponseEntity<List<Map<String, Object>>> result = publicProfileController.searchPlants(searchTerm);
-        System.out.println(result);
-        assertFalse(result.toString().isEmpty());
+//        when(plantRepository.findPlantsFromSearch(testGarden.getOwner(), searchTerm)).thenReturn(List.of(testPlant));
+//        when(plantService.getAllPlants(testGarden.getOwner(), searchTerm)).thenReturn(List.of(testPlant));
+
+//        ResponseEntity<List<Map<String, Object>>> result = publicProfileController.searchPlants(searchTerm);
+//        System.out.println(result);
+//        assertFalse(result.toString().isEmpty());
+
+
 
         // post request
 //        mockMvc.perform(post("http://localhost:8080/users/edit-public-profile/search")
@@ -270,13 +287,26 @@ public class PublicProfileControllerTest {
 //                .andExpect(status().isOk());
 
         // post request
-        mockMvc.perform(post("http://localhost:8080/users/edit-public-profile/search")
-                        .content(asJsonString(new ResponseEntity<List<Map<String, Object>>>(HttpStatusCode.valueOf(200))))
-                        .content(asJsonString(new HashMap<>()))
+//        mockMvc.perform(post("http://localhost:8080/users/edit-public-profile/search")
+//                        .param("search", searchTerm)
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .accept(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$[0].name").value("Tomato"))
+//                .andExpect(jsonPath("$[0].gardenName").value("Test Garden"));
+
+        MockHttpServletResponse result = mockMvc.perform(post("/users/edit-public-profile/search")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .content(searchTerm)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse();
+
+        System.out.println("Result: " + result);
+
     }
+
 
     public static String asJsonString(final Object obj) {
         try {

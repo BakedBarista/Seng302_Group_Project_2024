@@ -156,8 +156,6 @@ public class PublicProfileController {
     @PostMapping("users/edit-public-profile/search")
     public ResponseEntity<List<Map<String, Object>>> searchPlants(@RequestParam(name = "search", required = false, defaultValue = "") String searchTerm) {
 
-        logger.info("Searching for {}", searchTerm);
-
         List<Plant> allPlants = plantService.getAllPlants(userService.getCurrentUser(), searchTerm)
                 .stream().toList();
 
