@@ -156,12 +156,13 @@ public class PublicProfileController {
     @PostMapping("users/edit-public-profile/search")
     public ResponseEntity<List<Map<String, Object>>> searchPlants(@RequestParam(name = "search", required = false, defaultValue = "") String searchTerm) {
 
+        logger.info("Searching for {}", searchTerm);
+
         List<Plant> allPlants = plantService.getAllPlants(userService.getCurrentUser(), searchTerm)
                 .stream().toList();
 
         List<Map<String, Object>> response = new ArrayList<>();
         allPlants.forEach(p -> {
-            logger.info("each plant {}", p);
             Map<String, Object> map = new HashMap<>();
             map.put("name", p.getName());
             map.put("gardenName", p.getGarden().getName());

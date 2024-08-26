@@ -29,6 +29,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -261,47 +262,24 @@ public class PublicProfileControllerTest {
 
     @Test
     void givenISearchAPlant_whenPlantExists_thenResponseReturn() throws Exception {
+        GardenUser owner = new GardenUser("", "", "", "", LocalDate.of(1970, 1, 1));
+        owner.setId(1L);
+
         Garden testGarden = new Garden("Garden", "1","Ilam Road","Ilam",
                 "Christchurch","New Zealand","8041",1.0,2.0, "Big", null);
+
         String searchTerm = "Tomato";
-        Plant testPlant = new Plant();
-        testPlant.setName("Tomato");
-//        testPlant.setGarden(testGarden);
-        testGarden.setPlants(List.of(testPlant));
-        testGarden.setOwner(loggedInUser);
-
-//        when(plantRepository.findPlantsFromSearch(testGarden.getOwner(), searchTerm)).thenReturn(List.of(testPlant));
-//        when(plantService.getAllPlants(testGarden.getOwner(), searchTerm)).thenReturn(List.of(testPlant));
-
-//        ResponseEntity<List<Map<String, Object>>> result = publicProfileController.searchPlants(searchTerm);
-//        System.out.println(result);
-//        assertFalse(result.toString().isEmpty());
-
-
-
-        // post request
-//        mockMvc.perform(post("http://localhost:8080/users/edit-public-profile/search")
-//                .content(asJsonString(new ResponseEntity<List<Map<String, Object>>>(HttpStatusCode.valueOf(200))))
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk());
-
-        // post request
-//        mockMvc.perform(post("http://localhost:8080/users/edit-public-profile/search")
-//                        .param("search", searchTerm)
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$[0].name").value("Tomato"))
-//                .andExpect(jsonPath("$[0].gardenName").value("Test Garden"));
-
-        MockHttpServletResponse result = mockMvc.perform(post("/users/edit-public-profile/search")
+        Plant testPlant1 = new Plant("Rose", "5", "Flower", LocalDate.of(1970, 1, 1));
+        testPlant1.setName("Tomato");
+        testGarden.setPlants(List.of(testPlant1));
+        testGarden.setOwner(owner);
+        
+        MvcResult result = mockMvc.perform(post("/users/edit-public-profile/search")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(searchTerm)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andReturn()
-                .getResponse();
+                .andReturn();
 
         System.out.println("Result: " + result);
 
