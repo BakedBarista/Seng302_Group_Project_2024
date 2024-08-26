@@ -63,6 +63,8 @@ public class PublicProfileController {
         model.addAttribute("name", user.getFullName());
         model.addAttribute(DESCRIPTION, user.getDescription());
         model.addAttribute("favouritePlants", user.getFavouritePlants());
+        System.out.println("Heyo" + user.getFavoriteGarden());
+        model.addAttribute("favouriteGarden", user.getFavoriteGarden());
 
         return "users/public-profile";
     }

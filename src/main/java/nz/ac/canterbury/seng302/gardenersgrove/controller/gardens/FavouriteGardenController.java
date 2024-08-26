@@ -8,6 +8,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 
@@ -42,7 +43,7 @@ public class FavouriteGardenController  {
     }
 
     @PutMapping("/users/edit-public-profile/favourite-garden")
-    public ResponseEntity<String> updateFavouriteGarden(@RequestBody String id) throws JsonProcessingException {
+    public ResponseEntity<String> updateFavouriteGarden(@RequestBody String id, Model model) throws JsonProcessingException {
         System.out.println(id);
         ObjectMapper mapper = new ObjectMapper();
         long gardenId;
@@ -58,8 +59,9 @@ public class FavouriteGardenController  {
         if (garden.isPresent()) {
             existingGarden = garden.get();
             gardenService.addFavouriteGarden(currentUser.getId(), existingGarden.getId());
+            model.addAttribute("favouriteGarden", existingGarden);
         }
-        System.out.println(currentUser.getFavoriteGarden());
+
 
         return ResponseEntity.ok("Favourite Garden Updated");
     }
