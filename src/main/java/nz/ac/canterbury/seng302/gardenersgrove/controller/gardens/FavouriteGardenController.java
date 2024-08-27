@@ -6,6 +6,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import org.apache.juli.logging.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -20,6 +23,8 @@ import java.util.Optional;
 @RestController
 public class FavouriteGardenController  {
 
+    Logger logger = LoggerFactory.getLogger(FavouriteGardenController.class);
+
     private GardenService gardenService;
     private GardenUserService gardenUserService;
 
@@ -32,19 +37,15 @@ public class FavouriteGardenController  {
 
     @PostMapping("/users/edit-public-profile/favourite-garden")
     public ResponseEntity<List<Garden>> favouriteGarden(@RequestParam(name="search",required = false,defaultValue = "") String searchTerm) {
-        System.out.println(searchTerm);
+        logger.info("{}",searchTerm);
         GardenUser currentUser = gardenUserService.getCurrentUser();
         List <Garden> publicGardens = gardenService.getPublicGardensByOwnerId(currentUser).stream().filter(garden-> garden.getName().toLowerCase().contains(searchTerm.toLowerCase())).toList();
-        System.out.println(publicGardens);
-
-
-
         return ResponseEntity.ok(publicGardens);
     }
 
     @PutMapping("/users/edit-public-profile/favourite-garden")
     public ResponseEntity<String> updateFavouriteGarden(@RequestBody String id, Model model) throws JsonProcessingException {
-        System.out.println(id);
+        logger.info("Updating");
         ObjectMapper mapper = new ObjectMapper();
         long gardenId;
         try {
