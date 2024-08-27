@@ -40,25 +40,25 @@ public class ApplicationController {
         this.friendService = friendService;
     }
 
-    /**
-     * Controls the initial home page controller when navigating to '/'
-     * @return the home page
-     */
-    @GetMapping("/")
-    public String home( Model model) {
-        logger.info("GET /");
-        try {
-            GardenUser owner = gardenUserService.getCurrentUser();
-            if(owner.getId() != null) {
-                List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
-                model.addAttribute("gardens", gardens);
-            }
-        }
-        catch (Exception e) {
-        logger.error("Error getting gardens for user");
-        }
-        return "home";
-    }
+    // /**
+    //  * trivial method
+    //  * @return's a constant
+    //  */
+    // @GetMapping("/")
+    // public String home( Model model) {
+    //     logger.info("GET /");
+    //     try {
+    //         GardenUser owner = gardenUserService.getCurrentUser();
+    //         if(owner.getId() != null) {
+    //             List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
+    //             model.addAttribute("gardens", gardens);
+    //         }
+    //     }
+    //     catch (Exception e) {
+    //     logger.error("Error getting gardens for user");
+    //     }
+    //     return "home";
+    // }
 
     /**
      * Controls the initial home page controller when navigating to '/'
@@ -117,7 +117,6 @@ public class ApplicationController {
         response.put("success", success);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
-
 
     @GetMapping("/ws-test")
     public String wsTest() {

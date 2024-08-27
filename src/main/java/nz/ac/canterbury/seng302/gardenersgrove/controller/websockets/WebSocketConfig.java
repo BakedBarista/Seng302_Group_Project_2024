@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.websockets;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.WebSocketHandler;
@@ -17,9 +18,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
     private ObjectMapper objectMapper;
+    private String serverOrigin;
 
-    public WebSocketConfig(ObjectMapper objectMapper) {
+    public WebSocketConfig(ObjectMapper objectMapper, @Value("${gardenersgrove.server.origin:*}") String serverOrigin) {
         this.objectMapper = objectMapper;
+        this.serverOrigin = serverOrigin;
     }
 
     /**
@@ -29,7 +32,8 @@ public class WebSocketConfig implements WebSocketConfigurer {
 	@Override
 	public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(testWebSocketHandler(), "/api/messages")
-        			.addInterceptors(new HttpSessionHandshakeInterceptor());
+                .setAllowedOrigins(serverOrigin)
+                .addInterceptors(new HttpSessionHandshakeInterceptor());
 	}
 
     /**
