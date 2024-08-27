@@ -305,7 +305,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .text-truncate-multiline {
     overflow-y: auto;
-    height: 6em;
+    height: 11em;
 }
 
 .public-profile-picture-padding {
@@ -797,14 +797,16 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .heart-icon {
-    width: 24px;
-    height: 24px;
+    width: 50x;
+    height: 50px;
     transition: transform 0.3s ease;
 }
 
 .btn:hover .heart-icon {
-    transform: scale(1.2);
+    transform: scale(1.1);
 }
+
+
 
 
 @media (max-width: 768px) {
