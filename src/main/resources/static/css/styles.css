@@ -1,9 +1,9 @@
 /* Colors */
 :root {
-    --gg-dark: #E8CB67;
-    --gg-primary: #395C0A;
+    --gg-dark: #b89006;
+    --gg-primary: #CB9F03;
     --gg-primary-rgb: 57, 92, 10;
-    --gg-primary-light: #608530;
+    --gg-primary-light: #b89006;
     --gg-secondary: #A4AF69;
     --gg-secondary-rgb: 164, 175, 105;
     --gg-secondary-dark: #8C9D34;
@@ -20,7 +20,7 @@
     --gg-black: #1E1E1E;
     --gg-black-rgb: 30, 30, 30;
 
-    --gg-heading-font: "DM Serif Display", serif;
+    --gg-heading-font: "Montserrat", sans-serif;
     --gg-body-font: "Open Sans", sans-serif;
 
 
@@ -48,13 +48,21 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-    font-family: "DM Serif Display", serif;
-    font-weight: 400;
+    font-family: "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
     font-style: normal;
 }
 
 .about-me {
     font-size: 18px;
+}
+
+.montserrat-heading {
+     font-family: "Montserrat", sans-serif;
+     font-optical-sizing: auto;
+     font-weight: 600;
+     font-style: normal;
 }
 
 .averia-serif-libre-bold {
@@ -79,7 +87,7 @@ h1, h2, h3, h4, h5, h6 {
     --bs-btn-color: var(--gg-white);
     --bs-btn-bg: var(--gg-primary);
     --bs-btn-border-color: var(--gg-primary);
-    --bs-btn-hover-color: var(--gg-white);
+
     --bs-btn-hover-bg: var(--gg-primary-light);
     --bs-btn-hover-border-color: var(--gg-primary-light);
     --bs-btn-focus-shadow-rgb: var(--gg-primary-rgb);
@@ -89,6 +97,13 @@ h1, h2, h3, h4, h5, h6 {
     --bs-btn-disabled-color: white;
     --bs-btn-disabled-bg: var(--gg-pale);
     --bs-btn-disabled-border-color: var(--gg-primary);
+}
+.btn-change {
+    --bs-btn-bg: #E8CB67;
+    --bs-btn-hover-bg: #ffe58b;
+    --bs-btn-hover-border-color: var(--gg-black);
+    --bs-btn-focus-shadow-rgb: var(--gg-primary-rgb);
+    --bs-btn-color: var(--gg-black);
 }
 
 .button-not-planted {
@@ -175,7 +190,7 @@ h1, h2, h3, h4, h5, h6 {
 /* Navbar and drawer specifics */
 :root {
     --gg-nav-drawer-width: 300px;
-    --gg-nav-drawer-padding: 28px;
+    --gg-nav-drawer-padding: 15px;
 }
 
 .nav-drawer {
@@ -199,6 +214,17 @@ h1, h2, h3, h4, h5, h6 {
         width: var(--gg-nav-drawer-width);
         height: 100vh;
         overflow-y: auto;
+    }
+
+    #navbarLogo {
+        width: 100%;
+    }
+}
+
+@media (max-width: 767.98px) {
+    #navbarLogo {
+        max-width: 200px;
+        width:80%;
     }
 }
 
@@ -231,7 +257,6 @@ h1, h2, h3, h4, h5, h6 {
 
 .nav-drawer li a {
     height: 50px;
-
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -283,6 +308,11 @@ h1, h2, h3, h4, h5, h6 {
 .public-profile-picture {
     border-radius: 999px;
     border: 10px white solid;
+}
+
+.text-truncate-multiline {
+    overflow-y: auto;
+    height: 6em;
 }
 
 .public-profile-picture-padding {
@@ -684,6 +714,9 @@ h1, h2, h3, h4, h5, h6 {
 
 .public-profile-plant-card {
     width: 200px;
+    height: 180px;
+}
+.public-profile-garden-card {
     height: 180px;
 }
 

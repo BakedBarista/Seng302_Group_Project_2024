@@ -33,6 +33,7 @@ public class TestWebSocketHandler extends TextWebSocketHandler {
 
 	/**
 	 * Handles an incoming WebSocket message.
+	 * @throws IOException 
 	 */
 	@Override
 	public void handleTextMessage(WebSocketSession session, TextMessage wsMessage) {
@@ -60,6 +61,14 @@ public class TestWebSocketHandler extends TextWebSocketHandler {
 				logger.info("increment");
 				counter++;
 				broadcastState();
+				break;
+			case "ping":
+				try {
+					session.sendMessage(new TextMessage("{\"type\":\"pong\"}"));
+				} catch (IOException e) {
+					// Ignore errors when responding to ping messages
+					return;
+				}
 				break;
 			default:
 				logger.error("Unknown message type: {}", message.get("type").asText());

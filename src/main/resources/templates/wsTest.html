@@ -21,6 +21,11 @@
             const ws = new WebSocket(url);
             ws.addEventListener('open', () => {
                 ws.send(JSON.stringify({ type: 'subscribe' }));
+
+                // Periodically send ping messages to keep the connection alive
+                setInterval(() => {
+                    ws.send(JSON.stringify({ type: 'ping' }));
+                }, 5000);
             });
 
             const counter = document.getElementById('counter');
