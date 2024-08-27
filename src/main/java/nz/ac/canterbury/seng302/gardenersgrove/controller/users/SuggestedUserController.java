@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.SuggestedUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,16 +31,18 @@ public class SuggestedUserController {
 
     private final GardenService gardenService;
     private final GardenUserService gardenUserService;
-    private FriendService friendService;
+    private final FriendService friendService;
+    private final SuggestedUserService suggestedUserService;
     private static final String PASSWORD = "password";
     private final GardenUser user4 = new GardenUser("Max", "Doe", "max@gmail.com", PASSWORD,
             LocalDate.of(1970, 1, 1));
 
     @Autowired
-    public SuggestedUserController(GardenService gardenService, GardenUserService gardenUserService, FriendService friendService) {
+    public SuggestedUserController(GardenService gardenService, GardenUserService gardenUserService, FriendService friendService, SuggestedUserService suggestedUserService) {
         this.gardenService = gardenService;
         this.gardenUserService = gardenUserService;
         this.friendService = friendService;
+        this.suggestedUserService = suggestedUserService;
     }
 
     /**
@@ -86,40 +89,63 @@ public class SuggestedUserController {
         Map<String, Object> response = new HashMap<>();
         boolean success = false;
 
-        if ("accept".equals(action) && !requestedId.equals(loggedInUserId)) {
-            if (alreadyFriends == null) {
-                // Not already friends
-                List<Friends> sentRequests = friendService.getSentRequests(loggedInUserId);
-                List<Friends> receivedRequests = friendService.getReceivedRequests(loggedInUserId);
+        List<Friends> receivedRequests = friendService.getReceivedRequests(loggedInUserId);
+        if ("decline".equals(action)) {
+            logger.info("Decline button clicked");
+        }
 
-                // Attempt to accept an existing friend request
-                for (Friends receivedRequest : receivedRequests) {
-                    if (receivedRequest.getSender().getId().equals(requestedId)) {
-                        receivedRequest.setStatus(Friends.Status.ACCEPTED);
-                        friendService.save(receivedRequest);
-                        success = true;
-                        break;
-                    }
-                }
-
-                // If no request was accepted, check if a request was already sent
-                if (!success) {
-                    boolean requestAlreadySent = false;
-                    for (Friends sentRequest : sentRequests) {
-                        if (sentRequest.getReceiver().getId().equals(requestedId)) {
-                            requestAlreadySent = true;
-                            break;
-                        }
-                    }
-
-                    // If no request was already sent, send a new request
-                    if (!requestAlreadySent) {
-                        Friends newRequest = new Friends(loggedInUser, requestedUser, Friends.Status.PENDING);
-                        friendService.save(newRequest);
-                    }
+        if ("accept".equals(action) && !requestedId.equals(loggedInUserId) && alreadyFriends == null) {
+            // Attempt to accept an existing friend request
+            for (Friends receivedRequest : receivedRequests) {
+                if (receivedRequest.getSender().getId().equals(requestedId)) {
+                    receivedRequest.setStatus(Friends.Status.ACCEPTED);
+                    friendService.save(receivedRequest);
+                    success = true;
+                    break;
                 }
             }
+
+            // If no request was accepted, check if a request was already sent
+            if (!success) {
+                boolean requestAlreadySent = suggestedUserService.isRequestSent(loggedInUserId, requestedId);
+
+                if (!requestAlreadySent) {
+                    Friends newRequest = new Friends(loggedInUser, requestedUser, Friends.Status.PENDING);
+                    friendService.save(newRequest);
+                }
+            }
+        } else if ("decline".equals(action) && !requestedId.equals(loggedInUserId) && alreadyFriends == null) {
+            logger.info("Decline button pressed by: {} on: {}", loggedInUserId, requestedId);
+
+            // If a request exists from the other user, we decline it
+            for (Friends receivedRequest : receivedRequests) {
+                if (receivedRequest.getSender().getId().equals(requestedId)) {
+                    logger.info("There was a pending request from that user, declining them.");
+                    receivedRequest.setStatus(Friends.Status.DECLINED);
+                    friendService.save(receivedRequest);
+                    success = true;
+                    break;
+                }
+            }
+
+            // If there is no existing request from the other user
+            if (!success) {
+                boolean requestAlreadySent = suggestedUserService.isRequestSent(loggedInUserId, requestedId);
+
+                // If we haven't already sent the user a request of some kind then we create a declined invitation.
+                if (!requestAlreadySent) {
+                    logger.info("There was no pending request, creating a decline to hide user from feed.");
+                    Friends newRequest = new Friends(loggedInUser, requestedUser, Friends.Status.DECLINED);
+                    friendService.save(newRequest);
+                }
+            }
+
+
+            // TODO: Implement hiding them in the feed in Make the connection feed work task
+            // NB: You shouldn't be able to see people in the feed that YOU have sent a request to. i.e. hearted them
         }
+
+
         // telling us when to trigger the toast, only when we have made a connection!
         response.put("success", success);
         return ResponseEntity.status(HttpStatus.OK).body(response);
