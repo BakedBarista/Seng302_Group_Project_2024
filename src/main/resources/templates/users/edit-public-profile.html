@@ -135,7 +135,8 @@
                            aria-hidden=""
                            alt="edit"
                            width="20"
-                           height="20" /> Change
+                           height="20" />
+                      <span th:text="${favouriteGarden != null ? 'Change' : 'Add'}">Change</span>
                   </a>
               </div>
               <th:block th:insert="~{fragments/favourite-garden.html :: favourite-garden}"></th:block>
