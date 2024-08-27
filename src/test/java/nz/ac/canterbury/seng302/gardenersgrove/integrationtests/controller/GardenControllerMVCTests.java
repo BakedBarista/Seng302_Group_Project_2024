@@ -20,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -32,8 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 @ExtendWith(MockitoExtension .class)
 public class GardenControllerMVCTests {
@@ -140,13 +140,21 @@ public class GardenControllerMVCTests {
         invalidGardenDTO.setSubmissionToken((String) session.getAttribute("submissionToken"));
         invalidGardenDTO.setName("");
 
-        mockMvc.perform(post("/gardens/create")
-                .session((MockHttpSession) session)
-                .flashAttr("garden",invalidGardenDTO))
-                .andExpect(status().isOk())
-                .andExpect(view().name("gardens/createGarden"))
-                .andExpect(model().attributeHasFieldErrors("garden","name"))
-                .andReturn();
+        MockMultipartFile mockMultipartFile = new MockMultipartFile(
+                "image",
+                "test-image.jpg",
+                "image/jpeg",
+                "Some Image Content".getBytes()
+        );
+
+        mockMvc.perform(multipart("/gardens/create")
+                        .file(mockMultipartFile)
+                        .session((MockHttpSession) session)
+                        .flashAttr("garden",invalidGardenDTO))
+                        .andExpect(status().isOk())
+                        .andExpect(view().name("gardens/createGarden"))
+                        .andExpect(model().attributeHasFieldErrors("garden","name"))
+                        .andReturn();
 
         //Check referer still exists in session
         assertNotNull(session.getAttribute("referer"));
