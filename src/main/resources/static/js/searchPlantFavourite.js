@@ -1,5 +1,4 @@
 function showSearchResults() {
-    console.log("Button Pressed")
 
     document.getElementById('searchForm').addEventListener('submit', function(event) {
         event.preventDefault();
@@ -7,7 +6,7 @@ function showSearchResults() {
         const searchResultsContainer = document.getElementById('searchResults');
         console.log("Searching for:", searchTerm);
 
-        fetch(`edit-public-profile/search?search=`+ encodeURIComponent(searchTerm), {
+        fetch(`${baseUrl}users/edit-public-profile/search?search=` + encodeURIComponent(searchTerm), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -15,57 +14,37 @@ function showSearchResults() {
             },
             body: JSON.stringify({searchTerm: searchTerm}),
         }).then(response => response.json())
-            .then( response => {
-                console.log("data {}", response);
-                const plantList = document.getElementById('searchResults');
-
+            .then(response => {
+                searchResultsContainer.innerHTML = '';
                 if (response.length > 0) {
-                    searchResultsContainer.innerHTML = '<h2>Results</h2>'
+                    const customSelect = document.createElement('div');
+                    customSelect.classList.add('custom-select');
 
-                    const plantSelection = document.createElement('select');
-                    //plantSelection.innerHTML = '';
-                    plantSelection.classList.add('form-select');
-                    plantSelection.size = 10;
-                    plantList.appendChild(plantSelection);
+                    const items = document.createElement('div');
+                    items.classList.add('select-items');
 
-                    response.forEach(
-                        plant => {
-                        console.log(plant.name);
+                    response.forEach(plant => {
+                        const option = document.createElement('div');
+                        const imageElement = document.createElement('img');
+                        imageElement.src = `${baseUrl}plants/${plant.id}/plant-image`;
+                        imageElement.alt = plant.name;
 
-                        const option = document.createElement('option');
+                        option.appendChild(imageElement);
+                        option.appendChild(document.createTextNode(` ${plant.name} (${plant.gardenName})`));
+                        option.dataset.value = plant.id;
 
-                        const plantOption = document.createElement('div');
-                        const optionName = document.createElement('span');
-                        optionName.innerHTML = `${plant.name}` + ` (${plant.gardenName})`;
-                        plantOption.appendChild(optionName);
+                        items.appendChild(option);
+                    });
 
-                        option.appendChild(plantOption);
+                    customSelect.appendChild(items);
+                    searchResultsContainer.appendChild(customSelect);
 
-                        // Styling for option list
-                        option.style.padding = '10px';
-                        option.style.borderRadius = '5px';
-                        option.style.border = '1px solid #ccc';
-                        option.style.cursor = 'pointer';
-
-                        option.addEventListener('mouseover', () => {
-                            option.style.backgroundColor = '#d3d3d3';
-                        })
-
-                        option.addEventListener('mouseover', () => {
-                            option.style.backgroundColor = '';
-                        })
-
-                        plantSelection.appendChild(option);
-
-                    })
                 } else {
-                        searchResultsContainer.innerHTML = '<h2>No results found</h2>'
+                    searchResultsContainer.innerHTML = '<h2>No results found</h2>';
                 }
             }).catch(error => {
-                console.log('Error: ', error);
-        })
-    })
-
-
+            console.log('Error: ', error);
+        });
+    });
 }
 

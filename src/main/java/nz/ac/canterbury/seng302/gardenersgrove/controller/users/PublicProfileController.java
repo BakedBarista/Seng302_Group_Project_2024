@@ -166,6 +166,8 @@ public class PublicProfileController {
             Map<String, Object> map = new HashMap<>();
             map.put("name", p.getName());
             map.put("gardenName", p.getGarden().getName());
+            map.put("image", p.getPlantImage());
+            map.put("id", p.getId());
             response.add(map);
         });
 
