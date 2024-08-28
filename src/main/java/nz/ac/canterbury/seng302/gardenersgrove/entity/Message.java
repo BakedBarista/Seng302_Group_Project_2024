@@ -26,7 +26,7 @@ public class Message {
     private String messageContent;
 
     /**
-     * For the JPA thing
+     * Empty constructor - required for JPA since this is an @Entity
      */
     public Message() {
     }
