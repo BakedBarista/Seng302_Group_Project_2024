@@ -15,9 +15,9 @@
             <a th:if="${currentUser == userId}" th:href="@{edit-public-profile}" class="btn btn-primary">Edit</a>
         </p>
         <img
-            class="card-img-top img-fluid fixed-height mb-4"
-            th:src="@{'/users/' + ${userId} + '/profile-banner'}"
-            alt="profile banner"
+                class="card-img-top img-fluid fixed-height mb-4"
+                th:src="@{'/users/' + ${userId} + '/profile-banner'}"
+                alt="profile banner"
         />
         <img
                 class="public-profile-picture position-absolute top-0 end-0 public-profile-picture-padding me-2"
@@ -39,14 +39,21 @@
             <a th:href="@{edit-public-profile}" class="btn btn-primary">Edit</a>
         </p>
 
+
+
+        <div class="card m-4 p-4 mt-1 border-0 rounded-3 shadow-sm " style="background-color: #F9EFCC">
+            <h4>My Favourite Garden</h4>
+
+            <th:block th:insert="~{fragments/favourite-garden.html :: favourite-garden}"></th:block>
+        </div>
+
         <div class="card m-4 p-4 mt-1 border-0 rounded-3 shadow-sm" style="background-color: #F9EFCC">
             <h4>My Favourite Plants...</h4>
-
             <div class="ms-5 me-5">
                 <div class="d-flex flex-wrap flex-md-nowrap">
-                    <!-- Non-empty card -->
+                    <!-- for each on favourite plants-->
+                    <!-- non-empty card -->
                     <div class="card p-2 me-3 mb-3 border-0 rounded-3 d-flex shadow-sm public-profile-plant-card bg-primary-temp">
-                        <!-- Placeholder image -->
                         <img
                                 class="mx-auto d-block pt-1"
                                 th:src="@{'/plants/10/plant-image'}"
@@ -57,12 +64,14 @@
                         <h4 class="pt-2 ps-2">Banana</h4>
                     </div>
 
-                    <!-- Empty card -->
-                    <div class="card p-2 me-3 mb-3 border-0 rounded-3 shadow-sm public-profile-plant-card justify-content-center bg-primary-grey">
+                    <!-- empty card -->
+                    <div class="card p-2 me-3 mb-3 border-0 rounded-3 shadow-sm public-profile-plant-card justify-content-center card-wiggle bg-primary-grey" onclick="openPlantSelectorModal(1)">
+                        <img th:src="@{/icons/create-mustard-grey.svg}" class="mx-auto d-block" aria-hidden="true" alt="empty-favourite" width="50" height="50" />
                     </div>
 
-                    <!-- Empty card -->
-                    <div class="card p-2 me-3 mb-3 border-0 rounded-3 shadow-sm public-profile-plant-card justify-content-center bg-primary-grey">
+                    <!-- empty card -->
+                    <div class="card p-2 me-3 mb-3 border-0 rounded-3 shadow-sm public-profile-plant-card justify-content-center card-wiggle bg-primary-grey" onclick="openPlantSelectorModal(1)">
+                        <img th:src="@{/icons/create-mustard-grey.svg}" class="mx-auto d-block" aria-hidden="true" alt="empty-favourite" width="50" height="50" />
                     </div>
                 </div>
             </div>

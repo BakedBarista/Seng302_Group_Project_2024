@@ -3,7 +3,7 @@
 
 **Task Name:** *replace*
 
-[**SonarQube Link**](https://sonarqube.csse.canterbury.ac.nz/dashboard?id=seng302-2024-team800&branch=branch-name-here)
+<!-- No need to add SonarQube link as it will be linked automatically -->
 
 ### Task Description:
 *Copy the task description here*
