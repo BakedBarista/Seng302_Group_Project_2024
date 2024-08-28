@@ -67,7 +67,7 @@ public class U14WeatherMonitoringFeature {
         GardenWeatherRepository gardenWeatherRepository = mock(GardenWeatherRepository.class);
         restTemplate = mock(RestTemplate.class);
         GardenUserService userService = new GardenUserService(gardenUserRepository);
-        gardenService = new GardenService(gardenRepository);
+        gardenService = new GardenService(gardenRepository, gardenUserRepository);
         gardenWeatherService = new GardenWeatherService(gardenWeatherRepository);
         FriendService friendService = new FriendService(friendsRepository);
         plantService = new PlantService(plantRepository, gardenRepository);

@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,6 +36,8 @@ public class GardenServiceTest {
     private GardenRepository gardenRepository;
     private GardenService gardenService;
 
+    private GardenUserRepository gardenUserRepository;
+
     @Mock
     private Pageable pageable;
 
@@ -44,7 +47,8 @@ public class GardenServiceTest {
     @BeforeEach
     public void setUp() {
         gardenRepository = mock(GardenRepository.class);
-        gardenService = new GardenService(gardenRepository);
+        gardenUserRepository = mock(GardenUserRepository.class);
+        gardenService = new GardenService(gardenRepository, gardenUserRepository);
     }
 
     @Test
