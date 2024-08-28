@@ -2,8 +2,6 @@ function showGardenSearchResults() {
     document.getElementById("searchGardenForm").addEventListener('submit', function(e) {
         e.preventDefault();
         const searchTerm = document.getElementById("searchGardenInput").value;
-        console.log(searchTerm);
-        console.log(JSON.stringify(searchTerm));
         const searchResultsContainer = document.getElementById("searchGardenResults");
         fetch(`edit-public-profile/favourite-garden?search=`+ encodeURIComponent(searchTerm),{
             method: 'POST',
@@ -83,8 +81,6 @@ function previewFavouriteGarden() {
 
 function updateFavouriteGarden() {
     const gardenId = document.getElementById('selectedGardenId').value;
-    console.log(gardenId);
-    console.log(JSON.stringify({id:gardenId}));
 
     fetch(`${baseUrl}users/edit-public-profile/favourite-garden`, {
         method: 'PUT',

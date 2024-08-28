@@ -33,16 +33,16 @@ public class FavouriteGardenController  {
     }
 
     @PostMapping("/users/edit-public-profile/favourite-garden")
-    public ResponseEntity<List<Garden>> favouriteGarden(@RequestParam(name="search",required = false,defaultValue = "") String searchTerm) {
-        logger.info("{}",searchTerm);
+    public ResponseEntity<List<Garden>> favouriteGarden(@RequestParam(name="search", required = false, defaultValue = "") String searchTerm) {
         GardenUser currentUser = gardenUserService.getCurrentUser();
-        List <Garden> publicGardens = gardenService.getPublicGardensByOwnerId(currentUser).stream().filter(garden-> garden.getName().toLowerCase().contains(searchTerm.toLowerCase())).toList();
+        List<Garden> publicGardens = gardenService.getPublicGardensByOwnerId(currentUser).stream()
+                .filter(garden -> garden.getName() != null && garden.getName().toLowerCase().contains(searchTerm.toLowerCase()))
+                .toList();
         return ResponseEntity.ok(publicGardens);
     }
 
     @PutMapping("/users/edit-public-profile/favourite-garden")
     public ResponseEntity<String> updateFavouriteGarden(@RequestBody String id, Model model) throws JsonProcessingException {
-        logger.info("Updating");
         ObjectMapper mapper = new ObjectMapper();
         long gardenId;
         try {
