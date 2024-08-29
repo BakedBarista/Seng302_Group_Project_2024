@@ -104,7 +104,6 @@ public class Plant extends BasePlant {
                 ", count='" + this.count + '\'' +
                 ", description='" + this.description + '\'' +
                 ", plantedDate='" + this.plantedDate + '\'' +
-                ", garden='" + this.garden + '\'' +
                 '}';
     }
 }
