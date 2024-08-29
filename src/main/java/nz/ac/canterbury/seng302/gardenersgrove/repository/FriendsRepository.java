@@ -1,12 +1,13 @@
 package nz.ac.canterbury.seng302.gardenersgrove.repository;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
-
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * GardenFormResult repository accessor
@@ -69,6 +70,16 @@ public interface FriendsRepository extends CrudRepository<Friends, Long> {
      */
     @Query("SELECT u FROM Friends u WHERE u.receiver.id = ?1 and u.status = ?2")
     List<Friends> getFriendshipsToUserWithStatus(Long receiver, Friends.Status status);
+
+
+    /**
+     * Looks for a pending friend request from one user to another.
+     * @param senderId
+     * @param receiverId
+     * @return an Optional containing the pending request if it exists
+     */
+    @Query("SELECT f FROM Friends f WHERE f.sender.id = :senderId AND f.receiver.id = :receiverId AND f.status = 'PENDING'")
+    Optional<Friends> findPendingFriendRequest(@Param("senderId") Long senderId, @Param("receiverId") Long receiverId);
 
     /**
      *

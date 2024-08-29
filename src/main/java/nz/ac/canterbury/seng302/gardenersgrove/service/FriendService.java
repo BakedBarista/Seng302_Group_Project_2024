@@ -3,12 +3,12 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.FriendsRepository;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.entity.Friends.Status.*;
 
@@ -110,6 +110,18 @@ public class FriendService {
      */
     public List<Friends> getReceivedRequests(Long user) {
         return friendsRepository.getFriendshipsToUserWithStatus(user, PENDING);
+    }
+
+    /**
+     * Looks for a request from the sender id and returns this friendship request if
+     * found.
+     *
+     * @param userId The ID of the user whose might have received the pending request
+     * @param senderId The ID of the person who might have sent the request
+     * @return an optional of the request if it is found.
+     */
+    public Optional<Friends> getPendingFriendRequest(Long userId, Long senderId) {
+        return friendsRepository.findPendingFriendRequest(senderId, userId);
     }
 
     /**
