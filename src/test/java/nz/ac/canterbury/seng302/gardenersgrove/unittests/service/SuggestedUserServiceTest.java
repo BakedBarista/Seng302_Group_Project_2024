@@ -14,7 +14,7 @@ import java.util.List;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.entity.Friends.Status.*;
 
-public class SuggestedUserServiceTest {
+class SuggestedUserServiceTest {
 
     private SuggestedUserService suggestedUserService;
     private FriendService friendService;
