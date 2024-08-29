@@ -2,28 +2,60 @@
 <html lang="en">
 <head>
     <title>Message</title>
-
     <meta http-equiv="Content-Type" context="text/html; charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
     <!-- This needs to be here for Bootstrap and general CSS imports -->
     <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
-</head>
-<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+    <style>
+        /* This subtracts the height of the navbar on mobile screens to account for height */
+        @media (max-width: 767.98px) {
+            main, body {
+                height: calc(100vh - 91px);
+            }
+        }
 
-<body>
-    <div class="container mt-4">
-        <div class="d-flex align-items-center">
-            <img class="rounded-circle overflow-hidden border border-dark me-2"
-            th:src="@{'/users/' + ${sentToUser.id} + '/profile-picture'}" style="width: 50px; height: 50px;" alt="profile picture">
-            <h5 class="mb-0" th:text="${sentToUser.fname} + ' ' + ${sentToUser.lname}"></h5>
+        /* For screens larger than mobile */
+        @media (min-width: 768px) {
+            main, body {
+                height: 100vh;
+            }
+        }
+    </style>
+</head>
+
+<body class="">
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+    <main class="flex-grow-1 d-flex flex-column position-relative h-100 px-lg-4 px-3">
+
+        <div class="mt-4">
+            <div class="d-flex align-items-center">
+                <img class="rounded-circle overflow-hidden border border-dark me-2"
+                th:src="@{'/users/' + ${sentToUser.id} + '/profile-picture'}" style="width: 50px; height: 50px;" alt="profile picture">
+                <h5 class="mb-0" th:text="${sentToUser.fname} + ' ' + ${sentToUser.lname}"></h5>
+            </div>
+            <hr>
+            <div class="messages mt-3">
+                <!-- message will be displayed here -->
+                <p>messages here</p>
+            </div>
+
+
+            <!-- message and send message box-->
+            <div class="container-fluid position-absolute bg-light bottom-0 start-0 end-0 py-3">
+                <form th:action="@{/users/{id}/send-message(id=${sentToUser.id})}" method="post" th:object="${messageDTO}">
+                    <div class="d-flex gap-2">
+                        <label for="message"></label>
+                        <textarea id="message" th:name="message" class="form-control flex-grow-1" style="resize: none;"  placeholder="Message here..." autofocus></textarea>
+                        <button type="submit" class="btn btn-primary px-4 py-0">
+                            <img th:src="@{/icons/sent-stroke-rounded.svg}" alt="Send">
+                        </button>
+                    </div>
+                </form>
+            </div>
+
         </div>
-        <hr>
-        <div class="messages mt-3">
-            <!-- message will be displayed here -->
-            <p>messages here</p>
-        </div>
-    </div>
+    </main>
     <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
 </body>
 </html>

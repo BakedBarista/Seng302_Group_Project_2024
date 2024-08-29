@@ -2,12 +2,12 @@
 :root {
     --gg-dark: #b89006;
     --gg-primary: #CB9F03;
-    --gg-primary-rgb: 57, 92, 10;
-    --gg-primary-light: #b89006;
-    --gg-secondary: #A4AF69;
-    --gg-secondary-rgb: 164, 175, 105;
-    --gg-secondary-dark: #8C9D34;
-    --gg-secondary-light: #D3DD9D;
+    --gg-primary-rgb: 203, 159, 3;
+    --gg-primary-light: #EDBA05;
+    --gg-secondary: #9E6F40;
+    --gg-secondary-rgb: 168, 111, 64;
+    --gg-secondary-dark: #964B00;
+    --gg-secondary-light: #CA935C;
     --gg-pale: #FFE0B5;
     --gg-not-planted:  saddlebrown;
     --gg-not-planted-hover: #af7244;
@@ -854,5 +854,41 @@ h1, h2, h3, h4, h5, h6 {
     background-color: #acacac;
 }
 
+/* Flip card */
 
+.flip-card {
+    width: 90vw;
+    max-width: 480px;
+    height: 720px;
+    perspective: 2000px;
+}
 
+.flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+}
+
+.flip-card-flipped .flip-card-inner {
+    transform: rotateY(180deg);
+}
+
+.flip-card-front,
+.flip-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    border-radius: calc(var(--bs-card-border-radius) - 1px);
+}
+
+.flip-card-back {
+    transform: rotateY(180deg);
+}
