@@ -47,6 +47,7 @@ public class SuggestedUserController {
 
     /**
      * Controls the initial home page controller when navigating to '/'
+     *
      * @return the home page
      */
     @GetMapping("/")
@@ -62,13 +63,12 @@ public class SuggestedUserController {
             Long userId = (Long) authentication.getPrincipal();
             GardenUser user = gardenUserService.getUserById(userId);
 
-            if(user.getId() != null) {
+            if (user.getId() != null) {
                 model.addAttribute("userId", suggestedUsers.get(0).getId());
                 model.addAttribute("name", suggestedUsers.get(0).getFullName());
                 model.addAttribute("description", suggestedUsers.get(0).getDescription());
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             logger.error("Error getting gardens for user");
         }
         return "home";
