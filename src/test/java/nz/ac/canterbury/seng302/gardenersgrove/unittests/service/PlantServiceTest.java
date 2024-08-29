@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unittests.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
@@ -219,5 +220,27 @@ class PlantServiceTest {
         boolean result = plantService.validateImage(file);
 
         Assertions.assertTrue(result);
+    }
+
+    @Test
+    void givenPlantExists_whenSearched_thenReturnsAllPlants() {
+        GardenUser owner = new GardenUser("", "", "", "", LocalDate.of(1970, 1, 1));
+        owner.setId(1L);
+        Garden testGarden = new Garden("Garden", "1","Ilam Road","Ilam",
+                "Christchurch","New Zealand","8041",1.0,2.0, "Big", 1.0, new byte[0], "");
+        Long gardenId = 1L;
+        testGarden.setId(gardenId);
+        Plant testPlant1 = new Plant("Rose", "5", "Flower", LocalDate.of(1970, 1, 1));
+        Plant testPlant2 = new Plant("Daisy", "3", "Flower", LocalDate.of(1970, 1, 1));
+        testGarden.setPlants(List.of(testPlant1, testPlant2));
+        testGarden.setOwner(owner);
+
+        String searchTerm = "Rose";
+
+        Mockito.when(plantRepository.findPlantsFromSearch(owner, searchTerm)).thenReturn(List.of(testPlant1));
+        List<Plant> result = plantService.getAllPlants(owner, searchTerm);
+
+        assertEquals(1, result.size());
+
     }
 }

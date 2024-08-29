@@ -830,6 +830,30 @@ h1, h2, h3, h4, h5, h6 {
     }
 }
 
+/*favourite plant selection*/
+
+#plantSelectorModal {
+    overflow: auto;
+}
+#plantSelectorModalContent {
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.select-items img {
+    width: 65px;
+    height: 65px;
+}
+
+.select-items div {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.select-items div:hover {
+    background-color: #acacac;
+}
+
 /* Flip card */
 
 .flip-card {
