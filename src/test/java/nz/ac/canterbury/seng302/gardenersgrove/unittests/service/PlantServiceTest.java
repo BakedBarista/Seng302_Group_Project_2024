@@ -227,7 +227,7 @@ class PlantServiceTest {
         GardenUser owner = new GardenUser("", "", "", "", LocalDate.of(1970, 1, 1));
         owner.setId(1L);
         Garden testGarden = new Garden("Garden", "1","Ilam Road","Ilam",
-                "Christchurch","New Zealand","8041",1.0,2.0, "Big", null);
+                "Christchurch","New Zealand","8041",1.0,2.0, "Big", 1.0, new byte[0], "");
         Long gardenId = 1L;
         testGarden.setId(gardenId);
         Plant testPlant1 = new Plant("Rose", "5", "Flower", LocalDate.of(1970, 1, 1));
