@@ -90,11 +90,9 @@ public class SuggestedUserController {
         boolean success = false;
 
         List<Friends> receivedRequests = friendService.getReceivedRequests(loggedInUserId);
-        if ("decline".equals(action)) {
-            logger.info("Decline button clicked");
-        }
 
         if ("accept".equals(action) && !requestedId.equals(loggedInUserId) && alreadyFriends == null) {
+            logger.info("Accept button pressed by: {} on: {}", loggedInUserId, requestedId);
             // Attempt to accept an existing friend request
             for (Friends receivedRequest : receivedRequests) {
                 if (receivedRequest.getSender().getId().equals(requestedId)) {
