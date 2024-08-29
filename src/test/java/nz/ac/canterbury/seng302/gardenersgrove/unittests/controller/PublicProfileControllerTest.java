@@ -101,7 +101,7 @@ public class PublicProfileControllerTest {
         authentication = Mockito.mock(Authentication.class);
         plantRepository = Mockito.mock(PlantRepository.class);
         user = new GardenUser();
-        publicProfileController = new PublicProfileController(gardenUserService, profanityService, gardenService, plantService);
+        publicProfileController = new PublicProfileController(gardenUserService, profanityService, plantService);
         loggedInUser = new GardenUser();
         loggedInUser.setId(loggedInUserId);
         loggedInUser.setEmail("logged.in@gmail.com");

@@ -4,7 +4,6 @@ function showSearchResults() {
         event.preventDefault();
         const searchTerm = document.getElementById('searchField').value;
         const searchResultsContainer = document.getElementById('searchResults');
-        console.log("Searching for:", searchTerm);
 
         fetch(`${baseUrl}users/edit-public-profile/search?search=` + encodeURIComponent(searchTerm), {
             method: 'POST',
