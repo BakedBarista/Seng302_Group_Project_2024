@@ -29,7 +29,7 @@ public class SuggestedUserService {
      * @param receiverId the request receiver's ID
      * @return true if request exists, false otherwise
      */
-    public boolean doesFriendRequestExist(Long senderId, Long receiverId) {
+    public boolean friendRecordExists(Long senderId, Long receiverId) {
         List<Friends> sentRequests = friendService.getSentRequests(senderId);
 
         // TODO: Remove this horrible for loop
