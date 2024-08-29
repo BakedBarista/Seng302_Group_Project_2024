@@ -85,63 +85,59 @@ public class SuggestedUserController {
         GardenUser loggedInUser = gardenUserService.getUserById(loggedInUserId);
         GardenUser requestedUser = gardenUserService.getUserById(requestedId);
 
-        Friends alreadyFriends = friendService.getAcceptedFriendship(loggedInUserId, requestedId);
-        Map<String, Object> response = new HashMap<>();
+        boolean notAlreadyFriends = friendService.getAcceptedFriendship(loggedInUserId, requestedId) != null;
+        boolean requestedIdNotUser = !requestedId.equals(loggedInUserId);
+
+        Map<String, Object> response = new HashMap<>(); // TODO:
         boolean success = false;
 
-        List<Friends> receivedRequests = friendService.getReceivedRequests(loggedInUserId);
-
-        if ("accept".equals(action) && !requestedId.equals(loggedInUserId) && alreadyFriends == null) {
+        if ("accept".equals(action) && requestedIdNotUser && notAlreadyFriends) {
             logger.info("Accept button pressed by: {} on: {}", loggedInUserId, requestedId);
-            // Attempt to accept an existing friend request
-            for (Friends receivedRequest : receivedRequests) {
-                if (receivedRequest.getSender().getId().equals(requestedId)) {
-                    receivedRequest.setStatus(Friends.Status.ACCEPTED);
-                    friendService.save(receivedRequest);
-                    success = true;
-                    break;
-                }
-            }
+
+            success = suggestedUserService.attemptToAcceptPendingRequest(requestedId, loggedInUserId);
 
             // If no request was accepted, check if a request was already sent
             if (!success) {
-                boolean requestAlreadySent = suggestedUserService.isRequestSent(loggedInUserId, requestedId);
+                boolean requestAlreadySent = suggestedUserService.doesFriendRequestExist(loggedInUserId, requestedId);
 
                 if (!requestAlreadySent) {
                     Friends newRequest = new Friends(loggedInUser, requestedUser, Friends.Status.PENDING);
                     friendService.save(newRequest);
                 }
             }
-        } else if ("decline".equals(action) && !requestedId.equals(loggedInUserId) && alreadyFriends == null) {
-            logger.info("Decline button pressed by: {} on: {}", loggedInUserId, requestedId);
-
-            // If a request exists from the other user, we decline it
-            for (Friends receivedRequest : receivedRequests) {
-                if (receivedRequest.getSender().getId().equals(requestedId)) {
-                    logger.info("There was a pending request from that user, declining them.");
-                    receivedRequest.setStatus(Friends.Status.DECLINED);
-                    friendService.save(receivedRequest);
-                    success = true;
-                    break;
-                }
-            }
-
-            // If there is no existing request from the other user
-            if (!success) {
-                boolean requestAlreadySent = suggestedUserService.isRequestSent(loggedInUserId, requestedId);
-
-                // If we haven't already sent the user a request of some kind then we create a declined invitation.
-                if (!requestAlreadySent) {
-                    logger.info("There was no pending request, creating a decline to hide user from feed.");
-                    Friends newRequest = new Friends(loggedInUser, requestedUser, Friends.Status.DECLINED);
-                    friendService.save(newRequest);
-                }
-            }
-
-
-            // TODO: Implement hiding them in the feed in Make the connection feed work task
-            // NB: You shouldn't be able to see people in the feed that YOU have sent a request to. i.e. hearted them
         }
+//        if ("decline".equals(action) && !requestedId.equals(loggedInUserId) && alreadyFriends == null) {
+//            logger.info("Decline button pressed by: {} on: {}", loggedInUserId, requestedId);
+//
+//            List<Friends> receivedRequests = friendService.getReceivedRequests(loggedInUserId);
+//
+//            // If a request exists from the other user, we decline it
+//            for (Friends receivedRequest : receivedRequests) {
+//                if (receivedRequest.getSender().getId().equals(requestedId)) {
+//                    logger.info("There was a pending request from that user, declining them.");
+//                    receivedRequest.setStatus(Friends.Status.DECLINED);
+//                    friendService.save(receivedRequest);
+//                    success = true;
+//                    break;
+//                }
+//            }
+//
+//            // If there is no existing request from the other user
+//            if (!success) {
+//                boolean requestAlreadySent = suggestedUserService.doesFriendRequestExist(loggedInUserId, requestedId);
+//
+//                // If we haven't already sent the user a request of some kind then we create a declined invitation.
+//                if (!requestAlreadySent) {
+//                    logger.info("There was no pending request, creating a decline to hide user from feed.");
+//                    Friends newRequest = new Friends(loggedInUser, requestedUser, Friends.Status.DECLINED);
+//                    friendService.save(newRequest);
+//                }
+//            }
+//
+//
+//            // TODO: Implement hiding them in the feed in Make the connection feed work task
+//            // NB: You shouldn't be able to see people in the feed that YOU have sent a request to. i.e. hearted them
+//        }
 
 
         // telling us when to trigger the toast, only when we have made a connection!
