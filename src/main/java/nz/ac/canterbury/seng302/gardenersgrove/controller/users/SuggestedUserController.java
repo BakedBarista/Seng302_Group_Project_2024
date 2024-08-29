@@ -105,7 +105,7 @@ public class SuggestedUserController {
 
             // If no request was accepted, check if a request was already sent
             if (!success) {
-                boolean requestAlreadySent = suggestedUserService.isRequestSent(loggedInUserId, requestedId);
+                boolean requestAlreadySent = suggestedUserService.friendRecordExists(loggedInUserId, requestedId);
 
                 if (!requestAlreadySent) {
                     Friends newRequest = new Friends(loggedInUser, requestedUser, Friends.Status.PENDING);
@@ -128,7 +128,7 @@ public class SuggestedUserController {
 
             // If there is no existing request from the other user
             if (!success) {
-                boolean requestAlreadySent = suggestedUserService.isRequestSent(loggedInUserId, requestedId);
+                boolean requestAlreadySent = suggestedUserService.friendRecordExists(loggedInUserId, requestedId);
 
                 // If we haven't already sent the user a request of some kind then we create a declined invitation.
                 if (!requestAlreadySent) {
