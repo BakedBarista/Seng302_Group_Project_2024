@@ -192,8 +192,13 @@ public class GardenUserService {
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new UsernameNotFoundException("No authenticated user found");
         }
-        long userId = Long.parseLong(authentication.getName());
-        return getUserById(userId);
+        String identifier = authentication.getName();
+        try {
+            long userId = Long.parseLong(identifier);
+            return getUserById(userId);
+        } catch (NumberFormatException e) {
+            return getUserByEmail(identifier);
+        }
     }
 
     /**
