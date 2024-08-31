@@ -13,7 +13,9 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -173,6 +175,19 @@ public class GardenServiceTest {
         assertEquals( expectedPage, result);
         verify(gardenRepository).findPageThatContainsQuery(search, pageable);
         verifyNoMoreInteractions(gardenRepository);
+    }
+
+    @Test
+    void whenAddFavouriteGarden_thenFavouriteGardenIsAdded() {
+        Garden garden = new Garden();
+        GardenUser gardenUser = new GardenUser();
+        gardenUser.setId(1L);
+        garden.setId(2L);
+        when(gardenRepository.findById(garden.getId())).thenReturn(Optional.of((garden)));
+        when(gardenUserRepository.findById(gardenUser.getId())).thenReturn(Optional.of(gardenUser));
+        gardenService.addFavouriteGarden(1L,2L);
+        Garden result = gardenUser.getFavoriteGarden();
+        assertEquals(garden, result);
     }
 
 
