@@ -277,6 +277,9 @@ public abstract class BaseGarden {
 
     public void setFavouriteGarden(GardenUser gardenUser) {this.favouriteGarden = gardenUser;}
 
+    public GardenUser getFavouriteGarden() {
+        return this.favouriteGarden;
+    }
     @Override
     public String toString() {
         return "Garden{" +

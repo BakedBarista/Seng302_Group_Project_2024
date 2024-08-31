@@ -238,8 +238,8 @@ public class GardenUserService {
     }
 
     public Garden getFavoriteGarden(Long userId) {
-        GardenUser user = gardenUserRepository.findById(userId).orElseThrow();
-        return user.getFavoriteGarden();
+        Optional<GardenUser> user = gardenUserRepository.findById(userId);
+        return user.map(GardenUser::getFavoriteGarden).orElse(null);
     }
 
 }
