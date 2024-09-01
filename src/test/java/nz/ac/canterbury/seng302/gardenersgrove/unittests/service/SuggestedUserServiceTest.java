@@ -79,7 +79,7 @@ class SuggestedUserServiceTest {
     }
 
     @Test
-    void testAttemptToAcceptPendingRequest_WhenRequestExists() {
+    void testAttemptToAcceptPendingRequest_WhenRequestExists_ThenAcceptRequest() {
         Friends pendingFriendship = new Friends();
         pendingFriendship.setStatus(PENDING);
 
@@ -93,7 +93,7 @@ class SuggestedUserServiceTest {
     }
 
     @Test
-    void testAttemptToAcceptPendingRequest_WhenNoRequestExists() {
+    void testAttemptToAcceptPendingRequest_WhenNoRequestExists_ThenDoNothing() {
         Mockito.when(friendService.getPendingFriendRequest(suggestedUserId, loggedInUserId)).thenReturn(Optional.empty());
 
         boolean result = suggestedUserService.attemptToAcceptPendingRequest(loggedInUserId, suggestedUserId);
@@ -103,26 +103,81 @@ class SuggestedUserServiceTest {
     }
 
     @Test
-    void testSendNewRequest_FriendRecordExists_NothingSentReturnFalse() {
-        SuggestedUserService suggestedUserServiceSpy = Mockito.spy(suggestedUserService);
-        doReturn(true).when(suggestedUserServiceSpy).friendRecordExists(loggedInUser.getId(), suggestedUser.getId());
+    void testAttemptToDeclinePendingRequest_WhenRequestExists_ThenDeclineRequest() {
+        Friends pendingFriendship = new Friends();
+        pendingFriendship.setStatus(PENDING);
 
-        boolean result = suggestedUserServiceSpy.sendNewRequest(loggedInUser, suggestedUser);
+        Mockito.when(friendService.getPendingFriendRequest(suggestedUserId, loggedInUserId)).thenReturn(Optional.of(pendingFriendship));
+
+        boolean result = suggestedUserService.attemptToDeclinePendingRequest(loggedInUserId, suggestedUserId);
+
+        Assertions.assertEquals(DECLINED, pendingFriendship.getStatus());
+        Mockito.verify(friendService, times(1)).save(pendingFriendship);
+        Assertions.assertTrue(result);
+    }
+
+    @Test
+    void testAttemptToDeclinePendingRequest_WhenNoRequestExists_ThenDoNothing() {
+        Mockito.when(friendService.getPendingFriendRequest(suggestedUserId, loggedInUserId)).thenReturn(Optional.empty());
+
+        boolean result = suggestedUserService.attemptToDeclinePendingRequest(loggedInUserId, suggestedUserId);
 
         Mockito.verify(friendService, never()).save(any(Friends.class));
         Assertions.assertFalse(result);
     }
 
     @Test
-    void testSendNewRequest_NoFriendRecordExists_SendPendingRequestReturnTrue() {
+    void testSendNewPendingRequest_FriendRecordExists_NothingSentReturnFalse() {
+        SuggestedUserService suggestedUserServiceSpy = Mockito.spy(suggestedUserService);
+        doReturn(true).when(suggestedUserServiceSpy).friendRecordExists(loggedInUser.getId(), suggestedUser.getId());
+
+        boolean result = suggestedUserServiceSpy.sendNewPendingRequest(loggedInUser, suggestedUser);
+
+        Mockito.verify(friendService, never()).save(any(Friends.class));
+        Assertions.assertFalse(result);
+    }
+
+    @Test
+    void testSendNewRequest_NoFriendRecordExists_SendPendingPendingRequestReturnTrue() {
         SuggestedUserService suggestedUserServiceSpy = Mockito.spy(suggestedUserService);
         doReturn(false).when(suggestedUserServiceSpy).friendRecordExists(loggedInUser.getId(), suggestedUser.getId());
 
-        boolean result = suggestedUserServiceSpy.sendNewRequest(loggedInUser, suggestedUser);
+        boolean result = suggestedUserServiceSpy.sendNewPendingRequest(loggedInUser, suggestedUser);
 
         Mockito.verify(friendService, times(1)).save(any(Friends.class));
         Assertions.assertTrue(result);
     }
 
+    @Test
+    void testSetDeclinedFriendship_PendingRecordExists_NothingSentReturnFalse() {
+        SuggestedUserService suggestedUserServiceSpy = Mockito.spy(suggestedUserService);
+        doReturn(true).when(suggestedUserServiceSpy).friendRecordExists(loggedInUser.getId(), suggestedUser.getId());
 
+        boolean result = suggestedUserServiceSpy.setDeclinedFriendship(loggedInUser, suggestedUser);
+
+        Mockito.verify(friendService, never()).save(any(Friends.class));
+        Assertions.assertFalse(result);
+    }
+
+    @Test
+    void testSetDeclinedFriendship_AcceptedRecordExists_NothingSentReturnFalse() {
+        Mockito.when(friendService.getAcceptedFriendship(loggedInUserId, suggestedUserId)).thenReturn(new Friends(loggedInUser, suggestedUser, ACCEPTED));
+
+        boolean result = suggestedUserService.setDeclinedFriendship(loggedInUser, suggestedUser);
+
+        Mockito.verify(friendService, never()).save(any(Friends.class));
+        Assertions.assertFalse(result);
+    }
+
+    @Test
+    void testSetDeclinedFriendship_NoFriendRecordExists_SetDeclinedFriendshipReturnFalse() {
+        SuggestedUserService suggestedUserServiceSpy = Mockito.spy(suggestedUserService);
+        doReturn(false).when(suggestedUserServiceSpy).friendRecordExists(loggedInUser.getId(), suggestedUser.getId());
+        Mockito.when(friendService.getAcceptedFriendship(loggedInUserId, suggestedUserId)).thenReturn(null);
+
+        boolean result = suggestedUserServiceSpy.sendNewPendingRequest(loggedInUser, suggestedUser);
+
+        Mockito.verify(friendService, times(1)).save(any(Friends.class));
+        Assertions.assertTrue(result);
+    }
 }

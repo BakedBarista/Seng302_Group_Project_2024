@@ -99,7 +99,7 @@ public interface FriendsRepository extends CrudRepository<Friends, Long> {
      * @param userId2 the second user's id
      * @return an optional of the friends entity if it exists
      */
-    @Query("SELECT f FROM Friends f WHERE ((f.userOneId = :userId1 AND f.userTwoId = :userId2) OR (f.userOneId = :userId2 AND f.userTwoId = :userId1)) AND f.status IN ('PENDING', 'DECLINED')")
+    @Query("SELECT f FROM Friends f WHERE ((f.sender.id = :userId1 AND f.receiver.id = :userId2) OR (f.receiver.id = :userId2 AND f.sender.id = :userId1)) AND (f.status = 'PENDING' OR f.status = 'DECLINED')")
     Optional<Friends> findPendingOrDeclinedFriendship(@Param("userId1") Long userId1, @Param("userId2") Long userId2);
 }
 

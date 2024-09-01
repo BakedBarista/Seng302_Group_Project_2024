@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.FriendsRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,7 @@ import static nz.ac.canterbury.seng302.gardenersgrove.entity.Friends.Status.*;
 public class FriendService {
     private final FriendsRepository friendsRepository;
 
+    @Autowired
     public FriendService(FriendsRepository friendsRepository) {this.friendsRepository = friendsRepository;}
 
     /**
