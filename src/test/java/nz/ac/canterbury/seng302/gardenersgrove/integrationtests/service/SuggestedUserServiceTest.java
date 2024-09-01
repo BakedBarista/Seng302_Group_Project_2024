@@ -6,7 +6,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.SuggestedUserService;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,13 +25,13 @@ class SuggestedUserServiceTest {
     @Autowired
     private SuggestedUserService suggestedUserService;
 
-    private GardenUser loggedInUser;
-    private GardenUser suggestedUser;
+    private static GardenUser loggedInUser;
+    private static GardenUser suggestedUser;
 
-    @BeforeEach
-    void setUp() {
-        loggedInUser = gardenUserRepository.save(new GardenUser("John", "Doe", "jdo123@uclive.ac.nz", "password",null));
-        suggestedUser = gardenUserRepository.save(new GardenUser("Jane", "Doe", "jdo456@uclive.ac.nz", "password",null));
+    @BeforeAll
+    static void setUp(@Autowired GardenUserRepository gardenUserRepository) {
+        loggedInUser = gardenUserRepository.save(new GardenUser("John", "Doe", "jdo123567@uclive.ac.nz", "password", null));
+        suggestedUser = gardenUserRepository.save(new GardenUser("Jane", "Doe", "jdo456@uclive.ac.nz", "password", null));
     }
 
     @Test

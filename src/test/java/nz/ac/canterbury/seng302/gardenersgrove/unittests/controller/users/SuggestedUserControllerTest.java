@@ -9,24 +9,18 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.SuggestedUserService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class SuggestedUserControllerTest {
@@ -40,9 +34,9 @@ class SuggestedUserControllerTest {
 
     private static SuggestedUserService suggestedUserService;
     private static Long loggedInUserId = 1L;
-    private static Long requestedUserId = 2L;
+    private static Long suggestedUserId = 2L;
     private static GardenUser loggedInUser;
-    private static GardenUser requestedUser;
+    private static GardenUser suggestedUser;
     private static Friends friendRequestReceive;
     private static Friends friendRequestSend;
 
@@ -63,15 +57,15 @@ class SuggestedUserControllerTest {
         when(gardenUserService.getUserById(loggedInUserId)).thenReturn(loggedInUser);
         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
 
-        requestedUser = new GardenUser();
-        requestedUser.setId(requestedUserId);
+        suggestedUser = new GardenUser();
+        suggestedUser.setId(suggestedUserId);
         //sender-receiver-status
-        friendRequestReceive = new Friends(requestedUser, loggedInUser, Friends.Status.PENDING);
-        friendRequestSend = new Friends(loggedInUser, requestedUser, Friends.Status.PENDING);
+        friendRequestReceive = new Friends(suggestedUser, loggedInUser, Friends.Status.PENDING);
+        friendRequestSend = new Friends(loggedInUser, suggestedUser, Friends.Status.PENDING);
 
         when(authentication.getPrincipal()).thenReturn(loggedInUser.getId());
         when(gardenUserService.getUserById(loggedInUser.getId())).thenReturn(loggedInUser);
-        when(gardenUserService.getUserById(requestedUser.getId())).thenReturn(requestedUser);
+        when(gardenUserService.getUserById(suggestedUser.getId())).thenReturn(suggestedUser);
 
     }
 
@@ -94,50 +88,71 @@ class SuggestedUserControllerTest {
     }
 
     @Test
-    void testAcceptFriendRequest_requestStatusAccept() {
-        List<Friends> receivedRequests = new ArrayList<>();
-        receivedRequests.add(friendRequestReceive);
-        when(friendService.getReceivedRequests(loggedInUser.getId())).thenReturn(receivedRequests);
-        ResponseEntity<Map<String, Object>> response = suggestedUserController.homeAccept("accept", requestedUser.getId(), authentication, model);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        Map<String, Object> responseBody = response.getBody();
-        assertEquals(true, responseBody.get("success"));
-        assertEquals(Friends.Status.ACCEPTED, friendRequestReceive.getStatus());
+    void testHandleAcceptDecline_ValidationFails_DoNothing() {
+        when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+        when(suggestedUserService.validationCheck(loggedInUserId, suggestedUserId)).thenReturn(false);
+
+        ResponseEntity<Map<String, Object>> response = suggestedUserController.handleAcceptDecline("accept", suggestedUserId, authentication, model);
+
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Assertions.assertFalse((Boolean) response.getBody().get("success"));
     }
 
     @Test
-    void testAcceptRequest_WhenNotReceived() {
-        List<Friends> receivedRequests = new ArrayList<>();
-        List<Friends> sentRequests = new ArrayList<>();
-        sentRequests.add(friendRequestSend);
+    void testHandleAcceptDecline_PendingRequestExists_PendingRequestAccepted() {
+        when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+        when(gardenUserService.getUserById(loggedInUserId)).thenReturn(loggedInUser);
+        when(gardenUserService.getUserById(suggestedUserId)).thenReturn(suggestedUser);
+        when(suggestedUserService.validationCheck(loggedInUserId, suggestedUserId)).thenReturn(true);
+        when(suggestedUserService.attemptToAcceptPendingRequest(loggedInUserId, suggestedUserId)).thenReturn(true);
 
-        when(friendService.getReceivedRequests(loggedInUser.getId())).thenReturn(receivedRequests);
-        when(friendService.getSentRequests(loggedInUser.getId())).thenReturn(sentRequests);
-        when(suggestedUserService.friendRecordExists(loggedInUserId, requestedUserId)).thenReturn(false);
+        ResponseEntity<Map<String, Object>> response = suggestedUserController.handleAcceptDecline("accept", suggestedUserId, authentication, model);
 
-        ResponseEntity<Map<String, Object>> response = suggestedUserController.homeAccept("accept", requestedUserId, authentication, model);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        Map<String, Object> responseBody = response.getBody();
-        assertEquals(false, responseBody.get("success"));
-//        verify(friendService, times(1)).save(any(Friends.class));
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Assertions.assertTrue((Boolean) response.getBody().get("success"));
     }
 
     @Test
-    void testAcceptRequest_WhenNotReceivedOrSent() {
-        List<Friends> receivedRequests = new ArrayList<>();
-        List<Friends> sentRequests = new ArrayList<>();
+    void testHandleAcceptDecline_NoFriendshipExists_NewRequestSent() {
+        when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+        when(gardenUserService.getUserById(loggedInUserId)).thenReturn(loggedInUser);
+        when(gardenUserService.getUserById(suggestedUserId)).thenReturn(suggestedUser);
+        when(suggestedUserService.validationCheck(loggedInUserId, suggestedUserId)).thenReturn(true);
+        when(suggestedUserService.attemptToAcceptPendingRequest(loggedInUserId, suggestedUserId)).thenReturn(false);
+        when(suggestedUserService.sendNewPendingRequest(loggedInUser, suggestedUser)).thenReturn(true);
 
-        when(friendService.getReceivedRequests(loggedInUser.getId())).thenReturn(receivedRequests);
-        when(friendService.getSentRequests(loggedInUser.getId())).thenReturn(sentRequests);
-        when(suggestedUserService.friendRecordExists(loggedInUserId, requestedUserId)).thenReturn(false);
+        ResponseEntity<Map<String, Object>> response = suggestedUserController.handleAcceptDecline("accept", suggestedUserId, authentication, model);
 
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Assertions.assertTrue((Boolean) response.getBody().get("success"));
+    }
 
-        ResponseEntity<Map<String, Object>> response = suggestedUserController.homeAccept("accept", requestedUser.getId(), authentication, model);
+    @Test
+    void testHandleAcceptDecline_PendingRequestExists_PendingRequestDeclined() {
+        when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+        when(gardenUserService.getUserById(loggedInUserId)).thenReturn(loggedInUser);
+        when(gardenUserService.getUserById(suggestedUserId)).thenReturn(suggestedUser);
+        when(suggestedUserService.validationCheck(loggedInUserId, suggestedUserId)).thenReturn(true);
+        when(suggestedUserService.attemptToDeclinePendingRequest(loggedInUserId, suggestedUserId)).thenReturn(true);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        Map<String, Object> responseBody = response.getBody();
-        assertEquals(false, responseBody.get("success"));
-        verify(friendService, times(1)).save(any(Friends.class));
+        ResponseEntity<Map<String, Object>> response = suggestedUserController.handleAcceptDecline("decline", suggestedUserId, authentication, model);
+
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Assertions.assertTrue((Boolean) response.getBody().get("success"));
+    }
+
+    @Test
+    void testHandleAcceptDecline_NoFriendshipExits_DeclineStatusSet() {
+        when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+        when(gardenUserService.getUserById(loggedInUserId)).thenReturn(loggedInUser);
+        when(gardenUserService.getUserById(suggestedUserId)).thenReturn(suggestedUser);
+        when(suggestedUserService.validationCheck(loggedInUserId, suggestedUserId)).thenReturn(true);
+        when(suggestedUserService.attemptToDeclinePendingRequest(loggedInUserId, suggestedUserId)).thenReturn(false);
+        when(suggestedUserService.setDeclinedFriendship(loggedInUser, suggestedUser)).thenReturn(true);
+
+        ResponseEntity<Map<String, Object>> response = suggestedUserController.handleAcceptDecline("decline", suggestedUserId, authentication, model);
+
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Assertions.assertTrue((Boolean) response.getBody().get("success"));
     }
 }

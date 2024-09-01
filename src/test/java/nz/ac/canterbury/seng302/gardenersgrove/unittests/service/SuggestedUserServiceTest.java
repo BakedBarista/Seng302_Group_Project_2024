@@ -180,4 +180,39 @@ class SuggestedUserServiceTest {
         Mockito.verify(friendService, times(1)).save(any(Friends.class));
         Assertions.assertTrue(result);
     }
+
+    @Test
+    void testValidationCheck_WithOwnId_ReturnFalse() {
+        boolean result = suggestedUserService.validationCheck(loggedInUserId, loggedInUserId);
+
+        Assertions.assertFalse(result);
+    }
+
+    @Test
+    void testValidationCheck_AlreadyFriends_ReturnFalse() {
+        when(friendService.getAcceptedFriendship(loggedInUserId, suggestedUserId)).thenReturn(new Friends());
+
+        boolean result = suggestedUserService.validationCheck(loggedInUserId, suggestedUserId);
+
+        Assertions.assertFalse(result);
+    }
+
+    @Test
+    void testValidationCheck_AlreadyDeclined_ReturnFalse() {
+        when(friendService.getDeclinedFriendship(loggedInUserId, suggestedUserId)).thenReturn(Optional.of(new Friends()));
+
+        boolean result = suggestedUserService.validationCheck(loggedInUserId, suggestedUserId);
+
+        Assertions.assertFalse(result);
+    }
+
+    @Test
+    void testValidationCheck_AllChecksPass_ReturnTrue() {
+        when(friendService.getAcceptedFriendship(loggedInUserId, suggestedUserId)).thenReturn(null);
+        when(friendService.getDeclinedFriendship(loggedInUserId, suggestedUserId)).thenReturn(Optional.empty());
+
+        boolean result = suggestedUserService.validationCheck(loggedInUserId, suggestedUserId);
+
+        Assertions.assertTrue(result);
+    }
 }
