@@ -11,8 +11,11 @@ import org.mockito.Mockito;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.entity.Friends.Status.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 class SuggestedUserServiceTest {
 
@@ -21,8 +24,8 @@ class SuggestedUserServiceTest {
 
     Long loggedInUserId = 1L;
     GardenUser loggedInUser;
-    Long receiverId = 2L;
-    GardenUser receiver;
+    Long suggestedUserId = 2L;
+    GardenUser suggestedUser;
 
     @BeforeEach
     public void setUp() {
@@ -30,28 +33,28 @@ class SuggestedUserServiceTest {
         suggestedUserService = new SuggestedUserService(friendService);
 
         loggedInUser = new GardenUser();
-        receiver = new GardenUser();
+        suggestedUser = new GardenUser();
 
         loggedInUser.setId(loggedInUserId);
-        receiver.setId(receiverId);
+        suggestedUser.setId(suggestedUserId);
     }
 
     @Test
     void whenPendingRecordExists_thenReturnTrue() {
-        Friends friendRecord = new Friends(loggedInUser, receiver, PENDING);
+        Friends friendRecord = new Friends(loggedInUser, suggestedUser, PENDING);
         Mockito.when(friendService.getSentRequests(loggedInUserId)).thenReturn(List.of(friendRecord));
 
-        boolean result = suggestedUserService.friendRecordExists(loggedInUserId, receiverId);
+        boolean result = suggestedUserService.friendRecordExists(loggedInUserId, suggestedUserId);
 
         Assertions.assertTrue(result);
     }
 
     @Test
     void whenDeclinedRecordExists_thenReturnTrue() {
-        Friends friendRecord = new Friends(loggedInUser, receiver, DECLINED);
+        Friends friendRecord = new Friends(loggedInUser, suggestedUser, DECLINED);
         Mockito.when(friendService.getSentRequests(loggedInUserId)).thenReturn(List.of(friendRecord));
 
-        boolean result = suggestedUserService.friendRecordExists(loggedInUserId, receiverId);
+        boolean result = suggestedUserService.friendRecordExists(loggedInUserId, suggestedUserId);
 
         Assertions.assertTrue(result);
     }
@@ -60,18 +63,66 @@ class SuggestedUserServiceTest {
     void whenNoRecordExists_thenReturnFalse() {
         Mockito.when(friendService.getSentRequests(loggedInUserId)).thenReturn(Collections.emptyList());
 
-        boolean result = suggestedUserService.friendRecordExists(loggedInUserId, receiverId);
+        boolean result = suggestedUserService.friendRecordExists(loggedInUserId, suggestedUserId);
 
         Assertions.assertFalse(result);
     }
 
     @Test
     void whenAcceptedRecordExists_thenReturnFalse() {
-        Friends friendRecord = new Friends(loggedInUser, receiver, ACCEPTED);
+        Friends friendRecord = new Friends(loggedInUser, suggestedUser, ACCEPTED);
         Mockito.when(friendService.getSentRequests(loggedInUserId)).thenReturn(List.of(friendRecord));
 
-        boolean result = suggestedUserService.friendRecordExists(loggedInUserId, receiverId);
+        boolean result = suggestedUserService.friendRecordExists(loggedInUserId, suggestedUserId);
 
         Assertions.assertFalse(result);
     }
+
+    @Test
+    void testAttemptToAcceptPendingRequest_WhenRequestExists() {
+        Friends pendingFriendship = new Friends();
+        pendingFriendship.setStatus(PENDING);
+
+        Mockito.when(friendService.getPendingFriendRequest(suggestedUserId, loggedInUserId)).thenReturn(Optional.of(pendingFriendship));
+
+        boolean result = suggestedUserService.attemptToAcceptPendingRequest(loggedInUserId, suggestedUserId);
+
+        Assertions.assertEquals(ACCEPTED, pendingFriendship.getStatus());
+        Mockito.verify(friendService, times(1)).save(pendingFriendship);
+        Assertions.assertTrue(result);
+    }
+
+    @Test
+    void testAttemptToAcceptPendingRequest_WhenNoRequestExists() {
+        Mockito.when(friendService.getPendingFriendRequest(suggestedUserId, loggedInUserId)).thenReturn(Optional.empty());
+
+        boolean result = suggestedUserService.attemptToAcceptPendingRequest(loggedInUserId, suggestedUserId);
+
+        Mockito.verify(friendService, never()).save(any(Friends.class));
+        Assertions.assertFalse(result);
+    }
+
+    @Test
+    void testSendNewRequest_FriendRecordExists_NothingSentReturnFalse() {
+        SuggestedUserService suggestedUserServiceSpy = Mockito.spy(suggestedUserService);
+        doReturn(true).when(suggestedUserServiceSpy).friendRecordExists(loggedInUser.getId(), suggestedUser.getId());
+
+        boolean result = suggestedUserServiceSpy.sendNewRequest(loggedInUser, suggestedUser);
+
+        Mockito.verify(friendService, never()).save(any(Friends.class));
+        Assertions.assertFalse(result);
+    }
+
+    @Test
+    void testSendNewRequest_NoFriendRecordExists_SendPendingRequestReturnTrue() {
+        SuggestedUserService suggestedUserServiceSpy = Mockito.spy(suggestedUserService);
+        doReturn(false).when(suggestedUserServiceSpy).friendRecordExists(loggedInUser.getId(), suggestedUser.getId());
+
+        boolean result = suggestedUserServiceSpy.sendNewRequest(loggedInUser, suggestedUser);
+
+        Mockito.verify(friendService, times(1)).save(any(Friends.class));
+        Assertions.assertTrue(result);
+    }
+
+
 }
