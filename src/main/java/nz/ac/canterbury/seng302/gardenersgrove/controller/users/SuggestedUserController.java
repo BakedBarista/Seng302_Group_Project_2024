@@ -74,7 +74,7 @@ public class SuggestedUserController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<Map<String, Object>> homeAccept(
+    public ResponseEntity<Map<String, Object>> handleAcceptDecline(
             @RequestParam(name = "action") String action,
             @RequestParam(name = "suggestedId") Long suggestedId,
             Authentication authentication,
@@ -84,29 +84,9 @@ public class SuggestedUserController {
         GardenUser loggedInUser = gardenUserService.getUserById(loggedInUserId);
         GardenUser suggestedUser = gardenUserService.getUserById(suggestedId);
         Map<String, Object> response = new HashMap<>();
-        boolean doNothing = false;
 
-
-        boolean requestedIdIsLoggedInUser = suggestedId.equals(loggedInUserId);
-        if (requestedIdIsLoggedInUser) {
-            logger.error("Suggested friend request was to logged in user's own ID. Doing nothing.");
-            doNothing = true;
-        }
-
-        boolean alreadyFriends = friendService.getAcceptedFriendship(loggedInUserId, suggestedId) != null;
-        if (alreadyFriends) {
-            logger.error("Suggested friend and logged in user are already friends. Doing nothing");
-            doNothing = true;
-        }
-
-        boolean alreadyDeclined = friendService.getDeclinedFriendship(loggedInUserId, suggestedId).isPresent();
-        if (alreadyDeclined) {
-            logger.error("Suggest friend and logged in user have a decline friendship. Doing nothing");
-            doNothing = true;
-        }
-
-        // No more action to be taken if the above checks fail
-        if (doNothing) {
+        boolean validationPassed = suggestedUserService.validationCheck(loggedInUserId, suggestedId);
+        if (!validationPassed) {
             response.put("success", false);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
@@ -117,7 +97,6 @@ public class SuggestedUserController {
             boolean pendingRequestAccepted = suggestedUserService.attemptToAcceptPendingRequest(loggedInUserId, suggestedId);
             if (pendingRequestAccepted) {
                 logger.info("Pending request from suggested user accepted, user's are now friends");
-                response.put("success", true);
             } else { // Send a new pending request to the suggested user
                 boolean newRequestSent = suggestedUserService.sendNewPendingRequest(loggedInUser, suggestedUser);
                 if (!newRequestSent) {
@@ -131,7 +110,6 @@ public class SuggestedUserController {
             boolean pendingRequestDeclined = suggestedUserService.attemptToDeclinePendingRequest(loggedInUserId, suggestedId);
             if (pendingRequestDeclined) {
                 logger.info("Pending request from suggested user declined, user won't be shown again");
-                response.put("success", false);
             } else {
                 boolean declineStatusSet = suggestedUserService.setDeclinedFriendship(loggedInUser, suggestedUser);
                 if (!declineStatusSet) {
@@ -142,94 +120,7 @@ public class SuggestedUserController {
             }
         }
 
+        response.put("success", true);
         return ResponseEntity.status(HttpStatus.OK).body(response);
-
-        // Decline button pressed flow
-//        if ("decline".equals(action)) {
-//            logger.info("Accept button pressed by: {} on: {}", loggedInUserId, suggestedId);
-//
-//            // Logged in user sent request to suggested user already then we do nothing.
-//
-//
-//
-//
-//            // If there is no friendship relation at all then we want to send a pending
-//
-//
-//        }
-//
-//
-//        // Do the accept button
-//        // Checks:
-//        // 1. Is there a pending friend request sent from the suggestedUser to us? Accept this
-//        // 2. Is there a pending friend request sent from us to the suggestedUser? Do nothing
-//        // 3. Is there already an accepted or decline status between us and the suggestedUser? Do nothing
-//        // 4. If there is no friend request at all then we want to send a request from us to the suggestedUser
-//
-//
-//
-//        // Do the decline button
-//        // 1. Is there a pending friend request sent from the suggestedUser to us? Remove this request and make it declined
-//        // 2. Is there a pending friend request sent from us to the suggestedUser? Decline their request
-//        // 3. Is there already an accepted or decline status between us and the suggestedUser? Do nothing
-//        // 4. If there is no friend request at all then we want to create a declined friendship from us to the suggestedUser
-//
-//
-//
-//
-//
-//        boolean success = false;
-//
-//
-//
-//        if ("accept".equals(action) && requestedIdNotUser && notAlreadyFriends) {
-//
-//
-//            // If no request was accepted, check if a request was already sent
-//            if (!success) {
-//                boolean requestAlreadySent = suggestedUserService.friendRecordExists(loggedInUserId, suggestedId);
-//
-//                if (!requestAlreadySent) {
-//                    Friends newRequest = new Friends(loggedInUser, suggestedUser, Friends.Status.PENDING);
-//                    friendService.save(newRequest);
-//                }
-//            }
-//        }
-//        if ("decline".equals(action) && !requestedId.equals(loggedInUserId) && alreadyFriends == null) {
-//            logger.info("Decline button pressed by: {} on: {}", loggedInUserId, requestedId);
-//
-//            List<Friends> receivedRequests = friendService.getReceivedRequests(loggedInUserId);
-//
-//            // If a request exists from the other user, we decline it
-//            for (Friends receivedRequest : receivedRequests) {
-//                if (receivedRequest.getSender().getId().equals(requestedId)) {
-//                    logger.info("There was a pending request from that user, declining them.");
-//                    receivedRequest.setStatus(Friends.Status.DECLINED);
-//                    friendService.save(receivedRequest);
-//                    success = true;
-//                    break;
-//                }
-//            }
-//
-//            // If there is no existing request from the other user
-//            if (!success) {
-//                boolean requestAlreadySent = suggestedUserService.doesFriendRequestExist(loggedInUserId, requestedId);
-//
-//                // If we haven't already sent the user a request of some kind then we create a declined invitation.
-//                if (!requestAlreadySent) {
-//                    logger.info("There was no pending request, creating a decline to hide user from feed.");
-//                    Friends newRequest = new Friends(loggedInUser, requestedUser, Friends.Status.DECLINED);
-//                    friendService.save(newRequest);
-//                }
-//            }
-//
-//
-//            // TODO: Implement hiding them in the feed in Make the connection feed work task
-//            // NB: You shouldn't be able to see people in the feed that YOU have sent a request to. i.e. hearted them
-//        }
-
-
-        // telling us when to trigger the toast, only when we have made a connection!
-//        response.put("success", success);
     }
 }

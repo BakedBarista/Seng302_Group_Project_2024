@@ -24,6 +24,36 @@ public class SuggestedUserService {
     }
 
     /**
+     * Performs a number of validation checks before dealing with the suggested user's accept or decline.
+     * Checks the ID isn't the logged-in users own ID.
+     * Checks the users aren't already friends.
+     * Checks there isn't an existing declined request.
+     * @param loggedInUserId the logged-in users ID.
+     * @param suggestedUserId the suggested users ID.
+     * @return true if the checks have passed. false if they fail.
+     */
+    public boolean validationCheck(Long loggedInUserId, Long suggestedUserId) {
+        boolean requestedIdIsLoggedInUser = suggestedUserId.equals(loggedInUserId);
+        if (requestedIdIsLoggedInUser) {
+            logger.error("Suggested friend request was to logged in user's own ID. Doing nothing.");
+            return false;
+        }
+
+        boolean alreadyFriends = friendService.getAcceptedFriendship(loggedInUserId, suggestedUserId) != null;
+        if (alreadyFriends) {
+            logger.error("Suggested friend and logged in user are already friends. Doing nothing");
+            return false;
+        }
+
+        boolean alreadyDeclined = friendService.getDeclinedFriendship(loggedInUserId, suggestedUserId).isPresent();
+        if (alreadyDeclined) {
+            logger.error("Suggest friend and logged in user have a decline friendship. Doing nothing");
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * Checks if there is an existing friendship request between two users.
      * The requests can be either PENDING or DECLINED
      * @param senderId the request sender's ID
