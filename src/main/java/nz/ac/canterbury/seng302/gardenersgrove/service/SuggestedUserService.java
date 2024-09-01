@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.entity.Friends.Status.ACCEPTED;
+import static nz.ac.canterbury.seng302.gardenersgrove.entity.Friends.Status.PENDING;
 
 @Service
 public class SuggestedUserService {
@@ -32,7 +34,6 @@ public class SuggestedUserService {
     public boolean friendRecordExists(Long senderId, Long receiverId) {
         List<Friends> sentRequests = friendService.getSentRequests(senderId);
 
-        // TODO: Remove this horrible for loop
         for (Friends sentRequest : sentRequests) {
             if (sentRequest.getReceiver().getId().equals(receiverId) && !sentRequest.getStatus().equals(ACCEPTED)) {
                 return true;
@@ -43,24 +44,43 @@ public class SuggestedUserService {
 
     /**
      * Check's for existing, pending received requests from the other user.
-     *
      * Will accept this request if it finds one. If none can be found, then
      * nothing happens and false returned.
-     * @param senderId the sender of the pending request
-     * @param receiverId the receiver of the pending request
+     * @param loggedInUserId the sender of the pending request
+     * @param suggestedUserId the receiver of the pending request
      * @return True if request accepted, otherwise false.
      */
-    public boolean attemptToAcceptPendingRequest(Long senderId, Long receiverId) {
-        Optional<Friends> pendingRequest = friendService.getPendingFriendRequest(receiverId, senderId);
+    public boolean attemptToAcceptPendingRequest(Long loggedInUserId, Long suggestedUserId) {
+        Optional<Friends> pendingRequest = friendService.getPendingFriendRequest(suggestedUserId, loggedInUserId);
 
         if (pendingRequest.isPresent()) {
-            logger.info("Pending request found from ID: {} to {}", senderId, receiverId);
+            logger.info("Pending request found from ID: {} to {}", suggestedUserId, loggedInUserId);
             logger.info("Accepting request");
             pendingRequest.get().setStatus(ACCEPTED);
             friendService.save(pendingRequest.get());
             return true;
         }
-        logger.info("No pending request from ID: {} to {}", senderId, receiverId);
+        logger.info("No pending request from ID: {} to {}", suggestedUserId, loggedInUserId);
         return false;
+    }
+
+    /**
+     * Sends a pending request to the suggested user if there is no pre-existing
+     * pending or declined relationship.
+     * @param loggedInUser the logged-in user
+     * @param suggestedUser the suggested user that's displayed
+     * @return true if the friendship was sent. false otherwise.
+     */
+    public boolean sendNewRequest(GardenUser loggedInUser, GardenUser suggestedUser) {
+        boolean friendRecordExists = friendRecordExists(loggedInUser.getId(), suggestedUser.getId());
+        if (friendRecordExists) {
+            logger.error("Friendship (pending or declined) between user's already exists, not sending a new request.");
+            return false;
+        }
+
+        logger.info("Sending a pending request from ID: {} to ID: {}", loggedInUser.getId(), suggestedUser.getId());
+        Friends pendingRequest = new Friends(loggedInUser, suggestedUser, PENDING);
+        friendService.save(pendingRequest);
+        return true;
     }
 }
