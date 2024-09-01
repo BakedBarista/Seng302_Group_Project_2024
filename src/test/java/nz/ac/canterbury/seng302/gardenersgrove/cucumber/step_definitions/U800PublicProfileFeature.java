@@ -6,6 +6,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.EditUserController;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.PublicProfileController;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditPasswordDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
@@ -20,6 +21,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,6 +43,7 @@ public class U800PublicProfileFeature {
     String invalidDescription;
     private GardenUser user;
     String validDescription = "I love gardening!";
+    Garden garden;
 
     MultipartFile profilePic = new MockMultipartFile(
             "image",
@@ -178,5 +182,40 @@ public class U800PublicProfileFeature {
                 "image/pdf",
                 largeContent
         );
+    }
+
+
+    @Then("I can see an editable section called “My Favourite Garden” where I can showcase my favourite public garden of mine.")
+    public void iCanSeeAnEditableSectionCalledMyFavouriteGardenWhereICanShowcaseMyFavouritePublicGardenOfMine() {
+        Garden favourite = new Garden();
+        user.setFavoriteGarden(favourite);
+        assertEquals(user.getFavoriteGarden(), favourite);
+    }
+
+    @When("I select a garden from the list of public gardens")
+    public void iSelectAGardenFromTheListOfPublicGardens() {
+        List<Garden> publicGardens = new ArrayList<>();
+        garden = new Garden();
+        garden.setOwner(user);
+        garden.setPublic(true);
+        publicGardens.add(garden);
+        user.setFavoriteGarden(publicGardens.get(0));
+    }
+
+    @Then("The garden is displayed")
+    public void theGardenIsDisplayed() {
+        assertEquals(garden, user.getFavoriteGarden());
+    }
+
+    @Given("I am on my edit profile page and I already have a favourite garden")
+    public void iAmOnMyEditProfilePageAndIAlreadyHaveAFavouriteGarden() {
+        if(user.getFavoriteGarden() == null) {
+            user.setFavoriteGarden(new Garden());
+        }
+    }
+
+    @Then("My favourite garden is updated")
+    public void myFavouriteGardenIsUpdated() {
+        assertEquals(user.getFavoriteGarden(), garden);
     }
 }
