@@ -6,8 +6,6 @@ const Actions = {
 document.addEventListener('DOMContentLoaded', function () {
     let acceptButton = document.getElementById('heartButton');
     let declineButton = document.getElementById('declineButton');
-    let toastDivs = document.getElementById('acceptToast');
-    let toast = new bootstrap.Toast(toastDivs);
 
     if (acceptButton) {
         acceptButton.addEventListener('click', function (event) {
@@ -33,6 +31,9 @@ document.addEventListener('DOMContentLoaded', function () {
  * @param suggestedUserId
  */
 function handlePost(action, suggestedUserId) {
+    let toastDivs = document.getElementById('acceptToast');
+    let toast = new bootstrap.Toast(toastDivs);
+
     let formData = new FormData();
     formData.append('action', action);
     formData.append('id', suggestedUserId);
