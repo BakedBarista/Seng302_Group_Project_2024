@@ -82,6 +82,17 @@ public class FriendService {
     }
 
     /**
+     * Gets a declined friendship between 2 users if one exists.
+     * @param sender user 1
+     * @param receiver user 2
+     * @return An optional of the declined friendship
+     */
+    public Optional<Friends> getDeclinedFriendship(Long sender, Long receiver) {
+        return Optional.ofNullable(friendsRepository.getFriendshipBetweenUsersWithStatus(sender, receiver, DECLINED));
+    }
+
+
+    /**
      * Retrieves the Friend object where sender sent a request to receiver
      *
      * @param sender user who sent the original request
@@ -153,6 +164,17 @@ public class FriendService {
     public void removeFriendship(Friends friends) {
         friendsRepository.delete(friends);
 
+    }
+
+
+    /**
+     * Finds any Pending or Declined relationships that exist between two users, in either direction.
+     * @param user1Id the first user
+     * @param user2Id the second user
+     * @return an optional of the relationship if it exists.
+     */
+    public Optional<Friends> getPendingOrDeclinedRequests(Long user1Id, Long user2Id) {
+        return friendsRepository.findPendingOrDeclinedFriendship(user1Id, user2Id);
     }
 
 }

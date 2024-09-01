@@ -90,5 +90,16 @@ public interface FriendsRepository extends CrudRepository<Friends, Long> {
     List<Friends> getFriendshipsFromUserWithStatus(Long sender, Friends.Status status);
 
     void deleteBySenderIdAndReceiverId(Long senderId, Long receiverId);
+
+    /**
+     * Finds any pending or declined friendships that may exist between 2 users.
+     * The relationship is from either direction.
+     * Will not return
+     * @param userId1 the first user's id
+     * @param userId2 the second user's id
+     * @return an optional of the friends entity if it exists
+     */
+    @Query("SELECT f FROM Friends f WHERE ((f.userOneId = :userId1 AND f.userTwoId = :userId2) OR (f.userOneId = :userId2 AND f.userTwoId = :userId1)) AND f.status IN ('PENDING', 'DECLINED')")
+    Optional<Friends> findPendingOrDeclinedFriendship(@Param("userId1") Long userId1, @Param("userId2") Long userId2);
 }
 
