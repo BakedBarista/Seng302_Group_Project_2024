@@ -1,8 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.SuggestedUserService;
 import org.slf4j.Logger;
@@ -28,19 +26,16 @@ public class SuggestedUserController {
 
     private static final Logger logger = LoggerFactory.getLogger(SuggestedUserController.class);
 
-    private final GardenService gardenService;
     private final GardenUserService gardenUserService;
-    private final FriendService friendService;
     private final SuggestedUserService suggestedUserService;
     private static final String PASSWORD = "password";
+    private static final String SUCCESS = "success";
     private final GardenUser user4 = new GardenUser("Max", "Doe", "max@gmail.com", PASSWORD,
             LocalDate.of(1970, 1, 1));
 
     @Autowired
-    public SuggestedUserController(GardenService gardenService, GardenUserService gardenUserService, FriendService friendService, SuggestedUserService suggestedUserService) {
-        this.gardenService = gardenService;
+    public SuggestedUserController(GardenUserService gardenUserService, SuggestedUserService suggestedUserService) {
         this.gardenUserService = gardenUserService;
-        this.friendService = friendService;
         this.suggestedUserService = suggestedUserService;
     }
 
@@ -87,7 +82,7 @@ public class SuggestedUserController {
 
         boolean validationPassed = suggestedUserService.validationCheck(loggedInUserId, suggestedId);
         if (!validationPassed) {
-            response.put("success", false);
+            response.put(SUCCESS, false);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
 
@@ -101,7 +96,7 @@ public class SuggestedUserController {
                 boolean newRequestSent = suggestedUserService.sendNewPendingRequest(loggedInUser, suggestedUser);
                 if (!newRequestSent) {
                     logger.error("Something went wrong trying to send a new request. Doing nothing");
-                    response.put("success", false);
+                    response.put(SUCCESS, false);
                     return ResponseEntity.status(HttpStatus.OK).body(response);
                 }
             }
@@ -114,13 +109,13 @@ public class SuggestedUserController {
                 boolean declineStatusSet = suggestedUserService.setDeclinedFriendship(loggedInUser, suggestedUser);
                 if (!declineStatusSet) {
                     logger.error("Something went wrong trying to set a declined friendship. Doing nothing");
-                    response.put("success", false);
+                    response.put(SUCCESS, false);
                     return ResponseEntity.status(HttpStatus.OK).body(response);
                 }
             }
         }
 
-        response.put("success", true);
+        response.put(SUCCESS, true);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }
