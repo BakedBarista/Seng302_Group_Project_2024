@@ -84,7 +84,7 @@ class FavouriteGardenControllerMVCTests {
     }
 
     @Test
-    public void testFavouriteGarden() throws Exception {
+    void testFavouriteGarden() throws Exception {
         mockMvc.perform(post("/users/edit-public-profile/favourite-garden")
                         .param("search", "rose")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -93,7 +93,7 @@ class FavouriteGardenControllerMVCTests {
     }
 
     @Test
-    public void testUpdateFavouriteGarden() throws Exception {
+    void testUpdateFavouriteGarden() throws Exception {
         String json = objectMapper.writeValueAsString(Map.of("id", "1"));
 
         mockMvc.perform(put("/users/edit-public-profile/favourite-garden")

@@ -12,7 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 
-import java.util.HashMap;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -53,9 +53,8 @@ public class FavouriteGardenController  {
         }
         Optional<Garden> garden = gardenService.getGardenById(gardenId);
         GardenUser currentUser = gardenUserService.getCurrentUser();
-        Garden existingGarden = new Garden();
         if (garden.isPresent()) {
-            existingGarden = garden.get();
+            Garden existingGarden = garden.get();
             gardenService.addFavouriteGarden(currentUser.getId(), existingGarden.getId());
             model.addAttribute("favouriteGarden", existingGarden);
         }

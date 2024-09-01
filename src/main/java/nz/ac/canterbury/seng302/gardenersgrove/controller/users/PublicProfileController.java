@@ -31,9 +31,12 @@ public class PublicProfileController {
     private final GardenUserService userService;
     private final ProfanityService profanityService;
 
+
     private static final String DEFAULT_PROFILE_BANNER_URL = "/img/default-banner.svg";
     
     private static final String USER_ID_ATTRIBUTE = "userId";
+
+    private  static  final  String FAVOURITE_GARDEN = "favouriteGarden";
 
     private static final String DESCRIPTION = "description";
 
@@ -63,7 +66,7 @@ public class PublicProfileController {
         model.addAttribute("name", user.getFullName());
         model.addAttribute(DESCRIPTION, user.getDescription());
         model.addAttribute("favouritePlants", user.getFavouritePlants());
-        model.addAttribute("favouriteGarden", user.getFavoriteGarden());
+        model.addAttribute(FAVOURITE_GARDEN, user.getFavoriteGarden());
         logger.info("{}",user.getFavoriteGarden());
 
         return "users/public-profile";
@@ -93,7 +96,7 @@ public class PublicProfileController {
         model.addAttribute(USER_ID_ATTRIBUTE, id);
         model.addAttribute("currentUser", loggedInUserId);
         model.addAttribute("name", user.getFullName());
-        model.addAttribute("favouriteGarden", user.getFavoriteGarden());
+        model.addAttribute(FAVOURITE_GARDEN, user.getFavoriteGarden());
         model.addAttribute(DESCRIPTION, user.getDescription());
 
         return "users/public-profile";
@@ -134,7 +137,7 @@ public class PublicProfileController {
         model.addAttribute("name", user.getFullName());
         editUserDTO.setDescription(user.getDescription());
         model.addAttribute("editUserDTO", editUserDTO);
-        model.addAttribute("favouriteGarden", user.getFavoriteGarden());
+        model.addAttribute(FAVOURITE_GARDEN, user.getFavoriteGarden());
 
         return "users/edit-public-profile";
     }

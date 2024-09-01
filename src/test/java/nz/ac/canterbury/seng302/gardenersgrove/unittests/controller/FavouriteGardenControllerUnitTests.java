@@ -21,7 +21,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-public class FavouriteGardenControllerUnitTests {
+class FavouriteGardenControllerUnitTests {
 
     @Mock
     private GardenService gardenService;
@@ -38,7 +38,7 @@ public class FavouriteGardenControllerUnitTests {
     }
 
     @Test
-    public void testFavouriteGarden() {
+    void testFavouriteGarden() {
         GardenUser mockUser = new GardenUser();
         List<Garden> mockGardens = List.of(new Garden("Rose Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"test description", 100.0));
 
@@ -52,7 +52,7 @@ public class FavouriteGardenControllerUnitTests {
     }
 
     @Test
-    public void testUpdateFavouriteGarden() throws Exception {
+    void testUpdateFavouriteGarden() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(Map.of("id", "1"));
         Model model = mock(Model.class);
@@ -71,7 +71,7 @@ public class FavouriteGardenControllerUnitTests {
     }
 
     @Test
-    public void testUpdateFavouriteGardenInvalidJson() throws Exception {
+    void testUpdateFavouriteGardenInvalidJson() throws Exception {
         String invalidJson = "{invalid}";
 
         Model model = mock(Model.class);
