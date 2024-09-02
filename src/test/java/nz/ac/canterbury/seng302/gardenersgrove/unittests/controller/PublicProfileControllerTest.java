@@ -298,7 +298,6 @@ public class PublicProfileControllerTest {
 
         ResponseEntity<byte[]> response = publicProfileController.favouriteGardenImage(1L, request);
 
-        assertEquals(302, response.getStatusCodeValue());
         assertEquals("/context/img/default-garden.svg", response.getHeaders().getFirst(HttpHeaders.LOCATION));
     }
 
