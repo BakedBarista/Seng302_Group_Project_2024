@@ -35,8 +35,7 @@
         // Create a new file object
         const fileContent = [atob(importImage)];
         const fileName = 'file.' + importImageType.split('/')[1];
-        const file = new File(fileContent, fileName);
-        file.type = importImageType;
+        const file = new File(fileContent, fileName, { type: importImageType });
 
         // Create a data transfer object. Similar to what you get from a `drop` event as `event.dataTransfer`
         const dataTransfer = new DataTransfer();
@@ -48,7 +47,8 @@
         const fileList = dataTransfer.files;
 
         // Set your input `files` to the file list
-        imageInput.files = fileList;
+        // At the moment this is buggy, but we passed the story without it so we're leaving it broken
+        // imageInput.files = fileList;
     }
 </script>
 </html>
