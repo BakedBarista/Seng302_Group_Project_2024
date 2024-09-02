@@ -143,7 +143,6 @@ public class PublicProfileController {
      * @param description the description of the user
      * @return A redirection to the "/users/public-profile"
      */
-
     @PostMapping("users/edit-public-profile")
     public String publicProfileEditSubmit(
             Authentication authentication,

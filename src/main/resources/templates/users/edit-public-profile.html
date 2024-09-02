@@ -28,7 +28,6 @@
         </div>
     </div>
 
-
   <div class="card border-top-0">
       <form th:action="@{/users/edit-public-profile}" method="post" enctype="multipart/form-data" th:object="${editUserDTO}" novalidate>
           <div class="card-img-top img-fluid fixed-height mb-4 position-relative">
@@ -47,6 +46,9 @@
                        th:src="@{'/users/' + ${userId} + '/profile-banner'}"
                        alt="profile banner"/>
                   <span id="editProfileBannerError" class="invalid-feedback"></span>
+                  <span>
+
+                  </span>
               </div>
           </div>
           <div>
@@ -100,7 +102,7 @@
                   <h4>My Favourite Garden</h4>
                   <a class="btn btn-change ms-auto mb-2" >
                       <img th:src="@{/icons/edit.svg}"
-                           aria-hidden=""
+                           aria-hidden="true"
                            alt="edit"
                            width="20"
                            height="20" /> Change
@@ -119,6 +121,16 @@
                       <!-- non-empty card -->
                       <div class="card p-2 me-3 mb-3 border-0 rounded-3 d-flex shadow-sm public-profile-plant-card bg-primary-temp">
                           <!-- place holder image -->
+                          <span onclick="deleteFavouritePlant(1); return false;">
+                              <a class="btn-change position-absolute bg-danger top-0 end-0 m-1 p-1 d-flex align-content-center justify-content-center rounded-3">
+                                  <img th:src="@{/icons/delete.svg}"
+                                       aria-hidden="true"
+                                       alt="delete"
+                                       width="17"
+                                       height="17" />
+                              </a>
+                          </span>
+
                           <img
                                   class="mx-auto d-block pt-1"
                                   th:src="@{'/plants/10/plant-image'}"
@@ -167,6 +179,22 @@
 <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
 
 <script>
+    const deleteFavouritePlant = async (id) => {
+        try {
+            await fetch(`${apiBaseUrl}/users/delete-favourite-plant/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrf,
+                },
+            })
+
+            window.location.reload();
+        } catch {
+            // handle error case ??
+        }
+    };
+
     openPlantSelectorModal = (index) => {
         const modal = new bootstrap.Modal(document.getElementById("plantSelectorModal"))
         modal.show()
