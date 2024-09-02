@@ -20,6 +20,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.web.servlet.MockMvc;
@@ -107,9 +108,10 @@ public class PublicProfileControllerTest {
         otherUser.setFname("Other");
         otherUser.setLname("User");
         otherUser.setDescription("This is a description for another user");
-
         garden = new Garden();
-        user.setFavoriteGarden(garden);
+
+
+
 
 
 
@@ -282,6 +284,8 @@ public class PublicProfileControllerTest {
         byte[] imageBytes = "image".getBytes();
         garden.setGardenImage("image/png", imageBytes);
 
+        user.setFavoriteGarden(garden);
+
         when(gardenUserService.getUserById(1L)).thenReturn(user);
 
         ResponseEntity<byte[]> response = publicProfileController.favouriteGardenImage(1L, request);
@@ -294,11 +298,15 @@ public class PublicProfileControllerTest {
     @Test
     void givenUserHasNoGardenImage_whenGetFavouriteGardenImage_thenRedirectToDefaultImage() {
         when(gardenUserService.getUserById(1L)).thenReturn(user);
-        when(request.getContextPath()).thenReturn("/context");
+        when(request.getContextPath()).thenReturn("");
+        garden.setGardenImage(null, null);
 
+        // Act
         ResponseEntity<byte[]> response = publicProfileController.favouriteGardenImage(1L, request);
 
-        assertEquals("/context/img/default-garden.svg", response.getHeaders().getFirst(HttpHeaders.LOCATION));
+        // Assert
+        assertEquals(HttpStatus.FOUND, response.getStatusCode());
+        assertEquals("/img/default-garden.svg", response.getHeaders().getFirst(HttpHeaders.LOCATION));
     }
 
 }
