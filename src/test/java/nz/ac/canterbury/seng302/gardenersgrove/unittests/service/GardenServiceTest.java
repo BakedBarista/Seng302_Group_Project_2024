@@ -2,14 +2,19 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unittests.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -28,8 +33,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 
@@ -66,9 +74,11 @@ public class GardenServiceTest {
         Double lat = 2.0;
         Double gardenSize = 100D;
         String gardenDescription = "Test Description";
+        byte[] gardenImage = null;
+        String gardenImageContent = null;
+        Garden garden = new Garden(gardenName, streetNumber,streetName,suburb,city,country,postCode,lon,lat, gardenDescription, gardenSize, gardenImage, gardenImageContent);
+        Mockito.when(gardenRepository.save(Mockito.any(Garden.class))).thenReturn(garden);
 
-        Garden garden = new Garden(gardenName, streetNumber,streetName,suburb,city,country,postCode,lon,lat, gardenDescription, gardenSize);
-        Mockito.when(gardenRepository.save(any(Garden.class))).thenReturn(garden);
 
         Garden gardenReturned = gardenService.addGarden(garden);
 
@@ -87,8 +97,8 @@ public class GardenServiceTest {
     @Test
     public void getAllGardens_ReturnsAllGardens() {
         List<Garden> mockGardens = Arrays.asList(
-                new Garden("Garden1", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041",1.0,2.0, "Big", null),
-                new Garden("Garden2", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041", 1.0,2.0,"Small", null)
+                new Garden("Garden1", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041",1.0,2.0, "Big", null, null, null),
+                new Garden("Garden2", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041", 1.0,2.0,"Small", null, null, null)
         );
         when(gardenRepository.findAll()).thenReturn(mockGardens);
 
@@ -100,7 +110,7 @@ public class GardenServiceTest {
 
     @Test
     public void getGardenById_ReturnsGarden() {
-        Garden garden = new Garden("Garden", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041",1.0,2.0, "Big", null);
+        Garden garden = new Garden("Garden", "1","Ilam Road","Ilam","Christchurch","New Zealand","8041",1.0,2.0, "Big", null, null, null);
 
         when(gardenRepository.findById(1L)).thenReturn(java.util.Optional.of(garden));
 
@@ -127,8 +137,8 @@ public class GardenServiceTest {
     @Test
     public void getGardensByOwnerId_ReturnsGardens() {
         List<Garden> mockGardens = Arrays.asList(
-                new Garden("Garden 1", "1","Test Road","Test Suburb","Test City","Test Country","1000",0.55,0.55, "small", null),
-                new Garden("Garden 2", "2","Test Road","Test Suburb","Test City","Test Country","1000",0.55,0.55, "small", null)
+                new Garden("Garden 1", "1","Test Road","Test Suburb","Test City","Test Country","1000",0.55,0.55, "small", null, null, null),
+                new Garden("Garden 2", "2","Test Road","Test Suburb","Test City","Test Country","1000",0.55,0.55, "small", null, null, null)
         );
         Mockito.when(gardenRepository.findByOwnerId(1L)).thenReturn(mockGardens);
 
@@ -141,8 +151,8 @@ public class GardenServiceTest {
     @Test
     void getGardensPagesByOwnerId_ReturnsGardensPage() {
         List<Garden> mockGardens = Arrays.asList(
-                new Garden("Garden 1", "1","Test Road","Test Suburb","Test City","Test Country","1000",0.55,0.55, "small", null),
-                new Garden("Garden 2", "2","Test Road","Test Suburb","Test City","Test Country","1000",0.55,0.55, "small", null)
+                new Garden("Garden 1", "1","Test Road","Test Suburb","Test City","Test Country","1000",0.55,0.55, "small", null,null, null),
+                new Garden("Garden 2", "2","Test Road","Test Suburb","Test City","Test Country","1000",0.55,0.55, "small", null,null, null)
         );
         Page<Garden> mockPage = new PageImpl<>(mockGardens, PageRequest.of(0, 10), 10);
         when(gardenService.getGardensByOwnerId(eq(1L), any(PageRequest.class))).thenReturn(mockPage);
@@ -191,8 +201,70 @@ public class GardenServiceTest {
     }
 
 
+    @Test
+    void setGardenImageWithValidId_imageSaved() throws IOException {
+        long id = 1L;
 
+        String filename = "test";
+        String originalFilename = "test.png";
+        byte[] imageBytes = "test".getBytes();
+        String contentType = "image/png";
 
+        MockMultipartFile file = new MockMultipartFile(filename, originalFilename, contentType, imageBytes);
+        Garden garden = new Garden();
+        garden.setId(id);
+        Mockito.when(gardenRepository.findById(id)).thenReturn(Optional.of(garden));
+
+        gardenService.setGardenImage(id, file);
+
+        verify(gardenRepository, times(1)).save(garden);
+        assertEquals(contentType, garden.getGardenImageContentType());
+        assertEquals(imageBytes, garden.getGardenImage());
+    }
+
+    @Test
+    void setPlantImageWithNonExistentId_imageNotSaved() throws IOException {
+        long id = 1L;
+        byte[] image = {};
+        String contentType = "image/svg";
+        String name = "plant.png";
+        String originalFilename = "plant.png";
+        MultipartFile file = new MockMultipartFile(name,originalFilename,contentType,image);
+
+        Mockito.when(gardenRepository.findById(id)).thenReturn(Optional.empty());
+
+        gardenService.setGardenImage(id, file);
+        verify(gardenRepository, never()).save(any());
+    }
+
+    @Test
+    void validateImage_withValidImage_shouldReturnTrue() {
+        long id = 1L;
+        byte[] image = {};
+        String contentType = "image/svg";
+        String name = "plant.png";
+        String originalFilename = "plant.png";
+        MultipartFile file = new MockMultipartFile(name,originalFilename,contentType,image);
+
+        boolean result = gardenService.validateImage(file);
+
+        assertTrue(result);
+    }
+
+    @Test
+    void validateImage_withInvalidFileType_shouldReturnFalse() {
+      
+        long id = 1L;
+        byte[] image = {};
+        String contentType = "image/gif";
+        String name = "plant.png";
+        String originalFilename = "plant.png";
+        MultipartFile file = new MockMultipartFile(name,originalFilename,contentType,image);
+
+        boolean result = gardenService.validateImage(file);
+
+        assertFalse(result);
+    }
 
 
 }

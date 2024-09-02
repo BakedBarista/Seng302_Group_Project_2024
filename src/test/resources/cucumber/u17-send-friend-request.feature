@@ -5,7 +5,6 @@ Feature:As Liam, I want to connect with my friends on Gardener’s Grove so that
     And My email is "liam@gmail.com"
     And My password is "P@ssw0rd"
 
-
   Scenario: I want to search for a user to add as a friend
     Given I am on the manage friends page
     When I search "John Doe"

@@ -79,12 +79,20 @@ public abstract class BaseGarden {
     @JoinTable(name="garden_tags", joinColumns = @JoinColumn(name="garden_id"), inverseJoinColumns = @JoinColumn(name="tag_id"))
     private Set<Tag> tags = new HashSet<>();
 
+    @Column(nullable = true)
+    protected String gardenImageContentType;
+
+    @Column(nullable = true, columnDefinition = "MEDIUMBLOB")
+    @Lob
+    protected byte[] gardenImage;
+
     @OneToOne
     @JoinColumn(name = "favouriteGarden")
     private GardenUser favouriteGarden;
 
     public BaseGarden(String name, String streetNumber, String streetName, String suburb, String city,
-                      String country, String postCode, Double lat, Double lon, String description) {
+                      String country, String postCode, Double lat, Double lon, String description, byte[] gardenImage,
+                      String gardenImageContentType) {
         this.name = name;
         this.streetNumber = streetNumber;
         this.streetName = streetName;
@@ -95,6 +103,8 @@ public abstract class BaseGarden {
         this.lat = lat;
         this.lon = lon;
         this.description = description;
+        this.gardenImage = gardenImage;
+        this.gardenImageContentType = gardenImageContentType;
     }
 
     /**
@@ -114,6 +124,8 @@ public abstract class BaseGarden {
             this.lat = garden.getLat();
             this.lon = garden.getLon();
             this.description = garden.getDescription();
+            this.gardenImage = garden.getGardenImage();
+            this.gardenImageContentType = garden.getGardenImageContentType();
         }
     }
 
@@ -273,6 +285,19 @@ public abstract class BaseGarden {
 
     public String getLocation() {
         return streetNumber + " " + streetName + " " + suburb + " " + city + " " + postCode + " " + country;
+    }
+
+    public byte[] getGardenImage() {
+        return gardenImage;
+    }
+
+    public String getGardenImageContentType() {
+        return gardenImageContentType;
+    }
+
+    public void setGardenImage(String contentType, byte[] gardenImage) {
+        this.gardenImageContentType = contentType;
+        this.gardenImage = gardenImage;
     }
 
     public void setFavouriteGarden(GardenUser gardenUser) {this.favouriteGarden = gardenUser;}

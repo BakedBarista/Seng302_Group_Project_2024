@@ -31,7 +31,7 @@ class GardenDTOTest {
 
     @BeforeEach
     void makeGarden() {
-        garden = new GardenDTO("Garden","1","Ilam Road","Ilam","Christchurch","New Zealand","8041",0.24,3.66,"big",null,"Token123");
+        garden = new GardenDTO("Garden","1","Ilam Road","Ilam","Christchurch","New Zealand","8041",0.24,3.66,"big",null,"Token123", null, null);
     }
 
     /**

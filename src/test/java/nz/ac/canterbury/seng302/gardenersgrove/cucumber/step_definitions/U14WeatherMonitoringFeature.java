@@ -21,10 +21,12 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weather.GardenWeatherService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weather.WeatherAPIService;
 import org.junit.jupiter.api.Assertions;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -54,6 +56,8 @@ public class U14WeatherMonitoringFeature {
     private WeatherAPICurrentResponse currentResponse;
     private double lat = -43.521369;
     private double lon = 172.58492;
+    private static MultipartFile file;
+
 
     @BeforeAll
     public static void beforeAll() {
@@ -77,6 +81,7 @@ public class U14WeatherMonitoringFeature {
         TagService tagService = mock(TagService.class);
         LocationService locationService = mock(LocationService.class);
         gardenController = new GardenController(gardenService, null, plantService, userService, weatherAPIService, friendService, mockedModerationService, profanityService, locationService);
+        file = new MockMultipartFile("file", "filename.txt", "text/plain", "Some file content".getBytes());
 
         GardenUser user = new GardenUser();
         user.setId(1L);
@@ -111,7 +116,7 @@ public class U14WeatherMonitoringFeature {
         when(mockedModerationService.checkIfDescriptionIsFlagged("")).thenReturn(false);
         when(gardenRepository.save(garden)).thenReturn(garden);
 
-        gardenController.submitCreateGardenForm(new GardenDTO(garden), bindingResult, authentication, model,session);
+        gardenController.submitCreateGardenForm(new GardenDTO(garden), bindingResult, file, authentication, model,session);
         assertNotNull(gardenRepository.findByOwnerId(user.getId()));
         assertNotNull(gardenRepository.findById(garden.getId()));
     }
