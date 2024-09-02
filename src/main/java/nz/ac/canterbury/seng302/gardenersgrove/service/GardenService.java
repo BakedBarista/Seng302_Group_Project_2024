@@ -158,8 +158,15 @@ public class GardenService {
             GardenUser existingUser = user.get();
             Garden existingGarden = garden.get();
 
+            if (existingUser.getFavoriteGarden() != null) {
+                Garden oldFavorite = existingUser.getFavoriteGarden();
+                oldFavorite.setFavouriteGarden(null);
+                gardenRepository.save(oldFavorite);
+            }
+
             existingUser.setFavoriteGarden(existingGarden);
             gardenUserRepository.save(existingUser);
+
         }
     }
 
@@ -167,7 +174,7 @@ public class GardenService {
      * Sets the image of the garden with given ID.
      * @param id ID of the garden which image is to be set
      * @param gardenImage multipart file for the garden image
-     * @throws IOException
+     * @throws IOException if the image cannot be read
      */
     public void setGardenImage(long id, MultipartFile gardenImage) throws IOException {
         var garden = gardenRepository.findById(id);

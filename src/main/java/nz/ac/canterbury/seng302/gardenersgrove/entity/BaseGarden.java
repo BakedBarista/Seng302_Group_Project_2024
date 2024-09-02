@@ -75,6 +75,7 @@ public abstract class BaseGarden {
     @JoinColumn(name = "owner_id", nullable = false)
     private GardenUser owner;
 
+    @JsonIgnore
     @ManyToMany
     @JoinTable(name="garden_tags", joinColumns = @JoinColumn(name="garden_id"), inverseJoinColumns = @JoinColumn(name="tag_id"))
     private Set<Tag> tags = new HashSet<>();
@@ -86,6 +87,7 @@ public abstract class BaseGarden {
     @Lob
     protected byte[] gardenImage;
 
+    @JsonIgnore
     @OneToOne
     @JoinColumn(name = "favouriteGarden")
     private GardenUser favouriteGarden;
@@ -109,7 +111,7 @@ public abstract class BaseGarden {
 
     /**
      * copy the main (shared) data for a base garden (either garden or gardenDTO)
-     * @param garden
+     * @param garden the garden to copy from
      */
     public BaseGarden(BaseGarden garden) {
         if (garden != null) {

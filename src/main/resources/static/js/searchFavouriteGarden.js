@@ -73,6 +73,9 @@ function previewFavouriteGarden() {
         document.getElementById('selectedGardenLocation').textContent = gardenLocation;
         document.getElementById('selectedGardenDescription').textContent = gardenDescription;
         document.getElementById('selectedGardenSize').textContent = gardenSize;
+
+        const gardenImageUrl = `${baseUrl}gardens/${gardenId}/garden-image`
+        document.getElementById('selectedGardenImage').src = gardenImageUrl;
     } else {
         console.log("No garden selected.");
     }

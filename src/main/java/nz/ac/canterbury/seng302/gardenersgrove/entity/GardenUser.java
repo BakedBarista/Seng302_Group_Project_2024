@@ -91,7 +91,7 @@ public class GardenUser {
     private List<Plant> favouritePlants;
 
     @PrimaryKeyJoinColumn
-    @OneToOne(mappedBy = "favouriteGarden", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "favouriteGarden", cascade = CascadeType.ALL)
     private Garden favoriteGarden;
 
     /**
@@ -120,7 +120,7 @@ public class GardenUser {
     /**
      * Gets the authorities granted to the user
      *
-     * @return
+     * @return the authorities granted to the user
      */
     public List<GrantedAuthority> getAuthorities() {
         return List.of();
@@ -239,7 +239,7 @@ public class GardenUser {
     /**
      * Sets the password of the user
      *
-     * @param password
+     * @param password the password to set
      */
     public void setPassword(String password) {
         PasswordEncoder encoder = new BCryptPasswordEncoder();
