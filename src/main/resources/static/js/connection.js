@@ -1,14 +1,39 @@
 document.addEventListener('DOMContentLoaded', function() {
-    let buttonClick = document.getElementById('heartIcon');
-    let toastDivs = document.getElementById('acceptToast');
-    let toast = new bootstrap.Toast(toastDivs);
+    const buttonClick = document.getElementById('heartIcon');
+    const toastDivs = document.getElementById('acceptToast');
+    const toast = new bootstrap.Toast(toastDivs);
+    
+    const cardName = document.getElementById('cardName');
+    
+    const userListJson = getMeta('_userList');
+    const userList = JSON.parse(userListJson);
+    
+    let userIndex = 0;
+    function currentUser() {
+        return userList[userIndex];
+    }
+    function showCurrentUserCard() {
+        if (userIndex > userList.length) {
+            const card = document.getElementById('card');
+            card.outerHTML = '<p>No users left to connect with</p>';
+        }
+        
+        const user = currentUser();
+        console.log(user);
+        cardName.textContent = user.fullName;
+    }
+    showCurrentUserCard();
 
     if (buttonClick) {
         buttonClick.addEventListener('click', function(event) {
             event.preventDefault();
-            let formData = new FormData();
+            
+            userIndex++;
+            showCurrentUserCard();
+
+            const formData = new FormData();
             formData.append('action', 'accept');
-            formData.append('id', 1); // this needs to be the id of user.
+            formData.append('id', currentUser().id); // this needs to be the id of user.
 
             fetch(`${baseUrl}`, {
                 method: 'POST',

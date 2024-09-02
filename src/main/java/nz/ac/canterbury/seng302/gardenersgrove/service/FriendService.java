@@ -140,7 +140,10 @@ public class FriendService {
      */
     public void removeFriendship(Friends friends) {
         friendsRepository.delete(friends);
+    }
 
+    public List<GardenUser> availbleConnections(GardenUser user){
+        return friendsRepository.getAvailableConnections(user.getId());
     }
 
 }

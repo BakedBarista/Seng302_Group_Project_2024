@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import org.slf4j.Logger;
@@ -10,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -20,16 +22,17 @@ public class SuggestedUserController {
 
     private static final Logger logger = LoggerFactory.getLogger(SuggestedUserController.class);
 
-    private final GardenService gardenService;
+    private final FriendService friendService;
     private final GardenUserService gardenUserService;
-    private static final String PASSWORD = "password";
-    private final GardenUser user4 = new GardenUser("Max", "Doe", "max@gmail.com", PASSWORD,
-            LocalDate.of(1970, 1, 1));
+
+    private final ObjectMapper objectMapper;
+
 
     @Autowired
-    public SuggestedUserController(GardenService gardenService, GardenUserService gardenUserService) {
-        this.gardenService = gardenService;
+    public SuggestedUserController(FriendService friendService, GardenUserService gardenUserService, ObjectMapper objectMapper) {
+        this.friendService = friendService;
         this.gardenUserService = gardenUserService;
+        this.objectMapper = objectMapper;
     }
 
     /**
@@ -40,20 +43,22 @@ public class SuggestedUserController {
     public String home(Authentication authentication, Model model) {
         logger.info("GET /");
         try {
-            //  hard-coding a mock user for the card
-            gardenUserService.addUser(user4);
-            user4.setDescription("I am here to meet some handsome young men who love gardening as much as I do! My passion is growing carrots and eggplants. In my spare time, I like to thrift, ice skate and hang out with my kid, Liana. She's three, and the love of my life. The baby daddy is my former sugar daddy, John Doe. He died of a heart attack on his yacht in Italy last summer");
-            List<GardenUser> suggestedUsers = new ArrayList<>();
-            suggestedUsers.add(user4);
-
             Long userId = (Long) authentication.getPrincipal();
             GardenUser user = gardenUserService.getUserById(userId);
-
-            if(user.getId() != null) {
-                model.addAttribute("userId", suggestedUsers.get(0).getId());
-                model.addAttribute("name", suggestedUsers.get(0).getFullName());
-                model.addAttribute("description", suggestedUsers.get(0).getDescription());
+            List<GardenUser> suggestedUsers  = friendService.availbleConnections(user);
+            for (GardenUser gardenUser : suggestedUsers) {
+                logger.info(gardenUser.getEmail());
             }
+
+            model.addAttribute("userId", suggestedUsers.get(0).getId());
+            model.addAttribute("name", suggestedUsers.get(0).getFullName());
+            model.addAttribute("description", suggestedUsers.get(0).getDescription());
+
+
+            String jsonUsers = objectMapper.writeValueAsString(suggestedUsers);
+            logger.info(jsonUsers);
+            model.addAttribute("userList", jsonUsers);
+            
         }
         catch (Exception e) {
             logger.error("Error getting gardens for user");
