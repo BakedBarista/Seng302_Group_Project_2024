@@ -54,10 +54,6 @@ h1, h2, h3, h4, h5, h6 {
     font-style: normal;
 }
 
-.about-me {
-    font-size: 18px;
-}
-
 .montserrat-heading {
      font-family: "Montserrat", sans-serif;
      font-optical-sizing: auto;
@@ -301,11 +297,6 @@ h1, h2, h3, h4, h5, h6 {
 .public-profile-picture {
     border-radius: 999px;
     border: 10px white solid;
-}
-
-.text-truncate-multiline {
-    overflow-y: auto;
-    height: 11em;
 }
 
 .public-profile-picture-padding {
@@ -757,6 +748,25 @@ h1, h2, h3, h4, h5, h6 {
     border-color: #888888;
 }
 
+#heartButton.animate .heart-icon {
+    animation: pulse 0.6s ease forwards;
+}
+#declineButton.animate .decline-icon {
+    animation: pulse 0.6s ease forwards;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
 #recordUpdateButtonTooltip {
     background-color: #E2E9CE;
 }
@@ -795,19 +805,6 @@ h1, h2, h3, h4, h5, h6 {
 .friend-container.friend-name {
     margin-left: 20px;
 }
-
-.heart-icon {
-    width: 50px;
-    height: 50px;
-    transition: transform 0.3s ease;
-}
-
-.btn:hover .heart-icon {
-    transform: scale(1.1);
-}
-
-
-
 
 @media (max-width: 768px) {
     .friend-info {
