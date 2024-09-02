@@ -39,7 +39,7 @@ class GardenTest {
     @Test
     void givenSetFavouriteGarden_thenUserIsSet() {
         GardenUser user = new GardenUser();
-        Garden garden = new Garden("Test Garden", null, null, null, null, null, null, null, null, null, null);
+        Garden garden = new Garden("Test Garden", null, null, null, null, null, null, null, null, null, null, null, null);
         garden.setFavouriteGarden(user);
         GardenUser result = garden.getFavouriteGarden();
 

@@ -40,7 +40,7 @@ class FavouriteGardenControllerUnitTests {
     @Test
     void testFavouriteGarden() {
         GardenUser mockUser = new GardenUser();
-        List<Garden> mockGardens = List.of(new Garden("Rose Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"test description", 100.0));
+        List<Garden> mockGardens = List.of(new Garden("Rose Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"test description", 100.0, null, null));
 
         when(gardenUserService.getCurrentUser()).thenReturn(mockUser);
         when(gardenService.getPublicGardensByOwnerId(mockUser)).thenReturn(mockGardens);

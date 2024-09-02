@@ -4,11 +4,9 @@ import io.cucumber.java.BeforeAll;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import nz.ac.canterbury.seng302.gardenersgrove.controller.users.EditUserController;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.PublicProfileController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditPasswordDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
@@ -42,6 +40,7 @@ public class U800PublicProfileFeature {
     private static ProfanityService profanityService;
     private static GardenService gardenService;
     private static PlantService plantService;
+    private static GardenUserRepository gardenUserRepository;
 
     private static PublicProfileController publicProfileController;
 
@@ -79,12 +78,13 @@ public class U800PublicProfileFeature {
         userRepository = mock(GardenUserRepository.class);
         gardenRepository = mock(GardenRepository.class);
         bindingResult = mock(BindingResult.class);
+        gardenUserRepository = mock(GardenUserRepository.class);
         model = mock(Model.class);
         authentication = mock(Authentication.class);
 
         userService = new GardenUserService(userRepository);
         plantService = new PlantService(plantRepository, gardenRepository);
-        gardenService = new GardenService(gardenRepository);
+        gardenService = new GardenService(gardenRepository, gardenUserRepository);
         profanityService = new ProfanityService();
         publicProfileController = new PublicProfileController(userService, profanityService, plantService);
     }
