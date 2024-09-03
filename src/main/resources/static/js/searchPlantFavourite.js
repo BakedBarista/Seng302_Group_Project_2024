@@ -1,5 +1,14 @@
-function showSearchResults() {
+let selectedCardId;
+let selectedPlantId;
+let selectedPlantName;
 
+function openPlantSelectorModal(index) {
+    const modal = new bootstrap.Modal(document.getElementById("plantSelectorModal"));
+    modal.show();
+    selectedCardId = 'favouritePlantCard' + index;
+}
+
+function showSearchResults() {
     document.getElementById('searchForm').addEventListener('submit', function(event) {
         event.preventDefault();
         const searchTerm = document.getElementById('searchField').value;
@@ -32,6 +41,11 @@ function showSearchResults() {
                         option.appendChild(document.createTextNode(` ${plant.name} (${plant.gardenName})`));
                         option.dataset.value = plant.id;
 
+                        option.addEventListener('click', function() {
+                            selectedPlantId = plant.id;
+                            selectedPlantName = plant.name;
+                        });
+
                         items.appendChild(option);
                     });
 
@@ -45,5 +59,41 @@ function showSearchResults() {
             console.log('Error: ', error);
         });
     });
+
+    document.getElementById('searchForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        if (selectedPlantId && selectedPlantName) {
+            updateFavouritePlants(selectedPlantId, selectedPlantName);
+            modal.close();
+        }
+    });
 }
 
+function updateFavouritePlants(plantId, plantName) {
+    const selectedCard = document.getElementById(selectedCardId);
+
+    const imgElement = selectedCard.querySelector('img');
+    imgElement.src = `${baseUrl}plants/${plantId}/plant-image`;
+    imgElement.alt = plantName;
+
+    const plantNameElement = selectedCard.querySelector('h4');
+    plantNameElement.textContent = plantName;
+
+    fetch(`${baseUrl}users/edit-public-profile/favourite-plant`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            [csrfHeader]: csrf,
+        },
+        body: JSON.stringify({ id: plantId }),
+    }).then(response => {
+        if (response.ok) {
+            console.log("Favourite plant updated");
+        } else {
+            console.log("Error updating favourite plant");
+            response.json().then(data => console.log(data));
+        }
+    }).catch(error => {
+        console.log(error);
+    });
+}

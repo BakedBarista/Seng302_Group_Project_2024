@@ -151,33 +151,7 @@ public class PublicProfileController {
         return "users/edit-public-profile";
     }
 
-    /**
-     * Gets all plant that matches the search input
-     *
-     * @param searchTerm search input
-     * @return response entity
-     */
-    @PostMapping("users/edit-public-profile/search")
-    public ResponseEntity<List<Map<String, Object>>> searchPlants(@RequestParam(name = "search", required = false, defaultValue = "") String searchTerm) {
 
-        logger.info("Searching plants");
-
-        List<Plant> allPlants = plantService.getAllPlants(userService.getCurrentUser(), searchTerm)
-                .stream().toList();
-
-        List<Map<String, Object>> response = new ArrayList<>();
-        allPlants.forEach(p -> {
-            Map<String, Object> map = new HashMap<>();
-            map.put("name", p.getName());
-            map.put("gardenName", p.getGarden().getName());
-            map.put("image", p.getPlantImage());
-            map.put("id", p.getId());
-            response.add(map);
-        });
-
-        return ResponseEntity.ok(response);
-
-    }
 
     /**
      * returns the edit-public-profile page

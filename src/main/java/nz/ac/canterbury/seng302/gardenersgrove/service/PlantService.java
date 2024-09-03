@@ -34,6 +34,8 @@ public class PlantService {
     private final GardenRepository gardenRepository;
     private final GardenUserRepository gardenUserRepository;
 
+    private final GardenUserService gardenUserService;
+
     /**
      * Constructor of PlantService, takes an instance of plantRepository
      * @param plantRepository an instance of PlantRepository
@@ -43,6 +45,7 @@ public class PlantService {
         this.plantRepository = plantRepository;
         this.gardenRepository = gardenRepository;
         this.gardenUserRepository = gardenUserRepository;
+        this.gardenUserService = new GardenUserService(gardenUserRepository);
     }
 
     /**
@@ -163,5 +166,28 @@ public class PlantService {
      */
     public  List<Plant> getAllPlants(GardenUser gardenUser, String searchTerm) {
         return plantRepository.findPlantsFromSearch(gardenUser, searchTerm);
+    }
+
+    /**
+     * Update the favourite plant
+     * @param userId user id
+     * @param plantId plant id
+     */
+    public void updateFavouritePlant(Long userId, Long plantId) {
+        GardenUser user = gardenUserService.getUserById(userId);
+        Optional<Plant> plant = getPlantById(plantId);
+
+        if(plant.isPresent()) {
+            Plant newPlant = plant.get();
+            if (user.getFavouritePlants().size() < 3) {
+                user.getFavouritePlants().add(newPlant);
+                gardenUserService.saveUser(user);
+            } else {
+                throw new IllegalStateException("Cannot have more than 3 favourite plants");
+            }
+
+
+        }
+
     }
 }

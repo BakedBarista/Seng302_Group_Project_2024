@@ -134,7 +134,7 @@
 
                       <!-- for each on favourite plants-->
                       <!-- non-empty card -->
-                      <div class="card p-2 me-3 mb-3 border-0 rounded-3 d-flex shadow-sm public-profile-plant-card bg-primary-temp">
+                      <div class="card p-2 me-3 mb-3 border-0 rounded-3 d-flex shadow-sm public-profile-plant-card bg-primary-temp" id="favouritePlantCard1">
                           <!-- place holder image -->
                           <img
                                   class="mx-auto d-block pt-1"
@@ -148,7 +148,7 @@
                       <!-- empty card -->
                       <div class="card p-2 me-3 mb-3 border-0 rounded-3 shadow-sm
                       public-profile-plant-card justify-content-center card-wiggle bg-primary-grey"
-                           onclick="openPlantSelectorModal(1)">
+                           id="favouritePlantCard2" onclick="openPlantSelectorModal(1)">
                           <img th:src="@{/icons/create-mustard-grey.svg}"
                                class="mx-auto d-block"
                                aria-hidden="true"
@@ -160,7 +160,7 @@
                       <!-- empty card -->
                       <div class="card p-2 me-3 mb-3 border-0 rounded-3 shadow-sm
                       public-profile-plant-card justify-content-center card-wiggle bg-primary-grey"
-                           onclick="openPlantSelectorModal(1)">
+                           id="favouritePlantCard3" onclick="openPlantSelectorModal(1)">
                           <img th:src="@{/icons/create-mustard-grey.svg}"
                                class="mx-auto d-block"
                                aria-hidden="true"
@@ -184,10 +184,7 @@
 
 <script>
 
-openPlantSelectorModal = (index) => {
-    const modal = new bootstrap.Modal(document.getElementById("plantSelectorModal"))
-    modal.show()
-}
+
 
 
     /** @type {HTMLInputElement} */

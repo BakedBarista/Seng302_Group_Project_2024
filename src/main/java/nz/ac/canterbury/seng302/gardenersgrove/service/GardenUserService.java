@@ -236,4 +236,6 @@ public class GardenUserService {
         return user.getFavouritePlants();
     }
 
+    public void saveUser(GardenUser user) {
+    }
 }
