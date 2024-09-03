@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.repository;
 
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -28,4 +29,6 @@ public interface PlantRepository extends CrudRepository<Plant, Long> {
 
     @Query("SELECT DISTINCT p FROM Plant p WHERE p.garden IN (SELECT g FROM Garden g WHERE g.owner = :owner AND g.isPublic) AND (lower(p.name) LIKE '%' || lower(:searchTerm) || '%' OR lower(p.description) LIKE '%' || lower(:searchTerm) || '%')")
     List<Plant> findPlantsFromSearch(@Param("owner") GardenUser owner, @Param("searchTerm") String searchTerm);
+
+    List<Plant> findByFavourite(GardenUser favourite);
 }

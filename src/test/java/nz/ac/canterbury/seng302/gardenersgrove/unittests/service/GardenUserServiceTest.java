@@ -1,12 +1,11 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unittests.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
+import org.assertj.core.util.Arrays;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -15,9 +14,13 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 class GardenUserServiceTest {
     private GardenUserService gardenUserService;
     private GardenUserRepository mockRepository;
+    private Plant plant1;
+    private Plant plant2;
 
     private GardenUser testUser1 = new GardenUser("John", "Doe", "jdo123@uclive.ac.nz", "password",
             null);
@@ -28,6 +31,19 @@ class GardenUserServiceTest {
     void setUp() {
         mockRepository = Mockito.mock(GardenUserRepository.class);
         gardenUserService = new GardenUserService(mockRepository);
+        // Initialize test plants
+        plant1 = new Plant("Tomato", "1", null, null);
+        plant2 = new Plant("Carrot", "2", null, null);
+
+        // Initialize and set favorite plants
+        List<Plant> favoritePlants = new ArrayList<>();
+        favoritePlants.add(plant1);
+        favoritePlants.add(plant2);
+
+        testUser1.setId(1L);
+        testUser1.setFavouritePlants(favoritePlants); // Explicitly set favorite plants
+
+        Mockito.when(mockRepository.findById(testUser1.getId())).thenReturn(Optional.of(testUser1));
     }
 
     @Test
@@ -203,4 +219,15 @@ class GardenUserServiceTest {
 
         assertThrows(RuntimeException.class, () -> gardenUserService.deobfuscateEmail(obfuscatedEmail));
     }
+
+    @Test
+    void givenUserHasFavoritePlants_whenGetFavoritePlantsCalled_thenReturnsFavoritePlants() {
+        List<Plant> result = gardenUserService.getFavoritePlants(testUser1.getId());
+
+        assertEquals(2, result.size());
+        assertTrue(result.contains(plant1));
+        assertTrue(result.contains(plant2));
+
+    }
+
 }

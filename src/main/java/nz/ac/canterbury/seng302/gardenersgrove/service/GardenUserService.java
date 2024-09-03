@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Service class for GardenUser, defined by the @link{Service} annotation.
@@ -229,6 +227,13 @@ public class GardenUserService {
     public String deobfuscateEmail(String obfuscatedEmail) {
         byte[] bytes = Base64.getDecoder().decode(obfuscatedEmail);
         return new String(bytes);
+    }
+
+    public List<Plant> getFavoritePlants(Long userId) {
+        GardenUser user = gardenUserRepository.findById(userId)
+                .orElseThrow();
+
+        return user.getFavouritePlants();
     }
 
 }

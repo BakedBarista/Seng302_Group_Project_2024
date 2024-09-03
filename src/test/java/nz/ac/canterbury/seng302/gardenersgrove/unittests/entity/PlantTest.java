@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.unittests.entity;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import org.junit.jupiter.api.Test;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
@@ -36,5 +37,14 @@ class PlantTest {
         plant.normalize();
 
         assertNull(plant.getCount());
+    }
+
+    @Test
+    void givenFavouriteExists_whenGetFavourite_thenFavouriteIsReturned() {
+        Plant plant = new Plant();
+        GardenUser gardenUser = new GardenUser();
+        plant.setFavourite(gardenUser);
+        GardenUser result = plant.getFavourite();
+        assertEquals(gardenUser, result);
     }
 }

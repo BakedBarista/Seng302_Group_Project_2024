@@ -34,9 +34,9 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 import java.io.IOException;
+import java.util.List;
 import java.time.LocalDate;
 
-import java.util.List;
 import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -62,6 +62,8 @@ public class PublicProfileControllerTest {
     private static Authentication authentication;
     private static Long userId;
     private static ProfanityService profanityService;
+
+    private static PlantService plantService;
 
     static Long loggedInUserId = 2L;
     static GardenUser loggedInUser;

@@ -2,9 +2,13 @@ package nz.ac.canterbury.seng302.gardenersgrove.unittests.entity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import org.junit.jupiter.api.Test;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+
+import java.util.ArrayList;
+import java.util.List;
 
 class GardenUserTests {
     @Test
@@ -23,5 +27,16 @@ class GardenUserTests {
         user.setLname(null);
 
         assertEquals("John", user.getFullName());
+    }
+
+    @Test
+    void givenFavouritePlantIsEmpty_whenAddFavouritePlant_thenPlantIsAdded() {
+        GardenUser user = new GardenUser();
+        Plant plant = new Plant();
+        List<Plant> plants = new ArrayList<>();
+        user.setFavouritePlants(plants);
+        user.addFavouritePlant(plant);
+        assertEquals(plants, user.getFavouritePlants());
+
     }
 }
