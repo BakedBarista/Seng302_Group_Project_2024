@@ -30,7 +30,6 @@ public class PlantDTO extends BasePlant {
     public String getPlantedDate() {
         return plantedDate;
     }
-
     public LocalDate getParsedPlantedDate() {
         if (plantedDate != null && !plantedDate.isEmpty()) {
             return LocalDate.parse(plantedDate);

@@ -65,7 +65,7 @@ class PlantHistoryServiceTest {
         gardenUserService.addUser(user);
 
         garden = new Garden("Garden Name", "1", "Ilam Rd", "Ilam", "Christchurch", "NZ", null, null, null,
-                "Garden Description", null);
+                "Garden Description", null, null, null);
         garden.setOwner(user);
         gardenService.addGarden(garden);
 

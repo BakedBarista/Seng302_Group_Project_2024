@@ -76,7 +76,7 @@ public class U19MakeGardenPublicFeature {
         gardenUser.setId(1L);
         gardenUser.setFname("testUser");
 
-        garden = new Garden("Test Garden", "1", "test", "test suburb", "test city", "test country", "1234", 0.0, 0.0, "test description", 100D);
+        garden = new Garden("Test Garden", "1", "test", "test suburb", "test city", "test country", "1234", 0.0, 0.0, "test description", 100D, null, null);
         garden.setId(1L);
         garden.setOwner(gardenUser);
 
@@ -96,7 +96,7 @@ public class U19MakeGardenPublicFeature {
         GardenUser anotherGardenUser = new GardenUser();
         anotherGardenUser.setId(2L);
 
-        Garden garden = new Garden("Test Garden", "1", "test", "test suburb", "test city", "test country", "1234", 0.0, 0.0, "test description", 100D);
+        Garden garden = new Garden("Test Garden", "1", "test", "test suburb", "test city", "test country", "1234", 0.0, 0.0, "test description", 100D, null, null);
         garden.setId(2L);
         garden.setOwner(anotherGardenUser);
         when(gardenRepository.findById(2L)).thenReturn(Optional.of(garden));

@@ -41,7 +41,6 @@ public class SuggestedUserController {
         logger.info("GET /");
         try {
             //  hard-coding a mock user for the card
-            gardenUserService.addUser(user4);
             user4.setDescription("I am here to meet some handsome young men who love gardening as much as I do! My passion is growing carrots and eggplants. In my spare time, I like to thrift, ice skate and hang out with my kid, Liana. She's three, and the love of my life. The baby daddy is my former sugar daddy, John Doe. He died of a heart attack on his yacht in Italy last summer");
             List<GardenUser> suggestedUsers = new ArrayList<>();
             suggestedUsers.add(user4);
@@ -56,7 +55,7 @@ public class SuggestedUserController {
             }
         }
         catch (Exception e) {
-            logger.error("Error getting gardens for user");
+            logger.error("Error getting suggested users", e);
         }
         return "home";
     }

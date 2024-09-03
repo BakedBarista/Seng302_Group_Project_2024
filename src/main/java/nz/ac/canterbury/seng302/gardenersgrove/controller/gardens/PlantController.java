@@ -12,7 +12,6 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantHistoryItemDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantInfoDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 
-import org.apache.logging.log4j.util.Base64Util;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +23,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -102,11 +100,10 @@ public class PlantController {
             plant.setDescription((String) session.getAttribute("plantDescription"));
 
             String image = (String) session.getAttribute("plantImage");
-            if (image != null) {
+            if (image != null && image.startsWith(WikidataService.IMAGE_URL_PREFIX)) {
                 try {
                     var conn = new URL(image).openConnection();
-                    byte[] base64Image
-                    = Base64.encodeBase64(conn.getInputStream().readAllBytes(), false);
+                    byte[] base64Image = Base64.encodeBase64(conn.getInputStream().readAllBytes(), false);
                     model.addAttribute("importImage", new String(base64Image));
                     model.addAttribute("importImageType", conn.getContentType());
                 } catch (IOException e) {

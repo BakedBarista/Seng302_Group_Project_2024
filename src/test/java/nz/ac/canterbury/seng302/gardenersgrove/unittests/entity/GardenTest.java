@@ -19,7 +19,7 @@ class GardenTest {
         ",,,,,''",
     })
     void givenGardenAtAddress_whenGetAddress_thenReturnAddress(String streetNumber, String streetName, String suburb, String city, String country, String expectedAddress) {
-        Garden garden = new Garden("Test Garden", streetNumber, streetName, suburb, city, country, null, null, null, null, null);
+        Garden garden = new Garden("Test Garden", streetNumber, streetName, suburb, city, country, null, null, null, null, null, null, null);
         
         String address = garden.getAddress();
 
@@ -28,7 +28,7 @@ class GardenTest {
 
     @Test
     void givenNullFieldsInGarden_whenGetAddress_thenReturnEmptyString() {
-        Garden garden = new Garden("Test Garden", null, null, null, null, null, null, null, null, null, null);
+        Garden garden = new Garden("Test Garden", null, null, null, null, null, null, null, null, null, null, null, null);
         
         String address = garden.getAddress();
 
