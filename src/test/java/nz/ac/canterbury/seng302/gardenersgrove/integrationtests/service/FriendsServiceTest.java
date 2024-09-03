@@ -15,6 +15,7 @@ import java.util.List;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.entity.Friends.Status.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.ignoreStubs;
 
 @DataJpaTest
 @Import(FriendService.class)
@@ -191,6 +192,42 @@ public class FriendsServiceTest {
         assertEquals(relationship, sentRequestsDeclined.get(0));
     }
 
+    @Test
+    void whenFriendRequestRecieved_thenIsShownAtTopOfFeed() {
+        Friends relationship = new Friends(testUser1, testUser2, PENDING);
+        friendService.save(relationship);
+        
+        var requests = friendService.receivedConnectionRequests(testUser2);
+
+        assertEquals(testUser1, requests.get(0));
+    }
+
+    @Test
+    void whenConnectionsAreAvailable_thenTheyAreShownInFeed() {
+        var feed = friendService.availableConnections(testUser1);
+
+        assertFalse(feed.isEmpty());
+        assertTrue(feed.contains(testUser4));
+        assertTrue(feed.contains(testUser5));
+    }
+
+    @Test
+    void whenUsersAreAlreadyFriends_thenTheyAreNotShownInEachOthersFeeds() {
+        var feed1 = friendService.availableConnections(testUser1);
+        var feed2 = friendService.availableConnections(testUser2);
+
+        assertFalse(feed1.contains(testUser2));
+        assertFalse(feed1.contains(testUser3));
+
+        assertFalse(feed2.contains(testUser1));
+    }
+
+    @Test
+    void whenConnectionsAreAvailable_thenUserIsNotRecommendedThemselves() {
+        var feed = friendService.availableConnections(testUser1);
+
+        assertFalse(feed.contains(testUser1));
+    }
 
 }
 
