@@ -9,7 +9,7 @@ import org.springframework.ui.Model;
 
 import static org.mockito.Mockito.mock;
 
-public class U800ConnectionFeed {
+public class U800_2_1_ConnectionFeed {
     private static Authentication authentication;
     private static Model model;
 

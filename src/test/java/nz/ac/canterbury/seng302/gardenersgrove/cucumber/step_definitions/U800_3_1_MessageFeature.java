@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-public class U800MessageFeature {
+public class U800_3_1_MessageFeature {
     @Autowired
     private GardenUserService gardenUserService;
     @Autowired
