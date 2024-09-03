@@ -30,10 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant.PlantStatus.HARVESTED;
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.HISTORY_FORMAT_DATE;
@@ -60,6 +57,12 @@ public class PlantController {
     private static final String ACCESS_DENIED = "error/accessDenied";
     private static final String GARDENS_REDIRECT = "redirect:/gardens/";
     private static final String ERROR_404 = "error/404";
+    private static final String SUBMISSION_TOKEN = "submissionToken";
+    private static final String REFERER = "referer";
+
+
+
+
 
 
 
@@ -80,9 +83,17 @@ public class PlantController {
      * @return redirect to add plant form
      */
     @GetMapping("/gardens/{id}/add-plant")
-    public String addPlantForm(@PathVariable("id") Long gardenId, @RequestParam(required = false) boolean importPlant, Model model, HttpSession session){
+    public String addPlantForm(@PathVariable("id") Long gardenId, @RequestParam(required = false) boolean importPlant,
+                               Model model, HttpSession session, HttpServletRequest request){
 
         logger.info("GET /gardens/${id}/add-plant - display the new plant form");
+
+        String submissionToken = UUID.randomUUID().toString();
+        String refererURI = request.getHeader("Referer");
+        session.setAttribute(SUBMISSION_TOKEN, submissionToken);
+        session.setAttribute(REFERER, refererURI);
+
+        model.addAttribute(SUBMISSION_TOKEN, submissionToken);
         model.addAttribute(GARDEN_ID, gardenId);
 
         Plant plant = new Plant("", "", "", null);
@@ -113,6 +124,7 @@ public class PlantController {
 
         List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
         model.addAttribute("gardens", gardens);
+        model.addAttribute(REFERER, refererURI);
         return "plants/addPlant";
     }
 
@@ -134,8 +146,19 @@ public class PlantController {
                                      BindingResult bindingResult,
                                      @RequestParam("image") MultipartFile file,
                                      @RequestParam("dateError") String dateValidity,
-                                     Model model) {
+                                     Model model, HttpSession session) {
         logger.info("POST /gardens/${gardenId}/add-plant - submit the new plant form");
+
+        String referer = (String) session.getAttribute(REFERER);
+        String token = plantDTO.getSubmissionToken();
+        String sessionToken = (String) session.getAttribute(SUBMISSION_TOKEN);
+
+        if (sessionToken == null || sessionToken.equals(token)) {
+            model.addAttribute("error", "Form has already been submitted or is invalid.");
+            model.addAttribute(PLANT, plantDTO);
+            model.addAttribute(REFERER, referer);
+            return "plants/addPlant";
+        }
 
         if (Objects.equals(dateValidity, "dateInvalid")) {
             bindingResult.rejectValue(
@@ -146,6 +169,8 @@ public class PlantController {
         }
 
         if (bindingResult.hasErrors()) {
+            model.addAttribute(SUBMISSION_TOKEN, token);
+            model.addAttribute(REFERER, referer);
             model.addAttribute(PLANT, plantDTO);
             model.addAttribute(GARDEN_ID, gardenId);
             logger.error("Validation error in Plant Form.");
@@ -155,6 +180,7 @@ public class PlantController {
         // Save the new plant and image
         Plant savedPlant = plantService.createPlant(plantDTO, gardenId);
         if (savedPlant != null) {
+            session.removeAttribute(SUBMISSION_TOKEN);
             try {
                 plantService.setPlantImage(savedPlant.getId(), file);
                 logger.info(PLANT_SUCCESSFULLY_SAVED_LOG, gardenId);
