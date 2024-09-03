@@ -73,12 +73,15 @@ class SuggestedUserControllerTest {
 
         Mockito.when(authentication.getPrincipal()).thenReturn(loggedInUserId);
         Mockito.when(gardenUserService.getUserById(loggedInUserId)).thenReturn(loggedInUser);
-        Mockito.when(friendService.availbleConnections(loggedInUser)).thenReturn(suggestedUsers);
+        Mockito.when(friendService.availableConnections(loggedInUser)).thenReturn(suggestedUsers);
         Mockito.when(objectMapper.writeValueAsString(suggestedUsers)).thenReturn("test");
 
         String page = suggestedUserController.home(authentication, model);
 
-        Mockito.verify(model, times(4)).addAttribute(anyString(), any());
+        Mockito.verify(model).addAttribute(eq("userId"), any());
+        Mockito.verify(model).addAttribute(eq("name"), any());
+        Mockito.verify(model).addAttribute(eq("description"), any());
+        Mockito.verify(model).addAttribute(eq("userList"), any());
 
         Assertions.assertEquals("home", page);
     }
