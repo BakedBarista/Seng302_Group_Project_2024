@@ -142,7 +142,21 @@ public class FriendService {
         friendsRepository.delete(friends);
     }
 
-    public List<GardenUser> availbleConnections(GardenUser user){
+    /**
+     * Retrieves all connection requests to the given user
+     * @param user The user to retrieve connection requests for
+     * @return A list of GardenUser objects
+     */
+    public List<GardenUser> receivedConnectionRequests(GardenUser user){
+        return getReceivedRequests(user.getId()).stream().map(Friends::getSender).toList();
+    }
+
+    /**
+     * Retrieves all available connections for the given user (people who they have not yet friend requested and who have not friend requested them)
+     * @param user The user to retrieve available connections for
+     * @return A list of GardenUser objects
+     */
+    public List<GardenUser> availableConnections(GardenUser user){
         return friendsRepository.getAvailableConnections(user.getId());
     }
 

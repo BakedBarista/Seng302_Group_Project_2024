@@ -45,23 +45,20 @@ public class SuggestedUserController {
         try {
             Long userId = (Long) authentication.getPrincipal();
             GardenUser user = gardenUserService.getUserById(userId);
-            List<GardenUser> suggestedUsers  = friendService.availbleConnections(user);
-            for (GardenUser gardenUser : suggestedUsers) {
-                logger.info(gardenUser.getEmail());
-            }
+            List<GardenUser> suggestedUsers = new ArrayList<>();
+            suggestedUsers.addAll(friendService.receivedConnectionRequests(user));
+            suggestedUsers.addAll(friendService.availableConnections(user));
 
             model.addAttribute("userId", suggestedUsers.get(0).getId());
             model.addAttribute("name", suggestedUsers.get(0).getFullName());
             model.addAttribute("description", suggestedUsers.get(0).getDescription());
 
-
             String jsonUsers = objectMapper.writeValueAsString(suggestedUsers);
-            logger.info(jsonUsers);
             model.addAttribute("userList", jsonUsers);
             
         }
         catch (Exception e) {
-            logger.error("Error getting gardens for user");
+            logger.error("Error getting suggested users", e);
         }
         return "home";
     }
