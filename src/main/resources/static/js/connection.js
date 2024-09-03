@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const toast = new bootstrap.Toast(toastDivs);
     
     const cardName = document.getElementById('cardName');
+    const cardDescription = document.getElementById('cardDescription');
+    const cardImage = document.getElementById('cardImage');
     
     const userListJson = getMeta('_userList') || '[]';
     const userList = JSON.parse(userListJson);
@@ -23,6 +25,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const user = currentUser();
         console.log(user);
         cardName.textContent = user.fullName;
+        cardDescription.textContent = user.description;
+        cardImage.src = `${baseUrl}users/${user.id}/profile-picture`;
     }
     showCurrentUserCard();
 
