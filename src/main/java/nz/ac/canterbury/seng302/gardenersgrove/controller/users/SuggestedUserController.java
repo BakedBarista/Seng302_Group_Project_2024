@@ -45,10 +45,8 @@ public class SuggestedUserController {
         try {
             Long userId = (Long) authentication.getPrincipal();
             GardenUser user = gardenUserService.getUserById(userId);
+
             List<GardenUser> suggestedUsers  = friendService.availbleConnections(user);
-            for (GardenUser gardenUser : suggestedUsers) {
-                logger.info(gardenUser.getEmail());
-            }
 
             model.addAttribute("userId", suggestedUsers.get(0).getId());
             model.addAttribute("name", suggestedUsers.get(0).getFullName());
