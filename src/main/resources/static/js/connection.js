@@ -5,17 +5,19 @@ document.addEventListener('DOMContentLoaded', function() {
     
     const cardName = document.getElementById('cardName');
     
-    const userListJson = getMeta('_userList');
+    const userListJson = getMeta('_userList') || '[]';
     const userList = JSON.parse(userListJson);
     
     let userIndex = 0;
     function currentUser() {
         return userList[userIndex];
     }
+
     function showCurrentUserCard() {
-        if (userIndex > userList.length) {
+        if (userIndex >= userList.length) {
             const card = document.getElementById('card');
             card.outerHTML = '<p>No users left to connect with</p>';
+            return;
         }
         
         const user = currentUser();
@@ -28,12 +30,12 @@ document.addEventListener('DOMContentLoaded', function() {
         buttonClick.addEventListener('click', function(event) {
             event.preventDefault();
             
-            userIndex++;
-            showCurrentUserCard();
-
             const formData = new FormData();
             formData.append('action', 'accept');
-            formData.append('id', currentUser().id); // this needs to be the id of user.
+            formData.append('id', currentUser()?.id); // this needs to be the id of user.
+            
+            userIndex++;
+            showCurrentUserCard();
 
             fetch(`${baseUrl}`, {
                 method: 'POST',

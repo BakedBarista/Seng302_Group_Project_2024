@@ -35,7 +35,7 @@
         <main class="d-flex flex-column align-items-center justify-content-center" style="margin: 10px">
             <h1 class="mt-2  text-center mb-3">Suggested Connections</h1>
             <div id="card" class="flip-card mt-4 col-lg-5 col-md-10 col-sm-10">
-                <div class="flip-card-inner card">
+                <div class="flip-card-inner card" th:if="${name != null}">
                     <div class="flip-card-front">
                         <div style="position: relative;">
                             <img class="suggest-user-picture card-img" th:src="@{'/img/gorila.png'}" alt="profile picture"
@@ -76,7 +76,7 @@
                         </div>
                     </div>
                 </div>
-                <form action="@{/}" method="POST">
+                <form action="@{/}" method="POST" th:if="${name != null}">
                     <input type="hidden" name="action" value="accept"/>
                     <button type="submit" class="btn p-0" id="heartButton">
                         <img th:src="@{/icons/heart.svg}" alt="Accept" class="heart-icon" id="heartIcon" />
