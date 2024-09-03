@@ -49,6 +49,10 @@ public class SuggestedUserController {
             suggestedUsers.addAll(friendService.receivedConnectionRequests(user));
             suggestedUsers.addAll(friendService.availableConnections(user));
 
+            if (suggestedUsers.isEmpty()) {
+                return "home";
+            }
+
             model.addAttribute("userId", suggestedUsers.get(0).getId());
             model.addAttribute("name", suggestedUsers.get(0).getFullName());
             model.addAttribute("description", suggestedUsers.get(0).getDescription());
