@@ -86,8 +86,8 @@ public class GardenUser {
     @Column(nullable = true)
     private Instant accountDisabledExpiryInstant;
 
-    @Column()
-    @OneToMany(mappedBy = "favourite")
+    @PrimaryKeyJoinColumn
+    @OneToMany(mappedBy = "favouritePlants", cascade = CascadeType.ALL)
     private List<Plant> favouritePlants;
 
     /**

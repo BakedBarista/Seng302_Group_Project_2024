@@ -30,5 +30,5 @@ public interface PlantRepository extends CrudRepository<Plant, Long> {
     @Query("SELECT DISTINCT p FROM Plant p WHERE p.garden IN (SELECT g FROM Garden g WHERE g.owner = :owner AND g.isPublic) AND (lower(p.name) LIKE '%' || lower(:searchTerm) || '%' OR lower(p.description) LIKE '%' || lower(:searchTerm) || '%')")
     List<Plant> findPlantsFromSearch(@Param("owner") GardenUser owner, @Param("searchTerm") String searchTerm);
 
-    List<Plant> findByFavourite(GardenUser favourite);
+    List<Plant> findByFavouritePlants(GardenUser gardenUser);
 }
