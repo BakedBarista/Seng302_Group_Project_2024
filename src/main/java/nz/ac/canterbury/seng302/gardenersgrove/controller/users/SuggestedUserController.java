@@ -56,7 +56,7 @@ public class SuggestedUserController {
             }
         }
         catch (Exception e) {
-            logger.error("Error getting gardens for user");
+            logger.error("Error getting suggested users", e);
         }
         return "home";
     }
