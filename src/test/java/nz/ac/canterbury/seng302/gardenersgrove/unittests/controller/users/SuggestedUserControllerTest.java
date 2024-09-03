@@ -1,7 +1,10 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unittests.controller.users;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.SuggestedUserController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import org.junit.jupiter.api.Assertions;
@@ -10,9 +13,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import static org.mockito.Mockito.times;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -22,16 +31,20 @@ class SuggestedUserControllerTest {
     private static GardenUserService gardenUserService;
     private static Model model;
     private static Authentication authentication;
-    private static GardenService gardenService;
+    private static FriendService friendService;
     static Long loggedInUserId = 1L;
     static GardenUser loggedInUser;
+
+    static ObjectMapper objectMapper;
 
     @BeforeAll
     static void setup() {
         gardenUserService = Mockito.mock(GardenUserService.class);
-        gardenService = Mockito.mock(GardenService.class);
+        friendService = Mockito.mock(FriendService.class);
         authentication = Mockito.mock(Authentication.class);
-        suggestedUserController = new SuggestedUserController(gardenService, gardenUserService);
+        objectMapper = Mockito.mock(ObjectMapper.class);
+        suggestedUserController = new SuggestedUserController(friendService, gardenUserService, objectMapper);
+
         loggedInUser = new GardenUser();
         loggedInUser.setId(loggedInUserId);
         loggedInUser.setEmail("logged.in@gmail.com");
@@ -48,15 +61,24 @@ class SuggestedUserControllerTest {
      * HARD-CODED Test!!!!!
      */
     @Test
-    void whenIViewMyPublicProfile_thenIAmTakenToThePublicProfilePage() {
+    void whenIViewMyPublicProfile_thenIAmTakenToThePublicProfilePage() throws JsonProcessingException {
         model = Mockito.mock(Model.class);
+
+        GardenUser suggestedUser = new GardenUser();
+        suggestedUser.setId(3L);
+        suggestedUser.setDescription("Another description");
+
+        List<GardenUser> suggestedUsers = Collections.singletonList(suggestedUser);
+
+
         Mockito.when(authentication.getPrincipal()).thenReturn(loggedInUserId);
         Mockito.when(gardenUserService.getUserById(loggedInUserId)).thenReturn(loggedInUser);
+        Mockito.when(friendService.availbleConnections(loggedInUser)).thenReturn(suggestedUsers);
+        Mockito.when(objectMapper.writeValueAsString(suggestedUsers)).thenReturn("test");
 
         String page = suggestedUserController.home(authentication, model);
 
-        Mockito.verify(model).addAttribute("name", "Max Doe");
-        Mockito.verify(model).addAttribute("description", "I am here to meet some handsome young men who love gardening as much as I do! My passion is growing carrots and eggplants. In my spare time, I like to thrift, ice skate and hang out with my kid, Liana. She's three, and the love of my life. The baby daddy is my former sugar daddy, John Doe. He died of a heart attack on his yacht in Italy last summer");
+        Mockito.verify(model, times(4)).addAttribute(anyString(), any());
 
         Assertions.assertEquals("home", page);
     }
