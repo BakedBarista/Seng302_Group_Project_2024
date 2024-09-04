@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.controller;
 
+import jakarta.servlet.http.HttpSession;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.MessageController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
@@ -15,6 +16,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 
@@ -43,11 +45,14 @@ class MessageControllerTest {
     private Model model;
     private GardenUser sender;
     private GardenUser receiver;
+    private HttpSession session;
 
     @BeforeEach
     void setUp() {
         model = mock(Model.class);
         authentication = mock(Authentication.class);
+        session = new MockHttpSession();
+        session.setAttribute("submissionToken", "token");
 
         sender = new GardenUser();
         sender.setFname("jane");
@@ -70,11 +75,11 @@ class MessageControllerTest {
     @Test
     void givenHaveFriend_whenSendAMessageToFriend_thenSaveMessageBetweenFriendAndMyself() {
         String message = "Hello";
-        MessageDTO messageDTO = new MessageDTO(message);
+        MessageDTO messageDTO = new MessageDTO(message, "token");
 
         Mockito.when(authentication.getPrincipal()).thenReturn(sender.getId());
 
-        String redirect = messageController.sendMessage(receiver.getId(), messageDTO, authentication, model);
+        String redirect = messageController.sendMessage(receiver.getId(), messageDTO, authentication, model, session);
         List<Message> savedMessages = messageRepository.findMessagesBetweenUsers(sender.getId(), receiver.getId());
 
         // verify return and model
@@ -83,5 +88,43 @@ class MessageControllerTest {
 
         // verify message is saved to repository
         Assertions.assertTrue(savedMessages.stream().map(Message::getMessageContent).toList().contains(message));
+    }
+
+    @Test
+    void givenNoToken_whenSendMessageToFriend_thenDontSaveMessageBetweenFriendAndMyself() {
+        String message = "Hello";
+        MessageDTO messageDTO = new MessageDTO(message, "token");
+        session.setAttribute("submissionToken", null);
+
+        Mockito.when(authentication.getPrincipal()).thenReturn(sender.getId());
+
+        String redirect = messageController.sendMessage(receiver.getId(), messageDTO, authentication, model, session);
+        List<Message> savedMessages = messageRepository.findMessagesBetweenUsers(sender.getId(), receiver.getId());
+
+        // verify return and model
+        Assertions.assertEquals("users/message", redirect);
+        Mockito.verify(model).addAttribute(Mockito.eq("sentToUser"), ArgumentCaptor.forClass(GardenUser.class).capture());
+
+        // verify message is saved to repository
+        Assertions.assertFalse(savedMessages.stream().map(Message::getMessageContent).toList().contains(message));
+    }
+
+    @Test
+    void givenOldToken_whenSendMessageToFriend_thenDontSaveMessageBetweenFriendAndMyself() {
+        String message = "Hello";
+        MessageDTO messageDTO = new MessageDTO(message, "token");
+        session.setAttribute("submissionToken", "tokenOld");
+
+        Mockito.when(authentication.getPrincipal()).thenReturn(sender.getId());
+
+        String redirect = messageController.sendMessage(receiver.getId(), messageDTO, authentication, model, session);
+        List<Message> savedMessages = messageRepository.findMessagesBetweenUsers(sender.getId(), receiver.getId());
+
+        // verify return and model
+        Assertions.assertEquals("users/message", redirect);
+        Mockito.verify(model).addAttribute(Mockito.eq("sentToUser"), ArgumentCaptor.forClass(GardenUser.class).capture());
+
+        // verify message is saved to repository
+        Assertions.assertFalse(savedMessages.stream().map(Message::getMessageContent).toList().contains(message));
     }
 }
