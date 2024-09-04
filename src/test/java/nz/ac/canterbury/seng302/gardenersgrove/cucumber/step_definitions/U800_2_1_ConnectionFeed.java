@@ -68,10 +68,15 @@ public class U800_2_1_ConnectionFeed {
         gardenUserRepository.deleteById(userImmy.getId());
     }
 
+    @Given("I am logged in")
+    public void i_am_logged_in() {
+    }
 
     @Given("I am on the homepage looking at the list of user profiles")
     @Given("I am logged in and I am on the homepage looking at the stack of user profiles")
     @Given("I am logged in and on the home page")
+    @Given("I am logged in and I am on the homepage looking at the top profile card on the stack")
+    @When("I am on the homepage looking at the top profile card on the stack")
     public void iAmOnTheHomepageLookingAtTheListOfUserProfiles() {
         String result = suggestedUserController.home(authentication, model);
 
@@ -123,14 +128,6 @@ public class U800_2_1_ConnectionFeed {
 
         assertFalse((Boolean) result.getBody().get("success"));
         assertTrue(result.getStatusCode().is2xxSuccessful());
-    }
-
-    @Then("their friend request is declined")
-    public void their_friend_request_is_declined() {
-        // TODO: Not yet implemented
-        // Friends request = friendsRepository.getAllFriendshipsBetweenUsers(userLiam.getId(), userBen.getId());
-        // assertNotNull(request);
-        // assertEquals(DECLINED, request.getStatus());
     }
 
     @When("I click the green love heart button on a person who I have a pending friend request from")
@@ -191,5 +188,38 @@ public class U800_2_1_ConnectionFeed {
         int immyIndex = userListJson.indexOf(userImmy.getFullName());
         int benIndex = userListJson.indexOf(userBen.getFullName());
         assertTrue(immyIndex < benIndex);
+    }
+
+    @Then("initially the profile picture, name, and description are shown.")
+    public void initially_the_profile_picture_name_and_description_are_shown() {
+        clearInvocations(model);
+        suggestedUserController.home(authentication, model);
+
+        verify(model).addAttribute(eq("userId"), anyLong());
+        verify(model).addAttribute(eq("name"), anyString());
+        verify(model).addAttribute(eq("description"), any());
+    }
+
+    @When("there are no profiles to view")
+    public void there_are_no_profiles_to_view() {
+        for (GardenUser user : gardenUserRepository.findAll()) {
+            if (user.getId() == userLiam.getId()) {
+                continue;
+            }
+
+            Friends request = new Friends(userLiam, user, PENDING);
+            friendsRepository.save(request);
+        }
+
+        clearInvocations(model);
+        suggestedUserController.home(authentication, model);
+    }
+
+    @Then("I am shown a message saying “Could not find any connection suggestions”.")
+    public void i_am_shown_a_message_saying_could_not_find_any_connection_suggestions() {
+        verify(model, never()).addAttribute(eq("userId"), any());
+        verify(model, never()).addAttribute(eq("name"), any());
+        verify(model, never()).addAttribute(eq("description"), any());
+        verify(model, never()).addAttribute(eq("userList"), any());
     }
 }
