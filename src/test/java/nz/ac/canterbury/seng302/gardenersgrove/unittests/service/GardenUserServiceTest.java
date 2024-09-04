@@ -3,10 +3,13 @@ package nz.ac.canterbury.seng302.gardenersgrove.unittests.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
 
 import java.util.List;
 import java.util.Optional;
 
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -19,14 +22,14 @@ class GardenUserServiceTest {
     private GardenUserService gardenUserService;
     private GardenUserRepository mockRepository;
 
-    private GardenUser testUser1 = new GardenUser("John", "Doe", "jdo123@uclive.ac.nz", "password",
-            null);
-    private GardenUser testUser2 = new GardenUser("Jane", "Doe", "jdo456@uclive.ac.nz", "password",
-            null);
+    private final GardenUser testUser1 = new GardenUser("John", "Doe",
+            "jdo123@uclive.ac.nz", "password",null);
+    private final GardenUser testUser2 = new GardenUser("Jane", "Doe",
+            "jdo456@uclive.ac.nz", "password",null);
 
     @BeforeEach
     void setUp() {
-        mockRepository = Mockito.mock(GardenUserRepository.class);
+        mockRepository = mock(GardenUserRepository.class);
         gardenUserService = new GardenUserService(mockRepository);
     }
 
@@ -202,5 +205,45 @@ class GardenUserServiceTest {
         var obfuscatedEmail = "not-base64 :)";
 
         assertThrows(RuntimeException.class, () -> gardenUserService.deobfuscateEmail(obfuscatedEmail));
+    }
+
+    @Test
+    void givenUserWithFavouritePlant_whenPlantIsUnfavourited_thenReturnTrue() {
+        Long plantId = 1L;
+        Long userId = 1L;
+        Plant plantA = mock(Plant.class);
+        Plant plantB = mock(Plant.class);
+        Plant plantC = mock(Plant.class);
+
+        List<Plant> favouritePlants = List.of(plantA, plantB, plantC);
+        testUser1.setFavouritePlants(favouritePlants);
+
+        Mockito.when(plantA.getId()).thenReturn(999L);
+        Mockito.when(plantC.getId()).thenReturn(999L);
+        Mockito.when(plantB.getId()).thenReturn(plantId);
+        Mockito.when(mockRepository.findById(userId)).thenReturn(Optional.of(testUser1));
+        Boolean result = gardenUserService.removeFavouritePlant(userId, plantId);
+
+        Assertions.assertTrue(result);
+    }
+
+    @Test
+    void givenUserWithoutFavouritePlant_whenPlantIsUnfavourited_thenReturnTrue() {
+        Long plantId = 1L;
+        Long userId = 1L;
+        Plant plantA = mock(Plant.class);
+        Plant plantB = mock(Plant.class);
+        Plant plantC = mock(Plant.class);
+
+        List<Plant> favouritePlants = List.of(plantA, plantB, plantC);
+        testUser1.setFavouritePlants(favouritePlants);
+
+        Mockito.when(plantA.getId()).thenReturn(999L);
+        Mockito.when(plantC.getId()).thenReturn(999L);
+        Mockito.when(plantB.getId()).thenReturn(999L);
+        Mockito.when(mockRepository.findById(userId)).thenReturn(Optional.of(testUser1));
+        Boolean result = gardenUserService.removeFavouritePlant(userId, plantId);
+
+        Assertions.assertFalse(result);
     }
 }
