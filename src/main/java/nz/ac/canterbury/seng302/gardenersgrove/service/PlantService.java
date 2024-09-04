@@ -178,7 +178,9 @@ public class PlantService {
         Optional<Plant> plant = getPlantById(plantId);
 
         if(plant.isPresent()) {
+            System.out.println("does it get here");
             Plant newPlant = plant.get();
+            System.out.println(newPlant);
             if (user.getFavouritePlants().size() < 3) {
                 user.getFavouritePlants().add(newPlant);
                 gardenUserService.saveUser(user);

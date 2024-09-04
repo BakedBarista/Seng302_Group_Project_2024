@@ -36,7 +36,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" id="submit-button" class="btn btn-primary btn-sm" onclick="updateFavouritePlants()">Submit</button>
+                    <button type="submit" id="plantSelectorModalSubmitButton" class="btn btn-primary btn-sm">Submit</button>
                 </div>
 
                     <script th:src="@{/js/autocomplete.js}"></script>
@@ -139,7 +139,7 @@
           <!-- Button Container with Adjusted Spacing -->
         <div class="d-flex justify-content-end px-4 mb-4">
           <a th:href="@{/users/public-profile}" class="btn btn-outline-secondary me-2" tabindex="4">Cancel</a>
-          <button class="btn btn-primary" tabindex="5">Submit</button>
+          <button class="btn btn-primary" tabindex="5" onclick=updateFavouritePlants()>Submit</button>
         </div>
       </form>
   </div>

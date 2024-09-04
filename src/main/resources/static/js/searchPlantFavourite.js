@@ -7,6 +7,11 @@ function openPlantSelectorModal(index) {
     modal.show();
     selectedCardId = 'favouritePlantCard' + index;
     console.log(selectedCardId);
+
+    document.getElementById("plantSelectorModalSubmitButton").addEventListener('click', function() {
+        previewFavouritePlants();
+        modal.hide();
+    }, { once: true });
 }
 
 function renderPlantCards(favouritePlants) {
@@ -16,22 +21,31 @@ function renderPlantCards(favouritePlants) {
     // Render cards for favorite plants
     favouritePlants.forEach((plant, index) => {
         const plantCard = document.createElement('div');
-        plantCard.className = 'card p-2 me-3 mb-3 border-0 rounded-3 d-flex shadow-sm public-profile-plant-card bg-primary-temp';
+        plantCard.className = 'card p-2 me-3 mb-3 border-0 rounded-3 d-flex flex-column shadow-sm public-profile-plant-card bg-primary-temp';
         plantCard.id = `favouritePlantCard${index + 1}`;
+
+        const imageContainer = document.createElement('div');
+        imageContainer.className = 'plant-image-container';
+        imageContainer.style = 'height: 50%;'; // Take up the top half
 
         const imageElement = document.createElement('img');
         imageElement.src = `${baseUrl}plants/${plant.id}/plant-image`;
         imageElement.alt = plant.name;
-        imageElement.className = 'mx-auto d-block pt-1';
-        imageElement.style = 'width: 100%; height: 80%; object-fit: cover';
+        imageElement.className = 'w-100 h-100';
+        imageElement.style = 'object-fit: cover;';
+
+        imageContainer.appendChild(imageElement);
 
         const plantName = document.createElement('h4');
-        plantName.className = 'pt-2 ps-2';
+        plantName.className = 'pt-2 ps-2 text-center';
         plantName.textContent = plant.name;
+        plantName.style = 'flex-grow: 1; display: flex; align-items: center; justify-content: center;'; // Center the text vertically
 
-        plantCard.appendChild(imageElement);
+        plantCard.appendChild(imageContainer);
         plantCard.appendChild(plantName);
         container.appendChild(plantCard);
+
+        console.log(`Card ${plantCard.id} created with plant name: ${plant.name}`);
     });
 
     // Render empty cards
@@ -51,10 +65,20 @@ function renderPlantCards(favouritePlants) {
         placeholderImage.height = 50;
         placeholderImage.className = 'mx-auto d-block';
 
+        const emptyPlantName = document.createElement('h4');
+        emptyPlantName.className = 'pt-2 ps-2 text-center';
+        emptyPlantName.textContent = ''; // Empty text content for empty cards
+
         emptyCard.appendChild(placeholderImage);
+        emptyCard.appendChild(emptyPlantName);
         container.appendChild(emptyCard);
+
+        console.log(`Empty card ${emptyCard.id} created`);
     }
 }
+
+
+
 
 
 
@@ -133,33 +157,35 @@ function showSearchResults() {
 
 function previewFavouritePlants() {
     const plantId = document.getElementById('selectedPlantId').value;
-
-    const selectedOption = document.querySelector("#searchPlantResults select option[data-id='" + plantId + "']");
+    const selectedOption = document.querySelector("#searchPlantResults .plant-option[data-id='" + plantId + "']");
 
     if (selectedOption) {
         const plantName = selectedOption.getAttribute('data-name');
         const plantImage = selectedOption.querySelector('img').src;
 
         const selectedCard = document.getElementById(selectedCardId);
-        selectedCard.querySelector()
-
+        console.log(selectedCard);
+        if (selectedCard) {
+            const h4Element = selectedCard.querySelector('h4');
+            if (!h4Element) {
+                console.error(`H4 element not found in the selected card.`);
+                return; // Exit the function early if h4Element is null
+            }
+            selectedCard.querySelector('h4').textContent = plantName;
+            selectedCard.querySelector('img').src = plantImage;
+        } else {
+            console.error(`Element with ID ${selectedCardId} not found.`);
+        }
+    } else {
+        console.error(`Plant option with ID ${plantId} not found.`);
     }
-
 }
+
 
 function updateFavouritePlants() {
     const plantId = document.getElementById('selectedPlantId').value;
 
 
-    const selectedCard = document.getElementById(selectedCardId);
-
-
-    const imgElement = selectedCard.querySelector('img');
-    imgElement.src = `${baseUrl}plants/${plantId}/plant-image`;
-    imgElement.alt = plantName;
-
-    const plantNameElement = selectedCard.querySelector('h4');
-    plantNameElement.textContent = plantName;
 
     fetch(`${baseUrl}users/edit-public-profile/favourite-plant`, {
         method: 'PUT',

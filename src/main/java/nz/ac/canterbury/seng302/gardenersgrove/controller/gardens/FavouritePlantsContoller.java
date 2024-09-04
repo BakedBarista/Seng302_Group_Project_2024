@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.gardens;
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.PublicProfileController;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.exceptions.JsonProcessingException;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
@@ -61,9 +62,12 @@ public class FavouritePlantsContoller {
     public ResponseEntity<String> updateFavouritePlant(@RequestBody Map<String, Long> payload, Authentication authentication) {
         Long userId = (Long) authentication.getPrincipal();
         Long plantId = payload.get("id");
-
+        System.out.println(userId);
+        System.out.println(plantId);
         try {
             plantService.updateFavouritePlant(userId, plantId);
+            GardenUser user = userService.getCurrentUser();
+            System.out.println(user.getFavouritePlants());
             return ResponseEntity.ok("Favourite plant updated successfully");
         } catch (Exception e) {
             logger.error("Error updating favourite plant", e);
