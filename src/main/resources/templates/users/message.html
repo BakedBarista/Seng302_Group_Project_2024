@@ -24,7 +24,7 @@
 
         /* Make messages container scrollable */
         .messages {
-            max-height: calc(100vh - 300px); /* Adjust as necessary */
+            height: calc(100vh - 200px); /* Adjust as necessary */
             overflow-y: auto;
 
         }
@@ -56,7 +56,16 @@
                     <div th:each="message : ${messages.value}">
                         <!--friends msg-->
                         <div th:if="${message.sender == sentToUser.id}" class="d-flex">
-                            <div class="card text-white bg-secondary shadow-sm mb-3 border-0" style="max-width: 40%">
+                            <!--large screen-->
+                            <div class="card text-white bg-secondary shadow-sm mb-3 border-0 d-none d-md-block" style="max-width: 40%">
+                                <div class="card-body">
+                                    <small>[[${dateFormatter.format(message.timestamp, TIMESTAMP_FORMAT)}]]</small>
+                                    <p class="card-text mt-2">[[${message.messageContent}]]</p>
+                                </div>
+                            </div>
+
+                            <!--small screen-->
+                            <div class="card text-white bg-secondary shadow-sm mb-3 border-0 d-block d-md-none" style="max-width: 80%">
                                 <div class="card-body">
                                     <small>[[${dateFormatter.format(message.timestamp, TIMESTAMP_FORMAT)}]]</small>
                                     <p class="card-text mt-2">[[${message.messageContent}]]</p>
@@ -94,6 +103,7 @@
                         </button>
                     </div>
                 </form>
+                <span class="d-sm-block p-3"></span>
             </div>
         </div>
     </main>
