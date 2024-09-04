@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -86,9 +87,8 @@ public class GardenUser {
     @Column(nullable = true)
     private Instant accountDisabledExpiryInstant;
 
-    @Column()
-    @OneToMany(mappedBy = "favourite")
-    private List<Plant> favouritePlants;
+    @OneToMany(mappedBy = "favourite", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Plant> favouritePlants = new ArrayList<>();
 
     /**
      * JPA required no-args constructor
@@ -454,5 +454,9 @@ public class GardenUser {
      */
     public void setFavouritePlants(List<Plant> favouritePlants) {
         this.favouritePlants = favouritePlants;
+
+        for (Plant plant : favouritePlants) {
+            plant.setFavourite(this);
+        }
     }
 }

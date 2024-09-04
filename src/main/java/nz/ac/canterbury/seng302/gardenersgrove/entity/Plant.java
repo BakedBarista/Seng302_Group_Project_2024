@@ -96,6 +96,10 @@ public class Plant extends BasePlant {
         return history;
     }
 
+    public void setFavourite(GardenUser user) {
+        this.favourite = user;
+    }
+
     @Override
     public String toString() {
         return "Plant{" +
