@@ -26,6 +26,7 @@
         .messages {
             max-height: calc(100vh - 300px); /* Adjust as necessary */
             overflow-y: auto;
+
         }
 
         /* Ensure textarea and send button stay at the bottom */
@@ -49,15 +50,13 @@
                 <h5 class="mb-0" th:text="${sentToUser.fname} + ' ' + ${sentToUser.lname}"></h5>
             </div>
             <hr>
-            <div class="messages mt-3">
+            <div id="scrollbar" class="messages mt-3 p-3">
                 <div th:each="messages: ${messagesMap}">
-                    <!- TODO : GROUP MESSAGES THAT ARE CLOSE IN TIME (by the same user) TOGETHER->
-
                     <div class="text-center mb-2">[[${dateFormatter.format(messages.key, DATE_FORMAT)}]]</div>
                     <div th:each="message : ${messages.value}">
                         <!--friends msg-->
                         <div th:if="${message.sender == sentToUser.id}" class="d-flex">
-                            <div class="card text-white bg-secondary shadow-sm mb-3" style="max-width: 40%">
+                            <div class="card text-white bg-secondary shadow-sm mb-3 border-0" style="max-width: 40%">
                                 <div class="card-body">
                                     <small>[[${dateFormatter.format(message.timestamp, TIMESTAMP_FORMAT)}]]</small>
                                     <p class="card-text mt-2">[[${message.messageContent}]]</p>
@@ -66,7 +65,7 @@
                         </div>
                         <!--logged in users msg-->
                         <div th:if="${message.receiver == sentToUser.id}" class="d-flex justify-content-end">
-                            <div class="card text-white bg-primary shadow-sm mb-3" style="max-width: 40%">
+                            <div class="card text-white bg-primary shadow-sm mb-3 border-0" style="max-width: 40%">
                                 <div class="card-body">
                                     <small>[[${dateFormatter.format(message.timestamp, TIMESTAMP_FORMAT)}]]</small>
                                     <p class="card-text mt-2">[[${message.messageContent}]]</p>
@@ -110,6 +109,15 @@
                     this.form.submit();
                 }
             });
+        });
+
+        const scrollToBottom = (element) => {
+            element.scrollTop = element.scrollHeight;
+        }
+
+        window.addEventListener('load', function() {
+            const scrollbar = document.getElementById('scrollbar');
+            scrollToBottom(scrollbar);
         });
     </script>
 </body>
