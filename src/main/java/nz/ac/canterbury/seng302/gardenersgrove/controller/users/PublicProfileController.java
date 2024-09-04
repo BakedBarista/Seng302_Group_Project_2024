@@ -147,6 +147,7 @@ public class PublicProfileController {
         model.addAttribute("name", user.getFullName());
         editUserDTO.setDescription(user.getDescription());
         model.addAttribute("editUserDTO", editUserDTO);
+        model.addAttribute("favouritePlants", user.getFavouritePlants());
 
         return "users/edit-public-profile";
     }
