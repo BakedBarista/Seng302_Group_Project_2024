@@ -203,7 +203,7 @@ public class U800_2_1_ConnectionFeed {
     @When("there are no profiles to view")
     public void there_are_no_profiles_to_view() {
         for (GardenUser user : gardenUserRepository.findAll()) {
-            if (user.getId() == userLiam.getId()) {
+            if (user.getId().longValue() == userLiam.getId().longValue()) {
                 continue;
             }
 
