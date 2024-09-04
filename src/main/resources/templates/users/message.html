@@ -21,6 +21,20 @@
                 height: 100vh;
             }
         }
+
+        /* Make messages container scrollable */
+        .messages {
+            max-height: calc(100vh - 300px); /* Adjust as necessary */
+            overflow-y: auto;
+        }
+
+        /* Ensure textarea and send button stay at the bottom */
+        .send-message-container {
+            position: sticky;
+            bottom: 0;
+            background-color: white;
+            z-index: 1000;
+        }
     </style>
 </head>
 
@@ -65,16 +79,17 @@
 
 
             <!-- message and send message box-->
-            <div class="container-fluid position-absolute bg-light bottom-0 start-0 end-0 py-3">
+            <div class="send-message-container">
                 <form th:action="@{/users/message(id=${sentToUser.id})}" method="post" th:object="${messageDTO}">
+                    <input type="hidden" name="submissionToken" th:value="${submissionToken}" />
                     <div class="d-flex gap-2">
                         <label for="message"></label>
                         <textarea id="message"
                                   th:name="message"
                                   class="form-control flex-grow-1"
                                   style="resize: none;"
-                                  placeholder="Message here..."
-                                  autofocus>
+                                  autofocus
+                                  >
                         </textarea>
                         <button type="submit" class="btn btn-primary px-4 py-0">
                             <img th:src="@{/icons/sent-stroke-rounded.svg}" alt="Send">
@@ -82,9 +97,20 @@
                     </div>
                 </form>
             </div>
-
         </div>
     </main>
     <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const textarea = document.getElementById("message");
+
+            textarea.addEventListener("keydown", function(event) {
+                if (event.key === "Enter" && !event.shiftKey) {
+                    event.preventDefault();
+                    this.form.submit();
+                }
+            });
+        });
+    </script>
 </body>
 </html>

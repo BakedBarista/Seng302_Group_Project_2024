@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.TIMESTAMP_FORMAT;
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.WEATHER_CARD_FORMAT_DATE;
@@ -51,9 +53,11 @@ public class MessageController {
     @GetMapping("users/message")
     public String messageFriend(@RequestParam("id") Long requestedUserId,
                                 Authentication authentication,
-                                Model model) {
+                                Model model,
+                                HttpSession session) {
         logger.info("GET message friend page opened to user {}", requestedUserId);
-
+        String submissionToken = UUID.randomUUID().toString();
+        session.setAttribute("submissionToken", submissionToken);
         Long loggedInUserId = (Long) authentication.getPrincipal();
         GardenUser sentToUser = userService.getUserById(requestedUserId);
 
@@ -66,7 +70,7 @@ public class MessageController {
         model.addAttribute("dateFormatter", new ThymeLeafDateFormatter());
         model.addAttribute("TIMESTAMP_FORMAT", TIMESTAMP_FORMAT);
         model.addAttribute("DATE_FORMAT", WEATHER_CARD_FORMAT_DATE);
-
+        model.addAttribute("submissionToken", submissionToken);
         model.addAttribute("messagesMap", messageService.getMessagesBetweenFriends(loggedInUserId, requestedUserId));
         model.addAttribute("sentToUser", sentToUser);
         return "users/message";
@@ -84,15 +88,20 @@ public class MessageController {
             @RequestParam("id") Long receiver,
             @Valid @ModelAttribute("messageDTO") MessageDTO messageDTO,
             Authentication authentication,
-            Model model) {
+            Model model,
+            HttpSession session) {
         logger.info("POST send message to {}", receiver);
+        String tokenFromForm = messageDTO.getSubmissionToken();
+        String sessionToken = (String) session.getAttribute("submissionToken");
+        logger.info("sessionToken: {}", sessionToken);
+        logger.info("tokenFromForm: {}", tokenFromForm);
+        if (sessionToken != null && sessionToken.equals(tokenFromForm)) {
+            Long sender = (Long) authentication.getPrincipal();
+            messageService.sendMessage(sender, receiver, messageDTO);
+            session.removeAttribute("submissionToken");
+        }
 
-        // add check for validation here
-
-        Long sender = (Long) authentication.getPrincipal();
-        messageService.sendMessage(sender, receiver, messageDTO);
-
-        return messageFriend(receiver, authentication, model);
+        return messageFriend(receiver, authentication, model,session);
     }
 
     @PostConstruct
@@ -100,14 +109,14 @@ public class MessageController {
         GardenUser u1 = userService.getUserByEmail("stynesluke@gmail.com");
         GardenUser u2 = userService.getUserByEmail("jan.doe@gmail.com");
         messageService.sendMessageWithTimestamp(u1.getId(), u2.getId(),
-                new MessageDTO("Hello I am Luke Stynes! :)"), LocalDateTime.now().minusDays(2));
+                new MessageDTO("Hello I am Luke Stynes! :)","token"), LocalDateTime.now().minusDays(2));
         messageService.sendMessageWithTimestamp(u2.getId(), u1.getId(),
-                new MessageDTO("Hello Luke Stynes, I am Jan Doe."), LocalDateTime.now().minusDays(1));
+                new MessageDTO("Hello Luke Stynes, I am Jan Doe.","token"), LocalDateTime.now().minusDays(1));
         messageService.sendMessageWithTimestamp(u1.getId(), u2.getId(),
-                new MessageDTO("Wow! What great bananas you grow Jan Doe."), LocalDateTime.now().minusDays(1));
+                new MessageDTO("Wow! What great bananas you grow Jan Doe.","token"), LocalDateTime.now().minusDays(1));
         messageService.sendMessageWithTimestamp(u1.getId(), u2.getId(),
                 new MessageDTO("I'm sending a really really long message here so that Ryan does not have to manually " +
                         "write in a really long message each time he runs the application locally, it is really " +
-                        "annoying so he asked me to write one that goes past the end of the screen"), LocalDateTime.now());
+                        "annoying so he asked me to write one that goes past the end of the screen","token"), LocalDateTime.now());
     }
 }
