@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.SuggestedUserDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
@@ -28,7 +29,6 @@ public class SuggestedUserController {
     private final ObjectMapper objectMapper;
 
 
-    @Autowired
     public SuggestedUserController(FriendService friendService, GardenUserService gardenUserService, ObjectMapper objectMapper) {
         this.friendService = friendService;
         this.gardenUserService = gardenUserService;
@@ -57,7 +57,8 @@ public class SuggestedUserController {
             model.addAttribute("name", suggestedUsers.get(0).getFullName());
             model.addAttribute("description", suggestedUsers.get(0).getDescription());
 
-            String jsonUsers = objectMapper.writeValueAsString(suggestedUsers);
+            List<SuggestedUserDTO> userDtos = suggestedUsers.stream().map(SuggestedUserDTO::new).toList();
+            String jsonUsers = objectMapper.writeValueAsString(userDtos);
             model.addAttribute("userList", jsonUsers);
             
         }

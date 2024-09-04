@@ -13,22 +13,27 @@ Feature: U800.2.1 As Favian, I want to find potential friends and send them frie
     Scenario: AC2 - deny a user no request incoming 
         Given I am logged in and I am on the homepage looking at the stack of user profiles
         When I click the red cross button on a person who I do not have a pending friend request from
-        Then this card is removed from the stack and no friend request is sent
+        Then this card is removed from the stack
+        And no friend request is sent
 
     Scenario: AC3 - deny a user with a request incoming 
         Given I am logged in and I am on the homepage looking at the stack of user profiles
         When I click the red cross button on a person who I do have a pending friend request from
-        Then this card is removed from the stack and their friend request is declined
+        Then this card is removed from the stack
+        And their friend request is declined
 
     Scenario: AC4 - accept a new connection
         Given I am logged in and I am on the homepage looking at the stack of user profiles
         When I click the green love heart button on a person who I have a pending friend request from
-        Then the friend request is accepted and a confirmation message pops up, and then the next user profile is shown
+        Then the friend request is accepted
+        And a confirmation message pops up
+        And the next user profile is shown
 
-    Scenario: AC5 - accept a conneciton send a request
+    Scenario: AC5 - accept a connection send a request
         Given I am logged in and I am on the homepage looking at the stack of user profiles
         When I click the green love heart button on a person who I don’t have a pending friend request from
-        Then a friend request is sent to the user that was on the top of the stack and then the next profile is shown
+        Then a friend request is sent to the user that was on the top of the stack
+        And the next user profile is shown
 
     Scenario: AC6 - friend requests first
         Given I am logged in and on the home page
