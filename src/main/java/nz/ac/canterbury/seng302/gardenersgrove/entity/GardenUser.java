@@ -447,4 +447,12 @@ public class GardenUser {
     public List<Plant> getFavouritePlants() {
         return favouritePlants;
     }
+
+    /**
+     * Sets the favourite plants of this user
+     * This is used when updating the favourite plants (e.g. adding or removing a plant)
+     */
+    public void setFavouritePlants(List<Plant> favouritePlants) {
+        this.favouritePlants = favouritePlants;
+    }
 }

@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -231,4 +232,23 @@ public class GardenUserService {
         return new String(bytes);
     }
 
+    /**
+     * Removes the favourite plant of a user - this is specified by the ID of the plant itself
+     * rather than an index within the list of favourite plants for a user.
+     * @param userId the id of the user who has the favourite plant
+     * @param plantId the id of the plant that the user favourites
+     * @return true if the plant was successfully removed from the favourite plant list.
+     */
+    public Boolean removeFavouritePlant(Long userId, Long plantId) {
+        GardenUser user = gardenUserRepository.findById(userId).orElseThrow();
+
+        boolean match = user.getFavouritePlants().stream().anyMatch(plant -> plant.getId().equals(plantId));
+        if (match) {
+            List<Plant> updatedFavouritePlants = user.getFavouritePlants().stream().filter(plant -> plant.getId().equals(plantId)).toList();
+            user.setFavouritePlants(updatedFavouritePlants);
+            gardenUserRepository.save(user);
+        }
+
+        return match;
+    }
 }
