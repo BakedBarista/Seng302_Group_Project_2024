@@ -5,6 +5,8 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.PlantController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
@@ -50,6 +52,8 @@ public class U28GardenHistoryPlantDateFeature {
     @Autowired
     private PlantController plantController;
 
+    private static HttpSession session;
+
     private static BindingResult bindingResult;
     private static Model model;
     private PlantDTO plantDTO;
@@ -64,6 +68,7 @@ public class U28GardenHistoryPlantDateFeature {
     public static void beforeAll() {
         bindingResult = mock(BindingResult.class);
         model = mock(Model.class);
+        session = mock(HttpSession.class);
         user = new GardenUser();
         user.setFname("liam");
         user.setLname("liam");
@@ -101,7 +106,7 @@ public class U28GardenHistoryPlantDateFeature {
 
     @When("I submit the add plant form")
     public void i_submit_the_add_plant_form() {
-        plantController.submitAddPlantForm(gardenId, plantDTO, bindingResult, file, date, model);
+        plantController.submitAddPlantForm(gardenId, plantDTO, bindingResult, file, date, model, session);
     }
 
     @Then("the plant is successfully added")

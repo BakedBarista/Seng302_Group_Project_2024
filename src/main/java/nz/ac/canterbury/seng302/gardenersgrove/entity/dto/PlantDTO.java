@@ -16,12 +16,11 @@ public class PlantDTO extends BasePlant {
 
     private String submissionToken;
 
-    public PlantDTO(String name, String count, String description, String plantedDate, String submissionToken) {
+    public PlantDTO(String name, String count, String description, String plantedDate) {
         this.name = name;
         this.count = count;
         this.description = description;
         this.plantedDate = plantedDate;
-        this.submissionToken = submissionToken;
     }
 
     public PlantDTO() {
@@ -40,14 +39,6 @@ public class PlantDTO extends BasePlant {
 
     public void setPlantedDate(String plantedDate) {
         this.plantedDate = plantedDate;
-    }
-
-    public void setSubmissionToken(String submissionToken) {
-        this.submissionToken = submissionToken;
-    }
-
-    public String getSubmissionToken() {
-        return submissionToken;
     }
 
     @Override

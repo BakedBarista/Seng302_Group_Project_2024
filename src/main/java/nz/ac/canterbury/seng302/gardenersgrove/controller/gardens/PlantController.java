@@ -56,7 +56,6 @@ public class PlantController {
     private static final String ACCESS_DENIED = "error/accessDenied";
     private static final String GARDENS_REDIRECT = "redirect:/gardens/";
     private static final String ERROR_404 = "error/404";
-    private static final String SUBMISSION_TOKEN = "submissionToken";
     private static final String REFERER = "referer";
 
 
@@ -87,12 +86,8 @@ public class PlantController {
 
         logger.info("GET /gardens/${id}/add-plant - display the new plant form");
 
-        String submissionToken = UUID.randomUUID().toString();
         String refererURI = request.getHeader("Referer");
-        session.setAttribute(SUBMISSION_TOKEN, submissionToken);
         session.setAttribute(REFERER, refererURI);
-
-        model.addAttribute(SUBMISSION_TOKEN, submissionToken);
         model.addAttribute(GARDEN_ID, gardenId);
 
         Plant plant = new Plant("", "", "", null);
@@ -112,7 +107,7 @@ public class PlantController {
                 }
             }
         }
-        model.addAttribute(PLANT, new PlantDTO());
+        model.addAttribute(PLANT, plant);
 
         GardenUser owner = gardenUserService.getCurrentUser();
         Optional<Garden> garden = gardenService.getGardenById(gardenId);
@@ -147,20 +142,7 @@ public class PlantController {
                                      Model model, HttpSession session) {
         logger.info("POST /gardens/${gardenId}/add-plant - submit the new plant form");
 
-        logger.info(plantDTO.toString());
         String referer = (String) session.getAttribute(REFERER);
-        String token = plantDTO.getSubmissionToken();
-        String sessionToken = (String) session.getAttribute(SUBMISSION_TOKEN);
-        logger.info("Session token {}", sessionToken);
-        logger.info("Token {}", token);
-
-
-        if (sessionToken == null || !sessionToken.equals(token)) {
-            model.addAttribute("error", "Form has already been submitted or is invalid.");
-            model.addAttribute(PLANT, new PlantDTO());
-            model.addAttribute(REFERER, referer);
-            return "plants/addPlant";
-        }
 
         if (Objects.equals(dateValidity, "dateInvalid")) {
             bindingResult.rejectValue(
@@ -174,14 +156,12 @@ public class PlantController {
             model.addAttribute(PLANT, plantDTO);
             model.addAttribute(GARDEN_ID, gardenId);
             model.addAttribute(REFERER, referer);
-            model.addAttribute(SUBMISSION_TOKEN, token);
             logger.error("Validation error in Plant Form.");
             return "plants/addPlant";
         }
 
         // Save the new plant and image
         Plant savedPlant = plantService.createPlant(plantDTO, gardenId);
-        session.removeAttribute(SUBMISSION_TOKEN);
         session.removeAttribute(REFERER);
 
         if (savedPlant != null) {
@@ -190,7 +170,6 @@ public class PlantController {
                 logger.info(PLANT_SUCCESSFULLY_SAVED_LOG, gardenId);
             } catch (Exception e) {
                 logger.error(PLANT_UNSUCCESSFULLY_SAVED_LOG, gardenId);
-                model.addAttribute(SUBMISSION_TOKEN, token);
                 model.addAttribute(REFERER, referer);
             }
         } else {
@@ -198,62 +177,6 @@ public class PlantController {
             return GARDENS_REDIRECT + gardenId;
         }
         return GARDENS_REDIRECT + gardenId;
-
-
-//        String referer = (String) session.getAttribute(REFERER);
-//        String token = plantDTO.getSubmissionToken();
-//        String sessionToken = (String) session.getAttribute(SUBMISSION_TOKEN);
-//
-//        if (sessionToken == null || !sessionToken.equals(token)) {
-//            model.addAttribute("error", "Form has already been submitted or is invalid.");
-//            model.addAttribute(PLANT, new PlantDTO());
-//            model.addAttribute(REFERER, referer);
-//            return "plants/addPlant";
-//        }
-//
-//        if (Objects.equals(dateValidity, "dateInvalid")) {
-//            bindingResult.rejectValue(
-//                    "plantedDate",
-//                    "plantedDate.formatError",
-//                    "Date is not in valid format, DD/MM/YYYY, or does not represent a real date"
-//            );
-//        }
-//
-//        if (bindingResult.hasErrors()) {
-//            model.addAttribute(SUBMISSION_TOKEN, token);
-//            model.addAttribute(REFERER, referer);
-//            model.addAttribute(PLANT, plantDTO);
-//            model.addAttribute(GARDEN_ID, gardenId);
-//            logger.error("Validation error in Plant Form.");
-//            return "plants/addPlant";
-//        }
-//
-//        // Save the new plant and image
-//        Plant savedPlant = plantService.createPlant(plantDTO, gardenId);
-//
-//        session.removeAttribute(SUBMISSION_TOKEN);
-//        session.removeAttribute(REFERER);
-//
-//        if (savedPlant != null) {
-//            try {
-//                plantService.setPlantImage(savedPlant.getId(), file);
-//                logger.info(PLANT_SUCCESSFULLY_SAVED_LOG, gardenId);
-//            } catch (Exception e) {
-//                logger.error(PLANT_UNSUCCESSFULLY_SAVED_LOG, gardenId);
-//            }
-//
-//        } else {
-//            logger.error(PLANT_UNSUCCESSFULLY_SAVED_LOG, gardenId);
-//        }
-//
-//        if (savedPlant != null) {
-//            session.removeAttribute(SUBMISSION_TOKEN);
-//            return GARDENS_REDIRECT + savedPlant.getGarden().getId();
-//        } else {
-//            return GARDENS_REDIRECT;
-//        }
-
-//        return GARDENS_REDIRECT + gardenId;
 
     }
 
