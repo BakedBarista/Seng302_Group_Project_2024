@@ -43,7 +43,7 @@ class SuggestedUserServiceTest {
         Optional<Friends> pendingRequestFromSuggested = friendService.getPendingFriendRequest(suggestedUser.getId(), loggedInUser.getId());
 
         Assertions.assertTrue(accepted);
-        Assertions.assertEquals(suggestedUser.getId(), loggedInUserFriends.getFirst().getId());
+        Assertions.assertEquals(suggestedUser.getId(), loggedInUserFriends.get(0).getId());
         Assertions.assertTrue(pendingRequestFromSuggested.isEmpty());
     }
 
