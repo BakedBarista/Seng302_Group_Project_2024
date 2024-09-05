@@ -80,16 +80,16 @@ public class SuggestedUserService {
      * @return True if request accepted, otherwise false.
      */
     public boolean attemptToAcceptPendingRequest(Long loggedInUserId, Long suggestedUserId) {
-        Optional<Friends> pendingRequest = friendService.getPendingFriendRequest(suggestedUserId, loggedInUserId);
+        Optional<Friends> pendingRequest = friendService.getPendingFriendRequest(loggedInUserId, suggestedUserId);
 
         if (pendingRequest.isPresent()) {
-            logger.info("Pending request found from ID: {} to {} to accept", suggestedUserId, loggedInUserId);
+            logger.info("Pending request found from ID: {} to ID: {} to accept", suggestedUserId, loggedInUserId);
             logger.info("Accepting request");
             pendingRequest.get().setStatus(ACCEPTED);
             friendService.save(pendingRequest.get());
             return true;
         }
-        logger.info("No pending request from ID: {} to {} to accept", suggestedUserId, loggedInUserId);
+        logger.info("No pending request from ID: {} to ID: {} to accept", suggestedUserId, loggedInUserId);
         return false;
     }
 

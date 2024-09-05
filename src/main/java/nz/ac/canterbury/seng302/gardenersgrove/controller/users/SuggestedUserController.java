@@ -95,7 +95,7 @@ public class SuggestedUserController {
             } else { // Send a new pending request to the suggested user
                 boolean newRequestSent = suggestedUserService.sendNewPendingRequest(loggedInUser, suggestedUser);
                 if (!newRequestSent) {
-                    logger.error("Something went wrong trying to send a new request. Doing nothing");
+                    logger.error("Users already have a pending request. Doing nothing");
                     return ResponseEntity.status(HttpStatus.OK).body(response);
                 }
             }
