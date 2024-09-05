@@ -48,7 +48,7 @@
         }
 
         .btn-custom {
-            background-color: #CB9F03;
+            background-color: #735B04;
             color: white;
             border-radius: 50px;
             padding: 10px 30px;
@@ -112,8 +112,8 @@
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-            <ul class="navbar-nav">
+        <div class="collapse navbar-collapse align-items-center justify-content-end" id="navbarNav">
+            <ul class="navbar-nav gap-3 align-items-center">
                 <li class="nav-item">
                     <a class="nav-link" href="#features">Features</a>
                 </li>
@@ -124,10 +124,10 @@
                     <a class="nav-link" href="#contact">Contact</a>
                 </li>
                 <li class="nav-item">
-                    <a class="btn btn-custom" href="#login">Log In</a>
+                    <a class="btn btn-custom" th:href="@{/users/login}">Log In</a>
                 </li>
                 <li class="nav-item">
-                    <a class="btn btn-custom" href="#register">Register</a>
+                    <a class="btn btn-custom" th:href="@{/users/register}">Register</a>
                 </li>
             </ul>
         </div>
@@ -141,7 +141,7 @@
             <h1>Welcome to Pollinat*r</h1>
             <p>Your garden, your community. Discover a world where gardeners come together to share their passion, swap tips, and celebrate the beauty of nature.</p>
             <p>At Pollinat*r, we connect you with fellow gardeners who share your interests and inspire your green thumb to reach new heights. Whether you're planting your first seed or cultivating a botanical masterpiece, Pollinat*r is the place where your gardening journey blossoms.</p>
-            <a href="#register" class="btn btn-custom">Join the Community</a>
+            <a th:href="@{/users/register}" class="btn btn-custom">Join the Community</a>
         </div>
         <div class="hero-image">
             <img th:src="@{/img/mockup.png}" alt="Phone Mockup">
@@ -150,17 +150,42 @@
 </section>
 
 <!-- Features Section -->
-<section class="section" id="features">
+<section class="section" id="features" style="background: #CB9F03;">
     <div class="container">
-        <h2>Features</h2>
-        <p>Pollinat*r offers a suite of tools and features designed to help you grow your garden and your connections:</p>
-        <ul>
-            <li><strong>Find Your Perfect Match:</strong> Swipe through other gardeners based on shared interests, gardening styles, and plant preferences.</li>
-            <li><strong>Document Your Journey:</strong> Create a personalized garden journal where you can post updates, photos, and share insights about your plants' progress.</li>
-            <li><strong>Connect and Share:</strong> Exchange gardening tips, ask questions, and celebrate milestones with the Pollinat*r community.</li>
-            <li><strong>Local Gardening Insights:</strong> Get personalized tips based on your location and weather to ensure your plants thrive.</li>
-            <li><strong>Shop and Swap:</strong> Access exclusive offers on seeds, tools, and garden essentials, or trade with fellow gardeners in your area.</li>
-        </ul>
+        <h2 class="text-center text-white">Features</h2>
+        <p class="text-center pb-5 text-white">Pollinat*r offers a suite of tools and features designed to help you grow your garden and your connections:</p>
+        <div class="row justify-content-center">
+            <!-- Card 1 -->
+            <div class="col-md-4 mb-3 d-flex justify-content-center">
+                <div class="card rounded-4 border-0 text-center p-3 shadow" style="width: 18rem;">
+                    <div class="card-body">
+                        <img th:src="@{/icons/match.svg}" alt="Icon 1" class="mb-3" style="width: 75px; height: 75px;">
+                        <h5 class="card-title">Find Your Perfect Match</h5>
+                        <p class="card-text">Swipe through other gardeners based on shared interests, gardening styles, and plant preferences.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Card 2 -->
+            <div class="col-md-4 mb-3 d-flex justify-content-center">
+                <div class="card text-center p-3 shadow rounded-4 border-0" style="width: 18rem;">
+                    <div class="card-body">
+                        <img th:src="@{/icons/document.svg}" alt="Icon 2" class="mb-3" style="width: 75px; height: 75px;">
+                        <h5 class="card-title">Document Your Journey</h5>
+                        <p class="card-text">Create a personalized garden journal where you can post updates, photos, and share insights about your plants' progress.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Card 3 -->
+            <div class="col-md-4 mb-3 d-flex justify-content-center">
+                <div class="card text-center p-3 shadow rounded-4 border-0" style="width: 18rem;">
+                    <div class="card-body">
+                        <img th:src="@{/icons/insight.svg}" alt="Icon 3" class="mb-3" style="width: 75px; height: 75px;">
+                        <h5 class="card-title">Local Gardening Insights</h5>
+                        <p class="card-text">Get personalized tips based on your location and weather to ensure your plants thrive.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
 
@@ -179,13 +204,13 @@
     <div class="container">
         <h2>Contact Us</h2>
         <p>Have questions, feedback, or just want to chat with the team? We’d love to hear from you!</p>
-        <p>Email us at <strong>support@pollinator.app</strong> or follow us on social media to stay up to date with the latest gardening tips, community events, and app updates.</p>
+        <p>Email us at <strong><a href="mailto:team800.garden@gmail.com">team800.garden@gmail.com</a></strong> or follow us on social media to stay up to date with the latest gardening tips, community events, and app updates.</p>
     </div>
 </section>
 
 <!-- Footer -->
-<footer>
-    <p>&copy; 2024 Pollinat*r. All rights reserved. Together, we’re growing something beautiful.</p>
+<footer style="background: #B89006;">
+    <p class="text-white">&copy; 2024 Pollinat*r. All rights reserved. Together, we’re growing something beautiful.</p>
 </footer>
 
 <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
