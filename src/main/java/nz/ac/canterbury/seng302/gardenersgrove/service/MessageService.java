@@ -40,7 +40,6 @@ public class MessageService {
 
     /**
      * Sends a message between users and saves it to the database - allows the specification of a timestamp.
-     * TODO - test me
      * @param sender the message sender
      * @param receiver the person who will receive the message
      * @param messageDTO the message object
@@ -50,15 +49,6 @@ public class MessageService {
         Message message = new Message(sender, receiver, timestamp, messageDTO.getMessage());
         messageRepository.save(message);
         return message;
-    }
-
-    /**
-     * Find's a message by it's unique ID
-     * @param messageId the unique ID of a message
-     * @return an optional of the message at that ID.
-     */
-    public Optional<Message> getMessageById(Long messageId) {
-        return messageRepository.findById(messageId);
     }
 
     /**

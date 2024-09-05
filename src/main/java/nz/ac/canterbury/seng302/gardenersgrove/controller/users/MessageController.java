@@ -56,6 +56,7 @@ public class MessageController {
                                 Model model,
                                 HttpSession session) {
         logger.info("GET message friend page opened to user {}", requestedUserId);
+
         String submissionToken = UUID.randomUUID().toString();
         session.setAttribute("submissionToken", submissionToken);
         Long loggedInUserId = (Long) authentication.getPrincipal();
@@ -91,10 +92,9 @@ public class MessageController {
             Model model,
             HttpSession session) {
         logger.info("POST send message to {}", receiver);
+
         String tokenFromForm = messageDTO.getSubmissionToken();
         String sessionToken = (String) session.getAttribute("submissionToken");
-        logger.info("sessionToken: {}", sessionToken);
-        logger.info("tokenFromForm: {}", tokenFromForm);
         if (sessionToken != null && sessionToken.equals(tokenFromForm)) {
             Long sender = (Long) authentication.getPrincipal();
             messageService.sendMessage(sender, receiver, messageDTO);
