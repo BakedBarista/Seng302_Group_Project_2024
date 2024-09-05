@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.controller;
 
+import jakarta.servlet.http.HttpSession;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.MessageController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
@@ -15,6 +16,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 
@@ -70,11 +72,14 @@ class MessageControllerTest {
     @Test
     void givenHaveFriend_whenSendAMessageToFriend_thenSaveMessageBetweenFriendAndMyself() {
         String message = "Hello";
-        MessageDTO messageDTO = new MessageDTO(message);
+        MessageDTO messageDTO = new MessageDTO(message,"token");
+
+        HttpSession session = new MockHttpSession();
+        session.setAttribute("submissionToken", "token");
 
         Mockito.when(authentication.getPrincipal()).thenReturn(sender.getId());
 
-        String redirect = messageController.sendMessage(receiver.getId(), messageDTO, authentication, model);
+        String redirect = messageController.sendMessage(receiver.getId(), messageDTO, authentication, model, session);
         List<Message> savedMessages = messageRepository.findMessagesBetweenUsers(sender.getId(), receiver.getId());
 
         // verify return and model

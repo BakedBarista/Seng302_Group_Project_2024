@@ -4,6 +4,7 @@ import io.cucumber.java.BeforeAll;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import jakarta.servlet.http.HttpSession;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.MessageController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
@@ -16,6 +17,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.MessageService;
 import org.junit.jupiter.api.Assertions;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 
@@ -45,6 +47,7 @@ public class U800MessageFeature {
     private static Long myId;
     private static Long receiverId;
     private static MessageDTO messageDTO;
+    private static MockHttpSession session;
 
     @BeforeAll
     public static void setup() {
@@ -102,7 +105,7 @@ public class U800MessageFeature {
         Mockito.when(authentication.getPrincipal()).thenReturn(myId);
         Long friendsId = gardenUserService.getUserByEmail(friendName + "cucumber@email.com").getId();
 
-        result = messageController.messageFriend(friendsId, authentication, model);
+        result = messageController.messageFriend(friendsId, authentication, model,session);
     }
 
     @Then("I am taken to the message page")
@@ -117,12 +120,12 @@ public class U800MessageFeature {
     }
     @When("I have typed a text-based message {string}")
     public void i_have_typed_a_text_based_message(String messageContent) {
-        messageDTO = new MessageDTO(messageContent);
+        messageDTO = new MessageDTO(messageContent,"");
     }
     @When("I press Send")
     public void i_press_send() {
         Mockito.when(authentication.getPrincipal()).thenReturn(myId);
-        result = messageController.sendMessage(receiverId, messageDTO, authentication, model);
+        result = messageController.sendMessage(receiverId, messageDTO, authentication, model,session);
     }
     @Then("The message is sent to that friend.")
     public void the_message_is_sent_to_that_friend() {

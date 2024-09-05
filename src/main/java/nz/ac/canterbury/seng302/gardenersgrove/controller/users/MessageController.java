@@ -108,15 +108,17 @@ public class MessageController {
     public void dummyMessages() {
         GardenUser u1 = userService.getUserByEmail("stynesluke@gmail.com");
         GardenUser u2 = userService.getUserByEmail("jan.doe@gmail.com");
-        messageService.sendMessageWithTimestamp(u1.getId(), u2.getId(),
-                new MessageDTO("Hello I am Luke Stynes! :)","token"), LocalDateTime.now().minusDays(2));
-        messageService.sendMessageWithTimestamp(u2.getId(), u1.getId(),
-                new MessageDTO("Hello Luke Stynes, I am Jan Doe.","token"), LocalDateTime.now().minusDays(1));
-        messageService.sendMessageWithTimestamp(u1.getId(), u2.getId(),
-                new MessageDTO("Wow! What great bananas you grow Jan Doe.","token"), LocalDateTime.now().minusDays(1));
-        messageService.sendMessageWithTimestamp(u1.getId(), u2.getId(),
-                new MessageDTO("I'm sending a really really long message here so that Ryan does not have to manually " +
-                        "write in a really long message each time he runs the application locally, it is really " +
-                        "annoying so he asked me to write one that goes past the end of the screen","token"), LocalDateTime.now());
+        if (u1 != null && u2 != null) {
+            messageService.sendMessageWithTimestamp(u1.getId(), u2.getId(),
+                    new MessageDTO("Hello I am Luke Stynes! :)", "token"), LocalDateTime.now().minusDays(2));
+            messageService.sendMessageWithTimestamp(u2.getId(), u1.getId(),
+                    new MessageDTO("Hello Luke Stynes, I am Jan Doe.", "token"), LocalDateTime.now().minusDays(1));
+            messageService.sendMessageWithTimestamp(u1.getId(), u2.getId(),
+                    new MessageDTO("Wow! What great bananas you grow Jan Doe.", "token"), LocalDateTime.now().minusDays(1));
+            messageService.sendMessageWithTimestamp(u1.getId(), u2.getId(),
+                    new MessageDTO("I'm sending a really really long message here so that Ryan does not have to manually " +
+                            "write in a really long message each time he runs the application locally, it is really " +
+                            "annoying so he asked me to write one that goes past the end of the screen", "token"), LocalDateTime.now());
+        }
     }
 }
