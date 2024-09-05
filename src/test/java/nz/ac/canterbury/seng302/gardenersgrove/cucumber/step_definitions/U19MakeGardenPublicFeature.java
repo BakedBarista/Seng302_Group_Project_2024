@@ -58,7 +58,7 @@ public class U19MakeGardenPublicFeature {
         friendRepository = mock(FriendsRepository.class);
         tagRepository = mock(TagRepository.class);
         tagService = new TagService(tagRepository, gardenService, profanityService);
-        objectMapper = mock(ObjectMapper.class);
+        objectMapper = new ObjectMapper();
 
         friendService = new FriendService(friendRepository);
         gardenService = new GardenService(gardenRepository);
@@ -66,7 +66,7 @@ public class U19MakeGardenPublicFeature {
         gardenUserService = mock(GardenUserService.class);
         gardenWeatherService = mock(GardenWeatherService.class);
         weatherAPIService = new WeatherAPIService(restTemplate, gardenService, gardenWeatherService);
-        moderationService = new ModerationService();
+        moderationService = new ModerationService(null, objectMapper, restTemplate);
         profanityService = new ProfanityService();
         locationService = new LocationService(restTemplate, objectMapper);
         model = mock(Model.class);
@@ -76,7 +76,7 @@ public class U19MakeGardenPublicFeature {
         gardenUser.setId(1L);
         gardenUser.setFname("testUser");
 
-        garden = new Garden("Test Garden", "1", "test", "test suburb", "test city", "test country", "1234", 0.0, 0.0, "test description", 100D);
+        garden = new Garden("Test Garden", "1", "test", "test suburb", "test city", "test country", "1234", 0.0, 0.0, "test description", 100D, null, null);
         garden.setId(1L);
         garden.setOwner(gardenUser);
 
@@ -96,7 +96,7 @@ public class U19MakeGardenPublicFeature {
         GardenUser anotherGardenUser = new GardenUser();
         anotherGardenUser.setId(2L);
 
-        Garden garden = new Garden("Test Garden", "1", "test", "test suburb", "test city", "test country", "1234", 0.0, 0.0, "test description", 100D);
+        Garden garden = new Garden("Test Garden", "1", "test", "test suburb", "test city", "test country", "1234", 0.0, 0.0, "test description", 100D, null, null);
         garden.setId(2L);
         garden.setOwner(anotherGardenUser);
         when(gardenRepository.findById(2L)).thenReturn(Optional.of(garden));

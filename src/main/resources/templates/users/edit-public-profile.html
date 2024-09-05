@@ -14,20 +14,37 @@
 <main class="main-container">
     <div class="modal fade" id="plantSelectorModal" tabindex="0" aria-labelledby="plantSelectorModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <div class="modal-content">
+            <div class="modal-content" id="plantSelectorModalContent">
                 <div class="modal-header">
                     <h5 class="modal-title" id="plantSelectorModalLabel">Select Favourite Plant</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <form class="input-group w-100" th:action="@{users/edit-public-profile/search}" method="post" id="searchForm">
+                        <input type="text" class="form-control" placeholder="Search plant" id="searchField"
+                               aria-label="Search plants" aria-describedby="button-addon" name="search" th:value="${previousSearch}">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="submit" id="button-addon" onclick="showSearchResults()">
+                                <img th:src="@{/icons/search-icon.svg}" alt="" width="20" height="25" />
+                            </button>
+                        </div>
+                    </form>
+
+                    <div id="searchResults" class="select-container"></div>
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" id="submit-button" class="btn btn-primary btn-sm">Submit</button>
                 </div>
+
+                    <script th:src="@{/js/autocomplete.js}"></script>
+                    <script th:src="@{/js/searchPlantFavourite.js}"></script>
+                </div>
+
             </div>
         </div>
     </div>
-
 
   <div class="card border-top-0">
       <form th:action="@{/users/edit-public-profile}" method="post" enctype="multipart/form-data" th:object="${editUserDTO}" novalidate>
@@ -95,6 +112,19 @@
                   </div>
               </div>
           </div>
+          <div class="card m-4 p-4 mt-1 border-0 rounded-3 shadow-sm " style="background-color: #F9EFCC">
+              <div class="d-flex">
+                  <h4>My Favourite Garden</h4>
+                  <a class="btn btn-change ms-auto mb-2" >
+                      <img th:src="@{/icons/edit.svg}"
+                           aria-hidden=""
+                           alt="edit"
+                           width="20"
+                           height="20" /> Change
+                  </a>
+              </div>
+              <th:block th:insert="~{fragments/favourite-garden.html :: favourite-garden}"></th:block>
+          </div>
 
           <div class="card m-4 p-4 mt-1 border-0 rounded-3 shadow-sm" style="background-color: #F9EFCC">
               <h4>My Favourite Plants...</h4>
@@ -154,13 +184,15 @@
 <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
 
 <script>
-    openPlantSelectorModal = (index) => {
-        const modal = new bootstrap.Modal(document.getElementById("plantSelectorModal"))
-        modal.show()
-    }
 
-  /** @type {HTMLInputElement} */
-  const editProfileImageInput = document.getElementById("image");
+openPlantSelectorModal = (index) => {
+    const modal = new bootstrap.Modal(document.getElementById("plantSelectorModal"))
+    modal.show()
+}
+
+
+    /** @type {HTMLInputElement} */
+    const editProfileImageInput = document.getElementById("image");
   /** @type {HTMLSpanElement} */
   const editProfilePictureError = document.getElementById("editProfilePictureError");
   /** @type {HTMLInputElement} */

@@ -62,8 +62,9 @@ public class SuggestedUserController {
                 model.addAttribute("name", suggestedUsers.get(0).getFullName());
                 model.addAttribute("description", suggestedUsers.get(0).getDescription());
             }
-        } catch (Exception e) {
-            logger.error("Error getting gardens for user");
+        }
+        catch (Exception e) {
+            logger.error("Error getting suggested users", e);
         }
         return "home";
     }

@@ -1,0 +1,39 @@
+<div th:fragment="favourite-garden">
+
+        <div class="card d-flex flex-wrap flex-md-nowrap shadow-sm bg-primary-temp" style="padding: 0;">
+            <div class="row w-100 py-3">
+                <div class="col-12 col-md-6 object-fit-cover ps-4" style="height: 180px;">
+                    <img
+                            class="border-0 rounded-3 shadow-sm"
+                            th:src="@{'/plants/10/plant-image'}"
+                            style="width: 100%; height: 100%; object-fit: cover;"
+                            alt="profile picture"
+                    />
+                </div>
+                <!-- Text Column -->
+                <div class="col-12 col-md-6 d-flex flex-column justify-content-center ps-3 text-start">
+                    <h5 class="pt-2 ps-2">Blue Oasis</h5>
+                    <div class="ps-2">
+                        <div class="d-flex align-items-center mb-2">
+                            <img th:src="@{/icons/location-04-stroke-rounded.svg}" alt="" width="20" height="25" />
+                            <p class="mb-0 mx-2">Christchurch NZ</p>
+                        </div>
+                        <div class="d-flex align-items-center mb-2">
+                            <img th:src="@{/icons/aspect-ratio-stroke-rounded.svg}" alt="" width="20" height="25" />
+                            <p class="mb-0 mx-2">2 m<sup>2</sup></p>
+                        </div>
+                        <div class="d-flex">
+                            <strong>Description: </strong>
+                        </div>
+                        <div class="overflow-y-auto" style="max-height: 40px;">
+                            <p class="mb-0 ">
+                                Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
