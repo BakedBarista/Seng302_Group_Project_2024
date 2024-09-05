@@ -75,7 +75,10 @@ class MessageControllerTest {
     @Test
     void givenHaveFriend_whenSendAMessageToFriend_thenSaveMessageBetweenFriendAndMyself() {
         String message = "Hello";
-        MessageDTO messageDTO = new MessageDTO(message, "token");
+        MessageDTO messageDTO = new MessageDTO(message,"token");
+
+        HttpSession session = new MockHttpSession();
+        session.setAttribute("submissionToken", "token");
 
         Mockito.when(authentication.getPrincipal()).thenReturn(sender.getId());
 

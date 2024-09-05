@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.PlantController;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.users.MessageController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
@@ -54,12 +55,6 @@ public class PlantControllerTest {
     @Autowired
     private PlantController plantController;
 
-    @Autowired
-    private PlantService plantService;
-
-    @Autowired
-    private PlantHistoryRepository plantHistoryRepository;
-
     @MockBean
     private GardenUserService userService;
 
@@ -70,11 +65,9 @@ public class PlantControllerTest {
 
     private Plant testPlant;
 
-    private int test = 0;
 
     @BeforeEach
     void setup() {
-        test++;
         testGarden = new Garden("test", "1", "test", "test", "test",
                 "test", "1234", 10D, 10D, "test", 10D);
         GardenUser user = new GardenUser("John", "Doe", "john@email.com", "P#ssw0rd", LocalDate.of(2000, 10, 10));
