@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -229,13 +230,29 @@ public class GardenUserService {
         return new String(bytes);
     }
 
-    public List<Plant> getFavoritePlants(Long userId) {
+    public Set<Plant> getFavoritePlants(Long userId) {
         GardenUser user = gardenUserRepository.findById(userId)
                 .orElseThrow();
 
         return user.getFavouritePlants();
     }
 
-    public void saveUser(GardenUser user) {
+    /**
+     * Update the favourite plant
+     * @param userId user id
+     * @param plant plant
+     */
+
+    public void updateFavouritePlant(Long userId, Plant plant) {
+        GardenUser user = getUserById(userId);
+        if (user.getFavouritePlants().size() < 3) {
+            user.getFavouritePlants().add(plant);
+            System.out.println("Plants: " + user.getFavouritePlants());
+            gardenUserRepository.save(user);
+        } else {
+            throw new IllegalStateException("Cannot have more than 3 favourite plants");
+        }
     }
+
+
 }

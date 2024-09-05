@@ -70,8 +70,8 @@ public class PublicProfileController {
             logger.info("Adding {} to {}",plants.get(i).getName(),user.getFullName());
             plantService.addFavouritePlant(user.getId(),plants.get(i).getId());
         }*/
-        List<Plant> favouritePlants = user.getFavouritePlants();
-        logger.info("{}",favouritePlants);
+        Set<Plant> favouritePlants = user.getFavouritePlants();
+        logger.info("Favourite plants : " + favouritePlants);
         model.addAttribute(USER_ID_ATTRIBUTE, userId);
         model.addAttribute("name", user.getFullName());
         model.addAttribute(DESCRIPTION, user.getDescription());
@@ -100,7 +100,7 @@ public class PublicProfileController {
         if (isCurrentUser) {
             return viewPublicProfile(authentication, model);
         }
-        List<Plant> favouritePlants = user.getFavouritePlants();
+        Set<Plant> favouritePlants = user.getFavouritePlants();
         logger.info("{}",user.getFavouritePlants());
         logger.info("current user: {}",userService.getUserById(id).getFname());
         logger.info("logged in user {}",userService.getUserById(loggedInUserId).getFname());

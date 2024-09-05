@@ -13,10 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 public class FavouritePlantsContoller {
@@ -59,19 +56,28 @@ public class FavouritePlantsContoller {
 
     }
     @PutMapping("/users/edit-public-profile/favourite-plant")
-    public ResponseEntity<String> updateFavouritePlant(@RequestBody Map<String, Long> payload, Authentication authentication) {
-        Long userId = (Long) authentication.getPrincipal();
-        Long plantId = payload.get("id");
-        System.out.println(userId);
-        System.out.println(plantId);
+    public ResponseEntity<?> updateFavouritePlants(@RequestBody Map<String, List<Long>> request) {
+        List<Long> plantIds = request.get("ids");
+        Long userId = userService.getCurrentUser().getId();
+        System.out.println("Received plant IDs: " + plantIds);
+        System.out.println("User ID: " + userId);
         try {
-            plantService.updateFavouritePlant(userId, plantId);
-            GardenUser user = userService.getCurrentUser();
-            System.out.println(user.getFavouritePlants());
-            return ResponseEntity.ok("Favourite plant updated successfully");
+            for (Long plantId : plantIds) {
+                System.out.println("Processing plant ID: " + plantId);
+                Optional<Plant> plant = plantService.getPlantById(plantId);
+                System.out.println("Plant found: " + plant.isPresent());
+                if (plant.isPresent()) {
+                    Plant newPlant = plant.get();
+                    System.out.println("Plant details: " + newPlant);
+                    userService.updateFavouritePlant(userId, newPlant);
+                } else {
+                    System.out.println("Plant with ID " + plantId + " not found.");
+                }
+            }
+            return ResponseEntity.ok().build();
         } catch (Exception e) {
-            logger.error("Error updating favourite plant", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating favourite plant");
+            System.out.println("ERROR HERE: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 }

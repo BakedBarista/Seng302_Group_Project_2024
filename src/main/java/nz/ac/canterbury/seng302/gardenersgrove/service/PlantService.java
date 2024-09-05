@@ -167,29 +167,6 @@ public class PlantService {
     public  List<Plant> getAllPlants(GardenUser gardenUser, String searchTerm) {
         return plantRepository.findPlantsFromSearch(gardenUser, searchTerm);
     }
-
-    /**
-     * Update the favourite plant
-     * @param userId user id
-     * @param plantId plant id
-     */
-    public void updateFavouritePlant(Long userId, Long plantId) {
-        GardenUser user = gardenUserService.getUserById(userId);
-        Optional<Plant> plant = getPlantById(plantId);
-
-        if(plant.isPresent()) {
-            System.out.println("does it get here");
-            Plant newPlant = plant.get();
-            System.out.println(newPlant);
-            if (user.getFavouritePlants().size() < 3) {
-                user.getFavouritePlants().add(newPlant);
-                gardenUserService.saveUser(user);
-            } else {
-                throw new IllegalStateException("Cannot have more than 3 favourite plants");
-            }
-
-
-        }
-
     }
-}
+
+

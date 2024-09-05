@@ -86,9 +86,9 @@ public class GardenUser {
     @Column(nullable = true)
     private Instant accountDisabledExpiryInstant;
 
-    @PrimaryKeyJoinColumn
-    @OneToMany(mappedBy = "favouritePlants", cascade = CascadeType.ALL)
-    private List<Plant> favouritePlants;
+    @OneToMany(mappedBy = "gardenUser", cascade = CascadeType.ALL)
+    private Set<Plant> favouritePlants = new HashSet<>();
+
 
     /**
      * JPA required no-args constructor
@@ -444,11 +444,11 @@ public class GardenUser {
      * Gets the favourite plants of this user
      * @return list of favourite plants
      */
-    public List<Plant> getFavouritePlants() {
+    public Set<Plant> getFavouritePlants() {
         return favouritePlants;
     }
 
-    public void setFavouritePlants(List<Plant> favouritePlants) {this.favouritePlants = favouritePlants;}
+    public void setFavouritePlants(Set<Plant> favouritePlants) {this.favouritePlants = favouritePlants;}
 
     public void addFavouritePlant(Plant favouritePlant) {
         favouritePlants.add(favouritePlant);

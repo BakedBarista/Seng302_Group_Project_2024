@@ -14,76 +14,6 @@ function openPlantSelectorModal(index) {
     }, { once: true });
 }
 
-function renderPlantCards(favouritePlants) {
-    const container = document.getElementById('favouritePlantsContainer');
-    container.innerHTML = ''; // Clear existing cards
-
-    // Render cards for favorite plants
-    favouritePlants.forEach((plant, index) => {
-        const plantCard = document.createElement('div');
-        plantCard.className = 'card p-2 me-3 mb-3 border-0 rounded-3 d-flex flex-column shadow-sm public-profile-plant-card bg-primary-temp';
-        plantCard.id = `favouritePlantCard${index + 1}`;
-
-        const imageContainer = document.createElement('div');
-        imageContainer.className = 'plant-image-container';
-        imageContainer.style = 'height: 50%;'; // Take up the top half
-
-        const imageElement = document.createElement('img');
-        imageElement.src = `${baseUrl}plants/${plant.id}/plant-image`;
-        imageElement.alt = plant.name;
-        imageElement.className = 'w-100 h-100';
-        imageElement.style = 'object-fit: cover;';
-
-        imageContainer.appendChild(imageElement);
-
-        const plantName = document.createElement('h4');
-        plantName.className = 'pt-2 ps-2 text-center';
-        plantName.textContent = plant.name;
-        plantName.style = 'flex-grow: 1; display: flex; align-items: center; justify-content: center;'; // Center the text vertically
-
-        plantCard.appendChild(imageContainer);
-        plantCard.appendChild(plantName);
-        container.appendChild(plantCard);
-
-        console.log(`Card ${plantCard.id} created with plant name: ${plant.name}`);
-    });
-
-    // Render empty cards
-    const remainingCards = 3 - favouritePlants.length;
-    for (let i = 0; i < remainingCards; i++) {
-        const emptyCard = document.createElement('div');
-        emptyCard.className = 'card p-2 me-3 mb-3 border-0 rounded-3 shadow-sm public-profile-plant-card justify-content-center card-wiggle bg-primary-grey';
-        emptyCard.id = `favouritePlantCard${favouritePlants.length + i + 1}`;
-        emptyCard.onclick = function() {
-            openPlantSelectorModal(favouritePlants.length + i + 1);
-        };
-
-        const placeholderImage = document.createElement('img');
-        placeholderImage.src = '/icons/create-mustard-grey.svg';
-        placeholderImage.alt = 'empty-favourite';
-        placeholderImage.width = 50;
-        placeholderImage.height = 50;
-        placeholderImage.className = 'mx-auto d-block';
-
-        const emptyPlantName = document.createElement('h4');
-        emptyPlantName.className = 'pt-2 ps-2 text-center';
-        emptyPlantName.textContent = ''; // Empty text content for empty cards
-
-        emptyCard.appendChild(placeholderImage);
-        emptyCard.appendChild(emptyPlantName);
-        container.appendChild(emptyCard);
-
-        console.log(`Empty card ${emptyCard.id} created`);
-    }
-}
-
-
-
-
-
-
-
-
 function showSearchResults() {
     document.getElementById('searchForm').addEventListener('submit', function(event) {
         event.preventDefault();
@@ -155,8 +85,89 @@ function showSearchResults() {
 }
 
 
+
+
+
+
+
+function renderPlantCards(favouritePlants) {
+    const container = document.getElementById('favouritePlantsContainer');
+    container.innerHTML = ''; // Clear existing cards
+
+    // Render cards for favorite plants
+    favouritePlants.forEach((plant, index) => {
+        const plantCard = document.createElement('div');
+        plantCard.className = 'card p-2 me-3 mb-3 border-0 rounded-3 d-flex flex-column shadow-sm public-profile-plant-card bg-primary-temp';
+        plantCard.id = `favouritePlantCard${index + 1}`;
+
+        const imageContainer = document.createElement('div');
+        imageContainer.className = 'plant-image-container';
+        imageContainer.style = 'height: 50%;'; // Take up the top half
+
+        const imageElement = document.createElement('img');
+        imageElement.src = `${baseUrl}plants/${plant.id}/plant-image`;
+        imageElement.alt = plant.name;
+        imageElement.className = 'w-100 h-100';
+        imageElement.style = 'object-fit: cover;';
+
+        imageContainer.appendChild(imageElement);
+
+        const plantName = document.createElement('h4');
+        plantName.className = 'pt-2 ps-2 text-center';
+        plantName.textContent = plant.name;
+        plantName.style = 'flex-grow: 1; display: flex; align-items: center; justify-content: center;'; // Center the text vertically
+
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.id = `selectedPlantId${index + 1}`;
+        hiddenInput.value = plant.id;
+
+        plantCard.appendChild(imageContainer);
+        plantCard.appendChild(plantName);
+        plantCard.appendChild(hiddenInput);
+        container.appendChild(plantCard);
+
+        console.log(`Card ${plantCard.id} created with plant name: ${plant.name}`);
+    });
+
+    // Render empty cards
+    const remainingCards = 3 - favouritePlants.length;
+    for (let i = 0; i < remainingCards; i++) {
+        const emptyCard = document.createElement('div');
+        emptyCard.className = 'card p-2 me-3 mb-3 border-0 rounded-3 shadow-sm public-profile-plant-card justify-content-center card-wiggle bg-primary-grey';
+        emptyCard.id = `favouritePlantCard${favouritePlants.length + i + 1}`;
+        emptyCard.onclick = function() {
+            openPlantSelectorModal(favouritePlants.length + i + 1);
+        };
+
+        const placeholderImage = document.createElement('img');
+        placeholderImage.src = '/icons/create-mustard-grey.svg';
+        placeholderImage.alt = 'empty-favourite';
+        placeholderImage.width = 50;
+        placeholderImage.height = 50;
+        placeholderImage.className = 'mx-auto d-block';
+
+        const emptyPlantName = document.createElement('h4');
+        emptyPlantName.className = 'pt-2 ps-2 text-center';
+        emptyPlantName.textContent = ''; // Empty text content for empty cards
+
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.id = `selectedPlantId${favouritePlants.length + i + 1}`;
+        hiddenInput.value = '';
+
+        emptyCard.appendChild(placeholderImage);
+        emptyCard.appendChild(emptyPlantName);
+        emptyCard.appendChild(hiddenInput);
+        container.appendChild(emptyCard);
+
+        console.log(`Empty card ${emptyCard.id} created`);
+    }
+}
+
+
 function previewFavouritePlants() {
-    const plantId = document.getElementById('selectedPlantId').value;
+    const plantId = selectedPlantId; // Use the global selectedPlantId
     const selectedOption = document.querySelector("#searchPlantResults .plant-option[data-id='" + plantId + "']");
 
     if (selectedOption) {
@@ -173,6 +184,11 @@ function previewFavouritePlants() {
             }
             selectedCard.querySelector('h4').textContent = plantName;
             selectedCard.querySelector('img').src = plantImage;
+
+            // Set the value of the hidden input field
+            const hiddenInput = selectedCard.querySelector('input[type="hidden"]');
+            hiddenInput.value = plantId;
+            console.log(`Set hidden input value for ${selectedCardId}: ${plantId}`);
         } else {
             console.error(`Element with ID ${selectedCardId} not found.`);
         }
@@ -183,9 +199,12 @@ function previewFavouritePlants() {
 
 
 function updateFavouritePlants() {
-    const plantId = document.getElementById('selectedPlantId').value;
-
-
+    const plantIds = [
+        document.getElementById('selectedPlantId1').value,
+        document.getElementById('selectedPlantId2').value,
+        document.getElementById('selectedPlantId3').value
+    ].filter(id => id);
+    console.log(plantIds);
 
     fetch(`${baseUrl}users/edit-public-profile/favourite-plant`, {
         method: 'PUT',
@@ -193,12 +212,12 @@ function updateFavouritePlants() {
             'Content-Type': 'application/json',
             [csrfHeader]: csrf,
         },
-        body: JSON.stringify({ id: plantId }),
+        body: JSON.stringify({ ids: plantIds }),
     }).then(response => {
         if (response.ok) {
-            console.log("Favourite plant updated");
+            console.log("Favourite plants updated");
         } else {
-            console.log("Error updating favourite plant");
+            console.log("Error updating favourite plants");
             response.json().then(data => console.log(data));
         }
     }).catch(error => {
