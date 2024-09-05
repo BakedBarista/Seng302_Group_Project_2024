@@ -1,150 +1,194 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="">
+<html lang="en">
+
 <head>
-    <title>Pollinat*r</title>
-
-    <meta http-equiv="Content-Type" context="text/html; charset=UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pollinat*r - Your Garden, Your Community</title>
     <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
-</head>
-<style>
-    .about-me-container {
-        max-height: 15vh;
-        overflow: hidden;
-        position: relative;
-        transition: max-height 0.3s ease;
-    }
-    .about-me-container.expanded {
-        max-height: none;
-    }
-    .about-me-container::after {
-        content: "";
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 20px;
-        background: linear-gradient(to top, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
-        display: block;
-    }
-    .about-me-container.expanded::after {
-        display: none;
-    }
-    .toggle-button {
-        cursor: pointer;
-        color: #007bff;
-        background: none;
-        border: none;
-        padding: 0;
-        font-size: 14px;
-        text-align: right;
-        margin-top: 5px;
-    }
-</style>
-<body>
-<nav th:replace="~{fragments/navbar :: navbar}"></nav>
-<main class="d-flex flex-column align-items-center justify-content-center" style="margin: 10px">
-    <h1 class="mt-2 text-center">Suggested Connections</h1>
-    <div class="col-lg-5 col-md-10 col-sm-10">
-        <div class="mt-4 shadow w-100">
-            <div style="position: relative;">
-                <img
-                        class="suggest-user-picture card-img"
-                        th:src="@{'/img/gorila.png'}"
-                        alt="profile picture"
-                        style="height:50vh; object-fit: cover;"
-                />
-                <div class="position-absolute bottom-0 text-light w-100"
-                     style="background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.8));">
-                    <div class="m-3 mt-6">
-                        <div class="d-flex flex-column">
-                            <span th:if="${name.length() >= 12}"><span class="d-sm-none d-flex mt-5"></span></span>
-                            <h2 class="mb-1">[[${name}]]</h2>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="d-flex flex-column m-3">
-                <div class="about-me-container" id="aboutMeContainer">
-                    <h5 class="mb-1 about-me">About me...</h5>
-                    <p>[[${description}]]</p>
-                </div>
-                <button class="toggle-button" id="toggleButton">See More</button>
-            </div>
-        </div>
-        <div class="d-flex justify-content-around w-100 my-4 py-3 bg-primary-grey shadow">
-            <div>
-                <form th:action="@{/}" method="POST">
-                    <input type="hidden" name="action" value="accept"/>
-                    <button type="submit" class="rounded-circle btn-lg p-3 shadow" id="heartButton"
-                            style="width: 90px; height: 90px; background-color: #DC3545; border: none;">
-                        <img th:src="@{/icons/heart.svg}" width="50" height="50" alt="Accept" class="heart-icon"
-                             id="heartIcon"/>
-                    </button>
-                </form>
-            </div>
-            <div>
-                <form th:action="@{/}" method="POST">
-                    <input type="hidden" name="action" value="decline"/>
-                    <button type="submit" class="rounded-circle btn-lg p-3 shadow" id="declineButton"
-                            style="width: 90px; height: 90px; background-color: #1E1E1E; border: 3px #1E1E1E;">
-                        <img th:src="@{/icons/broken-heart.svg}" width="50" height="50" alt="Decline"
-                             class="decline-icon" id="declineIcon"/>
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
-    <div class="toast-container position-fixed bottom-0 end-0 p-3">
-
-        <div id="acceptToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header">
-                <strong class="me-auto">Pollinator</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-            <div class="toast-body" id="toastBody">
-                You have a new connection, check the friends tab for more info!
-            </div>
-        </div>
-    </div>
-</main>
-<th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
-<script>
-    $(function () {
-        $(".heart").on("click", function () {
-            $(this).toggleClass("is-active");
-        });
-    });
-</script>
-<script>
-    document.getElementById('toggleButton').addEventListener('click', function () {
-        var container = document.getElementById('aboutMeContainer');
-        var button = document.getElementById('toggleButton');
-
-        container.classList.toggle('expanded');
-        if (container.classList.contains('expanded')) {
-            button.textContent = 'See Less';
-        } else {
-            button.textContent = 'See More';
+    <style>
+        /* Custom Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: white;
+            color: #333;
         }
-    });
-    function addAnimation(buttonId) {
-        let button = document.getElementById(buttonId);
-        button.classList.add('animate');
-        setTimeout(function () {
-            button.classList.remove('animate');
-        }, 600);
-    }
 
-    document.getElementById('heartButton').addEventListener('click', function () {
-        addAnimation('heartButton');
-    });
+        .navbar {
+            background-color: #CB9F03;
+        }
 
-    document.getElementById('declineButton').addEventListener('click', function () {
-        addAnimation('declineButton');
-    });
-</script>
+        .navbar-brand img {
+            height: 50px;
+        }
 
-<script th:src="@{/js/connection.js}"></script>
+        .hero-section {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            background-color: white;
+        }
+
+        .hero-content {
+            flex: 1;
+            text-align: left;
+            padding-right: 30px;
+        }
+
+        .hero-content h1 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .hero-content p {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            color: #666;
+        }
+
+        .btn-custom {
+            background-color: #CB9F03;
+            color: white;
+            border-radius: 50px;
+            padding: 10px 30px;
+        }
+
+        .btn-custom:hover {
+            background-color: #b88c02;
+            color: white;
+        }
+
+        .nav-link {
+            color: white;
+        }
+
+        .nav-link:hover {
+            color: #eee;
+        }
+
+        .hero-image {
+            flex: 1;
+            text-align: center;
+        }
+
+        .hero-image img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .section {
+            padding: 100px 0;
+            background-color: white;
+        }
+
+        .section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .section p {
+            font-size: 1.25rem;
+            color: #666;
+        }
+
+        footer {
+            padding: 50px 0;
+            text-align: center;
+            background-color: #f4f4f4;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body class="p-0">
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg">
+    <div class="container">
+        <a class="navbar-brand" href="#"><img th:src="@{/img/logo.svg}" alt="Pollinat*r Logo"></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="#features">Features</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#about">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#contact">Contact</a>
+                </li>
+                <li class="nav-item">
+                    <a class="btn btn-custom" href="#login">Log In</a>
+                </li>
+                <li class="nav-item">
+                    <a class="btn btn-custom" href="#register">Register</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero-section" id="home">
+    <div class="container d-flex align-items-center">
+        <div class="hero-content">
+            <h1>Welcome to Pollinat*r</h1>
+            <p>Your garden, your community. Discover a world where gardeners come together to share their passion, swap tips, and celebrate the beauty of nature.</p>
+            <p>At Pollinat*r, we connect you with fellow gardeners who share your interests and inspire your green thumb to reach new heights. Whether you're planting your first seed or cultivating a botanical masterpiece, Pollinat*r is the place where your gardening journey blossoms.</p>
+            <a href="#register" class="btn btn-custom">Join the Community</a>
+        </div>
+        <div class="hero-image">
+            <img th:src="@{/img/mockup.png}" alt="Phone Mockup">
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="section" id="features">
+    <div class="container">
+        <h2>Features</h2>
+        <p>Pollinat*r offers a suite of tools and features designed to help you grow your garden and your connections:</p>
+        <ul>
+            <li><strong>Find Your Perfect Match:</strong> Swipe through other gardeners based on shared interests, gardening styles, and plant preferences.</li>
+            <li><strong>Document Your Journey:</strong> Create a personalized garden journal where you can post updates, photos, and share insights about your plants' progress.</li>
+            <li><strong>Connect and Share:</strong> Exchange gardening tips, ask questions, and celebrate milestones with the Pollinat*r community.</li>
+            <li><strong>Local Gardening Insights:</strong> Get personalized tips based on your location and weather to ensure your plants thrive.</li>
+            <li><strong>Shop and Swap:</strong> Access exclusive offers on seeds, tools, and garden essentials, or trade with fellow gardeners in your area.</li>
+        </ul>
+    </div>
+</section>
+
+<!-- About Section -->
+<section class="section" id="about">
+    <div class="container">
+        <h2>About Pollinat*r</h2>
+        <p>Pollinat*r isn’t just an app; it’s a community built by gardeners, for gardeners. We believe in the power of nature to bring people together, whether it's sharing advice on how to get rid of those pesky aphids, showcasing your latest homegrown tomato crop, or simply connecting over a shared love of soil and sunshine.</p>
+        <p>Launched in 2024, Pollinat*r grew from a simple idea: gardening should be social. From seasoned horticulturists to those just starting with a few indoor plants, Pollinat*r is a space for everyone. We're proud to help green thumbs of all levels find their community, build connections, and nurture their love for gardening in a meaningful way.</p>
+        <p>Join Pollinat*r and become part of a growing movement of plant lovers who are making the world a greener, more connected place—one garden at a time.</p>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section class="section" id="contact">
+    <div class="container">
+        <h2>Contact Us</h2>
+        <p>Have questions, feedback, or just want to chat with the team? We’d love to hear from you!</p>
+        <p>Email us at <strong>support@pollinator.app</strong> or follow us on social media to stay up to date with the latest gardening tips, community events, and app updates.</p>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer>
+    <p>&copy; 2024 Pollinat*r. All rights reserved. Together, we’re growing something beautiful.</p>
+</footer>
+
+<th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
 </body>
+
 </html>

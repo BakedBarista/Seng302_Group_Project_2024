@@ -47,6 +47,12 @@ public class SuggestedUserController {
     @GetMapping("/")
     public String home(Authentication authentication, Model model) {
         logger.info("GET /");
+
+        if (authentication == null) {
+            logger.info("User is not logged in, directing to landing page.");
+            return "home";
+        }
+
         try {
             //  hard-coding a mock user for the card
             gardenUserService.addUser(user4);
@@ -63,9 +69,9 @@ public class SuggestedUserController {
                 model.addAttribute("description", suggestedUsers.get(0).getDescription());
             }
         } catch (Exception e) {
-            logger.error("Error getting gardens for user");
+            logger.error("Error with getting suggested friends for user");
         }
-        return "home";
+        return "suggestedFriends";
     }
 
     @PostMapping("/")
@@ -79,6 +85,12 @@ public class SuggestedUserController {
         GardenUser loggedInUser = gardenUserService.getUserById(loggedInUserId);
         GardenUser suggestedUser = gardenUserService.getUserById(suggestedId);
         Map<String, Object> response = new HashMap<>();
+
+        if (loggedInUser == null) {
+            logger.error("User is not logged in, doing nothing");
+            response.put(SUCCESS, false);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
 
         boolean validationPassed = suggestedUserService.validationCheck(loggedInUserId, suggestedId);
         if (!validationPassed) {
