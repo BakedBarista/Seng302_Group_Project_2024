@@ -50,6 +50,7 @@ public class U800MessageFeature {
     private static Long receiverId;
     private static MessageDTO messageDTO;
     private static MockHttpSession session;
+    private static int currentMessages;
 
     @BeforeAll
     public static void setup() {
@@ -120,6 +121,7 @@ public class U800MessageFeature {
     @Given("I am on a direct messaging page for my friend {string}")
     public void i_am_on_a_direct_messaging_page_for_my_friend(String friendName) {
         receiverId = gardenUserService.getUserByEmail(friendName + "cucumber@email.com").getId();
+        currentMessages = messageRepository.findMessagesBetweenUsers(myId, receiverId).size();
     }
     @When("I have typed a text-based message {string}")
     public void i_have_typed_a_text_based_message(String messageContent) {
@@ -160,8 +162,7 @@ public class U800MessageFeature {
     public void the_messages_are_displayed_in_chronological_order() {
         List<Message> messages = messageRepository.findMessagesBetweenUsers(myId, receiverId);
 
-        System.out.println(messages);
-        Assertions.assertEquals(4, messages.size());
+        Assertions.assertEquals(currentMessages + 4, messages.size());
         for (int i = 1; i < messages.size(); i++) {
             Assertions.assertTrue(messages.get(i).getTimestamp().isAfter(messages.get(i-1).getTimestamp()));
         }
