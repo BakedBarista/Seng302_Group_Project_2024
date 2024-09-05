@@ -50,7 +50,7 @@ public class SuggestedUserController {
         try {
             //  hard-coding a mock user for the card
             gardenUserService.addUser(user4);
-            user4.setDescription("I am here to meet some handsome young men who love gardening as much as I do! My passion is growing carrots and eggplants. In my spare time, I like to thrift, ice skate and hang out with my kid, Liana. She's three, and the love of my life. The baby daddy is my former sugar daddy, John Doe. He died of a heart attack on his yacht in Italy last summer");
+            user4.setDescription("I am here to meet some\n handsome young \nmen who love gardening\n\n\n\n\n as much as I do! In my spare time, I like to thrift, ice skate, and grow vege. The baby daddy is my former sugar daddy John Doe. He died of a heart attack on his yacht in Italy last summer.");
             List<GardenUser> suggestedUsers = new ArrayList<>();
             suggestedUsers.add(user4);
 
@@ -82,7 +82,6 @@ public class SuggestedUserController {
 
         boolean validationPassed = suggestedUserService.validationCheck(loggedInUserId, suggestedId);
         if (!validationPassed) {
-            response.put(SUCCESS, false);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
 
@@ -92,11 +91,11 @@ public class SuggestedUserController {
             boolean pendingRequestAccepted = suggestedUserService.attemptToAcceptPendingRequest(loggedInUserId, suggestedId);
             if (pendingRequestAccepted) {
                 logger.info("Pending request from suggested user accepted, user's are now friends");
+                response.put(SUCCESS, true);
             } else { // Send a new pending request to the suggested user
                 boolean newRequestSent = suggestedUserService.sendNewPendingRequest(loggedInUser, suggestedUser);
                 if (!newRequestSent) {
                     logger.error("Something went wrong trying to send a new request. Doing nothing");
-                    response.put(SUCCESS, false);
                     return ResponseEntity.status(HttpStatus.OK).body(response);
                 }
             }
@@ -109,13 +108,11 @@ public class SuggestedUserController {
                 boolean declineStatusSet = suggestedUserService.setDeclinedFriendship(loggedInUser, suggestedUser);
                 if (!declineStatusSet) {
                     logger.error("Something went wrong trying to set a declined friendship. Doing nothing");
-                    response.put(SUCCESS, false);
                     return ResponseEntity.status(HttpStatus.OK).body(response);
                 }
             }
         }
 
-        response.put(SUCCESS, true);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }
