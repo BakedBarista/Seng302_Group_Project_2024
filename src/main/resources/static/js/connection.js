@@ -3,26 +3,24 @@ const Actions = {
     DECLINE: 'decline',
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    let acceptButton = document.getElementById('heartButton');
-    let declineButton = document.getElementById('declineButton');
+let acceptButton = document.getElementById('heartButton');
+let declineButton = document.getElementById('declineButton');
 
-    if (acceptButton) {
-        acceptButton.addEventListener('click', function (event) {
-            event.preventDefault();
-            //TODO: This user ID needs to be updated in the new task
-            handlePost(Actions.ACCEPT, 7);
-        });
-    }
+if (acceptButton) {
+    acceptButton.addEventListener('click', function (event) {
+        event.preventDefault();
+        //TODO: This user ID needs to be updated in the new task
+        handlePost(Actions.ACCEPT, document.getElementById("suggestedIdAccept").value);
+    });
+}
 
-    if (declineButton) {
-        declineButton.addEventListener('click', function (event) {
-            event.preventDefault();
-            //TODO: This user ID needs to be updated in the new task
-            handlePost(Actions.DECLINE, 7);
-        });
-    }
-});
+if (declineButton) {
+    declineButton.addEventListener('click', function (event) {
+        event.preventDefault();
+        //TODO: This user ID needs to be updated in the new task
+        handlePost(Actions.DECLINE, document.getElementById("suggestedIdDecline").value);
+    });
+}
 
 
 /**
@@ -36,7 +34,7 @@ function handlePost(action, suggestedUserId) {
 
     let formData = new FormData();
     formData.append('action', action);
-    formData.append('id', suggestedUserId);
+    formData.append('suggestedId', suggestedUserId);
 
     fetch(`${baseUrl}`, {
         method: 'POST',
@@ -50,6 +48,7 @@ function handlePost(action, suggestedUserId) {
         if (response.ok) {
             return response.json();
         } else {
+            return response.json();
             throw new Error('Network response was not ok.');
         }
     })
@@ -57,8 +56,6 @@ function handlePost(action, suggestedUserId) {
         console.log('Response data:', data);
         if (data.success) {
             toast.show();
-        } else {
-            console.error('Request failed or no matching request found.');
         }
     })
     .catch(error => {
