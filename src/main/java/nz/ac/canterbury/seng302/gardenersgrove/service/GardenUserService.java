@@ -248,6 +248,7 @@ public class GardenUserService {
         if (user.getFavouritePlants().size() < 3) {
             user.getFavouritePlants().add(plant);
             System.out.println("Plants: " + user.getFavouritePlants());
+            user.addFavouritePlant(plant);
             gardenUserRepository.save(user);
         } else {
             throw new IllegalStateException("Cannot have more than 3 favourite plants");
