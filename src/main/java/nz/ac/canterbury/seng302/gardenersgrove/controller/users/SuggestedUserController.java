@@ -50,7 +50,7 @@ public class SuggestedUserController {
         try {
             //  hard-coding a mock user for the card
             gardenUserService.addUser(user4);
-            user4.setDescription("I am here to meet some\n handsome young \nmen who love gardening\n\n\n\n\n as much as I do! In my spare time, I like to thrift, ice skate, and grow vege. The baby daddy is my former sugar daddy John Doe. He died of a heart attack on his yacht in Italy last summer.");
+            user4.setDescription("I am here to meet some handsome young men who love gardening as much as I do! In my spare time, I like to thrift, ice skate, and grow vege. The baby daddy is my former sugar daddy John Doe. He died of a heart attack on his yacht in Italy last summer.");
             List<GardenUser> suggestedUsers = new ArrayList<>();
             suggestedUsers.add(user4);
 

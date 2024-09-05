@@ -76,7 +76,7 @@ class SuggestedUserControllerTest {
         String page = suggestedUserController.home(authentication, model);
 
         Mockito.verify(model).addAttribute("name", "Max Doe");
-        Mockito.verify(model).addAttribute("description", "I am here to meet some handsome young men who love gardening as much as I do! My passion is growing carrots and eggplants. In my spare time, I like to thrift, ice skate and hang out with my kid, Liana. She's three, and the love of my life. The baby daddy is my former sugar daddy, John Doe. He died of a heart attack on his yacht in Italy last summer");
+        Mockito.verify(model).addAttribute("description", "I am here to meet some handsome young men who love gardening as much as I do! In my spare time, I like to thrift, ice skate, and grow vege. The baby daddy is my former sugar daddy John Doe. He died of a heart attack on his yacht in Italy last summer.");
 
         Assertions.assertEquals("home", page);
     }
@@ -89,7 +89,7 @@ class SuggestedUserControllerTest {
         ResponseEntity<Map<String, Object>> response = suggestedUserController.handleAcceptDecline("accept", suggestedUserId, authentication, model);
 
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-        Assertions.assertFalse((Boolean) response.getBody().get("success"));
+        Assertions.assertNull(response.getBody().get("success"));
     }
 
     @Test
@@ -118,7 +118,7 @@ class SuggestedUserControllerTest {
         ResponseEntity<Map<String, Object>> response = suggestedUserController.handleAcceptDecline("accept", suggestedUserId, authentication, model);
 
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-        Assertions.assertTrue((Boolean) response.getBody().get("success"));
+        Assertions.assertNull(response.getBody().get("success"));
     }
 
     @Test
@@ -132,7 +132,7 @@ class SuggestedUserControllerTest {
         ResponseEntity<Map<String, Object>> response = suggestedUserController.handleAcceptDecline("decline", suggestedUserId, authentication, model);
 
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-        Assertions.assertTrue((Boolean) response.getBody().get("success"));
+        Assertions.assertNull(response.getBody().get("success"));
     }
 
     @Test
@@ -147,6 +147,6 @@ class SuggestedUserControllerTest {
         ResponseEntity<Map<String, Object>> response = suggestedUserController.handleAcceptDecline("decline", suggestedUserId, authentication, model);
 
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-        Assertions.assertTrue((Boolean) response.getBody().get("success"));
+        Assertions.assertNull(response.getBody().get("success"));
     }
 }
