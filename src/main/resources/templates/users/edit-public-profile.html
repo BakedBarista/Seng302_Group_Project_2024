@@ -13,6 +13,9 @@
 
 <main class="main-container">
     <input type="hidden" id="selectedPlantId">
+    <input type="hidden" id="favouritePlantsData" th:attr="data-favourite-plants=${favouritePlantsJson}" />
+    <input type="hidden" id="placeholderImageSrc" th:value="@{/icons/create-mustard-grey.svg}">
+
     <div class="modal fade" id="plantSelectorModal" tabindex="0" aria-labelledby="plantSelectorModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content" id="plantSelectorModalContent">
@@ -148,8 +151,9 @@
 
 <script>
 
-    const favouritePlants = /*[[${favouritePlants}]]*/ [];
     window.onload = function() {
+        const favouritePlantsData = document.getElementById('favouritePlantsData').getAttribute('data-favourite-plants');
+        const favouritePlants = JSON.parse(favouritePlantsData);
         renderPlantCards(favouritePlants);
     };
 

@@ -1,16 +1,16 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.gardens;
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.PublicProfileController;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
-import nz.ac.canterbury.seng302.gardenersgrove.exceptions.JsonProcessingException;
+
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -59,8 +59,7 @@ public class FavouritePlantsContoller {
     public ResponseEntity<?> updateFavouritePlants(@RequestBody Map<String, List<Long>> request) {
         List<Long> plantIds = request.get("ids");
         Long userId = userService.getCurrentUser().getId();
-        System.out.println("Received plant IDs: " + plantIds);
-        System.out.println("User ID: " + userId);
+
         try {
             for (Long plantId : plantIds) {
                 System.out.println("Processing plant ID: " + plantId);

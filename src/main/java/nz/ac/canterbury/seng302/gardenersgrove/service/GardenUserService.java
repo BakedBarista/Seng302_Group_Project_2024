@@ -9,7 +9,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -246,7 +245,6 @@ public class GardenUserService {
     public void updateFavouritePlant(Long userId, Plant plant) {
         GardenUser user = getUserById(userId);
         if (user.getFavouritePlants().size() < 3) {
-            user.getFavouritePlants().add(plant);
             System.out.println("Plants: " + user.getFavouritePlants());
             user.addFavouritePlant(plant);
             gardenUserRepository.save(user);

@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -30,10 +31,12 @@ public abstract class BasePlant {
     @Column(nullable = false, length = 512)
     protected String description;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn
     protected Garden garden;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "garden_user_id")
     private GardenUser gardenUser;

@@ -1,11 +1,14 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.FavouritePlantDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.exceptions.ProfanityDetectedException;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
@@ -25,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 public class PublicProfileController {
@@ -137,7 +141,7 @@ public class PublicProfileController {
      * @return A redirection to the "/users/edit-public-profile"
      */
     @GetMapping("users/edit-public-profile")
-    public String editPublicProfile(Authentication authentication, Model model) {
+    public String editPublicProfile(Authentication authentication, Model model) throws JsonProcessingException {
         logger.info("GET /users/edit-public-profile");
         Long userId = (Long) authentication.getPrincipal();
         GardenUser user = userService.getUserById(userId);
@@ -147,9 +151,28 @@ public class PublicProfileController {
         model.addAttribute("name", user.getFullName());
         editUserDTO.setDescription(user.getDescription());
         model.addAttribute("editUserDTO", editUserDTO);
-        model.addAttribute("favouritePlants", user.getFavouritePlants());
+        System.out.println("PLANTS!!!: " + user.getFavouritePlants());
+
+
+
+        Set<Plant> favouritePlants = user.getFavouritePlants();
+        List<FavouritePlantDTO> favouritePlantDTOs = favouritePlants.stream()
+                .map(this::convertToFavouritePlantDTO)
+                .collect(Collectors.toList());
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String favouritePlantsJson = objectMapper.writeValueAsString(favouritePlantDTOs);
+        System.out.println(favouritePlants);
+        System.out.println("Favourite plants json: " + favouritePlantsJson);
+        System.out.println(favouritePlantDTOs);
+
+        model.addAttribute("favouritePlantsJson", favouritePlantsJson);
 
         return "users/edit-public-profile";
+    }
+
+    private FavouritePlantDTO convertToFavouritePlantDTO(Plant plant) {
+        return new FavouritePlantDTO(plant.getId(), plant.getName(), plant.getPlantImage());
     }
 
 

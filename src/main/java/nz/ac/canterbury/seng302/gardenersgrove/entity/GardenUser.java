@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import org.springframework.security.core.GrantedAuthority;
@@ -19,6 +20,8 @@ import static nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationConst
  * Entity class reflecting an entry of fname, lname, email, password and date of birth
  * Note the @link{Entity} annotation required for declaring this as a persistence entity
  */
+
+
 @Entity
 public class GardenUser {
     @Id
@@ -57,11 +60,11 @@ public class GardenUser {
     @Lob
     private byte[] profileBanner;
 
-    // these are a set of friendships in the friends table where the user is sender
+    @JsonIgnore
     @OneToMany(mappedBy = "sender")
     private Set<Friends> friendshipsAsSender = new HashSet<>();
 
-    // these are a set of friendships in the friends table where the user is receiver
+    @JsonIgnore
     @OneToMany(mappedBy = "receiver")
     private Set<Friends> friendshipsAsReceiver = new HashSet<>();
 
@@ -86,6 +89,7 @@ public class GardenUser {
     @Column(nullable = true)
     private Instant accountDisabledExpiryInstant;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "gardenUser", cascade = CascadeType.ALL)
     private Set<Plant> favouritePlants = new HashSet<>();
 
