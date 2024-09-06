@@ -11,7 +11,10 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import static jakarta.persistence.CascadeType.ALL;
+import static jakarta.persistence.FetchType.EAGER;
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationConstants.MAX_USER_DESCRIPTION_LENGTH;
 
 
@@ -86,7 +89,7 @@ public class GardenUser {
     @Column(nullable = true)
     private Instant accountDisabledExpiryInstant;
 
-    @OneToMany(mappedBy = "gardenUser", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "gardenUser", cascade = ALL, fetch = EAGER, orphanRemoval = true)
     private Set<Plant> favouritePlants = new HashSet<>();
 
 
@@ -463,5 +466,16 @@ public class GardenUser {
     public void addFavouritePlant(Plant favouritePlant) {
         favouritePlants.add(favouritePlant);
         favouritePlant.setFavourite(this);
+    }
+
+    public void removeFavouritePlant(Long plantId) {
+        this.favouritePlants
+                .stream()
+                .filter(plant -> plant.getId().equals(plantId))
+                .findFirst()
+                .orElseThrow()
+                .setFavourite(null);
+
+        this.favouritePlants.removeIf(plant -> plant.getId().equals(plantId));
     }
 }

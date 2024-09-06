@@ -1,11 +1,12 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.controller;
 
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,9 @@ import java.util.Set;
 public class DeleteFavouritePlantControllerTest {
 
     @Autowired
+    private GardenService gardenService;
+
+    @Autowired
     private GardenUserService userService;
 
     @Autowired
@@ -26,25 +30,31 @@ public class DeleteFavouritePlantControllerTest {
 
     private GardenUser user;
 
-    private Boolean hasSetup = false;
-
     @BeforeEach
     void setup() {
-        Plant plantA = new Plant("testPlantA", "1", "yellow", LocalDate.now());
-        Plant plantB = new Plant("testPlantB", "2", "green", LocalDate.now());
-        Plant plantC = new Plant("testPlantC", "1", "big", LocalDate.now());
-        if (!hasSetup) {
+        if (userService.getUserByEmail("johndoe@someemail.com") == null) {
             user = new GardenUser("john", "doe", "johndoe@someemail.com", "password", LocalDate.now());
             userService.addUser(user);
-            plantService.save(plantA);
-            plantService.save(plantB);
-            plantService.save(plantC);
-
-            hasSetup = true;
+        } else {
+            user = userService.getUserByEmail("johndoe@someemail.com");
         }
+        Garden garden = new Garden("name", "1", "streetName",
+                "suburb", "city", "country", "1000", 0D, 0D,
+                "description", 2D, "gardenImage".getBytes(), "gardenImageContentType");
+        garden.setOwner(user);
+        gardenService.addGarden(garden);
+
+        Plant plantA = new Plant("testPlantA", "1", "yellow", LocalDate.now());
+        plantA.setGarden(garden);
+        Plant plantB = new Plant("testPlantB", "2", "green", LocalDate.now());
+        plantB.setGarden(garden);
+        Plant plantC = new Plant("testPlantC", "1", "big", LocalDate.now());
+        plantC.setGarden(garden);
+        plantService.save(plantA);
+        plantService.save(plantB);
+        plantService.save(plantC);
 
         user.setFavouritePlants(Set.of(plantA, plantB, plantC));
-
         userService.addUser(user);
     }
 
@@ -62,8 +72,8 @@ public class DeleteFavouritePlantControllerTest {
         // assert there was a match (e.g. found the plant in the set)
         Assertions.assertTrue(wasMatch);
         // assert that the plant has been removed from the set
-        Assertions.assertFalse(updatedUser.getFavouritePlants().contains(plantToRemove));
-    }
+        Assertions.assertTrue(updatedUser.getFavouritePlants()
+                .stream().filter(plant -> plant.getId().equals(plantToRemove.getId())).toList().isEmpty());    }
 
     @Test
     void givenIAmAuthorizedAndHavePlantsWithIdsFavourited_whenIDeletePlantsWithIds_thenPlantsWithIdsAreRemoved() {
@@ -79,14 +89,19 @@ public class DeleteFavouritePlantControllerTest {
         GardenUser updatedUser = userService.getUserById(user.getId());
 
         // assert there is only 1 plant left
-//        Assertions.assertEquals(1, updatedUser.getFavouritePlants().size());
+        Assertions.assertEquals(1, updatedUser.getFavouritePlants().size());
         // assert removal of A was matched and no longer in the list
         Assertions.assertTrue(wasMatchA);
-        Assertions.assertFalse(updatedUser.getFavouritePlants().contains(plantA));
+        Assertions.assertTrue(updatedUser.getFavouritePlants()
+                .stream().filter(plant -> plant.getId().equals(plantA.getId())).toList().isEmpty());
         // assert removal of C was matched and no longer in the list
         Assertions.assertTrue(wasMatchC);
-        Assertions.assertFalse(updatedUser.getFavouritePlants().contains(plantC));
+        Assertions.assertTrue(updatedUser.getFavouritePlants()
+                .stream().filter(plant -> plant.getId().equals(plantC.getId())).toList().isEmpty());
         // assert B is still in the list
-        Assertions.assertTrue(updatedUser.getFavouritePlants().contains(plantB));
+        Assertions.assertFalse(updatedUser.getFavouritePlants()
+                .stream().filter(plant -> plant.getId().equals(plantB.getId())).toList().isEmpty());
+
+        System.out.println(plantService.getAllPlants().stream().filter(plant -> plant.getId().equals(plantA.getId())));
     }
 }

@@ -35,7 +35,7 @@ public class Plant extends BasePlant {
     private Set<PlantHistoryItem> history = new HashSet<>();
 
     @ManyToOne
-    @JoinColumn(name = "garden_user_id")
+    @JoinColumn
     private GardenUser gardenUser;
 
     public Plant(String name, String count, String description, LocalDate plantedDate) {

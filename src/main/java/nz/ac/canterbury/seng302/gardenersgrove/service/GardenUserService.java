@@ -242,9 +242,8 @@ public class GardenUserService {
 
         boolean match = user.getFavouritePlants().stream().anyMatch(plant -> plant.getId().equals(plantId));
         if (match) {
-            Set<Plant> updatedFavouritePlants = user.getFavouritePlants().stream().filter(plant -> plant.getId().equals(plantId)).collect(Collectors.toSet());
-            user.setFavouritePlants(updatedFavouritePlants);
-            gardenUserRepository.save(user);
+            user.removeFavouritePlant(plantId);
+            addUser(user);
         }
 
         return match;
