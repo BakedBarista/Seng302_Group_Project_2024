@@ -23,6 +23,11 @@
     button img {
         transition: transform 0.2s ease-in-out;
     }
+
+    .upper-control {
+        background: none;
+        border-color: transparent;
+    }
 </style>
 <body>
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
@@ -30,6 +35,22 @@
     <h1 class="my-3 text-center">Suggested Connections</h1>
     <div class="col-sm-10 d-flex justify-content-center">
         <div class="card border-0 shadow w-100" style="background: #353535; border-radius: 30px; padding: 15px; max-width: 500px;">
+            <div class="d-flex justify-content-between pb-2">
+                <button class="upper-control" data-bs-toggle="tooltip" title="Flip card">
+                    <img
+                            th:src="@{/icons/flip-card.svg}"
+                            alt="Flip card"
+                            style="height: 35px; width:35px"
+                    />
+                </button>
+                <button class="upper-control" data-bs-toggle="tooltip" title="Skip user">
+                    <img
+                            th:src="@{/icons/skip-connection.svg}"
+                            alt="Skip user"
+                            style="height: 35px; width:35px"
+                    />
+                </button>
+            </div>
             <div style="position: relative;">
                 <img
                         class="suggest-user-picture card-img"
@@ -51,7 +72,7 @@
                         <input type="hidden" name="action" value="accept"/>
                         <input type="hidden" name="suggestedId" id="suggestedIdAccept" th:value="${userId}"/>
                         <button type="submit" class="rounded-circle btn-lg p-3 shadow" id="heartButton"
-                                style="width: 90px; height: 90px; background-color: #DC3545; border: none;">
+                                style="width: 90px; height: 90px; background-color: #DC3545; border: none;" data-bs-toggle="tooltip" title="Request Connection">
                             <img th:src="@{/icons/heart.svg}" width="50" height="50" alt="Accept" class="heart-icon"
                                  id="heartIcon"/>
                         </button>
@@ -62,7 +83,7 @@
                         <input type="hidden" name="action" value="decline"/>
                         <input type="hidden" name="suggestedId" id="suggestedIdDecline" th:value="${userId}"/>
                         <button type="submit" class="rounded-circle btn-lg p-3 shadow" id="declineButton"
-                                style="width: 90px; height: 90px; background-color: #FFF; border: 3px #FFF;">
+                                style="width: 90px; height: 90px; background-color: #FFF; border: 3px #FFF;" data-bs-toggle="tooltip" title="Decline Connection">
                             <img th:src="@{/icons/broken-heart.svg}" width="50" height="50" alt="Decline"
                                  class="decline-icon" id="declineIcon"/>
                         </button>
