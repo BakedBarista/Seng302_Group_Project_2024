@@ -1,8 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unittests.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import org.assertj.core.util.Arrays;
@@ -36,7 +34,7 @@ class GardenUserServiceTest {
         plant2 = new Plant("Carrot", "2", null, null);
 
         // Initialize and set favorite plants
-        List<Plant> favoritePlants = new ArrayList<>();
+        Set<Plant> favoritePlants = new HashSet<>();
         favoritePlants.add(plant1);
         favoritePlants.add(plant2);
 
@@ -222,7 +220,7 @@ class GardenUserServiceTest {
 
     @Test
     void givenUserHasFavoritePlants_whenGetFavoritePlantsCalled_thenReturnsFavoritePlants() {
-        List<Plant> result = gardenUserService.getFavoritePlants(testUser1.getId());
+        Set<Plant> result = gardenUserService.getFavoritePlants(testUser1.getId());
 
         assertEquals(2, result.size());
         assertTrue(result.contains(plant1));

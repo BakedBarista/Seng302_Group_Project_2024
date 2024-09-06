@@ -8,7 +8,9 @@ import org.junit.jupiter.api.Test;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 class GardenUserTests {
     @Test
@@ -33,7 +35,7 @@ class GardenUserTests {
     void givenFavouritePlantIsEmpty_whenAddFavouritePlant_thenPlantIsAdded() {
         GardenUser user = new GardenUser();
         Plant plant = new Plant();
-        List<Plant> plants = new ArrayList<>();
+        Set<Plant> plants = new HashSet<>();
         user.setFavouritePlants(plants);
         user.addFavouritePlant(plant);
         assertEquals(plants, user.getFavouritePlants());

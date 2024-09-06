@@ -1,7 +1,9 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unittests.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.FavouritePlantsContoller;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.PublicProfileController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
@@ -53,6 +55,8 @@ public class PublicProfileControllerTest {
     private static PublicProfileController publicProfileController;
     private static GardenUserService gardenUserService;
     private static GardenService gardenService;
+
+    private static FavouritePlantsContoller favouritePlantsController;
     private static PlantService plantService;
 
     private static PlantRepository plantRepository;
@@ -63,7 +67,6 @@ public class PublicProfileControllerTest {
     private static Long userId;
     private static ProfanityService profanityService;
 
-    private static PlantService plantService;
 
     static Long loggedInUserId = 2L;
     static GardenUser loggedInUser;
@@ -88,6 +91,7 @@ public class PublicProfileControllerTest {
         plantRepository = Mockito.mock(PlantRepository.class);
         user = new GardenUser();
         publicProfileController = new PublicProfileController(gardenUserService, profanityService, plantService);
+        favouritePlantsController = new FavouritePlantsContoller(gardenUserService, plantService);
         loggedInUser = new GardenUser();
         loggedInUser.setId(loggedInUserId);
         loggedInUser.setEmail("logged.in@gmail.com");
@@ -204,7 +208,7 @@ public class PublicProfileControllerTest {
     }
 
     @Test
-    void testEditForm() {
+    void testEditForm() throws JsonProcessingException {
         Model model = mock(Model.class);
         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
         String result = publicProfileController.editPublicProfile(authentication, model);
@@ -261,7 +265,7 @@ public class PublicProfileControllerTest {
 
         when(gardenUserService.getCurrentUser()).thenReturn(owner);
         when(plantService.getAllPlants(owner, searchTerm)).thenReturn(List.of(testPlant1));
-        ResponseEntity<List<Map<String, Object>>> response = publicProfileController.searchPlants("Tomato");
+        ResponseEntity<List<Map<String, Object>>> response = favouritePlantsController.searchPlants("Tomato");
 
         List<Map<String, Object>> list = response.getBody();
         assertEquals(1, list.size());
