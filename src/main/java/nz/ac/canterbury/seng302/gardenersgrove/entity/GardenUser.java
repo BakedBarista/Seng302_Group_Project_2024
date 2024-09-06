@@ -8,7 +8,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -87,8 +86,9 @@ public class GardenUser {
     @Column(nullable = true)
     private Instant accountDisabledExpiryInstant;
 
-    @OneToMany(mappedBy = "favourite", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Plant> favouritePlants = new ArrayList<>();
+    @OneToMany(mappedBy = "gardenUser", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<Plant> favouritePlants = new HashSet<>();
+
 
     /**
      * JPA required no-args constructor
@@ -99,9 +99,9 @@ public class GardenUser {
      * Creates import java.util.HashSet; a new GardenUser object
      *
      * @param fname first name of user
-     * @param lname last name of user 
-     * @param email email of user 
-     * @param password password of user 
+     * @param lname last name of user
+     * @param email email of user
+     * @param password password of user
      * @param dateOfBirth date of birth of use
      */
     public GardenUser(String fname, String lname, String email, String password, LocalDate dateOfBirth) {
@@ -377,7 +377,7 @@ public class GardenUser {
 
     /**
      * Sets the id of the user. This method only intended for use in tests.
-     * 
+     *
      * @param id the id of the user
      */
     public void setId(long id) {
@@ -395,7 +395,7 @@ public class GardenUser {
 
     /**
      * Sets the strike count of the user
-     * 
+     *
      * @param strikeCount the number of strikes the user has accumulated
      */
     public void setStrikeCount(int strikeCount) {
@@ -422,7 +422,7 @@ public class GardenUser {
 
     /**
      * Gets the time at which the user's account will be re-enabled, if there is one
-     * 
+     *
      * @return the time at which the user's account will be re-enabled
      */
     public Instant getAccountDisabledExpiryInstant() {
@@ -444,7 +444,7 @@ public class GardenUser {
      * Gets the favourite plants of this user
      * @return list of favourite plants
      */
-    public List<Plant> getFavouritePlants() {
+    public Set<Plant> getFavouritePlants() {
         return favouritePlants;
     }
 
@@ -452,11 +452,16 @@ public class GardenUser {
      * Sets the favourite plants of this user
      * This is used when updating the favourite plants (e.g. adding or removing a plant)
      */
-    public void setFavouritePlants(List<Plant> favouritePlants) {
+    public void setFavouritePlants(Set<Plant> favouritePlants) {
         this.favouritePlants = favouritePlants;
 
         for (Plant plant : favouritePlants) {
             plant.setFavourite(this);
         }
+    }
+
+    public void addFavouritePlant(Plant favouritePlant) {
+        favouritePlants.add(favouritePlant);
+        favouritePlant.setFavourite(this);
     }
 }

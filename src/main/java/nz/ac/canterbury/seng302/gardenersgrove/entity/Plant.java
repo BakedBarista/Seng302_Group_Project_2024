@@ -35,8 +35,8 @@ public class Plant extends BasePlant {
     private Set<PlantHistoryItem> history = new HashSet<>();
 
     @ManyToOne
-    @JoinColumn(name = "favourite")
-    private GardenUser favourite;
+    @JoinColumn(name = "garden_user_id")
+    private GardenUser gardenUser;
 
     public Plant(String name, String count, String description, LocalDate plantedDate) {
         this.name = name;
@@ -97,7 +97,7 @@ public class Plant extends BasePlant {
     }
 
     public void setFavourite(GardenUser user) {
-        this.favourite = user;
+        this.gardenUser = user;
     }
 
     @Override
