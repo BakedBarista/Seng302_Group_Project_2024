@@ -7,6 +7,7 @@ import static org.mockito.Mockito.mock;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import org.junit.jupiter.api.Assertions;
@@ -215,7 +216,7 @@ class GardenUserServiceTest {
         Plant plantB = mock(Plant.class);
         Plant plantC = mock(Plant.class);
 
-        List<Plant> favouritePlants = List.of(plantA, plantB, plantC);
+        Set<Plant> favouritePlants = Set.of(plantA, plantB, plantC);
         testUser1.setFavouritePlants(favouritePlants);
 
         Mockito.when(plantA.getId()).thenReturn(999L);
@@ -235,7 +236,7 @@ class GardenUserServiceTest {
         Plant plantB = mock(Plant.class);
         Plant plantC = mock(Plant.class);
 
-        List<Plant> favouritePlants = List.of(plantA, plantB, plantC);
+        Set<Plant> favouritePlants = Set.of(plantA, plantB, plantC);
         testUser1.setFavouritePlants(favouritePlants);
 
         Mockito.when(plantA.getId()).thenReturn(999L);
