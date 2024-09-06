@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.gardens;
 
-import nz.ac.canterbury.seng302.gardenersgrove.controller.users.PublicProfileController;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 
@@ -18,7 +17,7 @@ import java.util.*;
 @RestController
 public class FavouritePlantsContoller {
 
-    private final Logger logger = LoggerFactory.getLogger(PublicProfileController.class);
+    private final Logger logger = LoggerFactory.getLogger(FavouritePlantsContoller.class);
 
     private final GardenUserService userService;
     private final PlantService plantService;
@@ -62,20 +61,17 @@ public class FavouritePlantsContoller {
 
         try {
             for (Long plantId : plantIds) {
-                System.out.println("Processing plant ID: " + plantId);
                 Optional<Plant> plant = plantService.getPlantById(plantId);
-                System.out.println("Plant found: " + plant.isPresent());
                 if (plant.isPresent()) {
                     Plant newPlant = plant.get();
-                    System.out.println("Plant details: " + newPlant);
                     userService.updateFavouritePlant(userId, newPlant);
                 } else {
-                    System.out.println("Plant with ID " + plantId + " not found.");
+                   logger.info("Plant with ID " + plantId + " not found.");
                 }
             }
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            System.out.println("ERROR HERE: " + e.getMessage());
+           logger.error("ERROR HERE: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }

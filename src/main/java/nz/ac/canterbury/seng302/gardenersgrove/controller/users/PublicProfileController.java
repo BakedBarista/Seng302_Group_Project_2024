@@ -67,15 +67,7 @@ public class PublicProfileController {
 
         Long userId = (Long) authentication.getPrincipal();
         GardenUser user = userService.getUserById(userId);
-        /*
-        //This block is used for testing by adding some plants
-        List<Plant> plants = plantService.getAllPlants();
-        for(int i = 0; i < 3;i++) {
-            logger.info("Adding {} to {}",plants.get(i).getName(),user.getFullName());
-            plantService.addFavouritePlant(user.getId(),plants.get(i).getId());
-        }*/
         Set<Plant> favouritePlants = user.getFavouritePlants();
-        logger.info("Favourite plants : " + favouritePlants);
         model.addAttribute(USER_ID_ATTRIBUTE, userId);
         model.addAttribute("name", user.getFullName());
         model.addAttribute(DESCRIPTION, user.getDescription());
@@ -105,7 +97,6 @@ public class PublicProfileController {
             return viewPublicProfile(authentication, model);
         }
         Set<Plant> favouritePlants = user.getFavouritePlants();
-        logger.info("{}",user.getFavouritePlants());
         logger.info("current user: {}",userService.getUserById(id).getFname());
         logger.info("logged in user {}",userService.getUserById(loggedInUserId).getFname());
         model.addAttribute(USER_ID_ATTRIBUTE, id);
@@ -151,21 +142,12 @@ public class PublicProfileController {
         model.addAttribute("name", user.getFullName());
         editUserDTO.setDescription(user.getDescription());
         model.addAttribute("editUserDTO", editUserDTO);
-        System.out.println("PLANTS!!!: " + user.getFavouritePlants());
-
-
-
         Set<Plant> favouritePlants = user.getFavouritePlants();
         List<FavouritePlantDTO> favouritePlantDTOs = favouritePlants.stream()
                 .map(this::convertToFavouritePlantDTO)
                 .collect(Collectors.toList());
-
         ObjectMapper objectMapper = new ObjectMapper();
         String favouritePlantsJson = objectMapper.writeValueAsString(favouritePlantDTOs);
-        System.out.println(favouritePlants);
-        System.out.println("Favourite plants json: " + favouritePlantsJson);
-        System.out.println(favouritePlantDTOs);
-
         model.addAttribute("favouritePlantsJson", favouritePlantsJson);
 
         return "users/edit-public-profile";
