@@ -44,6 +44,12 @@
             margin-bottom: 30px;
             color: #666;
         }
+        .btn-custom-light {
+            background-color: #CB9F03;
+            color: white;
+            border-radius: 50px;
+            padding: 10px 30px;
+        }
 
         .btn-custom {
             background-color: #735B04;
@@ -163,7 +169,7 @@
             <h1>Welcome to Pollinat*r</h1>
             <p>Your garden, your community. Discover a world where gardeners come together to share their passion, swap tips, and celebrate the beauty of nature.</p>
             <p>At Pollinat*r, we connect you with fellow gardeners who share your interests and inspire your green thumb to reach new heights. Whether you're planting your first seed or cultivating a botanical masterpiece, Pollinat*r is the place where your gardening journey blossoms.</p>
-            <a th:href="@{/users/register}" class="btn btn-custom">Join the Community</a>
+            <a th:href="@{/users/register}" class="btn btn-custom-light">Join the Community</a>
         </div>
         <div class="hero-image">
             <img th:src="@{/img/mockup.png}" alt="Phone Mockup">
@@ -177,7 +183,7 @@
             </div>
             <p class="text-center">Your garden, your community. Discover a world where gardeners come together to share their passion, swap tips, and celebrate the beauty of nature.</p>
             <div class="d-flex justify-content-center">
-                <a th:href="@{/users/register}" class="btn btn-custom">Join the Community</a>
+                <a th:href="@{/users/register}" class="btn btn-custom-light">Join the Community</a>
             </div>
         </div>
     </div>

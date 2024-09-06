@@ -1,26 +1,26 @@
 <div th:fragment="list-of-gardens">
-    <div class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-2">
+    <div class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-2 g-4">
         <th:block th:each="garden : ${gardenPage.content}">
-            <div class="pb-5 px-5">
+            <div class="">
                 <a th:href="@{/gardens/{id}(id=${garden.id})}" class="text-decoration-none text-dark">
-                    <div class="card h-100 card-hover">
-                        <div class="card-img-top bg-success card-img-top-fixed d-flex align-items-center">
+                    <div class="card rounded-3 border-0 shadow-sm h-100 card-hover">
+                        <div class="card-img-top card-img-top-fixed d-flex align-items-center">
                             <div class="row g-0 img-row">
                                 <th:block th:if="${garden.getPlants().isEmpty()}">
                                     <div class="col-12">
-                                        <div class="plant-img" title="Default Garden Image" th:style="|background-image: url('@{/img/defaultgarden.jpg}')|"></div>
+                                        <div class="plant-img rounded-top-3" title="Default Garden Image" th:style="|background-image: url('@{/img/default-garden.svg}')|"></div>
                                     </div>
                                 </th:block>
                                 <th:block th:each="plant, iterStat : ${garden.getPlants()}">
                                     <div class="col" th:class="${#lists.size(garden.getPlants()) == 1 ? 'col-12' :
                                               #lists.size(garden.getPlants()) == 2 ? 'col-6' :
                                               'col-6 col-sm-4 col-lg-6'}" th:if="${iterStat.index < 4}">
-                                        <div class="plant-img" th:style="|background-image: url('@{/plants/{plantId}/plant-image(plantId=${plant.id})}')|"></div>
+                                        <div class="plant-img rounded-top-3" th:style="|background-image: url('@{/plants/{plantId}/plant-image(plantId=${plant.id})}')|"></div>
                                     </div>
                                 </th:block>
                             </div>
                         </div>
-                        <div class="card-footer">
+                        <div class="card-footer bg-white">
                             <h5 class="card-title" th:text="${garden.name}"></h5>
                             <p class="card-text" th:text="${garden.city}"></p>
                         </div>
@@ -29,7 +29,7 @@
             </div>
         </th:block>
     </div>
-    <nav>
+    <nav class="mt-4">
         <ul class="pagination justify-content-center">
             <!-- First page link -->
             <li class="page-item" th:classappend="${gardenPage.first ? 'disabled' : ''}">

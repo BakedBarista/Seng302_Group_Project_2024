@@ -1,13 +1,13 @@
 <svg width="300" height="300" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect width="300" height="300" fill="#EDEDED"/>
-<g clip-path="url(#clip0_148_25)">
-<path d="M130.311 160.648C135.872 158.289 138.393 151.693 135.942 145.915C133.491 140.138 124.312 138.505 122.422 130.049C112.246 138.069 113.585 149.228 115.804 154.459C118.255 160.236 124.75 163.007 130.311 160.648Z" stroke="#395C0A" stroke-width="3" stroke-linejoin="round"/>
-<path d="M148.468 179.963C135.954 170.316 128.674 159.616 124.665 150.405" stroke="#395C0A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M151.612 169.734C158.529 174.372 167.24 171.723 171.068 163.818C174.896 155.912 169.052 143.505 176.04 133.969C159.646 128.666 149.483 139.865 146.018 147.022C142.19 154.927 144.694 165.096 151.612 169.734Z" stroke="#395C0A" stroke-width="3" stroke-linejoin="round"/>
-<path d="M148.887 186.938C148.922 172.139 152.868 160.932 158.037 152.788" stroke="#395C0A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<rect width="300" height="300" fill="#FFF8E5"/>
+<g clip-path="url(#clip0_293_22)">
+<path d="M130.311 160.648C135.872 158.289 138.393 151.693 135.942 145.915C133.491 140.138 124.312 138.505 122.422 130.049C112.246 138.069 113.585 149.228 115.804 154.459C118.255 160.236 124.75 163.007 130.311 160.648Z" stroke="#D2A509" stroke-width="3" stroke-linejoin="round"/>
+<path d="M148.468 179.963C135.954 170.316 128.674 159.616 124.665 150.405" stroke="#D2A509" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M151.612 169.734C158.529 174.372 167.24 171.723 171.068 163.818C174.896 155.912 169.052 143.505 176.04 133.969C159.646 128.666 149.483 139.865 146.018 147.022C142.19 154.927 144.694 165.096 151.612 169.734Z" stroke="#D2A509" stroke-width="3" stroke-linejoin="round"/>
+<path d="M148.887 186.938C148.922 172.139 152.868 160.932 158.037 152.788" stroke="#D2A509" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
 </g>
 <defs>
-<clipPath id="clip0_148_25">
+<clipPath id="clip0_293_22">
 <rect width="75" height="75" fill="white" transform="translate(98.2739 136.774) rotate(-30)"/>
 </clipPath>
 </defs>
