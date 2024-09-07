@@ -145,7 +145,7 @@ public class PublicProfileController {
         Set<Plant> favouritePlants = user.getFavouritePlants();
         List<FavouritePlantDTO> favouritePlantDTOs = favouritePlants.stream()
                 .map(this::convertToFavouritePlantDTO)
-                .collect(Collectors.toList());
+                .toList();
         ObjectMapper objectMapper = new ObjectMapper();
         String favouritePlantsJson = objectMapper.writeValueAsString(favouritePlantDTOs);
         model.addAttribute("favouritePlantsJson", favouritePlantsJson);

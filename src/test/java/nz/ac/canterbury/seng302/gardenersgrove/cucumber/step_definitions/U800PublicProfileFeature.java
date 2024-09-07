@@ -84,7 +84,7 @@ public class U800PublicProfileFeature {
         authentication = mock(Authentication.class);
 
         userService = new GardenUserService(userRepository);
-        plantService = new PlantService(plantRepository, gardenRepository, userRepository);
+        plantService = new PlantService(plantRepository, gardenRepository);
         gardenService = new GardenService(gardenRepository);
         profanityService = new ProfanityService();
         publicProfileController = new PublicProfileController(userService, profanityService, plantService);

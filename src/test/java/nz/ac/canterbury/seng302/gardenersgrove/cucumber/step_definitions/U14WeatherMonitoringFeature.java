@@ -74,7 +74,7 @@ public class U14WeatherMonitoringFeature {
         gardenService = new GardenService(gardenRepository);
         gardenWeatherService = new GardenWeatherService(gardenWeatherRepository);
         FriendService friendService = new FriendService(friendsRepository);
-        plantService = new PlantService(plantRepository, gardenRepository,gardenUserRepository);
+        plantService = new PlantService(plantRepository, gardenRepository);
         weatherAPIService = new WeatherAPIService(restTemplate, gardenService, gardenWeatherService);
         mockedModerationService = mock(ModerationService.class);
         ProfanityService profanityService = mock(ProfanityService.class);

@@ -60,7 +60,7 @@ public class U19MakeGardenPublicFeature {
 
         friendService = new FriendService(friendRepository);
         gardenService = new GardenService(gardenRepository);
-        plantService = new PlantService(plantRepository, gardenRepository,gardenUserRepository);
+        plantService = new PlantService(plantRepository, gardenRepository);
         gardenUserService = mock(GardenUserService.class);
         gardenWeatherService = mock(GardenWeatherService.class);
         weatherAPIService = new WeatherAPIService(restTemplate, gardenService, gardenWeatherService);

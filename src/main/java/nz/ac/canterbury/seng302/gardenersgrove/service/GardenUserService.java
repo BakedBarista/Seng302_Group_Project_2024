@@ -245,7 +245,6 @@ public class GardenUserService {
     public void updateFavouritePlant(Long userId, Plant plant) {
         GardenUser user = getUserById(userId);
         if (user.getFavouritePlants().size() < 3) {
-            System.out.println("Plants: " + user.getFavouritePlants());
             user.addFavouritePlant(plant);
             gardenUserRepository.save(user);
         } else {

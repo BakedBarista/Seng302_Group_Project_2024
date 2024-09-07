@@ -55,7 +55,7 @@ public class FavouritePlantsContoller {
 
     }
     @PutMapping("/users/edit-public-profile/favourite-plant")
-    public ResponseEntity<?> updateFavouritePlants(@RequestBody Map<String, List<Long>> request) {
+    public ResponseEntity<String> updateFavouritePlants(@RequestBody Map<String, List<Long>> request) {
         List<Long> plantIds = request.get("ids");
         Long userId = userService.getCurrentUser().getId();
 
@@ -66,12 +66,12 @@ public class FavouritePlantsContoller {
                     Plant newPlant = plant.get();
                     userService.updateFavouritePlant(userId, newPlant);
                 } else {
-                   logger.info("Plant with ID " + plantId + " not found.");
+                    logger.info(String.format("Plant with ID %d not found.", plantId));
                 }
             }
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-           logger.error("ERROR HERE: " + e.getMessage());
+            logger.error(String.format("ERROR HERE: %s", e.getMessage()));
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }

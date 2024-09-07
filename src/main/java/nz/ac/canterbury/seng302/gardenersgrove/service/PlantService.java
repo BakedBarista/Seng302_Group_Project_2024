@@ -14,7 +14,6 @@ import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -32,20 +31,15 @@ public class PlantService {
     private static final int MAX_FILE_SIZE = 10 * 1024 * 1024;
     private final PlantRepository plantRepository;
     private final GardenRepository gardenRepository;
-    private final GardenUserRepository gardenUserRepository;
-
-    private final GardenUserService gardenUserService;
 
     /**
      * Constructor of PlantService, takes an instance of plantRepository
      * @param plantRepository an instance of PlantRepository
      */
     @Autowired
-    public PlantService(PlantRepository plantRepository, GardenRepository gardenRepository,GardenUserRepository gardenUserRepository) {
+    public PlantService(PlantRepository plantRepository, GardenRepository gardenRepository) {
         this.plantRepository = plantRepository;
         this.gardenRepository = gardenRepository;
-        this.gardenUserRepository = gardenUserRepository;
-        this.gardenUserService = new GardenUserService(gardenUserRepository);
     }
 
     /**
@@ -144,19 +138,6 @@ public class PlantService {
     public Plant save(Plant plant) {
         return plantRepository.save(plant);
     }
-
-    //Adding favourite plant for test purpose
-    /*public void addFavouritePlant(Long userId, Long plantId) {
-        Optional<GardenUser> user = gardenUserRepository.findById(userId);
-        Optional<Plant> plant = plantRepository.findById(plantId);
-        if (user.isPresent() && plant.isPresent()) {
-            GardenUser gardenUser = user.get();
-            Plant existingPlant = plant.get();
-            gardenUser.addFavouritePlant(existingPlant);
-            gardenUserRepository.save(gardenUser);
-        }
-
-    }*/
 
     /**
      *
