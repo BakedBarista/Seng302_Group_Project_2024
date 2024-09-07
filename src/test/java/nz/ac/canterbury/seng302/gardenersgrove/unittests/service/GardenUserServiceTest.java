@@ -24,6 +24,7 @@ class GardenUserServiceTest {
     private GardenUserRepository mockRepository;
     private Plant plant1;
     private Plant plant2;
+    private GardenUser mockUser;
 
     private GardenUser testUser1 = new GardenUser("John", "Doe", "jdo123@uclive.ac.nz", "password",
             null);
@@ -36,7 +37,9 @@ class GardenUserServiceTest {
         gardenUserService = new GardenUserService(mockRepository);
         // Initialize test plants
         plant1 = new Plant("Tomato", "1", null, null);
+        plant1.setId(1L);
         plant2 = new Plant("Carrot", "2", null, null);
+        plant2.setId(2L);
 
         // Initialize and set favorite plants
         Set<Plant> favoritePlants = new HashSet<>();
@@ -44,9 +47,15 @@ class GardenUserServiceTest {
         favoritePlants.add(plant2);
 
         testUser1.setId(1L);
-        testUser1.setFavouritePlants(favoritePlants); // Explicitly set favorite plants
+
+
+
+        testUser1.addFavouritePlant(plant1);
+        testUser1.addFavouritePlant(plant2);
 
         Mockito.when(mockRepository.findById(testUser1.getId())).thenReturn(Optional.of(testUser1));
+
+
     }
 
     @Test
@@ -245,15 +254,20 @@ class GardenUserServiceTest {
 
 
     @Test
-    void testUpdateFavouritePlantWithNewPlant() {
-        Set<Plant> favouritePlants = new HashSet<>();
-        favouritePlants.add(new Plant("Tomato", "1", null, null));
-        testUser1.setFavouritePlants(favouritePlants);
+    void testUpdateFavouritePlant_SuccessfullyAddsPlant() {
+        Plant newPlant = new Plant("Lettuce", "4", null, null);
+        newPlant.setId(4L);
 
-        gardenUserService.updateFavouritePlant(testUser1.getId(), plant1);
+        Mockito.when(mockRepository.findById(1L)).thenReturn(Optional.of(testUser1));
 
+        gardenUserService.updateFavouritePlant(1L, newPlant);
+
+        assertTrue(testUser1.getFavouritePlants().contains(newPlant));
+        assertEquals(3, testUser1.getFavouritePlants().size());
         verify(mockRepository, times(1)).save(testUser1);
     }
+
+
 
 
 
