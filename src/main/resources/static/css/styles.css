@@ -862,7 +862,7 @@ h1, h2, h3, h4, h5, h6 {
 .flip-card {
     width: 90vw;
     max-width: 480px;
-    height: 720px;
+    height: 88vh;
     perspective: 2000px;
 }
 
