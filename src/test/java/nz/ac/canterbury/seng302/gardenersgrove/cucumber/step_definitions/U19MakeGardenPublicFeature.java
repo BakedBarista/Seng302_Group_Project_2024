@@ -46,7 +46,6 @@ public class U19MakeGardenPublicFeature {
 
     private static Model model;
 
-    private static  GardenUserRepository gardenUserRepository;
 
     private static GardenController gardenController;
 

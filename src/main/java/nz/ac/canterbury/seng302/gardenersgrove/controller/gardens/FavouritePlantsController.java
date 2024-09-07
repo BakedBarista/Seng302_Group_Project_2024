@@ -10,19 +10,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
 @RestController
-public class FavouritePlantsContoller {
+public class FavouritePlantsController {
 
-    private final Logger logger = LoggerFactory.getLogger(FavouritePlantsContoller.class);
+    private final Logger logger = LoggerFactory.getLogger(FavouritePlantsController.class);
 
     private final GardenUserService userService;
     private final PlantService plantService;
 
-    public FavouritePlantsContoller(GardenUserService userService, PlantService plantService) {
+    public FavouritePlantsController(GardenUserService userService, PlantService plantService) {
         this.userService = userService;
         this.plantService = plantService;
     }
@@ -54,6 +55,7 @@ public class FavouritePlantsContoller {
         return ResponseEntity.ok(response);
 
     }
+    @Transactional
     @PutMapping("/users/edit-public-profile/favourite-plant")
     public ResponseEntity<String> updateFavouritePlants(@RequestBody Map<String, List<Long>> request) {
         List<Long> plantIds = request.get("ids");

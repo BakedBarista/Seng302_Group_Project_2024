@@ -1,9 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unittests.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.FavouritePlantsContoller;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.FavouritePlantsController;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.PublicProfileController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
@@ -12,13 +11,11 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
-
+import com.fasterxml.jackson.core.type.TypeReference;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.ProfanityService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
@@ -58,7 +55,7 @@ public class PublicProfileControllerTest {
     private static GardenUserService gardenUserService;
     private static GardenService gardenService;
 
-    private static FavouritePlantsContoller favouritePlantsController;
+    private static FavouritePlantsController favouritePlantsController;
     private static PlantService plantService;
 
     private static Garden garden;
@@ -98,7 +95,7 @@ public class PublicProfileControllerTest {
         plantRepository = Mockito.mock(PlantRepository.class);
         user = new GardenUser();
         publicProfileController = new PublicProfileController(gardenUserService, profanityService, plantService);
-        favouritePlantsController = new FavouritePlantsContoller(gardenUserService, plantService);
+        favouritePlantsController = new FavouritePlantsController(gardenUserService, plantService);
         loggedInUser = new GardenUser();
         loggedInUser.setId(loggedInUserId);
         loggedInUser.setEmail("logged.in@gmail.com");
@@ -282,7 +279,6 @@ public class PublicProfileControllerTest {
 
         List<Map<String, Object>> list = response.getBody();
         assertEquals(1, list.size());
-
     }
 
     @Test
