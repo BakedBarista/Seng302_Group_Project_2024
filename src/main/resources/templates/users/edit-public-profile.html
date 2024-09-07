@@ -148,11 +148,6 @@
               <div class="d-flex">
                   <h4>My Favourite Garden</h4>
                   <a class="btn btn-change ms-auto mb-2" onclick=openGardenSelectorModel()>
-                      <img th:src="@{/icons/edit.svg}"
-                           aria-hidden=""
-                           alt="edit"
-                           width="20"
-                           height="20" />
                       <span th:text="${favouriteGarden != null ? 'Change' : 'Add'}">Change</span>
                   </a>
               </div>

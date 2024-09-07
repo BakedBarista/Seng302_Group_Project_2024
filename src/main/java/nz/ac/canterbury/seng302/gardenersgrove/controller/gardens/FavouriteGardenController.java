@@ -17,6 +17,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Controller for handling requests related to favourite gardens
+ */
 @RestController
 public class FavouriteGardenController  {
 
@@ -32,6 +35,11 @@ public class FavouriteGardenController  {
         this.gardenUserService = gardenUserService;
     }
 
+    /**
+     * Get all public gardens that the user can favourite
+     * @param searchTerm search term to filter gardens by
+     * @return list of public gardens
+     */
     @PostMapping("/users/edit-public-profile/favourite-garden")
     public ResponseEntity<List<Garden>> favouriteGarden(@RequestParam(name="search", required = false, defaultValue = "") String searchTerm) {
         GardenUser currentUser = gardenUserService.getCurrentUser();
@@ -41,6 +49,13 @@ public class FavouriteGardenController  {
         return ResponseEntity.ok(publicGardens);
     }
 
+    /**
+     * Update the favourite garden of the current user
+     * @param id garden id to favourite
+     * @param model model to add the favourite garden to
+     * @return response entity
+     * @throws JsonProcessingException if the json is invalid
+     */
     @PutMapping("/users/edit-public-profile/favourite-garden")
     public ResponseEntity<String> updateFavouriteGarden(@RequestBody String id, Model model) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
