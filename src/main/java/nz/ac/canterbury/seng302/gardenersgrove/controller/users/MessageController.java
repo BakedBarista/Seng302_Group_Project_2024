@@ -23,7 +23,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.TIMESTAMP_FORMAT;
@@ -141,6 +143,7 @@ public class MessageController {
         
         List<Message> chats = messageService.findAllRecentChats(loggedInUserId);
         Long requestedUserId;
+        Map<GardenUser, String> recentChats = new HashMap<>();
 
         // this is to get who we are loading onto first
         if (!chats.isEmpty()) {
@@ -159,6 +162,9 @@ public class MessageController {
                 logger.info("Timestamp: {}", chat.getTimestamp());
                 logger.info("Message: {}", chat.getMessageContent());
                 logger.info("---------");
+
+                GardenUser requestedUser = userService.getUserById(requestedUserId);
+                recentChats.put(requestedUser, chat.getMessageContent());
             }
 
             String submissionToken = UUID.randomUUID().toString();
@@ -177,9 +183,51 @@ public class MessageController {
             model.addAttribute("submissionToken", submissionToken);
             model.addAttribute("messagesMap", messageService.getMessagesBetweenFriends(loggedInUserId, requestedUserId));
             model.addAttribute("sentToUser", sentToUser);
+            model.addAttribute("recentChats", recentChats);
         }
 
         return "users/message-home";
     }   
 
+    @PostMapping("message-home")
+public String messageHome(@RequestParam("userId") Long userId,
+        Authentication authentication,
+        Model model,
+        HttpSession session) {
+
+    logger.info("POST message Home");
+
+    Long loggedInUserId = (Long) authentication.getPrincipal();
+    
+    List<Message> chats = messageService.findAllRecentChats(loggedInUserId);
+    Map<GardenUser, String> recentChats = new HashMap<>();
+
+    // Process recent chats
+    for (Message chat : chats) {
+        if (chat.getSender().equals(userId) || chat.getReceiver().equals(userId)) {
+            GardenUser requestedUser = userService.getUserById(userId);
+            recentChats.put(requestedUser, chat.getMessageContent());
+            break; // Exit loop once the relevant chat is found
+        }
+    }
+
+    String submissionToken = UUID.randomUUID().toString();
+    session.setAttribute("submissionToken", submissionToken);
+    GardenUser sentToUser = userService.getUserById(userId);
+
+    Friends isFriend = friendService.getFriendship(loggedInUserId, userId);
+    if (isFriend == null) {
+        return "redirect:/users/manage-friends";
+    }
+
+    model.addAttribute("dateFormatter", new ThymeLeafDateFormatter());
+    model.addAttribute("TIMESTAMP_FORMAT", TIMESTAMP_FORMAT);
+    model.addAttribute("DATE_FORMAT", WEATHER_CARD_FORMAT_DATE);
+    model.addAttribute("submissionToken", submissionToken);
+    model.addAttribute("messagesMap", messageService.getMessagesBetweenFriends(loggedInUserId, userId));
+    model.addAttribute("sentToUser", sentToUser);
+    model.addAttribute("recentChats", recentChats);
+
+    return "users/message-home";
+}
 }
