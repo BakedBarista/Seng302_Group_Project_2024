@@ -86,7 +86,7 @@ public class PublicProfileController {
      */
     @GetMapping("users/{id}/favourite-garden-image")
     public ResponseEntity<byte[]> favouriteGardenImage(@PathVariable("id") Long id, HttpServletRequest request) {
-        logger.info("GET /users/" + id + "/favourite-garden-image");
+        logger.info(String.format("GET /users/%d/favourite-garden-image", id));
 
         GardenUser user = userService.getUserById(id);
         if (user.getFavoriteGarden() == null || user.getFavoriteGarden().getGardenImage() == null) {
