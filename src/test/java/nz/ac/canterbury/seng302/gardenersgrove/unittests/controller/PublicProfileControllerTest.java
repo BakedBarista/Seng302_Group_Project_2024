@@ -21,6 +21,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.web.servlet.MockMvc;
@@ -59,6 +61,8 @@ public class PublicProfileControllerTest {
     private static FavouritePlantsContoller favouritePlantsController;
     private static PlantService plantService;
 
+    private static Garden garden;
+
     private static PlantRepository plantRepository;
 
     private static GardenUser user;
@@ -78,6 +82,9 @@ public class PublicProfileControllerTest {
     private EditUserDTO editUserDTO;
 
     private static MockMvc mockMvc;
+
+    @Mock
+    private HttpServletRequest request;
 
     @BeforeAll
     static void setup() {
@@ -107,6 +114,12 @@ public class PublicProfileControllerTest {
         otherUser.setFname("Other");
         otherUser.setLname("User");
         otherUser.setDescription("This is a description for another user");
+        garden = new Garden();
+
+
+
+
+
 
         mockMvc = MockMvcBuilders.standaloneSetup(publicProfileController).build();
 
@@ -270,6 +283,36 @@ public class PublicProfileControllerTest {
         List<Map<String, Object>> list = response.getBody();
         assertEquals(1, list.size());
 
+    }
+
+    @Test
+    void givenUserHasGardenImage_whenGetFavouriteGardenImage_thenReturnImageBytes() {
+        byte[] imageBytes = "image".getBytes();
+        garden.setGardenImage("image/png", imageBytes);
+
+        user.setFavoriteGarden(garden);
+
+        when(gardenUserService.getUserById(1L)).thenReturn(user);
+
+        ResponseEntity<byte[]> response = publicProfileController.favouriteGardenImage(1L, request);
+
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals("image/png", response.getHeaders().getContentType().toString());
+        assertEquals(imageBytes, response.getBody());
+    }
+
+    @Test
+    void givenUserHasNoGardenImage_whenGetFavouriteGardenImage_thenRedirectToDefaultImage() {
+        when(gardenUserService.getUserById(1L)).thenReturn(user);
+        when(request.getContextPath()).thenReturn("");
+        garden.setGardenImage(null, null);
+
+        // Act
+        ResponseEntity<byte[]> response = publicProfileController.favouriteGardenImage(1L, request);
+
+        // Assert
+        assertEquals(HttpStatus.FOUND, response.getStatusCode());
+        assertEquals("/img/default-garden.svg", response.getHeaders().getFirst(HttpHeaders.LOCATION));
     }
 
 }

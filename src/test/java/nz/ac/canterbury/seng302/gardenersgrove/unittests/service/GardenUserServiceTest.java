@@ -1,6 +1,10 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unittests.service;
 
 import java.util.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import org.assertj.core.util.Arrays;
@@ -47,7 +51,7 @@ class GardenUserServiceTest {
     @Test
     void givenGetUsersCalled_thenReturnsUsers() {
         var allUsers = List.of(testUser1, testUser2);
-        Mockito.when(mockRepository.findAll()).thenReturn(allUsers);
+        when(mockRepository.findAll()).thenReturn(allUsers);
 
         var users = gardenUserService.getUser();
 
@@ -59,7 +63,7 @@ class GardenUserServiceTest {
     void givenUserWithEmailExists_whenAddUserCalled_thenThrowsException() {
         testUser1.setEmail("email@example.com");
         testUser2.setEmail("email@example.com");
-        Mockito.when(mockRepository.findByEmail(testUser1.getEmail())).thenReturn(Optional.of(testUser1));
+        when(mockRepository.findByEmail(testUser1.getEmail())).thenReturn(Optional.of(testUser1));
 
         assertThrows(IllegalStateException.class, () -> gardenUserService.addUser(testUser2));
     }
@@ -67,7 +71,7 @@ class GardenUserServiceTest {
     @Test
     void givenUserWithEmailExists_whenGetUserByEmailCalled_thenReturnsUser() {
         var email = testUser1.getEmail();
-        Mockito.when(mockRepository.findByEmail(email)).thenReturn(Optional.of(testUser1));
+        when(mockRepository.findByEmail(email)).thenReturn(Optional.of(testUser1));
 
         var user = gardenUserService.getUserByEmail(email);
 
@@ -78,7 +82,7 @@ class GardenUserServiceTest {
     @Test
     void givenUserWithEmailDoesntExist_whenGetUserByEmailCalled_thenReturnsNull() {
         var email = testUser1.getEmail();
-        Mockito.when(mockRepository.findByEmail(email)).thenReturn(Optional.empty());
+        when(mockRepository.findByEmail(email)).thenReturn(Optional.empty());
 
         var user = gardenUserService.getUserByEmail(email);
 
@@ -89,7 +93,7 @@ class GardenUserServiceTest {
     @Test
     void givenGetUserByEmailAndPasswordCalledWithValidEmailAndPassword_thenReturnsUser() {
         var email = testUser1.getEmail();
-        Mockito.when(mockRepository.findByEmail(email)).thenReturn(Optional.of(testUser1));
+        when(mockRepository.findByEmail(email)).thenReturn(Optional.of(testUser1));
 
         var user = gardenUserService.getUserByEmailAndPassword(email, "password");
 
@@ -100,7 +104,7 @@ class GardenUserServiceTest {
     @Test
     void givenGetUserByEmailAndPasswordCalledWithInvalidEmail_thenReturnsNull() {
         var email = testUser1.getEmail();
-        Mockito.when(mockRepository.findByEmail(email)).thenReturn(Optional.empty());
+        when(mockRepository.findByEmail(email)).thenReturn(Optional.empty());
 
         var user = gardenUserService.getUserByEmailAndPassword(email, "password");
 
@@ -111,7 +115,7 @@ class GardenUserServiceTest {
     @Test
     void givenGetUserByEmailAndPasswordCalledWithInvalidPassword_thenReturnsNull() {
         var email = testUser1.getEmail();
-        Mockito.when(mockRepository.findByEmail(email)).thenReturn(Optional.of(testUser1));
+        when(mockRepository.findByEmail(email)).thenReturn(Optional.of(testUser1));
 
         var user = gardenUserService.getUserByEmailAndPassword(email, "invalid-password");
 
@@ -122,7 +126,7 @@ class GardenUserServiceTest {
     @Test
     void givenGetUserByIdCalledWithValidId_thenReturnsUser() {
         var id = 1L;
-        Mockito.when(mockRepository.findById(id)).thenReturn(Optional.of(testUser1));
+        when(mockRepository.findById(id)).thenReturn(Optional.of(testUser1));
 
         var user = gardenUserService.getUserById(id);
 
@@ -133,7 +137,7 @@ class GardenUserServiceTest {
     @Test
     void giveGetUserByIdCalledWithInvalidId_thenReturnsNull() {
         var id = 1L;
-        Mockito.when(mockRepository.findById(id)).thenReturn(Optional.empty());
+        when(mockRepository.findById(id)).thenReturn(Optional.empty());
 
         var user = gardenUserService.getUserById(id);
 
@@ -146,7 +150,7 @@ class GardenUserServiceTest {
         var id = 1L;
         var contentType = "text/plain";
         var profilePicture = "profile-picture".getBytes();
-        Mockito.when(mockRepository.findById(id)).thenReturn(Optional.of(testUser1));
+        when(mockRepository.findById(id)).thenReturn(Optional.of(testUser1));
 
         gardenUserService.setProfilePicture(id, contentType, profilePicture);
 
@@ -160,7 +164,7 @@ class GardenUserServiceTest {
         var id = 1L;
         var contentType = "text/plain";
         var banner = "banner".getBytes();
-        Mockito.when(mockRepository.findById(id)).thenReturn(Optional.of(testUser1));
+        when(mockRepository.findById(id)).thenReturn(Optional.of(testUser1));
 
         gardenUserService.setProfileBanner(id, contentType, banner);
 
@@ -174,7 +178,7 @@ class GardenUserServiceTest {
         var id = 1L;
         var contentType = "text/plain";
         var profilePicture = "profile-picture".getBytes();
-        Mockito.when(mockRepository.findById(id)).thenReturn(Optional.empty());
+        when(mockRepository.findById(id)).thenReturn(Optional.empty());
 
         gardenUserService.setProfilePicture(id, contentType, profilePicture);
 
@@ -216,6 +220,16 @@ class GardenUserServiceTest {
         var obfuscatedEmail = "not-base64 :)";
 
         assertThrows(RuntimeException.class, () -> gardenUserService.deobfuscateEmail(obfuscatedEmail));
+    }
+
+    @Test
+    void givenGetfavouriteGardenById_thenReturnFavouriteGardens() {
+        Garden garden = new Garden();
+        testUser1.setFavoriteGarden(garden);
+        testUser1.setId(1L);
+        when(mockRepository.findById(testUser1.getId())).thenReturn(Optional.of(testUser1));
+        Garden favouriteGarden = gardenUserService.getFavoriteGarden(testUser1.getId());
+        assertEquals(garden, favouriteGarden);
     }
 
     @Test

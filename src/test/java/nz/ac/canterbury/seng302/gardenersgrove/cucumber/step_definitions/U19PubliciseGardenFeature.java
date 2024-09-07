@@ -65,7 +65,7 @@ public class U19PubliciseGardenFeature {
         model = mock(Model.class);
         authentication = mock(Authentication.class);
         gardenUserService = new GardenUserService(gardenUserRepository);
-        gardenService = new GardenService(gardenRepository);
+        gardenService = new GardenService(gardenRepository, gardenUserRepository);
         tagService = new TagService(tagRepository, gardenService, profanityService);
     }
 

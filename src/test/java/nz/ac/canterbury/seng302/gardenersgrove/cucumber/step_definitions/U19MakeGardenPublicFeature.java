@@ -46,6 +46,8 @@ public class U19MakeGardenPublicFeature {
 
     private static Model model;
 
+    private static  GardenUserRepository gardenUserRepository;
+
     private static GardenController gardenController;
 
     @BeforeAll
@@ -54,12 +56,13 @@ public class U19MakeGardenPublicFeature {
         gardenRepository = mock(GardenRepository.class);
         restTemplate = mock(RestTemplate.class);
         friendRepository = mock(FriendsRepository.class);
+        gardenUserRepository = mock(GardenUserRepository.class);
         tagRepository = mock(TagRepository.class);
         tagService = new TagService(tagRepository, gardenService, profanityService);
         objectMapper = new ObjectMapper();
 
         friendService = new FriendService(friendRepository);
-        gardenService = new GardenService(gardenRepository);
+        gardenService = new GardenService(gardenRepository, gardenUserRepository);
         plantService = new PlantService(plantRepository, gardenRepository);
         gardenUserService = mock(GardenUserService.class);
         gardenWeatherService = mock(GardenWeatherService.class);

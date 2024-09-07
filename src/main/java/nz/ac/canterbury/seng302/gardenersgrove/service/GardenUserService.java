@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
@@ -189,8 +190,13 @@ public class GardenUserService {
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new UsernameNotFoundException("No authenticated user found");
         }
-        long userId = Long.parseLong(authentication.getName());
-        return getUserById(userId);
+        String identifier = authentication.getName();
+        try {
+            long userId = Long.parseLong(identifier);
+            return getUserById(userId);
+        } catch (NumberFormatException e) {
+            return getUserByEmail(identifier);
+        }
     }
 
     /**
@@ -227,6 +233,11 @@ public class GardenUserService {
     public String deobfuscateEmail(String obfuscatedEmail) {
         byte[] bytes = Base64.getDecoder().decode(obfuscatedEmail);
         return new String(bytes);
+    }
+
+    public Garden getFavoriteGarden(Long userId) {
+        Optional<GardenUser> user = gardenUserRepository.findById(userId);
+        return user.map(GardenUser::getFavoriteGarden).orElse(null);
     }
 
     public Set<Plant> getFavoritePlants(Long userId) {
