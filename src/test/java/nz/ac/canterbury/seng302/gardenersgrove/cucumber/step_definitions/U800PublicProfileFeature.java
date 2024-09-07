@@ -7,6 +7,7 @@ import io.cucumber.java.en.When;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.PublicProfileController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
@@ -23,9 +24,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -53,6 +52,8 @@ public class U800PublicProfileFeature {
     private GardenUser user;
     String validDescription = "I love gardening!";
     Garden garden;
+
+    Plant plant;
 
     MultipartFile profilePic = new MockMultipartFile(
             "image",
@@ -231,4 +232,39 @@ public class U800PublicProfileFeature {
     public void myFavouriteGardenIsUpdated() {
         assertEquals(user.getFavoriteGarden(), garden);
     }
+
+    @Then("I can see an editable section called “My Favourite Plants” where I can showcase my three favourite public plants that are mine")
+    public void iCanSeeAnEditableSectionCalledMyFavouritePlantsWhereICanShowcaseMyThreeFavouritePublicPlantsThatAreMine() {
+        Set<Plant> favouritePlants = new HashSet<>();
+        Plant plant1 = new Plant();
+        Plant plant2 = new Plant();
+        Plant plant3 = new Plant();
+        favouritePlants.add(plant1);
+        favouritePlants.add(plant2);
+        favouritePlants.add(plant3);
+        user.setFavouritePlants(favouritePlants);
+        assertEquals(user.getFavouritePlants(), favouritePlants);
+    }
+
+    @When("I select a plant from the list of public plants")
+    public void iSelectAPlantFromTheListOfPublicPlants() {
+        List<Plant> publicPlants = new ArrayList<>();
+        plant = new Plant();
+        publicPlants.add(plant);
+        user.addFavouritePlant(publicPlants.get(0));
+    }
+
+    @Then("The plant is displayed")
+    public void thePlantIsDisplayed() {
+        System.out.println(user.getFavouritePlants());
+        System.out.println(plant);
+        assertTrue(user.getFavouritePlants().contains(plant));
+    }
+
 }
+
+
+
+
+
+
