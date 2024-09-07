@@ -72,4 +72,8 @@ public class MessageService {
 
         return sortedMessageHash;
     }
+
+    public List<Message> findAllRecentChats(Long user1){
+        return messageRepository.findAllRecentChats(user1);
+    }
 }

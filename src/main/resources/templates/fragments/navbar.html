@@ -63,6 +63,13 @@
             Friends
           </a>
         </li>
+        <li>
+          <a th:href="@{/message-home}">
+            <img class="link-icon" th:src="@{/icons/message.svg}" width="24" height="24" aria-hidden alt="Message" />
+            Messages
+          </a>
+        </li>
+    
     
       </ul>
       <ul th:if="${isAuthenticated}" class="pt-3">

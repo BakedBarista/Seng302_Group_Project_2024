@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Message;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.MessageDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.TIMESTAMP_FORMAT;
@@ -121,4 +123,63 @@ public class MessageController {
                             "annoying so he asked me to write one that goes past the end of the screen", "token"), LocalDateTime.now());
         }
     }
+
+    /**
+     * Method to return the message page
+     * @param requestedUserId friend's id to send message to
+     * @param model may not need one
+     * @return message page
+     */
+    @GetMapping("message-home")
+    public String messageHome(Authentication authentication,
+        Model model,
+        HttpSession session) {
+
+        logger.info("GET message Home");
+
+        Long loggedInUserId = (Long) authentication.getPrincipal();
+        
+        List<Message> chats = messageService.findAllRecentChats(loggedInUserId);
+        Long requestedUserId;
+
+        // this is to get who we are loading onto first
+        if (!chats.isEmpty()) {
+
+            // Get the first chat message
+            Message firstChat = chats.get(0);
+            if (loggedInUserId != firstChat.getSender()) {
+                requestedUserId = firstChat.getSender();
+            } else {
+                requestedUserId = firstChat.getReceiver();
+            }
+
+            for (Message chat : chats) {
+                logger.info("Sender: {}", chat.getSender());
+                logger.info("Receiver: {}", chat.getReceiver());
+                logger.info("Timestamp: {}", chat.getTimestamp());
+                logger.info("Message: {}", chat.getMessageContent());
+                logger.info("---------");
+            }
+
+            String submissionToken = UUID.randomUUID().toString();
+            session.setAttribute("submissionToken", submissionToken);
+            GardenUser sentToUser = userService.getUserById(requestedUserId);
+
+
+            Friends isFriend = friendService.getFriendship(loggedInUserId, requestedUserId);
+            if (isFriend == null) {
+                return "redirect:/users/manage-friends";
+            }
+
+            model.addAttribute("dateFormatter", new ThymeLeafDateFormatter());
+            model.addAttribute("TIMESTAMP_FORMAT", TIMESTAMP_FORMAT);
+            model.addAttribute("DATE_FORMAT", WEATHER_CARD_FORMAT_DATE);
+            model.addAttribute("submissionToken", submissionToken);
+            model.addAttribute("messagesMap", messageService.getMessagesBetweenFriends(loggedInUserId, requestedUserId));
+            model.addAttribute("sentToUser", sentToUser);
+        }
+
+        return "users/message-home";
+    }   
+
 }
