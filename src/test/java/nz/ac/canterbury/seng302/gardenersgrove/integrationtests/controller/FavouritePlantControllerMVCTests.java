@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @ActiveProfiles("integration-tests")
 @AutoConfigureMockMvc
-public class FavouritePlantControllerMVCTests {
+class FavouritePlantControllerMVCTests {
     @Autowired
     private ObjectMapper objectMapper;
 
