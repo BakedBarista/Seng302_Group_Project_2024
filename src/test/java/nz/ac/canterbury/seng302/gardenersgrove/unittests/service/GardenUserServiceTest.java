@@ -4,7 +4,6 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
@@ -18,6 +17,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class GardenUserServiceTest {
     private GardenUserService gardenUserService;
@@ -242,5 +242,20 @@ class GardenUserServiceTest {
         assertTrue(result.contains(plant2));
 
     }
+
+
+    @Test
+    void testUpdateFavouritePlantWithNewPlant() {
+        Set<Plant> favouritePlants = new HashSet<>();
+        favouritePlants.add(new Plant("Tomato", "1", null, null));
+        testUser1.setFavouritePlants(favouritePlants);
+
+        gardenUserService.updateFavouritePlant(testUser1.getId(), plant1);
+
+        verify(mockRepository, times(1)).save(testUser1);
+    }
+
+
+
 
 }
