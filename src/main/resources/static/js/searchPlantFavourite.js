@@ -103,7 +103,7 @@ function renderPlantCards(favouritePlants) {
         imageElement.alt = 'plant image';
 
         const plantName = document.createElement('h5');
-        plantName.className = 'pt-2 ps-2';
+        plantName.className = 'pt-2 text-center';
         plantName.textContent = plant.name;
 
         const hiddenInput = document.createElement('input');
@@ -165,6 +165,8 @@ function previewFavouritePlants() {
 
         if (selectedCard) {
 
+            selectedCard.className = 'card p-2 me-3 mb-3 border-0 rounded-3 d-flex shadow-sm public-profile-plant-card bg-primary-temp';
+
             let imgElement = selectedCard.querySelector('img');
             if (!imgElement) {
                 imgElement = document.createElement('img');
@@ -175,13 +177,14 @@ function previewFavouritePlants() {
             imgElement.className = 'mx-auto d-block pt-1';
             imgElement.style = 'width: 100%; height: 80%; object-fit: cover';
 
-            let plantNameElement = selectedCard.querySelector('h5');
+            let plantNameElement = selectedCard.querySelector('h4');
             if (!plantNameElement) {
-                plantNameElement = document.createElement('h5');
-                plantNameElement.className = 'pt-2 ps-2';
+                plantNameElement = document.createElement('h4');
                 selectedCard.appendChild(plantNameElement);
             }
+            plantNameElement.className = 'text-center pt-2';
             plantNameElement.textContent = plantName;
+
 
             const hiddenInput = selectedCard.querySelector('input[type="hidden"]');
             hiddenInput.value = plantId;
