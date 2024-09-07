@@ -66,7 +66,9 @@ public class FavouritePlantsContoller {
                     Plant newPlant = plant.get();
                     userService.updateFavouritePlant(userId, newPlant);
                 } else {
-                    logger.info(String.format("Plant with ID %d not found.", plantId));
+                    if (logger.isInfoEnabled()) {
+                        logger.info(String.format("Plant with ID %d not found.", plantId));
+                    }
                 }
             }
             return ResponseEntity.ok().build();
