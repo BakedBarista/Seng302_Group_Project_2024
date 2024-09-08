@@ -12,11 +12,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -110,5 +112,26 @@ class FavouritePlantsControllerUnitTests {
 
         assertEquals(200, response.getStatusCodeValue());
         verify(userService, never()).updateFavouritePlant(anyLong(), any());
+    }
+
+    @Test
+    void testUpdateFavouritePlantsException() {
+        // Setup the request
+        Map<String, List<Long>> request = new HashMap<>();
+        request.put("ids", Arrays.asList(1L, 2L, 3L));
+
+        when(plantService.getPlantById(anyLong())).thenThrow(new RuntimeException("Database error"));
+
+
+        ResponseEntity<String> response = favouritePlantsController.updateFavouritePlants(request);
+
+        // Assert that the response status is INTERNAL_SERVER_ERROR
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+
+        // Assert that the response body contains the exception message
+        assertTrue(response.getBody().contains("Database error"));
+
+        // Verify that the logger was called with the expected message
+        // Note: To verify logging, you might need to use a logging framework or tool.
     }
 }
