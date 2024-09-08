@@ -12,6 +12,7 @@
         @media (max-width: 767.98px) {
             main, body {
                 height: calc(100vh - 91px);
+                overflow: hidden;
             }
         }
 
@@ -19,14 +20,23 @@
         @media (min-width: 768px) {
             main, body {
                 height: 100vh;
+                overflow: hidden;
             }
         }
 
+        @media (max-width: 767.98px) {
+            .messages {
+                height: calc(100vh - 260px);
+                overflow: auto;
+            }
+        }
         /* Make messages container scrollable */
-        .messages {
-            height: calc(100vh - 200px); /* Adjust as necessary */
-            overflow-y: auto;
+        @media (min-width: 768px) {
+            .messages {
+                height: calc(100vh - 200px); /* Adjust as necessary */
+                overflow-y: auto;
 
+            }
         }
 
         /* Ensure textarea and send button stay at the bottom */
@@ -74,7 +84,16 @@
                         </div>
                         <!--logged in users msg-->
                         <div th:if="${message.receiver == sentToUser.id}" class="d-flex justify-content-end">
-                            <div class="card text-white bg-primary shadow-sm mb-3 border-0" style="max-width: 40%">
+                            <div class="card text-white bg-primary shadow-sm mb-3 border-0 d-none d-md-block" style="max-width: 40%">
+                                <div class="card-body">
+                                    <small>[[${dateFormatter.format(message.timestamp, TIMESTAMP_FORMAT)}]]</small>
+                                    <p class="card-text mt-2">[[${message.messageContent}]]</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div th:if="${message.receiver == sentToUser.id}" class="d-flex justify-content-end">
+                            <div class="card text-white bg-primary shadow-sm mb-3 border-0 d-block d-md-none" style="max-width: 80%">
                                 <div class="card-body">
                                     <small>[[${dateFormatter.format(message.timestamp, TIMESTAMP_FORMAT)}]]</small>
                                     <p class="card-text mt-2">[[${message.messageContent}]]</p>

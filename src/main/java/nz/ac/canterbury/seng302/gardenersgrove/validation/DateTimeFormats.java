@@ -16,5 +16,5 @@ public class DateTimeFormats {
 
     public static final DateTimeFormatter HISTORY_FORMAT_DATE = DateTimeFormatter.ofPattern("d MMMM yyyy");
 
-    public static final DateTimeFormatter TIMESTAMP_FORMAT = DateTimeFormatter.ofPattern("hh:mm:ssa");
+    public static final DateTimeFormatter TIMESTAMP_FORMAT = DateTimeFormatter.ofPattern("hh:mm a");
 }
