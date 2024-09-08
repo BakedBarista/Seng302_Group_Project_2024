@@ -8,32 +8,25 @@
     <!-- This needs to be here for Bootstrap and general CSS imports -->
     <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
     <style>
-        /* This subtracts the height of the navbar on mobile screens to account for height */
+        /* For small screens */
         @media (max-width: 767.98px) {
             main, body {
-                height: calc(100vh - 91px);
+                height: 80vh;
                 overflow: hidden;
             }
+            .messages {
+                height: 60vh;
+                overflow: auto;
+            }
         }
-
         /* For screens larger than mobile */
         @media (min-width: 768px) {
             main, body {
                 height: 100vh;
                 overflow: hidden;
             }
-        }
-
-        @media (max-width: 767.98px) {
             .messages {
-                height: calc(100vh - 260px);
-                overflow: auto;
-            }
-        }
-        /* Make messages container scrollable */
-        @media (min-width: 768px) {
-            .messages {
-                height: calc(100vh - 200px); /* Adjust as necessary */
+                height: 70vh;
                 overflow-y: auto;
 
             }
