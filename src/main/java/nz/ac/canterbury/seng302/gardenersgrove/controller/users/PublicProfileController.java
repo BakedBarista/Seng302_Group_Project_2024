@@ -77,6 +77,7 @@ public class PublicProfileController {
         model.addAttribute(DESCRIPTION, user.getDescription());
         model.addAttribute(FAVOURITE_GARDEN, user.getFavoriteGarden());
 
+
         model.addAttribute("favouritePlants", favouritePlants);
 
         return "users/public-profile";
@@ -170,7 +171,10 @@ public class PublicProfileController {
         editUserDTO.setDescription(user.getDescription());
         model.addAttribute("editUserDTO", editUserDTO);
         model.addAttribute(FAVOURITE_GARDEN, user.getFavoriteGarden());
+
+
         Set<Plant> favouritePlants = user.getFavouritePlants();
+        model.addAttribute("favouritePlants", favouritePlants);
         List<FavouritePlantDTO> favouritePlantDTOs = favouritePlants.stream()
                 .map(this::convertToFavouritePlantDTO)
                 .toList();
@@ -181,6 +185,11 @@ public class PublicProfileController {
         return "users/edit-public-profile";
     }
 
+    /**
+     * Converts a plant to a FavouritePlantDTO
+     * @param plant  the plant to convert
+     * @return FavouritePlantDTO
+     */
     private FavouritePlantDTO convertToFavouritePlantDTO(Plant plant) {
         return new FavouritePlantDTO(plant.getId(), plant.getName(), plant.getPlantImage());
     }

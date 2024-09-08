@@ -1,45 +1,52 @@
 let selectedCardId;
 let selectedPlantId;
 let selectedPlantName;
-const placeholderImageSrc = document.getElementById('placeholderImageSrc').value;
+let selectedPlants = [];
 
 //Called when the user pushes a + on the plant card
 function openPlantSelectorModal(index) {
-    const modal = new bootstrap.Modal(document.getElementById("plantSelectorModal"));
+    const modalElement = document.getElementById("plantSelectorModal");
+    const modal = new bootstrap.Modal(modalElement);
     modal.show();
 
     selectedCardId = 'favouritePlantCard' + index;  //Used to get the card that was clicked on
-
-    //Waits for submission of the modal before previewing the plant cards
-    document.getElementById("plantSelectorModalSubmitButton").addEventListener('click', function() {
-        previewFavouritePlants();
-        modal.hide();
-    }, { once: true });
+    document.getElementById('searchField').value = '';  // Clear the search input field
+    document.getElementById('searchPlantResults').innerHTML = '';
+    // Remove the previous event listener before adding a new one
+    const submitButton = document.getElementById("plantSelectorModalSubmitButton");
+    submitButton.removeEventListener('click', handleModalSubmit);  // Remove any previous listeners
+    submitButton.addEventListener('click', handleModalSubmit);  // Attach the new listener
 }
 
-//Functions for search and selecting plants on the modal
+// New function to handle the modal submit
+function handleModalSubmit() {
+    previewFavouritePlants();
+}
+
+// Functions for search and selecting plants on the modal
 function showSearchResults() {
     document.getElementById('searchForm').addEventListener('submit', function(event) {
         event.preventDefault();
         const searchTerm = document.getElementById('searchField').value;
         const searchResultsContainer = document.getElementById('searchPlantResults');
-
+        searchResultsContainer.innerHTML = '';
         fetch(`${baseUrl}users/edit-public-profile/search?search=` + encodeURIComponent(searchTerm), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 [csrfHeader]: csrf,
             },
-            body: JSON.stringify({searchTerm: searchTerm}),
+            body: JSON.stringify({ searchTerm: searchTerm }),
         }).then(response => response.json())
             .then(response => {
                 searchResultsContainer.innerHTML = '';
                 if (response.length > 0) {
-                    searchResultsContainer.innerHTML = '<h2>Results</h2>';
+                    searchResultsContainer.innerHTML = '<h2 style="padding: 10px;">Results</h2>';
+
                     const customDropdown = document.createElement('div');
                     customDropdown.classList.add('custom-dropdown');
                     searchResultsContainer.appendChild(customDropdown);
-                    //Styles the search results and adds a highlight when clicked
+
                     response.forEach(plant => {
                         const plantOption = document.createElement('div');
                         plantOption.classList.add('plant-option');
@@ -53,15 +60,16 @@ function showSearchResults() {
                         imageElement.style.height = '50px';
                         imageElement.style.marginRight = '10px';
 
-                        plantOption.appendChild(imageElement);
-                        plantOption.appendChild(document.createTextNode(` ${plant.name} (${plant.gardenName})`));
-
                         plantOption.style.padding = '10px';
+                        plantOption.style.marginBottom = '10px'; // Add margin between results
                         plantOption.style.borderRadius = '5px';
                         plantOption.style.border = '1px solid #ccc';
                         plantOption.style.cursor = 'pointer';
                         plantOption.style.display = 'flex';
                         plantOption.style.alignItems = 'center';
+
+                        plantOption.appendChild(imageElement);
+                        plantOption.appendChild(document.createTextNode(` ${plant.name} (${plant.gardenName})`));
 
                         customDropdown.appendChild(plantOption);
 
@@ -77,11 +85,14 @@ function showSearchResults() {
                             selectedPlantName = plant.name;
                             document.getElementById('selectedPlantId').value = plant.id; //Sets the hidden input field
 
+                            // Hide the error message when a valid plant is selected
+                            const errorMessage = document.getElementById('error-message');
+                            errorMessage.style.display = 'none';
                         });
                     });
 
                 } else {
-                    searchResultsContainer.innerHTML = '<h2>No results found</h2>';
+                    searchResultsContainer.innerHTML = '<h2 style="padding: 10px;">No results found</h2>';
                 }
             }).catch(error => {
             console.log('Error: ', error);
@@ -90,70 +101,8 @@ function showSearchResults() {
 }
 
 
-//Function to dynamically render the favourite plants on the edit public profile depending on the number of favourite plants
-function renderPlantCards(favouritePlants) {
-    const container = document.getElementById('favouritePlantsContainer');
-    container.innerHTML = '';
-    // Render cards for favorite plants
-    favouritePlants.forEach((plant, index) => {
-        const plantCard = document.createElement('div');
-        plantCard.className = 'card p-2 me-3 mb-3 border-0 rounded-3 d-flex shadow-sm public-profile-plant-card bg-primary-temp';
-
-        const imageElement = document.createElement('img');
-        imageElement.className = 'mx-auto d-block pt-1';
-        imageElement.src = `${baseUrl}plants/${plant.id}/plant-image`;
-        imageElement.style = 'width: 100%;height: 80%; object-fit: cover';
-        imageElement.alt = 'plant image';
-
-        const plantName = document.createElement('h5');
-        plantName.className = 'pt-2 text-center';
-        plantName.textContent = plant.name;
-
-        const hiddenInput = document.createElement('input');
-        hiddenInput.type = 'hidden';
-        hiddenInput.id = `selectedPlantId${index + 1}`;
-        hiddenInput.value = plant.id;
-
-        plantCard.appendChild(imageElement);
-        plantCard.appendChild(plantName);
-        container.appendChild(plantCard);
-
-    });
-
-    // Render empty cards
-    const remainingCards = 3 - favouritePlants.length;
-    for (let i = 0; i < remainingCards; i++) {
-        const emptyCard = document.createElement('div');
-        emptyCard.className = 'card p-2 me-3 mb-3 border-0 rounded-3 shadow-sm public-profile-plant-card justify-content-center card-wiggle bg-primary-grey';
-        emptyCard.id = `favouritePlantCard${favouritePlants.length + i + 1}`;
-        emptyCard.onclick = function() {
-            openPlantSelectorModal(favouritePlants.length + i + 1);
-        };
-
-        const placeholderImage = document.createElement('img');
-        placeholderImage.src = placeholderImageSrc;
-        placeholderImage.alt = 'empty-favourite';
-        placeholderImage.width = 50;
-        placeholderImage.height = 50;
-        placeholderImage.className = 'mx-auto d-block';
-
-        const emptyPlantName = document.createElement('h4');
-        emptyPlantName.className = 'pt-2 ps-2 text-center';
-        emptyPlantName.textContent = '';
-
-        const hiddenInput = document.createElement('input');
-        hiddenInput.type = 'hidden';
-        hiddenInput.id = `selectedPlantId${favouritePlants.length + i + 1}`;
-        hiddenInput.value = '';
-
-        emptyCard.appendChild(placeholderImage);
-        emptyCard.appendChild(emptyPlantName);
-        emptyCard.appendChild(hiddenInput);
-        container.appendChild(emptyCard);
 
 
-    }
-}
 
 // Function to get the favourite plants of the user and preview them after the user has selected one from the modal
 function previewFavouritePlants() {
@@ -161,13 +110,28 @@ function previewFavouritePlants() {
     const selectedOption = document.querySelector("#searchPlantResults .plant-option[data-id='" + plantId + "']");
 
     if (selectedOption) {
+        const selectedCard = document.getElementById(selectedCardId);
+
+        // Check if the plant is already selected and the selected card is not the current one
+        if (selectedPlants.includes(plantId) && selectedCard.querySelector('input[type="hidden"]').value != plantId) {
+            const errorMessage = document.getElementById('error-message');
+            errorMessage.textContent = 'This plant has already been selected. Please choose a different one.';
+            errorMessage.style.display = 'block';
+            return; // Prevent the modal from closing
+        }
+
         const plantName = selectedOption.getAttribute('data-name');
         const plantImage = selectedOption.querySelector('img').src;
 
-        const selectedCard = document.getElementById(selectedCardId);
-
         if (selectedCard) {
+            // Remove the old plantId from selectedPlants (in case the user is changing the plant for the same card)
+            const previousPlantId = selectedCard.querySelector('input[type="hidden"]').value;
+            const previousPlantIndex = selectedPlants.indexOf(previousPlantId);
+            if (previousPlantIndex > -1) {
+                selectedPlants.splice(previousPlantIndex, 1);
+            }
 
+            // Update the card's appearance
             selectedCard.className = 'card p-2 me-3 mb-3 border-0 rounded-3 d-flex shadow-sm public-profile-plant-card bg-primary-temp';
 
             let imgElement = selectedCard.querySelector('img');
@@ -188,10 +152,19 @@ function previewFavouritePlants() {
             plantNameElement.className = 'text-center pt-2';
             plantNameElement.textContent = plantName;
 
-
             const hiddenInput = selectedCard.querySelector('input[type="hidden"]');
             hiddenInput.value = plantId;
 
+            // Add the new plantId to selectedPlants
+            selectedPlants.push(plantId);
+
+            // Hide the error message since plant was successfully added
+            const errorMessage = document.getElementById('error-message');
+            errorMessage.style.display = 'none';
+
+            // Hide the modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById("plantSelectorModal"));
+            modal.hide();
         } else {
             console.error(`Element with ID ${selectedCardId} not found.`);
         }
@@ -199,6 +172,7 @@ function previewFavouritePlants() {
         console.error(`Plant option with ID ${plantId} not found.`);
     }
 }
+
 
 
 // Function to update the favourite plants of the user

@@ -38,6 +38,7 @@
 
                 </div>
                 <div class="modal-footer">
+                    <div id="error-message" style="color: red; display: none;"></div>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="button" id="plantSelectorModalSubmitButton" class="btn btn-primary">Submit</button>
                 </div>
@@ -80,6 +81,8 @@
             </div>
         </div>
     </div>
+
+
 
 
   <div class="card border-top-0">
@@ -162,9 +165,23 @@
               <h4>My Favourite Plants...</h4>
               <div class="ms-5 me-5">
                   <div class="d-flex flex-wrap flex-md-nowrap" id="favouritePlantsContainer">
+                      <!-- Render cards for favorite plants -->
+                      <div th:each="plant : ${favouritePlants}" class="card p-2 me-3 mb-3 border-0 rounded-3 d-flex shadow-sm public-profile-plant-card bg-primary-temp">
+                          <img th:src="@{'/plants/' + ${plant.id} + '/plant-image'}" class="mx-auto d-block pt-1" style="width: 100%; height: 80%; object-fit: cover" alt="plant image"/>
+                          <h5 class="pt-2 text-center" th:text="${plant.name}">Plant Name</h5>
+                          <input type="hidden" th:id="'selectedPlantId' + ${plant.id}" th:value="${plant.id}"/>
+                      </div>
+
+                      <!-- Render empty cards -->
+                      <div th:if="${favouritePlants.size() < 3}" th:each="i : ${#numbers.sequence(1, 3 - favouritePlants.size())}" class="card p-2 me-3 mb-3 border-0 rounded-3 shadow-sm public-profile-plant-card justify-content-center bg-primary-grey" th:id="'favouritePlantCard' + ${i}" th:onclick="'openPlantSelectorModal(' + ${i} + ')'">
+                          <img th:src="@{/icons/create-mustard-grey.svg}" alt="empty-favourite" width="50" height="50" class="mx-auto d-block"/>
+                          <h4 class="pt-2 ps-2 text-center"></h4>
+                          <input type="hidden" th:id="'selectedPlantId' + ${i}" value=""/>
+                      </div>
                   </div>
               </div>
           </div>
+
 
 
           <!-- Button Container with Adjusted Spacing -->
@@ -183,11 +200,6 @@
         updateFavouriteGarden();
     }
 
-    window.onload = function() {
-        const favouritePlantsData = document.getElementById('favouritePlantsData').getAttribute('data-favourite-plants');
-        const favouritePlants = JSON.parse(favouritePlantsData);
-        renderPlantCards(favouritePlants);
-    };
 
 
 
