@@ -90,6 +90,10 @@ public class GardenUser {
     @OneToMany(mappedBy = "favourite")
     private List<Plant> favouritePlants;
 
+    @PrimaryKeyJoinColumn
+    @OneToOne(mappedBy = "favouriteGarden", cascade = CascadeType.ALL)
+    private Garden favoriteGarden;
+
     /**
      * JPA required no-args constructor
      */
@@ -116,7 +120,7 @@ public class GardenUser {
     /**
      * Gets the authorities granted to the user
      *
-     * @return
+     * @return the authorities granted to the user
      */
     public List<GrantedAuthority> getAuthorities() {
         return List.of();
@@ -235,7 +239,7 @@ public class GardenUser {
     /**
      * Sets the password of the user
      *
-     * @param password
+     * @param password the password to set
      */
     public void setPassword(String password) {
         PasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -446,5 +450,12 @@ public class GardenUser {
      */
     public List<Plant> getFavouritePlants() {
         return favouritePlants;
+    }
+
+    public Garden getFavoriteGarden() {return favoriteGarden;}
+
+    public void setFavoriteGarden(Garden garden) {
+        this.favoriteGarden = garden;
+        garden.setFavouriteGarden(this);
     }
 }

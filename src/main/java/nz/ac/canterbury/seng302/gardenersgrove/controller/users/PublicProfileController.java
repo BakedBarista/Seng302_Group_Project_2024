@@ -34,9 +34,14 @@ public class PublicProfileController {
     private final ProfanityService profanityService;
     private final PlantService plantService;
 
+
     private static final String DEFAULT_PROFILE_BANNER_URL = "/img/default-banner.svg";
+
+    private static final String DEFAULT_GARDEN_IMAGE_URL = "/img/default-garden.svg";
     
     private static final String USER_ID_ATTRIBUTE = "userId";
+
+    private  static  final  String FAVOURITE_GARDEN = "favouriteGarden";
 
     private static final String DESCRIPTION = "description";
 
@@ -68,8 +73,30 @@ public class PublicProfileController {
         model.addAttribute("name", user.getFullName());
         model.addAttribute(DESCRIPTION, user.getDescription());
         model.addAttribute("favouritePlants", user.getFavouritePlants());
+        model.addAttribute(FAVOURITE_GARDEN, user.getFavoriteGarden());
+
 
         return "users/public-profile";
+    }
+
+    /**
+     * gets the current favourite garden picture
+     * @param id the id of the user
+     * @param request the request
+     * @return ResponseEntity with the garden image bytes or a redirect to a default garden image URL
+     */
+    @GetMapping("users/{id}/favourite-garden-image")
+    public ResponseEntity<byte[]> favouriteGardenImage(@PathVariable("id") Long id, HttpServletRequest request) {
+        if (logger.isInfoEnabled()) {
+            logger.info(String.format("GET /users/%d/favourite-garden-image", id));
+        }
+
+        GardenUser user = userService.getUserById(id);
+        if (user.getFavoriteGarden() == null || user.getFavoriteGarden().getGardenImage() == null) {
+            return ResponseEntity.status(302).header(HttpHeaders.LOCATION, request.getContextPath() + DEFAULT_GARDEN_IMAGE_URL).build();
+        }
+        return ResponseEntity.ok().contentType(MediaType.parseMediaType(user.getFavoriteGarden().getGardenImageContentType()))
+                .body(user.getFavoriteGarden().getGardenImage());
     }
 
     /**
@@ -96,6 +123,7 @@ public class PublicProfileController {
         model.addAttribute(USER_ID_ATTRIBUTE, id);
         model.addAttribute("currentUser", loggedInUserId);
         model.addAttribute("name", user.getFullName());
+        model.addAttribute(FAVOURITE_GARDEN, user.getFavoriteGarden());
         model.addAttribute(DESCRIPTION, user.getDescription());
 
         return "users/public-profile";
@@ -136,6 +164,7 @@ public class PublicProfileController {
         model.addAttribute("name", user.getFullName());
         editUserDTO.setDescription(user.getDescription());
         model.addAttribute("editUserDTO", editUserDTO);
+        model.addAttribute(FAVOURITE_GARDEN, user.getFavoriteGarden());
 
         return "users/edit-public-profile";
     }
@@ -265,5 +294,7 @@ public class PublicProfileController {
             throw new ProfanityDetectedException();
         }
     }
+
+
 
 }
