@@ -456,15 +456,31 @@ public class GardenUser {
         return favouritePlants;
     }
 
+    /**
+     * Gets the favourite garden of the user
+     * @return the favourite garden
+     */
     public Garden getFavoriteGarden() {return favoriteGarden;}
 
+    /**
+     * Sets the favourite garden of the user
+     * @param garden the garden to set as the favourite
+     */
     public void setFavoriteGarden(Garden garden) {
         this.favoriteGarden = garden;
         garden.setFavouriteGarden(this);
     }
 
+    /**
+     * Sets the favourite plants of this user
+     * @param favouritePlants list of favourite plants
+     */
     public void setFavouritePlants(Set<Plant> favouritePlants) {this.favouritePlants = favouritePlants;}
 
+    /**
+     * Add a plant to the user's favourite plants
+     * @param favouritePlant the plant to add
+     */
     public void addFavouritePlant(Plant favouritePlant) {
         favouritePlants.add(favouritePlant);
         favouritePlant.setFavourite(this);}

@@ -109,6 +109,7 @@ public abstract class BasePlant {
         this.garden = garden;
     }
 
+
     public GardenUser getFavourite() {return gardenUser; }
 
     public void setFavourite(GardenUser gardenUser) {this.gardenUser = gardenUser;}

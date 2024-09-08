@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
+/**
+ * Contoller that sets and gets  the favourite plants for the user
+ */
 @RestController
 public class FavouritePlantsController {
 
@@ -55,6 +58,12 @@ public class FavouritePlantsController {
         return ResponseEntity.ok(response);
 
     }
+
+    /**
+     * Gets all the favourite plants for the user
+     * @param request request
+     * @return response entity
+     */
     @Transactional
     @PutMapping("/users/edit-public-profile/favourite-plant")
     public ResponseEntity<String> updateFavouritePlants(@RequestBody Map<String, List<Long>> request) {

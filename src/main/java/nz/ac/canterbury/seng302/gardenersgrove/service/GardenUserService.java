@@ -235,11 +235,21 @@ public class GardenUserService {
         return new String(bytes);
     }
 
+    /**
+     * Get the favourite garden of the user
+     * @param userId user id
+     * @return garden garden
+     */
     public Garden getFavoriteGarden(Long userId) {
         Optional<GardenUser> user = gardenUserRepository.findById(userId);
         return user.map(GardenUser::getFavoriteGarden).orElse(null);
     }
 
+    /**
+     * Get the favourite plants of the user
+     * @param userId user id
+     * @return set of favourite plants
+     */
     public Set<Plant> getFavoritePlants(Long userId) {
         GardenUser user = gardenUserRepository.findById(userId)
                 .orElseThrow();
@@ -247,12 +257,13 @@ public class GardenUserService {
         return user.getFavouritePlants();
     }
 
+
+
     /**
      * Update the favourite plant
      * @param userId user id
      * @param plant plant
      */
-
     public void updateFavouritePlant(Long userId, Plant plant) {
         GardenUser user = getUserById(userId);
         if (user.getFavouritePlants().size() < 3) {
