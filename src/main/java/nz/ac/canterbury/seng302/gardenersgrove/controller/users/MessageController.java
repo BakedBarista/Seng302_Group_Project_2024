@@ -73,6 +73,14 @@ public class MessageController {
         logger.info("POST send message to {}", receiver);
 
         // add check for validation here
+        String messageContent = messageDTO.getMessage();
+        if (messageContent.isEmpty()) {
+            logger.info("Message is empty");
+            return "redirect:/users/message";
+        } else if (messageContent.length() > 160) {
+            logger.info("Message is too long");
+            return "redirect:/users/message";
+        }
 
         Long sender = (Long) authentication.getPrincipal();
         messageService.sendMessage(sender, receiver, messageDTO);
