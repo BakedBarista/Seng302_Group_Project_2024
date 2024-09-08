@@ -62,9 +62,15 @@ public class FavouriteGardenController  {
         long gardenId;
         try {
             Map<String, Object> map = mapper.readValue(id, Map.class);
-            gardenId = Long.parseLong(map.get("id").toString());
+            String gardenIdStr = map.get("id").toString();
+            if (gardenIdStr.isEmpty()) {
+                return ResponseEntity.badRequest().body("Garden ID cannot be empty");
+            }
+            gardenId = Long.parseLong(gardenIdStr);
         } catch (JsonProcessingException e) {
             return ResponseEntity.badRequest().body("Invalid json format");
+        } catch (NumberFormatException e) {
+            return ResponseEntity.badRequest().body("Invalid garden ID format");
         }
         Optional<Garden> garden = gardenService.getGardenById(gardenId);
         GardenUser currentUser = gardenUserService.getCurrentUser();
@@ -73,7 +79,6 @@ public class FavouriteGardenController  {
             gardenService.addFavouriteGarden(currentUser.getId(), existingGarden.getId());
             model.addAttribute("favouriteGarden", existingGarden);
         }
-
 
         return ResponseEntity.ok("Favourite Garden Updated");
     }

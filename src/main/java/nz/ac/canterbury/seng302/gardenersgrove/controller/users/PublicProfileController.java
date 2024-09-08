@@ -48,6 +48,8 @@ public class PublicProfileController {
 
     private static final String DESCRIPTION = "description";
 
+    private static final String FAVOURITE_PLANTS = "favouritePlants";
+
     private static final Set<String> ACCEPTED_FILE_TYPES = Set.of("image/jpeg", "image/jpg", "image/png", "image/svg");
 
     private static final int MAX_FILE_SIZE = 10 * 1024 * 1024;
@@ -78,7 +80,7 @@ public class PublicProfileController {
         model.addAttribute(FAVOURITE_GARDEN, user.getFavoriteGarden());
 
 
-        model.addAttribute("favouritePlants", favouritePlants);
+        model.addAttribute(FAVOURITE_PLANTS, favouritePlants);
 
         return "users/public-profile";
     }
@@ -131,7 +133,7 @@ public class PublicProfileController {
         model.addAttribute("name", user.getFullName());
         model.addAttribute(FAVOURITE_GARDEN, user.getFavoriteGarden());
         model.addAttribute(DESCRIPTION, user.getDescription());
-        model.addAttribute("favouritePlants",favouritePlants);
+        model.addAttribute(FAVOURITE_PLANTS, favouritePlants);
 
         return "users/public-profile";
     }
@@ -174,7 +176,7 @@ public class PublicProfileController {
 
 
         Set<Plant> favouritePlants = user.getFavouritePlants();
-        model.addAttribute("favouritePlants", favouritePlants);
+        model.addAttribute(FAVOURITE_PLANTS, favouritePlants);
         List<FavouritePlantDTO> favouritePlantDTOs = favouritePlants.stream()
                 .map(this::convertToFavouritePlantDTO)
                 .toList();

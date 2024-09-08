@@ -1,7 +1,14 @@
 let selectedCardId;
 let selectedPlantId;
 let selectedPlantName;
+let favouritePlants = [];
 let selectedPlants = [];
+
+window.onload = function() {
+    const favouritePlantsData = document.getElementById('favouritePlantsData').getAttribute('data-favourite-plants');
+    favouritePlants = JSON.parse(favouritePlantsData);
+
+};
 
 //Called when the user pushes a + on the plant card
 function openPlantSelectorModal(index) {
@@ -20,7 +27,8 @@ function openPlantSelectorModal(index) {
 
 // New function to handle the modal submit
 function handleModalSubmit() {
-    previewFavouritePlants();
+    previewFavouritePlants(favouritePlants);
+    console.log(favouritePlants);
 }
 
 // Functions for search and selecting plants on the modal
@@ -61,7 +69,6 @@ function showSearchResults() {
                         imageElement.style.marginRight = '10px';
 
                         plantOption.style.padding = '10px';
-                        plantOption.style.marginBottom = '10px'; // Add margin between results
                         plantOption.style.borderRadius = '5px';
                         plantOption.style.border = '1px solid #ccc';
                         plantOption.style.cursor = 'pointer';
@@ -104,73 +111,85 @@ function showSearchResults() {
 
 
 
-// Function to get the favourite plants of the user and preview them after the user has selected one from the modal
-function previewFavouritePlants() {
+// Helper function to check if the plant is already selected
+function isPlantAlreadySelected(plantId, selectedCard, favouritePlants) {
+    return (selectedPlants.includes(plantId) && selectedCard.querySelector('input[type="hidden"]').value != plantId) || favouritePlants.some(plant => plant.id === plantId);
+}
+
+// Helper function to update the card's appearance
+function updateCardAppearance(selectedCard, plantImage, plantName, plantId) {
+    selectedCard.className = 'card p-2 me-3 mb-3 border-0 rounded-3 d-flex shadow-sm public-profile-plant-card bg-primary-temp';
+
+    let imgElement = selectedCard.querySelector('img');
+    if (!imgElement) {
+        imgElement = document.createElement('img');
+        selectedCard.appendChild(imgElement);
+    }
+    imgElement.src = plantImage;
+    imgElement.alt = 'plant image';
+    imgElement.className = 'mx-auto d-block pt-1';
+    imgElement.style = 'width: 100%; height: 80%; object-fit: cover';
+
+    let plantNameElement = selectedCard.querySelector('h4');
+    if (!plantNameElement) {
+        plantNameElement = document.createElement('h4');
+        selectedCard.appendChild(plantNameElement);
+    }
+    plantNameElement.className = 'text-center pt-2';
+    plantNameElement.textContent = plantName;
+
+    const hiddenInput = selectedCard.querySelector('input[type="hidden"]');
+    hiddenInput.value = plantId;
+}
+
+// Helper function to handle errors
+function showError(message) {
+    const errorMessage = document.getElementById('error-message');
+    errorMessage.textContent = message;
+    errorMessage.style.display = 'block';
+}
+
+function previewFavouritePlants(favouritePlants) {
     const plantId = selectedPlantId;
     const selectedOption = document.querySelector("#searchPlantResults .plant-option[data-id='" + plantId + "']");
 
-    if (selectedOption) {
-        const selectedCard = document.getElementById(selectedCardId);
-
-        // Check if the plant is already selected and the selected card is not the current one
-        if (selectedPlants.includes(plantId) && selectedCard.querySelector('input[type="hidden"]').value != plantId) {
-            const errorMessage = document.getElementById('error-message');
-            errorMessage.textContent = 'This plant has already been selected. Please choose a different one.';
-            errorMessage.style.display = 'block';
-            return; // Prevent the modal from closing
-        }
-
-        const plantName = selectedOption.getAttribute('data-name');
-        const plantImage = selectedOption.querySelector('img').src;
-
-        if (selectedCard) {
-            // Remove the old plantId from selectedPlants (in case the user is changing the plant for the same card)
-            const previousPlantId = selectedCard.querySelector('input[type="hidden"]').value;
-            const previousPlantIndex = selectedPlants.indexOf(previousPlantId);
-            if (previousPlantIndex > -1) {
-                selectedPlants.splice(previousPlantIndex, 1);
-            }
-
-            // Update the card's appearance
-            selectedCard.className = 'card p-2 me-3 mb-3 border-0 rounded-3 d-flex shadow-sm public-profile-plant-card bg-primary-temp';
-
-            let imgElement = selectedCard.querySelector('img');
-            if (!imgElement) {
-                imgElement = document.createElement('img');
-                selectedCard.appendChild(imgElement);
-            }
-            imgElement.src = plantImage;
-            imgElement.alt = 'plant image';
-            imgElement.className = 'mx-auto d-block pt-1';
-            imgElement.style = 'width: 100%; height: 80%; object-fit: cover';
-
-            let plantNameElement = selectedCard.querySelector('h4');
-            if (!plantNameElement) {
-                plantNameElement = document.createElement('h4');
-                selectedCard.appendChild(plantNameElement);
-            }
-            plantNameElement.className = 'text-center pt-2';
-            plantNameElement.textContent = plantName;
-
-            const hiddenInput = selectedCard.querySelector('input[type="hidden"]');
-            hiddenInput.value = plantId;
-
-            // Add the new plantId to selectedPlants
-            selectedPlants.push(plantId);
-
-            // Hide the error message since plant was successfully added
-            const errorMessage = document.getElementById('error-message');
-            errorMessage.style.display = 'none';
-
-            // Hide the modal
-            const modal = bootstrap.Modal.getInstance(document.getElementById("plantSelectorModal"));
-            modal.hide();
-        } else {
-            console.error(`Element with ID ${selectedCardId} not found.`);
-        }
-    } else {
+    if (!selectedOption) {
         console.error(`Plant option with ID ${plantId} not found.`);
+        return;
     }
+
+    const selectedCard = document.getElementById(selectedCardId);
+    if (!selectedCard) {
+        console.error(`Element with ID ${selectedCardId} not found.`);
+        return;
+    }
+
+    if (isPlantAlreadySelected(plantId, selectedCard, favouritePlants)) {
+        showError('This plant has already been selected. Please choose a different one.');
+        return;
+    }
+
+    const plantName = selectedOption.getAttribute('data-name');
+    const plantImage = selectedOption.querySelector('img').src;
+
+    // Remove the old plantId from selectedPlants (in case the user is changing the plant for the same card)
+    const previousPlantId = selectedCard.querySelector('input[type="hidden"]').value;
+    const previousPlantIndex = selectedPlants.indexOf(previousPlantId);
+    if (previousPlantIndex > -1) {
+        selectedPlants.splice(previousPlantIndex, 1);
+    }
+
+    updateCardAppearance(selectedCard, plantImage, plantName, plantId);
+
+    // Add the new plantId to selectedPlants
+    selectedPlants.push(plantId);
+
+    // Hide the error message since plant was successfully added
+    showError('');
+
+    // Hide the modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById("plantSelectorModal"));
+    modal.hide();
 }
 
 
@@ -182,7 +201,6 @@ function updateFavouritePlants() {
         document.getElementById('selectedPlantId2')?.value,
         document.getElementById('selectedPlantId3')?.value
     ].filter(id => id);
-
 
     fetch(`${baseUrl}users/edit-public-profile/favourite-plant`, {
         method: 'PUT',
