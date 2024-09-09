@@ -50,7 +50,7 @@
             <div class="d-flex align-items-center">
                 <img class="rounded-circle overflow-hidden border border-dark me-2"
                 th:src="@{'/users/' + ${sentToUser.id} + '/profile-picture'}" style="width: 50px; height: 50px;" alt="profile picture">
-                <h5 class="mb-0" th:text="${sentToUser.fname} + ' ' + ${sentToUser.lname}"></h5>
+                <h5 class="mb-0" th:text="${sentToUser.fname} + ' ' + (${sentToUser.lname} != null ? ${sentToUser.lname} : '')"></h5>
             </div>
             <hr>
             <div id="scrollbar" class="messages mt-3 p-3">
