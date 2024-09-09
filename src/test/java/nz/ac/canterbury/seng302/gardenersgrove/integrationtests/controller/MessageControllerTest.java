@@ -17,11 +17,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 
 import java.time.LocalDate;
 import java.util.List;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @SuppressWarnings("SpringJavaInjectionsPointsAutowiringInspection")
 @SpringBootTest
@@ -71,10 +73,12 @@ class MessageControllerTest {
     void givenHaveFriend_whenSendAMessageToFriend_thenSaveMessageBetweenFriendAndMyself() {
         String message = "Hello";
         MessageDTO messageDTO = new MessageDTO(message);
+        BindingResult bindingResult = mock(BindingResult.class);
 
         Mockito.when(authentication.getPrincipal()).thenReturn(sender.getId());
+        when(bindingResult.hasErrors()).thenReturn(false);
 
-        String redirect = messageController.sendMessage(receiver.getId(), messageDTO, authentication, model);
+        String redirect = messageController.sendMessage(receiver.getId(), messageDTO, bindingResult, authentication, model);
         List<Message> savedMessages = messageRepository.findMessagesBetweenUsers(sender.getId(), receiver.getId());
 
         // verify return and model

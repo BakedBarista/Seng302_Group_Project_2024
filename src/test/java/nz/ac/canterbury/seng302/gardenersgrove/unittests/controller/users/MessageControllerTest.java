@@ -14,6 +14,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -31,12 +32,16 @@ class MessageControllerTest {
     private static MessageService mockedMessageService;
 
     private static Authentication authentication;
+    private static BindingResult bindingResult;
+
 
     @BeforeEach
     public void setup() {
         gardenUserService = mock(GardenUserService.class);
         mockedFriendService = mock(FriendService.class);
         mockedMessageService = mock(MessageService.class);
+        bindingResult = mock(BindingResult.class);
+
         messageController = new MessageController(gardenUserService, mockedFriendService, mockedMessageService);
 
         model = mock(Model.class);
@@ -62,8 +67,9 @@ class MessageControllerTest {
         Mockito.when(authentication.getPrincipal()).thenReturn(sender);
         Mockito.when(mockedFriendService.getFriendship(any(), any())).thenReturn(new Friends());
         Mockito.when(gardenUserService.getUserById(sender)).thenReturn(new GardenUser());
+        Mockito.when(bindingResult.hasErrors()).thenReturn(false);
 
-        String result = messageController.sendMessage(receiver, messageDTO, authentication,  model);
+        String result = messageController.sendMessage(receiver, messageDTO, bindingResult, authentication,  model);
         Assertions.assertEquals("users/message", result);
     }
 
@@ -76,8 +82,9 @@ class MessageControllerTest {
         Mockito.when(authentication.getPrincipal()).thenReturn(sender);
         Mockito.when(mockedFriendService.getFriendship(any(), any())).thenReturn(new Friends());
         Mockito.when(gardenUserService.getUserById(sender)).thenReturn(new GardenUser());
+        Mockito.when(bindingResult.hasErrors()).thenReturn(false);
 
-        messageController.sendMessage(receiver, messageDTO, authentication,  model);
+        messageController.sendMessage(receiver, messageDTO, bindingResult, authentication,  model);
         Mockito.verify(mockedMessageService).sendMessage(sender, receiver, messageDTO);
     }
 }
