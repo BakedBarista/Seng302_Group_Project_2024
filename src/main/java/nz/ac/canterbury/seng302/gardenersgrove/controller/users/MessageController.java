@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -53,7 +54,9 @@ public class MessageController {
             return "redirect:/users/manage-friends";
         }
 
+        model.addAttribute("messageDTO", new MessageDTO(""));
         model.addAttribute("sentToUser", sentToUser);
+
         return "users/message";
     }
 
@@ -68,19 +71,35 @@ public class MessageController {
     public String sendMessage(
             @PathVariable("id") Long receiver,
             @Valid @ModelAttribute("messageDTO") MessageDTO messageDTO,
+            BindingResult bindingResult,
             Authentication authentication,
             Model model) {
         logger.info("POST send message to {}", receiver);
 
         // add check for validation here
-        String messageContent = messageDTO.getMessage();
-        if (messageContent.isEmpty()) {
-            logger.info("Message is empty");
-            return "redirect:/users/message";
-        } else if (messageContent.length() > 160) {
-            logger.info("Message is too long");
-            return "redirect:/users/message";
+//        String messageContent = messageDTO.getMessage();
+//        logger.info("Message: {}", messageContent);
+//        if (messageContent == null) {
+//            bindingResult.rejectValue("message", null, "empty message");
+//            logger.info("Message is empty");
+//        } else if (messageContent.length() > 160) {
+//            logger.info("Message is too long");
+//        }
+
+
+
+
+        if (bindingResult.hasErrors()) {
+            logger.info("Binding result has errors");
+            logger.info("Receiver is {}", receiver);
+            model.addAttribute("messageDTO", messageDTO);
+
+            GardenUser sentToUser = userService.getUserById(receiver);
+            model.addAttribute("sentToUser", sentToUser);
+
+            return "users/message";
         }
+
 
         Long sender = (Long) authentication.getPrincipal();
         messageService.sendMessage(sender, receiver, messageDTO);
