@@ -138,4 +138,19 @@ public class U800MessageFeature {
         // Don't test timestamp as tested in unit and integration
     }
 
+
+
+    @When("I have an empty message {string}")
+    public void iHaveAnEmptyMessageMessage(String message) {
+        Mockito.when(authentication.getPrincipal()).thenReturn(myId);
+        messageDTO = new MessageDTO(message);
+
+//        Mockito.when(bindingResult.hasErrors()).thenReturn(true);
+    }
+
+
+    @Then("The message is not sent.")
+    public void the_message_is_not_sent() {
+        Message message = messageRepository.findMessagesBetweenUsers(myId, receiverId).get(0);
+    }
 }
