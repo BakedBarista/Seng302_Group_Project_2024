@@ -258,9 +258,12 @@ class GardenUserServiceTest {
         Plant newPlant = new Plant("Lettuce", "4", null, null);
         newPlant.setId(4L);
 
+        Set<Plant> newSet = new HashSet<>();
+        newSet.add(newPlant);
+
         Mockito.when(mockRepository.findById(1L)).thenReturn(Optional.of(testUser1));
 
-        gardenUserService.updateFavouritePlant(1L, newPlant);
+        gardenUserService.updateFavouritePlant(1L, newSet);
 
         assertTrue(testUser1.getFavouritePlants().contains(newPlant));
         assertEquals(3, testUser1.getFavouritePlants().size());

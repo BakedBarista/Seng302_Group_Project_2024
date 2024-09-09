@@ -83,10 +83,12 @@ class FavouritePlantsControllerUnitTests {
         Map<String, List<Long>> request = new HashMap<>();
         request.put("ids", Collections.singletonList(1L));
 
+        Set<Plant> newSet = new HashSet<>();
+        newSet.add(plant);
         ResponseEntity<String> response = favouritePlantsController.updateFavouritePlants(request);
 
         assertEquals(200, response.getStatusCodeValue());
-        verify(userService, times(1)).updateFavouritePlant(1L, plant);
+        verify(userService, times(1)).updateFavouritePlant(1L, newSet);
     }
 
     @Test
