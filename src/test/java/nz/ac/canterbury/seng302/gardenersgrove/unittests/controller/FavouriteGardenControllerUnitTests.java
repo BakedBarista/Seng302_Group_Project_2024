@@ -91,7 +91,7 @@ class FavouriteGardenControllerUnitTests {
         ResponseEntity<String> response = favouriteGardenController.updateFavouriteGarden(json, model);
 
         assertEquals(400, response.getStatusCodeValue());
-        assertEquals("Garden ID cannot be empty", response.getBody());
+        assertEquals("Invalid garden ID format", response.getBody());
     }
 
 

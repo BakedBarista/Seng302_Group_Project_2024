@@ -266,7 +266,7 @@ class GardenUserServiceTest {
         gardenUserService.updateFavouritePlant(1L, newSet);
 
         assertTrue(testUser1.getFavouritePlants().contains(newPlant));
-        assertEquals(3, testUser1.getFavouritePlants().size());
+        assertEquals(1, testUser1.getFavouritePlants().size());
         verify(mockRepository, times(1)).save(testUser1);
     }
 

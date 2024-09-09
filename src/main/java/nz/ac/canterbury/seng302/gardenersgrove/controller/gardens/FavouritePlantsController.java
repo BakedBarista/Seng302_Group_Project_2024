@@ -84,7 +84,9 @@ public class FavouritePlantsController {
                 }
             }
 
-            userService.updateFavouritePlant(userId, plantsSet);
+            if (!plantsSet.isEmpty()) {
+                userService.updateFavouritePlant(userService.getCurrentUser().getId(), plantsSet);
+            }
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             logger.error(String.format("ERROR HERE: %s", e.getMessage()));
