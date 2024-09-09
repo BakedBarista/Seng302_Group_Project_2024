@@ -53,6 +53,7 @@ public class U800MessageFeature {
     public static void setup() {
         authentication = mock(Authentication.class);
         model = mock(Model.class);
+        bindingResult = mock(BindingResult.class);
         user.setId(1L);
     }
 
@@ -125,6 +126,7 @@ public class U800MessageFeature {
     @When("I press Send")
     public void i_press_send() {
         Mockito.when(authentication.getPrincipal()).thenReturn(myId);
+        Mockito.when(bindingResult.hasErrors()).thenReturn(false);
         result = messageController.sendMessage(receiverId, messageDTO, bindingResult, authentication, model);
     }
     @Then("The message is sent to that friend.")
