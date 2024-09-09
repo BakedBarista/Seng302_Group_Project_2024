@@ -38,8 +38,7 @@ class FavouritePlantsControllerUnitTests {
 
     @BeforeEach
     void setUp() {
-        GardenUser mockUser = new GardenUser();
-        mockUser.setId(1L);
+
         plant = new Plant();
         plant.setId(1L);
         plant.setName("Rose");
@@ -48,7 +47,6 @@ class FavouritePlantsControllerUnitTests {
        Garden mockGardens =new Garden("Rose Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"test description", 100.0, null, null);
         plant.setGarden(mockGardens);
 
-        when(userService.getCurrentUser()).thenReturn(mockUser);
 
 
 
@@ -79,6 +77,9 @@ class FavouritePlantsControllerUnitTests {
     @Test
     void testUpdateFavouritePlantsWithValidIds() {
         when(plantService.getPlantById(1L)).thenReturn(Optional.of(plant));
+        GardenUser mockUser = new GardenUser();
+        mockUser.setId(1L);
+        when(userService.getCurrentUser()).thenReturn(mockUser);
 
         Map<String, List<Long>> request = new HashMap<>();
         request.put("ids", Collections.singletonList(1L));
