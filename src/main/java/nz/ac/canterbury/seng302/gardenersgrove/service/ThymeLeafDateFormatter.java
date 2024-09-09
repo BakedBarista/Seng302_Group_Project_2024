@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
@@ -24,6 +25,21 @@ public class ThymeLeafDateFormatter {
      * @return the date as a formatted string or "-" if the date is null
      */
     public String format(LocalDate date, DateTimeFormatter formatter) {
+        if (date != null) {
+            return date.format(formatter);
+        } else {
+            return DEFAULT_RESPONSE;
+        }
+    }
+
+    /**
+     * Formats the LocalDateTime into a String using a given DateTimeFormatter object, this is primarily used by Thymeleaf
+     * because Thymeleaf cannot handle this itself (in some circumstances)
+     * @param date LocalDateTime to format
+     * @param formatter formatter provided
+     * @return the date as a formatted string or "-" if the date is null
+     */
+    public String format(LocalDateTime date, DateTimeFormatter formatter) {
         if (date != null) {
             return date.format(formatter);
         } else {

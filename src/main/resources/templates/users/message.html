@@ -8,18 +8,36 @@
     <!-- This needs to be here for Bootstrap and general CSS imports -->
     <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
     <style>
-        /* This subtracts the height of the navbar on mobile screens to account for height */
+        /* For small screens */
         @media (max-width: 767.98px) {
             main, body {
-                height: calc(100vh - 91px);
+                height: 80vh;
+                overflow: hidden;
+            }
+            .messages {
+                height: 60vh;
+                overflow: auto;
             }
         }
-
         /* For screens larger than mobile */
         @media (min-width: 768px) {
             main, body {
                 height: 100vh;
+                overflow: hidden;
             }
+            .messages {
+                height: 70vh;
+                overflow-y: auto;
+
+            }
+        }
+
+        /* Ensure textarea and send button stay at the bottom */
+        .send-message-container {
+            position: sticky;
+            bottom: 0;
+            background-color: white;
+            z-index: 1000;
         }
     </style>
 </head>
@@ -35,27 +53,93 @@
                 <h5 class="mb-0" th:text="${sentToUser.fname} + ' ' + ${sentToUser.lname}"></h5>
             </div>
             <hr>
-            <div class="messages mt-3">
-                <!-- message will be displayed here -->
-                <p>messages here</p>
+            <div id="scrollbar" class="messages mt-3 p-3">
+                <div th:each="messages: ${messagesMap}">
+                    <div class="text-center mb-2">[[${dateFormatter.format(messages.key, DATE_FORMAT)}]]</div>
+                    <div th:each="message : ${messages.value}">
+                        <!--friends msg-->
+                        <div th:if="${message.sender == sentToUser.id}" class="d-flex">
+                            <!--large screen-->
+                            <div class="card text-white bg-secondary shadow-sm mb-3 border-0 d-none d-md-block" style="max-width: 40%">
+                                <div class="card-body">
+                                    <small>[[${dateFormatter.format(message.timestamp, TIMESTAMP_FORMAT)}]]</small>
+                                    <p class="card-text mt-2">[[${message.messageContent}]]</p>
+                                </div>
+                            </div>
+
+                            <!--small screen-->
+                            <div class="card text-white bg-secondary shadow-sm mb-3 border-0 d-block d-md-none" style="max-width: 80%">
+                                <div class="card-body">
+                                    <small>[[${dateFormatter.format(message.timestamp, TIMESTAMP_FORMAT)}]]</small>
+                                    <p class="card-text mt-2">[[${message.messageContent}]]</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!--logged in users msg-->
+                        <div th:if="${message.receiver == sentToUser.id}" class="d-flex justify-content-end">
+                            <div class="card text-white bg-primary shadow-sm mb-3 border-0 d-none d-md-block" style="max-width: 40%">
+                                <div class="card-body">
+                                    <small>[[${dateFormatter.format(message.timestamp, TIMESTAMP_FORMAT)}]]</small>
+                                    <p class="card-text mt-2">[[${message.messageContent}]]</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div th:if="${message.receiver == sentToUser.id}" class="d-flex justify-content-end">
+                            <div class="card text-white bg-primary shadow-sm mb-3 border-0 d-block d-md-none" style="max-width: 80%">
+                                <div class="card-body">
+                                    <small>[[${dateFormatter.format(message.timestamp, TIMESTAMP_FORMAT)}]]</small>
+                                    <p class="card-text mt-2">[[${message.messageContent}]]</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
 
             <!-- message and send message box-->
-            <div class="container-fluid position-absolute bg-light bottom-0 start-0 end-0 py-3">
-                <form th:action="@{/users/{id}/send-message(id=${sentToUser.id})}" method="post" th:object="${messageDTO}">
+            <div class="send-message-container">
+                <form th:action="@{/users/message(id=${sentToUser.id})}" method="post" th:object="${messageDTO}">
+                    <input type="hidden" name="submissionToken" th:value="${submissionToken}" />
                     <div class="d-flex gap-2">
                         <label for="message"></label>
-                        <textarea id="message" th:name="message" class="form-control flex-grow-1" style="resize: none;"  placeholder="Message here..." autofocus></textarea>
+                        <textarea id="message"
+                                  th:name="message"
+                                  class="form-control flex-grow-1"
+                                  style="resize: none;"
+                                  placeholder="Enter message here..."
+                                  autofocus></textarea><!-- Do not new line this -->
                         <button type="submit" class="btn btn-primary px-4 py-0">
                             <img th:src="@{/icons/sent-stroke-rounded.svg}" alt="Send">
                         </button>
                     </div>
                 </form>
+                <span class="d-sm-block p-3"></span>
             </div>
-
         </div>
     </main>
     <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const textarea = document.getElementById("message");
+
+            textarea.addEventListener("keydown", function(event) {
+                if (event.key === "Enter" && !event.shiftKey) {
+                    event.preventDefault();
+                    this.form.submit();
+                }
+            });
+        });
+
+        const scrollToBottom = (element) => {
+            element.scrollTop = element.scrollHeight;
+        }
+
+        window.addEventListener('load', function() {
+            const scrollbar = document.getElementById('scrollbar');
+            scrollToBottom(scrollbar);
+        });
+    </script>
 </body>
 </html>
