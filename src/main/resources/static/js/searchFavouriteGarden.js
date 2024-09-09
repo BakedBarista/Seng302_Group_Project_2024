@@ -80,13 +80,17 @@ function previewFavouriteGarden() {
         console.log("No garden selected.");
     }
 }
-document.getElementById('editPublicProfileForm').addEventListener('submit', function(event) {
-    event.preventDefault();
-    updateFavouriteGarden();
-});
+
 
 function updateFavouriteGarden() {
     const gardenId = document.getElementById('selectedGardenId').value;
+
+    if(!gardenId) {
+
+        document.getElementById("editPublicProfileForm").submit();
+        return;
+
+    }
 
 
     fetch(`${baseUrl}users/edit-public-profile/favourite-garden`, {

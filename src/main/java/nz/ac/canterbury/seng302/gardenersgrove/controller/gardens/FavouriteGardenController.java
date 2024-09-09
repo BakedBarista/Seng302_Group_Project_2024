@@ -63,9 +63,6 @@ public class FavouriteGardenController  {
         try {
             Map<String, Object> map = mapper.readValue(id, Map.class);
             String gardenIdStr = map.get("id").toString();
-            if (gardenIdStr.isEmpty()) {
-                return ResponseEntity.badRequest().body("Garden ID cannot be empty");
-            }
             gardenId = Long.parseLong(gardenIdStr);
         } catch (JsonProcessingException e) {
             return ResponseEntity.badRequest().body("Invalid json format");

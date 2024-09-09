@@ -475,7 +475,12 @@ public class GardenUser {
      * Sets the favourite plants of this user
      * @param favouritePlants list of favourite plants
      */
-    public void setFavouritePlants(Set<Plant> favouritePlants) {this.favouritePlants = favouritePlants;}
+    public void setFavouritePlants(Set<Plant> favouritePlants) {
+        this.favouritePlants = favouritePlants;
+        for(Plant plant : favouritePlants) {
+            plant.setFavourite(this);
+        }
+    }
 
     /**
      * Add a plant to the user's favourite plants

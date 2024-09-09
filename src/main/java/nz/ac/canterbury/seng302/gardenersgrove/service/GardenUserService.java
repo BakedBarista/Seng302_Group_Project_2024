@@ -264,10 +264,10 @@ public class GardenUserService {
      * @param userId user id
      * @param plant plant
      */
-    public void updateFavouritePlant(Long userId, Plant plant) {
+    public void updateFavouritePlant(Long userId, Set<Plant> plants) {
         GardenUser user = getUserById(userId);
         if (user.getFavouritePlants().size() < 3) {
-            user.addFavouritePlant(plant);
+            user.setFavouritePlants(plants);
             gardenUserRepository.save(user);
         } else {
             throw new IllegalStateException("Cannot have more than 3 favourite plants");
