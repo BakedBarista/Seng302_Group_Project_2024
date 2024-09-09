@@ -128,7 +128,6 @@ public class MessageController {
 
     /**
      * Method to return the message page
-     * @param requestedUserId friend's id to send message to
      * @param model may not need one
      * @return message page
      */
@@ -207,7 +206,6 @@ public String messageHome(@RequestParam("userId") Long userId,
         if (chat.getSender().equals(userId) || chat.getReceiver().equals(userId)) {
             GardenUser requestedUser = userService.getUserById(userId);
             recentChats.put(requestedUser, chat.getMessageContent());
-            break; // Exit loop once the relevant chat is found
         }
     }
 
