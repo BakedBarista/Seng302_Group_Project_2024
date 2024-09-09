@@ -10,7 +10,7 @@
     <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
     <style>
         /* This subtracts the height of the navbar on mobile screens to account for height */
-        @media (max-width: 767.98px) {
+        @media (max-width: 1000px) {
             #messageWindow {
                 display: none;
             }
@@ -24,17 +24,21 @@
         }
 
         /* For screens larger than mobile */
-        @media (min-width: 768px) {
-
+        @media (min-width: 1000px) {
             #friendChatBar {
-                width: 25vw;
+                width: 300px;
+                flex: none;
             }
 
-            main,
-            body {
+            main {
+                width: calc(100vw - 300px);
+            }
+
+            main, body {
                 height: 100vh;
             }
         }
+
 
         /* Make messages container scrollable */
         .messages {
@@ -61,7 +65,7 @@
 <body class="">
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 <div class="container-fluid d-flex h-100 p-0">
-    <div class="sidebar bg-light border-end d-md-block" id="friendChatBar">
+    <div class="sidebar bg-light border-end" id="friendChatBar">
         <div class="p-3 border-bottom">
             <h5>Recent Chats</h5>
         </div>
@@ -75,7 +79,7 @@
                                 <img class="rounded-circle border border-dark"
                                      th:src="@{'/users/' + ${chat.key.id} + '/profile-picture'}"
                                      style="width: 50px; height: 50px;" alt="profile picture">
-                                <div class="m-3">
+                                <div class="m-3 text-start">
                                     <h6 th:text="${chat.key.fname} + ' ' + ${chat.key.lname}"></h6>
                                     <p th:text="${chat.value}" th:title="${chat.value}"></p>
                                 </div>
@@ -90,7 +94,7 @@
     <main class="flex-grow-1 d-flex flex-column position-relative h-100 px-lg-4">
         <div class="mt-4" id="messageWindow">
             <div class="d-flex align-items-center justify-content-around">
-                <button type="button" id="backButton" class="btn btn-secondary d-md-none"><</button>
+                <button type="button" id="backButton" class="btn btn-secondary"><</button>
                 <h5 class="mb-0" th:text="${sentToUser.fname} + ' ' + ${sentToUser.lname}"></h5>
                 <img class="rounded-circle overflow-hidden border border-dark me-2"
                      th:src="@{'/users/' + ${sentToUser.id} + '/profile-picture'}" style="width: 50px; height: 50px;"
@@ -150,55 +154,50 @@
                 this.form.submit();
             }
         });
-    });
 
-    const scrollToBottom = (element) => {
-        element.scrollTop = element.scrollHeight;
-    }
+        const scrollToBottom = (element) => {
+            element.scrollTop = element.scrollHeight;
+        };
 
-    window.addEventListener('load', function () {
         const scrollbar = document.getElementById('scrollbar');
         scrollToBottom(scrollbar);
-    });
 
-    const activeChatId = '[[${activeChat}]]';
-
-    if (activeChatId) {
+        const activeChatId = '[[${activeChat}]]';
         const activeChatDiv = document.getElementById(activeChatId);
+
         if (activeChatDiv) {
             activeChatDiv.classList.add('active-chat');
-        } else {
-            activeChatDiv.classList.remove('active-chat');
         }
-    }
 
-    const chatButtons = document.querySelectorAll('.open-chat');
-    const messageWindow = document.getElementById('messageWindow');
-    const friendChatBar = document.getElementById('friendChatBar');
-    const backButton = document.getElementById('backButton');
+        const chatButtons = document.querySelectorAll('.open-chat');
+        const messageWindow = document.getElementById('messageWindow');
+        const friendChatBar = document.getElementById('friendChatBar');
+        const backButton = document.getElementById('backButton');
 
-    function handleChatToggle() {
-        if (window.innerWidth < 768) {
-            chatButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    friendChatBar.style.display = 'none';
-                    messageWindow.style.display = 'block';
+        function handleChatToggle() {
+            if (window.innerWidth < 1000) {  // Adjusted from 768px to 1000px to match your media query
+                chatButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        friendChatBar.style.display = 'none';
+                        messageWindow.style.display = 'block';
+                    });
                 });
-            });
 
-            backButton.addEventListener('click', () => {
-                messageWindow.style.display = 'none';
+                backButton.addEventListener('click', () => {
+                    messageWindow.style.display = 'none';
+                    friendChatBar.style.display = 'block';
+                });
+            } else {
+                messageWindow.style.display = 'block';
                 friendChatBar.style.display = 'block';
-            });
-        } else {
-            // Reset view if screen width is greater than or equal to 768
-            messageWindow.style.display = 'block';
-            friendChatBar.style.display = 'block';
+                backButton.style.display = 'none';
+            }
         }
-    }
-    handleChatToggle();
 
-    window.addEventListener('resize', handleChatToggle);
+        handleChatToggle();  // Execute on page load
+
+        window.addEventListener('resize', handleChatToggle);  // Re-apply on resize
+    });
 
 </script>
 </body>
