@@ -57,6 +57,7 @@ function showSearchResults() {
 
                     response.forEach(plant => {
                         const plantOption = document.createElement('div');
+                        plantOption.style.marginBottom = '5px';
                         plantOption.classList.add('plant-option');
                         plantOption.setAttribute('data-id', plant.id);
                         plantOption.setAttribute('data-name', plant.name);
@@ -107,13 +108,36 @@ function showSearchResults() {
     });
 }
 
-
-
-
-
 // Helper function to check if the plant is already selected
 function isPlantAlreadySelected(plantId, selectedCard, favouritePlants) {
-    return (selectedPlants.includes(plantId) && selectedCard.querySelector('input[type="hidden"]').value != plantId) || favouritePlants.some(plant => plant.id === plantId);
+    return (selectedPlants.includes(plantId) && selectedCard.querySelector('input[type="hidden"]').value != plantId)
+        || favouritePlants.some(plant => plant.id === plantId);
+}
+
+// Function to add delete button to the card
+function addDeleteButton(selectedCard) {
+    const span = document.createElement('span');
+
+    const button = document.createElement('a');
+    button.className = 'btn-change position-absolute bg-danger top-0 end-0 m-1 p-1 d-flex ' +
+        'align-content-center justify-content-center rounded-3';
+
+    const img = document.createElement('img');
+    img.src = '../icons/delete.svg';
+    img.alt = 'delete';
+    img.width = 17;
+    img.height = 17;
+
+    button.appendChild(img);
+
+    button.onclick = function() {
+        deleteFavouritePlant(selectedCard).then();
+        return false;
+    };
+
+    span.appendChild(button);
+
+    selectedCard.appendChild(span);
 }
 
 // Helper function to update the card's appearance
@@ -130,6 +154,9 @@ function updateCardAppearance(selectedCard, plantImage, plantName, plantId) {
     imgElement.className = 'mx-auto d-block pt-1';
     imgElement.style = 'width: 100%; height: 80%; object-fit: cover';
 
+    // Add the delete button
+    addDeleteButton(selectedCard);
+
     let plantNameElement = selectedCard.querySelector('h4');
     if (!plantNameElement) {
         plantNameElement = document.createElement('h4');
@@ -140,6 +167,14 @@ function updateCardAppearance(selectedCard, plantImage, plantName, plantId) {
 
     const hiddenInput = selectedCard.querySelector('input[type="hidden"]');
     hiddenInput.value = plantId;
+}
+
+function clearCardAppearance(selectedCard) {
+    selectedCard.className = 'card p-2 me-3 mb-3 border-0 rounded-3 shadow-sm public-profile-plant-card ' +
+        'justify-content-center card-wiggle bg-primary-grey';
+
+    const hiddenInput = selectedCard.querySelector('input[type="hidden"]');
+    hiddenInput.value = -1;
 }
 
 // Helper function to handle errors
@@ -234,3 +269,10 @@ function updateFavouritePlants() {
         console.log(error);
     });
 }
+
+const deleteFavouritePlant = (selectedCardId) => {
+    let id = "selectedCardId" + selectedCardId.toString()
+    console.log(id)
+    let selectedCard = document.getElementById(id)
+    clearCardAppearance(selectedCard)
+};
