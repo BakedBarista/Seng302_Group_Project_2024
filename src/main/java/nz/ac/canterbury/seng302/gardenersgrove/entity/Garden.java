@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
 import org.slf4j.Logger;
@@ -24,6 +25,7 @@ public class Garden extends BaseGarden {
     @Column
     private boolean wateringRecommendation;
 
+    @JsonIgnore
     @OneToOne(mappedBy = "garden", cascade = CascadeType.ALL, orphanRemoval = true)
     private GardenWeather gardenWeather;
 

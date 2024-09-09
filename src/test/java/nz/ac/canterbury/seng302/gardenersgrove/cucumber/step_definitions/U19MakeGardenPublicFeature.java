@@ -8,10 +8,7 @@ import io.cucumber.java.en.When;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.GardenController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.FriendsRepository;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.TagRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weather.GardenWeatherService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weather.WeatherAPIService;
@@ -30,6 +27,7 @@ public class U19MakeGardenPublicFeature {
     private static TagRepository tagRepository;
     private static PlantRepository plantRepository;
     private static GardenRepository gardenRepository;
+    private static GardenUserRepository gardenUserRepository;
 
     private static GardenService gardenService;
     private static PlantService plantService;
@@ -48,6 +46,7 @@ public class U19MakeGardenPublicFeature {
 
     private static Model model;
 
+
     private static GardenController gardenController;
 
     @BeforeAll
@@ -56,12 +55,13 @@ public class U19MakeGardenPublicFeature {
         gardenRepository = mock(GardenRepository.class);
         restTemplate = mock(RestTemplate.class);
         friendRepository = mock(FriendsRepository.class);
+        gardenUserRepository = mock(GardenUserRepository.class);
         tagRepository = mock(TagRepository.class);
         tagService = new TagService(tagRepository, gardenService, profanityService);
         objectMapper = new ObjectMapper();
 
         friendService = new FriendService(friendRepository);
-        gardenService = new GardenService(gardenRepository);
+        gardenService = new GardenService(gardenRepository, gardenUserRepository);
         plantService = new PlantService(plantRepository, gardenRepository);
         gardenUserService = mock(GardenUserService.class);
         gardenWeatherService = mock(GardenWeatherService.class);

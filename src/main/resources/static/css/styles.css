@@ -806,6 +806,16 @@ h1, h2, h3, h4, h5, h6 {
     margin-left: 20px;
 }
 
+.heart-icon {
+    width: 24px;
+    height: 24px;
+    transition: transform 0.3s ease;
+}
+
+.btn:hover .heart-icon {
+    transform: scale(1.2);
+}
+
 
 @media (max-width: 768px) {
     .friend-info {
@@ -828,6 +838,30 @@ h1, h2, h3, h4, h5, h6 {
         margin-left: 0;
         margin-top: 5px;
     }
+}
+
+/*favourite plant selection*/
+
+#plantSelectorModal {
+    overflow: auto;
+}
+#plantSelectorModalContent {
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.select-items img {
+    width: 65px;
+    height: 65px;
+}
+
+.select-items div {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.select-items div:hover {
+    background-color: #acacac;
 }
 
 /* Flip card */
@@ -867,4 +901,11 @@ h1, h2, h3, h4, h5, h6 {
 
 .flip-card-back {
     transform: rotateY(180deg);
+}
+
+
+
+.plant-option.highlighted {
+    background-color: #e0f7fa; /* Highlight color */
+    border-color: #00796b; /* Highlight border color */
 }

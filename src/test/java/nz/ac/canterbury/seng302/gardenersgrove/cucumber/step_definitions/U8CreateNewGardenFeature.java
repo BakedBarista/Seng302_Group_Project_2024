@@ -78,7 +78,7 @@ public class U8CreateNewGardenFeature {
         restTemplate = mock(RestTemplate.class);
         objectMapper = new ObjectMapper();
         userService = new GardenUserService(gardenUserRepository);
-        gardenService = new GardenService(gardenRepository);
+        gardenService = new GardenService(gardenRepository, gardenUserRepository);
         friendService = new FriendService(friendsRepository);
         plantService = new PlantService(plantRepository, gardenRepository);
         tagService = new TagService(tagRepository, gardenService, profanityService);

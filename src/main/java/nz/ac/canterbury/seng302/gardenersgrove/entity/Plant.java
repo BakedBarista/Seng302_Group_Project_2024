@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
 import java.time.LocalDate;
@@ -17,6 +18,7 @@ public class Plant extends BasePlant {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn
     protected Garden garden;
@@ -31,12 +33,9 @@ public class Plant extends BasePlant {
     @Lob
     protected byte[] plantImage;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "plant")
     private Set<PlantHistoryItem> history = new HashSet<>();
-
-    @ManyToOne
-    @JoinColumn
-    private GardenUser gardenUser;
 
     public Plant(String name, String count, String description, LocalDate plantedDate) {
         this.name = name;
@@ -94,10 +93,6 @@ public class Plant extends BasePlant {
 
     public Set<PlantHistoryItem> getHistory() {
         return history;
-    }
-
-    public void setFavourite(GardenUser user) {
-        this.gardenUser = user;
     }
 
     @Override

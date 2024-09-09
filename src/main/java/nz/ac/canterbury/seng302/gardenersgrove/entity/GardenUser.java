@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import org.springframework.security.core.GrantedAuthority;
@@ -60,11 +61,11 @@ public class GardenUser {
     @Lob
     private byte[] profileBanner;
 
-    // these are a set of friendships in the friends table where the user is sender
+    @JsonIgnore
     @OneToMany(mappedBy = "sender")
     private Set<Friends> friendshipsAsSender = new HashSet<>();
 
-    // these are a set of friendships in the friends table where the user is receiver
+    @JsonIgnore
     @OneToMany(mappedBy = "receiver")
     private Set<Friends> friendshipsAsReceiver = new HashSet<>();
 
@@ -89,22 +90,28 @@ public class GardenUser {
     @Column(nullable = true)
     private Instant accountDisabledExpiryInstant;
 
-    @OneToMany(mappedBy = "gardenUser", cascade = ALL, fetch = EAGER, orphanRemoval = true)
+    @JsonIgnore
+    @OneToMany(mappedBy = "gardenUser", cascade = CascadeType.ALL)
     private Set<Plant> favouritePlants = new HashSet<>();
 
+
+    @PrimaryKeyJoinColumn
+    @OneToOne(mappedBy = "favouriteGarden", cascade = CascadeType.ALL)
+    private Garden favoriteGarden;
 
     /**
      * JPA required no-args constructor
      */
-    public GardenUser() {}
+    public GardenUser() {
+    }
 
     /**
      * Creates import java.util.HashSet; a new GardenUser object
      *
-     * @param fname first name of user
-     * @param lname last name of user
-     * @param email email of user
-     * @param password password of user
+     * @param fname       first name of user
+     * @param lname       last name of user
+     * @param email       email of user
+     * @param password    password of user
      * @param dateOfBirth date of birth of use
      */
     public GardenUser(String fname, String lname, String email, String password, LocalDate dateOfBirth) {
@@ -119,7 +126,7 @@ public class GardenUser {
     /**
      * Gets the authorities granted to the user
      *
-     * @return
+     * @return the authorities granted to the user
      */
     public List<GrantedAuthority> getAuthorities() {
         return List.of();
@@ -185,6 +192,7 @@ public class GardenUser {
 
     /**
      * Get the user's public description
+     *
      * @return the description
      */
     public String getDescription() {
@@ -193,6 +201,7 @@ public class GardenUser {
 
     /**
      * set the user's public description
+     *
      * @param description public description
      */
     public void setDescription(String description) {
@@ -238,7 +247,7 @@ public class GardenUser {
     /**
      * Sets the password of the user
      *
-     * @param password
+     * @param password the password to set
      */
     public void setPassword(String password) {
         PasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -276,6 +285,7 @@ public class GardenUser {
 
     /**
      * get the bytes that represent the users public profile banner
+     *
      * @return byte array for profile banner
      */
     public byte[] getProfileBanner() {
@@ -284,6 +294,7 @@ public class GardenUser {
 
     /**
      * get the content type for the users public profile banner
+     *
      * @return content type for profile banner
      */
     public String getProfileBannerContentType() {
@@ -294,7 +305,7 @@ public class GardenUser {
     /**
      * Sets the profile picture of the user
      *
-     * @param contentType contentType The content type of the profile picture
+     * @param contentType    contentType The content type of the profile picture
      * @param profilePicture rofilePicture The byte array representing the profile picture
      */
     public void setProfilePicture(String contentType, byte[] profilePicture) {
@@ -304,7 +315,8 @@ public class GardenUser {
 
     /**
      * Sets the public profile banner and the content type of the banner for the user
-     * @param contentType the content type of the banner
+     *
+     * @param contentType   the content type of the banner
      * @param profileBanner the byte array representing the banner
      */
     public void setProfileBanner(String contentType, byte[] profileBanner) {
@@ -314,7 +326,7 @@ public class GardenUser {
 
     /**
      * Set the emailValidationToken of this user
-     *  - may be null
+     * - may be null
      */
     public void setEmailValidationToken(String emailValidationToken) {
         this.emailValidationToken = emailValidationToken;
@@ -323,7 +335,8 @@ public class GardenUser {
 
     /**
      * Get this users emailValidationToken
-     *  - may be null
+     * - may be null
+     *
      * @return emailValidationToken
      */
     public String getEmailValidationToken() {
@@ -332,7 +345,8 @@ public class GardenUser {
 
     /**
      * Get this users resetPasswordToken
-     *  - may be null
+     * - may be null
+     *
      * @return emailValidationToken
      */
     public String getResetPasswordToken() {
@@ -355,7 +369,8 @@ public class GardenUser {
 
     /**
      * Return the emailValidationTokenExpiryInstant of this user
-     *  - may be null
+     * - may be null
+     *
      * @return emailValidationTokenExpiryInstant
      */
     public Instant getEmailValidationTokenExpiryInstant() {
@@ -371,7 +386,8 @@ public class GardenUser {
 
     /**
      * Return the resetPasswordTokenExpiryInstant of this user
-     *  - may be null
+     * - may be null
+     *
      * @return resetPasswordTokenExpiryInstant
      */
     public Instant getResetPasswordTokenExpiryInstant() {
@@ -444,8 +460,24 @@ public class GardenUser {
     }
 
     /**
+     * Gets the favourite garden of the user
+     * @return the favourite garden
+     */
+    public Garden getFavoriteGarden() {return favoriteGarden;}
+
+    /**
+     * Sets the favourite garden of the user
+     * @param garden the garden to set as the favourite
+     */
+    public void setFavoriteGarden(Garden garden) {
+        this.favoriteGarden = garden;
+        garden.setFavouriteGarden(this);
+    }
+
+    /**
      * Gets the favourite plants of this user
-     * @return list of favourite plants
+     *
+     * @return set of favourite plants
      */
     public Set<Plant> getFavouritePlants() {
         return favouritePlants;
@@ -453,16 +485,26 @@ public class GardenUser {
 
     /**
      * Sets the favourite plants of this user
-     * This is used when updating the favourite plants (e.g. adding or removing a plant)
+     * @param favouritePlants list of favourite plants
      */
     public void setFavouritePlants(Set<Plant> favouritePlants) {
-        this.favouritePlants = favouritePlants;
+        // Clear existing associations
+        for (Plant plant : this.favouritePlants) {
+            plant.setFavourite(null);
+        }
+        this.favouritePlants.clear();
 
+        // Set new favourite plants
+        this.favouritePlants = favouritePlants;
         for (Plant plant : favouritePlants) {
             plant.setFavourite(this);
         }
     }
 
+    /**
+     * Add a plant to the user's favourite plants
+     * @param favouritePlant the plant to add
+     */
     public void addFavouritePlant(Plant favouritePlant) {
         favouritePlants.add(favouritePlant);
         favouritePlant.setFavourite(this);

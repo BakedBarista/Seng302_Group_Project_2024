@@ -12,7 +12,7 @@
         <main class="d-flex flex-column align-items-center justify-content-center" style="margin: 10px">
             <h1 class="mt-2  text-center mb-3">Suggested Connections</h1>
             <div class="flip-card mt-4 col-lg-5 col-md-10 col-sm-10">
-                <div class="flip-card-inner card">
+                <div class="flip-card-inner card" th:if="${name != null}">
                     <div class="flip-card-front">
                         <div style="position: relative;">
                             <img class="suggest-user-picture card-img" th:src="@{'/img/gorila.png'}" alt="profile picture"
@@ -53,7 +53,28 @@
                         </div>
                     </div>
                 </div>
+
+                <form action="@{/}" method="POST">
+                    <input type="hidden" name="action" value="accept"/>
+                    <button type="submit" class="btn p-0" id="heartButton">
+                        <img th:src="@{/icons/heart.svg}" alt="Accept" class="heart-icon" id="heartIcon" />
+                    </button>
+                </form>
+
             </div>
+
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            <div id="acceptToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header">
+                    <strong class="me-auto">Pollinator</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body" id="toastBody">
+                    You have a new connection, check the friends tab for more info!
+                </div>
+            </div>
+        </div>
+
         </main>
         <script>
             document.querySelectorAll('.flip-card').forEach((card) => {
@@ -66,5 +87,6 @@
             });
         </script>
         <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
+        <script th:src="@{/js/connection.js}"></script>
     </body>
 </html>
