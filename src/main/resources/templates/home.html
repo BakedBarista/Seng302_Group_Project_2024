@@ -80,18 +80,6 @@
                 <div class="action-buttons pb-5 flex-shrink-0 mt-auto d-flex w-100 justify-content-center">
                     <div class="me-5">
                         <form th:action="@{/}" method="POST">
-                            <input type="hidden" name="action" value="accept"/>
-                            <input type="hidden" name="suggestedId" id="suggestedIdAccept" th:value="${userId}"/>
-                            <button type="submit" class="rounded-circle btn-lg p-3 shadow" id="heartButton"
-                                    style="width: 90px; height: 90px; background-color: #DC3545; border: none;"
-                                    data-bs-toggle="tooltip" title="Request Connection">
-                                <img th:src="@{/icons/heart.svg}" width="50" height="50" alt="Accept" class="heart-icon"
-                                     id="heartIcon"/>
-                            </button>
-                        </form>
-                    </div>
-                    <div class="ms-5">
-                        <form th:action="@{/}" method="POST">
                             <input type="hidden" name="action" value="decline"/>
                             <input type="hidden" name="suggestedId" id="suggestedIdDecline" th:value="${userId}"/>
                             <button type="submit" class="rounded-circle btn-lg p-3 shadow" id="declineButton"
@@ -99,6 +87,18 @@
                                     data-bs-toggle="tooltip" title="Decline Connection">
                                 <img th:src="@{/icons/broken-heart.svg}" width="50" height="50" alt="Decline"
                                      class="decline-icon" id="declineIcon"/>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="ms-5">
+                        <form th:action="@{/}" method="POST">
+                            <input type="hidden" name="action" value="accept"/>
+                            <input type="hidden" name="suggestedId" id="suggestedIdAccept" th:value="${userId}"/>
+                            <button type="submit" class="rounded-circle btn-lg p-3 shadow" id="heartButton"
+                                    style="width: 90px; height: 90px; background-color: #DC3545; border: none;"
+                                    data-bs-toggle="tooltip" title="Request Connection">
+                                <img th:src="@{/icons/heart.svg}" width="50" height="50" alt="Accept" class="heart-icon"
+                                     id="heartIcon"/>
                             </button>
                         </form>
                     </div>
