@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.cucumber.step_definitions;
 
 import io.cucumber.java.BeforeAll;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -21,6 +22,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -138,19 +140,25 @@ public class U800MessageFeature {
         // Don't test timestamp as tested in unit and integration
     }
 
-
+    @And("I send invalid message")
+    public void i_send_invalid_message() {
+        Mockito.when(authentication.getPrincipal()).thenReturn(myId);
+        Mockito.when(bindingResult.hasErrors()).thenReturn(true);
+        result = messageController.sendMessage(receiverId, messageDTO, bindingResult, authentication, model);
+    }
 
     @When("I have an empty message {string}")
     public void iHaveAnEmptyMessageMessage(String message) {
         Mockito.when(authentication.getPrincipal()).thenReturn(myId);
         messageDTO = new MessageDTO(message);
-
-//        Mockito.when(bindingResult.hasErrors()).thenReturn(true);
     }
 
 
     @Then("The message is not sent.")
     public void the_message_is_not_sent() {
-        Message message = messageRepository.findMessagesBetweenUsers(myId, receiverId).get(0);
+        List<Message> message = messageRepository.findMessagesBetweenUsers(myId, receiverId);
+        Assertions.assertEquals(message.size(), 1);
     }
+
+
 }

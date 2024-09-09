@@ -16,14 +16,14 @@ Feature: Message friend from the friends list
       Then I am taken to the message page
       And The message is sent to that friend.
 
-    Scenario Outline: User sends empty message to their friend
+    Scenario Outline: User sends invalid message to their friend
       Given I am on a direct messaging page for my friend "Jane"
       When I have an empty message <message>
-      And I press Send
+      And I send invalid message
       Then I am taken to the message page
       And The message is not sent.
 
       Examples:
       |message|
       |""     |
-      |"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      |"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"|
