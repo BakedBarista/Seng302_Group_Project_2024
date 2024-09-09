@@ -183,13 +183,14 @@ public class MessageController {
             model.addAttribute("messagesMap", messageService.getMessagesBetweenFriends(loggedInUserId, requestedUserId));
             model.addAttribute("sentToUser", sentToUser);
             model.addAttribute("recentChats", recentChats);
+            model.addAttribute("activeChat", requestedUserId);
         }
 
         return "users/message-home";
     }   
 
     @PostMapping("message-home")
-public String messageHome(@RequestParam("userId") Long userId,
+public String messageHome(@RequestParam("userId") Long requestedUserId,
         Authentication authentication,
         Model model,
         HttpSession session) {
@@ -203,17 +204,17 @@ public String messageHome(@RequestParam("userId") Long userId,
 
     // Process recent chats
     for (Message chat : chats) {
-        if (chat.getSender().equals(userId) || chat.getReceiver().equals(userId)) {
-            GardenUser requestedUser = userService.getUserById(userId);
+        if (chat.getSender().equals(requestedUserId) || chat.getReceiver().equals(requestedUserId)) {
+            GardenUser requestedUser = userService.getUserById(requestedUserId);
             recentChats.put(requestedUser, chat.getMessageContent());
         }
     }
 
     String submissionToken = UUID.randomUUID().toString();
     session.setAttribute("submissionToken", submissionToken);
-    GardenUser sentToUser = userService.getUserById(userId);
+    GardenUser sentToUser = userService.getUserById(requestedUserId);
 
-    Friends isFriend = friendService.getFriendship(loggedInUserId, userId);
+    Friends isFriend = friendService.getFriendship(loggedInUserId, requestedUserId);
     if (isFriend == null) {
         return "redirect:/users/manage-friends";
     }
@@ -222,9 +223,10 @@ public String messageHome(@RequestParam("userId") Long userId,
     model.addAttribute("TIMESTAMP_FORMAT", TIMESTAMP_FORMAT);
     model.addAttribute("DATE_FORMAT", WEATHER_CARD_FORMAT_DATE);
     model.addAttribute("submissionToken", submissionToken);
-    model.addAttribute("messagesMap", messageService.getMessagesBetweenFriends(loggedInUserId, userId));
+    model.addAttribute("messagesMap", messageService.getMessagesBetweenFriends(loggedInUserId, requestedUserId));
     model.addAttribute("sentToUser", sentToUser);
     model.addAttribute("recentChats", recentChats);
+    model.addAttribute("activeChat", requestedUserId);
 
     return "users/message-home";
 }
