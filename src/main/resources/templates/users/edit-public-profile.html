@@ -160,22 +160,23 @@
                       <div th:each="i : ${#numbers.sequence(1, 3)}"
                            class="card p-2 me-3 mb-3 border-0 rounded-3 shadow-sm public-profile-plant-card"
                            th:classappend="${i <= favouritePlants.size()} ? 'd-flex bg-primary-temp' : 'justify-content-center card-wiggle bg-primary-grey'"
-                           th:id="${i <= favouritePlants.size()} ? '' : 'favouritePlantCard' + ${i}"
+                           th:id="'favouritePlantCard' + ${i}"
                            th:onclick="${i <= favouritePlants.size()} ? '' : 'openPlantSelectorModal(' + ${i} + ')'">
                           <!-- Filled card content -->
                           <th:block th:if="${i <= favouritePlants.size()}">
-                              <span onclick="deleteFavouritePlant(i); return false;">
-                                  <a class="btn-change position-absolute bg-danger top-0 end-0 m-1 p-1
-                                            d-flex align-content-center justify-content-center rounded-3">
-                                      <img th:src="@{/icons/delete.svg}"
-                                           aria-hidden="true"
-                                           alt="delete"
-                                           width="17"
-                                           height="17" />
-                                  </a>
-                              </span>
+                    <span th:onclick="'deleteFavouritePlant(' + ${i} + '); return false;'">
+                        <a class="btn-change position-absolute bg-danger top-0 end-0 m-1 p-1
+                                  d-flex align-content-center justify-content-center rounded-3">
+                            <img th:src="@{/icons/delete.svg}"
+                                 aria-hidden="true"
+                                 alt="delete"
+                                 width="17"
+                                 height="17" />
+                        </a>
+                    </span>
                               <img th:src="@{'/plants/' + ${favouritePlants[i-1].id} + '/plant-image'}" class="mx-auto d-block pt-1" style="width: 100%; height: 80%; object-fit: cover" alt="plant image"/>
                               <h5 class="pt-2 text-center" th:text="${favouritePlants[i-1].name}">Plant Name</h5>
+                              <input type="hidden" th:id="'plantId' + ${i}" th:value="${favouritePlants[i-1].id}"/>
                           </th:block>
 
                           <!-- Empty card content -->

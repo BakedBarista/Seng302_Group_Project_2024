@@ -5,10 +5,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 /**
  * Class purely for dealing with the API calls of deleting favourite plants
@@ -34,11 +33,15 @@ public class DeleteFavouritePlantController {
      * @param plantId id of the plant
      * @param authentication authentication for the user
      */
-    @DeleteMapping("/users/delete-favourite-plant/{id}")
+    @DeleteMapping("/users/delete-favourite-plant")
     public void deleteFavouritePlant(
-            @PathVariable("id") Long plantId,
+            @RequestBody Map<String, Long> requestBody,
             Authentication authentication
     ) {
+
+        Long plantId = requestBody.get("plantId");
+        System.out.println(plantId);
+
         logger.info("DELETE /users/delete-favourite-plant/{}", plantId);
 
         Long userId = (Long) authentication.getPrincipal();

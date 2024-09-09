@@ -173,8 +173,27 @@ function clearCardAppearance(selectedCard) {
     selectedCard.className = 'card p-2 me-3 mb-3 border-0 rounded-3 shadow-sm public-profile-plant-card ' +
         'justify-content-center card-wiggle bg-primary-grey';
 
-    const hiddenInput = selectedCard.querySelector('input[type="hidden"]');
-    hiddenInput.value = -1;
+    selectedCard.innerHTML = '';
+
+    // Add empty card content
+    const imgElement = document.createElement('img');
+    imgElement.src = '/icons/create-mustard-grey.svg';
+    imgElement.alt = 'empty-favourite';
+    imgElement.width = 50;
+    imgElement.height = 50;
+    imgElement.className = 'mx-auto d-block';
+    selectedCard.appendChild(imgElement);
+
+    // Add hidden input
+    const hiddenInput = document.createElement('input');
+    hiddenInput.type = 'hidden';
+    hiddenInput.id = 'selectedPlantId' + selectedCard.id.replace('favouritePlantCard', '');
+    hiddenInput.value = '';
+    selectedCard.appendChild(hiddenInput);
+
+    // Re-add onclick event for opening plant selector modal
+    const cardIndex = selectedCard.id.replace('favouritePlantCard', '');
+    selectedCard.onclick = () => openPlantSelectorModal(cardIndex);
 }
 
 // Helper function to handle errors
@@ -271,8 +290,34 @@ function updateFavouritePlants() {
 }
 
 const deleteFavouritePlant = (selectedCardId) => {
-    let id = "selectedCardId" + selectedCardId.toString()
-    console.log(id)
-    let selectedCard = document.getElementById(id)
-    clearCardAppearance(selectedCard)
-};
+    let id = "favouritePlantCard" + selectedCardId.toString();
+    let plantId = document.getElementById("selectedPlantId" + selectedCardId.toString()).value;
+    console.log("Plant ID to delete:", plantId);
+
+    let selectedCard = document.getElementById(id);
+    if (selectedCard) {
+        fetch(`${apiBaseUrl}/users/delete-favourite-plant`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                [csrfHeader]: csrf,
+            },
+            body: JSON.stringify({ plantId: parseInt(plantId) }),
+        }).then(response => {
+            if (response.ok) {
+                console.log("Favourite plant deleted");
+                clearCardAppearance(selectedCard);
+            } else {
+                console.log("Error deleting favourite plant");
+                return response.json();
+            }
+        }).then(data => {
+            if (data) console.log(data);
+        }).catch(error => {
+            console.log("Error:", error);
+        });
+        event.stopPropagation();
+    } else {
+        console.error(`Element with id ${id} not found.`);
+    }
+}
