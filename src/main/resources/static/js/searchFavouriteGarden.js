@@ -80,10 +80,14 @@ function previewFavouriteGarden() {
         console.log("No garden selected.");
     }
 }
-
+document.getElementById('editPublicProfileForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    updateFavouriteGarden();
+});
 
 function updateFavouriteGarden() {
     const gardenId = document.getElementById('selectedGardenId').value;
+
 
     fetch(`${baseUrl}users/edit-public-profile/favourite-garden`, {
         method: 'PUT',
@@ -95,6 +99,7 @@ function updateFavouriteGarden() {
     }).then(response => {
         if(response.ok) {
             console.log("Garden updated");
+            document.getElementById("editPublicProfileForm").submit();
         } else {
             console.log("Error updating garden");
             response.json().then(data => console.log(data));
@@ -103,5 +108,7 @@ function updateFavouriteGarden() {
     }).catch(error => {
         console.log(error);
     });
+
+
 
 }

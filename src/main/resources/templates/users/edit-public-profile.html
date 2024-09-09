@@ -72,14 +72,14 @@
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick=previewFavouriteGarden()>Submit</button>
                 </div>
 
-                <script th:src="@{/js/searchFavouriteGarden.js}"></script>
+
             </div>
         </div>
     </div>
 
 
   <div class="card border-top-0">
-      <form th:action="@{/users/edit-public-profile}" method="post" enctype="multipart/form-data" th:object="${editUserDTO}" novalidate>
+      <form th:action="@{/users/edit-public-profile}" id="editPublicProfileForm" method="post" enctype="multipart/form-data" th:object="${editUserDTO}" novalidate onsubmit="updateFavouriteGarden()">
           <div class="card-img-top img-fluid fixed-height mb-4 position-relative">
               <div class="position-relative">
                   <label for="bannerImage" class="position-absolute top-0 end-0 p-2" style="cursor: pointer;">
@@ -204,10 +204,12 @@
         <!-- Button Container with Adjusted Spacing -->
         <div class="d-flex justify-content-end px-4 mb-4">
           <a th:href="@{/users/public-profile}" class="btn btn-outline-secondary me-2" tabindex="4">Cancel</a>
-          <button class="btn btn-primary" onclick=updateFavouriteGarden() tabindex="5">Submit</button>
+          <button class="btn btn-primary" type="submit" tabindex="5">Submit</button>
         </div>
+          <script th:src="@{/js/searchFavouriteGarden.js}"></script>
       </form>
   </div>
+
 </main>
 <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
 
