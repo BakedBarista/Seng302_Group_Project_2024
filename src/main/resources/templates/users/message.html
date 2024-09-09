@@ -8,25 +8,28 @@
     <!-- This needs to be here for Bootstrap and general CSS imports -->
     <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
     <style>
-        /* This subtracts the height of the navbar on mobile screens to account for height */
+        /* For small screens */
         @media (max-width: 767.98px) {
             main, body {
-                height: calc(100vh - 91px);
+                height: 80vh;
+                overflow: hidden;
+            }
+            .messages {
+                height: 60vh;
+                overflow: auto;
             }
         }
-
         /* For screens larger than mobile */
         @media (min-width: 768px) {
             main, body {
                 height: 100vh;
+                overflow: hidden;
             }
-        }
+            .messages {
+                height: 70vh;
+                overflow-y: auto;
 
-        /* Make messages container scrollable */
-        .messages {
-            height: calc(100vh - 200px); /* Adjust as necessary */
-            overflow-y: auto;
-
+            }
         }
 
         /* Ensure textarea and send button stay at the bottom */
@@ -47,7 +50,7 @@
             <div class="d-flex align-items-center">
                 <img class="rounded-circle overflow-hidden border border-dark me-2"
                 th:src="@{'/users/' + ${sentToUser.id} + '/profile-picture'}" style="width: 50px; height: 50px;" alt="profile picture">
-                <h5 class="mb-0" th:text="${sentToUser.fname} + ' ' + ${sentToUser.lname}"></h5>
+                <h5 class="mb-0" th:text="${sentToUser.fname} + ' ' + (${sentToUser.lname} != null ? ${sentToUser.lname} : '')"></h5>
             </div>
             <hr>
             <div id="scrollbar" class="messages mt-3 p-3">
@@ -74,7 +77,16 @@
                         </div>
                         <!--logged in users msg-->
                         <div th:if="${message.receiver == sentToUser.id}" class="d-flex justify-content-end">
-                            <div class="card text-white bg-primary shadow-sm mb-3 border-0" style="max-width: 40%">
+                            <div class="card text-white bg-primary shadow-sm mb-3 border-0 d-none d-md-block" style="max-width: 40%">
+                                <div class="card-body">
+                                    <small>[[${dateFormatter.format(message.timestamp, TIMESTAMP_FORMAT)}]]</small>
+                                    <p class="card-text mt-2">[[${message.messageContent}]]</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div th:if="${message.receiver == sentToUser.id}" class="d-flex justify-content-end">
+                            <div class="card text-white bg-primary shadow-sm mb-3 border-0 d-block d-md-none" style="max-width: 80%">
                                 <div class="card-body">
                                     <small>[[${dateFormatter.format(message.timestamp, TIMESTAMP_FORMAT)}]]</small>
                                     <p class="card-text mt-2">[[${message.messageContent}]]</p>

@@ -2,12 +2,12 @@
 :root {
     --gg-dark: #b89006;
     --gg-primary: #CB9F03;
-    --gg-primary-rgb: 57, 92, 10;
-    --gg-primary-light: #b89006;
-    --gg-secondary: #A4AF69;
-    --gg-secondary-rgb: 164, 175, 105;
-    --gg-secondary-dark: #8C9D34;
-    --gg-secondary-light: #D3DD9D;
+    --gg-primary-rgb: 203, 159, 3;
+    --gg-primary-light: #EDBA05;
+    --gg-secondary: #9E6F40;
+    --gg-secondary-rgb: 168, 111, 64;
+    --gg-secondary-dark: #964B00;
+    --gg-secondary-light: #CA935C;
     --gg-pale: #FFE0B5;
     --gg-not-planted:  saddlebrown;
     --gg-not-planted-hover: #af7244;
@@ -87,7 +87,7 @@ h1, h2, h3, h4, h5, h6 {
     --bs-btn-color: var(--gg-white);
     --bs-btn-bg: var(--gg-primary);
     --bs-btn-border-color: var(--gg-primary);
-    --bs-btn-hover-color: var(--gg-white);
+
     --bs-btn-hover-bg: var(--gg-primary-light);
     --bs-btn-hover-border-color: var(--gg-primary-light);
     --bs-btn-focus-shadow-rgb: var(--gg-primary-rgb);
@@ -97,6 +97,13 @@ h1, h2, h3, h4, h5, h6 {
     --bs-btn-disabled-color: white;
     --bs-btn-disabled-bg: var(--gg-pale);
     --bs-btn-disabled-border-color: var(--gg-primary);
+}
+.btn-change {
+    --bs-btn-bg: #E8CB67;
+    --bs-btn-hover-bg: #ffe58b;
+    --bs-btn-hover-border-color: var(--gg-black);
+    --bs-btn-focus-shadow-rgb: var(--gg-primary-rgb);
+    --bs-btn-color: var(--gg-black);
 }
 
 .button-not-planted {
@@ -709,6 +716,9 @@ h1, h2, h3, h4, h5, h6 {
     width: 200px;
     height: 180px;
 }
+.public-profile-garden-card {
+    height: 180px;
+}
 
 .bg-primary-temp {
     /*fix this later*/
@@ -796,6 +806,16 @@ h1, h2, h3, h4, h5, h6 {
     margin-left: 20px;
 }
 
+.heart-icon {
+    width: 24px;
+    height: 24px;
+    transition: transform 0.3s ease;
+}
+
+.btn:hover .heart-icon {
+    transform: scale(1.2);
+}
+
 
 @media (max-width: 768px) {
     .friend-info {
@@ -820,3 +840,72 @@ h1, h2, h3, h4, h5, h6 {
     }
 }
 
+/*favourite plant selection*/
+
+#plantSelectorModal {
+    overflow: auto;
+}
+#plantSelectorModalContent {
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.select-items img {
+    width: 65px;
+    height: 65px;
+}
+
+.select-items div {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.select-items div:hover {
+    background-color: #acacac;
+}
+
+/* Flip card */
+
+.flip-card {
+    width: 90vw;
+    max-width: 480px;
+    height: 720px;
+    perspective: 2000px;
+}
+
+.flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+}
+
+.flip-card-flipped .flip-card-inner {
+    transform: rotateY(180deg);
+}
+
+.flip-card-front,
+.flip-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    border-radius: calc(var(--bs-card-border-radius) - 1px);
+}
+
+.flip-card-back {
+    transform: rotateY(180deg);
+}
+
+
+
+.plant-option.highlighted {
+    background-color: #e0f7fa; /* Highlight color */
+    border-color: #00796b; /* Highlight border color */
+}

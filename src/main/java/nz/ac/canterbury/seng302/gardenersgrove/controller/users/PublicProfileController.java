@@ -1,13 +1,18 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.FavouritePlantDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.exceptions.ProfanityDetectedException;
+import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.ProfanityService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Set;
+import java.util.*;
 
 @Controller
 public class PublicProfileController {
@@ -30,21 +35,30 @@ public class PublicProfileController {
 
     private final GardenUserService userService;
     private final ProfanityService profanityService;
+    private final PlantService plantService;
+
 
     private static final String DEFAULT_PROFILE_BANNER_URL = "/img/default-banner.svg";
-    
+
+    private static final String DEFAULT_GARDEN_IMAGE_URL = "/img/default-garden.svg";
+
     private static final String USER_ID_ATTRIBUTE = "userId";
 
+    private  static  final  String FAVOURITE_GARDEN = "favouriteGarden";
+
     private static final String DESCRIPTION = "description";
+
+    private static final String FAVOURITE_PLANTS = "favouritePlants";
 
     private static final Set<String> ACCEPTED_FILE_TYPES = Set.of("image/jpeg", "image/jpg", "image/png", "image/svg");
 
     private static final int MAX_FILE_SIZE = 10 * 1024 * 1024;
 
     @Autowired
-    public PublicProfileController(GardenUserService userService, ProfanityService profanityService) {
+    public PublicProfileController(GardenUserService userService, ProfanityService profanityService, PlantService plantService) {
         this.userService = userService;
         this.profanityService = profanityService;
+        this.plantService = plantService;
     }
 
     /**
@@ -52,19 +66,44 @@ public class PublicProfileController {
      *
      * @return Returns the current user's public profile
      */
+    @Transactional
     @GetMapping("/users/public-profile")
     public String viewPublicProfile(Authentication authentication, Model model) {
         logger.info("GET /users/public-profile");
 
         Long userId = (Long) authentication.getPrincipal();
         GardenUser user = userService.getUserById(userId);
-
+        Set<Plant> favouritePlants = user.getFavouritePlants();
         model.addAttribute(USER_ID_ATTRIBUTE, userId);
+        model.addAttribute("currentUser", userId);
         model.addAttribute("name", user.getFullName());
         model.addAttribute(DESCRIPTION, user.getDescription());
-        model.addAttribute("favouritePlants", user.getFavouritePlants());
+        model.addAttribute(FAVOURITE_GARDEN, user.getFavoriteGarden());
+
+
+        model.addAttribute(FAVOURITE_PLANTS, favouritePlants);
 
         return "users/public-profile";
+    }
+
+    /**
+     * gets the current favourite garden picture
+     * @param id the id of the user
+     * @param request the request
+     * @return ResponseEntity with the garden image bytes or a redirect to a default garden image URL
+     */
+    @GetMapping("users/{id}/favourite-garden-image")
+    public ResponseEntity<byte[]> favouriteGardenImage(@PathVariable("id") Long id, HttpServletRequest request) {
+        if (logger.isInfoEnabled()) {
+            logger.info(String.format("GET /users/%d/favourite-garden-image", id));
+        }
+
+        GardenUser user = userService.getUserById(id);
+        if (user.getFavoriteGarden() == null || user.getFavoriteGarden().getGardenImage() == null) {
+            return ResponseEntity.status(302).header(HttpHeaders.LOCATION, request.getContextPath() + DEFAULT_GARDEN_IMAGE_URL).build();
+        }
+        return ResponseEntity.ok().contentType(MediaType.parseMediaType(user.getFavoriteGarden().getGardenImageContentType()))
+                .body(user.getFavoriteGarden().getGardenImage());
     }
 
     /**
@@ -72,6 +111,7 @@ public class PublicProfileController {
      * @param id the requested user's id
      * @return Returns the selected user's public profile
      */
+    @Transactional
     @GetMapping("/users/public-profile/{id}")
     public String viewOtherPublicProfile(@PathVariable("id") Long id, Authentication authentication, Model model) {
         logger.info("GET /users/public-profile/{} - display user's public profile", id);
@@ -81,17 +121,20 @@ public class PublicProfileController {
         if (user == null) {
             return "error/404";
         }
-
         Long loggedInUserId = (Long) authentication.getPrincipal();
         boolean isCurrentUser = loggedInUserId.equals(id);
         if (isCurrentUser) {
             return viewPublicProfile(authentication, model);
         }
-
+        Set<Plant> favouritePlants = user.getFavouritePlants();
+        logger.info("current user: {}",userService.getUserById(id).getFname());
+        logger.info("logged in user {}",userService.getUserById(loggedInUserId).getFname());
         model.addAttribute(USER_ID_ATTRIBUTE, id);
         model.addAttribute("currentUser", loggedInUserId);
         model.addAttribute("name", user.getFullName());
+        model.addAttribute(FAVOURITE_GARDEN, user.getFavoriteGarden());
         model.addAttribute(DESCRIPTION, user.getDescription());
+        model.addAttribute(FAVOURITE_PLANTS, favouritePlants);
 
         return "users/public-profile";
     }
@@ -114,14 +157,13 @@ public class PublicProfileController {
                 .body(user.getProfileBanner());
     }
 
-
     /**
      * returns the edit-public-profile page
      *
      * @return A redirection to the "/users/edit-public-profile"
      */
     @GetMapping("users/edit-public-profile")
-    public String editPublicProfile(Authentication authentication, Model model) {
+    public String editPublicProfile(Authentication authentication, Model model) throws JsonProcessingException {
         logger.info("GET /users/edit-public-profile");
         Long userId = (Long) authentication.getPrincipal();
         GardenUser user = userService.getUserById(userId);
@@ -131,9 +173,31 @@ public class PublicProfileController {
         model.addAttribute("name", user.getFullName());
         editUserDTO.setDescription(user.getDescription());
         model.addAttribute("editUserDTO", editUserDTO);
+        model.addAttribute(FAVOURITE_GARDEN, user.getFavoriteGarden());
+
+
+        Set<Plant> favouritePlants = user.getFavouritePlants();
+        model.addAttribute(FAVOURITE_PLANTS, favouritePlants);
+        List<FavouritePlantDTO> favouritePlantDTOs = favouritePlants.stream()
+                .map(this::convertToFavouritePlantDTO)
+                .toList();
+        ObjectMapper objectMapper = new ObjectMapper();
+        String favouritePlantsJson = objectMapper.writeValueAsString(favouritePlantDTOs);
+        model.addAttribute("favouritePlantsJson", favouritePlantsJson);
 
         return "users/edit-public-profile";
     }
+
+    /**
+     * Converts a plant to a FavouritePlantDTO
+     * @param plant  the plant to convert
+     * @return FavouritePlantDTO
+     */
+    private FavouritePlantDTO convertToFavouritePlantDTO(Plant plant) {
+        return new FavouritePlantDTO(plant.getId(), plant.getName(), plant.getPlantImage());
+    }
+
+
 
     /**
      * returns the edit-public-profile page
@@ -232,4 +296,7 @@ public class PublicProfileController {
             throw new ProfanityDetectedException();
         }
     }
+
+
+
 }

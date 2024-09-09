@@ -69,7 +69,7 @@ public class PlantControllerTest {
     @BeforeEach
     void setup() {
         testGarden = new Garden("test", "1", "test", "test", "test",
-                "test", "1234", 10D, 10D, "test", 10D);
+                "test", "1234", 10D, 10D, "test", 10D, null, null);
         GardenUser user = new GardenUser("John", "Doe", "john@email.com", "P#ssw0rd", LocalDate.of(2000, 10, 10));
         user.setId(1L);
         userRepository.save(user);

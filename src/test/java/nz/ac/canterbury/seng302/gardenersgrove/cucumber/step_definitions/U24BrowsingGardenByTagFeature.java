@@ -8,6 +8,7 @@ import io.cucumber.java.BeforeAll;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.TagRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.exceptions.ProfanityDetectedException;
@@ -39,6 +40,8 @@ public class U24BrowsingGardenByTagFeature {
     public static TagRepository tagRepository;
     public static ProfanityService profanityService;
 
+    public static GardenUserRepository mockGardenUserRepository;
+
     public static Pageable pageable;
     public static Page<Garden> tester;
     public static ArrayList<String> searchItems;
@@ -50,7 +53,8 @@ public class U24BrowsingGardenByTagFeature {
         mockTagService = mock(TagService.class);
         tagRepository = mock(TagRepository.class);
         mockGardenRepository = mock(GardenRepository.class);
-        gardenService = new GardenService(mockGardenRepository);
+        mockGardenUserRepository = mock(GardenUserRepository.class);
+        gardenService = new GardenService(mockGardenRepository, mockGardenUserRepository);
         tagService = new TagService(tagRepository, gardenService, profanityService);
         pageable = mock(Pageable.class);
     }
@@ -74,7 +78,7 @@ public class U24BrowsingGardenByTagFeature {
         } catch(ProfanityDetectedException doNothing){
         }
         testTag1 = tagService.getTag(tag);
-        testGarden1 = new Garden(garden, streetNumber,streetName,suburb,city,country,postCode,lon,lat, gardenDescription, gardenSize);
+        testGarden1 = new Garden(garden, streetNumber,streetName,suburb,city,country,postCode,lon,lat, gardenDescription, gardenSize, null, null);
         gardenService.addGarden(testGarden1);
         testGarden1.getTags().add(testTag1);
         assertTrue(testGarden1.getTags().contains(testTag1));

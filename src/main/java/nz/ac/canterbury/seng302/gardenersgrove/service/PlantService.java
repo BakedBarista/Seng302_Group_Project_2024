@@ -1,9 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import org.springframework.stereotype.Service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
@@ -11,10 +10,14 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * PlantService implementation of the plant repository
@@ -32,6 +35,7 @@ public class PlantService {
      * Constructor of PlantService, takes an instance of plantRepository
      * @param plantRepository an instance of PlantRepository
      */
+    @Autowired
     public PlantService(PlantRepository plantRepository, GardenRepository gardenRepository) {
         this.plantRepository = plantRepository;
         this.gardenRepository = gardenRepository;
@@ -54,7 +58,7 @@ public class PlantService {
 
     /**
      * Adds a plant to the database.
-     * @param plant the plant data to save in the database.
+     * @param plantDTO plantDTO
      * @param gardenId the garden ID to associate the plant with.
      * @return the saved plant object.
      */
@@ -133,4 +137,16 @@ public class PlantService {
     public Plant save(Plant plant) {
         return plantRepository.save(plant);
     }
-}
+
+    /**
+     *
+     * @param gardenUser garden owner
+     * @param searchTerm search input
+     * @return list of plants
+     */
+    public  List<Plant> getAllPlants(GardenUser gardenUser, String searchTerm) {
+        return plantRepository.findPlantsFromSearch(gardenUser, searchTerm);
+    }
+    }
+
+
