@@ -196,19 +196,24 @@ function previewFavouritePlants(favouritePlants) {
 
 // Function to update the favourite plants of the user
 function updateFavouritePlants() {
-    event.preventDefault();
-    const plantIds = [
+    const currentPlantIds = [
+        document.getElementById('currentPlantId1')?.value,
+        document.getElementById('currentPlantId2')?.value,
+        document.getElementById('currentPlantId3')?.value
+    ].filter(id => id);
+
+    const newPlantIds = [
         document.getElementById('selectedPlantId1')?.value,
         document.getElementById('selectedPlantId2')?.value,
         document.getElementById('selectedPlantId3')?.value
     ].filter(id => id);
-    console.log("1." + document.getElementById('selectedPlantId1')?.value)
-    console.log("2." + document.getElementById('selectedPlantId2')?.value)
-    console.log("3." + document.getElementById('selectedPlantId3')?.value)
 
+    const plantsChanged = JSON.stringify(currentPlantIds) !== JSON.stringify(newPlantIds);
 
-    console.log(plantIds);
-
+    if (!plantsChanged) {
+        updateFavouriteGarden();
+        return;
+    }
 
     fetch(`${baseUrl}users/edit-public-profile/favourite-plant`, {
         method: 'PUT',
@@ -216,10 +221,10 @@ function updateFavouritePlants() {
             'Content-Type': 'application/json',
             [csrfHeader]: csrf,
         },
-        body: JSON.stringify({ ids: plantIds }),
+        body: JSON.stringify({ ids: newPlantIds }),
     }).then(response => {
         if (response.ok) {
-            //updateFavouriteGarden();
+            updateFavouriteGarden();
             console.log("Favourite plants updated");
         } else {
             console.log("Error updating favourite plants");

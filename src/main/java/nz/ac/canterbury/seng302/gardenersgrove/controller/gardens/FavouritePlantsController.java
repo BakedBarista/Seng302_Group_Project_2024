@@ -67,7 +67,6 @@ public class FavouritePlantsController {
     @Transactional
     @PutMapping("/users/edit-public-profile/favourite-plant")
     public ResponseEntity<String> updateFavouritePlants(@RequestBody Map<String, List<Long>> request) {
-        System.out.println("HEREE");
         Set<Plant> plantsSet = new HashSet<>();
         List<Long> plantIds = request.get("ids");
         Long userId = userService.getCurrentUser().getId();
@@ -85,8 +84,7 @@ public class FavouritePlantsController {
                 }
             }
 
-            userService.updateFavouritePlant(userId, plantsSet );
-            System.out.println("PLANTAS" + userService.getCurrentUser().getFavouritePlants());
+            userService.updateFavouritePlant(userId, plantsSet);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             logger.error(String.format("ERROR HERE: %s", e.getMessage()));

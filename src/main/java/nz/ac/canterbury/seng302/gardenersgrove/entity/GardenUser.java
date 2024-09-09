@@ -476,8 +476,15 @@ public class GardenUser {
      * @param favouritePlants list of favourite plants
      */
     public void setFavouritePlants(Set<Plant> favouritePlants) {
+        // Clear existing associations
+        for (Plant plant : this.favouritePlants) {
+            plant.setFavourite(null);
+        }
+        this.favouritePlants.clear();
+
+        // Set new favourite plants
         this.favouritePlants = favouritePlants;
-        for(Plant plant : favouritePlants) {
+        for (Plant plant : favouritePlants) {
             plant.setFavourite(this);
         }
     }

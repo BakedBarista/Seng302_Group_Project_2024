@@ -164,18 +164,21 @@
               <div class="ms-5 me-5">
                   <div class="d-flex flex-wrap flex-md-nowrap" id="favouritePlantsContainer">
                       <!-- Render cards for favorite plants -->
-                      <div th:each="plant : ${favouritePlants}" class="card p-2 me-3 mb-3 border-0 rounded-3 d-flex shadow-sm public-profile-plant-card bg-primary-temp">
-                          <img th:src="@{'/plants/' + ${plant.id} + '/plant-image'}" class="mx-auto d-block pt-1" style="width: 100%; height: 80%; object-fit: cover" alt="plant image"/>
-                          <h5 class="pt-2 text-center" th:text="${plant.name}">Plant Name</h5>
-                          <input type="hidden" th:id="'selectedPlantId' + ${iterStat.index + 1}"
-                                 th:value="${plant.id}"/>
-                      </div>
+                      <div th:each="i : ${#numbers.sequence(1, 3)}" class="card p-2 me-3 mb-3 border-0 rounded-3 shadow-sm public-profile-plant-card" th:classappend="${i <= favouritePlants.size()} ? 'd-flex bg-primary-temp' : 'justify-content-center bg-primary-grey'" th:id="${i <= favouritePlants.size()} ? '' : 'favouritePlantCard' + ${i}" th:onclick="${i <= favouritePlants.size()} ? '' : 'openPlantSelectorModal(' + ${i} + ')'">
 
-                      <!-- Render empty cards -->
-                      <div th:if="${favouritePlants.size() < 3}" th:each="i : ${#numbers.sequence(1, 3 - favouritePlants.size())}" class="card p-2 me-3 mb-3 border-0 rounded-3 shadow-sm public-profile-plant-card justify-content-center bg-primary-grey" th:id="'favouritePlantCard' + ${i}" th:onclick="'openPlantSelectorModal(' + ${i} + ')'">
-                          <img th:src="@{/icons/create-mustard-grey.svg}" alt="empty-favourite" width="50" height="50" class="mx-auto d-block"/>
-                          <h4 class="pt-2 ps-2 text-center"></h4>
-                          <input type="hidden" th:id="'selectedPlantId' + ${i}" value=""/>
+                          <!-- Filled card content -->
+                          <th:block th:if="${i <= favouritePlants.size()}">
+                              <img th:src="@{'/plants/' + ${favouritePlants[i-1].id} + '/plant-image'}" class="mx-auto d-block pt-1" style="width: 100%; height: 80%; object-fit: cover" alt="plant image"/>
+                              <h5 class="pt-2 text-center" th:text="${favouritePlants[i-1].name}">Plant Name</h5>
+                          </th:block>
+
+                          <!-- Empty card content -->
+                          <th:block th:unless="${i <= favouritePlants.size()}">
+                              <img th:src="@{/icons/create-mustard-grey.svg}" alt="empty-favourite" width="50" height="50" class="mx-auto d-block"/>
+                              <h4 class="pt-2 ps-2 text-center"></h4>
+                          </th:block>
+
+                          <input type="hidden" th:id="'selectedPlantId' + ${i}" th:value="${i <= favouritePlants.size()} ? ${favouritePlants[i-1].id} : ''"/>
                       </div>
                   </div>
               </div>
