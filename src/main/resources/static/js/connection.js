@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const toastDivs = document.getElementById('acceptToast');
     const toast = new bootstrap.Toast(toastDivs);
     
+    const card = document.getElementById('card');
     const cardName = document.getElementById('cardName');
     const cardDescription = document.getElementById('cardDescription');
     const cardImage = document.getElementById('cardImage');
@@ -33,21 +34,39 @@ document.addEventListener('DOMContentLoaded', function() {
     if (buttonClick) {
         buttonClick.addEventListener('click', function(event) {
             event.preventDefault();
-            
-            const formData = new FormData();
-            formData.append('action', 'accept');
-            formData.append('id', currentUser()?.id); // this needs to be the id of user.
-            
-            userIndex++;
-            showCurrentUserCard();
+            accept();
+        });
+    }
 
-            fetch(`${baseUrl}`, {
-                method: 'POST',
-                headers: {
-                    [csrfHeader]: csrf,
-                },
-                body: formData
-            })
+    let startX = 0;
+    const SWIPE_THRESHOLD = 50;
+    card.addEventListener('touchstart', function(event) {
+        startX = event.touches[0].clientX;
+    });
+    card.addEventListener('touchend', function(event) {
+        const endX = event.changedTouches[0].clientX;
+        if (endX - startX >= SWIPE_THRESHOLD) {
+            accept();
+        } else if (endX - startX <= -SWIPE_THRESHOLD) {
+            decline();
+        }
+    });
+
+    function accept() {
+        const formData = new FormData();
+        formData.append('action', 'accept');
+        formData.append('id', currentUser()?.id); // this needs to be the id of user.
+
+        userIndex++;
+        showCurrentUserCard();
+
+        fetch(`${baseUrl}`, {
+            method: 'POST',
+            headers: {
+                [csrfHeader]: csrf,
+            },
+            body: formData
+        })
             .then(response => {
                 console.log('Raw response:', response);
                 if (response.ok) {
@@ -59,14 +78,19 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 console.log('Response data:', data);
                 if (data.success) {
+                    console.log('Accepted friend request');
                     toast.show();
                 } else {
-                    console.error('Request failed or no matching request found.');
+                    console.log('Sent friend request');
                 }
             })
             .catch(error => {
                 console.error('There was a problem with the fetch operation:', error);
             });
-        });
+    }
+
+    function decline() {
+        // TODO
+        console.log('TODO: decline');
     }
 });
