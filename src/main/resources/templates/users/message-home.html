@@ -11,7 +11,12 @@
     <style>
         /* This subtracts the height of the navbar on mobile screens to account for height */
         @media (max-width: 767.98px) {
-
+            #messageWindow {
+                display: none;
+            }
+            #friendChatBar {
+                width: 100vw;
+            }
             main,
             body {
                 height: calc(100vh - 91px);
@@ -52,18 +57,16 @@
 <body class="">
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 <div class="container-fluid d-flex h-100 p-0">
-    <div class="sidebar bg-light border-end d-none d-md-block" style="width: 25vw;">
+    <div class="sidebar bg-light border-end d-md-block" style="width: 25vw;" id="friendChatBar">
         <div class="p-3 border-bottom">
             <h5>Recent Chats</h5>
         </div>
         <div class="overflow-auto" style="height: calc(100vh - 56px); width: 20vw;">
             <div id="chatSection" th:each="chat : ${recentChats}" class="border-bottom">
                 <div th:id="${chat.key.id}">
-                    <!-- Form for each chat entry -->
                     <form th:action="@{/message-home}" method="post" class="d-flex align-items-center w-100">
-                        <!-- Hidden input to send the user ID -->
-                        <input type="hidden" name="userId" th:value="${chat.key.id}"/>
-                        <button type="submit" class="btn btn-link text-decoration-none text-dark w-100">
+                        <input type="hidden" name="userId" th:value="${chat.key.id}" />
+                        <button type="button" class="btn btn-link text-decoration-none text-dark w-100 open-chat">
                             <div class="d-flex align-items-center">
                                 <img class="rounded-circle border border-dark"
                                      th:src="@{'/users/' + ${chat.key.id} + '/profile-picture'}"
@@ -81,13 +84,14 @@
     </div>
 
     <main class="flex-grow-1 d-flex flex-column position-relative h-100 px-lg-4 px-3">
-        <div class="mt-4">
+        <div class="mt-4" id="messageWindow">
             <div class="d-flex align-items-center">
                 <img class="rounded-circle overflow-hidden border border-dark me-2"
                      th:src="@{'/users/' + ${sentToUser.id} + '/profile-picture'}" style="width: 50px; height: 50px;"
                      alt="profile picture">
                 <h5 class="mb-0" th:text="${sentToUser.fname} + ' ' + ${sentToUser.lname}"></h5>
             </div>
+            <button type="button" id="backButton" class="btn btn-secondary mb-3 d-md-none">Back</button>
             <hr>
             <div id="scrollbar" class="messages mt-3 p-3">
                 <div th:each="messages: ${messagesMap}">
@@ -95,18 +99,7 @@
                     <div th:each="message : ${messages.value}">
                         <!--friends msg-->
                         <div th:if="${message.sender == sentToUser.id}" class="d-flex">
-                            <!--large screen-->
-                            <div class="card text-white bg-secondary shadow-sm mb-3 border-0 d-none d-md-block"
-                                 style="max-width: 40%">
-                                <div class="card-body">
-                                    <small>[[${dateFormatter.format(message.timestamp, TIMESTAMP_FORMAT)}]]</small>
-                                    <p class="card-text mt-2">[[${message.messageContent}]]</p>
-                                </div>
-                            </div>
-
-                            <!--small screen-->
-                            <div class="card text-white bg-secondary shadow-sm mb-3 border-0 d-block d-md-none"
-                                 style="max-width: 80%">
+                            <div class="card text-white bg-secondary shadow-sm mb-3 border-0" style="max-width: 80%;">
                                 <div class="card-body">
                                     <small>[[${dateFormatter.format(message.timestamp, TIMESTAMP_FORMAT)}]]</small>
                                     <p class="card-text mt-2">[[${message.messageContent}]]</p>
@@ -126,16 +119,13 @@
                 </div>
             </div>
 
-
             <!-- message and send message box-->
             <div class="send-message-container">
                 <form th:action="@{/users/message(id=${sentToUser.id})}" method="post" th:object="${messageDTO}">
-                    <input type="hidden" name="submissionToken" th:value="${submissionToken}"/>
+                    <input type="hidden" name="submissionToken" th:value="${submissionToken}" />
                     <div class="d-flex gap-2">
-                        <label for="message"></label>
-                        <textarea id="message" th:name="message" class="form-control flex-grow-1"
-                                  style="resize: none;" placeholder="Enter message here..."
-                                  autofocus></textarea><!-- Do not new line this -->
+                            <textarea id="message" th:name="message" class="form-control flex-grow-1" style="resize: none;"
+                                      placeholder="Enter message here..." autofocus></textarea><!-- Do not new line this -->
                         <button type="submit" class="btn btn-primary px-4 py-0">
                             <img th:src="@{/icons/sent-stroke-rounded.svg}" alt="Send">
                         </button>
@@ -178,6 +168,23 @@
             activeChatDiv.classList.remove('active-chat');
         }
     }
+
+    const chatButtons = document.querySelectorAll('.open-chat');
+    const messageWindow = document.getElementById('messageWindow');
+    const friendChatBar = document.getElementById('friendChatBar');
+    const backButton = document.getElementById('backButton');
+
+    chatButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            friendChatBar.style.display = 'none';
+            messageWindow.style.display = 'block';
+        });
+    });
+
+    backButton.addEventListener('click', () => {
+        messageWindow.style.display = 'none';
+        friendChatBar.style.display = 'block';
+    });
 </script>
 </body>
 
