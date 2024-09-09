@@ -69,7 +69,6 @@ public class FavouritePlantsController {
     public ResponseEntity<String> updateFavouritePlants(@RequestBody Map<String, List<Long>> request) {
         Set<Plant> plantsSet = new HashSet<>();
         List<Long> plantIds = request.get("ids");
-        Long userId = userService.getCurrentUser().getId();
 
         try {
             for (Long plantId : plantIds) {
