@@ -74,20 +74,6 @@ public class MessageController {
             BindingResult bindingResult,
             Authentication authentication,
             Model model) {
-        logger.info("POST send message to {}", receiver);
-
-        // add check for validation here
-//        String messageContent = messageDTO.getMessage();
-//        logger.info("Message: {}", messageContent);
-//        if (messageContent == null) {
-//            bindingResult.rejectValue("message", null, "empty message");
-//            logger.info("Message is empty");
-//        } else if (messageContent.length() > 160) {
-//            logger.info("Message is too long");
-//        }
-
-
-
 
         if (bindingResult.hasErrors()) {
             logger.info("Binding result has errors");
@@ -99,7 +85,6 @@ public class MessageController {
 
             return "users/message";
         }
-
 
         Long sender = (Long) authentication.getPrincipal();
         messageService.sendMessage(sender, receiver, messageDTO);
