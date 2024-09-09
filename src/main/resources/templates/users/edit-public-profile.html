@@ -77,16 +77,14 @@
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick=previewFavouriteGarden()>Submit</button>
                 </div>
 
-                <script th:src="@{/js/searchFavouriteGarden.js}"></script>
+
             </div>
         </div>
     </div>
 
 
-
-
   <div class="card border-top-0">
-      <form th:action="@{/users/edit-public-profile}" method="post" enctype="multipart/form-data" th:object="${editUserDTO}" novalidate>
+      <form th:action="@{/users/edit-public-profile}" id="editPublicProfileForm" method="post" enctype="multipart/form-data" th:object="${editUserDTO}" novalidate onsubmit="updateFavouriteGarden()">
           <div class="card-img-top img-fluid fixed-height mb-4 position-relative">
               <div class="position-relative">
                   <label for="bannerImage" class="position-absolute top-0 end-0 p-2" style="cursor: pointer;">
@@ -189,6 +187,7 @@
             <a th:href="@{/users/public-profile}" class="btn btn-outline-secondary me-2" tabindex="4">Cancel</a>
             <button class="btn btn-primary" tabindex="5" onclick="updateBoth()">Submit</button>
         </div>
+          <script th:src="@{/js/searchFavouriteGarden.js}"></script>
       </form>
   </div>
 </main>
