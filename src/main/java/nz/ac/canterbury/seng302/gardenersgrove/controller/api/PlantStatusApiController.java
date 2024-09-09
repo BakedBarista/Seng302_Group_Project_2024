@@ -56,6 +56,8 @@ public class PlantStatusApiController {
         existingPlant.setStatus(newStatus);
 
         plantService.save(existingPlant);
+
+
         Map<String, Object> response = new HashMap<>();
         response.put(STATUS, newStatus.name());
 

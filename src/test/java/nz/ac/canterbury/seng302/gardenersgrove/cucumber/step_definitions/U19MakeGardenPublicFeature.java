@@ -27,6 +27,7 @@ public class U19MakeGardenPublicFeature {
     private static TagRepository tagRepository;
     private static PlantRepository plantRepository;
     private static GardenRepository gardenRepository;
+    private static GardenUserRepository gardenUserRepository;
 
     private static GardenService gardenService;
     private static PlantService plantService;
@@ -45,7 +46,6 @@ public class U19MakeGardenPublicFeature {
 
     private static Model model;
 
-    private static  GardenUserRepository gardenUserRepository;
 
     private static GardenController gardenController;
 

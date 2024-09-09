@@ -81,4 +81,50 @@ class FavouriteGardenControllerUnitTests {
         assertEquals(400, response.getStatusCodeValue());
         assertEquals("Invalid json format", response.getBody());
     }
+
+    @Test
+    void testUpdateFavouriteGardenEmptyId() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writeValueAsString(Map.of("id", ""));
+        Model model = mock(Model.class);
+
+        ResponseEntity<String> response = favouriteGardenController.updateFavouriteGarden(json, model);
+
+        assertEquals(400, response.getStatusCodeValue());
+        assertEquals("Invalid garden ID format", response.getBody());
+    }
+
+
+    @Test
+    void testUpdateFavouriteGardenInvalidIdFormat() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writeValueAsString(Map.of("id", "abc"));
+        Model model = mock(Model.class);
+
+        ResponseEntity<String> response = favouriteGardenController.updateFavouriteGarden(json, model);
+
+        assertEquals(400, response.getStatusCodeValue());
+        assertEquals("Invalid garden ID format", response.getBody());
+    }
+    @Test
+    void testUpdateFavouriteGardenGardenNotFound() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writeValueAsString(Map.of("id", "1"));
+        Model model = mock(Model.class);
+
+        GardenUser mockUser = new GardenUser();
+
+        when(gardenUserService.getCurrentUser()).thenReturn(mockUser);
+        when(gardenService.getGardenById(1L)).thenReturn(Optional.empty());
+
+        ResponseEntity<String> response = favouriteGardenController.updateFavouriteGarden(json, model);
+
+        // Verify that the response is OK even if the garden is not found
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals("Favourite Garden Updated", response.getBody());
+        verify(gardenService, times(0)).addFavouriteGarden(anyLong(), anyLong()); // Ensure no update was attempted
+    }
+
+
+
 }
