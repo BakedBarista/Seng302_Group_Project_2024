@@ -77,7 +77,6 @@ public class MessageController {
 
         if (bindingResult.hasErrors()) {
             logger.info("Binding result has errors");
-            logger.info("Receiver is {}", receiver);
             model.addAttribute("messageDTO", messageDTO);
 
             GardenUser sentToUser = userService.getUserById(receiver);

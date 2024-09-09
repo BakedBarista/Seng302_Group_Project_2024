@@ -48,7 +48,6 @@
                         <label for="message" th:class="'form-label ' + ${#fields.hasErrors('message') ? 'is-invalid' : ''}"></label>
                         <textarea id="message" th:name="message" th:field="*{message}" class="form-control flex-grow-1" style="resize: none;"  placeholder="Message here..." autofocus></textarea>
                         <div class="invalid-feedback" th:if="${#fields.hasErrors('message')}" th:errors="*{message}">
-<!--                            <span th:text="${#fields.errors('message')}"></span>-->
                         </div>
                         <button type="submit" class="btn btn-primary px-4 py-0">
                             <img th:src="@{/icons/sent-stroke-rounded.svg}" alt="Send">
