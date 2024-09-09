@@ -26,6 +26,10 @@
         /* For screens larger than mobile */
         @media (min-width: 768px) {
 
+            #friendChatBar {
+                width: 25vw;
+            }
+
             main,
             body {
                 height: 100vh;
@@ -57,11 +61,11 @@
 <body class="">
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 <div class="container-fluid d-flex h-100 p-0">
-    <div class="sidebar bg-light border-end d-md-block" style="width: 25vw;" id="friendChatBar">
+    <div class="sidebar bg-light border-end d-md-block" id="friendChatBar">
         <div class="p-3 border-bottom">
             <h5>Recent Chats</h5>
         </div>
-        <div class="overflow-auto" style="height: calc(100vh - 56px); width: 20vw;">
+        <div class="overflow-auto" style="height: calc(100vh - 56px);">
             <div id="chatSection" th:each="chat : ${recentChats}" class="border-bottom">
                 <div th:id="${chat.key.id}">
                     <form th:action="@{/message-home}" method="post" class="d-flex align-items-center w-100">
@@ -83,16 +87,15 @@
         </div>
     </div>
 
-    <main class="flex-grow-1 d-flex flex-column position-relative h-100 px-lg-4 px-3">
+    <main class="flex-grow-1 d-flex flex-column position-relative h-100 px-lg-4">
         <div class="mt-4" id="messageWindow">
-            <div class="d-flex align-items-center">
+            <div class="d-flex align-items-center justify-content-around">
+                <button type="button" id="backButton" class="btn btn-secondary d-md-none"><</button>
+                <h5 class="mb-0" th:text="${sentToUser.fname} + ' ' + ${sentToUser.lname}"></h5>
                 <img class="rounded-circle overflow-hidden border border-dark me-2"
                      th:src="@{'/users/' + ${sentToUser.id} + '/profile-picture'}" style="width: 50px; height: 50px;"
                      alt="profile picture">
-                <h5 class="mb-0" th:text="${sentToUser.fname} + ' ' + ${sentToUser.lname}"></h5>
             </div>
-            <button type="button" id="backButton" class="btn btn-secondary mb-3 d-md-none">Back</button>
-            <hr>
             <div id="scrollbar" class="messages mt-3 p-3">
                 <div th:each="messages: ${messagesMap}">
                     <div class="text-center mb-2">[[${dateFormatter.format(messages.key, DATE_FORMAT)}]]</div>
@@ -174,17 +177,29 @@
     const friendChatBar = document.getElementById('friendChatBar');
     const backButton = document.getElementById('backButton');
 
-    chatButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            friendChatBar.style.display = 'none';
-            messageWindow.style.display = 'block';
-        });
-    });
+    function handleChatToggle() {
+        if (window.innerWidth < 768) {
+            chatButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    friendChatBar.style.display = 'none';
+                    messageWindow.style.display = 'block';
+                });
+            });
 
-    backButton.addEventListener('click', () => {
-        messageWindow.style.display = 'none';
-        friendChatBar.style.display = 'block';
-    });
+            backButton.addEventListener('click', () => {
+                messageWindow.style.display = 'none';
+                friendChatBar.style.display = 'block';
+            });
+        } else {
+            // Reset view if screen width is greater than or equal to 768
+            messageWindow.style.display = 'block';
+            friendChatBar.style.display = 'block';
+        }
+    }
+    handleChatToggle();
+
+    window.addEventListener('resize', handleChatToggle);
+
 </script>
 </body>
 

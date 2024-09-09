@@ -163,7 +163,12 @@ public class MessageController {
                 logger.info("---------");
 
                 GardenUser requestedUser = userService.getUserById(requestedUserId);
-                recentChats.put(requestedUser, chat.getMessageContent());
+                String messageContent = chat.getMessageContent();
+                if (messageContent.length() > 50) {
+                    messageContent = messageContent.substring(0, 50);
+                    messageContent = messageContent + "...";
+                }
+                recentChats.put(requestedUser, messageContent);
             }
 
             String submissionToken = UUID.randomUUID().toString();
