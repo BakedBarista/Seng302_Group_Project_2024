@@ -2,9 +2,16 @@ package nz.ac.canterbury.seng302.gardenersgrove.unittests.entity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import org.junit.jupiter.api.Test;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 class GardenUserTests {
     @Test
@@ -23,5 +30,25 @@ class GardenUserTests {
         user.setLname(null);
 
         assertEquals("John", user.getFullName());
+    }
+
+    @Test
+    void givenFavouritePlantIsEmpty_whenAddFavouritePlant_thenPlantIsAdded() {
+        GardenUser user = new GardenUser();
+        Plant plant = new Plant();
+        Set<Plant> plants = new HashSet<>();
+        user.setFavouritePlants(plants);
+        user.addFavouritePlant(plant);
+        assertEquals(plants, user.getFavouritePlants());
+
+    }
+
+    @Test
+    void givenSetFavouriteGarden_thenFavouriteIsSet() {
+        GardenUser user = new GardenUser();
+        Garden garden = new Garden();
+        user.setFavoriteGarden(garden);
+        assertEquals(garden, user.getFavoriteGarden());
+        assertEquals(user,garden.getFavouriteGarden());
     }
 }

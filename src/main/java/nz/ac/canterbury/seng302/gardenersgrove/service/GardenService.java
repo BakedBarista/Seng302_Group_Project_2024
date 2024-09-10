@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,10 +25,14 @@ public class GardenService {
     Logger logger = LoggerFactory.getLogger(GardenService.class);
 
     private final GardenRepository gardenRepository;
+    private final GardenUserRepository gardenUserRepository;
     private static final Set<String> ACCEPTED_FILE_TYPES = Set.of("image/jpeg", "image/jpg", "image/png", "image/svg");
     private static final int MAX_FILE_SIZE = 10 * 1024 * 1024;
 
-    public GardenService(GardenRepository gardenRepository) {this.gardenRepository = gardenRepository;}
+    public GardenService(GardenRepository gardenRepository, GardenUserRepository gardenUserRepository) {
+        this.gardenUserRepository = gardenUserRepository;
+        this.gardenRepository = gardenRepository;
+    }
 
     /**
      * Gets all the gardens currently in the database.
@@ -146,23 +151,42 @@ public class GardenService {
         }
     }
 
+    public void addFavouriteGarden(Long userId, Long gardenId) {
+        Optional<GardenUser> user = gardenUserRepository.findById(userId);
+        Optional<Garden> garden = gardenRepository.findById(gardenId);
+        if(user.isPresent()&&garden.isPresent()) {
+            GardenUser existingUser = user.get();
+            Garden existingGarden = garden.get();
+
+            if (existingUser.getFavoriteGarden() != null) {
+                Garden oldFavorite = existingUser.getFavoriteGarden();
+                oldFavorite.setFavouriteGarden(null);
+                gardenRepository.save(oldFavorite);
+            }
+
+            existingUser.setFavoriteGarden(existingGarden);
+            gardenUserRepository.save(existingUser);
+
+        }
+    }
+
     /**
      * Sets the image of the garden with given ID.
      * @param id ID of the garden which image is to be set
      * @param gardenImage multipart file for the garden image
-     * @throws IOException 
+     * @throws IOException if the image cannot be read
      */
     public void setGardenImage(long id, MultipartFile gardenImage) throws IOException {
         var garden = gardenRepository.findById(id);
         if (garden.isEmpty()) {
             return;
         }
-        
+
         if (validateImage(gardenImage) && !gardenImage.isEmpty()) {
             garden.get().setGardenImage(gardenImage.getContentType(), gardenImage.getBytes());
             gardenRepository.save(garden.get());
         }
-        
+
     }
 
     /**

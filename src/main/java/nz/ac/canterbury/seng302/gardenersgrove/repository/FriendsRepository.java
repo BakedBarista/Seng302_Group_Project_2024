@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -101,5 +102,8 @@ public interface FriendsRepository extends CrudRepository<Friends, Long> {
      */
     @Query("SELECT f FROM Friends f WHERE ((f.sender.id = :userId1 AND f.receiver.id = :userId2) OR (f.receiver.id = :userId2 AND f.sender.id = :userId1)) AND (f.status = 'PENDING' OR f.status = 'DECLINED')")
     Optional<Friends> findPendingOrDeclinedFriendship(@Param("userId1") Long userId1, @Param("userId2") Long userId2);
+
+    @Transactional
+    void deleteBySenderId(Long senderId);
 }
 

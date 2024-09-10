@@ -896,3 +896,10 @@ h1, h2, h3, h4, h5, h6 {
 .flip-card-back {
     transform: rotateY(180deg);
 }
+
+
+
+.plant-option.highlighted {
+    background-color: #e0f7fa; /* Highlight color */
+    border-color: #00796b; /* Highlight border color */
+}
