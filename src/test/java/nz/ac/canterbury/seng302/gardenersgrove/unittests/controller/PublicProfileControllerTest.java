@@ -1,7 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unittests.controller;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.FavouritePlantsController;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.PublicProfileController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
@@ -10,15 +11,15 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
-
+import com.fasterxml.jackson.core.type.TypeReference;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.ProfanityService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.web.servlet.MockMvc;
@@ -34,9 +35,9 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 import java.io.IOException;
+import java.util.List;
 import java.time.LocalDate;
 
-import java.util.List;
 import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -53,7 +54,11 @@ public class PublicProfileControllerTest {
     private static PublicProfileController publicProfileController;
     private static GardenUserService gardenUserService;
     private static GardenService gardenService;
+
+    private static FavouritePlantsController favouritePlantsController;
     private static PlantService plantService;
+
+    private static Garden garden;
 
     private static PlantRepository plantRepository;
 
@@ -62,6 +67,7 @@ public class PublicProfileControllerTest {
     private static Authentication authentication;
     private static Long userId;
     private static ProfanityService profanityService;
+
 
     static Long loggedInUserId = 2L;
     static GardenUser loggedInUser;
@@ -73,6 +79,9 @@ public class PublicProfileControllerTest {
     private EditUserDTO editUserDTO;
 
     private static MockMvc mockMvc;
+
+    @Mock
+    private HttpServletRequest request;
 
     @BeforeAll
     static void setup() {
@@ -86,6 +95,7 @@ public class PublicProfileControllerTest {
         plantRepository = Mockito.mock(PlantRepository.class);
         user = new GardenUser();
         publicProfileController = new PublicProfileController(gardenUserService, profanityService, plantService);
+        favouritePlantsController = new FavouritePlantsController(gardenUserService, plantService);
         loggedInUser = new GardenUser();
         loggedInUser.setId(loggedInUserId);
         loggedInUser.setEmail("logged.in@gmail.com");
@@ -101,6 +111,12 @@ public class PublicProfileControllerTest {
         otherUser.setFname("Other");
         otherUser.setLname("User");
         otherUser.setDescription("This is a description for another user");
+        garden = new Garden();
+
+
+
+
+
 
         mockMvc = MockMvcBuilders.standaloneSetup(publicProfileController).build();
 
@@ -202,7 +218,7 @@ public class PublicProfileControllerTest {
     }
 
     @Test
-    void testEditForm() {
+    void testEditForm() throws JsonProcessingException {
         Model model = mock(Model.class);
         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
         String result = publicProfileController.editPublicProfile(authentication, model);
@@ -259,11 +275,40 @@ public class PublicProfileControllerTest {
 
         when(gardenUserService.getCurrentUser()).thenReturn(owner);
         when(plantService.getAllPlants(owner, searchTerm)).thenReturn(List.of(testPlant1));
-        ResponseEntity<List<Map<String, Object>>> response = publicProfileController.searchPlants("Tomato");
+        ResponseEntity<List<Map<String, Object>>> response = favouritePlantsController.searchPlants("Tomato");
 
         List<Map<String, Object>> list = response.getBody();
         assertEquals(1, list.size());
+    }
 
+    @Test
+    void givenUserHasGardenImage_whenGetFavouriteGardenImage_thenReturnImageBytes() {
+        byte[] imageBytes = "image".getBytes();
+        garden.setGardenImage("image/png", imageBytes);
+
+        user.setFavoriteGarden(garden);
+
+        when(gardenUserService.getUserById(1L)).thenReturn(user);
+
+        ResponseEntity<byte[]> response = publicProfileController.favouriteGardenImage(1L, request);
+
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals("image/png", response.getHeaders().getContentType().toString());
+        assertEquals(imageBytes, response.getBody());
+    }
+
+    @Test
+    void givenUserHasNoGardenImage_whenGetFavouriteGardenImage_thenRedirectToDefaultImage() {
+        when(gardenUserService.getUserById(1L)).thenReturn(user);
+        when(request.getContextPath()).thenReturn("");
+        garden.setGardenImage(null, null);
+
+        // Act
+        ResponseEntity<byte[]> response = publicProfileController.favouriteGardenImage(1L, request);
+
+        // Assert
+        assertEquals(HttpStatus.FOUND, response.getStatusCode());
+        assertEquals("/img/default-garden.svg", response.getHeaders().getFirst(HttpHeaders.LOCATION));
     }
 
 }

@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.unittests.entity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -33,5 +34,15 @@ class GardenTest {
         String address = garden.getAddress();
 
         assertEquals("", address);
+    }
+
+    @Test
+    void givenSetFavouriteGarden_thenUserIsSet() {
+        GardenUser user = new GardenUser();
+        Garden garden = new Garden("Test Garden", null, null, null, null, null, null, null, null, null, null, null, null);
+        garden.setFavouriteGarden(user);
+        GardenUser result = garden.getFavouriteGarden();
+
+        assertEquals(result,user);
     }
 }
