@@ -13,9 +13,6 @@ public class PlantDTO extends BasePlant {
 
     @ValidDate()
     private String plantedDate;
-
-    private String submissionToken;
-
     public PlantDTO(String name, String count, String description, String plantedDate) {
         this.name = name;
         this.count = count;
