@@ -144,6 +144,8 @@ function addDeleteButton(selectedCard) {
 
 // Helper function to update the card's appearance
 function updateCardAppearance(selectedCard, plantImage, plantName, plantId) {
+
+
     selectedCard.className = 'card p-2 me-3 mb-3 border-0 rounded-3 d-flex shadow-sm public-profile-plant-card bg-primary-temp';
 
     let imgElement = selectedCard.querySelector('img');
@@ -190,7 +192,11 @@ function clearCardAppearance(selectedCard) {
     imgElement.className = 'mx-auto d-block';
     selectedCard.appendChild(imgElement);
 
-    selectedCard.onclick = () => openPlantSelectorModal(selectedCardId)
+    setTimeout(() => {
+        selectedCard.onclick = () => {
+            openPlantSelectorModal(selectedCardId)
+        }
+    }, 100);
 }
 
 // Helper function to handle errors
@@ -300,6 +306,7 @@ function updateFavouritePlants() {
 }
 
 const deleteFavouritePlant = (selectedCardId) => {
+    console.log("deleted")
     let plantId = document.getElementById("selectedPlantId" + selectedCardId.toString()).value;
     removeSelectedPlant(plantId);
     let id = "favouritePlantCard".concat(selectedCardId.toString());
