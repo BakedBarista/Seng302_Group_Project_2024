@@ -44,7 +44,7 @@
 <main class="d-flex flex-column align-items-center justify-content-center" style="margin: 10px">
     <h1 class="my-3 text-center">Suggested Connections</h1>
     <div class="col-sm-10 flip-card flex-grow-1 flex-column">
-        <div class="flip-card-inner border-0 w-100 card">
+        <div class="flip-card-inner border-0 w-100 card" th:if="${name != null}">
             <div class="flip-card-front d-flex justify-content-between flex-column px-3 py-2 shadow" style="border-radius: 30px; min-height: 100%;">
                 <div class="d-flex justify-content-between pb-1">
                     <button class="upper-control" data-bs-toggle="tooltip" title="Flip card" data-gg-flip-card-toggle>
