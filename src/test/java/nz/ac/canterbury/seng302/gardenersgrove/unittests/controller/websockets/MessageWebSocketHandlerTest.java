@@ -11,20 +11,20 @@ import org.springframework.web.socket.WebSocketSession;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import nz.ac.canterbury.seng302.gardenersgrove.controller.websockets.TestWebSocketHandler;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.websockets.MessageWebSocketHandler;
 
 import static org.mockito.Mockito.*;
 
-class TestWebSocketHandlerTest {
+class MessageWebSocketHandlerTest {
 
-    private TestWebSocketHandler testWebSocketHandler;
+    private MessageWebSocketHandler testWebSocketHandler;
     private WebSocketSession session1;
     private WebSocketSession session2;
     
     @BeforeEach
     void setUp() {
         ObjectMapper objectMapper = new ObjectMapper();
-        testWebSocketHandler = new TestWebSocketHandler(objectMapper);
+        testWebSocketHandler = new MessageWebSocketHandler(objectMapper);
 
         session1 = mock(WebSocketSession.class);
         session2 = mock(WebSocketSession.class);

@@ -8,17 +8,11 @@ public class MessageDTO {
     @Size(max = 160, message = "Messages can not be longer than 160 characters.")
     private final String message;
 
-    private final String submissionToken;
-
-    public MessageDTO(String message, String submissionToken) {
-
+    public MessageDTO(String message) {
         this.message = message;
-        this.submissionToken = submissionToken;
     }
 
     public String getMessage() {
         return message;
     }
-
-    public String getSubmissionToken() {return submissionToken;}
 }

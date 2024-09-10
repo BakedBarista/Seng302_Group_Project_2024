@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.websockets;
 
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.fasterxml.jackson.databind.node.JsonNodeType;
@@ -17,17 +18,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-/**
- * An example WebSocketHandler for testing purposes.
- */
-public class TestWebSocketHandler extends TextWebSocketHandler {
-    private final Logger logger = LoggerFactory.getLogger(TestWebSocketHandler.class);
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.MessageDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.service.MessageService;
 
+/**
+ * A WebSocketHandler for real-time messaging.
+ */
+public class MessageWebSocketHandler extends TextWebSocketHandler {
+    private final Logger logger = LoggerFactory.getLogger(MessageWebSocketHandler.class);
+
+	private MessageService messageService;
 	private ObjectMapper objectMapper;
-	private long counter;
 	private Set<WebSocketSession> activeSessions = new HashSet<>();
 
-	public TestWebSocketHandler(ObjectMapper objectMapper) {
+	public MessageWebSocketHandler(MessageService messageService, ObjectMapper objectMapper) {
+		this.messageService = messageService;
 		this.objectMapper = objectMapper;
 	}
 
@@ -57,10 +62,17 @@ public class TestWebSocketHandler extends TextWebSocketHandler {
 				activeSessions.add(session);
 				sendState(session);
 				break;
-			case "increment":
-				logger.info("increment");
-				counter++;
-				broadcastState();
+			case "sendMessage":
+				Long sender = Long.parseLong(session.getPrincipal().getName());
+				Long reciever = message.get("reciever").asLong();
+				String messageText = message.get("message").asText();
+				logger.info("sendMessage {} {} {}", sender, reciever, messageText);
+
+				// TODO: validate DTO
+				MessageDTO messageDTO = new MessageDTO(messageText);
+				messageService.sendMessage(sender, reciever, messageDTO);
+
+				broadcastState(List.of(sender, reciever));
 				break;
 			case "ping":
 				try {
@@ -78,9 +90,15 @@ public class TestWebSocketHandler extends TextWebSocketHandler {
 
 	/**
 	 * Broadcasts the current counter value to all active sessions.
+	 * 
+	 * @param to A list of user IDs to broadcast the current state to
 	 */
-	private void broadcastState() {
+	private void broadcastState(List<Long> to) {
 		for (WebSocketSession session : Set.copyOf(activeSessions)) {
+			long userId = Long.parseLong(session.getPrincipal().getName());
+			if (to == null || !to.contains(userId)) {
+				continue;
+			}
 			if (session.isOpen()) {
 				sendState(session);
 			} else {
@@ -96,7 +114,7 @@ public class TestWebSocketHandler extends TextWebSocketHandler {
 	private void sendState(WebSocketSession session) {
 		ObjectNode message = JsonNodeFactory.instance.objectNode();
 		message.put("type", "value");
-		message.put("value", counter);
+		// message.put("value", counter);
 
 		String jsonMessage;
 		try {

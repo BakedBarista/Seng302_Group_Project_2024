@@ -100,7 +100,7 @@
 
             <!-- message and send message box-->
             <div class="send-message-container">
-                <form th:action="@{/users/message(id=${sentToUser.id})}" method="post" th:object="${messageDTO}">
+                <form th:action="@{/users/message(id=${sentToUser.id})}" method="post" th:object="${messageDTO}" id="sendMessageForm">
                     <input type="hidden" name="submissionToken" th:value="${submissionToken}" />
                     <div class="d-flex gap-2">
                         <div class="d-flex flex-fill flex-wrap">
@@ -132,7 +132,7 @@
             textarea.addEventListener("keydown", function(event) {
                 if (event.key === "Enter" && !event.shiftKey) {
                     event.preventDefault();
-                    this.form.submit();
+                    sendMessage();
                 }
             });
         });
@@ -154,5 +154,6 @@
             button.disabled = messageField.value.length <= 0 || messageField.value.trim().length === 0;
         })
     </script>
+    <script th:src="@{/js/message.js}"></script>
 </body>
 </html>
