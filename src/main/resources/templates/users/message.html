@@ -47,7 +47,7 @@
                     <div class="d-flex gap-2">
                         <div class="d-flex flex-fill flex-wrap">
                             <label for="message" th:class="'form-label ' + ${#fields.hasErrors('message') ? 'is-invalid' : ''}"></label>
-                           <div class="d-flex flex-fill">
+                           <div class="d-flex flex-fill gap-2">
                             <textarea id="message" th:name="message" th:field="*{message}" class="form-control flex-grow-1" style="resize: none;"  placeholder="Message here..." autofocus></textarea>
                             <button type="submit" class="btn btn-primary px-4 py-0" id="sendButton" disabled>
                                 <img th:src="@{/icons/sent-stroke-rounded.svg}" alt="Send">
