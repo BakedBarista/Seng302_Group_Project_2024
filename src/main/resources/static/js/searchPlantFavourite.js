@@ -254,24 +254,20 @@ function previewFavouritePlants(favouritePlants) {
 function updateFavouritePlants() {
     event.preventDefault();
 
-
     for(let i = 0; i < 3; i++) {
-        console.log(document.getElementById('selectedPlantId' + (i + 1)).value);
-        console.log(i);
-        console.log(document.getElementById('plantId' + (i + 1))?.value);
-       if(document.getElementById("plantId" + (i + 1))?.value === "true") {
-            let plantId = document.getElementById('currentPlantId' + (i + 1))?.value;
-            console.log(plantId)
+        let currentPlant = document.getElementById('selectedPlantId' + (i + 1)).value
+        if(document.getElementById("deleteFlag" + (i + 1))?.value === "true"
+            && currentPlant !== "") {
             fetch(`${apiBaseUrl}users/delete-favourite-plant`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
                     [csrfHeader]: csrf,
                 },
-                body: JSON.stringify({ plantId: parseInt(plantId) }),
+                body: JSON.stringify({ plantId: parseInt(currentPlant) }),
             }).then(response => {
                 if (response.ok) {
-                    document.getElementById("plantId" + (i + 1)).value = "false";
+                    document.getElementById("deleteFlag" + (i + 1)).value = "false";
                     document.getElementById('selectedPlantId' + (i + 1)).value = "";
                     console.log("Favourite plant deleted");
                 } else {
@@ -319,11 +315,8 @@ function updateFavouritePlants() {
 
 const deleteFavouritePlant = (selectedCardId) => {
     let id = "favouritePlantCard" + selectedCardId.toString();
-    let plantId = document.getElementById("selectedPlantId" + selectedCardId.toString()).value;
-    console.log("Plant ID to delete:", plantId);
-    document.getElementById("plantId" +  selectedCardId.toString()).value = "true";
-    console.log( "plantId" +  selectedCardId.toString());
-    console.log(document.getElementById("plantId" +  selectedCardId.toString()).value = "true");
+    document.getElementById("deleteFlag" +  selectedCardId.toString()).value = "true";
+    console.log("deleteFlag" +  selectedCardId.toString());
     let selectedCard = document.getElementById(id);
     clearCardAppearance(selectedCard);
 }

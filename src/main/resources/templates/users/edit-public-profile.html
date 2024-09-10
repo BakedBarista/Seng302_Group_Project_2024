@@ -184,7 +184,7 @@
                           <th:block th:unless="${i <= favouritePlants.size()}">
                               <img th:src="@{/icons/create-mustard-grey.svg}" alt="empty-favourite" width="50" height="50" class="mx-auto d-block"/>
                           </th:block>
-
+                          <input type="hidden" th:id="'deleteFlag' + ${i}" th:value="false"/>
                           <input type="hidden" th:id="'selectedPlantId' + ${i}" th:value="${i <= favouritePlants.size()} ? ${favouritePlants[i-1].id} : ''"/>
                       </div>
                   </div>
