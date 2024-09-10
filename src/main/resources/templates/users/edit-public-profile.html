@@ -162,9 +162,11 @@
                            th:classappend="${i <= favouritePlants.size()} ? 'd-flex bg-primary-temp' : 'justify-content-center card-wiggle bg-primary-grey'"
                            th:id="'favouritePlantCard' + ${i}"
                            th:onclick="${i <= favouritePlants.size()} ? '' : 'openPlantSelectorModal(' + ${i} + ')'">
+                          <input type="hidden" th:id="'selectedPlantId' + ${i}" th:value="${i <= favouritePlants.size()} ? ${favouritePlants[i-1].id} : ''"/>
+
                           <!-- Filled card content -->
                           <th:block th:if="${i <= favouritePlants.size()}">
-                                <span th:onclick="'deleteFavouritePlant(' + ${i} + '); return false;'">
+                                <span th:onclick="'deleteFavouritePlantHTML(' + ${i} + '); return false;'">
                                     <a class="btn-change position-absolute bg-danger top-0 end-0 m-1 p-1
                                               d-flex align-content-center justify-content-center rounded-3">
                                         <img th:src="@{/icons/delete.svg}"
@@ -182,7 +184,6 @@
                           <th:block th:unless="${i <= favouritePlants.size()}">
                               <img th:src="@{/icons/create-mustard-grey.svg}" alt="empty-favourite" width="50" height="50" class="mx-auto d-block"/>
                           </th:block>
-                          <input type="hidden" th:id="'selectedPlantId' + ${i}" th:value="${i <= favouritePlants.size()} ? ${favouritePlants[i-1].id} : ''"/>
                       </div>
                   </div>
               </div>

@@ -112,8 +112,7 @@ function showSearchResults() {
 
 // Helper function to check if the plant is already selected
 function isPlantAlreadySelected(plantId, selectedCard, favouritePlants) {
-    return (selectedPlants.includes(plantId) && selectedCard.querySelector('input[type="hidden"]').value != plantId)
-        || favouritePlants.some(plant => plant.id === plantId);
+    return (selectedPlants.includes(plantId) || favouritePlants.some(plant => plant.id === plantId));
 }
 
 // Function to add delete button to the card
@@ -176,7 +175,11 @@ function clearCardAppearance(selectedCard) {
     selectedCard.className = 'card p-2 me-3 mb-3 border-0 rounded-3 shadow-sm public-profile-plant-card ' +
         'justify-content-center card-wiggle bg-primary-grey';
 
+    const hiddenElement = document.getElementById("selectedPlantId" + selectedCardId)
+
     selectedCard.innerHTML = '';
+
+    selectedCard.appendChild(hiddenElement)
 
     // Add empty card content
     const imgElement = document.createElement('img');
@@ -187,8 +190,7 @@ function clearCardAppearance(selectedCard) {
     imgElement.className = 'mx-auto d-block';
     selectedCard.appendChild(imgElement);
 
-    const cardIndex = selectedCard.id.replace("favouritePlantCard", '')
-    selectedCard.onclick = () => openPlantSelectorModal(selectedPlantId)
+    selectedCard.onclick = () => openPlantSelectorModal(selectedCardId)
 }
 
 // Helper function to handle errors
@@ -218,8 +220,6 @@ function previewFavouritePlants(favouritePlants) {
         return;
     }
 
-    console.log(selectedCard)
-
     const plantName = selectedOption.getAttribute('data-name');
     const plantImage = selectedOption.querySelector('img').src;
 
@@ -241,8 +241,6 @@ function previewFavouritePlants(favouritePlants) {
     // Hide the modal
     const modal = bootstrap.Modal.getInstance(document.getElementById("plantSelectorModal"));
     modal.hide();
-
-    console.log(selectedCard)
 }
 
 // Function to update the favourite plants of the user
@@ -253,28 +251,32 @@ function updateFavouritePlants() {
         document.getElementById('selectedPlantId3')?.value
     ].filter(id => id);
 
-    console.log(deletedPlantIds)
     for (let currentPlant in deletedPlantIds) {
-        fetch(`${apiBaseUrl}/users/delete-favourite-plant`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-                [csrfHeader]: csrf,
-            },
-            body: JSON.stringify({ plantId: parseInt(currentPlant) }),
-        }).then(response => {
-            if (response.ok) {
-                console.log("Favourite plant deleted");
-            } else {
-                console.log("Error deleting favourite plant");
-                return response.json();
-            }
-        }).then(data => {
-            if (data) console.log(data);
-        }).catch(error => {
-            console.log("Error:", error);
-        });
-        event.stopPropagation();
+        console.log(currentPlant)
+        console.log(favouritePlants)
+        console.log(!favouritePlants.some(plant => plant.id === parseInt(currentPlant)))
+        if (!favouritePlants.some(plant => plant.id === parseInt(currentPlant))) {
+            fetch(`${apiBaseUrl}/users/delete-favourite-plant`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrf,
+                },
+                body: JSON.stringify({ plantId: parseInt(currentPlant) }),
+            }).then(response => {
+                if (response.ok) {
+                    console.log("Favourite plant deleted");
+                } else {
+                    console.log("Error deleting favourite plant");
+                    return response.json();
+                }
+            }).then(data => {
+                if (data) console.log(data);
+            }).catch(error => {
+                console.log("Error:", error);
+            });
+            event.stopPropagation();
+        }
     }
 
     fetch(`${baseUrl}users/edit-public-profile/favourite-plant`, {
@@ -298,12 +300,27 @@ function updateFavouritePlants() {
 }
 
 const deleteFavouritePlant = (selectedCardId) => {
-    console.log(selectedCardId)
+    let plantId = document.getElementById("selectedPlantId" + selectedCardId.toString()).value;
+    removeSelectedPlant(plantId);
     let id = "favouritePlantCard".concat(selectedCardId.toString());
-    console.log(id)
     let selectedCard = document.getElementById(id);
-    console.log(selectedCard)
-    console.log("selectedPlantId" + selectedCardId.toString())
-    deletedPlantIds[selectedCardId] = document.getElementById("selectedPlantId" + selectedCardId.toString()).value;
+    deletedPlantIds[selectedCardId] = plantId;
     clearCardAppearance(selectedCard);
+}
+
+const deleteFavouritePlantHTML = (cardId) => {
+    selectedCardId = cardId
+    deleteFavouritePlant(cardId)
+}
+
+const removeSelectedPlant = (plantId) => {
+    const indexSelected = selectedPlants.indexOf(parseInt(plantId));
+    if (indexSelected >= 0) {
+        selectedPlants.splice(indexSelected,1);
+    }
+
+    const indexFavourite = favouritePlants.findIndex(plant => parseInt(plant.id) === parseInt(plantId));
+    if (indexFavourite >= 0) {
+        favouritePlants.splice(indexFavourite,1);
+    }
 }
