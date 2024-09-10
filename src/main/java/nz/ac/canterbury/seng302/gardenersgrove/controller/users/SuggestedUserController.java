@@ -16,8 +16,17 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.context.IContext;
+import org.thymeleaf.context.WebContext;
+import org.thymeleaf.web.IWebExchange;
+import org.thymeleaf.web.servlet.JakartaServletWebApplication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,15 +42,17 @@ public class SuggestedUserController {
     private final GardenUserService gardenUserService;
     private final SuggestedUserService suggestedUserService;
     private final ObjectMapper objectMapper;
+    private final TemplateEngine templateEngine;
 
     private static final String SUCCESS = "success";
 
     @Autowired
-    public SuggestedUserController(FriendService friendService, GardenUserService gardenUserService, SuggestedUserService suggestedUserService, ObjectMapper objectMapper) {
+    public SuggestedUserController(FriendService friendService, GardenUserService gardenUserService, SuggestedUserService suggestedUserService, ObjectMapper objectMapper, TemplateEngine templateEngine) {
         this.friendService = friendService;
         this.gardenUserService = gardenUserService;
         this.suggestedUserService = suggestedUserService;
         this.objectMapper = objectMapper;
+        this.templateEngine = templateEngine;
     }
 
     /**
@@ -50,7 +61,7 @@ public class SuggestedUserController {
      * @return the home page
      */
     @GetMapping("/")
-    public String home(Authentication authentication, Model model) {
+    public String home(Authentication authentication, Model model, HttpServletRequest request, HttpServletResponse response) {
         logger.info("GET /");
         try {
             Long userId = (Long) authentication.getPrincipal();
@@ -67,7 +78,7 @@ public class SuggestedUserController {
             model.addAttribute("name", suggestedUsers.get(0).getFullName());
             model.addAttribute("description", suggestedUsers.get(0).getDescription());
 
-            List<SuggestedUserDTO> userDtos = suggestedUsers.stream().map(SuggestedUserDTO::new).toList();
+            List<SuggestedUserDTO> userDtos = suggestedUsers.stream().map((GardenUser u) -> makeSuggestedUserDTO(u, request, response)).toList();
             String jsonUsers = objectMapper.writeValueAsString(userDtos);
             model.addAttribute("userList", jsonUsers);
         }
@@ -75,6 +86,20 @@ public class SuggestedUserController {
             logger.error("Error getting suggested users", e);
         }
         return "home";
+    }
+
+    private SuggestedUserDTO makeSuggestedUserDTO(GardenUser user, HttpServletRequest request, HttpServletResponse response) {
+        SuggestedUserDTO dto = new SuggestedUserDTO(user);
+
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("userId", user.getId());
+
+        // Manually render thymeleaf fragments for the backside of each card
+        JakartaServletWebApplication application = JakartaServletWebApplication.buildApplication(request.getServletContext());
+        WebContext context = new WebContext(application.buildExchange(request, response), request.getLocale(), variables);
+        dto.setFavouriteGardenHtml(templateEngine.process("fragments/favourite-garden.html", context));
+
+        return dto;
     }
 
     @PostMapping("/")

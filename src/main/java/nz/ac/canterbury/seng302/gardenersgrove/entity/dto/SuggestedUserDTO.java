@@ -7,6 +7,8 @@ public class SuggestedUserDTO {
     private String fullName;
     private String description;
 
+    private String favouriteGardenHtml;
+
     public SuggestedUserDTO(GardenUser user) {
         this.id = user.getId();
         this.fullName = user.getFullName();
@@ -23,5 +25,13 @@ public class SuggestedUserDTO {
 
     public String getDescription() {
         return description;
+    }
+
+    public String getFavouriteGardenHtml() {
+        return favouriteGardenHtml;
+    }
+
+    public void setFavouriteGardenHtml(String favouriteGardenHtml) {
+        this.favouriteGardenHtml = favouriteGardenHtml;
     }
 }
