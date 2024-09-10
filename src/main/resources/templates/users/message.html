@@ -67,7 +67,7 @@
         const messageField = document.getElementById("message");
         const button = document.getElementById("sendButton");
         messageField.addEventListener("input", () => {
-            button.disabled = messageField.value.length <= 0;
+            button.disabled = messageField.value.length <= 0 || messageField.value.trim().length === 0;
         })
     </script>
 </body>
