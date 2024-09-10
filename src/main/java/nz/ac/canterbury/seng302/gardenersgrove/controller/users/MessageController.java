@@ -207,11 +207,13 @@ public String messageHome(@RequestParam("userId") Long requestedUserId,
     List<Message> chats = messageService.findAllRecentChats(loggedInUserId);
     Map<GardenUser, String> recentChats = new HashMap<>();
 
-    // Process recent chats
-    for (Message chat : chats) {
-        if (chat.getSender().equals(requestedUserId) || chat.getReceiver().equals(requestedUserId)) {
-            GardenUser requestedUser = userService.getUserById(requestedUserId);
-            recentChats.put(requestedUser, chat.getMessageContent());
+    if (!chats.isEmpty()) {
+        // Process recent chats
+        for (Message chat : chats) {
+            if (chat.getSender().equals(requestedUserId) || chat.getReceiver().equals(requestedUserId)) {
+                GardenUser requestedUser = userService.getUserById(requestedUserId);
+                recentChats.put(requestedUser, chat.getMessageContent());
+            }
         }
     }
 
