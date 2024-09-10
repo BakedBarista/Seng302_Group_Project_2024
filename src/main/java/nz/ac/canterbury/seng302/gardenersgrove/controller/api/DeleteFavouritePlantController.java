@@ -46,5 +46,6 @@ public class DeleteFavouritePlantController {
 
         Long userId = (Long) authentication.getPrincipal();
         gardenUserService.removeFavouritePlant(userId, plantId);
+
     }
 }

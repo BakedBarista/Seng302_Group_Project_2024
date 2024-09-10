@@ -164,6 +164,7 @@
                            th:onclick="${i <= favouritePlants.size()} ? '' : 'openPlantSelectorModal(' + ${i} + ')'">
                           <!-- Filled card content -->
                           <th:block th:if="${i <= favouritePlants.size()}">
+                              <input type="hidden" th:id="'plantId' + ${i}" th:value="false"/>
                     <span th:onclick="'deleteFavouritePlant(' + ${i} + '); return false;'">
                         <a class="btn-change position-absolute bg-danger top-0 end-0 m-1 p-1
                                   d-flex align-content-center justify-content-center rounded-3">
