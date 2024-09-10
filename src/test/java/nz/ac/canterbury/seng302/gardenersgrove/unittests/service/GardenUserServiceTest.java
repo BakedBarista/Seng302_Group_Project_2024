@@ -1,14 +1,13 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unittests.service;
 
+import java.util.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
-
-import java.util.List;
-import java.util.Optional;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
+import org.assertj.core.util.Arrays;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -17,9 +16,15 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
 class GardenUserServiceTest {
     private GardenUserService gardenUserService;
     private GardenUserRepository mockRepository;
+    private Plant plant1;
+    private Plant plant2;
+    private GardenUser mockUser;
 
     private GardenUser testUser1 = new GardenUser("John", "Doe", "jdo123@uclive.ac.nz", "password",
             null);
@@ -30,6 +35,27 @@ class GardenUserServiceTest {
     void setUp() {
         mockRepository = Mockito.mock(GardenUserRepository.class);
         gardenUserService = new GardenUserService(mockRepository);
+        // Initialize test plants
+        plant1 = new Plant("Tomato", "1", null, null);
+        plant1.setId(1L);
+        plant2 = new Plant("Carrot", "2", null, null);
+        plant2.setId(2L);
+
+        // Initialize and set favorite plants
+        Set<Plant> favoritePlants = new HashSet<>();
+        favoritePlants.add(plant1);
+        favoritePlants.add(plant2);
+
+        testUser1.setId(1L);
+
+
+
+        testUser1.addFavouritePlant(plant1);
+        testUser1.addFavouritePlant(plant2);
+
+        Mockito.when(mockRepository.findById(testUser1.getId())).thenReturn(Optional.of(testUser1));
+
+
     }
 
     @Test
@@ -215,4 +241,38 @@ class GardenUserServiceTest {
         Garden favouriteGarden = gardenUserService.getFavoriteGarden(testUser1.getId());
         assertEquals(garden, favouriteGarden);
     }
+
+    @Test
+    void givenUserHasFavoritePlants_whenGetFavoritePlantsCalled_thenReturnsFavoritePlants() {
+        Set<Plant> result = gardenUserService.getFavoritePlants(testUser1.getId());
+
+        assertEquals(2, result.size());
+        assertTrue(result.contains(plant1));
+        assertTrue(result.contains(plant2));
+
+    }
+
+
+    @Test
+    void testUpdateFavouritePlant_SuccessfullyAddsPlant() {
+        Plant newPlant = new Plant("Lettuce", "4", null, null);
+        newPlant.setId(4L);
+
+        Set<Plant> newSet = new HashSet<>();
+        newSet.add(newPlant);
+
+        Mockito.when(mockRepository.findById(1L)).thenReturn(Optional.of(testUser1));
+
+        gardenUserService.updateFavouritePlant(1L, newSet);
+
+        assertTrue(testUser1.getFavouritePlants().contains(newPlant));
+        assertEquals(1, testUser1.getFavouritePlants().size());
+        verify(mockRepository, times(1)).save(testUser1);
+    }
+
+
+
+
+
+
 }

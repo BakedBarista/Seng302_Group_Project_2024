@@ -85,6 +85,14 @@ function previewFavouriteGarden() {
 function updateFavouriteGarden() {
     const gardenId = document.getElementById('selectedGardenId').value;
 
+    if(!gardenId) {
+
+        document.getElementById("editPublicProfileForm").submit();
+        return;
+
+    }
+
+
     fetch(`${baseUrl}users/edit-public-profile/favourite-garden`, {
         method: 'PUT',
         headers: {
@@ -95,6 +103,7 @@ function updateFavouriteGarden() {
     }).then(response => {
         if(response.ok) {
             console.log("Garden updated");
+            document.getElementById("editPublicProfileForm").submit();
         } else {
             console.log("Error updating garden");
             response.json().then(data => console.log(data));
@@ -103,5 +112,7 @@ function updateFavouriteGarden() {
     }).catch(error => {
         console.log(error);
     });
+
+
 
 }
