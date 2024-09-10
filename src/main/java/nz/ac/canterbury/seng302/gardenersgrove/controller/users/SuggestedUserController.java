@@ -105,7 +105,7 @@ public class SuggestedUserController {
                     boolean newRequestSent = suggestedUserService.sendNewPendingRequest(loggedInUser, suggestedUser);
                     if (!newRequestSent) {
                         logger.error("Users already have a pending request. Doing nothing");
-                        return ResponseEntity.status(HttpStatus.OK).body(response);
+                        break;
                     }
                 }
                 break;
@@ -118,7 +118,7 @@ public class SuggestedUserController {
                     boolean declineStatusSet = suggestedUserService.setDeclinedFriendship(loggedInUser, suggestedUser);
                     if (!declineStatusSet) {
                         logger.error("Something went wrong trying to set a declined friendship. Doing nothing");
-                        return ResponseEntity.status(HttpStatus.OK).body(response);
+                        break;
                     }
                 }
                 break;

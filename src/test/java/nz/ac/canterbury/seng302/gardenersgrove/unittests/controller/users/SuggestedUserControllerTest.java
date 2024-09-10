@@ -56,6 +56,7 @@ class SuggestedUserControllerTest {
         friendService = Mockito.mock(FriendService.class);
         authentication = Mockito.mock(Authentication.class);
         suggestedUserService = Mockito.mock(SuggestedUserService.class);
+        objectMapper = new ObjectMapper();
         suggestedUserController = new SuggestedUserController(friendService, gardenUserService, suggestedUserService, objectMapper);
         objectMapper = new ObjectMapper();
 
@@ -98,7 +99,6 @@ class SuggestedUserControllerTest {
         Mockito.when(authentication.getPrincipal()).thenReturn(loggedInUserId);
         Mockito.when(gardenUserService.getUserById(loggedInUserId)).thenReturn(loggedInUser);
         Mockito.when(friendService.availableConnections(loggedInUser)).thenReturn(suggestedUsers);
-        Mockito.when(objectMapper.writeValueAsString(suggestedUsers)).thenReturn("test");
 
         String page = suggestedUserController.home(authentication, model);
 

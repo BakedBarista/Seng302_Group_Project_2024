@@ -1,28 +1,41 @@
 package nz.ac.canterbury.seng302.gardenersgrove.cucumber.step_definitions;
 
-import io.cucumber.java.After;
-import io.cucumber.java.Before;
-import io.cucumber.java.en.Given;
-import io.cucumber.java.en.Then;
-import io.cucumber.java.en.When;
-import nz.ac.canterbury.seng302.gardenersgrove.controller.ApplicationController;
-import nz.ac.canterbury.seng302.gardenersgrove.controller.users.SuggestedUserController;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.FriendsRepository;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
+import static nz.ac.canterbury.seng302.gardenersgrove.entity.Friends.Status.ACCEPTED;
+import static nz.ac.canterbury.seng302.gardenersgrove.entity.Friends.Status.PENDING;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.assertArg;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.clearInvocations;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.Map;
+
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 
-import java.util.Map;
-
-import static nz.ac.canterbury.seng302.gardenersgrove.entity.Friends.Status.ACCEPTED;
-import static nz.ac.canterbury.seng302.gardenersgrove.entity.Friends.Status.PENDING;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.users.SuggestedUserController;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.FriendsRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 public class U800_2_1_ConnectionFeed {
@@ -31,13 +44,11 @@ public class U800_2_1_ConnectionFeed {
     private static GardenUser userLiam;
     private static GardenUser userBen;
     private static GardenUser userImmy;
-    private boolean confirmationMessageShown;
+    private Boolean confirmationMessageShown;
     private String userListJson;
 
     @Autowired
     private SuggestedUserController suggestedUserController;
-    @Autowired
-    private ApplicationController applicationController;
     @Autowired
     private GardenUserRepository gardenUserRepository;
     @Autowired
@@ -85,9 +96,9 @@ public class U800_2_1_ConnectionFeed {
 
     @When("I accept or decline a profile")
     public void iAcceptOrDeclineAProfile() {
-        ResponseEntity<Map<String, Object>> result = applicationController.homeAccept("accept", userBen.getId(), authentication, model);
+        ResponseEntity<Map<String, Object>> result = suggestedUserController.handleAcceptDecline("accept", userBen.getId(), authentication, model);
 
-        assertFalse((Boolean) result.getBody().get("success"));
+        assertNull(result.getBody().get("success"));
         assertTrue(result.getStatusCode().is2xxSuccessful());
     }
 
@@ -107,7 +118,7 @@ public class U800_2_1_ConnectionFeed {
 
     @When("I click the red cross button on a person who I do not have a pending friend request from")
     public void i_click_the_red_cross_button_on_a_person_who_i_do_not_have_a_pending_friend_request_from() {
-        ResponseEntity<Map<String, Object>> result = applicationController.homeAccept("decline", userBen.getId(), authentication, model);
+        ResponseEntity<Map<String, Object>> result = suggestedUserController.handleAcceptDecline("decline", userBen.getId(), authentication, model);
 
         assertFalse((Boolean) result.getBody().get("success"));
         assertTrue(result.getStatusCode().is2xxSuccessful());
@@ -124,9 +135,9 @@ public class U800_2_1_ConnectionFeed {
         Friends request = new Friends(userBen, userLiam, PENDING);
         friendsRepository.save(request);
 
-        ResponseEntity<Map<String, Object>> result = applicationController.homeAccept("decline", userBen.getId(), authentication, model);
+        ResponseEntity<Map<String, Object>> result = suggestedUserController.handleAcceptDecline("decline", userBen.getId(), authentication, model);
 
-        assertFalse((Boolean) result.getBody().get("success"));
+        assertNull(result.getBody().get("success"));
         assertTrue(result.getStatusCode().is2xxSuccessful());
     }
 
@@ -135,7 +146,7 @@ public class U800_2_1_ConnectionFeed {
         Friends request = new Friends(userBen, userLiam, PENDING);
         friendsRepository.save(request);
 
-        ResponseEntity<Map<String, Object>> result = applicationController.homeAccept("accept", userBen.getId(), authentication, model);
+        ResponseEntity<Map<String, Object>> result = suggestedUserController.handleAcceptDecline("accept", userBen.getId(), authentication, model);
 
         confirmationMessageShown = (Boolean) result.getBody().get("success");
         assertTrue(result.getStatusCode().is2xxSuccessful());
@@ -155,9 +166,9 @@ public class U800_2_1_ConnectionFeed {
 
     @When("I click the green love heart button on a person who I don’t have a pending friend request from")
     public void i_click_the_green_love_heart_button_on_a_person_who_i_don_t_have_a_pending_friend_request_from() {
-        ResponseEntity<Map<String, Object>> result = applicationController.homeAccept("accept", userBen.getId(), authentication, model);
+        ResponseEntity<Map<String, Object>> result = suggestedUserController.handleAcceptDecline("accept", userBen.getId(), authentication, model);
 
-        assertFalse((Boolean) result.getBody().get("success"));
+        assertNull(result.getBody().get("success"));
         assertTrue(result.getStatusCode().is2xxSuccessful());
     }
 
