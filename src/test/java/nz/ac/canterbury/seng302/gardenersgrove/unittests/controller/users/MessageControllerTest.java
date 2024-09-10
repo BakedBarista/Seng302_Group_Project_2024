@@ -91,22 +91,6 @@ class MessageControllerTest {
     }
 
     @Test
-    void givenMessageInvalid_whenClickSend_ThenSendingUnsuccessful() {
-        Long sender = 1L;
-        Long receiver = 2L;
-        MessageDTO messageDTO = new MessageDTO("");
-
-        Mockito.when(authentication.getPrincipal()).thenReturn(sender);
-        Mockito.when(mockedFriendService.getFriendship(any(), any())).thenReturn(new Friends());
-        Mockito.when(gardenUserService.getUserById(sender)).thenReturn(new GardenUser());
-        Mockito.when(bindingResult.hasErrors()).thenReturn(true);
-
-
-        String result = messageController.sendMessage(receiver, messageDTO, bindingResult, authentication,  model);
-        assertEquals("users/message", result);
-    }
-
-    @Test
     void givenMessageTooLong_whenClickSend_ThenSendingUnsuccessful() {
         Long sender = 1L;
         Long receiver = 2L;

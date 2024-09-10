@@ -6,8 +6,7 @@ import jakarta.validation.constraints.Size;
 /** DTO For handing the submission of messages */
 public class MessageDTO {
 
-    @NotBlank(message = "Message cannot be empty")
-    @Size(max = 160, message = "Message too long.")
+    @Size(max = 160, message = "Messages can not be longer than 160 characters.")
     private final String message;
 
 
