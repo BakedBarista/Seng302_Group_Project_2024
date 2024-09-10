@@ -72,12 +72,21 @@ public class MessageController {
             return "redirect:/users/manage-friends";
         }
 
+        List<Message> allMessages = messageService.findAllRecentChats(loggedInUserId);
+
+        Map<Long, Message> recentMessagesMap = messageService.getLatestMessages(allMessages, loggedInUserId);
+
+        Map<GardenUser, String> recentChats = messageService.convertToPreview(recentMessagesMap);
+
         model.addAttribute("dateFormatter", new ThymeLeafDateFormatter());
         model.addAttribute("TIMESTAMP_FORMAT", TIMESTAMP_FORMAT);
         model.addAttribute("DATE_FORMAT", WEATHER_CARD_FORMAT_DATE);
         model.addAttribute("submissionToken", submissionToken);
         model.addAttribute("messagesMap", messageService.getMessagesBetweenFriends(loggedInUserId, requestedUserId));
         model.addAttribute("sentToUser", sentToUser);
+        model.addAttribute("recentChats", recentChats);
+        model.addAttribute("activeChat", requestedUserId);
+
         return "users/message-home";
     }
 
@@ -188,36 +197,34 @@ public String messageHome(@RequestParam("userId") Long requestedUserId,
 
     Long loggedInUserId = (Long) authentication.getPrincipal();
     
-    List<Message> chats = messageService.findAllRecentChats(loggedInUserId);
-    Map<GardenUser, String> recentChats = new HashMap<>();
+    List<Message> allMessages = messageService.findAllRecentChats(loggedInUserId);
 
-    if (!chats.isEmpty()) {
-        // Process recent chats
-        for (Message chat : chats) {
-            if (chat.getSender().equals(requestedUserId) || chat.getReceiver().equals(requestedUserId)) {
-                GardenUser requestedUser = userService.getUserById(requestedUserId);
-                recentChats.put(requestedUser, chat.getMessageContent());
-            }
+    if (!allMessages.isEmpty()) {
+
+        Map<Long, Message> recentMessagesMap = messageService.getLatestMessages(allMessages, loggedInUserId);
+
+        Map<GardenUser, String> recentChats = messageService.convertToPreview(recentMessagesMap);
+
+
+        String submissionToken = UUID.randomUUID().toString();
+        session.setAttribute("submissionToken", submissionToken);
+        GardenUser sentToUser = userService.getUserById(requestedUserId);
+
+
+        Friends isFriend = friendService.getFriendship(loggedInUserId, requestedUserId);
+        if (isFriend == null) {
+            return "redirect:/users/manage-friends";
         }
+
+        model.addAttribute("dateFormatter", new ThymeLeafDateFormatter());
+        model.addAttribute("TIMESTAMP_FORMAT", TIMESTAMP_FORMAT);
+        model.addAttribute("DATE_FORMAT", WEATHER_CARD_FORMAT_DATE);
+        model.addAttribute("submissionToken", submissionToken);
+        model.addAttribute("messagesMap", messageService.getMessagesBetweenFriends(loggedInUserId, requestedUserId));
+        model.addAttribute("sentToUser", sentToUser);
+        model.addAttribute("recentChats", recentChats);
+        model.addAttribute("activeChat", requestedUserId);
     }
-
-    String submissionToken = UUID.randomUUID().toString();
-    session.setAttribute("submissionToken", submissionToken);
-    GardenUser sentToUser = userService.getUserById(requestedUserId);
-
-    Friends isFriend = friendService.getFriendship(loggedInUserId, requestedUserId);
-    if (isFriend == null) {
-        return "redirect:/users/manage-friends";
-    }
-
-    model.addAttribute("dateFormatter", new ThymeLeafDateFormatter());
-    model.addAttribute("TIMESTAMP_FORMAT", TIMESTAMP_FORMAT);
-    model.addAttribute("DATE_FORMAT", WEATHER_CARD_FORMAT_DATE);
-    model.addAttribute("submissionToken", submissionToken);
-    model.addAttribute("messagesMap", messageService.getMessagesBetweenFriends(loggedInUserId, requestedUserId));
-    model.addAttribute("sentToUser", sentToUser);
-    model.addAttribute("recentChats", recentChats);
-    model.addAttribute("activeChat", requestedUserId);
 
     return "users/message-home";
 }
