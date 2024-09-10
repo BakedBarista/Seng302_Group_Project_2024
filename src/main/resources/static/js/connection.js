@@ -60,6 +60,21 @@ document.addEventListener('DOMContentLoaded', function() {
         userIndex++;
         showCurrentUserCard();
 
+        sendPost(formData);
+    }
+
+    function decline() {
+        const formData = new FormData();
+        formData.append('action', 'decline');
+        formData.append('id', currentUser()?.id); // this needs to be the id of user.
+
+        userIndex++;
+        showCurrentUserCard();
+
+        sendPost(formData);
+    }
+
+    function sendPost(formData) {
         fetch(`${baseUrl}`, {
             method: 'POST',
             headers: {
@@ -87,10 +102,5 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(error => {
                 console.error('There was a problem with the fetch operation:', error);
             });
-    }
-
-    function decline() {
-        // TODO
-        console.log('TODO: decline');
     }
 });
