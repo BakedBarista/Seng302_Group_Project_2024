@@ -19,6 +19,9 @@ function openPlantSelectorModal(index) {
     modal.show();
 
     selectedCardId = 'favouritePlantCard' + index;  //Used to get the card that was clicked on
+
+
+
     document.getElementById('searchField').value = '';  // Clear the search input field
     document.getElementById('searchPlantResults').innerHTML = '';
     // Remove the previous event listener before adding a new one
