@@ -102,7 +102,7 @@ public class SuggestedUserService {
      * @return True if request declined, otherwise false.
      */
     public boolean attemptToDeclinePendingRequest(Long loggedInUserId, Long suggestedUserId) {
-        Optional<Friends> pendingRequest = friendService.getPendingFriendRequest(suggestedUserId, loggedInUserId);
+        Optional<Friends> pendingRequest = friendService.getPendingFriendRequest(loggedInUserId, suggestedUserId);
 
         if (pendingRequest.isPresent()) {
             logger.info("Pending request found from ID: {} to {} to decline", suggestedUserId, loggedInUserId);

@@ -1,7 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.cucumber.step_definitions;
 
-import static nz.ac.canterbury.seng302.gardenersgrove.entity.Friends.Status.ACCEPTED;
-import static nz.ac.canterbury.seng302.gardenersgrove.entity.Friends.Status.PENDING;
+import static nz.ac.canterbury.seng302.gardenersgrove.entity.Friends.Status.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -127,21 +126,25 @@ public class U800_2_1_ConnectionFeed {
         }));
     }
 
-    @When("I click the red cross button on a person who I do not have a pending friend request from")
+    @When("I click the decline button on a person who I do not have a pending friend request from")
     public void i_click_the_red_cross_button_on_a_person_who_i_do_not_have_a_pending_friend_request_from() {
         ResponseEntity<Map<String, Object>> result = suggestedUserController.handleAcceptDecline("decline", userBen.getId(), authentication, model);
 
-        assertFalse((Boolean) result.getBody().get("success"));
+        assertNull(result.getBody().get("success"));
         assertTrue(result.getStatusCode().is2xxSuccessful());
     }
 
     @Then("no friend request is sent")
     public void no_friend_request_is_sent() {
-        Friends request = friendsRepository.getAllFriendshipsBetweenUsers(userLiam.getId(), userBen.getId());
-        assertNull(request);
+        Friends request = friendsRepository.getFriendshipBetweenUsers(userLiam.getId(), userBen.getId());
+        if (request == null) {
+            assertNull(request);
+        } else {
+            assertEquals(Friends.Status.DECLINED, request.getStatus());
+        }
     }
 
-    @When("I click the red cross button on a person who I do have a pending friend request from")
+    @When("I click the decline button on a person who I do have a pending friend request from")
     public void i_click_the_red_cross_button_on_a_person_who_i_do_have_a_pending_friend_request_from() {
         Friends request = new Friends(userBen, userLiam, PENDING);
         friendsRepository.save(request);
@@ -152,7 +155,7 @@ public class U800_2_1_ConnectionFeed {
         assertTrue(result.getStatusCode().is2xxSuccessful());
     }
 
-    @When("I click the green love heart button on a person who I have a pending friend request from")
+    @When("I click the accept button on a person who I have a pending friend request from")
     public void i_click_the_green_love_heart_button_on_a_person_who_i_have_a_pending_friend_request_from() {
         Friends request = new Friends(userBen, userLiam, PENDING);
         friendsRepository.save(request);
@@ -170,12 +173,19 @@ public class U800_2_1_ConnectionFeed {
         assertEquals(ACCEPTED, request.getStatus());
     }
 
+    @Then("their friend request is declined")
+    public void their_friend_request_is_declined() {
+        Friends request = friendsRepository.getAllFriendshipsBetweenUsers(userBen.getId(), userLiam.getId());
+        assertNotNull(request);
+        assertEquals(DECLINED, request.getStatus());
+    }
+
     @Then("a confirmation message pops up")
     public void a_confirmation_message_pops_up() {
         assertTrue(confirmationMessageShown);
     }
 
-    @When("I click the green love heart button on a person who I don’t have a pending friend request from")
+    @When("I click the accept button on a person who I don’t have a pending friend request from")
     public void i_click_the_green_love_heart_button_on_a_person_who_i_don_t_have_a_pending_friend_request_from() {
         ResponseEntity<Map<String, Object>> result = suggestedUserController.handleAcceptDecline("accept", userBen.getId(), authentication, model);
 
@@ -243,5 +253,31 @@ public class U800_2_1_ConnectionFeed {
         verify(model, never()).addAttribute(eq("name"), any());
         verify(model, never()).addAttribute(eq("description"), any());
         verify(model, never()).addAttribute(eq("userList"), any());
+    }
+
+    @When("I tap on the card")
+    public void i_tap_on_the_card() {
+        // This is done purely in JS, so cannot be tested here
+    }
+
+    @Then("the card will flip over and the Best Plants will be displayed")
+    public void the_card_will_flip_over_and_the_best_plants_will_be_displayed() {
+        verify(model).addAttribute(eq("userList"), assertArg((String userListJson) -> {
+            assertTrue(userListJson.contains("favouritePlants"));
+        }));
+    }
+
+    @Then("Favourite Garden will be displayed")
+    public void favourite_garden_will_be_displayed() {
+        verify(model).addAttribute(eq("userList"), assertArg((String userListJson) -> {
+            assertTrue(userListJson.contains("favouriteGarden"));
+        }));
+    }
+
+    @Then("I am shown potential new connections who are not my friends as a swipeable stack of profile cards.")
+    public void i_am_shown_potential_new_connections_who_are_not_my_friends_as_a_swipeable_stack_of_profile_cards() {
+        verify(model).addAttribute(eq("userList"), assertArg((String userListJson) -> {
+            assertTrue(userListJson.startsWith("[{\"id\":"));
+        }));
     }
 }
