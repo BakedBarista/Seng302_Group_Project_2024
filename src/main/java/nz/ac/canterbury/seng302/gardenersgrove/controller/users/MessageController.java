@@ -136,9 +136,12 @@ public class MessageController {
     }
 
     /**
-     * Method to return the message page
-     * @param model may not need one
-     * @return message page
+     * Handles GET requests for the message home page.
+     * @param authentication the authentication object representing the currently logged-in user.
+     * @param model          the model to be populated with view attributes.
+     * @param session        the HTTP session used to store the submission token.
+     * @return               the view name "users/message-home" or a redirect to manage friends if the user
+     *                       is not a friend.
      */
     @GetMapping("message-home")
     public String messageHome(Authentication authentication,
@@ -148,13 +151,11 @@ public class MessageController {
         logger.info("GET message Home");
 
         Long loggedInUserId = (Long) authentication.getPrincipal();
-        logger.info("1");
         List<Message> allMessages = messageService.findAllRecentChats(loggedInUserId);
 
         Long requestedUserId = null;
-        logger.info("2");
+
         if (!allMessages.isEmpty()) {
-            logger.info("3");
             Map<Long, Message> recentMessagesMap = messageService.getLatestMessages(allMessages, loggedInUserId);
 
             Map<GardenUser, String> recentChats = messageService.convertToPreview(recentMessagesMap);
@@ -188,8 +189,17 @@ public class MessageController {
         return "users/message-home";
     }
 
+    /**
+     * Processes a POST request to update the message home view.
+     *
+     * @param requestedUserId the ID of the user to whom the message is being sent.
+     * @param authentication  the current logged-in user's authentication object.
+     * @param model           the model to be populated with view attributes.
+     * @param session         the HTTP session used to store the submission token.
+     * @return                the view name, or a redirect if the user is not a friend.
+     */
     @PostMapping("message-home")
-public String messageHomeSend(@RequestParam("userId") Long requestedUserId,
+    public String messageHomeSend(@RequestParam("userId") Long requestedUserId,
         Authentication authentication,
         Model model,
         HttpSession session) {

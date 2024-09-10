@@ -78,10 +78,23 @@ public class MessageService {
         return sortedMessageHash;
     }
 
+    /**
+     * Retrieves all recent chats for the specified user.
+     *
+     * @param user1 the ID of the user whose recent chats are to be retrieved.
+     * @return a list of objects representing the recent chats for the specified user.
+     */
     public List<Message> findAllRecentChats(Long user1){
         return messageRepository.findAllRecentChats(user1);
     }
 
+    /**
+     * Retrieves the ID of the other user involved in a message.
+     *
+     * @param userId the ID of the user whose counterpart in the message is to be found
+     * @param message the object containing the sender and receiver information.
+     * @return the ID of the other user in the message
+     */
     public Long getOtherUserId(Long userId, Message message) {
         if (message.getSender().equals(userId)) {
             return message.getReceiver();
@@ -91,6 +104,14 @@ public class MessageService {
             return null;
         }
     }
+
+    /**
+     * Retrieves the latest message for each user from a list of all messages.
+     *
+     * @param allMessages the list of all messages to be processed.
+     * @param loggedInUserId the ID of the logged-in user to exclude from the results.
+     * @return a map where the key is the ID of the other user and the value is their most recent MESSAGE
+     */
 
     public Map<Long, Message> getLatestMessages(List<Message> allMessages, Long loggedInUserId) {
         Map<Long, Message> recentMessagesMap = new HashMap<>();
@@ -119,6 +140,12 @@ public class MessageService {
         return sortedMessagesMap;
     }
 
+    /**
+     * Converts a map of recent messages into a map of user previews.
+     *
+     * @param recentMessagesMap a map of user IDs to their most recent message.
+     * @return a map where each key is a user and each value is  their most recent message.
+     */
     public Map<GardenUser, String> convertToPreview(Map<Long, Message> recentMessagesMap) {
         Map<GardenUser, String> recentChats = new LinkedHashMap<>();
 
@@ -131,14 +158,15 @@ public class MessageService {
 
             recentChats.put(user, messagePreview);
         }
-        for (Map.Entry<GardenUser, String> chatEntry : recentChats.entrySet()) {
-            GardenUser user = chatEntry.getKey();
-            String messagePreview = chatEntry.getValue();
-            System.out.println("User: " + user + ", Message Preview: " + messagePreview);
-        }
         return recentChats;
     }
 
+    /**
+     * Retrieves the ID of the user with the most recent message from a map of messages.
+     *
+     * @param recentMessagesMap a map where the key is a user ID and the value is their most recent message
+     * @return the ID of the user with the most recent message
+     */
     public Long getActiveChat(Map<Long, Message> recentMessagesMap) {
         Long latestUserId = null;
         LocalDateTime latestTimestamp = null;
