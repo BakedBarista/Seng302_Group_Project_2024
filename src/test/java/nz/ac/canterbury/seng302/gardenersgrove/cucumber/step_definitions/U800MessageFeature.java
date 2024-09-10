@@ -150,7 +150,7 @@ public class U800MessageFeature {
     @Then("The message is not sent.")
     public void the_message_is_not_sent() {
         List<Message> message = messageRepository.findMessagesBetweenUsers(myId, receiverId);
-        Assertions.assertEquals(1, message.size());
+        Assertions.assertEquals(0, message.size());
     }
 
 }
