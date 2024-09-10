@@ -44,14 +44,18 @@
             <!-- message and send message box-->
             <div class="container-fluid position-absolute bg-light bottom-0 start-0 end-0 py-3">
                 <form th:action="@{/users/{id}/send-message(id=${sentToUser.id})}" method="post" th:object="${messageDTO}">
-                    <div class="d-flex gap-2 flex-column">
-                        <label for="message" th:class="'form-label ' + ${#fields.hasErrors('message') ? 'is-invalid' : ''}"></label>
-                        <textarea id="message" th:name="message" th:field="*{message}" class="form-control flex-grow-1" style="resize: none;"  placeholder="Message here..." autofocus></textarea>
-                        <div class="invalid-feedback" th:if="${#fields.hasErrors('message')}" th:errors="*{message}">
+                    <div class="d-flex gap-2">
+                        <div class="d-flex flex-fill flex-wrap">
+                            <label for="message" th:class="'form-label ' + ${#fields.hasErrors('message') ? 'is-invalid' : ''}"></label>
+                           <div class="d-flex flex-fill">
+                            <textarea id="message" th:name="message" th:field="*{message}" class="form-control flex-grow-1" style="resize: none;"  placeholder="Message here..." autofocus></textarea>
+                            <button type="submit" class="btn btn-primary px-4 py-0" id="sendButton" disabled>
+                                <img th:src="@{/icons/sent-stroke-rounded.svg}" alt="Send">
+                            </button>
+                           </div>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('message')}" th:errors="*{message}"></div>
                         </div>
-                        <button type="submit" class="btn btn-primary px-4 py-0">
-                            <img th:src="@{/icons/sent-stroke-rounded.svg}" alt="Send">
-                        </button>
+
                     </div>
                 </form>
             </div>
@@ -59,5 +63,13 @@
         </div>
     </main>
     <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
+    <script>
+        const messageField = document.getElementById("message");
+        const button = document.getElementById("sendButton");
+        messageField.addEventListener("input", () => {
+            button.disabled = messageField.value.length <= 0;
+        })
+    </script>
 </body>
+
 </html>
