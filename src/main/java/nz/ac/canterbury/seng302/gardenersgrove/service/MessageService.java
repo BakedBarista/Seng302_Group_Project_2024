@@ -36,8 +36,9 @@ public class MessageService {
 
     /**
      * Sends a message between users and saves it to the database.
-     * @param sender the message sender
-     * @param receiver the person who will receive the message
+     * 
+     * @param sender     the message sender
+     * @param receiver   the person who will receive the message
      * @param messageDTO the message object
      * @return the message that was sent
      */
@@ -47,13 +48,16 @@ public class MessageService {
     }
 
     /**
-     * Sends a message between users and saves it to the database - allows the specification of a timestamp.
-     * @param sender the message sender
-     * @param receiver the person who will receive the message
+     * Sends a message between users and saves it to the database - allows the
+     * specification of a timestamp.
+     * 
+     * @param sender     the message sender
+     * @param receiver   the person who will receive the message
      * @param messageDTO the message object
      * @return the message that was sent
      */
-    public Message sendMessageWithTimestamp(Long sender, Long receiver, MessageDTO messageDTO, LocalDateTime timestamp) {
+    public Message sendMessageWithTimestamp(Long sender, Long receiver, MessageDTO messageDTO,
+            LocalDateTime timestamp) {
         Message message = new Message(sender, receiver, timestamp, messageDTO.getMessage());
         messageRepository.save(message);
         return message;
@@ -61,6 +65,7 @@ public class MessageService {
 
     /**
      * Returns a map of saved messages between user1 and user2
+     * 
      * @param user1 any user
      * @param user2 any user
      * @return map of messages
@@ -69,7 +74,7 @@ public class MessageService {
         List<Message> messages = messageRepository.findMessagesBetweenUsers(user1, user2);
         TreeMap<LocalDate, List<Message>> sortedMessageHash = new TreeMap<>();
 
-        for (Message message: messages) {
+        for (Message message : messages) {
             LocalDate date = message.getTimestamp().toLocalDate();
             if (sortedMessageHash.containsKey(date)) {
                 sortedMessageHash.get(date).add(message);
@@ -85,16 +90,18 @@ public class MessageService {
      * Retrieves all recent chats for the specified user.
      *
      * @param user1 the ID of the user whose recent chats are to be retrieved.
-     * @return a list of objects representing the recent chats for the specified user.
+     * @return a list of objects representing the recent chats for the specified
+     *         user.
      */
-    public List<Message> findAllRecentChats(Long user1){
+    public List<Message> findAllRecentChats(Long user1) {
         return messageRepository.findAllRecentChats(user1);
     }
 
     /**
      * Retrieves the ID of the other user involved in a message.
      *
-     * @param userId the ID of the user whose counterpart in the message is to be found
+     * @param userId  the ID of the user whose counterpart in the message is to be
+     *                found
      * @param message the object containing the sender and receiver information.
      * @return the ID of the other user in the message
      */
@@ -111,9 +118,11 @@ public class MessageService {
     /**
      * Retrieves the latest message for each user from a list of all messages.
      *
-     * @param allMessages the list of all messages to be processed.
-     * @param loggedInUserId the ID of the logged-in user to exclude from the results.
-     * @return a map where the key is the ID of the other user and the value is their most recent MESSAGE
+     * @param allMessages    the list of all messages to be processed.
+     * @param loggedInUserId the ID of the logged-in user to exclude from the
+     *                       results.
+     * @return a map where the key is the ID of the other user and the value is
+     *         their most recent MESSAGE
      */
 
     public Map<Long, Message> getLatestMessages(List<Message> allMessages, Long loggedInUserId) {
@@ -131,15 +140,16 @@ public class MessageService {
         }
 
         List<Map.Entry<Long, Message>> sortedEntries = recentMessagesMap.entrySet()
-            .stream()
-            .sorted((entry1, entry2) -> entry2.getValue().getTimestamp().compareTo(entry1.getValue().getTimestamp()))
-            .collect(Collectors.toList());
+                .stream()
+                .sorted((entry1, entry2) -> entry2.getValue().getTimestamp()
+                        .compareTo(entry1.getValue().getTimestamp()))
+                .toList();
 
         Map<Long, Message> sortedMessagesMap = new LinkedHashMap<>();
         for (Map.Entry<Long, Message> entry : sortedEntries) {
             sortedMessagesMap.put(entry.getKey(), entry.getValue());
         }
-        
+
         return sortedMessagesMap;
     }
 
@@ -147,7 +157,8 @@ public class MessageService {
      * Converts a map of recent messages into a map of user previews.
      *
      * @param recentMessagesMap a map of user IDs to their most recent message.
-     * @return a map where each key is a user and each value is  their most recent message.
+     * @return a map where each key is a user and each value is their most recent
+     *         message.
      */
     public Map<GardenUser, String> convertToPreview(Map<Long, Message> recentMessagesMap) {
         Map<GardenUser, String> recentChats = new LinkedHashMap<>();
@@ -165,9 +176,11 @@ public class MessageService {
     }
 
     /**
-     * Retrieves the ID of the user with the most recent message from a map of messages.
+     * Retrieves the ID of the user with the most recent message from a map of
+     * messages.
      *
-     * @param recentMessagesMap a map where the key is a user ID and the value is their most recent message
+     * @param recentMessagesMap a map where the key is a user ID and the value is
+     *                          their most recent message
      * @return the ID of the user with the most recent message
      */
     public Long getActiveChat(Map<Long, Message> recentMessagesMap) {
@@ -184,11 +197,12 @@ public class MessageService {
         return latestUserId;
     }
 
-    public void setupModelAttributes(Model model, Long loggedInUserId, Long requestedUserId, GardenUser sentToUser, Map<GardenUser, String> recentChats, String submissionToken) {
+    public void setupModelAttributes(Model model, Long loggedInUserId, Long requestedUserId, GardenUser sentToUser,
+            Map<GardenUser, String> recentChats, String submissionToken) {
         model.addAttribute("dateFormatter", new ThymeLeafDateFormatter());
         model.addAttribute("TIMESTAMP_FORMAT", TIMESTAMP_FORMAT);
         model.addAttribute("DATE_FORMAT", WEATHER_CARD_FORMAT_DATE);
-        model.addAttribute("submissionToken", submissionToken); 
+        model.addAttribute("submissionToken", submissionToken);
         model.addAttribute("messagesMap", getMessagesBetweenFriends(loggedInUserId, requestedUserId));
         model.addAttribute("sentToUser", sentToUser);
         model.addAttribute("recentChats", recentChats);

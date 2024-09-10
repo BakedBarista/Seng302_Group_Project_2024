@@ -10,7 +10,6 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.MessageDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.MessageService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.ThymeLeafDateFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,13 +22,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.TIMESTAMP_FORMAT;
-import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.WEATHER_CARD_FORMAT_DATE;
 
 @Controller
 public class MessageController {
@@ -39,10 +34,14 @@ public class MessageController {
     private final FriendService friendService;
     private final MessageService messageService;
 
+    private final String SUBMISSION_TOKEN = "submissionToken";
+    private final String MESSAGE_HOME = "users/message-home";
+    private final String MANGE_FRIENDS_REDIRECT = "redirect:/users/manage-friends";
+
     @Autowired
     public MessageController(GardenUserService userService,
-                             FriendService friendService,
-                             MessageService messageService) {
+            FriendService friendService,
+            MessageService messageService) {
         this.userService = userService;
         this.friendService = friendService;
         this.messageService = messageService;
@@ -50,26 +49,27 @@ public class MessageController {
 
     /**
      * Method to return the message page
+     * 
      * @param requestedUserId friend's id to send message to
-     * @param model may not need one
+     * @param model           may not need one
      * @return message page
      */
     @GetMapping("users/message")
     public String messageFriend(@RequestParam("id") Long requestedUserId,
-                                Authentication authentication,
-                                Model model,
-                                HttpSession session) {
+            Authentication authentication,
+            Model model,
+            HttpSession session) {
         logger.info("GET message friend page opened to user {}", requestedUserId);
 
         String submissionToken = UUID.randomUUID().toString();
-        session.setAttribute("submissionToken", submissionToken);
+        session.setAttribute(SUBMISSION_TOKEN, submissionToken);
         Long loggedInUserId = (Long) authentication.getPrincipal();
         GardenUser sentToUser = userService.getUserById(requestedUserId);
 
         // need to be friends to send a message
         Friends isFriend = friendService.getFriendship(loggedInUserId, requestedUserId);
         if (isFriend == null) {
-            return "redirect:/users/manage-friends";
+            return MANGE_FRIENDS_REDIRECT;
         }
 
         List<Message> allMessages = messageService.findAllRecentChats(loggedInUserId);
@@ -78,17 +78,18 @@ public class MessageController {
 
         Map<GardenUser, String> recentChats = messageService.convertToPreview(recentMessagesMap);
 
-        messageService.setupModelAttributes(model, loggedInUserId, requestedUserId, sentToUser, recentChats, submissionToken);
+        messageService.setupModelAttributes(model, loggedInUserId, requestedUserId, sentToUser, recentChats,
+                submissionToken);
 
-
-        return "users/message-home";
+        return MESSAGE_HOME;
     }
 
     /**
      * Handles the post mapping for sending messages between users
-     * @param receiver the ID of the user the message is being sent to/.
+     * 
+     * @param receiver       the ID of the user the message is being sent to/.
      * @param authentication the authentication of the authenticated user
-     * @param model the model data in the html request
+     * @param model          the model data in the html request
      * @return Redirects the user to the send message page
      */
     @PostMapping("users/message")
@@ -101,46 +102,55 @@ public class MessageController {
         logger.info("POST send message to {}", receiver);
 
         String tokenFromForm = messageDTO.getSubmissionToken();
-        String sessionToken = (String) session.getAttribute("submissionToken");
+        String sessionToken = (String) session.getAttribute(SUBMISSION_TOKEN);
         if (sessionToken != null && sessionToken.equals(tokenFromForm)) {
             Long sender = (Long) authentication.getPrincipal();
             messageService.sendMessage(sender, receiver, messageDTO);
-            session.removeAttribute("submissionToken");
+            session.removeAttribute(SUBMISSION_TOKEN);
         }
 
-        return messageFriend(receiver, authentication, model,session);
+        return messageFriend(receiver, authentication, model, session);
     }
 
     @PostConstruct
     public void dummyMessages() {
+        String TOKEN = "token";
         GardenUser u1 = userService.getUserByEmail("stynesluke@gmail.com");
         GardenUser u2 = userService.getUserByEmail("jan.doe@gmail.com");
         if (u1 != null && u2 != null) {
             messageService.sendMessageWithTimestamp(u1.getId(), u2.getId(),
-                    new MessageDTO("Hello I am Luke Stynes! :)", "token"), LocalDateTime.now().minusDays(2));
+                    new MessageDTO("Hello I am Luke Stynes! :)", TOKEN), LocalDateTime.now().minusDays(2));
             messageService.sendMessageWithTimestamp(u2.getId(), u1.getId(),
-                    new MessageDTO("Hello Luke Stynes, I am Jan Doe.", "token"), LocalDateTime.now().minusDays(1));
+                    new MessageDTO("Hello Luke Stynes, I am Jan Doe.", TOKEN), LocalDateTime.now().minusDays(1));
             messageService.sendMessageWithTimestamp(u1.getId(), u2.getId(),
-                    new MessageDTO("Wow! What great bananas you grow Jan Doe.", "token"), LocalDateTime.now().minusDays(1));
+                    new MessageDTO("Wow! What great bananas you grow Jan Doe.", TOKEN),
+                    LocalDateTime.now().minusDays(1));
             messageService.sendMessageWithTimestamp(u1.getId(), u2.getId(),
-                    new MessageDTO("I'm sending a really really long message here so that Ryan does not have to manually " +
-                            "write in a really long message each time he runs the application locally, it is really " +
-                            "annoying so he asked me to write one that goes past the end of the screen", "token"), LocalDateTime.now());
+                    new MessageDTO(
+                            "I'm sending a really really long message here so that Ryan does not have to manually " +
+                                    "write in a really long message each time he runs the application locally, it is really "
+                                    +
+                                    "annoying so he asked me to write one that goes past the end of the screen",
+                                    TOKEN),
+                    LocalDateTime.now());
         }
     }
 
     /**
      * Handles GET requests for the message home page.
-     * @param authentication the authentication object representing the currently logged-in user.
+     * 
+     * @param authentication the authentication object representing the currently
+     *                       logged-in user.
      * @param model          the model to be populated with view attributes.
      * @param session        the HTTP session used to store the submission token.
-     * @return               the view name "users/message-home" or a redirect to manage friends if the user
-     *                       is not a friend.
+     * @return the view name "users/message-home" or a redirect to manage friends if
+     *         the user
+     *         is not a friend.
      */
     @GetMapping("message-home")
     public String messageHome(Authentication authentication,
-        Model model,
-        HttpSession session) {
+            Model model,
+            HttpSession session) {
 
         logger.info("GET message Home");
 
@@ -161,20 +171,20 @@ public class MessageController {
             }
 
             String submissionToken = UUID.randomUUID().toString();
-            session.setAttribute("submissionToken", submissionToken);
+            session.setAttribute(SUBMISSION_TOKEN, submissionToken);
             GardenUser sentToUser = userService.getUserById(requestedUserId);
-
 
             Friends isFriend = friendService.getFriendship(loggedInUserId, requestedUserId);
             if (isFriend == null) {
-                return "redirect:/users/manage-friends";
+                return MANGE_FRIENDS_REDIRECT;
             }
 
-            messageService.setupModelAttributes(model, loggedInUserId, requestedUserId, sentToUser, recentChats, submissionToken);
+            messageService.setupModelAttributes(model, loggedInUserId, requestedUserId, sentToUser, recentChats,
+                    submissionToken);
 
         }
 
-        return "users/message-home";
+        return MESSAGE_HOME;
     }
 
     /**
@@ -184,41 +194,38 @@ public class MessageController {
      * @param authentication  the current logged-in user's authentication object.
      * @param model           the model to be populated with view attributes.
      * @param session         the HTTP session used to store the submission token.
-     * @return                the view name, or a redirect if the user is not a friend.
+     * @return the view name, or a redirect if the user is not a friend.
      */
     @PostMapping("message-home")
     public String messageHomeSend(@RequestParam("userId") Long requestedUserId,
-        Authentication authentication,
-        Model model,
-        HttpSession session) {
+            Authentication authentication,
+            Model model,
+            HttpSession session) {
 
-    logger.info("POST message Home");
+        logger.info("POST message Home");
 
-    Long loggedInUserId = (Long) authentication.getPrincipal();
-    
-    List<Message> allMessages = messageService.findAllRecentChats(loggedInUserId);
+        Long loggedInUserId = (Long) authentication.getPrincipal();
 
-    if (!allMessages.isEmpty()) {
+        List<Message> allMessages = messageService.findAllRecentChats(loggedInUserId);
 
-        Map<Long, Message> recentMessagesMap = messageService.getLatestMessages(allMessages, loggedInUserId);
+        if (!allMessages.isEmpty()) {
 
-        Map<GardenUser, String> recentChats = messageService.convertToPreview(recentMessagesMap);
+            Map<Long, Message> recentMessagesMap = messageService.getLatestMessages(allMessages, loggedInUserId);
 
+            Map<GardenUser, String> recentChats = messageService.convertToPreview(recentMessagesMap);
 
-        String submissionToken = UUID.randomUUID().toString();
-        session.setAttribute("submissionToken", submissionToken);
-        GardenUser sentToUser = userService.getUserById(requestedUserId);
+            String submissionToken = UUID.randomUUID().toString();
+            session.setAttribute(SUBMISSION_TOKEN, submissionToken);
+            GardenUser sentToUser = userService.getUserById(requestedUserId);
 
+            Friends isFriend = friendService.getFriendship(loggedInUserId, requestedUserId);
+            if (isFriend == null) {
+                return MANGE_FRIENDS_REDIRECT;
+            }
 
-        Friends isFriend = friendService.getFriendship(loggedInUserId, requestedUserId);
-        if (isFriend == null) {
-            return "redirect:/users/manage-friends";
+            messageService.setupModelAttributes(model, loggedInUserId, requestedUserId, sentToUser, recentChats,
+                    submissionToken);
         }
-
-        messageService.setupModelAttributes(model, loggedInUserId, requestedUserId, sentToUser, recentChats, submissionToken);
-
+        return MESSAGE_HOME;
     }
-
-    return "users/message-home";
-}
 }
