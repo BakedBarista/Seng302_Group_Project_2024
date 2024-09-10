@@ -164,27 +164,24 @@
                            th:onclick="${i <= favouritePlants.size()} ? '' : 'openPlantSelectorModal(' + ${i} + ')'">
                           <!-- Filled card content -->
                           <th:block th:if="${i <= favouritePlants.size()}">
-                              <input type="hidden" th:id="'plantId' + ${i}" th:value="false"/>
-                    <span th:onclick="'deleteFavouritePlant(' + ${i} + '); return false;'">
-                        <a class="btn-change position-absolute bg-danger top-0 end-0 m-1 p-1
-                                  d-flex align-content-center justify-content-center rounded-3">
-                            <img th:src="@{/icons/delete.svg}"
-                                 aria-hidden="true"
-                                 alt="delete"
-                                 width="17"
-                                 height="17" />
-                        </a>
-                    </span>
+                                <span th:onclick="'deleteFavouritePlant(' + ${i} + '); return false;'">
+                                    <a class="btn-change position-absolute bg-danger top-0 end-0 m-1 p-1
+                                              d-flex align-content-center justify-content-center rounded-3">
+                                        <img th:src="@{/icons/delete.svg}"
+                                             aria-hidden="true"
+                                             alt="delete"
+                                             width="17"
+                                             height="17" />
+                                    </a>
+                                </span>
                               <img th:src="@{'/plants/' + ${favouritePlants[i-1].id} + '/plant-image'}" class="mx-auto d-block pt-1" style="width: 100%; height: 80%; object-fit: cover" alt="plant image"/>
                               <h5 class="pt-2 text-center" th:text="${favouritePlants[i-1].name}">Plant Name</h5>
-                              <input type="hidden" th:id="'plantId' + ${i}" th:value="${favouritePlants[i-1].id}"/>
                           </th:block>
 
                           <!-- Empty card content -->
                           <th:block th:unless="${i <= favouritePlants.size()}">
                               <img th:src="@{/icons/create-mustard-grey.svg}" alt="empty-favourite" width="50" height="50" class="mx-auto d-block"/>
                           </th:block>
-                          <input type="hidden" th:id="'deleteFlag' + ${i}" th:value="false"/>
                           <input type="hidden" th:id="'selectedPlantId' + ${i}" th:value="${i <= favouritePlants.size()} ? ${favouritePlants[i-1].id} : ''"/>
                       </div>
                   </div>
