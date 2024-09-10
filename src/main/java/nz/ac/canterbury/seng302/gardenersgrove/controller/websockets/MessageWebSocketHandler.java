@@ -76,7 +76,7 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 				String messageText = message.get("message").asText();
 				logger.info("sendMessage {} {} {}", sender, reciever, messageText);
 
-				MessageDTO messageDTO = new MessageDTO(messageText);
+				MessageDTO messageDTO = new MessageDTO(messageText, null);
 				Set<ConstraintViolation<MessageDTO>> errors = validatorFactory.getValidator().validate(messageDTO);
 				if (!errors.isEmpty()) {
 					logger.error("Invalid message: {}", errors);
