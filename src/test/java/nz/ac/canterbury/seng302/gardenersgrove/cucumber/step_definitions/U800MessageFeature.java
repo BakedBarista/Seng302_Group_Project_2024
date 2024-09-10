@@ -173,7 +173,7 @@ public class U800MessageFeature {
     public void the_existing_chats_are_displayed_on_the_side_in_chronological_order(String numOfChats) {
         int expectedChatCount = Integer.parseInt(numOfChats);
 
-        result = messageController.messageHome(receiverId, authentication, model, session);
+        result = messageController.messageHomeSend(receiverId, authentication, model, session);
         List<Message> allMessages = messageService.findAllRecentChats(myId);
         Map<Long, Message> recentMessagesMap = messageService.getLatestMessages(allMessages, myId);
         Map<GardenUser, String> recentChats = messageService.convertToPreview(recentMessagesMap);

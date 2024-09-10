@@ -146,8 +146,8 @@ class MessageControllerTest {
     @Test
     void whenMessageHomeParameterGET_thenReturnMessageHome() {
 
-        GardenUser user1 = new GardenUser("test", "2", "Tester@gmail.com",  "Password1!", null);
-        GardenUser user2 = new GardenUser("John", "Doe", "postTester@gmail.com",  "Password1!", null);
+        GardenUser user1 = new GardenUser("teste", "2", "Tester2@gmail.com",  "Password1!", null);
+        GardenUser user2 = new GardenUser("John1", "Doe", "post3Tester@gmail.com",  "Password1!", null);
         gardenUserRepository.save(user1);
         gardenUserRepository.save(user2);
 
