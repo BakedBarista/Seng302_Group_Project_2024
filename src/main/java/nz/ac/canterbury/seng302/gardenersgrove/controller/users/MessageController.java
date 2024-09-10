@@ -39,9 +39,9 @@ public class MessageController {
     private final FriendService friendService;
     private final MessageService messageService;
 
-    private final String SUBMISSION_TOKEN = "submissionToken";
-    private final String MESSAGE_HOME = "users/message-home";
-    private final String MANGE_FRIENDS_REDIRECT = "redirect:/users/manage-friends";
+    private static final String sumissionTokenString = "submissionToken";
+    private static final String messageHomeEndpoint = "users/message-home";
+    private static final String manageFriendsRedirect = "redirect:/users/manage-friends";
 
     @Autowired
     public MessageController(GardenUserService userService,
@@ -111,14 +111,14 @@ public class MessageController {
         logger.info("GET message page opened to user {}", requestedUserId);
 
         String submissionToken = UUID.randomUUID().toString();
-        session.setAttribute(SUBMISSION_TOKEN, submissionToken);
+        session.setAttribute(sumissionTokenString, submissionToken);
         Long loggedInUserId = (Long) authentication.getPrincipal();
 
         GardenUser sentToUser = userService.getUserById(requestedUserId);
 
         Friends isFriend = friendService.getFriendship(loggedInUserId, requestedUserId);
         if (isFriend == null) {
-            return MANGE_FRIENDS_REDIRECT;
+            return manageFriendsRedirect;
         }
 
         List<Message> allMessages = messageService.findAllRecentChats(loggedInUserId);
@@ -130,7 +130,7 @@ public class MessageController {
         messageService.setupModelAttributes(model, loggedInUserId, requestedUserId, sentToUser, recentChats,
                 submissionToken);
 
-        return MESSAGE_HOME;
+        return messageHomeEndpoint;
     }
 
     /**
@@ -172,7 +172,7 @@ public class MessageController {
         logger.info("POST send message to {}", receiver);
 
         String tokenFromForm = messageDTO.getSubmissionToken();
-        String sessionToken = (String) session.getAttribute(SUBMISSION_TOKEN);
+        String sessionToken = (String) session.getAttribute(sumissionTokenString);
 
         if (bindingResult.hasErrors()) {
             logger.info("Binding result has errors");
@@ -192,7 +192,7 @@ public class MessageController {
         if (sessionToken != null && sessionToken.equals(tokenFromForm)) {
             Long sender = (Long) authentication.getPrincipal();
             messageService.sendMessage(sender, receiver, messageDTO);
-            session.removeAttribute(SUBMISSION_TOKEN);
+            session.removeAttribute(sumissionTokenString);
         }
         return messageFriend(receiver, authentication, model, session);
     }
@@ -249,17 +249,17 @@ public class MessageController {
             Map<GardenUser, String> recentChats = messageService.convertToPreview(recentMessagesMap);
 
             String submissionToken = UUID.randomUUID().toString();
-            session.setAttribute(SUBMISSION_TOKEN, submissionToken);
+            session.setAttribute(sumissionTokenString, submissionToken);
             GardenUser sentToUser = userService.getUserById(requestedUserId);
 
             Friends isFriend = friendService.getFriendship(loggedInUserId, requestedUserId);
             if (isFriend == null) {
-                return MANGE_FRIENDS_REDIRECT;
+                return manageFriendsRedirect;
             }
 
             messageService.setupModelAttributes(model, loggedInUserId, requestedUserId, sentToUser, recentChats,
                     submissionToken);
         }
-        return MESSAGE_HOME;
+        return messageHomeEndpoint;
     }
 }
