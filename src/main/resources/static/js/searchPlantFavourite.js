@@ -8,7 +8,11 @@ let deletedPlantIds = {}
 window.onload = function() {
     const favouritePlantsData = document.getElementById('favouritePlantsData').getAttribute('data-favourite-plants');
     favouritePlants = JSON.parse(favouritePlantsData);
-    deletedPlantIds = {}
+
+    deletedPlantIds = {};
+    selectedPlants = [];
+    selectedPlantId = null;
+    selectedCardId = null;
 };
 
 //Called when the user pushes a + on the plant card
@@ -144,7 +148,8 @@ function addDeleteButton(selectedCard) {
 
 // Helper function to update the card's appearance
 function updateCardAppearance(selectedCard, plantImage, plantName, plantId) {
-
+    selectedCard.onclick = null
+    selectedCard.removeAttribute("onclick")
 
     selectedCard.className = 'card p-2 me-3 mb-3 border-0 rounded-3 d-flex shadow-sm public-profile-plant-card bg-primary-temp';
 
@@ -255,12 +260,12 @@ function updateFavouritePlants() {
         document.getElementById('selectedPlantId1')?.value,
         document.getElementById('selectedPlantId2')?.value,
         document.getElementById('selectedPlantId3')?.value
-    ].filter(id => id);
+    ].filter(id => id).filter(item => !Object.values(deletedPlantIds).includes(item));
 
-    for (let currentPlant in deletedPlantIds) {
-        console.log(currentPlant)
-        console.log(favouritePlants)
-        console.log(!favouritePlants.some(plant => plant.id === parseInt(currentPlant)))
+    console.log(deletedPlantIds)
+    console.log(newPlantIds)
+
+    for (let currentPlant of Object.values(deletedPlantIds)) {
         if (!favouritePlants.some(plant => plant.id === parseInt(currentPlant))) {
             fetch(`${apiBaseUrl}/users/delete-favourite-plant`, {
                 method: 'DELETE',
@@ -271,7 +276,7 @@ function updateFavouritePlants() {
                 body: JSON.stringify({ plantId: parseInt(currentPlant) }),
             }).then(response => {
                 if (response.ok) {
-                    console.log("Favourite plant deleted");
+                    console.log(`Favourite plant ${currentPlant} deleted`);
                 } else {
                     console.log("Error deleting favourite plant");
                     return response.json();
