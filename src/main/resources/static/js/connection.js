@@ -48,7 +48,6 @@ function handlePost(action, suggestedUserId) {
         if (response.ok) {
             return response.json();
         } else {
-            return response.json();
             throw new Error('Network response was not ok.');
         }
     })
