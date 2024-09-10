@@ -144,7 +144,8 @@ public class U800MessageFeature {
     @When("They press Send")
     public void they_press_send() {
         Mockito.when(authentication.getPrincipal()).thenReturn(receiverId);
-        result = messageController.sendMessage(myId, messageDTO, authentication, model, session);
+        Mockito.when(bindingResult.hasErrors()).thenReturn(false);
+        result = messageController.sendMessage(myId, messageDTO, bindingResult, authentication, model, session);
     }
 
     @When("I press Send")

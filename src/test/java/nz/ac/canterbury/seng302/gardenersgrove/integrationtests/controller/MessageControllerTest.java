@@ -50,12 +50,14 @@ class MessageControllerTest {
     private static GardenUser receiver;
     private static HttpSession session;
     private Boolean hasNotSetUp = true;
+    private static BindingResult bindingResult;
 
     @BeforeAll
     static void setUp() {
         model = mock(Model.class);
         authentication = mock(Authentication.class);
         session = new MockHttpSession();
+        bindingResult = mock(BindingResult.class);
         session.setAttribute("submissionToken", "token");
 
         sender = new GardenUser();
@@ -112,8 +114,9 @@ class MessageControllerTest {
         session.setAttribute("submissionToken", null);
 
         Mockito.when(authentication.getPrincipal()).thenReturn(sender.getId());
+        Mockito.when(bindingResult.hasErrors()).thenReturn(false);
 
-        messageController.sendMessage(receiver.getId(), messageDTO, authentication, model, session);
+        messageController.sendMessage(receiver.getId(), messageDTO, bindingResult, authentication, model, session);
         List<Message> savedMessages = messageRepository.findMessagesBetweenUsers(sender.getId(), receiver.getId());
 
         // verify message is saved to repository
@@ -127,8 +130,9 @@ class MessageControllerTest {
         session.setAttribute("submissionToken", "tokenOld");
 
         Mockito.when(authentication.getPrincipal()).thenReturn(sender.getId());
+        Mockito.when(bindingResult.hasErrors()).thenReturn(false);
 
-        messageController.sendMessage(receiver.getId(), messageDTO, authentication, model, session);
+        messageController.sendMessage(receiver.getId(), messageDTO, bindingResult, authentication, model, session);
         List<Message> savedMessages = messageRepository.findMessagesBetweenUsers(sender.getId(), receiver.getId());
 
         // verify message is saved to repository

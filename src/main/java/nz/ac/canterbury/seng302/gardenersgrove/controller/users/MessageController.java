@@ -75,7 +75,7 @@ public class MessageController {
         model.addAttribute("DATE_FORMAT", WEATHER_CARD_FORMAT_DATE);
         model.addAttribute("submissionToken", submissionToken);
         model.addAttribute("messagesMap", messageService.getMessagesBetweenFriends(loggedInUserId, requestedUserId));
-        model.addAttribute("messageDTO", new MessageDTO(""));
+        model.addAttribute("messageDTO", new MessageDTO("", ""));
         model.addAttribute("sentToUser", sentToUser);
 
         return "users/message";
@@ -98,23 +98,32 @@ public class MessageController {
             HttpSession session) {
         logger.info("POST send message to {}", receiver);
 
+        String tokenFromForm = messageDTO.getSubmissionToken();
+        String sessionToken = (String) session.getAttribute("submissionToken");
+
         if (bindingResult.hasErrors()) {
             logger.info("Binding result has errors");
             model.addAttribute("messageDTO", messageDTO);
             GardenUser sentToUser = userService.getUserById(receiver);
             model.addAttribute("sentToUser", sentToUser);
+            Long loggedInUserId = (Long) authentication.getPrincipal();
+            model.addAttribute("messagesMap", messageService.getMessagesBetweenFriends(loggedInUserId, receiver));
+            model.addAttribute("dateFormatter", new ThymeLeafDateFormatter());
+            model.addAttribute("TIMESTAMP_FORMAT", TIMESTAMP_FORMAT);
+            model.addAttribute("DATE_FORMAT", WEATHER_CARD_FORMAT_DATE);
+            model.addAttribute("submissionToken", tokenFromForm);
 
             return "users/message";
         }
 
 
-        String tokenFromForm = messageDTO.getSubmissionToken();
-        String sessionToken = (String) session.getAttribute("submissionToken");
         if (sessionToken != null && sessionToken.equals(tokenFromForm)) {
             Long sender = (Long) authentication.getPrincipal();
             messageService.sendMessage(sender, receiver, messageDTO);
             session.removeAttribute("submissionToken");
         }
+
+
 
         return messageFriend(receiver, authentication, model,session);
     }
