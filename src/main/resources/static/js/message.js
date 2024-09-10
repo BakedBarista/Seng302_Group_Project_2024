@@ -2,6 +2,10 @@ const origin = location.origin.replace('http', 'ws');
 const url = `${origin}${apiBaseUrl}/messages`;
 const otherUserId = new URLSearchParams(location.search).get('id');
 
+/**@type {HTMLFormElement} */
+const sendMessageForm = document.getElementById('sendMessageForm');
+const messagesContainer = document.getElementById('scrollbar');
+
 const ws = new WebSocket(url);
 ws.addEventListener('open', () => {
     ws.send(JSON.stringify({ type: 'subscribe' }));
@@ -16,13 +20,13 @@ ws.addEventListener('open', () => {
 ws.addEventListener('message', (ev) => {
     const data = JSON.parse(ev.data);
     switch (data.type) {
-        case 'value':
+        case 'updateMessages':
+            console.log('updateMessages');
+            updateMessages();
             break;
     }
 });
 
-/**@type {HTMLFormElement} */
-const sendMessageForm = document.getElementById('sendMessageForm');
 sendMessageForm.addEventListener('submit', (ev) => {
     ev.preventDefault();
 
@@ -36,4 +40,13 @@ function sendMessage() {
         JSON.stringify({ type: 'sendMessage', reciever: otherUserId, message })
     );
     textArea.value = '';
+}
+
+async function updateMessages() {
+    const res = await fetch(`${apiBaseUrl}/messages/${otherUserId}`);
+    const html = await res.text();
+    messagesContainer.innerHTML = html;
+
+    button.disabled = true;
+    scrollToBottom(messagesContainer);
 }

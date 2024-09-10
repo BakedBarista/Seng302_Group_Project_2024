@@ -60,7 +60,7 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 			case "subscribe":
 				logger.info("subscribe");
 				activeSessions.add(session);
-				sendState(session);
+				updateMessages(session);
 				break;
 			case "sendMessage":
 				Long sender = Long.parseLong(session.getPrincipal().getName());
@@ -72,7 +72,7 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 				MessageDTO messageDTO = new MessageDTO(messageText);
 				messageService.sendMessage(sender, reciever, messageDTO);
 
-				broadcastState(List.of(sender, reciever));
+				updateMessagesBroadcast(List.of(sender, reciever));
 				break;
 			case "ping":
 				try {
@@ -89,18 +89,18 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 	}
 
 	/**
-	 * Broadcasts the current counter value to all active sessions.
-	 * 
-	 * @param to A list of user IDs to broadcast the current state to
+	 * Sends an `updateMessages` message to each of the given users.
+	 * @param userIds A list of user IDs to broadcast the message to
 	 */
-	private void broadcastState(List<Long> to) {
+	private void updateMessagesBroadcast(List<Long> userIds) {
 		for (WebSocketSession session : Set.copyOf(activeSessions)) {
 			long userId = Long.parseLong(session.getPrincipal().getName());
-			if (to == null || !to.contains(userId)) {
+			if (userIds == null || !userIds.contains(userId)) {
 				continue;
 			}
+
 			if (session.isOpen()) {
-				sendState(session);
+				updateMessages(session);
 			} else {
 				activeSessions.remove(session);
 			}
@@ -108,13 +108,12 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 	}
 
 	/**
-	 * Sends the current counter value to a given session.
-	 * @param session the session to send the value to
+	 * Sends an `updateMessages` to a given session.
+	 * @param session the session to send the message to
 	 */
-	private void sendState(WebSocketSession session) {
+	private void updateMessages(WebSocketSession session) {
 		ObjectNode message = JsonNodeFactory.instance.objectNode();
-		message.put("type", "value");
-		// message.put("value", counter);
+		message.put("type", "updateMessages");
 
 		String jsonMessage;
 		try {

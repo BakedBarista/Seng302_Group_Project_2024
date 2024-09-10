@@ -16,10 +16,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.TIMESTAMP_FORMAT;
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.WEATHER_CARD_FORMAT_DATE;
@@ -54,8 +54,6 @@ public class MessageController {
                                 HttpSession session) {
         logger.info("GET message friend page opened to user {}", requestedUserId);
 
-        String submissionToken = UUID.randomUUID().toString();
-        session.setAttribute("submissionToken", submissionToken);
         Long loggedInUserId = (Long) authentication.getPrincipal();
         GardenUser sentToUser = userService.getUserById(requestedUserId);
 
@@ -68,12 +66,37 @@ public class MessageController {
         model.addAttribute("dateFormatter", new ThymeLeafDateFormatter());
         model.addAttribute("TIMESTAMP_FORMAT", TIMESTAMP_FORMAT);
         model.addAttribute("DATE_FORMAT", WEATHER_CARD_FORMAT_DATE);
-        model.addAttribute("submissionToken", submissionToken);
         model.addAttribute("messagesMap", messageService.getMessagesBetweenFriends(loggedInUserId, requestedUserId));
         model.addAttribute("messageDTO", new MessageDTO(""));
         model.addAttribute("sentToUser", sentToUser);
 
         return "users/message";
+    }
+
+    @GetMapping("api/messages/{id}")
+    public String messageFriendList(@PathVariable("id") Long requestedUserId,
+                                Authentication authentication,
+                                Model model,
+                                HttpSession session) {
+        logger.info("GET message friend page opened to user {}", requestedUserId);
+
+        Long loggedInUserId = (Long) authentication.getPrincipal();
+        GardenUser sentToUser = userService.getUserById(requestedUserId);
+
+        // need to be friends to send a message
+        Friends isFriend = friendService.getFriendship(loggedInUserId, requestedUserId);
+        if (isFriend == null) {
+            return "redirect:/users/manage-friends";
+        }
+
+        model.addAttribute("dateFormatter", new ThymeLeafDateFormatter());
+        model.addAttribute("TIMESTAMP_FORMAT", TIMESTAMP_FORMAT);
+        model.addAttribute("DATE_FORMAT", WEATHER_CARD_FORMAT_DATE);
+        model.addAttribute("messagesMap", messageService.getMessagesBetweenFriends(loggedInUserId, requestedUserId));
+        model.addAttribute("messageDTO", new MessageDTO(""));
+        model.addAttribute("sentToUser", sentToUser);
+
+        return "users/messagesList";
     }
 
     @PostConstruct
