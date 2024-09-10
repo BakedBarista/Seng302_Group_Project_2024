@@ -86,34 +86,38 @@ public class SuggestedUserController {
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
 
-        // Accept button pressed flow
-        if ("accept".equals(action)) {
-            // Look for a pending request and accept it if one exists.
-            boolean pendingRequestAccepted = suggestedUserService.attemptToAcceptPendingRequest(loggedInUserId, suggestedId);
-            if (pendingRequestAccepted) {
-                logger.info("Pending request from suggested user accepted, user's are now friends");
-                response.put(SUCCESS, true);
-            } else { // Send a new pending request to the suggested user
-                boolean newRequestSent = suggestedUserService.sendNewPendingRequest(loggedInUser, suggestedUser);
-                if (!newRequestSent) {
-                    logger.error("Users already have a pending request. Doing nothing");
-                    return ResponseEntity.status(HttpStatus.OK).body(response);
+        switch (action) {
+            case "accept":
+                // Look for a pending request and accept it if one exists.
+                boolean pendingRequestAccepted = suggestedUserService.attemptToAcceptPendingRequest(loggedInUserId, suggestedId);
+                if (pendingRequestAccepted) {
+                    logger.info("Pending request from suggested user accepted, user's are now friends");
+                    response.put(SUCCESS, true);
+                } else { // Send a new pending request to the suggested user
+                    boolean newRequestSent = suggestedUserService.sendNewPendingRequest(loggedInUser, suggestedUser);
+                    if (!newRequestSent) {
+                        logger.error("Users already have a pending request. Doing nothing");
+                        return ResponseEntity.status(HttpStatus.OK).body(response);
+                    }
                 }
-            }
-        } else if ("decline".equals(action)) {
-            // Look for a pending request and decline it
-            boolean pendingRequestDeclined = suggestedUserService.attemptToDeclinePendingRequest(loggedInUserId, suggestedId);
-            if (pendingRequestDeclined) {
-                logger.info("Pending request from suggested user declined, user won't be shown again");
-            } else {
-                boolean declineStatusSet = suggestedUserService.setDeclinedFriendship(loggedInUser, suggestedUser);
-                if (!declineStatusSet) {
-                    logger.error("Something went wrong trying to set a declined friendship. Doing nothing");
-                    return ResponseEntity.status(HttpStatus.OK).body(response);
+                break;
+            case "decline":
+                // Look for a pending request and decline it
+                boolean pendingRequestDeclined = suggestedUserService.attemptToDeclinePendingRequest(loggedInUserId, suggestedId);
+                if (pendingRequestDeclined) {
+                    logger.info("Pending request from suggested user declined, user won't be shown again");
+                } else {
+                    boolean declineStatusSet = suggestedUserService.setDeclinedFriendship(loggedInUser, suggestedUser);
+                    if (!declineStatusSet) {
+                        logger.error("Something went wrong trying to set a declined friendship. Doing nothing");
+                        return ResponseEntity.status(HttpStatus.OK).body(response);
+                    }
                 }
-            }
+                break;
+            default:
+                logger.error("Action is neither 'accept' or 'decline'. Doing nothing");
+                break;
         }
-
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }
