@@ -140,36 +140,63 @@ public class MessageController {
 
         Long loggedInUserId = (Long) authentication.getPrincipal();
         
-        List<Message> chats = messageService.findAllRecentChats(loggedInUserId);
+        List<Message> allMessages = messageService.findAllRecentChats(loggedInUserId);
         Long requestedUserId;
         Map<GardenUser, String> recentChats = new HashMap<>();
 
-        // this is to get who we are loading onto first
-        if (!chats.isEmpty()) {
+        if (!allMessages.isEmpty()) {
 
-            // Get the first chat message
-            Message firstChat = chats.get(0);
-            if (loggedInUserId != firstChat.getSender()) {
-                requestedUserId = firstChat.getSender();
-            } else {
-                requestedUserId = firstChat.getReceiver();
-            }
-
-            for (Message chat : chats) {
-                logger.info("Sender: {}", chat.getSender());
-                logger.info("Receiver: {}", chat.getReceiver());
-                logger.info("Timestamp: {}", chat.getTimestamp());
-                logger.info("Message: {}", chat.getMessageContent());
-                logger.info("---------");
-
-                GardenUser requestedUser = userService.getUserById(requestedUserId);
-                String messageContent = chat.getMessageContent();
-                if (messageContent.length() > 50) {
-                    messageContent = messageContent.substring(0, 50);
-                    messageContent = messageContent + "...";
+            Map<Long, Message> recentMessagesMap = new HashMap<>();
+        
+            for (Message message : allMessages) {
+                Long otherUserId = messageService.getOtherUserId(loggedInUserId, message);
+                
+                if (otherUserId != null) {
+                    Message existingMessage = recentMessagesMap.get(otherUserId);
+                    if (existingMessage == null || message.getTimestamp().isAfter(existingMessage.getTimestamp())) {
+                        recentMessagesMap.put(otherUserId, message);
+                    }
                 }
-                recentChats.put(requestedUser, messageContent);
             }
+
+            
+
+            for (Map.Entry<Long, Message> entry : recentMessagesMap.entrySet()) {
+                Long userId = entry.getKey();
+                Message msg = entry.getValue();
+                
+                GardenUser user = userService.getUserById(userId);
+                String messagePreview = msg.getMessageContent(); 
+                
+                recentChats.put(user, messagePreview);
+            }
+
+            for (Map.Entry<Long, Message> entry : recentMessagesMap.entrySet()) {
+                Long userId = entry.getKey();
+                Message msg = entry.getValue();
+                logger.info("UserId: " + userId + ", Message: " + msg.getMessageContent());
+            }
+    
+
+            LocalDateTime latestTimestamp = null;
+            Long latestUserId = null;
+
+            for (Map.Entry<Long, Message> entry : recentMessagesMap.entrySet()) {
+                Long userId = entry.getKey();
+                Message message = entry.getValue();
+                if (latestTimestamp == null || message.getTimestamp().isAfter(latestTimestamp)) {
+                    latestTimestamp = message.getTimestamp();
+                    latestUserId = userId;
+                }
+            }
+
+            if (latestUserId != null) {
+                requestedUserId = latestUserId;
+            } else {
+                requestedUserId = null;
+            }
+
+
 
             String submissionToken = UUID.randomUUID().toString();
             session.setAttribute("submissionToken", submissionToken);

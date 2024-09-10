@@ -17,7 +17,7 @@ public interface MessageRepository extends CrudRepository<Message, Long>{
     @Query("SELECT m FROM Message m WHERE (m.sender = ?1 AND m.receiver = ?2) OR (m.sender = ?2 AND m.receiver = ?1)")
     List<Message> findMessagesBetweenUsers(Long user1, Long user2);
     
-    @Query("SELECT m FROM Message m WHERE (m.sender = ?1 OR m.receiver = ?1) AND m.timestamp IN (SELECT m2.timestamp FROM Message m2 WHERE (m2.sender = ?1 OR m2.receiver = ?1))")
+    @Query("SELECT m FROM Message m WHERE (m.sender = ?1 OR m.receiver = ?1)")
     List<Message> findAllRecentChats(Long user1);
 
 }

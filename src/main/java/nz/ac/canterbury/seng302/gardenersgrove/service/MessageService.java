@@ -76,4 +76,14 @@ public class MessageService {
     public List<Message> findAllRecentChats(Long user1){
         return messageRepository.findAllRecentChats(user1);
     }
+
+    public Long getOtherUserId(Long userId, Message message) {
+        if (message.getSender().equals(userId)) {
+            return message.getReceiver();
+        } else if (message.getReceiver().equals(userId)) {
+            return message.getSender();
+        } else {
+            return null;
+        }
+    }
 }
