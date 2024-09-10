@@ -38,7 +38,7 @@ class SuggestedUserServiceTest {
     void whenSuggestedUserHasSentRequest_andLoggedInUserAccepts_thenAcceptRequest() {
         friendService.save(new Friends(suggestedUser, loggedInUser, Friends.Status.PENDING));
 
-        boolean accepted = suggestedUserService.attemptToAcceptPendingRequest(suggestedUser.getId(), loggedInUser.getId());
+        boolean accepted = suggestedUserService.attemptToAcceptPendingRequest(loggedInUser.getId(), suggestedUser.getId());
         List<GardenUser> loggedInUserFriends = friendService.getAllFriends(loggedInUser.getId());
         Optional<Friends> pendingRequestFromSuggested = friendService.getPendingFriendRequest(suggestedUser.getId(), loggedInUser.getId());
 

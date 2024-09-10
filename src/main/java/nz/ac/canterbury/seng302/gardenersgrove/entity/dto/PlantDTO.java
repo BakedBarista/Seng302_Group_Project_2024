@@ -13,7 +13,6 @@ public class PlantDTO extends BasePlant {
 
     @ValidDate()
     private String plantedDate;
-
     public PlantDTO(String name, String count, String description, String plantedDate) {
         this.name = name;
         this.count = count;
@@ -27,7 +26,6 @@ public class PlantDTO extends BasePlant {
     public String getPlantedDate() {
         return plantedDate;
     }
-
     public LocalDate getParsedPlantedDate() {
         if (plantedDate != null && !plantedDate.isEmpty()) {
             return LocalDate.parse(plantedDate);

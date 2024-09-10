@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="">
 <head>
     <title>Pollinat*r</title>
 
@@ -8,98 +8,141 @@
     <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
 </head>
 <style>
-    .about-me-container {
-        max-height: 15vh;
-        overflow: hidden;
-        position: relative;
-        transition: max-height 0.3s ease;
+    /* Button hover: slightly grow */
+    button:hover {
+        transform: scale(1.05);
+        transition: transform 0.2s ease-in-out;
     }
-    .about-me-container.expanded {
-        max-height: none;
+
+    /* Icon click animation: pop effect */
+    button:active img {
+        transform: scale(1.2);
+        transition: transform 0.1s ease-in-out;
     }
-    .about-me-container::after {
-        content: "";
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 20px;
-        background: linear-gradient(to top, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
-        display: block;
+
+    button img {
+        transition: transform 0.2s ease-in-out;
     }
-    .about-me-container.expanded::after {
-        display: none;
-    }
-    .toggle-button {
-        cursor: pointer;
-        color: #007bff;
+
+    .upper-control {
         background: none;
-        border: none;
-        padding: 0;
-        font-size: 14px;
-        text-align: right;
-        margin-top: 5px;
+        border-color: transparent;
+    }
+
+    @media screen and (max-height: 850px) {
+        .flip-card {
+            height: 850px; /* Set your fixed height here */
+        }
+
+        .action-buttons {
+            padding: 2rem;
+        }
     }
 </style>
 <body>
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 <main class="d-flex flex-column align-items-center justify-content-center" style="margin: 10px">
-    <h1 class="mt-2 text-center">Suggested Connections</h1>
-    <div class="col-lg-5 col-md-10 col-sm-10">
-        <div class="mt-4 shadow w-100">
-            <div style="position: relative;">
-                <img
-                        class="suggest-user-picture card-img"
-                        th:src="@{'/img/gorila.png'}"
-                        alt="profile picture"
-                        style="height:50vh; object-fit: cover;"
-                />
-                <div class="position-absolute bottom-0 text-light w-100"
-                     style="background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.8));">
-                    <div class="m-3 mt-6">
-                        <div class="d-flex flex-column">
-                            <span th:if="${name.length() >= 12}"><span class="d-sm-none d-flex mt-5"></span></span>
-                            <h2 class="mb-1">[[${name}]]</h2>
+    <h1 class="my-3 text-center">Suggested Connections</h1>
+    <div class="col-sm-10 flip-card flex-grow-1 flex-column">
+        <div class="flip-card-inner border-0 w-100 card">
+            <div class="flip-card-front d-flex justify-content-between flex-column px-3 py-2 shadow" style="border-radius: 30px; min-height: 100%;">
+                <div class="d-flex justify-content-between pb-1">
+                    <button class="upper-control" data-bs-toggle="tooltip" title="Flip card" data-gg-flip-card-toggle>
+                        <img
+                                th:src="@{/icons/flip-card.svg}"
+                                alt="Flip card"
+                                style="height: 35px; width:35px"
+                        />
+                    </button>
+                    <button class="upper-control" data-bs-toggle="tooltip" title="Skip user">
+                        <img
+                                th:src="@{/icons/skip-connection.svg}"
+                                alt="Skip user"
+                                style="height: 35px; width:35px"
+                        />
+                    </button>
+                </div>
+                <div style="position: relative;">
+                    <img
+                            class="suggest-user-picture card-img"
+                            th:src="@{'/img/max-doe.jpeg'}"
+                            alt="profile picture"
+                            style="height:50vh; object-fit: cover; border-radius: 15px;"
+                    />
+                </div>
+                <div class="d-flex flex-column pt-2">
+                    <span th:if="${name.length() >= 12}"><span class="d-sm-none d-flex mt-5"></span></span>
+                    <h2 class="mb-1 text-white">[[${name}]]</h2>
+                </div>
+                <div style="max-height: 150px;">
+                    <p class="text-white">[[${description}]]</p>
+                </div>
+                <div class="d-flex justify-content-center">
+                    <div class="me-5">
+                        <form th:action="@{/}" method="POST">
+                            <input type="hidden" name="action" value="decline"/>
+                            <input type="hidden" name="suggestedId" id="suggestedIdDecline" th:value="${userId}"/>
+                            <button type="submit" class="rounded-circle btn-lg p-3 shadow" id="declineButton"
+                                    style="width: 90px; height: 90px; background-color: #FFF; border: 3px #FFF;"
+                                    data-bs-toggle="tooltip" title="Decline Connection">
+                                <img th:src="@{/icons/broken-heart.svg}" width="50" height="50" alt="Decline"
+                                     class="decline-icon" id="declineIcon"/>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="ms-5">
+                        <form th:action="@{/}" method="POST">
+                            <input type="hidden" name="action" value="accept"/>
+                            <input type="hidden" name="suggestedId" id="suggestedIdAccept" th:value="${userId}"/>
+                            <button type="submit" class="rounded-circle btn-lg p-3 shadow" id="heartButton"
+                                    style="width: 90px; height: 90px; background-color: #DC3545; border: none;"
+                                    data-bs-toggle="tooltip" title="Request Connection">
+                                <img th:src="@{/icons/heart.svg}" width="50" height="50" alt="Accept" class="heart-icon"
+                                     id="heartIcon"/>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="flip-card-back p-3" style="border-radius: 30px">
+                <div class="d-flex justify-content-between pb-2">
+                    <button class="upper-control" data-bs-toggle="tooltip" title="Flip card" data-gg-flip-card-toggle>
+                        <img
+                                th:src="@{/icons/flip-card.svg}"
+                                alt="Flip card"
+                                style="height: 35px; width:35px"
+                        />
+                    </button>
+                    <button class="upper-control" data-bs-toggle="tooltip" title="Skip user">
+                        <img
+                                th:src="@{/icons/skip-connection.svg}"
+                                alt="Skip user"
+                                style="height: 35px; width:35px"
+                        />
+                    </button>
+                </div>
+                <div class="d-flex flex-column flex-grow-1">
+                    <h5 class="m-2 mb-1 about-me text-white">My Favourite Garden</h5>
+                    <div class="m-2 d-flex flex-wrap">
+                        <th:block th:insert="~{fragments/favourite-garden.html :: favourite-garden}"></th:block>
+                    </div>
+                    <div class="flex-grow-1"></div>
+                    <h5 class="m-2 mb-1 about-me text-white">My Favourite Plants</h5>
+                    <div class="m-2 d-flex flex-wrap">
+                        <div class="card p-2 me-3 mb-3 border-0 rounded-3 d-flex shadow-sm public-profile-plant-card bg-primary-temp">
+                            <img class="mx-auto d-block pt-1" th:src="@{'/plants/10/plant-image'}"
+                                 style="width: 100%; height: 100%; object-fit: cover;" alt="plant image"/>
+                            <h6 class="pt-2 ps-2 text-white">Banana</h6>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="d-flex flex-column m-3">
-                <div class="about-me-container" id="aboutMeContainer">
-                    <h5 class="mb-1 about-me">About me...</h5>
-                    <p>[[${description}]]</p>
-                </div>
-                <button class="toggle-button" id="toggleButton">See More</button>
-            </div>
-        </div>
-        <div class="d-flex justify-content-around w-100 my-4 py-3 bg-primary-grey shadow">
-            <div>
-                <form th:action="@{/}" method="POST">
-                    <input type="hidden" name="action" value="accept"/>
-                    <button type="submit" class="rounded-circle btn-lg p-3 shadow" id="heartButton"
-                            style="width: 90px; height: 90px; background-color: #DC3545; border: none;">
-                        <img th:src="@{/icons/heart.svg}" width="50" height="50" alt="Accept" class="heart-icon"
-                             id="heartIcon"/>
-                    </button>
-                </form>
-            </div>
-            <div>
-                <form th:action="@{/}" method="POST">
-                    <input type="hidden" name="action" value="decline"/>
-                    <button type="submit" class="rounded-circle btn-lg p-3 shadow" id="declineButton"
-                            style="width: 90px; height: 90px; background-color: #1E1E1E; border: 3px #1E1E1E;">
-                        <img th:src="@{/icons/broken-heart.svg}" width="50" height="50" alt="Decline"
-                             class="decline-icon" id="declineIcon"/>
-                    </button>
-                </form>
-            </div>
         </div>
     </div>
     <div class="toast-container position-fixed bottom-0 end-0 p-3">
-
         <div id="acceptToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header">
-                <strong class="me-auto">Pollinator</strong>
+                <strong class="me-auto">Pollinat*r</strong>
                 <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
             <div class="toast-body" id="toastBody">
@@ -108,43 +151,17 @@
         </div>
     </div>
 </main>
-<th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
 <script>
-    $(function () {
-        $(".heart").on("click", function () {
-            $(this).toggleClass("is-active");
+    document.querySelectorAll('.flip-card').forEach((card) => {
+        const toggleButtons = card.querySelectorAll('[data-gg-flip-card-toggle]');
+        toggleButtons.forEach((button) => {
+            button.addEventListener('click', () => {
+                card.classList.toggle('flip-card-flipped');
+            });
         });
     });
 </script>
-<script>
-    document.getElementById('toggleButton').addEventListener('click', function () {
-        var container = document.getElementById('aboutMeContainer');
-        var button = document.getElementById('toggleButton');
-
-        container.classList.toggle('expanded');
-        if (container.classList.contains('expanded')) {
-            button.textContent = 'See Less';
-        } else {
-            button.textContent = 'See More';
-        }
-    });
-    function addAnimation(buttonId) {
-        let button = document.getElementById(buttonId);
-        button.classList.add('animate');
-        setTimeout(function () {
-            button.classList.remove('animate');
-        }, 600);
-    }
-
-    document.getElementById('heartButton').addEventListener('click', function () {
-        addAnimation('heartButton');
-    });
-
-    document.getElementById('declineButton').addEventListener('click', function () {
-        addAnimation('declineButton');
-    });
-</script>
-
+<th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
 <script th:src="@{/js/connection.js}"></script>
 </body>
 </html>

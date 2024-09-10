@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.weather.GardenWeather;
 import org.slf4j.Logger;
@@ -24,11 +25,19 @@ public class Garden extends BaseGarden {
     @Column
     private boolean wateringRecommendation;
 
+    @JsonIgnore
     @OneToOne(mappedBy = "garden", cascade = CascadeType.ALL, orphanRemoval = true)
     private GardenWeather gardenWeather;
 
     @Column(nullable = true)
     private Double size;
+
+    @Column(nullable = true)
+    protected String gardenImageContentType;
+
+    @Column(nullable = true, columnDefinition = "MEDIUMBLOB")
+    @Lob
+    protected byte[] gardenImage;
 
     public Garden() {
     }
@@ -48,8 +57,8 @@ public class Garden extends BaseGarden {
      * @param size
      */
     public Garden(String name, String streetNumber, String streetName, String suburb, String city, String country,
-                  String postCode, Double lat, Double lon, String description, Double size) {
-        super(name, streetNumber, streetName, suburb, city, country, postCode, lat, lon, description);
+                  String postCode, Double lat, Double lon, String description, Double size, byte[] gardenImage, String gardenImageContentType) {
+        super(name, streetNumber, streetName, suburb, city, country, postCode, lat, lon, description, gardenImage, gardenImageContentType);
         this.size = size;
     }
 
@@ -118,5 +127,17 @@ public class Garden extends BaseGarden {
         this.weatherAlertHidden = alertHidden;
     }
 
+    public byte[] getGardenImage() {
+        return gardenImage;
+    }
+
+    public String getGardenImageContentType() {
+        return gardenImageContentType;
+    }
+
+    public void setGardenImage(String contentType, byte[] gardenImage) {
+        this.gardenImageContentType = contentType;
+        this.gardenImage = gardenImage;
+    }
 
 }

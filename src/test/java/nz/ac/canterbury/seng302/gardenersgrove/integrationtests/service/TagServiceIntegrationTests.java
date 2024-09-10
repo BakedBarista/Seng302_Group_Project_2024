@@ -64,7 +64,7 @@ class TagServiceIntegrationTests {
         GardenUser user = new GardenUser("Test", "User", "jdo.asdf@gmail.com", "password", LocalDate.of(1970, 1, 1));
         userRepository.save(user);
 
-        garden = new Garden("Test garden", null, null, null, "Test city", "Test country", null, null, null, null, null);
+        garden = new Garden("Test garden", null, null, null, "Test city", "Test country", null, null, null, null, null, null, null);
         garden.setOwner(user);
         garden.getTags().add(redTag);
         garden.getTags().add(greenTag);

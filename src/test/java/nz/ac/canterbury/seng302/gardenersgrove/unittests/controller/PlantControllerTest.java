@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unittests.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.PlantController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
@@ -62,7 +63,9 @@ class PlantControllerTest {
     @Mock
     private WikidataService wikidataService;
 
+    private HttpSession session;
     private Model model;
+    private HttpServletRequest request;
 
     @InjectMocks
     private PlantController plantController;
@@ -95,9 +98,11 @@ class PlantControllerTest {
         mockGarden.setOwner(mockUser);
         when(gardenService.getGardenById(0L)).thenReturn(Optional.of(mockGarden));
         fileFilled = new MockMultipartFile("image", "testImage.jpg", "image/jpeg", "test image content".getBytes());
-        model = mock(Model.class);
 
+        session = mock(HttpSession.class);
+        model = mock(Model.class);
         authentication = mock(Authentication.class);
+        request = mock(HttpServletRequest.class);
     }
 
     @Test
@@ -105,7 +110,7 @@ class PlantControllerTest {
         long gardenId = 0;
         String expectedReturnPage = "plants/addPlant";
 
-        String returnPage = plantController.addPlantForm(gardenId, false, model, null);
+        String returnPage = plantController.addPlantForm(gardenId, false, model, session, request);
         assertEquals(expectedReturnPage, returnPage);
     }
 
@@ -115,7 +120,7 @@ class PlantControllerTest {
         String expectedReturnPage = "error/accessDenied";
 
         when(gardenService.getGardenById(gardenId)).thenReturn(Optional.empty());
-        String returnPage = plantController.addPlantForm(gardenId, false, model, null);
+        String returnPage = plantController.addPlantForm(gardenId, false, model, session, request);
         assertEquals(expectedReturnPage, returnPage);
     }
 
@@ -127,13 +132,13 @@ class PlantControllerTest {
         GardenUser owner = new GardenUser();
         owner.setId(1L);
 
-        Garden garden = new Garden("Test Garden", "1", "test", "test suburb", "test city", "test country", "1234", 0.0, 0.0, "test description", 100D);
+        Garden garden = new Garden("Test Garden", "1", "test", "test suburb", "test city", "test country", "1234", 0.0, 0.0, "test description", 100D, null, null);
         garden.setOwner(owner);
 
         when(gardenService.getGardenById(gardenId) ).thenReturn(Optional.of(garden));
         when(gardenUserService.getCurrentUser()).thenReturn(new GardenUser());
 
-        String returnPage = plantController.addPlantForm(gardenId, false, model, null);
+        String returnPage = plantController.addPlantForm(gardenId, false, model, session, request);
         assertEquals(expectedReturnPage, returnPage);
 
     }
@@ -147,7 +152,7 @@ class PlantControllerTest {
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
-        String returnPage = plantController.submitAddPlantForm(gardenId, validPlantDTO, bindingResult, file, dateValidStr, model);
+        String returnPage = plantController.submitAddPlantForm(gardenId, validPlantDTO, bindingResult, file, dateValidStr, model, session);
         assertEquals(expectedReturnPage, returnPage);
     }
 
@@ -159,7 +164,7 @@ class PlantControllerTest {
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
-        String returnPage = plantController.submitAddPlantForm(gardenId, invalidPlantDTO, bindingResult, file, dateValidStr, model);
+        String returnPage = plantController.submitAddPlantForm(gardenId, invalidPlantDTO, bindingResult, file, dateValidStr, model, session);
         assertEquals(expectedReturnPage, returnPage);
     }
 
@@ -216,7 +221,7 @@ class PlantControllerTest {
         GardenUser owner = new GardenUser();
         owner.setId(1L);
 
-        Garden garden = new Garden("Test Garden", "1", "test", "test suburb", "test city", "test country", "1234", 0.0, 0.0, "test description", 100D);
+        Garden garden = new Garden("Test Garden", "1", "test", "test suburb", "test city", "test country", "1234", 0.0, 0.0, "test description", 100D, null, null);
         garden.setOwner(owner);
 
         when(plantService.getPlantById(plantId)).thenReturn(Optional.of(plant));
@@ -388,7 +393,7 @@ class PlantControllerTest {
         doThrow(new RuntimeException("Image processing error"))
                 .when(plantService).setPlantImage(anyLong(), any(MultipartFile.class));
 
-        String view = plantController.submitAddPlantForm(gardenId, plantDTO, bindingResult, file, dateValidStr, model);
+        String view = plantController.submitAddPlantForm(gardenId, plantDTO, bindingResult, file, dateValidStr, model, session);
 
         assertEquals("redirect:/gardens/" + gardenId, view);
     }
@@ -466,7 +471,7 @@ class PlantControllerTest {
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
 
-        String returnPage = plantController.submitAddPlantForm(1L, plantDTO, bindingResult, file, dateValidStr, model);
+        String returnPage = plantController.submitAddPlantForm(1L, plantDTO, bindingResult, file, dateValidStr, model, session);
         verify(bindingResult).hasErrors();
 
         assertEquals("plants/addPlant", returnPage);
@@ -483,7 +488,7 @@ class PlantControllerTest {
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
 
-        String returnPage = plantController.submitAddPlantForm(1L, plantDTO, bindingResult, file, dateValidStr, model);
+        String returnPage = plantController.submitAddPlantForm(1L, plantDTO, bindingResult, file, dateValidStr, model, session);
         verify(bindingResult).hasErrors();
         assertEquals("plants/addPlant", returnPage);
 
@@ -580,6 +585,40 @@ class PlantControllerTest {
         assertEquals("plants/plantInformation", returnPage);
         verify(model).addAttribute(eq("plants"), assertArg((List<PlantInfoDTO> plants) -> {
             assertEquals("Tomato", plants.get(0).getLabel());
+        }));
+    }
+
+    @Test
+    void whenAddToGardenListShown_thenSavesPlantToSessionState() {
+        plantController.plantInformationAddToGarden("Tomato", "Red fruit", "https://example.com/test.png", session,
+                model);
+
+        verify(session).setAttribute("plantLabel", "Tomato");
+        verify(session).setAttribute("plantDescription", "Red fruit");
+        verify(session).setAttribute("plantImage", "https://example.com/test.png");
+    }
+
+    @Test
+    void whenAddToGardenListShown_thenShowsGardenList() {
+        when(gardenService.getGardensByOwnerId(any())).thenReturn(List.of());
+
+        plantController.plantInformationAddToGarden("Tomato", "Red fruit", "https://example.com/test.png", session,
+                model);
+
+        verify(model).addAttribute("gardens", List.of());
+    }
+
+    @Test
+    void whenAddToGarden_andGardenSelected_thenFormPrefilled() {
+        when(session.getAttribute("plantLabel")).thenReturn("Tomato");
+        when(session.getAttribute("plantDescription")).thenReturn("Red fruit");
+        when(session.getAttribute("plantImage")).thenReturn("");
+
+        plantController.addPlantForm(1L, true, model, session, request);
+
+        verify(model).addAttribute(eq("plant"), assertArg((Plant plant) -> {
+            assertEquals("Tomato", plant.getName());
+            assertEquals("Red fruit", plant.getDescription());
         }));
     }
 }

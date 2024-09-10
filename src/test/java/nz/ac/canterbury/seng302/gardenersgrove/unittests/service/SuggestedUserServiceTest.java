@@ -83,7 +83,7 @@ class SuggestedUserServiceTest {
         Friends pendingFriendship = new Friends();
         pendingFriendship.setStatus(PENDING);
 
-        Mockito.when(friendService.getPendingFriendRequest(suggestedUserId, loggedInUserId)).thenReturn(Optional.of(pendingFriendship));
+        Mockito.when(friendService.getPendingFriendRequest(loggedInUserId, suggestedUserId)).thenReturn(Optional.of(pendingFriendship));
 
         boolean result = suggestedUserService.attemptToAcceptPendingRequest(loggedInUserId, suggestedUserId);
 

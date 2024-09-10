@@ -1,23 +1,36 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
-import org.h2.util.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Arrays;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Service
 public class ModerationService {
     Logger logger = LoggerFactory.getLogger(ModerationService.class);
 
-    @Value("${moderation.api.key}")
     private String moderationApiKey;
+    private ObjectMapper objectMapper;
+    private RestTemplate restTemplate;
 
     private static final String MODERATION_API_URL = "https://api.openai.com/v1/moderations";
+
+    public ModerationService(@Value("${moderation.api.key}") String moderationApiKey, ObjectMapper objectMapper, RestTemplate restTemplate) {
+        this.moderationApiKey = moderationApiKey;
+        this.objectMapper = objectMapper;
+        this.restTemplate = restTemplate;
+    }
 
 
     /**
@@ -28,15 +41,22 @@ public class ModerationService {
     public ResponseEntity<String> moderateDescription(String description) {
         logger.info("Moderating description");
 
-        String requestBody = "{\"input\": \"" + description + "\"}";
+        ObjectNode node = JsonNodeFactory.instance.objectNode();
+        node.put("input", description);
+        String requestBody;
+        try {
+            requestBody = objectMapper.writeValueAsString(node);
+        } catch (JsonProcessingException e) {
+            // This should never happen as it is always possible to encode a string using JSON
+            return null;
+        }
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "Bearer " + moderationApiKey);
 
         HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
 
-        RestTemplate restTemplate = new RestTemplate();
-        
         ResponseEntity<String> responseEntity = restTemplate.postForEntity(MODERATION_API_URL, requestEntity, String.class);
 
 
