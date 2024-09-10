@@ -12,6 +12,10 @@
 
 
 <main class="main-container">
+    <input type="hidden" id="selectedPlantId">
+    <input type="hidden" id="favouritePlantsData" th:attr="data-favourite-plants=${favouritePlantsJson}" />
+    <input type="hidden" id="placeholderImageSrc" th:value="@{/icons/create-mustard-grey.svg}">
+
     <div class="modal fade" id="plantSelectorModal" tabindex="0" aria-labelledby="plantSelectorModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content" id="plantSelectorModalContent">
@@ -30,12 +34,13 @@
                         </div>
                     </form>
 
-                    <div id="searchResults" class="select-container"></div>
+                    <div id="searchPlantResults" class="select-container"></div>
 
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer bg-light" style="position: sticky; bottom: 0; width: 100%;">
+                    <div id="error-message" style="color: red; display: none;"></div>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" id="submit-button" class="btn btn-primary btn-sm">Submit</button>
+                    <button type="button" id="plantSelectorModalSubmitButton" class="btn btn-primary">Submit</button>
                 </div>
 
                     <script th:src="@{/js/autocomplete.js}"></script>
@@ -44,10 +49,42 @@
 
             </div>
         </div>
+
+    <div class="modal fade" id="gardenSelectorModal" tabindex="0" aria-labelledby="plantSelectorModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="gardenSelectorModalLabel">Select Favourite Garden</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="input-group w-100" id="searchGardenForm">
+                        <input type="hidden" id="selectedGardenId">
+                        <input type="text" class="form-control" placeholder="Search Garden" id="searchGardenInput"
+                               aria-label="Search gardens" aria-describedby="button-addon" name="search">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="submit" id="gardenSearch" onclick=showGardenSearchResults()>
+                                <img th:src="@{/icons/search-icon.svg}" alt="" width="20" height="25">
+                            </button>
+                        </div>
+                    </form>
+
+
+                    <div id="searchGardenResults" class="mt-3"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick=previewFavouriteGarden()>Submit</button>
+                </div>
+
+
+            </div>
+        </div>
     </div>
 
+
   <div class="card border-top-0">
-      <form th:action="@{/users/edit-public-profile}" method="post" enctype="multipart/form-data" th:object="${editUserDTO}" novalidate>
+      <form th:action="@{/users/edit-public-profile}" id="editPublicProfileForm" method="post" enctype="multipart/form-data" th:object="${editUserDTO}" novalidate>
           <div class="card-img-top img-fluid fixed-height mb-4 position-relative">
               <div class="position-relative">
                   <label for="bannerImage" class="position-absolute top-0 end-0 p-2" style="cursor: pointer;">
@@ -115,12 +152,8 @@
           <div class="card m-4 p-4 mt-1 border-0 rounded-3 shadow-sm " style="background-color: #F9EFCC">
               <div class="d-flex">
                   <h4>My Favourite Garden</h4>
-                  <a class="btn btn-change ms-auto mb-2" >
-                      <img th:src="@{/icons/edit.svg}"
-                           aria-hidden=""
-                           alt="edit"
-                           width="20"
-                           height="20" /> Change
+                  <a class="btn btn-change ms-auto mb-2" onclick=openGardenSelectorModel()>
+                      <span th:text="${favouriteGarden != null ? 'Change' : 'Add'}">Change</span>
                   </a>
               </div>
               <th:block th:insert="~{fragments/favourite-garden.html :: favourite-garden}"></th:block>
@@ -129,70 +162,64 @@
           <div class="card m-4 p-4 mt-1 border-0 rounded-3 shadow-sm" style="background-color: #F9EFCC">
               <h4>My Favourite Plants...</h4>
               <div class="ms-5 me-5">
-                  <div class="d-flex flex-wrap flex-md-nowrap">
-                      <!-- please remove hard coded stuff when you can :) -->
+                  <div class="d-flex flex-wrap flex-md-nowrap" id="favouritePlantsContainer">
+                      <!-- Render cards for favorite plants -->
+                      <div th:each="i : ${#numbers.sequence(1, 3)}" class="card p-2 me-3 mb-3 border-0 rounded-3 shadow-sm public-profile-plant-card" th:classappend="${i <= favouritePlants.size()} ? 'd-flex bg-primary-temp' : 'justify-content-center card-wiggle bg-primary-grey'" th:id="${i <= favouritePlants.size()} ? '' : 'favouritePlantCard' + ${i}" th:onclick="${i <= favouritePlants.size()} ? '' : 'openPlantSelectorModal(' + ${i} + ')'">
 
-                      <!-- for each on favourite plants-->
-                      <!-- non-empty card -->
-                      <div class="card p-2 me-3 mb-3 border-0 rounded-3 d-flex shadow-sm public-profile-plant-card bg-primary-temp">
-                          <!-- place holder image -->
-                          <img
-                                  class="mx-auto d-block pt-1"
-                                  th:src="@{'/plants/10/plant-image'}"
-                                  width="120"
-                                  height="120"
-                                  alt="profile picture"
-                          />
-                          <h4 class="pt-2 ps-2">Banana</h4>
-                      </div>
+                          <!-- Filled card content -->
+                          <th:block th:if="${i <= favouritePlants.size()}">
+                              <img th:src="@{'/plants/' + ${favouritePlants[i-1].id} + '/plant-image'}" class="mx-auto d-block pt-1" style="width: 100%; height: 80%; object-fit: cover" alt="plant image"/>
+                              <h5 class="pt-2 text-center" th:text="${favouritePlants[i-1].name}">Plant Name</h5>
+                          </th:block>
 
-                      <!-- empty card -->
-                      <div class="card p-2 me-3 mb-3 border-0 rounded-3 shadow-sm
-                      public-profile-plant-card justify-content-center card-wiggle bg-primary-grey"
-                           onclick="openPlantSelectorModal(1)">
-                          <img th:src="@{/icons/create-mustard-grey.svg}"
-                               class="mx-auto d-block"
-                               aria-hidden="true"
-                               alt="empty-favourite"
-                               width="50"
-                               height="50" />
-                      </div>
+                          <!-- Empty card content -->
+                          <th:block th:unless="${i <= favouritePlants.size()}">
+                              <img th:src="@{/icons/create-mustard-grey.svg}" alt="empty-favourite" width="50" height="50" class="mx-auto d-block"/>
+                              <h4 class="pt-2 ps-2 text-center"></h4>
+                          </th:block>
 
-                      <!-- empty card -->
-                      <div class="card p-2 me-3 mb-3 border-0 rounded-3 shadow-sm
-                      public-profile-plant-card justify-content-center card-wiggle bg-primary-grey"
-                           onclick="openPlantSelectorModal(1)">
-                          <img th:src="@{/icons/create-mustard-grey.svg}"
-                               class="mx-auto d-block"
-                               aria-hidden="true"
-                               alt="empty-favourite"
-                               width="50"
-                               height="50" />
+                          <input type="hidden" th:id="'selectedPlantId' + ${i}" th:value="${i <= favouritePlants.size()} ? ${favouritePlants[i-1].id} : ''"/>
                       </div>
                   </div>
               </div>
           </div>
-        
-        <!-- Button Container with Adjusted Spacing -->
+
+
+
+          <!-- Button Container with Adjusted Spacing -->
         <div class="d-flex justify-content-end px-4 mb-4">
-          <a th:href="@{/users/public-profile}" class="btn btn-outline-secondary me-2" tabindex="4">Cancel</a>
-          <button class="btn btn-primary" tabindex="5">Submit</button>
+            <a th:href="@{/users/public-profile}" class="btn btn-outline-secondary me-2" tabindex="4">Cancel</a>
+            <button class="btn btn-primary" type="submit" tabindex="5">Submit</button>
         </div>
+          <script th:src="@{/js/searchFavouriteGarden.js}"></script>
       </form>
   </div>
 </main>
 <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
 
 <script>
+    document.getElementById('editPublicProfileForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        updateFavouritePlants();
 
-openPlantSelectorModal = (index) => {
-    const modal = new bootstrap.Modal(document.getElementById("plantSelectorModal"))
-    modal.show()
-}
+    });
 
 
-    /** @type {HTMLInputElement} */
-    const editProfileImageInput = document.getElementById("image");
+
+
+
+
+    openGardenSelectorModel = () => {
+        const modal = new bootstrap.Modal(document.getElementById("gardenSelectorModal"))
+        modal.show()
+    }
+
+
+
+
+
+  /** @type {HTMLInputElement} */
+  const editProfileImageInput = document.getElementById("image");
   /** @type {HTMLSpanElement} */
   const editProfilePictureError = document.getElementById("editProfilePictureError");
   /** @type {HTMLInputElement} */

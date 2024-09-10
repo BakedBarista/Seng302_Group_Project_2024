@@ -4,15 +4,19 @@ import io.cucumber.java.BeforeAll;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import nz.ac.canterbury.seng302.gardenersgrove.controller.users.EditUserController;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.PublicProfileController;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditPasswordDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
+import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.ProfanityService;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
@@ -20,7 +24,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -37,14 +41,19 @@ public class U800_1_1_PublicProfileFeature {
 
     private static GardenUserService userService;
     private static ProfanityService profanityService;
-    private static GardenService gardenService;
+
     private static PlantService plantService;
+    private static GardenService gardenService;
+    private static GardenUserRepository gardenUserRepository;
 
     private static PublicProfileController publicProfileController;
 
     String invalidDescription;
     private GardenUser user;
     String validDescription = "I love gardening!";
+    Garden garden;
+
+    Plant plant;
 
     MultipartFile profilePic = new MockMultipartFile(
             "image",
@@ -75,12 +84,13 @@ public class U800_1_1_PublicProfileFeature {
         userRepository = mock(GardenUserRepository.class);
         gardenRepository = mock(GardenRepository.class);
         bindingResult = mock(BindingResult.class);
+        gardenUserRepository = mock(GardenUserRepository.class);
         model = mock(Model.class);
         authentication = mock(Authentication.class);
 
         userService = new GardenUserService(userRepository);
         plantService = new PlantService(plantRepository, gardenRepository);
-        gardenService = new GardenService(gardenRepository);
+        gardenService = new GardenService(gardenRepository, gardenUserRepository);
         profanityService = new ProfanityService();
         publicProfileController = new PublicProfileController(userService, profanityService, plantService);
     }
@@ -187,4 +197,74 @@ public class U800_1_1_PublicProfileFeature {
                 largeContent
         );
     }
+
+
+    @Then("I can see an editable section called “My Favourite Garden” where I can showcase my favourite public garden of mine.")
+    public void iCanSeeAnEditableSectionCalledMyFavouriteGardenWhereICanShowcaseMyFavouritePublicGardenOfMine() {
+        Garden favourite = new Garden();
+        user.setFavoriteGarden(favourite);
+        assertEquals(user.getFavoriteGarden(), favourite);
+    }
+
+    @When("I select a garden from the list of public gardens")
+    public void iSelectAGardenFromTheListOfPublicGardens() {
+        List<Garden> publicGardens = new ArrayList<>();
+        garden = new Garden();
+        garden.setOwner(user);
+        garden.setPublic(true);
+        publicGardens.add(garden);
+        user.setFavoriteGarden(publicGardens.get(0));
+    }
+
+    @Then("The garden is displayed")
+    public void theGardenIsDisplayed() {
+        assertEquals(garden, user.getFavoriteGarden());
+    }
+
+    @Given("I am on my edit profile page and I already have a favourite garden")
+    public void iAmOnMyEditProfilePageAndIAlreadyHaveAFavouriteGarden() {
+        if(user.getFavoriteGarden() == null) {
+            user.setFavoriteGarden(new Garden());
+        }
+    }
+
+    @Then("My favourite garden is updated")
+    public void myFavouriteGardenIsUpdated() {
+        assertEquals(user.getFavoriteGarden(), garden);
+    }
+
+    @Then("I can see an editable section called “My Favourite Plants” where I can showcase my three favourite public plants that are mine")
+    public void iCanSeeAnEditableSectionCalledMyFavouritePlantsWhereICanShowcaseMyThreeFavouritePublicPlantsThatAreMine() {
+        Set<Plant> favouritePlants = new HashSet<>();
+        Plant plant1 = new Plant();
+        Plant plant2 = new Plant();
+        Plant plant3 = new Plant();
+        favouritePlants.add(plant1);
+        favouritePlants.add(plant2);
+        favouritePlants.add(plant3);
+        user.setFavouritePlants(favouritePlants);
+        assertEquals(user.getFavouritePlants(), favouritePlants);
+    }
+
+    @When("I select a plant from the list of public plants")
+    public void iSelectAPlantFromTheListOfPublicPlants() {
+        List<Plant> publicPlants = new ArrayList<>();
+        plant = new Plant();
+        publicPlants.add(plant);
+        user.addFavouritePlant(publicPlants.get(0));
+    }
+
+    @Then("The plant is displayed")
+    public void thePlantIsDisplayed() {
+        System.out.println(user.getFavouritePlants());
+        System.out.println(plant);
+        assertTrue(user.getFavouritePlants().contains(plant));
+    }
+
 }
+
+
+
+
+
+

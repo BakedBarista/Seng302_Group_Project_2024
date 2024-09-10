@@ -1,6 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Service class for GardenUser, defined by the @link{Service} annotation.
@@ -191,8 +190,13 @@ public class GardenUserService {
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new UsernameNotFoundException("No authenticated user found");
         }
-        long userId = Long.parseLong(authentication.getName());
-        return getUserById(userId);
+        String identifier = authentication.getName();
+        try {
+            long userId = Long.parseLong(identifier);
+            return getUserById(userId);
+        } catch (NumberFormatException e) {
+            return getUserByEmail(identifier);
+        }
     }
 
     /**
@@ -230,5 +234,45 @@ public class GardenUserService {
         byte[] bytes = Base64.getDecoder().decode(obfuscatedEmail);
         return new String(bytes);
     }
+
+    /**
+     * Get the favourite garden of the user
+     * @param userId user id
+     * @return garden garden
+     */
+    public Garden getFavoriteGarden(Long userId) {
+        Optional<GardenUser> user = gardenUserRepository.findById(userId);
+        return user.map(GardenUser::getFavoriteGarden).orElse(null);
+    }
+
+    /**
+     * Get the favourite plants of the user
+     * @param userId user id
+     * @return set of favourite plants
+     */
+    public Set<Plant> getFavoritePlants(Long userId) {
+        GardenUser user = gardenUserRepository.findById(userId)
+                .orElseThrow();
+
+        return user.getFavouritePlants();
+    }
+
+
+
+    /**
+     * Update the favourite plant
+     * @param userId user id
+     * @param plant plant
+     */
+    public void updateFavouritePlant(Long userId, Set<Plant> plants) {
+        GardenUser user = getUserById(userId);
+        if (plants.size() <= 3) {
+            user.setFavouritePlants(plants);
+            gardenUserRepository.save(user);
+        } else {
+            throw new IllegalArgumentException("Cannot have more than 3 favourite plants");
+        }
+    }
+
 
 }

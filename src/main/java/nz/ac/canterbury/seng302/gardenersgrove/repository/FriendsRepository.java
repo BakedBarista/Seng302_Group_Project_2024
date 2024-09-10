@@ -6,6 +6,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -80,6 +81,9 @@ public interface FriendsRepository extends CrudRepository<Friends, Long> {
     List<Friends> getFriendshipsFromUserWithStatus(Long sender, Friends.Status status);
 
     void deleteBySenderIdAndReceiverId(Long senderId, Long receiverId);
+
+    @Transactional
+    void deleteBySenderId(Long senderId);
 
     /**
      *

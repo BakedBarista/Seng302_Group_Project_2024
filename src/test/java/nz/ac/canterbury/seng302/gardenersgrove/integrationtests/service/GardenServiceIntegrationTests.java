@@ -46,7 +46,7 @@ public class GardenServiceIntegrationTests {
     @BeforeEach
     public void setUp() {
         gardenUserService = new GardenUserService(gardenUserRepository);
-        gardenService = new GardenService(gardenRepository);
+        gardenService = new GardenService(gardenRepository, gardenUserRepository);
         plantService = new PlantService(plantRepository, gardenRepository);
 
         GardenUser gardenUser = new GardenUser("John", "Doe", "john.doe@gmail.com", "password", LocalDate.of(2000, 10, 10));

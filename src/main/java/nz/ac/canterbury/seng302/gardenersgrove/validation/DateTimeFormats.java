@@ -15,4 +15,6 @@ public class DateTimeFormats {
     public static final DateTimeFormatter WEATHER_CARD_FORMAT_DATE = DateTimeFormatter.ofPattern("EEEE dd MMM");
 
     public static final DateTimeFormatter HISTORY_FORMAT_DATE = DateTimeFormatter.ofPattern("d MMMM yyyy");
+
+    public static final DateTimeFormatter TIMESTAMP_FORMAT = DateTimeFormatter.ofPattern("hh:mm a");
 }

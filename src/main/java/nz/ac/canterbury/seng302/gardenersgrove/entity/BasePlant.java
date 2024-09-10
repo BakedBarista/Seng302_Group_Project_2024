@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -30,12 +31,21 @@ public abstract class BasePlant {
     @Column(nullable = false, length = 512)
     protected String description;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn
     protected Garden garden;
 
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "garden_user_id")
+    private GardenUser gardenUser;
+
+
     @Enumerated(EnumType.STRING)
     private PlantStatus status = PlantStatus.NOT_GROWING;
+
+
 
     @Column()
     protected LocalDate harvestedDate;
@@ -98,6 +108,11 @@ public abstract class BasePlant {
     public void setGarden(Garden garden) {
         this.garden = garden;
     }
+
+
+    public GardenUser getFavourite() {return gardenUser; }
+
+    public void setFavourite(GardenUser gardenUser) {this.gardenUser = gardenUser;}
 
     /**
      * Removes extraneous information (such as weird decimals) from the plant object.
