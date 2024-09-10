@@ -78,14 +78,8 @@ public class MessageController {
 
         Map<GardenUser, String> recentChats = messageService.convertToPreview(recentMessagesMap);
 
-        model.addAttribute("dateFormatter", new ThymeLeafDateFormatter());
-        model.addAttribute("TIMESTAMP_FORMAT", TIMESTAMP_FORMAT);
-        model.addAttribute("DATE_FORMAT", WEATHER_CARD_FORMAT_DATE);
-        model.addAttribute("submissionToken", submissionToken);
-        model.addAttribute("messagesMap", messageService.getMessagesBetweenFriends(loggedInUserId, requestedUserId));
-        model.addAttribute("sentToUser", sentToUser);
-        model.addAttribute("recentChats", recentChats);
-        model.addAttribute("activeChat", requestedUserId);
+        messageService.setupModelAttributes(model, loggedInUserId, requestedUserId, sentToUser, recentChats, submissionToken);
+
 
         return "users/message-home";
     }
@@ -176,14 +170,8 @@ public class MessageController {
                 return "redirect:/users/manage-friends";
             }
 
-            model.addAttribute("dateFormatter", new ThymeLeafDateFormatter());
-            model.addAttribute("TIMESTAMP_FORMAT", TIMESTAMP_FORMAT);
-            model.addAttribute("DATE_FORMAT", WEATHER_CARD_FORMAT_DATE);
-            model.addAttribute("submissionToken", submissionToken);
-            model.addAttribute("messagesMap", messageService.getMessagesBetweenFriends(loggedInUserId, requestedUserId));
-            model.addAttribute("sentToUser", sentToUser);
-            model.addAttribute("recentChats", recentChats);
-            model.addAttribute("activeChat", requestedUserId);
+            messageService.setupModelAttributes(model, loggedInUserId, requestedUserId, sentToUser, recentChats, submissionToken);
+
         }
 
         return "users/message-home";
@@ -227,14 +215,8 @@ public class MessageController {
             return "redirect:/users/manage-friends";
         }
 
-        model.addAttribute("dateFormatter", new ThymeLeafDateFormatter());
-        model.addAttribute("TIMESTAMP_FORMAT", TIMESTAMP_FORMAT);
-        model.addAttribute("DATE_FORMAT", WEATHER_CARD_FORMAT_DATE);
-        model.addAttribute("submissionToken", submissionToken);
-        model.addAttribute("messagesMap", messageService.getMessagesBetweenFriends(loggedInUserId, requestedUserId));
-        model.addAttribute("sentToUser", sentToUser);
-        model.addAttribute("recentChats", recentChats);
-        model.addAttribute("activeChat", requestedUserId);
+        messageService.setupModelAttributes(model, loggedInUserId, requestedUserId, sentToUser, recentChats, submissionToken);
+
     }
 
     return "users/message-home";

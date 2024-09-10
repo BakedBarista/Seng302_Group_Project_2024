@@ -6,12 +6,15 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.MessageDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.TIMESTAMP_FORMAT;
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.WEATHER_CARD_FORMAT_DATE;
 
 /**
  * Service class for handling messaging between users
@@ -179,5 +182,16 @@ public class MessageService {
             }
         }
         return latestUserId;
+    }
+
+    public void setupModelAttributes(Model model, Long loggedInUserId, Long requestedUserId, GardenUser sentToUser, Map<GardenUser, String> recentChats, String submissionToken) {
+        model.addAttribute("dateFormatter", new ThymeLeafDateFormatter());
+        model.addAttribute("TIMESTAMP_FORMAT", TIMESTAMP_FORMAT);
+        model.addAttribute("DATE_FORMAT", WEATHER_CARD_FORMAT_DATE);
+        model.addAttribute("submissionToken", submissionToken); 
+        model.addAttribute("messagesMap", getMessagesBetweenFriends(loggedInUserId, requestedUserId));
+        model.addAttribute("sentToUser", sentToUser);
+        model.addAttribute("recentChats", recentChats);
+        model.addAttribute("activeChat", requestedUserId);
     }
 }
