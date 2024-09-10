@@ -11,7 +11,7 @@ Feature: Message friend from the friends list
 
     Scenario: User sends a message to their friend
       Given I am on a direct messaging page for my friend "Jane"
-      Given I am on a direct messaging page for my friend "Jane"
+      When I have typed a text-based message "Hello"
       And I press Send
       Then I am taken to the message page
       And The message is sent to that friend.
