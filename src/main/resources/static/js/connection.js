@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const buttonClick = document.getElementById('heartIcon');
+    const declineButton = document.getElementById('declineButton');
+    const acceptButton = document.getElementById('heartIcon');
     const toastDivs = document.getElementById('acceptToast');
     const toast = new bootstrap.Toast(toastDivs);
     
@@ -31,8 +32,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     showCurrentUserCard();
 
-    if (buttonClick) {
-        buttonClick.addEventListener('click', function(event) {
+    if (declineButton) {
+        declineButton.addEventListener('click', function(event) {
+            event.preventDefault();
+            decline();
+        });
+    }
+    if (acceptButton) {
+        acceptButton.addEventListener('click', function(event) {
             event.preventDefault();
             accept();
         });

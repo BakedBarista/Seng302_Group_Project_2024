@@ -80,7 +80,7 @@ public class SuggestedUserController {
     @PostMapping("/")
     public ResponseEntity<Map<String, Object>> handleAcceptDecline(
             @RequestParam(name = "action") String action,
-            @RequestParam(name = "suggestedId") Long suggestedId,
+            @RequestParam(name = "id") Long suggestedId,
             Authentication authentication,
             Model model) {
         logger.info("Post /");
