@@ -78,7 +78,7 @@ public class MessageController {
         model.addAttribute("submissionToken", submissionToken);
         model.addAttribute("messagesMap", messageService.getMessagesBetweenFriends(loggedInUserId, requestedUserId));
         model.addAttribute("sentToUser", sentToUser);
-        return "users/message";
+        return "users/message-home";
     }
 
     /**
@@ -139,64 +139,21 @@ public class MessageController {
         logger.info("GET message Home");
 
         Long loggedInUserId = (Long) authentication.getPrincipal();
-        
+
         List<Message> allMessages = messageService.findAllRecentChats(loggedInUserId);
-        Long requestedUserId;
-        Map<GardenUser, String> recentChats = new HashMap<>();
+        Long requestedUserId = null;
 
         if (!allMessages.isEmpty()) {
 
-            Map<Long, Message> recentMessagesMap = new HashMap<>();
-        
-            for (Message message : allMessages) {
-                Long otherUserId = messageService.getOtherUserId(loggedInUserId, message);
-                
-                if (otherUserId != null) {
-                    Message existingMessage = recentMessagesMap.get(otherUserId);
-                    if (existingMessage == null || message.getTimestamp().isAfter(existingMessage.getTimestamp())) {
-                        recentMessagesMap.put(otherUserId, message);
-                    }
-                }
-            }
+            Map<Long, Message> recentMessagesMap = messageService.getLatestMessages(allMessages, loggedInUserId);
 
-            
+            Map<GardenUser, String> recentChats = messageService.convertToPreview(recentMessagesMap);
 
-            for (Map.Entry<Long, Message> entry : recentMessagesMap.entrySet()) {
-                Long userId = entry.getKey();
-                Message msg = entry.getValue();
-                
-                GardenUser user = userService.getUserById(userId);
-                String messagePreview = msg.getMessageContent(); 
-                
-                recentChats.put(user, messagePreview);
-            }
-
-            for (Map.Entry<Long, Message> entry : recentMessagesMap.entrySet()) {
-                Long userId = entry.getKey();
-                Message msg = entry.getValue();
-                logger.info("UserId: " + userId + ", Message: " + msg.getMessageContent());
-            }
-    
-
-            LocalDateTime latestTimestamp = null;
-            Long latestUserId = null;
-
-            for (Map.Entry<Long, Message> entry : recentMessagesMap.entrySet()) {
-                Long userId = entry.getKey();
-                Message message = entry.getValue();
-                if (latestTimestamp == null || message.getTimestamp().isAfter(latestTimestamp)) {
-                    latestTimestamp = message.getTimestamp();
-                    latestUserId = userId;
-                }
-            }
+            Long latestUserId = messageService.getActiveChat(recentMessagesMap);
 
             if (latestUserId != null) {
                 requestedUserId = latestUserId;
-            } else {
-                requestedUserId = null;
             }
-
-
 
             String submissionToken = UUID.randomUUID().toString();
             session.setAttribute("submissionToken", submissionToken);
@@ -219,7 +176,7 @@ public class MessageController {
         }
 
         return "users/message-home";
-    }   
+    }
 
     @PostMapping("message-home")
 public String messageHome(@RequestParam("userId") Long requestedUserId,

@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.unittests.service;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Message;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.MessageDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.MessageRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.MessageService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,11 +22,13 @@ class MessageServiceTest {
     private Clock clock;
     private Instant timestamp;
 
+    private GardenUserService userService;
+
     @BeforeEach
     public void setUp() {
         messageRepository = mock(MessageRepository.class);
         clock = mock(Clock.class);
-        messageService = new MessageService(messageRepository, clock);
+        messageService = new MessageService(messageRepository, clock, userService);
 
         timestamp = Instant.ofEpochSecond(0);
     }

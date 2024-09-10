@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Message;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.MessageDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.MessageRepository;
@@ -20,10 +21,13 @@ public class MessageService {
     private final MessageRepository messageRepository;
     private final Clock clock;
 
+    private final GardenUserService userService;
+
     @Autowired
-    public MessageService(MessageRepository messageRepository, Clock clock) {
+    public MessageService(MessageRepository messageRepository, Clock clock, GardenUserService userService) {
         this.messageRepository = messageRepository;
         this.clock = clock;
+        this.userService = userService;
     }
 
     /**
@@ -85,5 +89,50 @@ public class MessageService {
         } else {
             return null;
         }
+    }
+
+    public Map<Long, Message> getLatestMessages(List<Message> allMessages, Long loggedInUserId) {
+        Map<Long, Message> recentMessagesMap = new HashMap<>();
+
+        for (Message message : allMessages) {
+            Long otherUserId = getOtherUserId(loggedInUserId, message);
+
+            if (otherUserId != null) {
+                Message existingMessage = recentMessagesMap.get(otherUserId);
+                if (existingMessage == null || message.getTimestamp().isAfter(existingMessage.getTimestamp())) {
+                    recentMessagesMap.put(otherUserId, message);
+                }
+            }
+        }
+        return recentMessagesMap;
+    }
+
+    public Map<GardenUser, String> convertToPreview(Map<Long, Message> recentMessagesMap) {
+        Map<GardenUser, String> recentChats = new HashMap<>();
+
+        for (Map.Entry<Long, Message> entry : recentMessagesMap.entrySet()) {
+            Long userId = entry.getKey();
+            Message msg = entry.getValue();
+
+            GardenUser user = userService.getUserById(userId);
+            String messagePreview = msg.getMessageContent();
+
+            recentChats.put(user, messagePreview);
+        }
+        return recentChats;
+    }
+
+    public Long getActiveChat(Map<Long, Message> recentMessagesMap) {
+        Long latestUserId = null;
+        LocalDateTime latestTimestamp = null;
+        for (Map.Entry<Long, Message> entry : recentMessagesMap.entrySet()) {
+            Long userId = entry.getKey();
+            Message message = entry.getValue();
+            if (latestTimestamp == null || message.getTimestamp().isAfter(latestTimestamp)) {
+                latestTimestamp = message.getTimestamp();
+                latestUserId = userId;
+            }
+        }
+        return latestUserId;
     }
 }
