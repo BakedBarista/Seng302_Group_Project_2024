@@ -11,6 +11,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Service class for handling messaging between users
@@ -104,11 +105,22 @@ public class MessageService {
                 }
             }
         }
-        return recentMessagesMap;
+
+        List<Map.Entry<Long, Message>> sortedEntries = recentMessagesMap.entrySet()
+            .stream()
+            .sorted((entry1, entry2) -> entry2.getValue().getTimestamp().compareTo(entry1.getValue().getTimestamp()))
+            .collect(Collectors.toList());
+
+        Map<Long, Message> sortedMessagesMap = new LinkedHashMap<>();
+        for (Map.Entry<Long, Message> entry : sortedEntries) {
+            sortedMessagesMap.put(entry.getKey(), entry.getValue());
+        }
+        
+        return sortedMessagesMap;
     }
 
     public Map<GardenUser, String> convertToPreview(Map<Long, Message> recentMessagesMap) {
-        Map<GardenUser, String> recentChats = new HashMap<>();
+        Map<GardenUser, String> recentChats = new LinkedHashMap<>();
 
         for (Map.Entry<Long, Message> entry : recentMessagesMap.entrySet()) {
             Long userId = entry.getKey();
