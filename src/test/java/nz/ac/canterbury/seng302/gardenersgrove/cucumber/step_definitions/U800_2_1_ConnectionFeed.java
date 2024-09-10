@@ -20,6 +20,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Map;
 
+import jakarta.servlet.ServletContext;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,8 @@ import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.SuggestedUserController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
@@ -41,6 +44,9 @@ import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 public class U800_2_1_ConnectionFeed {
     private static Authentication authentication;
     private static Model model;
+    private static HttpServletRequest req;
+    private static HttpServletResponse res;
+    private static ServletContext context;
     private static GardenUser userLiam;
     private static GardenUser userBen;
     private static GardenUser userImmy;
@@ -66,6 +72,9 @@ public class U800_2_1_ConnectionFeed {
         authentication = mock(Authentication.class);
         when(authentication.getPrincipal()).thenReturn(userLiam.getId());
         model = mock(Model.class);
+        req = mock(HttpServletRequest.class);
+        res = mock(HttpServletResponse.class);
+        context = mock(ServletContext.class);
     }
 
     @After
@@ -89,7 +98,9 @@ public class U800_2_1_ConnectionFeed {
     @Given("I am logged in and I am on the homepage looking at the top profile card on the stack")
     @When("I am on the homepage looking at the top profile card on the stack")
     public void iAmOnTheHomepageLookingAtTheListOfUserProfiles() {
-        String result = suggestedUserController.home(authentication, model);
+        when(req.getServletContext()).thenReturn(context);
+
+        String result = suggestedUserController.home(authentication, model, req, res);
 
         assertEquals("home", result);
     }
@@ -108,7 +119,7 @@ public class U800_2_1_ConnectionFeed {
     public void iAmNotShownThatProfileAgain() {
         clearInvocations(model);
 
-        String result = suggestedUserController.home(authentication, model);
+        String result = suggestedUserController.home(authentication, model, req, res);
 
         assertEquals("home", result);
         verify(model).addAttribute(eq("userList"), assertArg((String jsonUsers) -> {
@@ -186,7 +197,7 @@ public class U800_2_1_ConnectionFeed {
         friendsRepository.save(request);
 
         clearInvocations(model);
-        String result = suggestedUserController.home(authentication, model);
+        String result = suggestedUserController.home(authentication, model, req, res);
         assertEquals("home", result);
 
         ArgumentCaptor<String> jsonCaptor = ArgumentCaptor.forClass(String.class);
@@ -204,7 +215,7 @@ public class U800_2_1_ConnectionFeed {
     @Then("initially the profile picture, name, and description are shown.")
     public void initially_the_profile_picture_name_and_description_are_shown() {
         clearInvocations(model);
-        suggestedUserController.home(authentication, model);
+        suggestedUserController.home(authentication, model, req, res);
 
         verify(model).addAttribute(eq("userId"), anyLong());
         verify(model).addAttribute(eq("name"), anyString());
@@ -223,7 +234,7 @@ public class U800_2_1_ConnectionFeed {
         }
 
         clearInvocations(model);
-        suggestedUserController.home(authentication, model);
+        suggestedUserController.home(authentication, model, req, res);
     }
 
     @Then("I am shown a message saying “Could not find any connection suggestions”.")

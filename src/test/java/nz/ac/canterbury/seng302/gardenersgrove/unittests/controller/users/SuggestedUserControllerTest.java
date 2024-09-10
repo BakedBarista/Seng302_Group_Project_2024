@@ -1,64 +1,69 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unittests.controller.users;
 
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.when;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import jakarta.servlet.ServletContext;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.ui.Model;
+import org.thymeleaf.TemplateEngine;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.SuggestedUserController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.SuggestedUserService;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
-import static org.mockito.Mockito.times;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.ui.Model;
 
-import java.util.Map;
-
-import java.util.Map;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
-
-@ExtendWith(MockitoExtension.class)
 class SuggestedUserControllerTest {
 
-    private static SuggestedUserController suggestedUserController;
-    private static GardenUserService gardenUserService;
-    private static Model model;
-    private static Authentication authentication;
+    private SuggestedUserController suggestedUserController;
+    private GardenUserService gardenUserService;
+    private Model model;
+    private Authentication authentication;
 
-    private static FriendService friendService;
-    private static SuggestedUserService suggestedUserService;
-    private static ObjectMapper objectMapper;
+    private FriendService friendService;
+    private SuggestedUserService suggestedUserService;
+    private ObjectMapper objectMapper;
+    private TemplateEngine templateEngine;
+    private HttpServletRequest request;
+    private HttpServletResponse response;
+    private ServletContext context;
 
-    private static Long loggedInUserId = 1L;
-    private static Long suggestedUserId = 2L;
-    private static GardenUser loggedInUser;
-    private static GardenUser suggestedUser;
-    private static Friends friendRequestReceive;
-    private static Friends friendRequestSend;
+    private Long loggedInUserId = 1L;
+    private Long suggestedUserId = 2L;
+    private GardenUser loggedInUser;
+    private GardenUser suggestedUser;
+    private Friends friendRequestReceive;
+    private Friends friendRequestSend;
 
-    @BeforeAll
-    static void setup() {
+    @BeforeEach
+    void setup() {
         gardenUserService = Mockito.mock(GardenUserService.class);
         friendService = Mockito.mock(FriendService.class);
         authentication = Mockito.mock(Authentication.class);
         suggestedUserService = Mockito.mock(SuggestedUserService.class);
         objectMapper = new ObjectMapper();
-        suggestedUserController = new SuggestedUserController(friendService, gardenUserService, suggestedUserService, objectMapper);
-        objectMapper = new ObjectMapper();
+        templateEngine = Mockito.mock(TemplateEngine.class);
+        request = Mockito.mock(HttpServletRequest.class);
+        response = Mockito.mock(HttpServletResponse.class);
+        context = Mockito.mock(ServletContext.class);
+        suggestedUserController = new SuggestedUserController(friendService, gardenUserService, suggestedUserService, objectMapper, templateEngine);
 
         loggedInUser = new GardenUser();
         loggedInUser.setId(loggedInUserId);
@@ -96,16 +101,20 @@ class SuggestedUserControllerTest {
         List<GardenUser> suggestedUsers = Collections.singletonList(suggestedUser);
 
 
+        Mockito.when(request.getServletContext()).thenReturn(context);
         Mockito.when(authentication.getPrincipal()).thenReturn(loggedInUserId);
         Mockito.when(gardenUserService.getUserById(loggedInUserId)).thenReturn(loggedInUser);
         Mockito.when(friendService.availableConnections(loggedInUser)).thenReturn(suggestedUsers);
 
-        String page = suggestedUserController.home(authentication, model);
+        String page = suggestedUserController.home(authentication, model, request, response);
 
         Mockito.verify(model).addAttribute(eq("userId"), any());
         Mockito.verify(model).addAttribute(eq("name"), any());
         Mockito.verify(model).addAttribute(eq("description"), any());
-        Mockito.verify(model).addAttribute(eq("userList"), any());
+        Mockito.verify(model).addAttribute(eq("userList"), assertArg((String s) -> {
+            Assertions.assertTrue(s.contains("favouriteGarden"));
+            Assertions.assertTrue(s.contains("favouritePlants"));
+        }));
 
         Assertions.assertEquals("home", page);
     }

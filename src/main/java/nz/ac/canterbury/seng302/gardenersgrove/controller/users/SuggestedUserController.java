@@ -107,7 +107,11 @@ public class SuggestedUserController {
         } else {
             dto.setFavouriteGardenHtml("<div class=\"text-center my-3 text-white\">No Favourite Garden Selected</div>");
         }
-        dto.setFavouritePlantsHtml(templateEngine.process("fragments/favourite-plants.html", context));
+        if (user.getFavouritePlants() != null) {
+            dto.setFavouritePlantsHtml(templateEngine.process("fragments/favourite-plants.html", context));
+        } else {
+            dto.setFavouritePlantsHtml("<div class=\"text-center my-3 text-white\">No Favourite Plants Selected</div>");
+        }
 
         return dto;
     }
