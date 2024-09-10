@@ -189,7 +189,7 @@ public class MessageController {
     }
 
     @PostMapping("message-home")
-public String messageHome(@RequestParam("userId") Long requestedUserId,
+public String messageHomeSend(@RequestParam("userId") Long requestedUserId,
         Authentication authentication,
         Model model,
         HttpSession session) {

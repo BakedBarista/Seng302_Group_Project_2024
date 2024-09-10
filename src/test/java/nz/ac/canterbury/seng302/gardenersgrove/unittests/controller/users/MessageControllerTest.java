@@ -142,4 +142,27 @@ class MessageControllerTest {
 
         assertEquals("users/message-home", view);
     }
+
+    @Test
+    void whenMessageHomeParameterGET_thenReturnMessageHome() {
+
+        GardenUser user1 = new GardenUser("test", "2", "Tester@gmail.com",  "Password1!", null);
+        GardenUser user2 = new GardenUser("John", "Doe", "postTester@gmail.com",  "Password1!", null);
+        gardenUserRepository.save(user1);
+        gardenUserRepository.save(user2);
+
+        LocalDateTime testTime = LocalDateTime.of(2024, 9, 10, 15, 30, 0);
+        Message testMessage = new Message(user1.getId(), user2.getId(), testTime, "HI");
+        messageRepository.save(testMessage);
+        Friends friend = new Friends(user1, user2, ACCEPTED);
+
+
+        when(gardenUserService.getUserById(user2.getId())).thenReturn(user2);
+        when(mockedFriendService.getFriendship(user1.getId(), user2.getId())).thenReturn(friend);
+        when(authentication.getPrincipal()).thenReturn(user1.getId());
+
+        String view = messageController2.messageHomeSend(user2.getId(), authentication, model, session);
+
+        assertEquals("users/message-home", view);
+    }
 }
