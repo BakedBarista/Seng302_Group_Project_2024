@@ -18,9 +18,7 @@ function openPlantSelectorModal(index) {
 
     modal.show();
 
-    selectedCardId = 'favouritePlantCard' + index;  //Used to get the card that was clicked on
-
-
+    selectedCardId = index;  //Used to get the card that was clicked on
 
     document.getElementById('searchField').value = '';  // Clear the search input field
     document.getElementById('searchPlantResults').innerHTML = '';
@@ -134,8 +132,9 @@ function addDeleteButton(selectedCard) {
 
     button.appendChild(img);
 
+    const thisId = selectedCardId
     button.onclick = function() {
-        deleteFavouritePlant(selectedCard);
+        deleteFavouritePlant(thisId);
         return false;
     };
 
@@ -189,7 +188,7 @@ function clearCardAppearance(selectedCard) {
     selectedCard.appendChild(imgElement);
 
     const cardIndex = selectedCard.id.replace("favouritePlantCard", '')
-    selectedCard.onclick = () => openPlantSelectorModal(cardIndex)
+    selectedCard.onclick = () => openPlantSelectorModal(selectedPlantId)
 }
 
 // Helper function to handle errors
@@ -208,7 +207,7 @@ function previewFavouritePlants(favouritePlants) {
         return;
     }
 
-    const selectedCard = document.getElementById(selectedCardId);
+    const selectedCard = document.getElementById('favouritePlantCard' + selectedCardId);
     if (!selectedCard) {
         console.error(`Element with ID ${selectedCardId} not found.`);
         return;
@@ -219,13 +218,15 @@ function previewFavouritePlants(favouritePlants) {
         return;
     }
 
+    console.log(selectedCard)
+
     const plantName = selectedOption.getAttribute('data-name');
     const plantImage = selectedOption.querySelector('img').src;
 
     // Remove the old plantId from selectedPlants (in case the user is changing the plant for the same card)
     const previousPlantId = selectedCard.querySelector('input[type="hidden"]').value;
     const previousPlantIndex = selectedPlants.indexOf(previousPlantId);
-    if (previousPlantIndex > -1) {
+    if (previousPlantIndex >= 0) {
         selectedPlants.splice(previousPlantIndex, 1);
     }
 
@@ -240,9 +241,9 @@ function previewFavouritePlants(favouritePlants) {
     // Hide the modal
     const modal = bootstrap.Modal.getInstance(document.getElementById("plantSelectorModal"));
     modal.hide();
+
+    console.log(selectedCard)
 }
-
-
 
 // Function to update the favourite plants of the user
 function updateFavouritePlants() {
@@ -285,7 +286,7 @@ function updateFavouritePlants() {
         body: JSON.stringify({ ids: newPlantIds }),
     }).then(response => {
         if (response.ok) {
-            //updateFavouriteGarden();
+            updateFavouriteGarden();
             console.log("Favourite plants updated");
         } else {
             console.log("Error updating favourite plants");
@@ -297,8 +298,12 @@ function updateFavouritePlants() {
 }
 
 const deleteFavouritePlant = (selectedCardId) => {
-    let id = "favouritePlantCard" + selectedCardId.toString();
-    deletedPlantIds[selectedCardId] = document.getElementById("selectedPlantId" + selectedCardId.toString()).value;
+    console.log(selectedCardId)
+    let id = "favouritePlantCard".concat(selectedCardId.toString());
+    console.log(id)
     let selectedCard = document.getElementById(id);
+    console.log(selectedCard)
+    console.log("selectedPlantId" + selectedCardId.toString())
+    deletedPlantIds[selectedCardId] = document.getElementById("selectedPlantId" + selectedCardId.toString()).value;
     clearCardAppearance(selectedCard);
 }
