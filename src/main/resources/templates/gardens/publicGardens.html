@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <title>Public Gardens</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -60,79 +60,7 @@
             of <span th:text="${gardenPage.totalElements}"></span>
         </p>
     </div>
-    <div class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-2">
-        <th:block th:each="garden : ${gardenPage.content}">
-            <div class="pb-5 px-5">
-                <a th:href="@{/gardens/{id}(id=${garden.id})}" class="text-decoration-none text-dark">
-                    <div class="card h-100 card-hover">
-                        <!-- Plant images grid -->
-                        <div class="card-img-top bg-success card-img-top-fixed d-flex align-items-center">
-                            <div class="row g-0 img-row">
-                                <th:block th:if="${garden.getPlants().isEmpty()}">
-                                    <div class="col-12">
-                                        <div class="plant-img" title="Default Garden Image" th:style="|background-image: url('@{/img/defaultgarden.jpg}')|"></div>
-                                    </div>
-                                </th:block>
-                                <th:block th:each="plant, iterStat : ${garden.getPlants()}">
-                                    <div class="col" th:class="${#lists.size(garden.getPlants()) == 1 ? 'col-12' :
-                                              #lists.size(garden.getPlants()) == 2 ? 'col-6' :
-                                              'col-6 col-sm-4 col-lg-6'}" th:if="${iterStat.index < 4}">
-                                        <div class="plant-img" th:style="|background-image: url('@{/plants/{plantId}/plant-image(plantId=${plant.id})}')|"></div>
-                                    </div>
-                                </th:block>
-                            </div>
-                        </div>
-                        <div class="card-footer">
-                            <h5 class="card-title" th:text="${garden.name}"></h5>
-                            <p class="card-text" th:text="'Created by: ' + ${garden.owner.fname} + (${garden.owner.lname} != null ? ' ' + ${garden.owner.lname} : '')"></p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-
-        </th:block>
-    </div>
-
-
-        <!-- Pagination Controls -->
-    <nav>
-        <ul class="pagination justify-content-center">
-            <!-- First page link -->
-            <li class="page-item" th:classappend="${gardenPage.isFirst() ? 'disabled' : ''}">
-                <a class="page-link" th:href="@{/gardens/public(page=0, size=${gardenPage.size})}">
-                    <img th:src="@{/icons/first-page-icon.svg}" alt="" width="20" height="25" />
-                </a>
-            </li>
-
-            <!-- Previous page link -->
-            <li class="page-item" th:classappend="${gardenPage.hasPrevious() ? '' : 'disabled'}">
-                <a class="page-link" th:href="@{/gardens/public(page=${gardenPage.number - 1}, size=${gardenPage.size})}">
-                    <img th:src="@{/icons/prev-icon.svg}" alt="" width="20" height="25" />
-                </a>
-            </li>
-
-            <!-- Dynamic page links -->
-            <li th:each="i : ${#numbers.sequence(gardenPage.number - 2, gardenPage.number + 2)}"
-                th:if="${i >= 0 and i < gardenPage.totalPages}" class="page-item"
-                th:classappend="${i == gardenPage.number ? 'active' : ''}">
-                <a class="page-link" th:href="@{/gardens/public(page=${i}, size=${gardenPage.size})}" th:text="${i + 1}" style="font-size:18px"></a>
-            </li>
-
-            <!-- Next page link -->
-            <li class="page-item" th:classappend="${gardenPage.hasNext() ? '' : 'disabled'}">
-                <a class="page-link" th:href="@{/gardens/public(page=${gardenPage.number + 1}, size=${gardenPage.size})}">
-                    <img th:src="@{/icons/next-icon.svg}" alt="" width="20" height="25" />
-                </a>
-            </li>
-
-            <!-- Last page link -->
-            <li class="page-item" th:classappend="${gardenPage.isLast() ? 'disabled' : ''}">
-                <a class="page-link" th:href="@{/gardens/public(page=${gardenPage.totalPages - 1}, size=${gardenPage.size})}">
-                    <img th:src="@{/icons/last-page-icon.svg}" alt="" width="20" height="25" />
-                </a>
-            </li>
-        </ul>
-    </nav>
+        <div th:replace="~{fragments/list-of-gardens.html :: list-of-gardens('/gardens/public')}"></div>
 
 </div>
 

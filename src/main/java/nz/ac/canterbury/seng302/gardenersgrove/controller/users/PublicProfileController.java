@@ -1,13 +1,18 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.FavouritePlantDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.exceptions.ProfanityDetectedException;
+import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.ProfanityService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Set;
+import java.util.*;
 
 @Controller
 public class PublicProfileController {
@@ -30,38 +35,111 @@ public class PublicProfileController {
 
     private final GardenUserService userService;
     private final ProfanityService profanityService;
+    private final PlantService plantService;
+
 
     private static final String DEFAULT_PROFILE_BANNER_URL = "/img/default-banner.svg";
-    
+
+    private static final String DEFAULT_GARDEN_IMAGE_URL = "/img/default-garden.svg";
+
     private static final String USER_ID_ATTRIBUTE = "userId";
+
+    private  static  final  String FAVOURITE_GARDEN = "favouriteGarden";
+
+    private static final String DESCRIPTION = "description";
+
+    private static final String FAVOURITE_PLANTS = "favouritePlants";
 
     private static final Set<String> ACCEPTED_FILE_TYPES = Set.of("image/jpeg", "image/jpg", "image/png", "image/svg");
 
     private static final int MAX_FILE_SIZE = 10 * 1024 * 1024;
 
-
-
     @Autowired
-    public PublicProfileController(GardenUserService userService, ProfanityService profanityService) {
+    public PublicProfileController(GardenUserService userService, ProfanityService profanityService, PlantService plantService) {
         this.userService = userService;
         this.profanityService = profanityService;
+        this.plantService = plantService;
     }
 
+    /**
+     * gets the current user's public profile
+     *
+     * @return Returns the current user's public profile
+     */
+    @Transactional
     @GetMapping("/users/public-profile")
     public String viewPublicProfile(Authentication authentication, Model model) {
         logger.info("GET /users/public-profile");
 
         Long userId = (Long) authentication.getPrincipal();
         GardenUser user = userService.getUserById(userId);
-
+        Set<Plant> favouritePlants = user.getFavouritePlants();
         model.addAttribute(USER_ID_ATTRIBUTE, userId);
-        model.addAttribute("name", user.getFname() + " " + user.getLname());
-        model.addAttribute("description", user.getDescription());
+        model.addAttribute("currentUser", userId);
+        model.addAttribute("name", user.getFullName());
+        model.addAttribute(DESCRIPTION, user.getDescription());
+        model.addAttribute(FAVOURITE_GARDEN, user.getFavoriteGarden());
+
+
+        model.addAttribute(FAVOURITE_PLANTS, favouritePlants);
 
         return "users/public-profile";
     }
 
-        /**
+    /**
+     * gets the current favourite garden picture
+     * @param id the id of the user
+     * @param request the request
+     * @return ResponseEntity with the garden image bytes or a redirect to a default garden image URL
+     */
+    @GetMapping("users/{id}/favourite-garden-image")
+    public ResponseEntity<byte[]> favouriteGardenImage(@PathVariable("id") Long id, HttpServletRequest request) {
+        if (logger.isInfoEnabled()) {
+            logger.info(String.format("GET /users/%d/favourite-garden-image", id));
+        }
+
+        GardenUser user = userService.getUserById(id);
+        if (user.getFavoriteGarden() == null || user.getFavoriteGarden().getGardenImage() == null) {
+            return ResponseEntity.status(302).header(HttpHeaders.LOCATION, request.getContextPath() + DEFAULT_GARDEN_IMAGE_URL).build();
+        }
+        return ResponseEntity.ok().contentType(MediaType.parseMediaType(user.getFavoriteGarden().getGardenImageContentType()))
+                .body(user.getFavoriteGarden().getGardenImage());
+    }
+
+    /**
+     * gets a user's public profile
+     * @param id the requested user's id
+     * @return Returns the selected user's public profile
+     */
+    @Transactional
+    @GetMapping("/users/public-profile/{id}")
+    public String viewOtherPublicProfile(@PathVariable("id") Long id, Authentication authentication, Model model) {
+        logger.info("GET /users/public-profile/{} - display user's public profile", id);
+
+        GardenUser user = userService.getUserById(id);
+        // returns a 404 if id does not exist
+        if (user == null) {
+            return "error/404";
+        }
+        Long loggedInUserId = (Long) authentication.getPrincipal();
+        boolean isCurrentUser = loggedInUserId.equals(id);
+        if (isCurrentUser) {
+            return viewPublicProfile(authentication, model);
+        }
+        Set<Plant> favouritePlants = user.getFavouritePlants();
+        logger.info("current user: {}",userService.getUserById(id).getFname());
+        logger.info("logged in user {}",userService.getUserById(loggedInUserId).getFname());
+        model.addAttribute(USER_ID_ATTRIBUTE, id);
+        model.addAttribute("currentUser", loggedInUserId);
+        model.addAttribute("name", user.getFullName());
+        model.addAttribute(FAVOURITE_GARDEN, user.getFavoriteGarden());
+        model.addAttribute(DESCRIPTION, user.getDescription());
+        model.addAttribute(FAVOURITE_PLANTS, favouritePlants);
+
+        return "users/public-profile";
+    }
+
+    /**
      * returns a given user's banner - this is useful for the public profile view and edit page
      *
      * @param id the id of the user
@@ -69,7 +147,7 @@ public class PublicProfileController {
      */
     @GetMapping("users/{id}/profile-banner")
     public ResponseEntity<byte[]> getPublicProfileBanner(@PathVariable("id") Long id, HttpServletRequest request) {
-        logger.info("GET /users/" + id + "/profile-banner");
+        logger.info("GET /users/{}/profile-banner", id);
 
         GardenUser user = userService.getUserById(id);
         if (user.getProfileBanner() == null) {
@@ -79,26 +157,47 @@ public class PublicProfileController {
                 .body(user.getProfileBanner());
     }
 
-
     /**
      * returns the edit-public-profile page
      *
      * @return A redirection to the "/users/edit-public-profile"
      */
     @GetMapping("users/edit-public-profile")
-    public String editPublicProfile(Authentication authentication, Model model) {
-
+    public String editPublicProfile(Authentication authentication, Model model) throws JsonProcessingException {
+        logger.info("GET /users/edit-public-profile");
         Long userId = (Long) authentication.getPrincipal();
         GardenUser user = userService.getUserById(userId);
         EditUserDTO editUserDTO = new EditUserDTO();
 
         model.addAttribute(USER_ID_ATTRIBUTE, userId);
-        model.addAttribute("name", user.getFname() + " " + user.getLname());
+        model.addAttribute("name", user.getFullName());
         editUserDTO.setDescription(user.getDescription());
         model.addAttribute("editUserDTO", editUserDTO);
+        model.addAttribute(FAVOURITE_GARDEN, user.getFavoriteGarden());
+
+
+        Set<Plant> favouritePlants = user.getFavouritePlants();
+        model.addAttribute(FAVOURITE_PLANTS, favouritePlants);
+        List<FavouritePlantDTO> favouritePlantDTOs = favouritePlants.stream()
+                .map(this::convertToFavouritePlantDTO)
+                .toList();
+        ObjectMapper objectMapper = new ObjectMapper();
+        String favouritePlantsJson = objectMapper.writeValueAsString(favouritePlantDTOs);
+        model.addAttribute("favouritePlantsJson", favouritePlantsJson);
 
         return "users/edit-public-profile";
     }
+
+    /**
+     * Converts a plant to a FavouritePlantDTO
+     * @param plant  the plant to convert
+     * @return FavouritePlantDTO
+     */
+    private FavouritePlantDTO convertToFavouritePlantDTO(Plant plant) {
+        return new FavouritePlantDTO(plant.getId(), plant.getName(), plant.getPlantImage());
+    }
+
+
 
     /**
      * returns the edit-public-profile page
@@ -114,11 +213,11 @@ public class PublicProfileController {
             Authentication authentication,
             @RequestParam("image") MultipartFile profilePic,
             @RequestParam("bannerImage") MultipartFile banner,
-            @RequestParam("description") String description,
+            @RequestParam(DESCRIPTION) String description,
             @Valid @ModelAttribute("editUserDTO") EditUserDTO editUserDTO,
             BindingResult bindingResult,
             Model model) throws IOException {
-
+        logger.info("POST /users/edit-public-profile");
         Long userId = (Long) authentication.getPrincipal();
         GardenUser user = userService.getUserById(userId);
         model.addAttribute(USER_ID_ATTRIBUTE, userId);
@@ -131,10 +230,10 @@ public class PublicProfileController {
             errorFlag = true;
         }
 
-        if (bindingResult.hasFieldErrors("description")) {errorFlag = true;}
+        if (bindingResult.hasFieldErrors(DESCRIPTION)) {errorFlag = true;}
 
         if (errorFlag) {
-            model.addAttribute("name", user.getFname() + " " + user.getLname());
+            model.addAttribute("name", user.getFullName());
             model.addAttribute("editUserDTO", editUserDTO);
             model.addAttribute("profanity", "There cannot be any profanity in the 'About me' section");
             return "users/edit-public-profile";
@@ -197,4 +296,7 @@ public class PublicProfileController {
             throw new ProfanityDetectedException();
         }
     }
+
+
+
 }

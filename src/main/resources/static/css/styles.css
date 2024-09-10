@@ -1,13 +1,13 @@
 /* Colors */
 :root {
-    --gg-dark: #2C430D;
-    --gg-primary: #395C0A;
-    --gg-primary-rgb: 57, 92, 10;
-    --gg-primary-light: #608530;
-    --gg-secondary: #A4AF69;
-    --gg-secondary-rgb: 164, 175, 105;
-    --gg-secondary-dark: #8C9D34;
-    --gg-secondary-light: #D3DD9D;
+    --gg-dark: #b89006;
+    --gg-primary: #CB9F03;
+    --gg-primary-rgb: 203, 159, 3;
+    --gg-primary-light: #EDBA05;
+    --gg-secondary: #9E6F40;
+    --gg-secondary-rgb: 168, 111, 64;
+    --gg-secondary-dark: #964B00;
+    --gg-secondary-light: #CA935C;
     --gg-pale: #FFE0B5;
     --gg-not-planted:  saddlebrown;
     --gg-not-planted-hover: #af7244;
@@ -20,7 +20,7 @@
     --gg-black: #1E1E1E;
     --gg-black-rgb: 30, 30, 30;
 
-    --gg-heading-font: "DM Serif Display", serif;
+    --gg-heading-font: "Montserrat", sans-serif;
     --gg-body-font: "Open Sans", sans-serif;
 
 
@@ -48,13 +48,18 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-    font-family: "DM Serif Display", serif;
-    font-weight: 400;
+    font-family: "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
     font-style: normal;
+    color: #1E1E1E;
 }
 
-.about-me {
-    font-size: 18px;
+.montserrat-heading {
+     font-family: "Montserrat", sans-serif;
+     font-optical-sizing: auto;
+     font-weight: 600;
+     font-style: normal;
 }
 
 .averia-serif-libre-bold {
@@ -79,7 +84,7 @@ h1, h2, h3, h4, h5, h6 {
     --bs-btn-color: var(--gg-white);
     --bs-btn-bg: var(--gg-primary);
     --bs-btn-border-color: var(--gg-primary);
-    --bs-btn-hover-color: var(--gg-white);
+
     --bs-btn-hover-bg: var(--gg-primary-light);
     --bs-btn-hover-border-color: var(--gg-primary-light);
     --bs-btn-focus-shadow-rgb: var(--gg-primary-rgb);
@@ -89,6 +94,13 @@ h1, h2, h3, h4, h5, h6 {
     --bs-btn-disabled-color: white;
     --bs-btn-disabled-bg: var(--gg-pale);
     --bs-btn-disabled-border-color: var(--gg-primary);
+}
+.btn-change {
+    --bs-btn-bg: #E8CB67;
+    --bs-btn-hover-bg: #ffe58b;
+    --bs-btn-hover-border-color: var(--gg-black);
+    --bs-btn-focus-shadow-rgb: var(--gg-primary-rgb);
+    --bs-btn-color: var(--gg-black);
 }
 
 .button-not-planted {
@@ -175,7 +187,7 @@ h1, h2, h3, h4, h5, h6 {
 /* Navbar and drawer specifics */
 :root {
     --gg-nav-drawer-width: 300px;
-    --gg-nav-drawer-padding: 28px;
+    --gg-nav-drawer-padding: 15px;
 }
 
 .nav-drawer {
@@ -199,6 +211,17 @@ h1, h2, h3, h4, h5, h6 {
         width: var(--gg-nav-drawer-width);
         height: 100vh;
         overflow-y: auto;
+    }
+
+    #navbarLogo {
+        width: 100%;
+    }
+}
+
+@media (max-width: 767.98px) {
+    #navbarLogo {
+        max-width: 200px;
+        width:80%;
     }
 }
 
@@ -231,7 +254,6 @@ h1, h2, h3, h4, h5, h6 {
 
 .nav-drawer li a {
     height: 50px;
-
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -682,6 +704,45 @@ h1, h2, h3, h4, h5, h6 {
     object-fit: cover;
 }
 
+.public-profile-plant-card {
+    width: 200px;
+    height: 180px;
+}
+.public-profile-garden-card {
+    height: 180px;
+}
+
+.bg-primary-temp {
+    /*fix this later*/
+    background-color: #E8CB67;
+}
+
+.bg-primary-grey {
+    background-color: #e7d6a8
+}
+
+@keyframes wiggle {
+    0% { transform: rotate(3deg); }
+    10% { transform: rotate(-3deg); }
+    20% { transform: rotate(3deg); }
+    30% { transform: rotate(-3deg); }
+    40% { transform: rotate(3deg); }
+    50% { transform: rotate(-3deg); }
+    60% { transform: rotate(3deg); }
+    70% { transform: rotate(-3deg); }
+    80% { transform: rotate(3deg); }
+    90% { transform: rotate(-3deg); }
+    100% { transform: rotate(0deg); }
+}
+
+.card-wiggle {
+    animation: none;
+}
+
+.card-wiggle:hover {
+    animation: wiggle 2s infinite;
+}
+
 .hover-plant {
     transition:
         transform 0.3s ease,
@@ -698,6 +759,18 @@ h1, h2, h3, h4, h5, h6 {
     border-color: #888888;
 }
 
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
 #recordUpdateButtonTooltip {
     background-color: #E2E9CE;
 }
@@ -711,3 +784,122 @@ h1, h2, h3, h4, h5, h6 {
     font-size: 14px;
 }
 
+.friend-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.friend-info img {
+    margin-right: 10px;
+}
+
+.message-button {
+    margin-top: 5px;
+    margin-left: 20px;
+}
+
+.friend-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    margin-top: 5px;
+}
+
+.friend-container.friend-name {
+    margin-left: 20px;
+}
+
+@media (max-width: 768px) {
+    .friend-info {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .message-button {
+        margin-left: 0;
+        margin-top: 10px;
+    }
+
+    .friend-container {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .friend-container .friend-name {
+        margin-left: 0;
+        margin-top: 5px;
+    }
+}
+
+/*favourite plant selection*/
+
+#plantSelectorModal {
+    overflow: auto;
+}
+#plantSelectorModalContent {
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.select-items img {
+    width: 65px;
+    height: 65px;
+}
+
+.select-items div {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.select-items div:hover {
+    background-color: #acacac;
+}
+
+/* Flip card */
+
+.flip-card {
+    width: 90vw;
+    max-width: 480px;
+    height: 88vh;
+    perspective: 2000px;
+}
+
+.flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+}
+
+.flip-card-flipped .flip-card-inner {
+    transform: rotateY(180deg);
+}
+
+.flip-card-front,
+.flip-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+
+    display: flex;
+    flex-direction: column;
+    background-color: #353535;
+    border-radius: calc(var(--bs-card-border-radius) - 1px);
+    justify-content: space-between;
+}
+
+.flip-card-back {
+    transform: rotateY(180deg);
+}
+
+
+
+.plant-option.highlighted {
+    background-color: #e0f7fa; /* Highlight color */
+    border-color: #00796b; /* Highlight border color */
+}

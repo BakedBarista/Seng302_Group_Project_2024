@@ -1,8 +1,10 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unittests.controller;
 
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.GardenController;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.PlantController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
@@ -20,17 +22,26 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.validation.FieldError;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -38,6 +49,7 @@ public class GardenControllerTest {
 
     String EXPECTED_MODERATION_ERROR_MESSAGE = "The description does not match the language standards of the app.";
     String LOCATION_ERROR_MESSAGE = "Location name must only include letters, numbers, spaces, dots, hyphens or apostrophes";
+
 
     @Mock
     private GardenService gardenService;
@@ -68,6 +80,7 @@ public class GardenControllerTest {
     @InjectMocks
     private GardenController gardenController;
 
+    private MultipartFile file;
     private static Authentication authentication;
 
     private static GardenRepository gardenRepository;
@@ -80,10 +93,13 @@ public class GardenControllerTest {
         when(mockUser.getId()).thenReturn(1L);
         when(gardenUserService.getCurrentUser()).thenReturn(mockUser);
         when(gardenService.getGardensByOwnerId(1L)).thenReturn(Collections.emptyList());
-
+        Page<Garden> mockGardenPage = mock(Page.class);
+        when(mockGardenPage.getTotalPages()).thenReturn(0);
+        when(gardenService.getGardensByOwnerId(eq(1L), any(PageRequest.class))).thenReturn(mockGardenPage);
         mockGarden = new Garden();
         mockGarden.setOwner(mockUser);
         when(gardenService.getGardenById(0L)).thenReturn(Optional.of(mockGarden));
+        file = new MockMultipartFile("file", "filename.txt", "text/plain", "Some file content".getBytes());
 
         authentication = mock(Authentication.class);
     }
@@ -92,12 +108,14 @@ public class GardenControllerTest {
     public void testForm() {
         Model model = mock(Model.class);
         HttpSession session = mock(HttpSession.class);
+        HttpServletRequest request = mock(HttpServletRequest.class);
         when(session.getAttribute("submissionToken")).thenReturn("mockToken123");
-        String result = gardenController.getCreateGardenForm(model,session);
+        when(request.getHeader("Referer")).thenReturn("");
+        String result = gardenController.getCreateGardenForm(model,session,request);
 
         verify(model).addAttribute(eq("garden"), any(GardenDTO.class));
         verify(model).addAttribute(eq("gardens"), anyList());
-
+        verify(model).addAttribute(eq("referer"), anyString());
         assertEquals("gardens/createGarden", result);
     }
 
@@ -106,13 +124,13 @@ public class GardenControllerTest {
         Model model = mock(Model.class);
         HttpSession session = mock(HttpSession.class);
         when(session.getAttribute("submissionToken")).thenReturn("mockToken123");
-        GardenDTO invalidGarden = new GardenDTO("","","","","","","",0.0,0.0,"",null,"Token123");
+        GardenDTO invalidGarden = new GardenDTO("","","","","","","",0.0,0.0,"",null,"Token123", null, null);
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
 
         when(authentication.getPrincipal()).thenReturn((Long) 1L);
         when(profanityService.badWordsFound(anyString())).thenReturn(new ArrayList<>());
-        String result = gardenController.submitCreateGardenForm(invalidGarden, bindingResult, authentication, model,session);
+        String result = gardenController.submitCreateGardenForm(invalidGarden, bindingResult, file, authentication, model,session);
 
         assertEquals("gardens/createGarden", result);
     }
@@ -122,7 +140,7 @@ public class GardenControllerTest {
         Model model = mock(Model.class);
         HttpSession session = mock(HttpSession.class);
         when(session.getAttribute("submissionToken")).thenReturn("mockToken123");
-        GardenDTO validGardenDTO = new GardenDTO("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"test description", "100","mockToken123");
+        GardenDTO validGardenDTO = new GardenDTO("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"test description", "100","mockToken123", null, null);
         validGardenDTO.setId((long) 1);
         Garden validGarden = validGardenDTO.toGarden();
 
@@ -134,7 +152,7 @@ public class GardenControllerTest {
         when(profanityService.badWordsFound(anyString())).thenReturn(new ArrayList<>());
 
         Mockito.when(moderationService.moderateDescription(anyString())).thenReturn(ResponseEntity.ok().build());
-        String result = gardenController.submitCreateGardenForm(validGardenDTO, bindingResult, authentication, model, session);
+        String result = gardenController.submitCreateGardenForm(validGardenDTO, bindingResult, file, authentication, model, session);
         assertEquals("redirect:/gardens/1", result);
     }
 
@@ -143,15 +161,15 @@ public class GardenControllerTest {
         Model model = mock(Model.class);
         when(gardenService.getAllGardens()).thenReturn(Collections.emptyList());
 
-        String result = gardenController.responses(model);
+        String result = gardenController.responses(model,0,10);
         assertEquals("gardens/viewGardens", result);
-        verify(model).addAttribute("gardens", Collections.emptyList());
+        verify(model).addAttribute(any(String.class),any(Page.class));
     }
 
     @Test
     public void testGardenDetail() {
         Model model = mock(Model.class);
-        GardenDTO gardenDTO = new GardenDTO("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"test description","100","Token123");
+        GardenDTO gardenDTO = new GardenDTO("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"test description","100","Token123", null, null);
         Garden garden = gardenDTO.toGarden();
         when(gardenService.getGardenById(1L)).thenReturn(Optional.of(garden));
         when(plantService.getPlantsByGardenId(1L)).thenReturn(Collections.emptyList());
@@ -172,7 +190,7 @@ public class GardenControllerTest {
         Model model = mock(Model.class);
         GardenUser owner = new GardenUser();
         owner.setId(1L);
-        GardenDTO gardenDTO = new GardenDTO("Test Garden", "1", "test", "test suburb", "test city", "test country", "1234", 0.0, 0.0, "test description", "100","Token123");
+        GardenDTO gardenDTO = new GardenDTO("Test Garden", "1", "test", "test suburb", "test city", "test country", "1234", 0.0, 0.0, "test description", "100","Token123", null, null);
         Garden garden = gardenDTO.toGarden();
         garden.setOwner(owner);
 
@@ -190,11 +208,17 @@ public class GardenControllerTest {
     @Test
     public void testUpdateGarden() {
         Model model = mock(Model.class);
-        GardenDTO gardenDTO = new GardenDTO("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"test description", "100","Token123");
+        MultipartFile file = new MockMultipartFile(
+                "image",
+                "profile.png",
+                "image/png",
+                "profile picture content".getBytes()
+        );
+        GardenDTO gardenDTO = new GardenDTO("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"test description", "100","Token123", null, null);
         when(gardenService.getGardenById(1)).thenReturn(Optional.of(gardenDTO.toGarden()));
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
-        String result = gardenController.updateGarden(1, gardenDTO, bindingResult, model);
+        String result = gardenController.updateGarden(1, gardenDTO, file, bindingResult, model);
         Garden garden = gardenService.getGardenById(1).get();
 
         assertEquals("redirect:/gardens/1", result);
@@ -240,7 +264,7 @@ public class GardenControllerTest {
         HttpSession session = mock(HttpSession.class);
         when(session.getAttribute("submissionToken")).thenReturn("mockToken123");
         String description = "some really nasty words";
-        GardenDTO invalidGardenDTO = new GardenDTO("","","","","","","",0.0,0.0,description,"","mockToken123");
+        GardenDTO invalidGardenDTO = new GardenDTO("","","","","","","",0.0,0.0,description,"","mockToken123", null, null);
         Garden invalidGarden = invalidGardenDTO.toGarden();
         gardenService.addGarden(invalidGarden);
         BindingResult bindingResult = mock(BindingResult.class);
@@ -253,7 +277,7 @@ public class GardenControllerTest {
         when(moderationService.checkIfDescriptionIsFlagged(description)).thenReturn(true);
         when(authentication.getPrincipal()).thenReturn(1L);
         when(gardenService.addGarden(any())).thenReturn(invalidGarden);
-        gardenController.submitCreateGardenForm(invalidGardenDTO, bindingResult, authentication, model,session);
+        gardenController.submitCreateGardenForm(invalidGardenDTO, bindingResult, file, authentication, model,session);
 
         verify(model).addAttribute("profanity", EXPECTED_MODERATION_ERROR_MESSAGE);
         verify(model).addAttribute("garden", invalidGardenDTO);
@@ -263,13 +287,19 @@ public class GardenControllerTest {
     public void testWhenImEditingAGarden_AndIHaveAGardenErrorAndAProfanityError_ThenTheModelHasProfanityError() {
         Model model = mock(Model.class);
         long id = 0;
+        MultipartFile file = new MockMultipartFile(
+                "image",
+                "profile.png",
+                "image/png",
+                "profile picture content".getBytes()
+        );
         String description = "some really nasty words";
-        GardenDTO invalidGarden = new GardenDTO("","","","","","","",0.0,0.0,description,null,"");
+        GardenDTO invalidGarden = new GardenDTO("","","","","","","",0.0,0.0,description,null,"", null, null);
         BindingResult bindingResult = mock(BindingResult.class);
 
         when(bindingResult.hasErrors()).thenReturn(true);
         when(moderationService.checkIfDescriptionIsFlagged(description)).thenReturn(true);
-        gardenController.updateGarden(id, invalidGarden, bindingResult, model);
+        gardenController.updateGarden(id, invalidGarden, file, bindingResult, model);
 
         verify(model).addAttribute("profanity", EXPECTED_MODERATION_ERROR_MESSAGE);
         verify(model).addAttribute("garden", invalidGarden);
@@ -278,7 +308,7 @@ public class GardenControllerTest {
     @Test
     public void testGetGardenId() {
         Model model = mock(Model.class);
-        Garden garden = new Garden("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"test description",null);
+        Garden garden = new Garden("Test Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"test description",null, null, null);
         GardenUser owner = new GardenUser();
         owner.setId(1L);
         garden.setOwner(owner);
@@ -294,7 +324,7 @@ public class GardenControllerTest {
     @Test
     public void testGardenDetail_WithNullLatLon() {
         Model model = mock(Model.class);
-        GardenDTO gardenDTO = new GardenDTO("Test Garden","1","test","test suburb","test city","test country","1234",null,null,"100","test description","");
+        GardenDTO gardenDTO = new GardenDTO("Test Garden","1","test","test suburb","test city","test country","1234",null,null,"100","test description","", null, null);
         Garden garden = gardenDTO.toGarden();
         GardenUser owner = new GardenUser();
         owner.setId(1L);
@@ -495,4 +525,41 @@ public class GardenControllerTest {
 
         Assertions.assertEquals("error/accessDenied", result);
     }
+
+    @Test
+    void whenGardenImageExists_returnGardenImage() {
+        HttpServletRequest mockRequest = new MockHttpServletRequest();
+        String imagePath = "static/img/garden.png";
+        try (InputStream inputStream = GardenControllerTest.class.getClassLoader().getResourceAsStream(imagePath)) {
+            if (inputStream == null) {
+                throw new IOException("Image not found: " + imagePath);
+            }
+            byte[] image = inputStream.readAllBytes();
+            String contentType = "image/png";
+            Garden garden = new Garden();
+            garden.setGardenImage(contentType, image);
+            when(gardenService.getGardenById(1L)).thenReturn(Optional.of(garden));
+            System.out.println("image " + garden.getGardenImage());
+            System.out.println("content " + garden.getGardenImageContentType());
+            ResponseEntity<byte[]> response = gardenController.gardenImage(1L, mockRequest);
+            assertEquals(HttpStatus.OK, response.getStatusCode());
+            assertEquals(contentType, response.getHeaders().getContentType().toString());
+            assertEquals(image, response.getBody());
+
+        } catch (IOException e) {
+            System.out.println("Error with resource file " + e.getMessage());
+        }
+    }
+
+    @Test
+    void whenGardenImageNotExist_returnGardenImage() {
+        HttpServletRequest mockRequest = new MockHttpServletRequest();
+        Garden garden = new Garden();
+        when(gardenService.getGardenById(1L)).thenReturn(Optional.of(garden));
+        ResponseEntity<byte[]> response = gardenController.gardenImage(1L, mockRequest);
+        assertEquals(HttpStatus.FOUND, response.getStatusCode());
+        assertEquals("/img/default-garden.svg", response.getHeaders().getFirst(HttpHeaders.LOCATION));
+    }
+
+
 }

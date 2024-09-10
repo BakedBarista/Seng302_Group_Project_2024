@@ -48,12 +48,12 @@
     <div class="tab-content col-lg-11">
         <div class="tab-pane fade show active" id="friends" role="tabpanel" aria-labelledby="friends-tab">
             <div class="card my-2">
-                <div class="card-body">
+                <div class="table-responsive">
                     <table class="table" aria-label="Table with a list of my friends">
                         <thead>
                         <tr>
                             <th scope="col">Name</th>
-                            <th scope="col">Link</th>
+                            <th scope="col">Garden</th>
                             <th scope="col">Profile</th>
                             <th scope="col"></th>
                         </tr>
@@ -67,18 +67,24 @@
                         </tbody>
                         <tbody th:each="friend : ${friends}">
                         <tr>
-                            <td class="align-middle">
-                                <img class="rounded-circle overflow-hidden border border-dark"
-                                     th:src="@{'/users/' + ${friend.id} + '/profile-picture'}"
-                                     style="width: 40px; height: 40px;" alt="Profile Picture">
-                                <span th:text="${friend.fname}"> </span>
-                                <span th:if="${friend.lname != null}" th:text="${friend.lname}"></span>
+                            <td class="align-middle friend-info">
+                                <div class="friend-container">
+                                    <img class="rounded-circle overflow-hidden border border-dark"
+                                         th:src="@{'/users/' + ${friend.id} + '/profile-picture'}"
+                                         style="width: 40px; height: 40px;" alt="Profile Picture">
+                                    <div class="friend-name">
+                                    <span th:text="${friend.fname}"></span>
+                                    <span th:if="${friend.lname != null}" th:text="${friend.lname}"></span>
+                                    </div>
+                                    <a th:href="@{/users/message(id=${friend.id})}" class="btn btn-primary btn-sm mr-2 message-button">Message</a>
+                                </div>
+
                             </td>
                             <td class="align-middle">
-                                <a th:href="@{/viewFriendGardens/{id}(id=${friend.id})}">View gardens</a>
+                                <a th:href="@{/viewFriendGardens/{id}(id=${friend.id})}" class="btn btn-secondary btn-sm mr-2">View gardens</a>
                             </td>
                             <td class="align-middle">
-                                <a th:href="@{/users/friend-profile/{id}(id=${friend.id})}">View profile</a>
+                                <a th:href="@{/users/public-profile/{id}(id=${friend.id})}" class="btn btn-secondary btn-sm mr-2">View Profile</a>
                             </td>
                             <td class="align-middle">
                                 <form th:action="@{/users/manage-friends/remove}" method="post">
@@ -103,6 +109,7 @@
                         <thead>
                         <tr>
                             <th scope="col">Name</th>
+                            <th scope="col">Profile</th>
                             <th scope="col"></th>
                         </tr>
                         </thead>
@@ -121,6 +128,9 @@
                                 <span th:text="${friend.sender.fname}"> </span>
                                 <span th:if="${friend.sender != null}"
                                       th:text="${friend.sender.lname}"></span>
+                            </td>
+                            <td class="align-middle">
+                                <a th:href="@{/users/public-profile/{id}(id=${friend.sender.id})}" class="btn btn-secondary btn-sm mr-2">View Profile</a>
                             </td>
                             <td>
                                 <form th:action="@{/users/manage-friends/accept}" method="post" class="d-inline">
@@ -147,6 +157,7 @@
                         <thead>
                         <tr>
                             <th scope="col">Name</th>
+                            <th scope="col">Profile</th>
                             <th scope="col">Status</th>
                             <th></th>
                         </tr>
@@ -165,6 +176,9 @@
                                 <span th:text="${friend.receiver.fname}"> </span>
                                 <span th:if="${friend.receiver != null}"
                                       th:text="${friend.receiver.lname}"></span>
+                            </td>
+                            <td class="align-middle">
+                                <a th:href="@{/users/public-profile/{id}(id=${friend.receiver.id})}" class="btn btn-secondary btn-sm mr-2">View Profile</a>
                             </td>
                             <td class="align-middle">
                                 <span th:text="${friend.status}" th:classappend="${friend.status.name() == 'PENDING'} ? 'friend-pending-badge' : 'friend-declined-badge'" class="badge-pill badge"></span>
@@ -229,9 +243,8 @@
                             <td class="align-middle">
                                 <span th:text="${mySelf.email}"></span>
                             </td>
-                            <td>
-                                <a href="http://localhost:8080/users/user" class="btn btn-primary btn-sm mr-2">View
-                                    Profile</a>
+                            <td class="align-middle">
+                                <a th:href="@{/users/public-profile}" class="btn btn-primary btn-sm mr-2">View Profile</a>
                             </td>
                         </tr>
                         <tr th:if="${!alreadyFriends.empty}" th:each="currentFriend : ${alreadyFriends}">
@@ -242,7 +255,8 @@
                                 <span th:text="${currentFriend.fname} "></span>
                                 <span th:if="${currentFriend.lname != null}" th:text="${currentFriend.lname}"></span>
                             </td>
-                            <td>
+                            <td class="align-middle">
+                                <a th:href="@{/users/public-profile/{id}(id=${currentFriend.id})}" class="btn btn-secondary btn-sm mr-2">View Profile</a>
                             </td>
                             <td class="align-middle text-success">
                                 <strong>Already Friends!</strong>
@@ -256,7 +270,8 @@
                                 <span th:text="${currentFriend.fname} "></span>
                                 <span th:if="${currentFriend.lname != null}" th:text="${currentFriend.lname}"></span>
                             </td>
-                            <td>
+                            <td class="align-middle">
+                                <a th:href="@{/users/public-profile/{id}(id=${currentFriend.id})}" class="btn btn-secondary btn-sm mr-2">View Profile</a>
                             </td>
                             <td class="align-middle text-muted">
                                 <span class="badge-pill badge friend-pending-badge">PENDING</span>
@@ -270,7 +285,9 @@
                                 <span th:text="${user.fname} "></span>
                                 <span th:if="${user.lname != null}" th:text="${user.lname}"></span>
                             </td>
-                            <td></td>
+                            <td class="align-middle">
+                                <a th:href="@{/users/public-profile/{id}(id=${user.id})}" class="btn btn-primary btn-sm mr-2">View Profile</a>
+                            </td>
                             <td class="align-middle text-muted">
                                 <span class="badge-pill badge friend-declined-badge">DECLINED</span>
                             </td>
@@ -283,8 +300,10 @@
                                 <span th:text="${user.fname} "></span>
                                 <span th:if="${user.lname != null}" th:text="${user.lname}"></span>
                             </td>
-                            <td></td>
-                            <td>
+                            <td class="align-middle">
+                                <a th:href="@{/users/public-profile/{id}(id=${user.id})}" class="btn btn-secondary btn-sm mr-2">View Profile</a>
+                            </td>
+                            <td class="align-middle">
                                 <form th:action="@{/users/manage-friends/accept}" method="post" class="d-inline">
                                     <button type="submit" name="acceptUser" th:value="${user.id}"
                                             class="btn btn-primary btn-sm mr-2">Accept
@@ -305,7 +324,9 @@
                                 <span th:text="${friend.fname} "></span>
                                 <span th:if="${friend.lname != null}" th:text="${friend.lname}"></span>
                             </td>
-                            <td></td>
+                            <td class="align-middle">
+                                <a th:href="@{/users/public-profile/{id}(id=${friend.id})}" class="btn btn-secondary btn-sm mr-2">View Profile</a>
+                            </td>
                             <td class="align-middle">
                                 <form th:action="@{/users/manage-friends/invite}" method="post" id="inviteBtn">
                                     <input type="hidden" name="requestedUser" th:value="${friend.id}" class="d-inline"/>

@@ -46,21 +46,23 @@
                     </div>
                 </div>
                 <div>
+                    <div class="mb-3 d-flex justify-content-center">
+                        <div class="position-relative d-inline">
+                            <img id="preview" th:src="@{/gardens/{id}/garden-image(id=${garden.id})}" alt="Garden Picture" class="rounded mx-auto d-block h-auto" style="width: 300px;" />
+                        </div>
+                    </div>
+
                     <div class="d-flex">
                         <img th:src="@{/icons/location-04-stroke-rounded.svg}" alt="" width="30" height="30" />
                         <div class="mt-1 d-flex">
                             <p class="mx-1"><strong>Location:</strong>
-                                <span th:text="${garden.streetNumber}"></span>
-                                <span th:text="${garden.streetName}"></span><span th:if="${garden.streetName}">,</span>
-                                <span th:text="${garden.suburb}"></span><span th:if="${garden.suburb}">,</span>
-                                <span th:text="${garden.city}"></span><span th:if="${garden.city}">,</span>
-                                <span th:text="${garden.country}"></span>
+                                <span th:text="${garden.address}"></span>
                             </p>
                         </div>
                     </div>
                     <div class="d-flex">
                         <img th:src="@{/icons/aspect-ratio-stroke-rounded.svg}" alt="" width="30" height="30" />
-                        <p class="mx-1 mt-1 fw-bold">Size: </p><span class="mt-1"><span th:text="${garden.size}"></span> <span th:if="${garden.size}">m&sup2;</span></span>
+                        <p class="mx-1 mt-1 fw-bold">Size: </p><span class="mt-1"><span th:text="${garden.size != null ? garden.size : 'Not Specified'}"></span> <span th:if="${garden.size}">m&sup2;</span></span>
                     </div>
                     <form th:action="@{/gardens/{id}(id=${garden.id})}" method="post" th:if="${currentUser.id == garden.owner.id}">
                         <p>
@@ -402,11 +404,17 @@
 <script>
     $(document).ready(function() {
         $('#harvestedDateModal').on('show.bs.modal', function (event) {
-            const today = new Date().toISOString().split('T')[0];
-            $('#harvestedDateInput').val(today);
+            const today = new Date();
+            const localDate = new Intl.DateTimeFormat('en', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            }).format(today).split('/').reverse().join('-');
+            $('#harvestedDateInput').val(localDate);
             $('#errorContainer').text('');
         });
     });
+
     function setPlantId(plantId) {
         document.getElementById('currentPlantId').value = plantId;
     }

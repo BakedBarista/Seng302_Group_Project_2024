@@ -15,15 +15,20 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weather.GardenWeatherService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.weather.WeatherAPIService;
 import org.mockito.Mockito;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 public class U8CreateNewGardenFeature {
@@ -43,6 +48,7 @@ public class U8CreateNewGardenFeature {
 
     private static WeatherAPIService weatherAPIService;
     private static RestTemplate restTemplate;
+    private static ObjectMapper objectMapper;
 
     private static LocationService locationService;
     private static FriendService friendService;
@@ -54,7 +60,7 @@ public class U8CreateNewGardenFeature {
 
     private static TagService tagService;
     private static TagRepository   tagRepository;
-
+    private static MultipartFile file;
     private static GardenController gardenController;
     private static GardenWeatherService gardenWeatherService;
 
@@ -70,16 +76,18 @@ public class U8CreateNewGardenFeature {
         profanityService = mock(ProfanityService.class);
         tagRepository = mock(TagRepository.class);
         restTemplate = mock(RestTemplate.class);
+        objectMapper = new ObjectMapper();
         userService = new GardenUserService(gardenUserRepository);
-        gardenService = new GardenService(gardenRepository);
+        gardenService = new GardenService(gardenRepository, gardenUserRepository);
         friendService = new FriendService(friendsRepository);
         plantService = new PlantService(plantRepository, gardenRepository);
         tagService = new TagService(tagRepository, gardenService, profanityService);
         weatherAPIService = new WeatherAPIService(restTemplate, gardenService, gardenWeatherService);
-        moderationService = new ModerationService();
+        moderationService = new ModerationService(null, objectMapper, restTemplate);
         mockedModerationService = mock(ModerationService.class);
         locationService = mock(LocationService.class);
         gardenController = new GardenController(gardenService, null, plantService, userService, weatherAPIService, friendService, moderationService, profanityService, locationService);
+        file = new MockMultipartFile("file", "filename.txt", "text/plain", "Some file content".getBytes());
     }
 
 
@@ -143,7 +151,7 @@ public class U8CreateNewGardenFeature {
         when(gardenRepository.save(Mockito.any())).thenReturn(garden);
         when(locationService.getLatLng(anyString())).thenReturn(new ArrayList<>());
 
-        gardenController.submitCreateGardenForm(new GardenDTO(garden), bindingResult, authentication, model, session);
+        gardenController.submitCreateGardenForm(new GardenDTO(garden), bindingResult, file, authentication, model, session);
     }
 
     @Then("A garden with that information is created")

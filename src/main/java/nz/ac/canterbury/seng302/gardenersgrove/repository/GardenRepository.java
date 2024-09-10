@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +31,12 @@ public interface GardenRepository extends CrudRepository<Garden, Long> {
     List<Garden> findByIsPublicTrueOrderByIdDesc();
 
     List<Garden> findByOwnerId(Long owner_id);
+
+    Page<Garden> findByOwnerId(Long ownerId, Pageable pageable);
+    @Transactional
+    void deleteByOwnerId(Long ownerId);
+
+
 
     @Query("SELECT g FROM Garden g WHERE ((g.name ILIKE %?1%) OR " +
             "EXISTS (SELECT p FROM Plant p WHERE p.garden = g AND p.name ILIKE %?1%)) AND g.isPublic ORDER BY g.id DESC")

@@ -18,6 +18,10 @@ public class Location {
     @JsonProperty("tz_id")
     private String timezoneId;
 
+    @JsonDeserialize
+    @JsonProperty("localtime")
+    private String localtime;
+
     public String getLocationName() {
         return locationName;
     }
@@ -32,5 +36,13 @@ public class Location {
 
     public void setTimezoneId(String timezoneId) {
         this.timezoneId = timezoneId;
+    }
+
+    public String getLocaltime() {
+        return localtime;
+    }
+
+    public void setLocaltime(String localtime) {
+        this.localtime = localtime;
     }
 }

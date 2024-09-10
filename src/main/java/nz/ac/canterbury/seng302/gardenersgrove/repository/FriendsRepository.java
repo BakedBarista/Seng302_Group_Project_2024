@@ -1,12 +1,14 @@
 package nz.ac.canterbury.seng302.gardenersgrove.repository;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
-
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * GardenFormResult repository accessor
@@ -70,6 +72,16 @@ public interface FriendsRepository extends CrudRepository<Friends, Long> {
     @Query("SELECT u FROM Friends u WHERE u.receiver.id = ?1 and u.status = ?2")
     List<Friends> getFriendshipsToUserWithStatus(Long receiver, Friends.Status status);
 
+
+    /**
+     * Looks for a pending friend request from one user to another.
+     * @param senderId
+     * @param receiverId
+     * @return an Optional containing the pending request if it exists
+     */
+    @Query("SELECT f FROM Friends f WHERE f.sender.id = :senderId AND f.receiver.id = :receiverId AND f.status = 'PENDING'")
+    Optional<Friends> findPendingFriendRequest(@Param("senderId") Long senderId, @Param("receiverId") Long receiverId);
+
     /**
      *
      * @param user user that has been declined
@@ -79,5 +91,19 @@ public interface FriendsRepository extends CrudRepository<Friends, Long> {
     List<Friends> getFriendshipsFromUserWithStatus(Long sender, Friends.Status status);
 
     void deleteBySenderIdAndReceiverId(Long senderId, Long receiverId);
+
+    /**
+     * Finds any pending or declined friendships that may exist between 2 users.
+     * The relationship is from either direction.
+     * Will not return
+     * @param userId1 the first user's id
+     * @param userId2 the second user's id
+     * @return an optional of the friends entity if it exists
+     */
+    @Query("SELECT f FROM Friends f WHERE ((f.sender.id = :userId1 AND f.receiver.id = :userId2) OR (f.receiver.id = :userId2 AND f.sender.id = :userId1)) AND (f.status = 'PENDING' OR f.status = 'DECLINED')")
+    Optional<Friends> findPendingOrDeclinedFriendship(@Param("userId1") Long userId1, @Param("userId2") Long userId2);
+
+    @Transactional
+    void deleteBySenderId(Long senderId);
 }
 

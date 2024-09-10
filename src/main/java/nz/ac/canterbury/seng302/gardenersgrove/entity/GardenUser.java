@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import org.springframework.security.core.GrantedAuthority;
@@ -19,6 +20,8 @@ import static nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationConst
  * Entity class reflecting an entry of fname, lname, email, password and date of birth
  * Note the @link{Entity} annotation required for declaring this as a persistence entity
  */
+
+
 @Entity
 public class GardenUser {
     @Id
@@ -57,11 +60,11 @@ public class GardenUser {
     @Lob
     private byte[] profileBanner;
 
-    // these are a set of friendships in the friends table where the user is sender
+    @JsonIgnore
     @OneToMany(mappedBy = "sender")
     private Set<Friends> friendshipsAsSender = new HashSet<>();
 
-    // these are a set of friendships in the friends table where the user is receiver
+    @JsonIgnore
     @OneToMany(mappedBy = "receiver")
     private Set<Friends> friendshipsAsReceiver = new HashSet<>();
 
@@ -85,6 +88,15 @@ public class GardenUser {
 
     @Column(nullable = true)
     private Instant accountDisabledExpiryInstant;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "gardenUser", cascade = CascadeType.ALL)
+    private Set<Plant> favouritePlants = new HashSet<>();
+
+
+    @PrimaryKeyJoinColumn
+    @OneToOne(mappedBy = "favouriteGarden", cascade = CascadeType.ALL)
+    private Garden favoriteGarden;
 
     /**
      * JPA required no-args constructor
@@ -112,7 +124,7 @@ public class GardenUser {
     /**
      * Gets the authorities granted to the user
      *
-     * @return
+     * @return the authorities granted to the user
      */
     public List<GrantedAuthority> getAuthorities() {
         return List.of();
@@ -231,7 +243,7 @@ public class GardenUser {
     /**
      * Sets the password of the user
      *
-     * @param password
+     * @param password the password to set
      */
     public void setPassword(String password) {
         PasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -435,4 +447,53 @@ public class GardenUser {
     public void setAccountDisabledExpiryInstant(Instant accountDisabledExpiryInstant) {
         this.accountDisabledExpiryInstant = accountDisabledExpiryInstant;
     }
+
+    /**
+     * Gets the favourite plants of this user
+     * @return list of favourite plants
+     */
+    public Set<Plant> getFavouritePlants() {
+        return favouritePlants;
+    }
+
+    /**
+     * Gets the favourite garden of the user
+     * @return the favourite garden
+     */
+    public Garden getFavoriteGarden() {return favoriteGarden;}
+
+    /**
+     * Sets the favourite garden of the user
+     * @param garden the garden to set as the favourite
+     */
+    public void setFavoriteGarden(Garden garden) {
+        this.favoriteGarden = garden;
+        garden.setFavouriteGarden(this);
+    }
+
+    /**
+     * Sets the favourite plants of this user
+     * @param favouritePlants list of favourite plants
+     */
+    public void setFavouritePlants(Set<Plant> favouritePlants) {
+        // Clear existing associations
+        for (Plant plant : this.favouritePlants) {
+            plant.setFavourite(null);
+        }
+        this.favouritePlants.clear();
+
+        // Set new favourite plants
+        this.favouritePlants = favouritePlants;
+        for (Plant plant : favouritePlants) {
+            plant.setFavourite(this);
+        }
+    }
+
+    /**
+     * Add a plant to the user's favourite plants
+     * @param favouritePlant the plant to add
+     */
+    public void addFavouritePlant(Plant favouritePlant) {
+        favouritePlants.add(favouritePlant);
+        favouritePlant.setFavourite(this);}
 }
