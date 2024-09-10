@@ -148,12 +148,13 @@ public class MessageController {
         logger.info("GET message Home");
 
         Long loggedInUserId = (Long) authentication.getPrincipal();
-
+        logger.info("1");
         List<Message> allMessages = messageService.findAllRecentChats(loggedInUserId);
+
         Long requestedUserId = null;
-
+        logger.info("2");
         if (!allMessages.isEmpty()) {
-
+            logger.info("3");
             Map<Long, Message> recentMessagesMap = messageService.getLatestMessages(allMessages, loggedInUserId);
 
             Map<GardenUser, String> recentChats = messageService.convertToPreview(recentMessagesMap);

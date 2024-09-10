@@ -131,6 +131,11 @@ public class MessageService {
 
             recentChats.put(user, messagePreview);
         }
+        for (Map.Entry<GardenUser, String> chatEntry : recentChats.entrySet()) {
+            GardenUser user = chatEntry.getKey();
+            String messagePreview = chatEntry.getValue();
+            System.out.println("User: " + user + ", Message Preview: " + messagePreview);
+        }
         return recentChats;
     }
 

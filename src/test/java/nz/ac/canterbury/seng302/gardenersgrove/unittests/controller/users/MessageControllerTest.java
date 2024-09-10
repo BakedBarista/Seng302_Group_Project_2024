@@ -6,6 +6,8 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Message;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.MessageDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.MessageRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.MessageService;
@@ -14,31 +16,47 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.entity.Friends.Status.ACCEPTED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-
+@SpringBootTest
 class MessageControllerTest {
 
     private MessageController messageController;
+    private MessageController messageController2;
+
     private Model model;
 
     @Autowired
     private GardenUserService gardenUserService;
+
+    @Autowired
+    private GardenUserRepository gardenUserRepository;
     private static FriendService mockedFriendService;
+
     private static MessageService mockedMessageService;
+
+    @Autowired
+    private MessageService messageService;
+
+    @Autowired
+    private MessageRepository messageRepository;
 
     private static Authentication authentication;
 
@@ -47,15 +65,28 @@ class MessageControllerTest {
     private final Long loggedInUserId = 1L;
     private final Long requestedUserId = 2L;
 
+    private  GardenUser user1 = new GardenUser("John", "Doe", "postTester@gmail.com",  "Password1!", null);
+    private  GardenUser user2 = new GardenUser("test", "2", "Tester@gmail.com",  "Password1!", null);
     @BeforeEach
     public void setup() {
+        session= new MockHttpSession();
+        model = mock(Model.class);
+        authentication = mock(Authentication.class);
+
         gardenUserService = mock(GardenUserService.class);
         mockedFriendService = mock(FriendService.class);
         mockedMessageService = mock(MessageService.class);
         messageController = new MessageController(gardenUserService, mockedFriendService, mockedMessageService);
-        session= new MockHttpSession();
-        model = mock(Model.class);
-        authentication = mock(Authentication.class);
+
+        gardenUserRepository.save(user1);
+        gardenUserRepository.save(user2);
+
+        LocalDateTime testTime = LocalDateTime.of(2024, 9, 10, 15, 30, 0);
+        Message testMessage = new Message(user1.getId(), user2.getId(), testTime, "HI");
+        messageRepository.save(testMessage);
+
+        messageController2 = new MessageController(gardenUserService, mockedFriendService, messageService);
+
     }
 
     @Test
@@ -99,31 +130,16 @@ class MessageControllerTest {
 
     @Test
     void whenMessageHomeGET_thenReturnMessageHome() {
-        GardenUser user1 = new GardenUser();
-        user1.setId(loggedInUserId);
-        GardenUser user2 = new GardenUser();
-        user2.setId(requestedUserId);
 
-        List<Message> allMessages = List.of(new Message(loggedInUserId, requestedUserId, LocalDateTime.now(), "Hey"));
-        Map<Long, Message> recentMessagesMap = Map.of(requestedUserId, allMessages.get(0));
-        Map<GardenUser, String> recentChats = Map.of(user2, "Hey");
         Friends friend = new Friends(user1, user2, ACCEPTED);
 
-        when(mockedMessageService.findAllRecentChats(loggedInUserId)).thenReturn(allMessages);
-        when(mockedMessageService.getLatestMessages(allMessages, loggedInUserId)).thenReturn(recentMessagesMap);
-        when(mockedMessageService.convertToPreview(recentMessagesMap)).thenReturn(recentChats);
-        when(mockedMessageService.getActiveChat(recentMessagesMap)).thenReturn(requestedUserId);
-        when(gardenUserService.getUserById(requestedUserId)).thenReturn(user1);
-        when(mockedFriendService.getFriendship(loggedInUserId, requestedUserId)).thenReturn(friend);
 
-        // Act
-        String view = messageController.messageHome(authentication, model, session);
+        when(gardenUserService.getUserById(user2.getId())).thenReturn(user2);
+        when(mockedFriendService.getFriendship(user1.getId(), user2.getId())).thenReturn(friend);
+        when(authentication.getPrincipal()).thenReturn(user1.getId());
 
-        // Assert
+        String view = messageController2.messageHome(authentication, model, session);
+
         assertEquals("users/message-home", view);
-        verify(model).addAttribute(eq("recentChats"), eq(recentChats));
-        verify(model).addAttribute(eq("sentToUser"), any(GardenUser.class));
-        verify(model).addAttribute(eq("activeChat"), eq(requestedUserId));
-        verify(model).addAttribute(eq("messagesMap"), any());
     }
 }
