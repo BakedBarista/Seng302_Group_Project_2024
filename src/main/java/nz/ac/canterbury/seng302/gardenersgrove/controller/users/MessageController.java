@@ -47,26 +47,62 @@ public class MessageController {
         this.messageService = messageService;
     }
 
+    /**
+     * Handles GET requests to display the message page for a specific user.
+     * 
+     * @param requestedUserId the ID of the user to view messages with
+     * @param authentication  the authentication information of the currently
+     *                        logged-in user
+     * @param model           the model to be populated with view attributes
+     * @param session         the HTTP session to store and retrieve the submission
+     *                        token
+     * @return the view name for the message page or a redirect to manage friends if
+     *         not friends
+     */
     @GetMapping("users/message")
     public String messageFriend(@RequestParam("id") Long requestedUserId,
-                                Authentication authentication,
-                                Model model,
-                                HttpSession session) {
+            Authentication authentication,
+            Model model,
+            HttpSession session) {
         return setupMessagePage(requestedUserId, authentication, model, session);
     }
 
+    /**
+     * Handles GET requests to display the message home page.
+     * 
+     * @param authentication the authentication information of the currently
+     *                       logged-in user
+     * @param model          the model to be populated with view attributes
+     * @param session        the HTTP session to store and retrieve the submission
+     *                       token
+     * @return the view name for the message home page or a redirect to manage
+     *         friends if not friends
+     */
     @GetMapping("message-home")
     public String messageHome(Authentication authentication,
-                              Model model,
-                              HttpSession session) {
+            Model model,
+            HttpSession session) {
         Long requestedUserId = getLatestRequestedUserId(authentication);
         return setupMessagePage(requestedUserId, authentication, model, session);
     }
 
+    /**
+     * Sets up the message page with required attributes and checks friendship
+     * status.
+     * 
+     * @param requestedUserId the ID of the user to view messages with
+     * @param authentication  the authentication information of the currently
+     *                        logged-in user
+     * @param model           the model to be populated with view attributes
+     * @param session         the HTTP session to store and retrieve the submission
+     *                        token
+     * @return the view name for the message page or a redirect to manage friends if
+     *         not friends
+     */
     private String setupMessagePage(Long requestedUserId,
-                                    Authentication authentication,
-                                    Model model,
-                                    HttpSession session) {
+            Authentication authentication,
+            Model model,
+            HttpSession session) {
         logger.info("GET message page opened to user {}", requestedUserId);
 
         String submissionToken = UUID.randomUUID().toString();
@@ -92,6 +128,14 @@ public class MessageController {
         return MESSAGE_HOME;
     }
 
+    /**
+     * Retrieves the ID of the most recent user with whom the logged-in user has
+     * exchanged messages.
+     * 
+     * @param authentication the authentication information of the currently
+     *                       logged-in user
+     * @return the ID of the latest active user or null if no recent messages exist
+     */
     private Long getLatestRequestedUserId(Authentication authentication) {
         Long loggedInUserId = (Long) authentication.getPrincipal();
         List<Message> allMessages = messageService.findAllRecentChats(loggedInUserId);
@@ -102,43 +146,6 @@ public class MessageController {
         }
         return null;
     }
-
-    // /**
-    //  * Method to return the message page
-    //  * 
-    //  * @param requestedUserId friend's id to send message to
-    //  * @param model           may not need one
-    //  * @return message page
-    //  */
-    // @GetMapping("users/message")
-    // public String messageFriend(@RequestParam("id") Long requestedUserId,
-    //         Authentication authentication,
-    //         Model model,
-    //         HttpSession session) {
-    //     logger.info("GET message friend page opened to user {}", requestedUserId);
-
-    //     String submissionToken = UUID.randomUUID().toString();
-    //     session.setAttribute(SUBMISSION_TOKEN, submissionToken);
-    //     Long loggedInUserId = (Long) authentication.getPrincipal();
-    //     GardenUser sentToUser = userService.getUserById(requestedUserId);
-
-    //     // need to be friends to send a message
-    //     Friends isFriend = friendService.getFriendship(loggedInUserId, requestedUserId);
-    //     if (isFriend == null) {
-    //         return MANGE_FRIENDS_REDIRECT;
-    //     }
-
-    //     List<Message> allMessages = messageService.findAllRecentChats(loggedInUserId);
-
-    //     Map<Long, Message> recentMessagesMap = messageService.getLatestMessages(allMessages, loggedInUserId);
-
-    //     Map<GardenUser, String> recentChats = messageService.convertToPreview(recentMessagesMap);
-
-    //     messageService.setupModelAttributes(model, loggedInUserId, requestedUserId, sentToUser, recentChats,
-    //             submissionToken);
-
-    //     return MESSAGE_HOME;
-    // }
 
     /**
      * Handles the post mapping for sending messages between users
@@ -187,61 +194,10 @@ public class MessageController {
                                     "write in a really long message each time he runs the application locally, it is really "
                                     +
                                     "annoying so he asked me to write one that goes past the end of the screen",
-                                    TOKEN),
+                            TOKEN),
                     LocalDateTime.now());
         }
     }
-
-    // /**
-    //  * Handles GET requests for the message home page.
-    //  * 
-    //  * @param authentication the authentication object representing the currently
-    //  *                       logged-in user.
-    //  * @param model          the model to be populated with view attributes.
-    //  * @param session        the HTTP session used to store the submission token.
-    //  * @return the view name "users/message-home" or a redirect to manage friends if
-    //  *         the user
-    //  *         is not a friend.
-    //  */
-    // @GetMapping("message-home")
-    // public String messageHome(Authentication authentication,
-    //         Model model,
-    //         HttpSession session) {
-
-    //     logger.info("GET message Home");
-
-    //     Long loggedInUserId = (Long) authentication.getPrincipal();
-    //     List<Message> allMessages = messageService.findAllRecentChats(loggedInUserId);
-
-    //     Long requestedUserId = null;
-
-    //     if (!allMessages.isEmpty()) {
-    //         Map<Long, Message> recentMessagesMap = messageService.getLatestMessages(allMessages, loggedInUserId);
-
-    //         Map<GardenUser, String> recentChats = messageService.convertToPreview(recentMessagesMap);
-
-    //         Long latestUserId = messageService.getActiveChat(recentMessagesMap);
-
-    //         if (latestUserId != null) {
-    //             requestedUserId = latestUserId;
-    //         }
-
-    //         String submissionToken = UUID.randomUUID().toString();
-    //         session.setAttribute(SUBMISSION_TOKEN, submissionToken);
-    //         GardenUser sentToUser = userService.getUserById(requestedUserId);
-
-    //         Friends isFriend = friendService.getFriendship(loggedInUserId, requestedUserId);
-    //         if (isFriend == null) {
-    //             return MANGE_FRIENDS_REDIRECT;
-    //         }
-
-    //         messageService.setupModelAttributes(model, loggedInUserId, requestedUserId, sentToUser, recentChats,
-    //                 submissionToken);
-
-    //     }
-
-    //     return MESSAGE_HOME;
-    // }
 
     /**
      * Processes a POST request to update the message home view.

@@ -12,7 +12,6 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.TIMESTAMP_FORMAT;
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.WEATHER_CARD_FORMAT_DATE;
 
@@ -117,6 +116,9 @@ public class MessageService {
 
     /**
      * Retrieves the latest message for each user from a list of all messages.
+     * 
+     * The sorting approach used here was suggested by ChatGPT, which helped us sort
+     * the map by timestamp to prioritise recent messages.
      *
      * @param allMessages    the list of all messages to be processed.
      * @param loggedInUserId the ID of the logged-in user to exclude from the
@@ -197,6 +199,20 @@ public class MessageService {
         return latestUserId;
     }
 
+    /**
+     * Populates the model with attributes necessary for rendering the message page.
+     * 
+     * @param model           the model object to be populated with attributes
+     * @param loggedInUserId  the ID of the currently logged-in user
+     * @param requestedUserId the ID of the user with whom the messages are being
+     *                        exchanged
+     * @param sentToUser      the GardenUser object representing the recipient of
+     *                        the messages
+     * @param recentChats     a map of users and their most recent messages for chat
+     *                        previews
+     * @param submissionToken a unique token used to prevent duplicate form
+     *                        submissions
+     */
     public void setupModelAttributes(Model model, Long loggedInUserId, Long requestedUserId, GardenUser sentToUser,
             Map<GardenUser, String> recentChats, String submissionToken) {
         model.addAttribute("dateFormatter", new ThymeLeafDateFormatter());
