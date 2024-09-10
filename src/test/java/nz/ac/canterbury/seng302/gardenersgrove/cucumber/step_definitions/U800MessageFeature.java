@@ -35,9 +35,9 @@ public class U800MessageFeature {
     @Autowired
     private GardenUserService gardenUserService;
     @Autowired
-    private  FriendService friendService;
+    private FriendService friendService;
     @Autowired
-    private  MessageService messageService;
+    private MessageService messageService;
     @Autowired
     private MessageController messageController;
     @Autowired
@@ -54,7 +54,6 @@ public class U800MessageFeature {
     private static MockHttpSession session;
     private static int currentMessages;
     private static BindingResult bindingResult;
-
 
     @BeforeAll
     public static void setup() {
@@ -95,6 +94,7 @@ public class U800MessageFeature {
             gardenUserService.addUser(user);
         }
     }
+
     @Given("{string} and {string} are friends")
     public void and_are_friends(String username1, String username2) {
         GardenUser user1 = gardenUserService.getUserByEmail(username1 + "cucumber@email.com");
@@ -114,11 +114,16 @@ public class U800MessageFeature {
         Mockito.when(authentication.getPrincipal()).thenReturn(myId);
         Long friendsId = gardenUserService.getUserByEmail(friendName + "cucumber@email.com").getId();
 
-        result = messageController.messageFriend(friendsId, authentication, model,session);
+        result = messageController.messageFriend(friendsId, authentication, model, session);
     }
 
     @Then("I am taken to the message page")
     public void i_am_taken_to_the_message_page() {
+        assertEquals("users/message", result);
+    }
+
+    @Then("I am taken to the message home page")
+    public void i_am_taken_to_the_message_home_page() {
         assertEquals("users/message-home", result);
     }
 
@@ -128,6 +133,7 @@ public class U800MessageFeature {
         receiverId = gardenUserService.getUserByEmail(friendName + "cucumber@email.com").getId();
         currentMessages = messageRepository.findMessagesBetweenUsers(myId, receiverId).size();
     }
+
     @When("I have typed a text-based message {string}")
     public void i_have_typed_a_text_based_message(String messageContent) {
         String token = UUID.randomUUID().toString();
@@ -138,7 +144,7 @@ public class U800MessageFeature {
     @When("They have typed a text-based message {string}")
     public void they_have_typed_a_text_based_message(String messageContent) {
         String token = UUID.randomUUID().toString();
-        messageDTO = new MessageDTO(messageContent,token);
+        messageDTO = new MessageDTO(messageContent, token);
         session.setAttribute("submissionToken", token);
     }
 
@@ -171,10 +177,9 @@ public class U800MessageFeature {
 
         Assertions.assertEquals(currentMessages + 4, messages.size());
         for (int i = 1; i < messages.size(); i++) {
-            Assertions.assertTrue(messages.get(i).getTimestamp().isAfter(messages.get(i-1).getTimestamp()));
+            Assertions.assertTrue(messages.get(i).getTimestamp().isAfter(messages.get(i - 1).getTimestamp()));
         }
     }
-<<<<<<< HEAD
 
     @Then("The {string} existing chats are displayed on the side in chronological order")
     public void the_existing_chats_are_displayed_on_the_side_in_chronological_order(String numOfChats) {
@@ -187,7 +192,8 @@ public class U800MessageFeature {
 
         assertEquals(expectedChatCount, recentChats.size());
         assertEquals("users/message-home", result);
-=======
+    }
+
     @When("I send invalid message")
     public void i_send_invalid_message() {
         Mockito.when(authentication.getPrincipal()).thenReturn(myId);
@@ -199,7 +205,6 @@ public class U800MessageFeature {
     public void the_message_is_not_sent() {
         List<Message> message = messageRepository.findMessagesBetweenUsers(myId, receiverId);
         Assertions.assertEquals(1, message.size());
->>>>>>> dev
     }
 
 }

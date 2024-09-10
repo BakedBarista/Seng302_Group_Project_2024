@@ -101,7 +101,7 @@ class MessageControllerTest {
         messageController.sendMessage(receiver.getId(), messageDTO,bindingResult, authentication, model, session);
         String redirect = messageController.sendMessage(receiver.getId(), messageDTO, bindingResult, authentication, model, session);
         List<Message> savedMessages = messageRepository.findMessagesBetweenUsers(sender.getId(), receiver.getId());
-        Assertions.assertEquals("users/message", redirect);
+        Assertions.assertEquals("users/message-home", redirect);
 
         // verify message is saved to repository
         Assertions.assertTrue(savedMessages.stream().map(Message::getMessageContent).toList().contains(message));
