@@ -2,11 +2,11 @@
     <div th:if="${#lists.size(gardenPage.content) == 0}" class="alert alert-info" role="alert">
         There is no garden to display, please add one first.
     </div>
-    <div th:unless="${#lists.size(gardenPage.content) == 0}" class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-2">
+    <div th:unless="${#lists.size(gardenPage.content) == 0}" class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-2 g-3">
         <th:block th:each="garden : ${gardenPage.content}">
-            <div class="">
+            <div>
                 <a th:href="@{/gardens/{id}(id=${garden.id})}" class="text-decoration-none text-dark">
-                    <div class="card rounded-3 border-0 shadow-sm h-100 card-hover">
+                    <div class="card rounded-3 border-0 shadow h-100 card-hover">
                         <div class="card-img-top card-img-top-fixed d-flex align-items-center">
                             <div class="row g-0 img-row">
                                 <div class="col-12">

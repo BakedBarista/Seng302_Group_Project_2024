@@ -400,8 +400,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .card-hover:hover {
-    transform: scale(1.025); /* Smaller scale for a subtler effect */
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Add a smooth shadow to enhance the hover effect */
+    transform: scale(1.02);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     z-index: 10;
 }
 

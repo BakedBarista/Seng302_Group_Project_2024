@@ -63,7 +63,7 @@
                 of <span th:text="${gardenPage.totalElements}"></span>
             </p>
         </div>
-            <div th:replace="~{fragments/list-of-gardens.html :: list-of-gardens}"></div>
+        <div th:replace="~{fragments/list-of-gardens.html :: list-of-gardens('/gardens/public')}"></div>
 
         </div>
     </div>
@@ -74,7 +74,6 @@
             of <span th:text="${gardenPage.totalElements}"></span>
         </p>
     </div>
-        <div th:replace="~{fragments/list-of-gardens.html :: list-of-gardens('/gardens/public')}"></div>
 
 <!-- Bootstrap scripts from your fragment -->
 <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
