@@ -22,6 +22,9 @@ ws.addEventListener('open', () => {
 
 ws.addEventListener('message', (ev) => {
     const data = JSON.parse(ev.data);
+    if (data.type === 'pong') {
+        return;
+    }
     console.log(data);
     switch (data.type) {
         case 'updateMessages':
