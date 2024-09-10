@@ -4,7 +4,10 @@ const otherUserId = new URLSearchParams(location.search).get('id');
 
 /**@type {HTMLFormElement} */
 const sendMessageForm = document.getElementById('sendMessageForm');
+const label = sendMessageForm.querySelector('label');
+const textArea = sendMessageForm.querySelector('textarea');
 const messagesContainer = document.getElementById('scrollbar');
+const invalidFeedback = document.getElementById('invalidFeedback');
 
 const ws = new WebSocket(url);
 ws.addEventListener('open', () => {
@@ -19,10 +22,16 @@ ws.addEventListener('open', () => {
 
 ws.addEventListener('message', (ev) => {
     const data = JSON.parse(ev.data);
+    console.log(data);
     switch (data.type) {
         case 'updateMessages':
             console.log('updateMessages');
             updateMessages();
+            break;
+        case 'error':
+            invalidFeedback.textContent = data.error;
+            label.classList.add('is-invalid');
+            textArea.value = data.message;
             break;
     }
 });
@@ -34,12 +43,14 @@ sendMessageForm.addEventListener('submit', (ev) => {
 });
 
 function sendMessage() {
-    const textArea = sendMessageForm.querySelector('textarea');
     const message = textArea.value;
     ws.send(
         JSON.stringify({ type: 'sendMessage', reciever: otherUserId, message })
     );
+
     textArea.value = '';
+    button.disabled = true;
+    label.classList.remove('is-invalid');
 }
 
 async function updateMessages() {
@@ -47,6 +58,5 @@ async function updateMessages() {
     const html = await res.text();
     messagesContainer.innerHTML = html;
 
-    button.disabled = true;
     scrollToBottom(messagesContainer);
 }

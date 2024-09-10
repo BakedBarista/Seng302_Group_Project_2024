@@ -18,6 +18,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ValidatorFactory;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.MessageDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.MessageService;
 
@@ -29,11 +31,13 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 
 	private MessageService messageService;
 	private ObjectMapper objectMapper;
+	private ValidatorFactory validatorFactory;
 	private Set<WebSocketSession> activeSessions = new HashSet<>();
 
-	public MessageWebSocketHandler(MessageService messageService, ObjectMapper objectMapper) {
+	public MessageWebSocketHandler(MessageService messageService, ObjectMapper objectMapper, ValidatorFactory validatorFactory) {
 		this.messageService = messageService;
 		this.objectMapper = objectMapper;
+		this.validatorFactory = validatorFactory;
 	}
 
 	/**
@@ -42,7 +46,9 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 	 */
 	@Override
 	public void handleTextMessage(WebSocketSession session, TextMessage wsMessage) {
-		logger.info("Received message: {}", wsMessage.getPayload());
+		if (!wsMessage.getPayload().contains("\"type\":\"ping\"")) {
+			logger.info("Received message: {}", wsMessage.getPayload());
+		}
 		JsonNode message;
 		try {
 			message = objectMapper.readTree(wsMessage.getPayload());
@@ -60,6 +66,8 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 			case "subscribe":
 				logger.info("subscribe");
 				activeSessions.add(session);
+
+				// Refresh messages on page load to avoid a race condition
 				updateMessages(session);
 				break;
 			case "sendMessage":
@@ -68,8 +76,13 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 				String messageText = message.get("message").asText();
 				logger.info("sendMessage {} {} {}", sender, reciever, messageText);
 
-				// TODO: validate DTO
 				MessageDTO messageDTO = new MessageDTO(messageText);
+				Set<ConstraintViolation<MessageDTO>> errors = validatorFactory.getValidator().validate(messageDTO);
+				if (!errors.isEmpty()) {
+					logger.error("Invalid message: {}", errors);
+					sendError(session, errors, messageText);
+					return;
+				}
 				messageService.sendMessage(sender, reciever, messageDTO);
 
 				updateMessagesBroadcast(List.of(sender, reciever));
@@ -114,6 +127,31 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 	private void updateMessages(WebSocketSession session) {
 		ObjectNode message = JsonNodeFactory.instance.objectNode();
 		message.put("type", "updateMessages");
+
+		String jsonMessage;
+		try {
+			jsonMessage = objectMapper.writeValueAsString(message);
+		} catch (JacksonException e) {
+			logger.error("Error encoding message", e);
+			return;
+		}
+
+		TextMessage wsMessage = new TextMessage(jsonMessage);
+		logger.info("Sending message: {}", wsMessage.getPayload());
+		try {
+			session.sendMessage(wsMessage);
+		} catch (IOException e) {
+			logger.error("Error sending message", e);
+		}
+	}
+
+	private void sendError(WebSocketSession session, Set<ConstraintViolation<MessageDTO>> errors, String messageText) {
+		String error = errors.toArray(new ConstraintViolation[] {})[0].getMessage();
+
+		ObjectNode message = JsonNodeFactory.instance.objectNode();
+		message.put("type", "error");
+		message.put("error", error);
+		message.put("message", messageText);
 
 		String jsonMessage;
 		try {
