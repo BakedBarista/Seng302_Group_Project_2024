@@ -88,16 +88,26 @@ public class SuggestedUserController {
         return "home";
     }
 
-    private SuggestedUserDTO makeSuggestedUserDTO(GardenUser user, HttpServletRequest request, HttpServletResponse response) {
+    private SuggestedUserDTO makeSuggestedUserDTO(GardenUser user, HttpServletRequest request,
+            HttpServletResponse response) {
         SuggestedUserDTO dto = new SuggestedUserDTO(user);
 
         Map<String, Object> variables = new HashMap<>();
         variables.put("userId", user.getId());
+        variables.put("favouriteGarden", user.getFavoriteGarden());
+        variables.put("favouritePlants", user.getFavouritePlants());
 
         // Manually render thymeleaf fragments for the backside of each card
-        JakartaServletWebApplication application = JakartaServletWebApplication.buildApplication(request.getServletContext());
-        WebContext context = new WebContext(application.buildExchange(request, response), request.getLocale(), variables);
-        dto.setFavouriteGardenHtml(templateEngine.process("fragments/favourite-garden.html", context));
+        JakartaServletWebApplication application = JakartaServletWebApplication
+                .buildApplication(request.getServletContext());
+        WebContext context = new WebContext(application.buildExchange(request, response), request.getLocale(),
+                variables);
+        if (user.getFavoriteGarden() != null) {
+            dto.setFavouriteGardenHtml(templateEngine.process("fragments/favourite-garden.html", context));
+        } else {
+            dto.setFavouriteGardenHtml("<div class=\"text-center my-3 text-white\">No Favourite Garden Selected</div>");
+        }
+        dto.setFavouritePlantsHtml(templateEngine.process("fragments/favourite-plants.html", context));
 
         return dto;
     }

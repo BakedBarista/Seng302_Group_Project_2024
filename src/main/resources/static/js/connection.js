@@ -8,6 +8,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const cardName = document.getElementById('cardName');
     const cardDescription = document.getElementById('cardDescription');
     const cardImage = document.getElementById('cardImage');
+    const favouriteGarden = document.getElementById('favouriteGarden');
+    const favouritePlants = document.getElementById('favouritePlants');
     
     const userListJson = getMeta('_userList') || '[]';
     const userList = JSON.parse(userListJson);
@@ -26,9 +28,13 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const user = currentUser();
         console.log(user);
+
         cardName.textContent = user.fullName;
         cardDescription.textContent = user.description;
         cardImage.src = `${baseUrl}users/${user.id}/profile-picture`;
+
+        favouriteGarden.innerHTML = user.favouriteGardenHtml;
+        favouritePlants.innerHTML = user.favouritePlantsHtml;
     }
     showCurrentUserCard();
 

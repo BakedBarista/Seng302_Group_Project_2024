@@ -8,6 +8,7 @@ public class SuggestedUserDTO {
     private String description;
 
     private String favouriteGardenHtml;
+    private String favouritePlantsHtml;
 
     public SuggestedUserDTO(GardenUser user) {
         this.id = user.getId();
@@ -33,5 +34,13 @@ public class SuggestedUserDTO {
 
     public void setFavouriteGardenHtml(String favouriteGardenHtml) {
         this.favouriteGardenHtml = favouriteGardenHtml;
+    }
+
+    public String getFavouritePlantsHtml() {
+        return favouritePlantsHtml;
+    }
+
+    public void setFavouritePlantsHtml(String favouritePlantsHtml) {
+        this.favouritePlantsHtml = favouritePlantsHtml;
     }
 }
