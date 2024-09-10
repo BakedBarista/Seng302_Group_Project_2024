@@ -114,7 +114,7 @@ public class U800MessageFeature {
 
     @Then("I am taken to the message page")
     public void i_am_taken_to_the_message_page() {
-        assertEquals("users/message", result);
+        assertEquals("users/message-home", result);
     }
 
     // AC5

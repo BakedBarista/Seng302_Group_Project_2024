@@ -55,7 +55,7 @@ class MessageControllerTest {
         Mockito.when(gardenUserService.getUserById(1L)).thenReturn(new GardenUser());
 
         String result = messageController.messageFriend(1L, authentication,  model,session);
-        Assertions.assertEquals("users/message", result);
+        Assertions.assertEquals("users/message-home", result);
     }
 
     @Test
@@ -69,7 +69,7 @@ class MessageControllerTest {
         Mockito.when(gardenUserService.getUserById(sender)).thenReturn(new GardenUser());
 
         String result = messageController.sendMessage(receiver, messageDTO, authentication,  model, session);
-        Assertions.assertEquals("users/message", result);
+        Assertions.assertEquals("users/message-home", result);
     }
 
     @Test
