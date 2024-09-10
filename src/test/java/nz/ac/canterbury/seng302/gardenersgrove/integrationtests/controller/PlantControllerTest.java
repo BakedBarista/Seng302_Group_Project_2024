@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.PlantController;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.MessageController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
@@ -121,8 +122,10 @@ public class PlantControllerTest {
         PlantDTO testPlantDTO = new PlantDTO("test", "1", "test", "2003-01-01");
         BindingResult bindingResult = Mockito.mock(BindingResult.class);
         Model model = Mockito.mock(Model.class);
+        HttpSession session = Mockito.mock(HttpSession.class);
 
-        plantController.submitAddPlantForm(testGarden.getId(), testPlantDTO, bindingResult, file, "", model);
+
+        plantController.submitAddPlantForm(testGarden.getId(), testPlantDTO, bindingResult, file, "", model, session);
 
         List<Plant> savedPlants = plantRepository.findAll();
         Plant savedPlant = savedPlants.get(savedPlants.size() - 1);
@@ -139,8 +142,9 @@ public class PlantControllerTest {
         PlantDTO testPlantDTO = new PlantDTO("test", "1", "test", "2003-01-01");
         BindingResult bindingResult = Mockito.mock(BindingResult.class);
         Model model = Mockito.mock(Model.class);
+        HttpSession session = Mockito.mock(HttpSession.class);
 
-        plantController.submitAddPlantForm(testGarden.getId(), testPlantDTO, bindingResult, file, "", model);
+        plantController.submitAddPlantForm(testGarden.getId(), testPlantDTO, bindingResult, file, "", model, session);
 
         List<Plant> savedPlants = plantRepository.findAll();
         Plant savedPlant = savedPlants.get(savedPlants.size() - 1);
