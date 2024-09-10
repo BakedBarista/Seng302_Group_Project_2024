@@ -23,6 +23,7 @@ import org.springframework.ui.Model;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -167,4 +168,18 @@ public class U800MessageFeature {
             Assertions.assertTrue(messages.get(i).getTimestamp().isAfter(messages.get(i-1).getTimestamp()));
         }
     }
+
+    @Then("The {string} existing chats are displayed on the side in chronological order")
+    public void the_existing_chats_are_displayed_on_the_side_in_chronological_order(String numOfChats) {
+        int expectedChatCount = Integer.parseInt(numOfChats);
+
+        result = messageController.messageHome(receiverId, authentication, model, session);
+        List<Message> allMessages = messageService.findAllRecentChats(myId);
+        Map<Long, Message> recentMessagesMap = messageService.getLatestMessages(allMessages, myId);
+        Map<GardenUser, String> recentChats = messageService.convertToPreview(recentMessagesMap);
+
+        assertEquals(expectedChatCount, recentChats.size());
+        assertEquals("users/message-home", result);
+    }
+
 }

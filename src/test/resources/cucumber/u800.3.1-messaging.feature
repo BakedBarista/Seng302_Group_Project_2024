@@ -2,7 +2,9 @@ Feature: Message friend from the friends list
   Background:
     Given I am a user named "John"
     And There is a user named "Jane"
+    And There is a user named "Immy"
     And "John" and "Jane" are friends
+    And "John" and "Immy" are friends
 
     Scenario: AC3 - User clicks the message button and is taken to the message page
       Given I am viewing my friends list
@@ -16,7 +18,7 @@ Feature: Message friend from the friends list
       Then I am taken to the message page
       And The message is sent to that friend.
 
-  Scenario: AC12 - Messages ordered chronologically
+  Scenario: AC10 - Messages ordered chronologically
     Given I am on a direct messaging page for my friend "Jane"
     When I have typed a text-based message "Hello"
     And I press Send
@@ -28,3 +30,16 @@ Feature: Message friend from the friends list
     And They press Send
     Then I am taken to the message page
     And The messages are displayed in chronological order
+
+  Scenario: AC12 - Message feed on side
+    Given I am on a direct messaging page for my friend "Jane"
+    When I have typed a text-based message "Hello"
+    And I press Send
+    Then I am taken to the message page
+
+    Given I am on a direct messaging page for my friend "Immy"
+    When I have typed a text-based message "Hi how are you"
+    And I press Send
+    Then I am taken to the message page
+
+    And The "2" existing chats are displayed on the side in chronological order
