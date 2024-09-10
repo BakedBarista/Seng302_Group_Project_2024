@@ -27,7 +27,6 @@ import java.util.UUID;
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.TIMESTAMP_FORMAT;
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.WEATHER_CARD_FORMAT_DATE;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class MessageController {
