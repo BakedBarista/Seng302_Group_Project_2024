@@ -19,12 +19,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @SuppressWarnings("SpringJavaInjectionsPointsAutowiringInspection")
 @SpringBootTest
@@ -48,12 +50,14 @@ class MessageControllerTest {
     private static GardenUser receiver;
     private static HttpSession session;
     private Boolean hasNotSetUp = true;
+    private static BindingResult bindingResult;
 
     @BeforeAll
     static void setUp() {
         model = mock(Model.class);
         authentication = mock(Authentication.class);
         session = new MockHttpSession();
+        bindingResult = mock(BindingResult.class);
         session.setAttribute("submissionToken", "token");
 
         sender = new GardenUser();
@@ -86,14 +90,18 @@ class MessageControllerTest {
     void givenHaveFriend_whenSendAMessageToFriend_thenSaveMessageBetweenFriendAndMyself() {
         String message = "Hello";
         MessageDTO messageDTO = new MessageDTO(message,"token");
+        BindingResult bindingResult = mock(BindingResult.class);
 
         HttpSession session = new MockHttpSession();
         session.setAttribute("submissionToken", "token");
 
         Mockito.when(authentication.getPrincipal()).thenReturn(sender.getId());
+        when(bindingResult.hasErrors()).thenReturn(false);
 
-        messageController.sendMessage(receiver.getId(), messageDTO, authentication, model, session);
+        messageController.sendMessage(receiver.getId(), messageDTO,bindingResult, authentication, model, session);
+        String redirect = messageController.sendMessage(receiver.getId(), messageDTO, bindingResult, authentication, model, session);
         List<Message> savedMessages = messageRepository.findMessagesBetweenUsers(sender.getId(), receiver.getId());
+        Assertions.assertEquals("users/message", redirect);
 
         // verify message is saved to repository
         Assertions.assertTrue(savedMessages.stream().map(Message::getMessageContent).toList().contains(message));
@@ -106,8 +114,9 @@ class MessageControllerTest {
         session.setAttribute("submissionToken", null);
 
         Mockito.when(authentication.getPrincipal()).thenReturn(sender.getId());
+        Mockito.when(bindingResult.hasErrors()).thenReturn(false);
 
-        messageController.sendMessage(receiver.getId(), messageDTO, authentication, model, session);
+        messageController.sendMessage(receiver.getId(), messageDTO, bindingResult, authentication, model, session);
         List<Message> savedMessages = messageRepository.findMessagesBetweenUsers(sender.getId(), receiver.getId());
 
         // verify message is saved to repository
@@ -121,8 +130,9 @@ class MessageControllerTest {
         session.setAttribute("submissionToken", "tokenOld");
 
         Mockito.when(authentication.getPrincipal()).thenReturn(sender.getId());
+        Mockito.when(bindingResult.hasErrors()).thenReturn(false);
 
-        messageController.sendMessage(receiver.getId(), messageDTO, authentication, model, session);
+        messageController.sendMessage(receiver.getId(), messageDTO, bindingResult, authentication, model, session);
         List<Message> savedMessages = messageRepository.findMessagesBetweenUsers(sender.getId(), receiver.getId());
 
         // verify message is saved to repository

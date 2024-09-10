@@ -17,22 +17,16 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
-
-import java.time.LocalDate;
+import org.springframework.validation.BindingResult;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Map;
-
 import static nz.ac.canterbury.seng302.gardenersgrove.entity.Friends.Status.ACCEPTED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
 
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 @SpringBootTest
@@ -59,23 +53,22 @@ class MessageControllerTest {
     private MessageRepository messageRepository;
 
     private static Authentication authentication;
+    private static BindingResult bindingResult;
 
     private static HttpSession session;
 
-    private final Long loggedInUserId = 1L;
-    private final Long requestedUserId = 2L;
-
     @BeforeEach
     public void setup() {
-        session= new MockHttpSession();
+        session = new MockHttpSession();
         model = mock(Model.class);
         authentication = mock(Authentication.class);
 
         gardenUserService = mock(GardenUserService.class);
         mockedFriendService = mock(FriendService.class);
         mockedMessageService = mock(MessageService.class);
-        messageController = new MessageController(gardenUserService, mockedFriendService, mockedMessageService);
+        bindingResult = mock(BindingResult.class);
 
+        messageController = new MessageController(gardenUserService, mockedFriendService, mockedMessageService);
 
         messageController2 = new MessageController(gardenUserService, mockedFriendService, messageService);
 
@@ -87,7 +80,7 @@ class MessageControllerTest {
         when(mockedFriendService.getFriendship(any(), any())).thenReturn(new Friends());
         when(gardenUserService.getUserById(1L)).thenReturn(new GardenUser());
 
-        String result = messageController.messageFriend(1L, authentication,  model,session);
+        String result = messageController.messageFriend(1L, authentication, model, session);
         assertEquals("users/message-home", result);
     }
 
@@ -95,36 +88,38 @@ class MessageControllerTest {
     void whenClickSendMessageButton_thenReturnMessagePage() {
         Long sender = 1L;
         Long receiver = 2L;
-        MessageDTO messageDTO = new MessageDTO("Hello","token");
+        MessageDTO messageDTO = new MessageDTO("Hello", "token");
 
-        when(authentication.getPrincipal()).thenReturn(sender);
-        when(mockedFriendService.getFriendship(any(), any())).thenReturn(new Friends());
-        when(gardenUserService.getUserById(sender)).thenReturn(new GardenUser());
+        Mockito.when(authentication.getPrincipal()).thenReturn(sender);
+        Mockito.when(mockedFriendService.getFriendship(any(), any())).thenReturn(new Friends());
+        Mockito.when(gardenUserService.getUserById(sender)).thenReturn(new GardenUser());
+        Mockito.when(bindingResult.hasErrors()).thenReturn(false);
 
-        String result = messageController.sendMessage(receiver, messageDTO, authentication,  model, session);
-        assertEquals("users/message-home", result);
+        String result = messageController.sendMessage(receiver, messageDTO, bindingResult, authentication, model,
+                session);
+        Assertions.assertEquals("users/message-home", result);
     }
 
     @Test
     void whenClickSendMessageButton_thenMessageSaved() {
         Long sender = 1L;
         Long receiver = 2L;
-        MessageDTO messageDTO = new MessageDTO("Hello","token");
+        MessageDTO messageDTO = new MessageDTO("Hello", "token");
         session.setAttribute("submissionToken", "token");
-        when(authentication.getPrincipal()).thenReturn(sender);
-        when(mockedFriendService.getFriendship(any(), any())).thenReturn(new Friends());
-        when(gardenUserService.getUserById(sender)).thenReturn(new GardenUser());
+        Mockito.when(authentication.getPrincipal()).thenReturn(sender);
+        Mockito.when(mockedFriendService.getFriendship(any(), any())).thenReturn(new Friends());
+        Mockito.when(gardenUserService.getUserById(sender)).thenReturn(new GardenUser());
+        Mockito.when(bindingResult.hasErrors()).thenReturn(false);
 
-        messageController.sendMessage(receiver, messageDTO, authentication,  model,session);
-        verify(mockedMessageService).sendMessage(sender, receiver, messageDTO);
+        messageController.sendMessage(receiver, messageDTO, bindingResult, authentication, model, session);
+        Mockito.verify(mockedMessageService).sendMessage(sender, receiver, messageDTO);
     }
-
 
     @Test
     void whenMessageHomeGET_thenReturnMessageHome() {
 
-        GardenUser user1 = new GardenUser("test", "2", "Tester@gmail.com",  "Password1!", null);
-        GardenUser user2 = new GardenUser("John", "Doe", "postTester@gmail.com",  "Password1!", null);
+        GardenUser user1 = new GardenUser("test", "2", "Tester@gmail.com", "Password1!", null);
+        GardenUser user2 = new GardenUser("John", "Doe", "postTester@gmail.com", "Password1!", null);
         gardenUserRepository.save(user1);
         gardenUserRepository.save(user2);
 
@@ -132,7 +127,6 @@ class MessageControllerTest {
         Message testMessage = new Message(user1.getId(), user2.getId(), testTime, "HI");
         messageRepository.save(testMessage);
         Friends friend = new Friends(user1, user2, ACCEPTED);
-
 
         when(gardenUserService.getUserById(user2.getId())).thenReturn(user2);
         when(mockedFriendService.getFriendship(user1.getId(), user2.getId())).thenReturn(friend);
@@ -146,8 +140,8 @@ class MessageControllerTest {
     @Test
     void whenMessageHomeParameterGET_thenReturnMessageHome() {
 
-        GardenUser user1 = new GardenUser("teste", "2", "Tester2@gmail.com",  "Password1!", null);
-        GardenUser user2 = new GardenUser("John1", "Doe", "post3Tester@gmail.com",  "Password1!", null);
+        GardenUser user1 = new GardenUser("teste", "2", "Tester2@gmail.com", "Password1!", null);
+        GardenUser user2 = new GardenUser("John1", "Doe", "post3Tester@gmail.com", "Password1!", null);
         gardenUserRepository.save(user1);
         gardenUserRepository.save(user2);
 
@@ -156,7 +150,6 @@ class MessageControllerTest {
         messageRepository.save(testMessage);
         Friends friend = new Friends(user1, user2, ACCEPTED);
 
-
         when(gardenUserService.getUserById(user2.getId())).thenReturn(user2);
         when(mockedFriendService.getFriendship(user1.getId(), user2.getId())).thenReturn(friend);
         when(authentication.getPrincipal()).thenReturn(user1.getId());
@@ -164,5 +157,23 @@ class MessageControllerTest {
         String view = messageController2.messageHomeSend(user2.getId(), authentication, model, session);
 
         assertEquals("users/message-home", view);
+    }
+
+    @Test
+    void givenMessageTooLong_whenClickSend_ThenSendingUnsuccessful() {
+        Long sender = 1L;
+        Long receiver = 2L;
+        String a = "a";
+        MessageDTO messageDTO = new MessageDTO(a.repeat(161), "token");
+        session.setAttribute("submissionToken", "token");
+
+        Mockito.when(authentication.getPrincipal()).thenReturn(sender);
+        Mockito.when(mockedFriendService.getFriendship(any(), any())).thenReturn(new Friends());
+        Mockito.when(gardenUserService.getUserById(sender)).thenReturn(new GardenUser());
+        Mockito.when(bindingResult.hasErrors()).thenReturn(true);
+
+        String result = messageController.sendMessage(receiver, messageDTO, bindingResult, authentication, model,
+                session);
+        assertEquals("users/message", result);
     }
 }

@@ -25,6 +25,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import org.springframework.validation.BindingResult;
+
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.TIMESTAMP_FORMAT;
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.WEATHER_CARD_FORMAT_DATE;
+import nz.ac.canterbury.seng302.gardenersgrove.service.ThymeLeafDateFormatter;
 
 @Controller
 public class MessageController {
@@ -145,6 +150,7 @@ public class MessageController {
             return messageService.getActiveChat(recentMessagesMap);
         }
         return null;
+
     }
 
     /**
@@ -159,6 +165,7 @@ public class MessageController {
     public String sendMessage(
             @RequestParam("id") Long receiver,
             @Valid @ModelAttribute("messageDTO") MessageDTO messageDTO,
+            BindingResult bindingResult,
             Authentication authentication,
             Model model,
             HttpSession session) {
@@ -166,12 +173,27 @@ public class MessageController {
 
         String tokenFromForm = messageDTO.getSubmissionToken();
         String sessionToken = (String) session.getAttribute(SUBMISSION_TOKEN);
+
+        if (bindingResult.hasErrors()) {
+            logger.info("Binding result has errors");
+            model.addAttribute("messageDTO", messageDTO);
+            GardenUser sentToUser = userService.getUserById(receiver);
+            model.addAttribute("sentToUser", sentToUser);
+            Long loggedInUserId = (Long) authentication.getPrincipal();
+            model.addAttribute("messagesMap", messageService.getMessagesBetweenFriends(loggedInUserId, receiver));
+            model.addAttribute("dateFormatter", new ThymeLeafDateFormatter());
+            model.addAttribute("TIMESTAMP_FORMAT", TIMESTAMP_FORMAT);
+            model.addAttribute("DATE_FORMAT", WEATHER_CARD_FORMAT_DATE);
+            model.addAttribute("submissionToken", tokenFromForm);
+
+            return "users/message";
+        }
+
         if (sessionToken != null && sessionToken.equals(tokenFromForm)) {
             Long sender = (Long) authentication.getPrincipal();
             messageService.sendMessage(sender, receiver, messageDTO);
             session.removeAttribute(SUBMISSION_TOKEN);
         }
-
         return messageFriend(receiver, authentication, model, session);
     }
 

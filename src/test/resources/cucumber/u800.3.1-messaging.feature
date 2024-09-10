@@ -18,28 +18,34 @@ Feature: Message friend from the friends list
       Then I am taken to the message page
       And The message is sent to that friend.
 
-  Scenario: AC10 - Messages ordered chronologically
-    Given I am on a direct messaging page for my friend "Jane"
-    When I have typed a text-based message "Hello"
-    And I press Send
-    And They have typed a text-based message "Hello"
-    And They press Send
-    And I have typed a text-based message "Bye"
-    And I press Send
-    And They have typed a text-based message "Bye"
-    And They press Send
-    Then I am taken to the message page
-    And The messages are displayed in chronological order
+    Scenario: User tries to send a long message to their friend
+      Given I am on a direct messaging page for my friend "Jane"
+      And I send invalid message
+      Then I am taken to the message page
+      And The message is not sent.
 
-  Scenario: AC12 - Message feed on side
-    Given I am on a direct messaging page for my friend "Jane"
-    When I have typed a text-based message "Hello"
-    And I press Send
-    Then I am taken to the message page
+    Scenario: AC10 - Messages ordered chronologically
+      Given I am on a direct messaging page for my friend "Jane"
+      When I have typed a text-based message "Hello"
+      And I press Send
+      And They have typed a text-based message "Hello"
+      And They press Send
+      And I have typed a text-based message "Bye"
+      And I press Send
+      And They have typed a text-based message "Bye"
+      And They press Send
+      Then I am taken to the message page
+      And The messages are displayed in chronological order
 
-    Given I am on a direct messaging page for my friend "Immy"
-    When I have typed a text-based message "Hi how are you"
-    And I press Send
-    Then I am taken to the message page
+    Scenario: AC12 - Message feed on side
+      Given I am on a direct messaging page for my friend "Jane"
+      When I have typed a text-based message "Hello"
+      And I press Send
+      Then I am taken to the message page
 
-    And The "2" existing chats are displayed on the side in chronological order
+      Given I am on a direct messaging page for my friend "Immy"
+      When I have typed a text-based message "Hi how are you"
+      And I press Send
+      Then I am taken to the message page
+
+      And The "2" existing chats are displayed on the side in chronological order
