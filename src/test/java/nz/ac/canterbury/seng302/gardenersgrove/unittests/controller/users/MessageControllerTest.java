@@ -65,8 +65,6 @@ class MessageControllerTest {
     private final Long loggedInUserId = 1L;
     private final Long requestedUserId = 2L;
 
-    private  GardenUser user1 = new GardenUser("John", "Doe", "postTester@gmail.com",  "Password1!", null);
-    private  GardenUser user2 = new GardenUser("test", "2", "Tester@gmail.com",  "Password1!", null);
     @BeforeEach
     public void setup() {
         session= new MockHttpSession();
@@ -78,12 +76,6 @@ class MessageControllerTest {
         mockedMessageService = mock(MessageService.class);
         messageController = new MessageController(gardenUserService, mockedFriendService, mockedMessageService);
 
-        gardenUserRepository.save(user1);
-        gardenUserRepository.save(user2);
-
-        LocalDateTime testTime = LocalDateTime.of(2024, 9, 10, 15, 30, 0);
-        Message testMessage = new Message(user1.getId(), user2.getId(), testTime, "HI");
-        messageRepository.save(testMessage);
 
         messageController2 = new MessageController(gardenUserService, mockedFriendService, messageService);
 
@@ -131,6 +123,14 @@ class MessageControllerTest {
     @Test
     void whenMessageHomeGET_thenReturnMessageHome() {
 
+        GardenUser user1 = new GardenUser("test", "2", "Tester@gmail.com",  "Password1!", null);
+        GardenUser user2 = new GardenUser("John", "Doe", "postTester@gmail.com",  "Password1!", null);
+        gardenUserRepository.save(user1);
+        gardenUserRepository.save(user2);
+
+        LocalDateTime testTime = LocalDateTime.of(2024, 9, 10, 15, 30, 0);
+        Message testMessage = new Message(user1.getId(), user2.getId(), testTime, "HI");
+        messageRepository.save(testMessage);
         Friends friend = new Friends(user1, user2, ACCEPTED);
 
 
