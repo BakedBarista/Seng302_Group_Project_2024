@@ -10,8 +10,8 @@
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 <div>
     <div class="p-lg-5 p-3">
-        <h2>My Gardens:</h2>
-        <div th:replace="~{fragments/list-of-gardens.html :: list-of-gardens}"></div>
+        <h3>My Gardens:</h3>
+        <div th:replace="~{fragments/list-of-gardens.html :: list-of-gardens('/gardens')}"></div>
     </div>
 </div>
 <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>

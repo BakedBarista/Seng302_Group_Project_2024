@@ -1,4 +1,4 @@
-<div th:fragment="list-of-gardens">
+<div th:fragment="list-of-gardens(baseUrl)">
     <div th:if="${#lists.size(gardenPage.content) == 0}" class="alert alert-info" role="alert">
         There is no garden to display, please add one first.
     </div>
@@ -34,7 +34,7 @@
 
             <!-- Previous page link -->
             <li class="page-item" th:classappend="${gardenPage.hasPrevious() ? '' : 'disabled'}">
-                <a class="page-link" th:href="@{/gardens(page=${gardenPage.number - 1}, size=${gardenPage.size})}">
+                <a class="page-link" th:href="@{${baseUrl}(page=${gardenPage.number - 1}, size=${gardenPage.size})}">
                     <img th:src="@{/icons/prev-icon.svg}" alt="" width="20" height="25" />
                 </a>
             </li>
@@ -43,19 +43,19 @@
             <li th:each="i : ${#numbers.sequence(gardenPage.number - 2, gardenPage.number + 2)}"
                 th:if="${i >= 0 and i < gardenPage.totalPages}" class="page-item"
                 th:classappend="${i == gardenPage.number ? 'active' : ''}">
-                <a class="page-link" th:href="@{/gardens(page=${i}, size=${gardenPage.size})}" th:text="${i + 1}" style="font-size:18px"></a>
+                <a class="page-link" th:href="@{${baseUrl}(page=${i}, size=${gardenPage.size})}" th:text="${i + 1}" style="font-size:18px"></a>
             </li>
 
             <!-- Next page link -->
             <li class="page-item" th:classappend="${gardenPage.hasNext() ? '' : 'disabled'}">
-                <a class="page-link" th:href="@{/gardens(page=${gardenPage.number + 1}, size=${gardenPage.size})}">
+                <a class="page-link" th:href="@{${baseUrl}(page=${gardenPage.number + 1}, size=${gardenPage.size})}">
                     <img th:src="@{/icons/next-icon.svg}" alt="" width="20" height="25" />
                 </a>
             </li>
 
             <!-- Last page link -->
             <li class="page-item" th:classappend="${gardenPage.last ? 'disabled' : ''}">
-                <a class="page-link" th:href="@{/gardens(page=${gardenPage.totalPages - 1}, size=${gardenPage.size})}">
+                <a class="page-link" th:href="@{${baseUrl}(page=${gardenPage.totalPages - 1}, size=${gardenPage.size})}">
                     <img th:src="@{/icons/last-page-icon.svg}" alt="" width="20" height="25" />
                 </a>
             </li>
