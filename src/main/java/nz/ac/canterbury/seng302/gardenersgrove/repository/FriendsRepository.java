@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.repository;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -105,5 +106,13 @@ public interface FriendsRepository extends CrudRepository<Friends, Long> {
 
     @Transactional
     void deleteBySenderId(Long senderId);
+
+    /**
+     * Get all users who are available to connect with a given user
+     * @param userId user that is getting connections
+     * @return a list of all the users who are available to connect with a given user
+     */
+    @Query("SELECT otherUser FROM GardenUser otherUser WHERE NOT EXISTS (SELECT f FROM Friends f WHERE f.sender.id = :userId AND f.receiver = otherUser) AND NOT EXISTS (SELECT f FROM Friends f WHERE f.sender = otherUser AND f.receiver.id = :userId) AND otherUser.id != :userId")
+    List<GardenUser> getAvailableConnections(Long userId);
 }
 

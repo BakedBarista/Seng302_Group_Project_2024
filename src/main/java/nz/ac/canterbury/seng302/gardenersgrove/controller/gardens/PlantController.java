@@ -187,8 +187,12 @@ public class PlantController {
     @GetMapping("/gardens/{gardenId}/plants/{plantId}/edit")
     public String editPlantForm(@PathVariable(GARDEN_ID) long gardenId,
                             @PathVariable(PLANT_ID) long plantId,
-                            Model model) {
+                            Model model, HttpSession session, HttpServletRequest request) {
         logger.info("/garden/{}/plant/{}/edit", gardenId, plantId);
+
+        String refererURI = request.getHeader("Referer");
+        session.setAttribute(REFERER, refererURI);
+
         Optional<Plant> plant = plantService.getPlantById(plantId);
         GardenUser owner = gardenUserService.getCurrentUser();
         Optional<Garden> garden = gardenService.getGardenById(gardenId);
@@ -200,6 +204,8 @@ public class PlantController {
         model.addAttribute(GARDEN_ID, gardenId);
         model.addAttribute(PLANT_ID, plantId);
         model.addAttribute(PLANT, plant.orElse(null));
+        model.addAttribute(REFERER, refererURI);
+
         return "plants/editPlant";
     }
 
@@ -220,7 +226,9 @@ public class PlantController {
                                       @RequestParam("dateError") String dateValidity,
                                       @Valid @ModelAttribute(PLANT) PlantDTO plant,
                                       BindingResult bindingResult,
-                                      Model model) {
+                                      Model model, HttpSession session) {
+
+        String referer = (String) session.getAttribute(REFERER);
 
         if (Objects.equals(dateValidity, "dateInvalid")) {
             bindingResult.rejectValue(
@@ -234,10 +242,13 @@ public class PlantController {
             model.addAttribute(PLANT, plant);
             model.addAttribute(GARDEN_ID, gardenId);
             model.addAttribute(PLANT_ID, plantId);
+            model.addAttribute(REFERER, referer);
             return "plants/editPlant";
         }
 
         Optional<Plant> existingPlant = plantService.getPlantById(plantId);
+        session.removeAttribute(REFERER);
+
         if (existingPlant.isPresent()){
             plantService.updatePlant(existingPlant.get(), plant);
 
@@ -247,6 +258,8 @@ public class PlantController {
                     logger.info(PLANT_SUCCESSFULLY_SAVED_LOG, gardenId);
                 } catch (Exception e) {
                     logger.error(PLANT_UNSUCCESSFULLY_SAVED_LOG, gardenId);
+                    model.addAttribute(REFERER, referer);
+
                 }
             }
         }
