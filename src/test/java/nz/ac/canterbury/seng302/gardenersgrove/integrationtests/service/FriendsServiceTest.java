@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
 import java.util.List;
+import java.util.Optional;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.entity.Friends.Status.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -190,6 +191,24 @@ public class FriendsServiceTest {
         List<Friends> sentRequestsDeclined = friendService.getSentRequestsDeclined(testUser3.getId());
         assertEquals(relationship, sentRequestsDeclined.get(0));
     }
+
+    @Test
+    void whenPendingRequestExists_thenFriendEntityReturned() {
+        Friends relationship = new Friends(testUser3, testUser4, PENDING);
+        friendService.save(relationship);
+
+        Optional<Friends> pendingRequest = friendService.getPendingFriendRequest(testUser4.getId(), testUser3.getId());
+        assertTrue(pendingRequest.isPresent());
+        assertEquals(relationship, pendingRequest.get());
+    }
+
+    @Test
+    void whenNoRequestExists_thenEmptyOptionalReturned() {
+        Optional<Friends> pendingRequest = friendService.getPendingFriendRequest(testUser4.getId(), testUser3.getId());
+        assertTrue(pendingRequest.isEmpty());
+    }
+
+
 
 
 }

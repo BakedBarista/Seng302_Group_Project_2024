@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.PlantController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
@@ -10,11 +11,9 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantHistoryItemDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantHistoryRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantHistoryService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,12 +53,6 @@ public class PlantControllerTest {
     @Autowired
     private PlantController plantController;
 
-    @Autowired
-    private PlantService plantService;
-
-    @Autowired
-    private PlantHistoryRepository plantHistoryRepository;
-
     @MockBean
     private GardenUserService userService;
 
@@ -69,6 +62,7 @@ public class PlantControllerTest {
     private Garden testGarden;
 
     private Plant testPlant;
+
 
     @BeforeEach
     void setup() {
@@ -125,8 +119,9 @@ public class PlantControllerTest {
         PlantDTO testPlantDTO = new PlantDTO("test", "1", "test", "2003-01-01");
         BindingResult bindingResult = Mockito.mock(BindingResult.class);
         Model model = Mockito.mock(Model.class);
+        HttpSession session = Mockito.mock(HttpSession.class);
 
-        plantController.submitAddPlantForm(testGarden.getId(), testPlantDTO, bindingResult, file, "", model);
+        plantController.submitAddPlantForm(testGarden.getId(), testPlantDTO, bindingResult, file, "", model, session);
 
         List<Plant> savedPlants = plantRepository.findAll();
         Plant savedPlant = savedPlants.get(savedPlants.size() - 1);
@@ -143,8 +138,9 @@ public class PlantControllerTest {
         PlantDTO testPlantDTO = new PlantDTO("test", "1", "test", "2003-01-01");
         BindingResult bindingResult = Mockito.mock(BindingResult.class);
         Model model = Mockito.mock(Model.class);
+        HttpSession session = Mockito.mock(HttpSession.class);
 
-        plantController.submitAddPlantForm(testGarden.getId(), testPlantDTO, bindingResult, file, "", model);
+        plantController.submitAddPlantForm(testGarden.getId(), testPlantDTO, bindingResult, file, "", model, session);
 
         List<Plant> savedPlants = plantRepository.findAll();
         Plant savedPlant = savedPlants.get(savedPlants.size() - 1);
@@ -161,8 +157,9 @@ public class PlantControllerTest {
         PlantDTO testPlantDTO = new PlantDTO("test", "1", "test", "2003-01-01");
         BindingResult bindingResult = Mockito.mock(BindingResult.class);
         Model model = Mockito.mock(Model.class);
+        HttpSession session = Mockito.mock(HttpSession.class);
 
-        plantController.submitEditPlantForm(testGarden.getId(), testPlant.getId(), file, "", testPlantDTO, bindingResult, model);
+        plantController.submitEditPlantForm(testGarden.getId(), testPlant.getId(), file, "", testPlantDTO, bindingResult, model, session);
 
         List<Plant> savedPlants = plantRepository.findAll();
         Plant savedPlant = savedPlants.get(savedPlants.size() - 1);
@@ -179,8 +176,9 @@ public class PlantControllerTest {
         PlantDTO testPlantDTO = new PlantDTO("test", "1", "test", "2003-01-01");
         BindingResult bindingResult = Mockito.mock(BindingResult.class);
         Model model = Mockito.mock(Model.class);
+        HttpSession session = Mockito.mock(HttpSession.class);
 
-        plantController.submitEditPlantForm(testGarden.getId(), testPlant.getId(), file, "", testPlantDTO, bindingResult, model);
+        plantController.submitEditPlantForm(testGarden.getId(), testPlant.getId(), file, "", testPlantDTO, bindingResult, model, session);
 
         List<Plant> savedPlants = plantRepository.findAll();
         Plant savedPlant = savedPlants.get(savedPlants.size() - 1);

@@ -28,10 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant.PlantStatus.HARVESTED;
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.HISTORY_FORMAT_DATE;
@@ -58,6 +55,11 @@ public class PlantController {
     private static final String ACCESS_DENIED = "error/accessDenied";
     private static final String GARDENS_REDIRECT = "redirect:/gardens/";
     private static final String ERROR_404 = "error/404";
+    private static final String REFERER = "referer";
+
+
+
+
 
 
 
@@ -78,9 +80,13 @@ public class PlantController {
      * @return redirect to add plant form
      */
     @GetMapping("/gardens/{id}/add-plant")
-    public String addPlantForm(@PathVariable("id") Long gardenId, @RequestParam(required = false) boolean importPlant, Model model, HttpSession session){
+    public String addPlantForm(@PathVariable("id") Long gardenId, @RequestParam(required = false) boolean importPlant,
+                               Model model, HttpSession session, HttpServletRequest request){
 
         logger.info("GET /gardens/${id}/add-plant - display the new plant form");
+
+        String refererURI = request.getHeader("Referer");
+        session.setAttribute(REFERER, refererURI);
         model.addAttribute(GARDEN_ID, gardenId);
 
         Plant plant = new Plant("", "", "", null);
@@ -110,6 +116,7 @@ public class PlantController {
 
         List<Garden> gardens = gardenService.getGardensByOwnerId(owner.getId());
         model.addAttribute("gardens", gardens);
+        model.addAttribute(REFERER, refererURI);
         return "plants/addPlant";
     }
 
@@ -131,8 +138,10 @@ public class PlantController {
                                      BindingResult bindingResult,
                                      @RequestParam("image") MultipartFile file,
                                      @RequestParam("dateError") String dateValidity,
-                                     Model model) {
+                                     Model model, HttpSession session) {
         logger.info("POST /gardens/${gardenId}/add-plant - submit the new plant form");
+
+        String referer = (String) session.getAttribute(REFERER);
 
         if (Objects.equals(dateValidity, "dateInvalid")) {
             bindingResult.rejectValue(
@@ -145,23 +154,29 @@ public class PlantController {
         if (bindingResult.hasErrors()) {
             model.addAttribute(PLANT, plantDTO);
             model.addAttribute(GARDEN_ID, gardenId);
+            model.addAttribute(REFERER, referer);
             logger.error("Validation error in Plant Form.");
             return "plants/addPlant";
         }
 
         // Save the new plant and image
         Plant savedPlant = plantService.createPlant(plantDTO, gardenId);
+        session.removeAttribute(REFERER);
+
         if (savedPlant != null) {
             try {
                 plantService.setPlantImage(savedPlant.getId(), file);
                 logger.info(PLANT_SUCCESSFULLY_SAVED_LOG, gardenId);
             } catch (Exception e) {
                 logger.error(PLANT_UNSUCCESSFULLY_SAVED_LOG, gardenId);
+                model.addAttribute(REFERER, referer);
             }
         } else {
             logger.error(PLANT_UNSUCCESSFULLY_SAVED_LOG, gardenId);
+            return GARDENS_REDIRECT + gardenId;
         }
         return GARDENS_REDIRECT + gardenId;
+
     }
 
     /**
@@ -172,8 +187,12 @@ public class PlantController {
     @GetMapping("/gardens/{gardenId}/plants/{plantId}/edit")
     public String editPlantForm(@PathVariable(GARDEN_ID) long gardenId,
                             @PathVariable(PLANT_ID) long plantId,
-                            Model model) {
+                            Model model, HttpSession session, HttpServletRequest request) {
         logger.info("/garden/{}/plant/{}/edit", gardenId, plantId);
+
+        String refererURI = request.getHeader("Referer");
+        session.setAttribute(REFERER, refererURI);
+
         Optional<Plant> plant = plantService.getPlantById(plantId);
         GardenUser owner = gardenUserService.getCurrentUser();
         Optional<Garden> garden = gardenService.getGardenById(gardenId);
@@ -185,6 +204,8 @@ public class PlantController {
         model.addAttribute(GARDEN_ID, gardenId);
         model.addAttribute(PLANT_ID, plantId);
         model.addAttribute(PLANT, plant.orElse(null));
+        model.addAttribute(REFERER, refererURI);
+
         return "plants/editPlant";
     }
 
@@ -205,7 +226,9 @@ public class PlantController {
                                       @RequestParam("dateError") String dateValidity,
                                       @Valid @ModelAttribute(PLANT) PlantDTO plant,
                                       BindingResult bindingResult,
-                                      Model model) {
+                                      Model model, HttpSession session) {
+
+        String referer = (String) session.getAttribute(REFERER);
 
         if (Objects.equals(dateValidity, "dateInvalid")) {
             bindingResult.rejectValue(
@@ -219,10 +242,13 @@ public class PlantController {
             model.addAttribute(PLANT, plant);
             model.addAttribute(GARDEN_ID, gardenId);
             model.addAttribute(PLANT_ID, plantId);
+            model.addAttribute(REFERER, referer);
             return "plants/editPlant";
         }
 
         Optional<Plant> existingPlant = plantService.getPlantById(plantId);
+        session.removeAttribute(REFERER);
+
         if (existingPlant.isPresent()){
             plantService.updatePlant(existingPlant.get(), plant);
 
@@ -232,6 +258,8 @@ public class PlantController {
                     logger.info(PLANT_SUCCESSFULLY_SAVED_LOG, gardenId);
                 } catch (Exception e) {
                     logger.error(PLANT_UNSUCCESSFULLY_SAVED_LOG, gardenId);
+                    model.addAttribute(REFERER, referer);
+
                 }
             }
         }

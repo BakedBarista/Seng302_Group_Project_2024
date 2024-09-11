@@ -3,12 +3,13 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.FriendsRepository;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.entity.Friends.Status.*;
 
@@ -20,6 +21,7 @@ import static nz.ac.canterbury.seng302.gardenersgrove.entity.Friends.Status.*;
 public class FriendService {
     private final FriendsRepository friendsRepository;
 
+    @Autowired
     public FriendService(FriendsRepository friendsRepository) {this.friendsRepository = friendsRepository;}
 
     /**
@@ -82,6 +84,17 @@ public class FriendService {
     }
 
     /**
+     * Gets a declined friendship between 2 users if one exists.
+     * @param sender user 1
+     * @param receiver user 2
+     * @return An optional of the declined friendship
+     */
+    public Optional<Friends> getDeclinedFriendship(Long sender, Long receiver) {
+        return Optional.ofNullable(friendsRepository.getFriendshipBetweenUsersWithStatus(sender, receiver, DECLINED));
+    }
+
+
+    /**
      * Retrieves the Friend object where sender sent a request to receiver
      *
      * @param sender user who sent the original request
@@ -113,6 +126,18 @@ public class FriendService {
     }
 
     /**
+     * Looks for a request from the sender id and returns this friendship request if
+     * found.
+     *
+     * @param userId The ID of the user whose might have received the pending request
+     * @param senderId The ID of the person who might have sent the request
+     * @return an optional of the request if it is found.
+     */
+    public Optional<Friends> getPendingFriendRequest(Long userId, Long senderId) {
+        return friendsRepository.findPendingFriendRequest(senderId, userId);
+    }
+
+    /**
      * Retrieves all users who declined a request from the given user
      *
      * @param user The ID of the user whose friend request has been declined
@@ -141,6 +166,17 @@ public class FriendService {
     public void removeFriendship(Friends friends) {
         friendsRepository.delete(friends);
 
+    }
+
+
+    /**
+     * Finds any Pending or Declined relationships that exist between two users, in either direction.
+     * @param user1Id the first user
+     * @param user2Id the second user
+     * @return an optional of the relationship if it exists.
+     */
+    public Optional<Friends> getPendingOrDeclinedRequests(Long user1Id, Long user2Id) {
+        return friendsRepository.findPendingOrDeclinedFriendship(user1Id, user2Id);
     }
 
 }

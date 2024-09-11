@@ -35,7 +35,7 @@ class MessageServiceTest {
         Long sender = 1L;
         Long receiver = 2L;
         String messageWord = "Hello";
-        MessageDTO messageDTO = new MessageDTO(messageWord);
+        MessageDTO messageDTO = new MessageDTO(messageWord,"token");
 
         when(clock.getZone()).thenReturn(ZoneId.systemDefault());
         when(clock.instant()).thenReturn(timestamp);
@@ -53,7 +53,7 @@ class MessageServiceTest {
         Long sender = 1L;
         Long receiver = 2L;
         String messageWord = "Hello";
-        MessageDTO messageDTO = new MessageDTO(messageWord);
+        MessageDTO messageDTO = new MessageDTO(messageWord,"token");
 
         when(clock.getZone()).thenReturn(ZoneId.systemDefault());
         when(clock.instant()).thenReturn(timestamp);

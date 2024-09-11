@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.cucumber.step_definitions;
 
 import io.cucumber.java.BeforeAll;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -16,10 +17,14 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.MessageService;
 import org.junit.jupiter.api.Assertions;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -45,11 +50,17 @@ public class U800MessageFeature {
     private static Long myId;
     private static Long receiverId;
     private static MessageDTO messageDTO;
+    private static MockHttpSession session;
+    private static int currentMessages;
+    private static BindingResult bindingResult;
+
 
     @BeforeAll
     public static void setup() {
+        session = new MockHttpSession();
         authentication = mock(Authentication.class);
         model = mock(Model.class);
+        bindingResult = mock(BindingResult.class);
         user.setId(1L);
     }
 
@@ -102,7 +113,7 @@ public class U800MessageFeature {
         Mockito.when(authentication.getPrincipal()).thenReturn(myId);
         Long friendsId = gardenUserService.getUserByEmail(friendName + "cucumber@email.com").getId();
 
-        result = messageController.messageFriend(friendsId, authentication, model);
+        result = messageController.messageFriend(friendsId, authentication, model,session);
     }
 
     @Then("I am taken to the message page")
@@ -114,16 +125,36 @@ public class U800MessageFeature {
     @Given("I am on a direct messaging page for my friend {string}")
     public void i_am_on_a_direct_messaging_page_for_my_friend(String friendName) {
         receiverId = gardenUserService.getUserByEmail(friendName + "cucumber@email.com").getId();
+        currentMessages = messageRepository.findMessagesBetweenUsers(myId, receiverId).size();
     }
     @When("I have typed a text-based message {string}")
     public void i_have_typed_a_text_based_message(String messageContent) {
-        messageDTO = new MessageDTO(messageContent);
+        String token = UUID.randomUUID().toString();
+        messageDTO = new MessageDTO(messageContent, token);
+        session.setAttribute("submissionToken", token);
     }
+
+    @When("They have typed a text-based message {string}")
+    public void they_have_typed_a_text_based_message(String messageContent) {
+        String token = UUID.randomUUID().toString();
+        messageDTO = new MessageDTO(messageContent,token);
+        session.setAttribute("submissionToken", token);
+    }
+
+    @When("They press Send")
+    public void they_press_send() {
+        Mockito.when(authentication.getPrincipal()).thenReturn(receiverId);
+        Mockito.when(bindingResult.hasErrors()).thenReturn(false);
+        result = messageController.sendMessage(myId, messageDTO, bindingResult, authentication, model, session);
+    }
+
     @When("I press Send")
     public void i_press_send() {
         Mockito.when(authentication.getPrincipal()).thenReturn(myId);
-        result = messageController.sendMessage(receiverId, messageDTO, authentication, model);
+        Mockito.when(bindingResult.hasErrors()).thenReturn(false);
+        result = messageController.sendMessage(receiverId, messageDTO, bindingResult, authentication, model, session);
     }
+
     @Then("The message is sent to that friend.")
     public void the_message_is_sent_to_that_friend() {
         Message message = messageRepository.findMessagesBetweenUsers(myId, receiverId).get(0);
@@ -131,6 +162,28 @@ public class U800MessageFeature {
         Assertions.assertEquals(myId, message.getSender());
         Assertions.assertEquals(receiverId, message.getReceiver());
         // Don't test timestamp as tested in unit and integration
+    }
+
+    @And("The messages are displayed in chronological order")
+    public void the_messages_are_displayed_in_chronological_order() {
+        List<Message> messages = messageRepository.findMessagesBetweenUsers(myId, receiverId);
+
+        Assertions.assertEquals(currentMessages + 4, messages.size());
+        for (int i = 1; i < messages.size(); i++) {
+            Assertions.assertTrue(messages.get(i).getTimestamp().isAfter(messages.get(i-1).getTimestamp()));
+        }
+    }
+    @When("I send invalid message")
+    public void i_send_invalid_message() {
+        Mockito.when(authentication.getPrincipal()).thenReturn(myId);
+        Mockito.when(bindingResult.hasErrors()).thenReturn(true);
+        result = messageController.sendMessage(receiverId, messageDTO, bindingResult, authentication, model, session);
+    }
+
+    @Then("The message is not sent.")
+    public void the_message_is_not_sent() {
+        List<Message> message = messageRepository.findMessagesBetweenUsers(myId, receiverId);
+        Assertions.assertEquals(1, message.size());
     }
 
 }

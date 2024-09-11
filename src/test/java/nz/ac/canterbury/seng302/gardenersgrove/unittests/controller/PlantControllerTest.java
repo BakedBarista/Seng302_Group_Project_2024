@@ -65,6 +65,7 @@ class PlantControllerTest {
 
     private HttpSession session;
     private Model model;
+    private HttpServletRequest request;
 
     @InjectMocks
     private PlantController plantController;
@@ -101,6 +102,7 @@ class PlantControllerTest {
         session = mock(HttpSession.class);
         model = mock(Model.class);
         authentication = mock(Authentication.class);
+        request = mock(HttpServletRequest.class);
     }
 
     @Test
@@ -108,7 +110,7 @@ class PlantControllerTest {
         long gardenId = 0;
         String expectedReturnPage = "plants/addPlant";
 
-        String returnPage = plantController.addPlantForm(gardenId, false, model, null);
+        String returnPage = plantController.addPlantForm(gardenId, false, model, session, request);
         assertEquals(expectedReturnPage, returnPage);
     }
 
@@ -118,7 +120,7 @@ class PlantControllerTest {
         String expectedReturnPage = "error/accessDenied";
 
         when(gardenService.getGardenById(gardenId)).thenReturn(Optional.empty());
-        String returnPage = plantController.addPlantForm(gardenId, false, model, null);
+        String returnPage = plantController.addPlantForm(gardenId, false, model, session, request);
         assertEquals(expectedReturnPage, returnPage);
     }
 
@@ -136,7 +138,7 @@ class PlantControllerTest {
         when(gardenService.getGardenById(gardenId) ).thenReturn(Optional.of(garden));
         when(gardenUserService.getCurrentUser()).thenReturn(new GardenUser());
 
-        String returnPage = plantController.addPlantForm(gardenId, false, model, null);
+        String returnPage = plantController.addPlantForm(gardenId, false, model, session, request);
         assertEquals(expectedReturnPage, returnPage);
 
     }
@@ -150,7 +152,7 @@ class PlantControllerTest {
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
-        String returnPage = plantController.submitAddPlantForm(gardenId, validPlantDTO, bindingResult, file, dateValidStr, model);
+        String returnPage = plantController.submitAddPlantForm(gardenId, validPlantDTO, bindingResult, file, dateValidStr, model, session);
         assertEquals(expectedReturnPage, returnPage);
     }
 
@@ -162,7 +164,7 @@ class PlantControllerTest {
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
-        String returnPage = plantController.submitAddPlantForm(gardenId, invalidPlantDTO, bindingResult, file, dateValidStr, model);
+        String returnPage = plantController.submitAddPlantForm(gardenId, invalidPlantDTO, bindingResult, file, dateValidStr, model, session);
         assertEquals(expectedReturnPage, returnPage);
     }
 
@@ -180,7 +182,7 @@ class PlantControllerTest {
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
-        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateInvalidStr, invalidPlantDTO, bindingResult, model);
+        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateInvalidStr, invalidPlantDTO, bindingResult, model, session);
 
         assertEquals(expectedReturnPage, returnPage);
     }
@@ -200,7 +202,7 @@ class PlantControllerTest {
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
         when(plantService.getPlantById(plantId)).thenReturn(Optional.of(new Plant(validPlantDTO)));
-        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, validPlantDTO, bindingResult, model);
+        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, validPlantDTO, bindingResult, model, session);
 
         assertEquals(expectedReturnPage, returnPage);
     }
@@ -227,7 +229,7 @@ class PlantControllerTest {
         when(gardenUserService.getCurrentUser()).thenReturn(owner);
         when(gardenService.getGardensByOwnerId(owner.getId())).thenReturn(Collections.singletonList(garden));
 
-        String returnPage = plantController.editPlantForm(gardenId, plantId, model);
+        String returnPage = plantController.editPlantForm(gardenId, plantId, model, session, request);
         assertEquals(expectedReturnPage, returnPage);
         verify(model).addAttribute("gardens", Collections.singletonList(garden));
         verify(model).addAttribute("gardenId", gardenId);
@@ -246,7 +248,7 @@ class PlantControllerTest {
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
         when(plantService.getPlantById(plantId)).thenReturn(Optional.of(plant));
-        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, validPlantDTO, bindingResult, model);
+        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, validPlantDTO, bindingResult, model, session);
 
         assertEquals(expectedReturnPage, returnPage);
 
@@ -262,7 +264,7 @@ class PlantControllerTest {
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
-        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, invalidPlant, bindingResult, model);
+        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, invalidPlant, bindingResult, model, session);
 
         assertEquals(expectedReturnPage, returnPage);
     }
@@ -281,7 +283,7 @@ class PlantControllerTest {
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
-        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateInvalidStr, invalidPlant, bindingResult, model);
+        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateInvalidStr, invalidPlant, bindingResult, model, session);
 
         assertEquals(expectedReturnPage, returnPage);
     }
@@ -302,7 +304,7 @@ class PlantControllerTest {
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
         when(plantService.getPlantById(plantId)).thenReturn(Optional.of(plant));
-        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, validPlantDTO, bindingResult, model);
+        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, validPlantDTO, bindingResult, model, session);
 
         verify(plantService, times(1)).updatePlant(plant, validPlantDTO);
         assertEquals(expectedReturnPage, returnPage);
@@ -318,7 +320,7 @@ class PlantControllerTest {
 
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
-        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, invalidPlantDTO, bindingResult, model);
+        String returnPage = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, invalidPlantDTO, bindingResult, model, session);
 
         verify(plantService, times(0)).updatePlant(eq(plant), any());
         assertEquals(expectedReturnPage, returnPage);
@@ -391,7 +393,7 @@ class PlantControllerTest {
         doThrow(new RuntimeException("Image processing error"))
                 .when(plantService).setPlantImage(anyLong(), any(MultipartFile.class));
 
-        String view = plantController.submitAddPlantForm(gardenId, plantDTO, bindingResult, file, dateValidStr, model);
+        String view = plantController.submitAddPlantForm(gardenId, plantDTO, bindingResult, file, dateValidStr, model, session);
 
         assertEquals("redirect:/gardens/" + gardenId, view);
     }
@@ -414,7 +416,7 @@ class PlantControllerTest {
         doThrow(new RuntimeException("Image processing error"))
                 .when(plantService).setPlantImage(anyLong(), any(MultipartFile.class));
 
-        String view = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, plantDTO, bindingResult, model);
+        String view = plantController.submitEditPlantForm(gardenId, plantId, file, dateValidStr, plantDTO, bindingResult, model, session);
 
         assertEquals("redirect:/gardens/" + gardenId, view);
     }
@@ -469,7 +471,7 @@ class PlantControllerTest {
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
 
-        String returnPage = plantController.submitAddPlantForm(1L, plantDTO, bindingResult, file, dateValidStr, model);
+        String returnPage = plantController.submitAddPlantForm(1L, plantDTO, bindingResult, file, dateValidStr, model, session);
         verify(bindingResult).hasErrors();
 
         assertEquals("plants/addPlant", returnPage);
@@ -486,7 +488,7 @@ class PlantControllerTest {
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
 
-        String returnPage = plantController.submitAddPlantForm(1L, plantDTO, bindingResult, file, dateValidStr, model);
+        String returnPage = plantController.submitAddPlantForm(1L, plantDTO, bindingResult, file, dateValidStr, model, session);
         verify(bindingResult).hasErrors();
         assertEquals("plants/addPlant", returnPage);
 
@@ -612,7 +614,7 @@ class PlantControllerTest {
         when(session.getAttribute("plantDescription")).thenReturn("Red fruit");
         when(session.getAttribute("plantImage")).thenReturn("");
 
-        plantController.addPlantForm(1L, true, model, session);
+        plantController.addPlantForm(1L, true, model, session, request);
 
         verify(model).addAttribute(eq("plant"), assertArg((Plant plant) -> {
             assertEquals("Tomato", plant.getName());
