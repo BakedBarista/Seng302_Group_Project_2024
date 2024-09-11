@@ -16,6 +16,12 @@ Feature: Message friend from the friends list
       Then I am taken to the message page
       And The message is sent to that friend.
 
+    Scenario: User tries to send a long message to their friend
+      Given I am on a direct messaging page for my friend "Jane"
+      And I send invalid message
+      Then I am taken to the message page
+      And The message is not sent.
+
   Scenario: AC12 - Messages ordered chronologically
     Given I am on a direct messaging page for my friend "Jane"
     When I have typed a text-based message "Hello"

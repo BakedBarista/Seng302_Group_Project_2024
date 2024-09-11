@@ -103,16 +103,21 @@
                 <form th:action="@{/users/message(id=${sentToUser.id})}" method="post" th:object="${messageDTO}">
                     <input type="hidden" name="submissionToken" th:value="${submissionToken}" />
                     <div class="d-flex gap-2">
-                        <label for="message"></label>
-                        <textarea id="message"
-                                  th:name="message"
-                                  class="form-control flex-grow-1"
-                                  style="resize: none;"
-                                  placeholder="Enter message here..."
-                                  autofocus></textarea><!-- Do not new line this -->
-                        <button type="submit" class="btn btn-primary px-4 py-0">
-                            <img th:src="@{/icons/sent-stroke-rounded.svg}" alt="Send">
-                        </button>
+                        <div class="d-flex flex-fill flex-wrap">
+                            <label for="message" th:class="'form-label ' + ${#fields.hasErrors('message') ? 'is-invalid' : ''}"></label>
+                            <div class="d-flex flex-fill gap-2">
+                                <textarea id="message"
+                                      th:name="message"
+                                      class="form-control flex-grow-1"
+                                      style="resize: none;"
+                                      placeholder="Enter message here..."
+                                      autofocus></textarea><!-- Do not new line this -->
+                                <button type="submit" class="btn btn-primary px-4 py-0" id="sendButton" disabled>
+                                    <img th:src="@{/icons/sent-stroke-rounded.svg}" alt="Send">
+                                </button>
+                            </div>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('message')}" th:errors="*{message}"></div>
+                        </div>
                     </div>
                 </form>
                 <span class="d-sm-block p-3"></span>
@@ -140,6 +145,14 @@
             const scrollbar = document.getElementById('scrollbar');
             scrollToBottom(scrollbar);
         });
+    </script>
+
+    <script>
+        const messageField = document.getElementById("message");
+        const button = document.getElementById("sendButton");
+        messageField.addEventListener("input", () => {
+            button.disabled = messageField.value.length <= 0 || messageField.value.trim().length === 0;
+        })
     </script>
 </body>
 </html>
