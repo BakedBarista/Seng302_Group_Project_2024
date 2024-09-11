@@ -79,7 +79,7 @@
         </div>
         <div th:if="${!#lists.isEmpty(recentChats)}">
             <div id="chatSection" th:each="chat : ${recentChats}" class="border-bottom" style="height: 125px;">
-                <div th:id="${chat.key.id}" class="h-100">
+                <div th:id="${chat.key.id + 'Mobile'}" class="h-100">
                     <form th:action="@{/message-home}" method="post" class="d-flex align-items-center w-100 h-100">
                         <input type="hidden" name="userId" th:value="${chat.key.id}"/>
                         <button class="btn btn-link text-decoration-none text-dark w-100 open-chat">
@@ -175,12 +175,13 @@
             }
         });
 
-        // TODO: This doesnt work
         const activeChatId = '[[${activeChat}]]';
+        const activeChatDivMobile = document.getElementById(activeChatId+"Mobile");
         const activeChatDiv = document.getElementById(activeChatId);
 
         if (activeChatDiv) {
             activeChatDiv.classList.add('active-chat');
+            activeChatDivMobile.classList.add('active-chat');
         }
     });
 </script>
