@@ -245,6 +245,12 @@ function previewFavouritePlants(favouritePlants) {
 
     // Add the new plantId to selectedPlants
     selectedPlants.push(plantId);
+    for (let key in deletedPlantIds) {
+        if (deletedPlantIds[key] === plantId.toString()) {
+            delete deletedPlantIds[key];
+            break;
+        }
+    }
 
     // Hide the error message since plant was successfully added
     showError('');
@@ -262,6 +268,13 @@ function updateFavouritePlants() {
         document.getElementById('selectedPlantId3')?.value
     ].filter(id => id).filter(item => !Object.values(deletedPlantIds).includes(item));
 
+    // for debugging if needed in the future :)
+    // console.log(newPlantIds)
+    // console.log(document.getElementById('selectedPlantId1')?.value)
+    // console.log(document.getElementById('selectedPlantId2')?.value)
+    // console.log(document.getElementById('selectedPlantId3')?.value)
+    // console.log(deletedPlantIds)
+    // console.log(favouritePlants)
 
     for (let currentPlant of Object.values(deletedPlantIds)) {
         if (!favouritePlants.some(plant => plant.id === parseInt(currentPlant))) {
