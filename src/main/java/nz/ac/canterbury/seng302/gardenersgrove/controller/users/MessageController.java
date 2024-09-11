@@ -191,7 +191,7 @@ public class MessageController {
             model.addAttribute("DATE_FORMAT", WEATHER_CARD_FORMAT_DATE);
             model.addAttribute("submissionToken", tokenFromForm);
 
-            return "users/message";
+            return "users/message-home";
         }
 
         if (sessionToken != null && sessionToken.equals(tokenFromForm)) {

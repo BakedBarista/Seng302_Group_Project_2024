@@ -174,7 +174,7 @@ class MessageControllerTest {
 
         String result = messageController.sendMessage(receiver, messageDTO, bindingResult, authentication, model,
                 session);
-        assertEquals("users/message", result);
+        assertEquals("users/message-home", result);
     }
 
     @Test

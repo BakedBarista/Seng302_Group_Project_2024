@@ -119,11 +119,6 @@ public class U800_3_1_MessageFeature {
 
     @Then("I am taken to the message page")
     public void i_am_taken_to_the_message_page() {
-        assertEquals("users/message", result);
-    }
-
-    @Then("I am taken to the message home page")
-    public void i_am_taken_to_the_message_home_page() {
         assertEquals("users/message-home", result);
     }
 
