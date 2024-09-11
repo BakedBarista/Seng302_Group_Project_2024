@@ -171,7 +171,8 @@ function updateCardAppearance(selectedCard, plantImage, plantName, plantId) {
         plantNameElement = document.createElement('h4');
         selectedCard.appendChild(plantNameElement);
     }
-    plantNameElement.className = 'text-center pt-2';
+    plantNameElement.className = 'text-center mt-2 overflow-y-auto text-center';
+    plantNameElement.style = "max-height:100px";
     plantNameElement.textContent = plantName;
 
     const hiddenInput = selectedCard.querySelector('input[type="hidden"]');

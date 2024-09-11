@@ -1,6 +1,6 @@
 const origin = location.origin.replace('http', 'ws');
 const url = `${origin}${apiBaseUrl}/messages`;
-const otherUserId = new URLSearchParams(location.search).get('id');
+const otherUserId = activeChatId;
 
 /**@type {HTMLFormElement} */
 const sendMessageForm = document.getElementById('sendMessageForm');
