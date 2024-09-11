@@ -17,9 +17,12 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 
@@ -34,6 +37,8 @@ class MessageControllerTest {
     private static MessageService mockedMessageService;
 
     private static Authentication authentication;
+    private static BindingResult bindingResult;
+
 
     private static HttpSession session;
 
@@ -42,6 +47,8 @@ class MessageControllerTest {
         gardenUserService = mock(GardenUserService.class);
         mockedFriendService = mock(FriendService.class);
         mockedMessageService = mock(MessageService.class);
+        bindingResult = mock(BindingResult.class);
+
         messageController = new MessageController(gardenUserService, mockedFriendService, mockedMessageService);
         session= new MockHttpSession();
         model = mock(Model.class);
@@ -67,8 +74,9 @@ class MessageControllerTest {
         Mockito.when(authentication.getPrincipal()).thenReturn(sender);
         Mockito.when(mockedFriendService.getFriendship(any(), any())).thenReturn(new Friends());
         Mockito.when(gardenUserService.getUserById(sender)).thenReturn(new GardenUser());
+        Mockito.when(bindingResult.hasErrors()).thenReturn(false);
 
-        String result = messageController.sendMessage(receiver, messageDTO, authentication,  model, session);
+        String result = messageController.sendMessage(receiver, messageDTO, bindingResult, authentication,  model, session);
         Assertions.assertEquals("users/message", result);
     }
 
@@ -81,8 +89,27 @@ class MessageControllerTest {
         Mockito.when(authentication.getPrincipal()).thenReturn(sender);
         Mockito.when(mockedFriendService.getFriendship(any(), any())).thenReturn(new Friends());
         Mockito.when(gardenUserService.getUserById(sender)).thenReturn(new GardenUser());
+        Mockito.when(bindingResult.hasErrors()).thenReturn(false);
 
-        messageController.sendMessage(receiver, messageDTO, authentication,  model,session);
+        messageController.sendMessage(receiver, messageDTO, bindingResult, authentication,  model,session);
         Mockito.verify(mockedMessageService).sendMessage(sender, receiver, messageDTO);
+    }
+
+    @Test
+    void givenMessageTooLong_whenClickSend_ThenSendingUnsuccessful() {
+        Long sender = 1L;
+        Long receiver = 2L;
+        String a = "a";
+        MessageDTO messageDTO = new MessageDTO(a.repeat(161), "token");
+        session.setAttribute("submissionToken", "token");
+
+        Mockito.when(authentication.getPrincipal()).thenReturn(sender);
+        Mockito.when(mockedFriendService.getFriendship(any(), any())).thenReturn(new Friends());
+        Mockito.when(gardenUserService.getUserById(sender)).thenReturn(new GardenUser());
+        Mockito.when(bindingResult.hasErrors()).thenReturn(true);
+
+
+        String result = messageController.sendMessage(receiver, messageDTO, bindingResult, authentication,  model, session);
+        assertEquals("users/message", result);
     }
 }

@@ -161,8 +161,9 @@ public class PlantControllerTest {
         PlantDTO testPlantDTO = new PlantDTO("test", "1", "test", "2003-01-01");
         BindingResult bindingResult = Mockito.mock(BindingResult.class);
         Model model = Mockito.mock(Model.class);
+        HttpSession session = Mockito.mock(HttpSession.class);
 
-        plantController.submitEditPlantForm(testGarden.getId(), testPlant.getId(), file, "", testPlantDTO, bindingResult, model);
+        plantController.submitEditPlantForm(testGarden.getId(), testPlant.getId(), file, "", testPlantDTO, bindingResult, model, session);
 
         List<Plant> savedPlants = plantRepository.findAll();
         Plant savedPlant = savedPlants.get(savedPlants.size() - 1);
@@ -179,8 +180,9 @@ public class PlantControllerTest {
         PlantDTO testPlantDTO = new PlantDTO("test", "1", "test", "2003-01-01");
         BindingResult bindingResult = Mockito.mock(BindingResult.class);
         Model model = Mockito.mock(Model.class);
+        HttpSession session = Mockito.mock(HttpSession.class);
 
-        plantController.submitEditPlantForm(testGarden.getId(), testPlant.getId(), file, "", testPlantDTO, bindingResult, model);
+        plantController.submitEditPlantForm(testGarden.getId(), testPlant.getId(), file, "", testPlantDTO, bindingResult, model, session);
 
         List<Plant> savedPlants = plantRepository.findAll();
         Plant savedPlant = savedPlants.get(savedPlants.size() - 1);

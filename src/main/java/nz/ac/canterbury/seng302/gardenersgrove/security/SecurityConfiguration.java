@@ -65,6 +65,7 @@ public class SecurityConfiguration {
         http.authorizeHttpRequests(auth -> {
             // These paths are accessible to anyone, with or without auth.
             auth.requestMatchers(
+                    "/",
                     "/users/register",
                     "/users/login",
                     "/users/user/*/authenticate-email",
