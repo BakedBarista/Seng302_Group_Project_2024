@@ -1,36 +1,11 @@
 package nz.ac.canterbury.seng302.gardenersgrove.cucumber.step_definitions;
 
-import static nz.ac.canterbury.seng302.gardenersgrove.entity.Friends.Status.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.assertArg;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.clearInvocations;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.Map;
-
-import jakarta.servlet.ServletContext;
-import org.mockito.ArgumentCaptor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.ui.Model;
-
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.SuggestedUserController;
@@ -38,6 +13,18 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.FriendsRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
+import org.mockito.ArgumentCaptor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.ui.Model;
+
+import java.util.Map;
+
+import static nz.ac.canterbury.seng302.gardenersgrove.entity.Friends.Status.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 public class U800_2_1_ConnectionFeed {
@@ -101,7 +88,7 @@ public class U800_2_1_ConnectionFeed {
 
         String result = suggestedUserController.home(authentication, model, req, res);
 
-        assertEquals("home", result);
+        assertEquals("suggestedFriends", result);
     }
 
     @When("I accept or decline a profile")
@@ -120,7 +107,7 @@ public class U800_2_1_ConnectionFeed {
 
         String result = suggestedUserController.home(authentication, model, req, res);
 
-        assertEquals("home", result);
+        assertEquals("suggestedFriends", result);
         verify(model).addAttribute(eq("userList"), assertArg((String jsonUsers) -> {
             assertFalse(jsonUsers.contains(userBen.getFullName()));
         }));
@@ -208,7 +195,7 @@ public class U800_2_1_ConnectionFeed {
 
         clearInvocations(model);
         String result = suggestedUserController.home(authentication, model, req, res);
-        assertEquals("home", result);
+        assertEquals("suggestedFriends", result);
 
         ArgumentCaptor<String> jsonCaptor = ArgumentCaptor.forClass(String.class);
         verify(model).addAttribute(eq("userList"), jsonCaptor.capture());

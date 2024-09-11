@@ -119,11 +119,11 @@
 
             .hero-section {
                 margin-top: 0;
-                height: calc(100vh - 76px);
+                height: calc(100vh - 57px);
             }
         }
         @media (min-width: 768px) {
-            .hero-section {
+            main {
                 margin-top: 76px;
             }
         }
@@ -135,7 +135,7 @@
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container align-items-center">
-        <a class="navbar-brand" href="#"><img th:src="@{/img/logo.svg}" alt="Pollinat*r Logo"></a>
+        <a class="navbar-brand" href="#"><img th:src="@{/img/logo.svg}" alt="Pollinat*r" style="height: 30px;"></a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -163,6 +163,7 @@
 </nav>
 
 <!-- Hero Section -->
+<main>
 <section class="hero-section" id="home">
     <div class="container d-lg-flex align-items-center d-none">
         <div class="hero-content">
@@ -253,6 +254,7 @@
 <footer style="background: #B89006;">
     <p class="text-white">&copy; 2024 Pollinat*r. All rights reserved. Together, we’re growing something beautiful.</p>
 </footer>
+</main>
 
 <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
 </body>
