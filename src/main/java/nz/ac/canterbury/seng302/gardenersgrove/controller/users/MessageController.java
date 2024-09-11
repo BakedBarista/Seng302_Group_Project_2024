@@ -39,9 +39,9 @@ public class MessageController {
     private final FriendService friendService;
     private final MessageService messageService;
 
-    private static final String sumissionTokenString = "submissionToken";
-    private static final String messageHomeEndpoint = "users/message-home";
-    private static final String manageFriendsRedirect = "redirect:/users/manage-friends";
+    private static final String SUBMISSION_TOKEN = "submissionToken";
+    private static final String MSG_HOME_ENDPOINT = "users/message-home";
+    private static final String MSG_HOME_ENDPOINT = "redirect:/users/manage-friends";
 
     @Autowired
     public MessageController(GardenUserService userService,
@@ -111,14 +111,14 @@ public class MessageController {
         logger.info("GET message page opened to user {}", requestedUserId);
 
         String submissionToken = UUID.randomUUID().toString();
-        session.setAttribute(sumissionTokenString, submissionToken);
+        session.setAttribute(SUBMISSION_TOKEN, submissionToken);
         Long loggedInUserId = (Long) authentication.getPrincipal();
 
         GardenUser sentToUser = userService.getUserById(requestedUserId);
 
         Friends isFriend = friendService.getFriendship(loggedInUserId, requestedUserId);
         if (isFriend == null) {
-            return manageFriendsRedirect;
+            return MSG_HOME_ENDPOINT;
         }
 
         List<Message> allMessages = messageService.findAllRecentChats(loggedInUserId);
@@ -130,7 +130,7 @@ public class MessageController {
         messageService.setupModelAttributes(model, loggedInUserId, requestedUserId, sentToUser, recentChats,
                 submissionToken);
 
-        return messageHomeEndpoint;
+        return MSG_HOME_ENDPOINT;
     }
 
     /**
@@ -172,7 +172,7 @@ public class MessageController {
         logger.info("POST send message to {}", receiver);
 
         String tokenFromForm = messageDTO.getSubmissionToken();
-        String sessionToken = (String) session.getAttribute(sumissionTokenString);
+        String sessionToken = (String) session.getAttribute(SUBMISSION_TOKEN);
 
         if (bindingResult.hasErrors()) {
             logger.info("Binding result has errors");
@@ -192,23 +192,23 @@ public class MessageController {
         if (sessionToken != null && sessionToken.equals(tokenFromForm)) {
             Long sender = (Long) authentication.getPrincipal();
             messageService.sendMessage(sender, receiver, messageDTO);
-            session.removeAttribute(sumissionTokenString);
+            session.removeAttribute(SUBMISSION_TOKEN);
         }
         return messageFriend(receiver, authentication, model, session);
     }
 
     @PostConstruct
     public void dummyMessages() {
-        String TOKEN = "token";
+        String token = "token";
         GardenUser u1 = userService.getUserByEmail("stynesluke@gmail.com");
         GardenUser u2 = userService.getUserByEmail("jan.doe@gmail.com");
         if (u1 != null && u2 != null) {
             messageService.sendMessageWithTimestamp(u1.getId(), u2.getId(),
-                    new MessageDTO("Hello I am Luke Stynes! :)", TOKEN), LocalDateTime.now().minusDays(2));
+                    new MessageDTO("Hello I am Luke Stynes! :)", token), LocalDateTime.now().minusDays(2));
             messageService.sendMessageWithTimestamp(u2.getId(), u1.getId(),
-                    new MessageDTO("Hello Luke Stynes, I am Jan Doe.", TOKEN), LocalDateTime.now().minusDays(1));
+                    new MessageDTO("Hello Luke Stynes, I am Jan Doe.", token), LocalDateTime.now().minusDays(1));
             messageService.sendMessageWithTimestamp(u1.getId(), u2.getId(),
-                    new MessageDTO("Wow! What great bananas you grow Jan Doe.", TOKEN),
+                    new MessageDTO("Wow! What great bananas you grow Jan Doe.", token),
                     LocalDateTime.now().minusDays(1));
             messageService.sendMessageWithTimestamp(u1.getId(), u2.getId(),
                     new MessageDTO(
@@ -216,7 +216,7 @@ public class MessageController {
                                     "write in a really long message each time he runs the application locally, it is really "
                                     +
                                     "annoying so he asked me to write one that goes past the end of the screen",
-                            TOKEN),
+                            token),
                     LocalDateTime.now());
         }
     }
@@ -249,17 +249,17 @@ public class MessageController {
             Map<GardenUser, String> recentChats = messageService.convertToPreview(recentMessagesMap);
 
             String submissionToken = UUID.randomUUID().toString();
-            session.setAttribute(sumissionTokenString, submissionToken);
+            session.setAttribute(SUBMISSION_TOKEN, submissionToken);
             GardenUser sentToUser = userService.getUserById(requestedUserId);
 
             Friends isFriend = friendService.getFriendship(loggedInUserId, requestedUserId);
             if (isFriend == null) {
-                return manageFriendsRedirect;
+                return MSG_HOME_ENDPOINT;
             }
 
             messageService.setupModelAttributes(model, loggedInUserId, requestedUserId, sentToUser, recentChats,
                     submissionToken);
         }
-        return messageHomeEndpoint;
+        return MSG_HOME_ENDPOINT;
     }
 }
