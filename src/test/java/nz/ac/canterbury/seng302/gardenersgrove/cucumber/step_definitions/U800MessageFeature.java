@@ -47,7 +47,7 @@ public class U800MessageFeature {
     private static Authentication authentication;
 
     private static GardenUser user = new GardenUser();
-    private static Long myId;
+    public static Long myId;
     private static Long receiverId;
     private static MessageDTO messageDTO;
     private static MockHttpSession session;
