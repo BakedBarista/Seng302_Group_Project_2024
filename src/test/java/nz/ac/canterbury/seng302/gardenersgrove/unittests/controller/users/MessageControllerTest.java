@@ -176,4 +176,17 @@ class MessageControllerTest {
                 session);
         assertEquals("users/message", result);
     }
+
+    @Test
+    void whenUpdateMessages_thenGetsMessages() {
+        Long sender = 1L;
+        Long receiver = 2L;
+        Mockito.when(authentication.getPrincipal()).thenReturn(sender);
+        Mockito.when(mockedFriendService.getFriendship(any(), any())).thenReturn(new Friends());
+        Mockito.when(gardenUserService.getUserById(sender)).thenReturn(new GardenUser());
+
+        String result = messageController.messageFriendList(receiver, authentication, model, session);
+
+        assertEquals("users/messagesList", result);
+    }
 }

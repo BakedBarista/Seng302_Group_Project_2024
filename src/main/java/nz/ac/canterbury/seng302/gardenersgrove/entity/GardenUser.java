@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static jakarta.persistence.FetchType.EAGER;
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationConstants.MAX_USER_DESCRIPTION_LENGTH;
 
 
@@ -20,8 +21,6 @@ import static nz.ac.canterbury.seng302.gardenersgrove.validation.ValidationConst
  * Entity class reflecting an entry of fname, lname, email, password and date of birth
  * Note the @link{Entity} annotation required for declaring this as a persistence entity
  */
-
-
 @Entity
 public class GardenUser {
     @Id
@@ -90,9 +89,8 @@ public class GardenUser {
     private Instant accountDisabledExpiryInstant;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "gardenUser", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "gardenUser", cascade = CascadeType.ALL, fetch = EAGER)
     private Set<Plant> favouritePlants = new HashSet<>();
-
 
     @PrimaryKeyJoinColumn
     @OneToOne(mappedBy = "favouriteGarden", cascade = CascadeType.ALL)
@@ -101,15 +99,15 @@ public class GardenUser {
     /**
      * JPA required no-args constructor
      */
-    public GardenUser() {}
+    public GardenUser() {
+    }
 
     /**
      * Creates import java.util.HashSet; a new GardenUser object
-     *
-     * @param fname first name of user
-     * @param lname last name of user 
-     * @param email email of user 
-     * @param password password of user 
+     * @param fname       first name of user
+     * @param lname       last name of user
+     * @param email       email of user
+     * @param password    password of user
      * @param dateOfBirth date of birth of use
      */
     public GardenUser(String fname, String lname, String email, String password, LocalDate dateOfBirth) {
@@ -123,7 +121,6 @@ public class GardenUser {
 
     /**
      * Gets the authorities granted to the user
-     *
      * @return the authorities granted to the user
      */
     public List<GrantedAuthority> getAuthorities() {
@@ -132,7 +129,6 @@ public class GardenUser {
 
     /**
      * Retrieves the id of user
-     *
      * @return id of user
      */
     public Long getId() {
@@ -141,7 +137,6 @@ public class GardenUser {
 
     /**
      * Setter for the user's first name
-     *
      * @param fname the user's first name
      */
     public void setFname(String fname) {
@@ -150,7 +145,6 @@ public class GardenUser {
 
     /**
      * Retrieves the user's first name
-     *
      * @return user's first name
      */
     public String getFname() {
@@ -159,7 +153,6 @@ public class GardenUser {
 
     /**
      * Setter for the user's last name
-     *
      * @param lname the user's last name
      */
     public void setLname(String lname) {
@@ -168,7 +161,6 @@ public class GardenUser {
 
     /**
      * Retrieves user's last name
-     *
      * @return user's last name
      */
     public String getLname() {
@@ -177,7 +169,6 @@ public class GardenUser {
 
     /**
      * Constructs the user's full name from their first and last names
-     *
      * @return the user's full name
      */
     public String getFullName() {
@@ -206,7 +197,6 @@ public class GardenUser {
 
     /**
      * Setter for the user's email
-     *
      * @param email the user's email
      */
     public void setEmail(String email) {
@@ -215,7 +205,6 @@ public class GardenUser {
 
     /**
      * Retrieves user's email
-     *
      * @return user's email
      */
     public String getEmail() {
@@ -224,7 +213,6 @@ public class GardenUser {
 
     /**
      * Setter for the user's date of birth
-     *
      * @param dateOfBirth the user's date of birth
      */
     public void setDateOfBirth(LocalDate dateOfBirth) {
@@ -233,7 +221,6 @@ public class GardenUser {
 
     /**
      * Retrieves user's date of birth
-     *
      * @return user's date of birth
      */
     public LocalDate getDateOfBirth() {
@@ -242,7 +229,6 @@ public class GardenUser {
 
     /**
      * Sets the password of the user
-     *
      * @param password the password to set
      */
     public void setPassword(String password) {
@@ -252,7 +238,6 @@ public class GardenUser {
 
     /**
      * Checks if the provided password matches the user's password
-     *
      * @param password password to check
      * @return True if the password matches, otherwise false
      */
@@ -263,7 +248,6 @@ public class GardenUser {
 
     /**
      * Retrieves the content type of the user's profile picture
-     *
      * @return The content type of the profile picture
      */
     public String getProfilePictureContentType() {
@@ -272,7 +256,6 @@ public class GardenUser {
 
     /**
      * Retrieves the byte array representing the user's profile picture
-     *
      * @return The byte array of the profile picture
      */
     public byte[] getProfilePicture() {
@@ -298,8 +281,7 @@ public class GardenUser {
 
     /**
      * Sets the profile picture of the user
-     *
-     * @param contentType contentType The content type of the profile picture
+     * @param contentType    contentType The content type of the profile picture
      * @param profilePicture rofilePicture The byte array representing the profile picture
      */
     public void setProfilePicture(String contentType, byte[] profilePicture) {
@@ -309,7 +291,7 @@ public class GardenUser {
 
     /**
      * Sets the public profile banner and the content type of the banner for the user
-     * @param contentType the content type of the banner
+     * @param contentType   the content type of the banner
      * @param profileBanner the byte array representing the banner
      */
     public void setProfileBanner(String contentType, byte[] profileBanner) {
@@ -319,7 +301,7 @@ public class GardenUser {
 
     /**
      * Set the emailValidationToken of this user
-     *  - may be null
+     * - may be null
      */
     public void setEmailValidationToken(String emailValidationToken) {
         this.emailValidationToken = emailValidationToken;
@@ -328,7 +310,7 @@ public class GardenUser {
 
     /**
      * Get this users emailValidationToken
-     *  - may be null
+     * - may be null
      * @return emailValidationToken
      */
     public String getEmailValidationToken() {
@@ -337,7 +319,7 @@ public class GardenUser {
 
     /**
      * Get this users resetPasswordToken
-     *  - may be null
+     * - may be null
      * @return emailValidationToken
      */
     public String getResetPasswordToken() {
@@ -360,7 +342,7 @@ public class GardenUser {
 
     /**
      * Return the emailValidationTokenExpiryInstant of this user
-     *  - may be null
+     * - may be null
      * @return emailValidationTokenExpiryInstant
      */
     public Instant getEmailValidationTokenExpiryInstant() {
@@ -376,7 +358,7 @@ public class GardenUser {
 
     /**
      * Return the resetPasswordTokenExpiryInstant of this user
-     *  - may be null
+     * - may be null
      * @return resetPasswordTokenExpiryInstant
      */
     public Instant getResetPasswordTokenExpiryInstant() {
@@ -385,7 +367,6 @@ public class GardenUser {
 
     /**
      * Sets the id of the user. This method only intended for use in tests.
-     * 
      * @param id the id of the user
      */
     public void setId(long id) {
@@ -394,7 +375,6 @@ public class GardenUser {
 
     /**
      * Gets the strike count of the user
-     *
      * @return the number of strikes the user has accumulated
      */
     public int getStrikeCount() {
@@ -403,7 +383,6 @@ public class GardenUser {
 
     /**
      * Sets the strike count of the user
-     * 
      * @param strikeCount the number of strikes the user has accumulated
      */
     public void setStrikeCount(int strikeCount) {
@@ -412,7 +391,6 @@ public class GardenUser {
 
     /**
      * Checks if the user's account is disabled
-     *
      * @return true if the account is disabled, otherwise false
      */
     public boolean isAccountDisabled() {
@@ -421,7 +399,6 @@ public class GardenUser {
 
     /**
      * Sets the accountDisabled status of the user
-     *
      * @param accountDisabled true if the account is disabled, otherwise false
      */
     public void setAccountDisabled(boolean accountDisabled) {
@@ -430,7 +407,6 @@ public class GardenUser {
 
     /**
      * Gets the time at which the user's account will be re-enabled, if there is one
-     * 
      * @return the time at which the user's account will be re-enabled
      */
     public Instant getAccountDisabledExpiryInstant() {
@@ -440,20 +416,11 @@ public class GardenUser {
     /**
      * Sets the time at which the user's account will be re-enabled, or null if the
      * account should not be automatically re-enabled
-     *
      * @param accountDisabledExpiryInstant the time at which the user's account will
      *                                     be re-enabled
      */
     public void setAccountDisabledExpiryInstant(Instant accountDisabledExpiryInstant) {
         this.accountDisabledExpiryInstant = accountDisabledExpiryInstant;
-    }
-
-    /**
-     * Gets the favourite plants of this user
-     * @return list of favourite plants
-     */
-    public Set<Plant> getFavouritePlants() {
-        return favouritePlants;
     }
 
     /**
@@ -469,6 +436,14 @@ public class GardenUser {
     public void setFavoriteGarden(Garden garden) {
         this.favoriteGarden = garden;
         garden.setFavouriteGarden(this);
+    }
+
+    /**
+     * Gets the favourite plants of this user
+     * @return set of favourite plants
+     */
+    public Set<Plant> getFavouritePlants() {
+        return favouritePlants;
     }
 
     /**
@@ -495,5 +470,14 @@ public class GardenUser {
      */
     public void addFavouritePlant(Plant favouritePlant) {
         favouritePlants.add(favouritePlant);
-        favouritePlant.setFavourite(this);}
+        favouritePlant.setFavourite(this);
+    }
+
+    /**
+     * Remove the favourite plant from favourite plant list
+     * @param plantId id of favourite plant
+     */
+    public void removeFavouritePlant(Long plantId) {
+        this.favouritePlants.removeIf(plant -> plant.getId().equals(plantId));
+    }
 }

@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-public class U800MessageFeature {
+public class U800_3_1_MessageFeature {
     @Autowired
     private GardenUserService gardenUserService;
     @Autowired
@@ -48,7 +48,7 @@ public class U800MessageFeature {
     private static Authentication authentication;
 
     private static GardenUser user = new GardenUser();
-    private static Long myId;
+    public static Long myId;
     private static Long receiverId;
     private static MessageDTO messageDTO;
     private static MockHttpSession session;
