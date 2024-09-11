@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.controller;
 
+import nz.ac.canterbury.seng302.gardenersgrove.controller.api.DeleteFavouritePlantController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
@@ -9,15 +10,25 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.core.Authentication;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import static org.mockito.Mockito.mock;
+
+@SuppressWarnings("SpringJavaInjectionsPointsAutowiringInspection")
 @SpringBootTest
 public class DeleteFavouritePlantControllerTest {
+
+    @Autowired
+    private DeleteFavouritePlantController controller;
 
     @Autowired
     private GardenService gardenService;
@@ -30,14 +41,20 @@ public class DeleteFavouritePlantControllerTest {
 
     private GardenUser user;
 
+    private Authentication authentication;
     @BeforeEach
     void setup() {
+        authentication = mock(Authentication.class);
+
         if (userService.getUserByEmail("johndoe@someemail.com") == null) {
             user = new GardenUser("john", "doe", "johndoe@someemail.com", "password", LocalDate.now());
             userService.addUser(user);
         } else {
             user = userService.getUserByEmail("johndoe@someemail.com");
+            Mockito.when(authentication.getPrincipal()).thenReturn(user.getId());
+            user.getFavouritePlants().forEach(plant -> controller.deleteFavouritePlant(Map.of("plantId", plant.getId()), authentication));
         }
+
         Garden garden = new Garden("name", "1", "streetName",
                 "suburb", "city", "country", "1000", 0D, 0D,
                 "description", 2D, "gardenImage".getBytes(), "gardenImageContentType");
@@ -56,16 +73,24 @@ public class DeleteFavouritePlantControllerTest {
 
         user.setFavouritePlants(Set.of(plantA, plantB, plantC));
         userService.addUser(user);
+
+        Mockito.when(authentication.getPrincipal()).thenReturn(user.getId());
     }
 
     @Test
     void givenIAmAuthorizedAndHavePlantWithIdFavourited_whenIDeletePlantWithId_thenPlantWithIdIsRemoved() {
-        GardenUser currentUser = userService.getUserById(user.getId());
-        Plant plantToRemove = currentUser.getFavouritePlants().stream().toList().get(0);
+        Plant plantToRemove = user.getFavouritePlants().stream().toList().get(0);
+        Map<String, Long> responseBody = new HashMap<>();
+        responseBody.put("plantId", plantToRemove.getId());
 
-        Boolean wasMatch = userService.removeFavouritePlant(currentUser.getId(), plantToRemove.getId());
+        System.out.println(user.getFavouritePlants());
+        System.out.println(user.getFavouritePlants().size());
+        System.out.println(responseBody);
+
+        Boolean wasMatch = controller.deleteFavouritePlant(responseBody, authentication);
 
         GardenUser updatedUser = userService.getUserById(user.getId());
+        System.out.println(updatedUser.getFavouritePlants());
 
         // assert that only one plant was removed
         Assertions.assertEquals(2, updatedUser.getFavouritePlants().size());
@@ -77,17 +102,20 @@ public class DeleteFavouritePlantControllerTest {
 
     @Test
     void givenIAmAuthorizedAndHavePlantsWithIdsFavourited_whenIDeletePlantsWithIds_thenPlantsWithIdsAreRemoved() {
-        GardenUser currentUser = userService.getUserById(user.getId());
-        List<Plant> plants = currentUser.getFavouritePlants().stream().toList();
+        List<Plant> plants = user.getFavouritePlants().stream().toList();
         Plant plantA = plants.get(0);
         Plant plantB = plants.get(1);
         Plant plantC = plants.get(2);
 
-        Boolean wasMatchA = userService.removeFavouritePlant(currentUser.getId(), plantA.getId());
-        Boolean wasMatchC = userService.removeFavouritePlant(currentUser.getId(), plantC.getId());
+        Map<String, Long> responseBodyA = new HashMap<>();
+        responseBodyA.put("plantId", plantA.getId());
+        Boolean wasMatchA = controller.deleteFavouritePlant(responseBodyA, authentication);
+
+        Map<String, Long> responseBodyC = new HashMap<>();
+        responseBodyC.put("plantId", plantC.getId());
+        Boolean wasMatchC = controller.deleteFavouritePlant(responseBodyC, authentication);
 
         GardenUser updatedUser = userService.getUserById(user.getId());
-
         // assert there is only 1 plant left
         Assertions.assertEquals(1, updatedUser.getFavouritePlants().size());
         // assert removal of A was matched and no longer in the list

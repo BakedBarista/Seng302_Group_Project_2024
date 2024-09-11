@@ -4,15 +4,12 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-import java.util.stream.Collectors;
 import java.util.*;
 
 /**
@@ -282,7 +279,6 @@ public class GardenUserService {
      */
     public Boolean removeFavouritePlant(Long userId, Long plantId) {
         GardenUser user = gardenUserRepository.findById(userId).orElseThrow();
-
         boolean match = user.getFavouritePlants().stream().anyMatch(plant -> plant.getId().equals(plantId));
         if (match) {
             user.removeFavouritePlant(plantId);

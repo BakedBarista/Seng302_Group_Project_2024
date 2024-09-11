@@ -41,11 +41,8 @@ public abstract class BasePlant {
     @JoinColumn(name = "garden_user_id")
     private GardenUser gardenUser;
 
-
     @Enumerated(EnumType.STRING)
     private PlantStatus status = PlantStatus.NOT_GROWING;
-
-
 
     @Column()
     protected LocalDate harvestedDate;

@@ -1,11 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
-import java.util.*;
-
-import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import org.springframework.stereotype.Service;
-
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
@@ -13,6 +9,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -147,6 +144,15 @@ public class PlantService {
     public  List<Plant> getAllPlants(GardenUser gardenUser, String searchTerm) {
         return plantRepository.findPlantsFromSearch(gardenUser, searchTerm);
     }
+
+    public void updatePlantUnfavourited(Long plantId) {
+        Optional<Plant> optionalPlant = this.getPlantById(plantId);
+        if (optionalPlant.isPresent()) {
+            Plant plant = optionalPlant.get();
+            plant.setFavourite(null);
+            save(plant);
+        }
     }
+}
 
 

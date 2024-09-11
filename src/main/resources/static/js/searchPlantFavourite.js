@@ -262,8 +262,6 @@ function updateFavouritePlants() {
         document.getElementById('selectedPlantId3')?.value
     ].filter(id => id).filter(item => !Object.values(deletedPlantIds).includes(item));
 
-    console.log(deletedPlantIds)
-    console.log(newPlantIds)
 
     for (let currentPlant of Object.values(deletedPlantIds)) {
         if (!favouritePlants.some(plant => plant.id === parseInt(currentPlant))) {
