@@ -49,7 +49,7 @@ public class DeleteFavouritePlantController {
             Authentication authentication
     ) {
         Long plantId = requestBody.get("plantId");
-        logger.info("DELETE /users/delete-favourite-plant/{}", plantId);
+        logger.info("DELETE /users/delete-favourite-plant");
 
         Long userId = (Long) authentication.getPrincipal();
         plantService.updatePlantUnfavourited(plantId);
