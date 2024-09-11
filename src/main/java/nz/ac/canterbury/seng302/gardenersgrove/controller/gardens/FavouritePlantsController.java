@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -66,7 +67,10 @@ public class FavouritePlantsController {
      */
     @Transactional
     @PutMapping("/users/edit-public-profile/favourite-plant")
-    public ResponseEntity<String> updateFavouritePlants(@RequestBody Map<String, List<Long>> request) {
+    public ResponseEntity<String> updateFavouritePlants(
+            @RequestBody Map<String, List<Long>> request,
+            Authentication authentication
+    ) {
         Set<Plant> plantsSet = new HashSet<>();
         List<Long> plantIds = request.get("ids");
 
@@ -84,7 +88,8 @@ public class FavouritePlantsController {
             }
 
             if (!plantsSet.isEmpty()) {
-                userService.updateFavouritePlant(userService.getCurrentUser().getId(), plantsSet);
+                Long userId = (Long) authentication.getPrincipal();
+                userService.updateFavouritePlant(userId, plantsSet);
             }
             return ResponseEntity.ok().build();
         } catch (Exception e) {

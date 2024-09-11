@@ -13,7 +13,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
@@ -22,7 +21,6 @@ import org.springframework.validation.BindingResult;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 
@@ -111,5 +109,18 @@ class MessageControllerTest {
 
         String result = messageController.sendMessage(receiver, messageDTO, bindingResult, authentication,  model, session);
         assertEquals("users/message", result);
+    }
+
+    @Test
+    void whenUpdateMessages_thenGetsMessages() {
+        Long sender = 1L;
+        Long receiver = 2L;
+        Mockito.when(authentication.getPrincipal()).thenReturn(sender);
+        Mockito.when(mockedFriendService.getFriendship(any(), any())).thenReturn(new Friends());
+        Mockito.when(gardenUserService.getUserById(sender)).thenReturn(new GardenUser());
+
+        String result = messageController.messageFriendList(receiver, authentication, model, session);
+
+        assertEquals("users/messagesList", result);
     }
 }
