@@ -41,7 +41,7 @@ public class MessageController {
 
     private static final String SUBMISSION_TOKEN = "submissionToken";
     private static final String MSG_HOME_ENDPOINT = "users/message-home";
-    private static final String MSG_HOME_ENDPOINT = "redirect:/users/manage-friends";
+    private static final String MANAGE_FRIENDS_REDIRECT = "redirect:/users/manage-friends";
 
     @Autowired
     public MessageController(GardenUserService userService,
@@ -118,7 +118,7 @@ public class MessageController {
 
         Friends isFriend = friendService.getFriendship(loggedInUserId, requestedUserId);
         if (isFriend == null) {
-            return MSG_HOME_ENDPOINT;
+            return MANAGE_FRIENDS_REDIRECT;
         }
 
         List<Message> allMessages = messageService.findAllRecentChats(loggedInUserId);
@@ -254,7 +254,7 @@ public class MessageController {
 
             Friends isFriend = friendService.getFriendship(loggedInUserId, requestedUserId);
             if (isFriend == null) {
-                return MSG_HOME_ENDPOINT;
+                return MANAGE_FRIENDS_REDIRECT;
             }
 
             messageService.setupModelAttributes(model, loggedInUserId, requestedUserId, sentToUser, recentChats,
