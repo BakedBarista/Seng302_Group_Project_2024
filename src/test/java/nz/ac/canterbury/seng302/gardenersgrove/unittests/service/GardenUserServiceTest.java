@@ -1,20 +1,19 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unittests.service;
 
-import java.util.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
-import org.assertj.core.util.Arrays;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -26,14 +25,14 @@ class GardenUserServiceTest {
     private Plant plant2;
     private GardenUser mockUser;
 
-    private GardenUser testUser1 = new GardenUser("John", "Doe", "jdo123@uclive.ac.nz", "password",
-            null);
-    private GardenUser testUser2 = new GardenUser("Jane", "Doe", "jdo456@uclive.ac.nz", "password",
-            null);
+    private final GardenUser testUser1 = new GardenUser("John", "Doe",
+            "jdo123@uclive.ac.nz", "password",null);
+    private final GardenUser testUser2 = new GardenUser("Jane", "Doe",
+            "jdo456@uclive.ac.nz", "password",null);
 
     @BeforeEach
     void setUp() {
-        mockRepository = Mockito.mock(GardenUserRepository.class);
+        mockRepository = mock(GardenUserRepository.class);
         gardenUserService = new GardenUserService(mockRepository);
         // Initialize test plants
         plant1 = new Plant("Tomato", "1", null, null);
@@ -48,8 +47,6 @@ class GardenUserServiceTest {
 
         testUser1.setId(1L);
 
-
-
         testUser1.addFavouritePlant(plant1);
         testUser1.addFavouritePlant(plant2);
 
@@ -61,7 +58,7 @@ class GardenUserServiceTest {
     @Test
     void givenGetUsersCalled_thenReturnsUsers() {
         var allUsers = List.of(testUser1, testUser2);
-        when(mockRepository.findAll()).thenReturn(allUsers);
+        Mockito.when(mockRepository.findAll()).thenReturn(allUsers);
 
         var users = gardenUserService.getUser();
 
@@ -73,7 +70,7 @@ class GardenUserServiceTest {
     void givenUserWithEmailExists_whenAddUserCalled_thenThrowsException() {
         testUser1.setEmail("email@example.com");
         testUser2.setEmail("email@example.com");
-        when(mockRepository.findByEmail(testUser1.getEmail())).thenReturn(Optional.of(testUser1));
+        Mockito.when(mockRepository.findByEmail(testUser1.getEmail())).thenReturn(Optional.of(testUser1));
 
         assertThrows(IllegalStateException.class, () -> gardenUserService.addUser(testUser2));
     }
@@ -81,7 +78,7 @@ class GardenUserServiceTest {
     @Test
     void givenUserWithEmailExists_whenGetUserByEmailCalled_thenReturnsUser() {
         var email = testUser1.getEmail();
-        when(mockRepository.findByEmail(email)).thenReturn(Optional.of(testUser1));
+        Mockito.when(mockRepository.findByEmail(email)).thenReturn(Optional.of(testUser1));
 
         var user = gardenUserService.getUserByEmail(email);
 
@@ -92,7 +89,7 @@ class GardenUserServiceTest {
     @Test
     void givenUserWithEmailDoesntExist_whenGetUserByEmailCalled_thenReturnsNull() {
         var email = testUser1.getEmail();
-        when(mockRepository.findByEmail(email)).thenReturn(Optional.empty());
+        Mockito.when(mockRepository.findByEmail(email)).thenReturn(Optional.empty());
 
         var user = gardenUserService.getUserByEmail(email);
 
@@ -103,7 +100,7 @@ class GardenUserServiceTest {
     @Test
     void givenGetUserByEmailAndPasswordCalledWithValidEmailAndPassword_thenReturnsUser() {
         var email = testUser1.getEmail();
-        when(mockRepository.findByEmail(email)).thenReturn(Optional.of(testUser1));
+        Mockito.when(mockRepository.findByEmail(email)).thenReturn(Optional.of(testUser1));
 
         var user = gardenUserService.getUserByEmailAndPassword(email, "password");
 
@@ -114,7 +111,7 @@ class GardenUserServiceTest {
     @Test
     void givenGetUserByEmailAndPasswordCalledWithInvalidEmail_thenReturnsNull() {
         var email = testUser1.getEmail();
-        when(mockRepository.findByEmail(email)).thenReturn(Optional.empty());
+        Mockito.when(mockRepository.findByEmail(email)).thenReturn(Optional.empty());
 
         var user = gardenUserService.getUserByEmailAndPassword(email, "password");
 
@@ -125,7 +122,7 @@ class GardenUserServiceTest {
     @Test
     void givenGetUserByEmailAndPasswordCalledWithInvalidPassword_thenReturnsNull() {
         var email = testUser1.getEmail();
-        when(mockRepository.findByEmail(email)).thenReturn(Optional.of(testUser1));
+        Mockito.when(mockRepository.findByEmail(email)).thenReturn(Optional.of(testUser1));
 
         var user = gardenUserService.getUserByEmailAndPassword(email, "invalid-password");
 
@@ -136,7 +133,7 @@ class GardenUserServiceTest {
     @Test
     void givenGetUserByIdCalledWithValidId_thenReturnsUser() {
         var id = 1L;
-        when(mockRepository.findById(id)).thenReturn(Optional.of(testUser1));
+        Mockito.when(mockRepository.findById(id)).thenReturn(Optional.of(testUser1));
 
         var user = gardenUserService.getUserById(id);
 
@@ -147,7 +144,7 @@ class GardenUserServiceTest {
     @Test
     void giveGetUserByIdCalledWithInvalidId_thenReturnsNull() {
         var id = 1L;
-        when(mockRepository.findById(id)).thenReturn(Optional.empty());
+        Mockito.when(mockRepository.findById(id)).thenReturn(Optional.empty());
 
         var user = gardenUserService.getUserById(id);
 
@@ -160,7 +157,7 @@ class GardenUserServiceTest {
         var id = 1L;
         var contentType = "text/plain";
         var profilePicture = "profile-picture".getBytes();
-        when(mockRepository.findById(id)).thenReturn(Optional.of(testUser1));
+        Mockito.when(mockRepository.findById(id)).thenReturn(Optional.of(testUser1));
 
         gardenUserService.setProfilePicture(id, contentType, profilePicture);
 
@@ -174,7 +171,7 @@ class GardenUserServiceTest {
         var id = 1L;
         var contentType = "text/plain";
         var banner = "banner".getBytes();
-        when(mockRepository.findById(id)).thenReturn(Optional.of(testUser1));
+        Mockito.when(mockRepository.findById(id)).thenReturn(Optional.of(testUser1));
 
         gardenUserService.setProfileBanner(id, contentType, banner);
 
@@ -188,7 +185,7 @@ class GardenUserServiceTest {
         var id = 1L;
         var contentType = "text/plain";
         var profilePicture = "profile-picture".getBytes();
-        when(mockRepository.findById(id)).thenReturn(Optional.empty());
+        Mockito.when(mockRepository.findById(id)).thenReturn(Optional.empty());
 
         gardenUserService.setProfilePicture(id, contentType, profilePicture);
 
@@ -252,7 +249,6 @@ class GardenUserServiceTest {
 
     }
 
-
     @Test
     void testUpdateFavouritePlant_SuccessfullyAddsPlant() {
         Plant newPlant = new Plant("Lettuce", "4", null, null);
@@ -270,9 +266,46 @@ class GardenUserServiceTest {
         verify(mockRepository, times(1)).save(testUser1);
     }
 
+    @Test
+    void givenUserWithFavouritePlant_whenPlantIsUnfavourited_thenReturnTrue() {
+        Long plantId = 1L;
+        Long userId = 1L;
+        Plant plantA = mock(Plant.class);
+        Plant plantB = mock(Plant.class);
+        Plant plantC = mock(Plant.class);
 
+        Set<Plant> favouritePlants = new HashSet<>();
+        favouritePlants.add(plantA);
+        favouritePlants.add(plantB);
+        favouritePlants.add(plantC);
+        testUser1.setFavouritePlants(favouritePlants);
 
+        Mockito.when(plantA.getId()).thenReturn(999L);
+        Mockito.when(plantC.getId()).thenReturn(999L);
+        Mockito.when(plantB.getId()).thenReturn(plantId);
+        Mockito.when(mockRepository.findById(userId)).thenReturn(Optional.of(testUser1));
+        Boolean result = gardenUserService.removeFavouritePlant(userId, plantId);
 
+        Assertions.assertTrue(result);
+    }
 
+    @Test
+    void givenUserWithoutFavouritePlant_whenPlantIsUnfavourited_thenReturnTrue() {
+        Long plantId = 1L;
+        Long userId = 1L;
+        Plant plantA = mock(Plant.class);
+        Plant plantB = mock(Plant.class);
+        Plant plantC = mock(Plant.class);
 
+        Set<Plant> favouritePlants = Set.of(plantA, plantB, plantC);
+        testUser1.setFavouritePlants(favouritePlants);
+
+        Mockito.when(plantA.getId()).thenReturn(999L);
+        Mockito.when(plantC.getId()).thenReturn(999L);
+        Mockito.when(plantB.getId()).thenReturn(999L);
+        Mockito.when(mockRepository.findById(userId)).thenReturn(Optional.of(testUser1));
+        Boolean result = gardenUserService.removeFavouritePlant(userId, plantId);
+
+        Assertions.assertFalse(result);
+    }
 }

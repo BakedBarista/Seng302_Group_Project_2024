@@ -897,7 +897,9 @@ h1, h2, h3, h4, h5, h6 {
     transform: rotateY(180deg);
 }
 
-
+.hoverable:hover {
+    cursor: pointer;
+}
 
 .plant-option.highlighted {
     background-color: #e0f7fa; /* Highlight color */
