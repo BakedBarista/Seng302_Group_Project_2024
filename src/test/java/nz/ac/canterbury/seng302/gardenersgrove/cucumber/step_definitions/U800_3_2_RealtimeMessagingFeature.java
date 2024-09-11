@@ -56,7 +56,7 @@ public class U800_3_2_RealtimeMessagingFeature {
 
     @Given("I am on the direct-messaging page for {string}")
     public void i_am_on_the_direct_messaging_page_for(String name) throws Exception {
-        user = userRepository.findById(U800MessageFeature.myId).get();
+        user = userRepository.findById(U800_3_1_MessageFeature.myId).get();
         friend = userRepository.findBySearchNoLname(name, user.getId()).get(0);
         when(authentication.getPrincipal()).thenReturn(user.getId());
         when(wsSession.isOpen()).thenReturn(true);
