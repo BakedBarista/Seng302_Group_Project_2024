@@ -68,7 +68,7 @@ class MessageWebSocketHandlerTest {
         when(principal1.getName()).thenReturn("1");
 
         TextMessage subscribe = new TextMessage("{\"type\":\"subscribe\"}");
-        TextMessage increment = new TextMessage("{\"type\":\"sendMessage\",\"reciever\":2,\"message\":\"test\"}");
+        TextMessage increment = new TextMessage("{\"type\":\"sendMessage\",\"receiver\":2,\"message\":\"test\"}");
 
         testWebSocketHandler.handleTextMessage(session1, subscribe);
         testWebSocketHandler.handleTextMessage(session1, increment);
@@ -86,7 +86,7 @@ class MessageWebSocketHandlerTest {
 
         TextMessage subscribe = new TextMessage("{\"type\":\"subscribe\"}");
         String longMessage = "test.".repeat(40);
-        TextMessage increment = new TextMessage("{\"type\":\"sendMessage\",\"reciever\":2,\"message\":\"" + longMessage + "\"}");
+        TextMessage increment = new TextMessage("{\"type\":\"sendMessage\",\"receiver\":2,\"message\":\"" + longMessage + "\"}");
 
         testWebSocketHandler.handleTextMessage(session1, subscribe);
         testWebSocketHandler.handleTextMessage(session1, increment);
@@ -101,7 +101,7 @@ class MessageWebSocketHandlerTest {
         when(principal1.getName()).thenReturn("1");
 
         TextMessage subscribe = new TextMessage("{\"type\":\"subscribe\"}");
-        TextMessage increment = new TextMessage("{\"type\":\"sendMessage\",\"reciever\":2,\"message\":\"test\"}");
+        TextMessage increment = new TextMessage("{\"type\":\"sendMessage\",\"receiver\":2,\"message\":\"test\"}");
 
         testWebSocketHandler.handleTextMessage(session1, subscribe);
         testWebSocketHandler.handleTextMessage(session1, increment);
@@ -119,7 +119,7 @@ class MessageWebSocketHandlerTest {
         when(principal2.getName()).thenReturn("2");
 
         TextMessage subscribe = new TextMessage("{\"type\":\"subscribe\"}");
-        TextMessage increment = new TextMessage("{\"type\":\"sendMessage\",\"reciever\":2,\"message\":\"test\"}");
+        TextMessage increment = new TextMessage("{\"type\":\"sendMessage\",\"receiver\":2,\"message\":\"test\"}");
 
         testWebSocketHandler.handleTextMessage(session1, subscribe);
         testWebSocketHandler.handleTextMessage(session2, subscribe);
@@ -136,7 +136,7 @@ class MessageWebSocketHandlerTest {
         when(principal1.getName()).thenReturn("1");
 
         TextMessage subscribe = new TextMessage("{\"type\":\"subscribe\"}");
-        TextMessage increment = new TextMessage("{\"type\":\"sendMessage\",\"reciever\":1,\"message\":\"test\"}");
+        TextMessage increment = new TextMessage("{\"type\":\"sendMessage\",\"receiver\":1,\"message\":\"test\"}");
 
         testWebSocketHandler.handleTextMessage(session1, subscribe);
         testWebSocketHandler.handleTextMessage(session1, increment);

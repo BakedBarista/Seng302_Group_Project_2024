@@ -73,9 +73,9 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 				break;
 			case "sendMessage":
 				Long sender = getCurrentUserId(session);
-				Long reciever = message.get("reciever").asLong();
+				Long receiver = message.get("receiver").asLong();
 				String messageText = message.get("message").asText();
-				logger.info("sendMessage {} {} {}", sender, reciever, messageText);
+				logger.info("sendMessage {} {} {}", sender, receiver, messageText);
 
 				MessageDTO messageDTO = new MessageDTO(messageText, null);
 				Set<ConstraintViolation<MessageDTO>> errors = validatorFactory.getValidator().validate(messageDTO);
@@ -84,9 +84,9 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 					sendError(session, errors, messageText);
 					return;
 				}
-				messageService.sendMessage(sender, reciever, messageDTO);
+				messageService.sendMessage(sender, receiver, messageDTO);
 
-				updateMessagesBroadcast(List.of(sender, reciever));
+				updateMessagesBroadcast(List.of(sender, receiver));
 				break;
 			case "ping":
 				try {

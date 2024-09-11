@@ -48,7 +48,7 @@ sendMessageForm.addEventListener('submit', (ev) => {
 function sendMessage() {
     const message = textArea.value;
     ws.send(
-        JSON.stringify({ type: 'sendMessage', reciever: otherUserId, message })
+        JSON.stringify({ type: 'sendMessage', receiver: otherUserId, message })
     );
 
     textArea.value = '';

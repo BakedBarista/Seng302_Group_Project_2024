@@ -84,7 +84,7 @@ public class U800_3_2_RealtimeMessagingFeature {
     }
 
     private TextMessage sendMessageTo(GardenUser user) {
-        return new TextMessage("{\"type\":\"sendMessage\",\"reciever\":" + user.getId() + ",\"message\":\"test\"}");
+        return new TextMessage("{\"type\":\"sendMessage\",\"receiver\":" + user.getId() + ",\"message\":\"test\"}");
     }
 
     @Then("it shows up without me having to reload the page")
