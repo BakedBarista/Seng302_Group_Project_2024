@@ -11,9 +11,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 
 import java.util.*;
 
@@ -36,20 +38,21 @@ class FavouritePlantsControllerUnitTests {
     private Plant plant;
     private List<Plant> plantList;
 
+    @Mock
+    private Authentication authentication;
+
+    private Long userId;
+
     @BeforeEach
     void setUp() {
-
         plant = new Plant();
         plant.setId(1L);
         plant.setName("Rose");
         plantList = Collections.singletonList(plant);
+        userId = 1L;
 
-       Garden mockGardens =new Garden("Rose Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"test description", 100.0, null, null);
+        Garden mockGardens = new Garden("Rose Garden","1","test","test suburb","test city","test country","1234",0.0,0.0,"test description", 100.0, null, null);
         plant.setGarden(mockGardens);
-
-
-
-
     }
 
     @Test
@@ -79,17 +82,18 @@ class FavouritePlantsControllerUnitTests {
         when(plantService.getPlantById(1L)).thenReturn(Optional.of(plant));
         GardenUser mockUser = new GardenUser();
         mockUser.setId(1L);
-        when(userService.getCurrentUser()).thenReturn(mockUser);
 
         Map<String, List<Long>> request = new HashMap<>();
         request.put("ids", Collections.singletonList(1L));
 
         Set<Plant> newSet = new HashSet<>();
         newSet.add(plant);
-        ResponseEntity<String> response = favouritePlantsController.updateFavouritePlants(request);
+
+        Mockito.when(authentication.getPrincipal()).thenReturn(userId);
+        ResponseEntity<String> response = favouritePlantsController.updateFavouritePlants(request, authentication);
 
         assertEquals(200, response.getStatusCodeValue());
-        verify(userService, times(1)).updateFavouritePlant(1L, newSet);
+        verify(userService, times(1)).updateFavouritePlant(userId, newSet);
     }
 
     @Test
@@ -99,7 +103,7 @@ class FavouritePlantsControllerUnitTests {
         Map<String, List<Long>> request = new HashMap<>();
         request.put("ids", Collections.singletonList(1L));
 
-        ResponseEntity<String> response = favouritePlantsController.updateFavouritePlants(request);
+        ResponseEntity<String> response = favouritePlantsController.updateFavouritePlants(request, authentication);
 
         assertEquals(200, response.getStatusCodeValue());
         verify(userService, never()).updateFavouritePlant(anyLong(), any());
@@ -111,7 +115,7 @@ class FavouritePlantsControllerUnitTests {
         Map<String, List<Long>> request = new HashMap<>();
         request.put("ids", Collections.emptyList());
 
-        ResponseEntity<String> response = favouritePlantsController.updateFavouritePlants(request);
+        ResponseEntity<String> response = favouritePlantsController.updateFavouritePlants(request, authentication);
 
         assertEquals(200, response.getStatusCodeValue());
         verify(userService, never()).updateFavouritePlant(anyLong(), any());
@@ -124,9 +128,7 @@ class FavouritePlantsControllerUnitTests {
         request.put("ids", Arrays.asList(1L, 2L, 3L));
 
         when(plantService.getPlantById(anyLong())).thenThrow(new RuntimeException("Database error"));
-
-
-        ResponseEntity<String> response = favouritePlantsController.updateFavouritePlants(request);
+        ResponseEntity<String> response = favouritePlantsController.updateFavouritePlants(request, authentication);
 
         // Assert that the response status is INTERNAL_SERVER_ERROR
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());

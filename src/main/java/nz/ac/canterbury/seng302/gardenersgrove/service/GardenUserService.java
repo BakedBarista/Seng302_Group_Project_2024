@@ -4,7 +4,6 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -238,7 +237,6 @@ public class GardenUserService {
     /**
      * Get the favourite garden of the user
      * @param userId user id
-     * @return garden garden
      */
     public Garden getFavoriteGarden(Long userId) {
         Optional<GardenUser> user = gardenUserRepository.findById(userId);
@@ -257,12 +255,10 @@ public class GardenUserService {
         return user.getFavouritePlants();
     }
 
-
-
     /**
      * Update the favourite plant
      * @param userId user id
-     * @param plant plant
+     * @param plants set of plants
      */
     public void updateFavouritePlant(Long userId, Set<Plant> plants) {
         GardenUser user = getUserById(userId);
@@ -274,5 +270,20 @@ public class GardenUserService {
         }
     }
 
-
+    /**
+     * Removes the favourite plant of a user - this is specified by the ID of the plant itself
+     * rather than an index within the list of favourite plants for a user.
+     * @param userId the id of the user who has the favourite plant
+     * @param plantId the id of the plant that the user favourites
+     * @return true if the plant was successfully removed from the favourite plant list.
+     */
+    public Boolean removeFavouritePlant(Long userId, Long plantId) {
+        GardenUser user = gardenUserRepository.findById(userId).orElseThrow();
+        boolean match = user.getFavouritePlants().stream().anyMatch(plant -> plant.getId().equals(plantId));
+        if (match) {
+            user.removeFavouritePlant(plantId);
+            addUser(user);
+        }
+        return match;
+    }
 }

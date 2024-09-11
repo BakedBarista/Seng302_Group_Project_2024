@@ -16,8 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -26,7 +28,6 @@ import java.util.UUID;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.TIMESTAMP_FORMAT;
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.WEATHER_CARD_FORMAT_DATE;
-import org.springframework.validation.BindingResult;
 
 @Controller
 public class MessageController {
@@ -60,8 +61,8 @@ public class MessageController {
 
         String submissionToken = UUID.randomUUID().toString();
         session.setAttribute("submissionToken", submissionToken);
+        model.addAttribute("submissionToken", submissionToken);
         Long loggedInUserId = (Long) authentication.getPrincipal();
-        GardenUser sentToUser = userService.getUserById(requestedUserId);
 
         // need to be friends to send a message
         Friends isFriend = friendService.getFriendship(loggedInUserId, requestedUserId);
@@ -69,13 +70,8 @@ public class MessageController {
             return "redirect:/users/manage-friends";
         }
 
-        model.addAttribute("dateFormatter", new ThymeLeafDateFormatter());
-        model.addAttribute("TIMESTAMP_FORMAT", TIMESTAMP_FORMAT);
-        model.addAttribute("DATE_FORMAT", WEATHER_CARD_FORMAT_DATE);
-        model.addAttribute("submissionToken", submissionToken);
-        model.addAttribute("messagesMap", messageService.getMessagesBetweenFriends(loggedInUserId, requestedUserId));
+        messageFriendList(requestedUserId, authentication, model, session);
         model.addAttribute("messageDTO", new MessageDTO("", ""));
-        model.addAttribute("sentToUser", sentToUser);
 
         return "users/message";
     }
@@ -125,6 +121,39 @@ public class MessageController {
 
 
         return messageFriend(receiver, authentication, model,session);
+    }
+
+    /**
+     * Page that is fetch by JS to replace the content of the scrollable message list
+     * @param requestedUserId friend's id to send message to
+     * @param authentication the authentication of the authenticated user
+     * @param model the model data in the html request
+     * @param session the session data in the html request
+     * @return messages list page
+     */
+    @GetMapping("api/messages/{id}")
+    public String messageFriendList(@PathVariable("id") Long requestedUserId,
+                                Authentication authentication,
+                                Model model,
+                                HttpSession session) {
+        logger.info("GET message friend page opened to user {}", requestedUserId);
+
+        Long loggedInUserId = (Long) authentication.getPrincipal();
+        GardenUser sentToUser = userService.getUserById(requestedUserId);
+
+        // need to be friends to send a message
+        Friends isFriend = friendService.getFriendship(loggedInUserId, requestedUserId);
+        if (isFriend == null) {
+            return "redirect:/users/manage-friends";
+        }
+
+        model.addAttribute("dateFormatter", new ThymeLeafDateFormatter());
+        model.addAttribute("TIMESTAMP_FORMAT", TIMESTAMP_FORMAT);
+        model.addAttribute("DATE_FORMAT", WEATHER_CARD_FORMAT_DATE);
+        model.addAttribute("messagesMap", messageService.getMessagesBetweenFriends(loggedInUserId, requestedUserId));
+        model.addAttribute("sentToUser", sentToUser);
+
+        return "users/messagesList";
     }
 
     @PostConstruct

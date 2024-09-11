@@ -86,7 +86,6 @@ function updateFavouriteGarden() {
     const gardenId = document.getElementById('selectedGardenId').value;
 
     if(!gardenId) {
-
         document.getElementById("editPublicProfileForm").submit();
         return;
 

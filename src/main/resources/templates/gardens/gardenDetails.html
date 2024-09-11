@@ -23,10 +23,10 @@
 
 <body>
 <div th:replace="~{fragments/navbar :: navbar}"></div>
-<main class="py-5">
-    <div class="mx-3">
+<main class="py-3">
+    <div class="mx-2">
         <div class="d-flex flex-column flex-xl-row gap-2">
-            <div class="card col-xl-6 col-12 p-4">
+            <div class="card rounded-3 shadow-sm border-0 col-xl-6 col-12 p-4">
                 <div class="d-flex">
                     <h1 class="pb-4 pe-5" th:text="${garden.name}">GARDEN NAME</h1>
                     <div class="ms-auto">
@@ -93,7 +93,7 @@
                     <script th:src="@{/js/gardenDetailsTagAutocomplete.js}"></script>
                 </div>
             </div>
-            <div class="card col-xl-6 col-12 p-3 pb-0">
+            <div class="card rounded-3 border-0 shadow-sm col-xl-6 col-12 p-3 pb-0">
                 <div class="mt-4 d-md-none"></div>
                 <div th:if="${displayWeatherAlert != null ? displayWeatherAlert and (currentUser.id == garden.owner.id) : false}" class="alert alert-dismissible fade show d-flex pe-3" style="background-color: lightskyblue" role="alert">
                     <div>
@@ -116,7 +116,7 @@
                     <div th:if="${displayWeather}">
                         <!-- current weather card -->
                         <h3>Current Weather: </h3>
-                        <div class="card mx-1 shadow-sm col-12 mt-2 mb-3">
+                        <div class="card rounded-3 border-0 mx-1 shadow-sm col-12 mt-2 mb-3">
                             <div class="d-flex">
                                 <div class="text-center w-50 pt-2">
                                     <img th:src="@{'/icons/weatherIcons/' + ${currentWeather.icon}}" alt="Sunny" width="50" height="50">
@@ -148,7 +148,7 @@
                         </div>
                         <!-- forecasted weather cards -->
                         <h3>Forecasted Weather: </h3>
-                        <div class="card mx-1 shadow-sm col-12 mt-2" th:each="daysWeather: ${forecastWeather}">
+                        <div class="card rounded-3 border-0 mx-1 shadow-sm col-12 mt-2" th:each="daysWeather: ${forecastWeather}">
                             <div class="d-flex">
                                 <div class="text-center w-50 pt-2">
                                     <img th:src="@{'/icons/weatherIcons/' + ${daysWeather.icon}}" alt="Sunny" width="50" height="50">
@@ -187,22 +187,22 @@
             </div>
         </div>
     </div>
-    <div class="d-flex justify-content-center align-items-center mb-1 sticky-top bg-light mt-3 p-3">
+    <div class="d-flex justify-content-center align-items-center sticky-top bg-white shadow-sm m-lg-3 m-2 rounded-3 p-3">
         <hr />
         <h2 class="flex-grow-1 text-center m-0">  Your Plants</h2>
         <a type="button" th:if="${currentUser.id == garden.owner.id}" th:href="@{/gardens/{id}/add-plant(id=${garden.id})}" class="btn btn-primary ms-auto">
             <img th:src="@{/icons/add-square-white.svg}" alt="" width="20" height="20" /> New Plant</a>
     </div>
-    <div class="mx-4">
+    <div class="mx-3 card p-3 shadow-sm">
         <div th:if="${plants.empty}">
             <p th:text="${currentUser.id == owner.id} ? 'Please add a plant first' : ${garden.name} + ' does not currently contain any plants'"></p>
         </div>
 
         <!-- Plant card -->
         <div class="flex">
-            <div class="row gap-2 justify-content-center">
+            <div class="row gap-3 justify-content-center">
                 <!-- small plant card -->
-                <div th:each="plant: ${plants}" class="card mb-3 d-lg-none" style="max-width: 540px;">
+                <div th:each="plant: ${plants}" class="card rounded-3 border-0 shadow-sm mb-3 d-lg-none" style="max-width: 540px;">
                     <div class="row g-0">
                         <div class="col-4 py-2">
                             <div class="d-inline">
@@ -224,7 +224,7 @@
                                     <a class="link-hover" th:href="@{/gardens/{gardenId}/plants/{plantId}(gardenId=${garden.id}, plantId=${plant.id})}">
                                         <img th:src="@{'/plants/' + ${plant.id} + '/plant-image'}"
                                              alt="Plant Picture"
-                                             class="w-100 rounded mx-auto d-block h-auto"
+                                             class="w-100 rounded-top-3 mx-auto d-block h-auto"
                                              style="max-width: 300px; max-height: 300px;" />
                                     </a>
                                     <span id="plantImageErrorSmall"
@@ -297,16 +297,16 @@
 
                 <!-- big plant card -->
                 <div th:each="plant : ${plants}"
-                     class="card shadow-sm rounded-2 p-0 m-0 col-xxl-3 col-xl-3 col-lg-6 col-12 d-none d-lg-block"
+                     class="card rounded-3 border-0 shadow-sm p-0 m-0 col-xxl-3 col-xl-3 col-lg-6 col-12 d-none d-lg-block"
                      style="max-width: 300px;">
                     <a class="link-hover" th:href="@{/gardens/{gardenId}/plants/{plantId}(gardenId=${garden.id}, plantId=${plant.id})}">
 
-                    <div class="card-header m-0 p-0 bg-transparent rounded-2" style="max-height: 300px;">
+                    <div class="card-header border-0 m-0 p-0 bg-transparent rounded-2" style="max-height: 300px;">
                         <div class="d-inline">
                             <form class="plantImageForm" th:action="@{'/plants/' + ${plant.id} + '/plant-image'}" method="post" enctype="multipart/form-data" novalidate >
                                 <label th:for="${plant.id}" class="position-absolute top-0 end-0 mt-1 me-1"  th:if="${currentUser.id == garden.owner.id}"  style="cursor: pointer;"><img th:src="@{/icons/trans-plus.svg}" alt="+" /></label>
                                 <input th:id="${plant.id}" name="image" class="image d-none" type="file" accept=".png,.jpg,.jpeg,.svg"/>
-                                <img th:src="@{'/plants/' + ${plant.id} + '/plant-image'}" alt="Plant Picture" class="w-100 rounded mx-auto d-block" style="width: 300px; height: 300px;" />
+                                <img th:src="@{'/plants/' + ${plant.id} + '/plant-image'}" alt="Plant Picture" class="w-100 rounded-top-3 mx-auto d-block" style="width: 300px; height: 300px;" />
                                 <span id="plantImageError" class="plantImageError invalid-feedback text-center position-absolute top-0 start-0 mb-3"></span>
                             </form>
                         </div>
@@ -354,12 +354,12 @@
                 <!-- Harvested Date Modal -->
                 <div class="modal fade" id="harvestedDateModal" tabindex="-1" aria-labelledby="harvestedDateModalLabel" aria-hidden="true" th:if="${currentUser.id == garden.owner.id}">
                     <div class="modal-dialog modal-dialog-centered modal-sm">
-                        <div class="modal-content">
+                        <div class="modal-content border-0">
                             <div class="modal-header">
-                                <h4 class="modal-title mx-2" id="harvestedDateModalLabel">Harvested Date</h4>
+                                <h4 class="modal-title mx-2 text-center" id="harvestedDateModalLabel">Harvested Date</h4>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                            <div class="modal-body mx-2">
+                            <div class="modal-body mx-2 d-flex justify-content-center">
                                 <label>Date:
                                     <input type="date" id="harvestedDateInput">
                                 </label>
@@ -371,14 +371,8 @@
                                 <button type="button" class="btn btn-primary" onclick="saveHarvestedDate()">Save date</button>
                             </div>
                         </div>
-
-
-
                     </div>
                 </div>
-
-
-
             </div>
         </div>
     </div>
@@ -392,13 +386,6 @@
             </div>
         </div>
     </div>
-
-
-
-
-
-
-
 </main>
 <th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
 <script>

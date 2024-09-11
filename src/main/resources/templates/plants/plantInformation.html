@@ -15,7 +15,7 @@
             <form class="input-group d-flex" action="#" th:action="@{/plant-information}" method="get" id="searchForm">
                 <div class="flex-grow-1" id="plant-search-autocomplete-container"></div>
                 <div class="input-group-append d-flex">
-                    <button class="btn btn-outline-secondary d-flex align-items-center" type="submit" id="button-addon">
+                    <button class="btn btn-outline-primary d-flex align-items-center" type="submit" id="button-addon">
                         <img th:src="@{/icons/search-icon.svg}" alt="" width="20" height="25" />
                     </button>
                 </div>
@@ -26,11 +26,11 @@
             <script th:src="@{/js/plantSearchAutocomplete.js}"></script>
         </div>
 
-        <div id="plantCardsContainer" class="mt-4" th:if="${plants != null}">
-            <div th:each="plant : ${plants}" id="plantCard" class="mt-4 card p-4">
+        <div id="plantCardsContainer" class="mt-3" th:if="${plants != null}">
+            <div th:each="plant : ${plants}" id="plantCard" class="mt-3den card p-4">
                 <h2 th:text="${plant.label}" id="plantCardLabel"></h2>
                 <p th:text="${plant.description}" id="plantCardDescription"></p>
-               <img th:src="${plant.image}" alt="Plant image" id="plantCardImage"></img>
+               <img th:src="${plant.image}" alt="Plant image" id="plantCardImage" />
             </div>
             <h3 class="text-center" th:if="${plants.isEmpty()}">Cannot find the plant you entered</h3>
         </div>
@@ -54,12 +54,12 @@
                     <img id="plantModalImage" src="" alt="Plant image">
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
                     <form th:action="@{/plant-information/add-to-garden}" method="post">
                         <input type="hidden" name="label" id="plantLabelInput">
                         <input type="hidden" name="description" id="plantDescriptionInput">
                         <input type="hidden" name="image" id="plantImageInput">
-                        <button type="submit" class="btn btn-secondary">Add To Garden</button>
+                        <button type="submit" class="btn btn-primary">Add To Garden</button>
                     </form>
                 </div>
             </div>

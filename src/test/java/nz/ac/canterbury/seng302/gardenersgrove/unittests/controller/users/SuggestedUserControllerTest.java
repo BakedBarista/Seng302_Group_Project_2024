@@ -1,47 +1,68 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unittests.controller.users;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.SuggestedUserController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.SuggestedUserService;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
+import org.thymeleaf.TemplateEngine;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
 class SuggestedUserControllerTest {
 
-    private static SuggestedUserController suggestedUserController;
-    private static GardenUserService gardenUserService;
-    private static Model model;
-    private static Authentication authentication;
+    private SuggestedUserController suggestedUserController;
+    private GardenUserService gardenUserService;
+    private Model model;
+    private Authentication authentication;
 
-    private static SuggestedUserService suggestedUserService;
-    private static Long loggedInUserId = 1L;
-    private static Long suggestedUserId = 2L;
-    private static GardenUser loggedInUser;
-    private static GardenUser suggestedUser;
-    private static Friends friendRequestReceive;
-    private static Friends friendRequestSend;
+    private FriendService friendService;
+    private SuggestedUserService suggestedUserService;
+    private ObjectMapper objectMapper;
+    private TemplateEngine templateEngine;
+    private HttpServletRequest request;
+    private HttpServletResponse response;
+    private ServletContext context;
 
-    @BeforeAll
-    static void setup() {
+    private Long loggedInUserId = 1L;
+    private Long suggestedUserId = 2L;
+    private GardenUser loggedInUser;
+    private GardenUser suggestedUser;
+    private Friends friendRequestReceive;
+    private Friends friendRequestSend;
+
+    @BeforeEach
+    void setup() {
         gardenUserService = Mockito.mock(GardenUserService.class);
+        friendService = Mockito.mock(FriendService.class);
         authentication = Mockito.mock(Authentication.class);
         suggestedUserService = Mockito.mock(SuggestedUserService.class);
-        suggestedUserController = new SuggestedUserController(gardenUserService, suggestedUserService);
+        objectMapper = new ObjectMapper();
+        templateEngine = Mockito.mock(TemplateEngine.class);
+        request = Mockito.mock(HttpServletRequest.class);
+        response = Mockito.mock(HttpServletResponse.class);
+        context = Mockito.mock(ServletContext.class);
+        suggestedUserController = new SuggestedUserController(friendService, gardenUserService, suggestedUserService, objectMapper, templateEngine);
+
         loggedInUser = new GardenUser();
         loggedInUser.setId(loggedInUserId);
         loggedInUser.setEmail("logged.in@gmail.com");
@@ -68,17 +89,32 @@ class SuggestedUserControllerTest {
      * HARD-CODED Test!!!!!
      */
     @Test
-    void whenIViewMyPublicProfile_thenIAmTakenToThePublicProfilePage() {
+    void whenIViewMyPublicProfile_thenIAmTakenToThePublicProfilePage() throws JsonProcessingException {
         model = Mockito.mock(Model.class);
+
+        GardenUser suggestedUser = new GardenUser();
+        suggestedUser.setId(3L);
+        suggestedUser.setDescription("Another description");
+
+        List<GardenUser> suggestedUsers = Collections.singletonList(suggestedUser);
+
+
+        Mockito.when(request.getServletContext()).thenReturn(context);
         Mockito.when(authentication.getPrincipal()).thenReturn(loggedInUserId);
         Mockito.when(gardenUserService.getUserById(loggedInUserId)).thenReturn(loggedInUser);
+        Mockito.when(friendService.availableConnections(loggedInUser)).thenReturn(suggestedUsers);
 
-        String page = suggestedUserController.home(authentication, model);
+        String page = suggestedUserController.home(authentication, model, request, response);
 
-        Mockito.verify(model).addAttribute("name", "Max Doe");
-        Mockito.verify(model).addAttribute("description", "I am here to meet some handsome young men who love gardening as much as I do! In my spare time, I like to thrift, ice skate, and grow vege. The baby daddy is my former sugar daddy John Doe. He died of a heart attack on his yacht in Italy last summer.");
+        Mockito.verify(model).addAttribute(eq("userId"), any());
+        Mockito.verify(model).addAttribute(eq("name"), any());
+        Mockito.verify(model).addAttribute(eq("description"), any());
+        Mockito.verify(model).addAttribute(eq("userList"), assertArg((String s) -> {
+            Assertions.assertTrue(s.contains("favouriteGarden"));
+            Assertions.assertTrue(s.contains("favouritePlants"));
+        }));
 
-        Assertions.assertEquals("home", page);
+        Assertions.assertEquals("suggestedFriends", page);
     }
 
     @Test
@@ -149,4 +185,24 @@ class SuggestedUserControllerTest {
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
         Assertions.assertNull(response.getBody().get("success"));
     }
+
+    @Test
+    void testGetHome_NoLoggedIn_LandingPageReturned() {
+        String result = suggestedUserController.home(null, model, request, response);
+
+        Assertions.assertEquals("home", result);
+    }
+
+    @Test
+    void testHandleAcceptDecline_NotLoggedIn_NothingHappens() {
+        when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+        when(gardenUserService.getUserById(loggedInUserId)).thenReturn(null);
+        when(gardenUserService.getUserById(suggestedUserId)).thenReturn(suggestedUser);
+
+        ResponseEntity<Map<String, Object>> response = suggestedUserController.handleAcceptDecline("decline", suggestedUserId, authentication, model);
+
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Assertions.assertEquals(false, response.getBody().get("success"));
+    }
+
 }

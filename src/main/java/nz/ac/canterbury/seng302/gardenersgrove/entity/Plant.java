@@ -37,8 +37,6 @@ public class Plant extends BasePlant {
     @OneToMany(mappedBy = "plant")
     private Set<PlantHistoryItem> history = new HashSet<>();
 
-
-
     public Plant(String name, String count, String description, LocalDate plantedDate) {
         this.name = name;
         this.count = count;
@@ -97,8 +95,6 @@ public class Plant extends BasePlant {
         return history;
     }
 
-
-
     @Override
     public String toString() {
         return "Plant{" +
@@ -107,6 +103,7 @@ public class Plant extends BasePlant {
                 ", count='" + this.count + '\'' +
                 ", description='" + this.description + '\'' +
                 ", plantedDate='" + this.plantedDate + '\'' +
+                ", favouritedGardenUser='" + this.getFavourite() + '\'' +
                 '}';
     }
 }
