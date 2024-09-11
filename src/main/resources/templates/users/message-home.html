@@ -9,39 +9,6 @@
     <!-- This needs to be here for Bootstrap and general CSS imports -->
     <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
     <style>
-        /*!* This subtracts the height of the navbar on mobile screens to account for height *!*/
-        /*@media (max-width: 1000px) {*/
-        /*    #messageWindow {*/
-        /*        display: none;*/
-        /*    }*/
-
-        /*    #friendChatBar {*/
-        /*        width: 100vw;*/
-        /*    }*/
-
-        /*    main,*/
-        /*    body {*/
-        /*        height: calc(100vh - 91px);*/
-        /*    }*/
-        /*}*/
-
-        /*!* For screens larger than mobile *!*/
-        /*@media (min-width: 1000px) {*/
-        /*    #friendChatBar {*/
-        /*        width: 300px;*/
-        /*        flex: none;*/
-        /*    }*/
-
-        /*    main {*/
-        /*        width: calc(100vw - 300px);*/
-        /*    }*/
-
-        /*    main, body {*/
-        /*        height: 100vh;*/
-        /*    }*/
-        /*}*/
-
-
         /* Make messages container scrollable */
         .messages {
             height: calc(100vh - 200px);
@@ -145,7 +112,7 @@
                         <img th:src="@{/icons/chat-bar.svg}" width="30" height="30" alt="View Chats" />
                     </button>
                     <h5 class="mb-0" th:text="${sentToUser.fullName}"></h5>
-                    <img class="rounded-circle overflow-hidden border border-dark ms-lg-2"
+                    <img class="rounded-circle overflow-hidden border border-dark"
                          th:src="@{'/users/' + ${sentToUser.id} + '/profile-picture'}"
                          style="width: 50px; height: 50px;"
                          alt="profile picture">
@@ -191,7 +158,6 @@
                             </button>
                         </div>
                     </form>
-<!--                    <span class="d-sm-block p-3"></span>-->
                 </div>
             </div>
         </div>
@@ -209,56 +175,14 @@
             }
         });
 
-        // const scrollToBottom = (element) => {
-        //     element.scrollTop = element.scrollHeight;
-        // };
-        //
-        // const scrollbar = document.getElementById('scrollbar');
-        // scrollToBottom(scrollbar);
-        //
+        // TODO: This doesnt work
         const activeChatId = '[[${activeChat}]]';
         const activeChatDiv = document.getElementById(activeChatId);
 
         if (activeChatDiv) {
             activeChatDiv.classList.add('active-chat');
         }
-        //
-        // const chatButtons = document.querySelectorAll('.open-chat');
-        // const messageWindow = document.getElementById('messageWindow');
-        // const messageWindowHeader = document.getElementById('messageWindowHeader');
-        // const friendChatBar = document.getElementById('friendChatBar');
-        // const backButton = document.getElementById('backButton');
-        // const noMessagesHeader = document.getElementById('noMessagesHeader');
-        //
-        // function handleChatToggle() {
-        //     if (window.innerWidth < 1000) {
-        //         chatButtons.forEach(button => {
-        //             button.addEventListener('click', () => {
-        //                 friendChatBar.style.display = 'none';
-        //                 messageWindow.style.display = 'block';
-        //             });
-        //         });
-        //
-        //         backButton.addEventListener('click', () => {
-        //             messageWindow.style.display = 'none';
-        //             friendChatBar.style.display = 'block';
-        //             noMessagesHeader.style.display = 'inline';
-        //         });
-        //     } else {
-        //         messageWindow.style.display = 'block';
-        //         friendChatBar.style.display = 'block';
-        //         backButton.style.display = 'none';
-        //         messageWindowHeader.classList.remove('justify-content-around');
-        //         messageWindowHeader.classList.add('justify-content-start');
-        //         noMessagesHeader.style.display = 'none';
-        //     }
-        // }
-        //
-        // // handleChatToggle();  // Execute on page load
-        //
-        // window.addEventListener('resize', handleChatToggle);  // Re-apply on resize
     });
-
 </script>
 </body>
 
