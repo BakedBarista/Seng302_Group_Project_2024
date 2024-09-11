@@ -16,8 +16,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.WebContext;
+import org.thymeleaf.web.servlet.JakartaServletWebApplication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,15 +39,17 @@ public class SuggestedUserController {
     private final GardenUserService gardenUserService;
     private final SuggestedUserService suggestedUserService;
     private final ObjectMapper objectMapper;
+    private final TemplateEngine templateEngine;
 
     private static final String SUCCESS = "success";
 
     @Autowired
-    public SuggestedUserController(FriendService friendService, GardenUserService gardenUserService, SuggestedUserService suggestedUserService, ObjectMapper objectMapper) {
+    public SuggestedUserController(FriendService friendService, GardenUserService gardenUserService, SuggestedUserService suggestedUserService, ObjectMapper objectMapper, TemplateEngine templateEngine) {
         this.friendService = friendService;
         this.gardenUserService = gardenUserService;
         this.suggestedUserService = suggestedUserService;
         this.objectMapper = objectMapper;
+        this.templateEngine = templateEngine;
     }
 
     /**
@@ -50,8 +58,14 @@ public class SuggestedUserController {
      * @return the home page
      */
     @GetMapping("/")
-    public String home(Authentication authentication, Model model) {
+    public String home(Authentication authentication, Model model, HttpServletRequest request, HttpServletResponse response) {
         logger.info("GET /");
+
+        if (authentication == null) {
+            logger.info("User is not logged in, directing to landing page.");
+            return "home";
+        }
+
         try {
             Long userId = (Long) authentication.getPrincipal();
             GardenUser user = gardenUserService.getUserById(userId);
@@ -60,21 +74,49 @@ public class SuggestedUserController {
             suggestedUsers.addAll(friendService.availableConnections(user));
 
             if (suggestedUsers.isEmpty()) {
-                return "home";
+                return "suggestedFriends";
             }
 
             model.addAttribute("userId", suggestedUsers.get(0).getId());
             model.addAttribute("name", suggestedUsers.get(0).getFullName());
             model.addAttribute("description", suggestedUsers.get(0).getDescription());
+            logger.info("Description: {}", suggestedUsers.get(0).getDescription());
 
-            List<SuggestedUserDTO> userDtos = suggestedUsers.stream().map(SuggestedUserDTO::new).toList();
+            List<SuggestedUserDTO> userDtos = suggestedUsers.stream().map((GardenUser u) -> makeSuggestedUserDTO(u, request, response)).toList();
             String jsonUsers = objectMapper.writeValueAsString(userDtos);
             model.addAttribute("userList", jsonUsers);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             logger.error("Error getting suggested users", e);
         }
-        return "home";
+        return "suggestedFriends";
+    }
+
+    private SuggestedUserDTO makeSuggestedUserDTO(GardenUser user, HttpServletRequest request,
+            HttpServletResponse response) {
+        SuggestedUserDTO dto = new SuggestedUserDTO(user);
+
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("userId", user.getId());
+        variables.put("favouriteGarden", user.getFavoriteGarden());
+        variables.put("favouritePlants", user.getFavouritePlants());
+
+        // Manually render thymeleaf fragments for the backside of each card
+        JakartaServletWebApplication application = JakartaServletWebApplication
+                .buildApplication(request.getServletContext());
+        WebContext context = new WebContext(application.buildExchange(request, response), request.getLocale(),
+                variables);
+        if (user.getFavoriteGarden() != null) {
+            dto.setFavouriteGardenHtml(templateEngine.process("fragments/favourite-garden.html", context));
+        } else {
+            dto.setFavouriteGardenHtml("<div class=\"text-center my-3 text-white\">No Favourite Garden Selected</div>");
+        }
+        if (user.getFavouritePlants() != null) {
+            dto.setFavouritePlantsHtml(templateEngine.process("fragments/favourite-plants.html", context));
+        } else {
+            dto.setFavouritePlantsHtml("<div class=\"text-center my-3 text-white\">No Favourite Plants Selected</div>");
+        }
+
+        return dto;
     }
 
     @PostMapping("/")
@@ -88,6 +130,12 @@ public class SuggestedUserController {
         GardenUser loggedInUser = gardenUserService.getUserById(loggedInUserId);
         GardenUser suggestedUser = gardenUserService.getUserById(suggestedId);
         Map<String, Object> response = new HashMap<>();
+
+        if (loggedInUser == null) {
+            logger.error("User is not logged in, doing nothing");
+            response.put(SUCCESS, false);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
 
         boolean validationPassed = suggestedUserService.validationCheck(loggedInUserId, suggestedId);
         if (!validationPassed) {

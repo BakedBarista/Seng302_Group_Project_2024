@@ -1,163 +1,277 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="">
+<html lang="en">
+
 <head>
-    <title>Pollinat*r</title>
-
-    <meta http-equiv="Content-Type" context="text/html; charset=UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pollinat*r - Your Garden, Your Community</title>
     <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: white;
+            color: #333;
+        }
 
-    <meta name="_userList" th:content="${userList}" />
+        .navbar {
+            background-color: #CB9F03;
+        }
+
+        .navbar-brand img {
+            height: 50px;
+        }
+
+        .hero-section {
+            display: flex;
+            align-items: center;
+            background-color: white;
+        }
+
+        .hero-content {
+            flex: 1;
+            text-align: left;
+        }
+
+        .hero-content h1 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .hero-content p {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            color: #666;
+        }
+        .btn-custom-light {
+            background-color: #CB9F03;
+            color: white;
+            border-radius: 50px;
+            padding: 10px 30px;
+        }
+
+        .btn-custom {
+            background-color: #735B04;
+            color: white;
+            border-radius: 50px;
+            padding: 10px 30px;
+        }
+
+        .btn-custom-trans {
+            color: white;
+            border-radius: 50px;
+            padding: 10px 20px;
+        }
+
+        .btn-custom:hover {
+            background-color: #453704;
+            color: white;
+        }
+
+        .hero-image {
+            flex: 1;
+            text-align: center;
+        }
+
+        .hero-image img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .section {
+            padding: 100px 0;
+            background-color: white;
+        }
+
+        .section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .section p {
+            font-size: 1.25rem;
+            color: #666;
+        }
+
+        footer {
+            padding: 50px 0;
+            text-align: center;
+            background-color: #f4f4f4;
+            color: #666;
+        }
+
+        .redirect-link {
+            background-color: #735B04;
+            font-weight: 600;
+        }
+
+        .redirect-link:hover {
+            background-color: #453704;
+        }
+
+        /*@media (max-width: 767.98px) {*/
+        /*    .redirect-link {*/
+        /*        margin-left: 0;*/
+        /*        background-color: #CB9F03;*/
+        /*    }*/
+
+        /*    .hero-section {*/
+        /*        margin-top: 0;*/
+        /*        height: calc(100vh - 57px);*/
+        /*    }*/
+        /*}*/
+        /*@media (min-width: 768px) {*/
+        /*    main {*/
+        /*        margin-top: 76px;*/
+        /*    }*/
+        /*}*/
+    </style>
 </head>
-<style>
-    /* Button hover: slightly grow */
-    button:hover {
-        transform: scale(1.05);
-        transition: transform 0.2s ease-in-out;
-    }
 
-    /* Icon click animation: pop effect */
-    button:active img {
-        transform: scale(1.2);
-        transition: transform 0.1s ease-in-out;
-    }
+<body class="p-0">
 
-    button img {
-        transition: transform 0.2s ease-in-out;
-    }
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container align-items-center">
+        <a class="navbar-brand" href="#"><img th:src="@{/img/logo.svg}" alt="Pollinat*r" style="height: 30px;"></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse align-items-center justify-content-end" id="navbarNav">
+            <ul class="navbar-nav gap-3 align-items-center">
+                <li class="nav-item">
+                    <a class="btn btn-custom-trans" href="#features">Features</a>
+                </li>
+                <li class="nav-item">
+                    <a class="btn btn-custom-trans" href="#about">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="btn btn-custom-trans" href="#contact">Contact</a>
+                </li>
+                <li class="nav-item">
+                    <a class="btn btn-custom redirect-link text-nowrap" th:href="@{/users/login}">LOG IN</a>
+                </li>
+                <li class="nav-item">
+                    <a class="btn btn-custom redirect-link" th:href="@{/users/register}">REGISTER</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
 
-    .upper-control {
-        background: none;
-        border-color: transparent;
-    }
+<!-- Hero Section -->
+<main>
+<section class="hero-section my-3" id="home">
+    <div class="container d-lg-flex align-items-center d-none">
+        <div class="hero-content">
+            <h1>Welcome to Pollinat*r</h1>
+            <p>Your garden, your community. Discover a world where gardeners come together to share their passion, swap tips, and celebrate the beauty of nature.</p>
+            <p>At Pollinat*r, we connect you with fellow gardeners who share your interests and inspire your green thumb to reach new heights. Whether you're planting your first seed or cultivating a botanical masterpiece, Pollinat*r is the place where your gardening journey blossoms.</p>
+            <a th:href="@{/users/register}" class="btn btn-custom-light">Join the Community</a>
+        </div>
+        <div class="hero-image">
+            <img th:src="@{/img/mockup.png}" alt="Phone Mockup">
+        </div>
+    </div>
+    <div class="container d-lg-none d-block">
+        <div class="hero-content">
+            <h1 class="text-center" style="font-size: 30pt;">Welcome to Pollinat*r</h1>
+            <div class="hero-image d-flex justify-content-center pb-2">
+                <img th:src="@{/img/mockup.png}" alt="Phone Mockup" width="300px">
+            </div>
+            <p class="text-center">Your garden, your community. Discover a world where gardeners come together to share their passion, swap tips, and celebrate the beauty of nature.</p>
+            <div class="d-flex justify-content-center">
+                <a th:href="@{/users/register}" class="btn btn-custom-light">Join the Community</a>
+            </div>
+        </div>
+    </div>
+</section>
 
-    @media screen and (max-height: 850px) {
-        .flip-card {
-            height: 850px; /* Set your fixed height here */
-        }
-
-        .action-buttons {
-            padding: 2rem;
-        }
-    }
-</style>
-<body>
-<nav th:replace="~{fragments/navbar :: navbar}"></nav>
-<main class="d-flex flex-column align-items-center justify-content-center" style="margin: 10px">
-    <h1 class="my-3 text-center">Suggested Connections</h1>
-    <div id="card" class="col-sm-10 flip-card flex-grow-1 flex-column">
-        <div class="flip-card-inner border-0 w-100 card" th:if="${name != null}">
-            <div class="flip-card-front d-flex justify-content-between flex-column px-3 py-2 shadow" style="border-radius: 30px; min-height: 100%;">
-                <div class="d-flex justify-content-between pb-1">
-                    <button class="upper-control" data-bs-toggle="tooltip" title="Flip card" data-gg-flip-card-toggle>
-                        <img
-                                th:src="@{/icons/flip-card.svg}"
-                                alt="Flip card"
-                                style="height: 35px; width:35px"
-                        />
-                    </button>
-                    <button class="upper-control" data-bs-toggle="tooltip" title="Skip user">
-                        <img
-                                th:src="@{/icons/skip-connection.svg}"
-                                alt="Skip user"
-                                style="height: 35px; width:35px"
-                        />
-                    </button>
-                </div>
-                <div style="position: relative;">
-                    <img
-                            class="suggest-user-picture card-img"
-                            th:src="@{'/users/' + ${userId} + '/profile-picture'}"
-                            id="cardImage"
-                            alt="profile picture"
-                            style="height:50vh; object-fit: cover; border-radius: 15px;"
-                    />
-                </div>
-                <div class="d-flex flex-column pt-2">
-                    <span th:if="${name.length() >= 12}"><span class="d-sm-none d-flex mt-5"></span></span>
-                    <h2 class="mb-1 text-white" id="cardName">[[${name}]]</h2>
-                </div>
-                <div style="max-height: 150px;">
-                    <p class="text-white" id="cardDescription">[[${description}]]</p>
-                </div>
-                <div class="d-flex justify-content-center">
-                    <div class="me-5">
-                        <button type="submit" class="rounded-circle btn-lg p-3 shadow" id="declineButton"
-                                style="width: 90px; height: 90px; background-color: #FFF; border: 3px #FFF;"
-                                data-bs-toggle="tooltip" title="Decline Connection">
-                            <img th:src="@{/icons/broken-heart.svg}" width="50" height="50" alt="Decline"
-                                    class="decline-icon" id="declineIcon"/>
-                        </button>
-                    </div>
-                    <div class="ms-5">
-                        <button type="submit" class="rounded-circle btn-lg p-3 shadow" id="heartButton"
-                                style="width: 90px; height: 90px; background-color: #DC3545; border: none;"
-                                data-bs-toggle="tooltip" title="Request Connection">
-                            <img th:src="@{/icons/heart.svg}" width="50" height="50" alt="Accept" class="heart-icon"
-                                    id="heartIcon"/>
-                        </button>
+<!-- Features Section -->
+<section class="section" id="features" style="background: #CB9F03;">
+    <div class="container">
+        <h2 class="text-center text-white">Features</h2>
+        <p class="text-center pb-5 text-white">Pollinat*r offers a suite of tools and features designed to help you grow your garden and your connections:</p>
+        <div class="row justify-content-center">
+            <!-- Card 1 -->
+            <div class="col-md-4 mb-3 d-flex justify-content-center">
+                <div class="card rounded-4 border-0 text-center p-3 shadow" style="width: 18rem;">
+                    <div class="card-body">
+                        <img th:src="@{/icons/match.svg}" alt="Icon 1" class="mb-3" style="width: 75px; height: 75px;">
+                        <h5 class="card-title">Find Your Perfect Match</h5>
+                        <p class="card-text">Swipe through other gardeners based on shared interests, gardening styles, and plant preferences.</p>
                     </div>
                 </div>
             </div>
-            <div class="flip-card-back p-3" style="border-radius: 30px">
-                <div class="d-flex justify-content-between pb-2">
-                    <button class="upper-control" data-bs-toggle="tooltip" title="Flip card" data-gg-flip-card-toggle>
-                        <img
-                                th:src="@{/icons/flip-card.svg}"
-                                alt="Flip card"
-                                style="height: 35px; width:35px"
-                        />
-                    </button>
-                    <button class="upper-control" data-bs-toggle="tooltip" title="Skip user">
-                        <img
-                                th:src="@{/icons/skip-connection.svg}"
-                                alt="Skip user"
-                                style="height: 35px; width:35px"
-                        />
-                    </button>
+            <!-- Card 2 -->
+            <div class="col-md-4 mb-3 d-flex justify-content-center">
+                <div class="card text-center p-3 shadow rounded-4 border-0" style="width: 18rem;">
+                    <div class="card-body">
+                        <img th:src="@{/icons/document.svg}" alt="Icon 2" class="mb-3" style="width: 75px; height: 75px;">
+                        <h5 class="card-title">Document Your Journey</h5>
+                        <p class="card-text">Create a personalized garden journal where you can post updates, photos, and share insights about your plants' progress.</p>
+                    </div>
+
                 </div>
-                <div class="d-flex flex-column flex-grow-1">
-                    <h5 class="m-2 mb-1 about-me text-white">My Favourite Garden</h5>
-                    <div class="m-2 d-flex flex-wrap">
-                        <th:block th:insert="~{fragments/favourite-garden.html :: favourite-garden}"></th:block>
+            </div>
+            <!-- Card 3 -->
+            <div class="col-md-4 mb-3 d-flex justify-content-center">
+                <div class="card text-center p-3 shadow rounded-4 border-0" style="width: 18rem;">
+                    <div class="card-body">
+                        <img th:src="@{/icons/insight.svg}" alt="Icon 3" class="mb-3" style="width: 75px; height: 75px;">
+                        <h5 class="card-title">Local Gardening Insights</h5>
+                        <p class="card-text">Get personalized tips based on your location and weather to ensure your plants thrive.</p>
                     </div>
-                    <div class="flex-grow-1"></div>
-                    <h5 class="m-2 mb-1 about-me text-white">My Favourite Plants</h5>
-                    <div class="m-2 d-flex flex-wrap">
-                        <div class="card p-2 me-3 mb-3 border-0 rounded-3 d-flex shadow-sm public-profile-plant-card bg-primary-temp">
-                            <img class="mx-auto d-block pt-1" th:src="@{'/plants/10/plant-image'}"
-                                 style="width: 100%; height: 100%; object-fit: cover;" alt="plant image"/>
-                            <h6 class="pt-2 ps-2 text-white">Banana</h6>
-                        </div>
-                    </div>
-                    <div class="flex-grow-1"></div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="toast-container position-fixed bottom-0 end-0 p-3">
-        <div id="acceptToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header">
-                <strong class="me-auto">Pollinat*r</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-            <div class="toast-body" id="toastBody">
-                You have a new connection, check the friends tab for more info!
-            </div>
-        </div>
+</section>
+
+<!-- About Section -->
+<section class="section" id="about">
+    <div class="container">
+        <h2>About Pollinat*r</h2>
+        <p>Pollinat*r isn’t just an app; it’s a community built by gardeners, for gardeners. We believe in the power of nature to bring people together, whether it's sharing advice on how to get rid of those pesky aphids, showcasing your latest homegrown tomato crop, or simply connecting over a shared love of soil and sunshine.</p>
+        <p>Launched in 2024, Pollinat*r grew from a simple idea: gardening should be social. From seasoned horticulturists to those just starting with a few indoor plants, Pollinat*r is a space for everyone. We're proud to help green thumbs of all levels find their community, build connections, and nurture their love for gardening in a meaningful way.</p>
+        <p>Join Pollinat*r and become part of a growing movement of plant lovers who are making the world a greener, more connected place—one garden at a time.</p>
     </div>
+</section>
+
+<!-- Contact Section -->
+<section class="section" id="contact">
+    <div class="container">
+        <h2>Contact Us</h2>
+        <p>Have questions, feedback, or just want to chat with the team? We’d love to hear from you!</p>
+        <p>Email us at <strong><a href="mailto:team800.garden@gmail.com">team800.garden@gmail.com</a></strong> or follow us on social media to stay up to date with the latest gardening tips, community events, and app updates.</p>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer style="background: #B89006;">
+    <p class="text-white">&copy; 2024 Pollinat*r. All rights reserved. Together, we’re growing something beautiful.</p>
+</footer>
 </main>
+
+<th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
 <script>
-    document.querySelectorAll('.flip-card').forEach((card) => {
-        const toggleButtons = card.querySelectorAll('[data-gg-flip-card-toggle]');
-        toggleButtons.forEach((button) => {
-            button.addEventListener('click', () => {
-                card.classList.toggle('flip-card-flipped');
+    document.addEventListener('DOMContentLoaded', function () {
+        var navLinks = document.querySelectorAll('.navbar-nav .nav-item .nav-link, .navbar-nav .nav-item .btn');
+        var navbarCollapse = document.getElementById('navbarNav');
+
+        navLinks.forEach(function (link) {
+            link.addEventListener('click', function () {
+                var bsCollapse = new bootstrap.Collapse(navbarCollapse);
+                bsCollapse.hide(); // Collapse the navbar
+
+                // Ensure the body is scrollable after collapse
+                document.body.style.overflow = 'auto';
             });
         });
     });
 </script>
-<th:block th:insert="~{fragments/general.html :: bs-scripts}"></th:block>
-<script th:src="@{/js/connection.js}"></script>
 </body>
+
 </html>
