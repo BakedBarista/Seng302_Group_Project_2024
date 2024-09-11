@@ -1,27 +1,19 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unittests.service;
 
-import java.util.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
-import org.junit.jupiter.api.Assertions;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
-import org.assertj.core.util.Arrays;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -282,7 +274,10 @@ class GardenUserServiceTest {
         Plant plantB = mock(Plant.class);
         Plant plantC = mock(Plant.class);
 
-        Set<Plant> favouritePlants = Set.of(plantA, plantB, plantC);
+        Set<Plant> favouritePlants = new HashSet<>();
+        favouritePlants.add(plantA);
+        favouritePlants.add(plantB);
+        favouritePlants.add(plantC);
         testUser1.setFavouritePlants(favouritePlants);
 
         Mockito.when(plantA.getId()).thenReturn(999L);

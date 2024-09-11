@@ -494,6 +494,7 @@ public class GardenUser {
         // Set new favourite plants
         this.favouritePlants = favouritePlants;
         for (Plant plant : favouritePlants) {
+            System.out.println(plant);
             plant.setFavourite(this);
         }
     }
