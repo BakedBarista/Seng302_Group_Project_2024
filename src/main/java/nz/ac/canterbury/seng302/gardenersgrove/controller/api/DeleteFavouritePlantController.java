@@ -16,8 +16,6 @@ import java.util.Map;
 
 /**
  * Class purely for dealing with the API calls of deleting favourite plants
- *
- * - maybe could be more generalized for managing favourite plants if needed
  */
 @RestController
 @RequestMapping("/api")
