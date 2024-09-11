@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <title>Message</title>
@@ -9,37 +9,37 @@
     <!-- This needs to be here for Bootstrap and general CSS imports -->
     <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
     <style>
-        /* This subtracts the height of the navbar on mobile screens to account for height */
-        @media (max-width: 1000px) {
-            #messageWindow {
-                display: none;
-            }
+        /*!* This subtracts the height of the navbar on mobile screens to account for height *!*/
+        /*@media (max-width: 1000px) {*/
+        /*    #messageWindow {*/
+        /*        display: none;*/
+        /*    }*/
 
-            #friendChatBar {
-                width: 100vw;
-            }
+        /*    #friendChatBar {*/
+        /*        width: 100vw;*/
+        /*    }*/
 
-            main,
-            body {
-                height: calc(100vh - 91px);
-            }
-        }
+        /*    main,*/
+        /*    body {*/
+        /*        height: calc(100vh - 91px);*/
+        /*    }*/
+        /*}*/
 
-        /* For screens larger than mobile */
-        @media (min-width: 1000px) {
-            #friendChatBar {
-                width: 300px;
-                flex: none;
-            }
+        /*!* For screens larger than mobile *!*/
+        /*@media (min-width: 1000px) {*/
+        /*    #friendChatBar {*/
+        /*        width: 300px;*/
+        /*        flex: none;*/
+        /*    }*/
 
-            main {
-                width: calc(100vw - 300px);
-            }
+        /*    main {*/
+        /*        width: calc(100vw - 300px);*/
+        /*    }*/
 
-            main, body {
-                height: 100vh;
-            }
-        }
+        /*    main, body {*/
+        /*        height: 100vh;*/
+        /*    }*/
+        /*}*/
 
 
         /* Make messages container scrollable */
@@ -64,30 +64,65 @@
     </style>
 </head>
 
-<body class="">
+<body class="vh-100 overflow-x-hidden vw-100">
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
-<div class="container-fluid d-flex h-100 p-0">
-    <div class="sidebar bg-light border-end" id="friendChatBar">
-        <div class="mt-3 p-2 border-bottom text-center">
-            <h3>Recent Chats</h3>
+<div class="container-fluid d-flex h-100 p-0 full-height-lg">
+    <!-- Mobile Offcanvas Drawer -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="chatDrawer" aria-labelledby="chatDrawerLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="chatDrawerLabel">Recent Chats</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div id="noMessagesHeaderMobile" th:if="${#lists.isEmpty(recentChats)}" class="text-center">
+                <h5>You have no recent messages!</h5>
+                <button class="btn-primary btn">Make a new connection</button>
+            </div>
+            <div th:if="${!#lists.isEmpty(recentChats)}">
+                <div id="chatSectionMobile" th:each="chat : ${recentChats}" class="border-bottom" style="height: 125px;">
+                    <div th:id="${chat.key.id}" class="h-100">
+                        <form th:action="@{/message-home}" method="post" class="d-flex align-items-center w-100 h-100">
+                            <input type="hidden" name="userId" th:value="${chat.key.id}"/>
+                            <button class="btn btn-link text-decoration-none text-dark w-100 open-chat">
+                                <div class="d-flex align-items-center">
+                                    <img class="rounded-circle border border-dark"
+                                         th:src="@{'/users/' + ${chat.key.id} + '/profile-picture'}"
+                                         style="width: 50px; height: 50px;" alt="profile picture">
+                                    <div class="m-3 text-start">
+                                        <h6 th:text="${chat.key.fullName}"></h6>
+                                        <p th:text="${chat.value}" th:title="${chat.value}" class="text-truncate m-0" style="max-width: 200px;"></p>
+                                    </div>
+                                </div>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Big Screen Sidebar-->
+    <div class="sidebar border-end overflow-y-auto d-none d-lg-block" id="friendChatBar" style="min-width: 300px;">
+        <div class="border-bottom text-center align-items-center py-3">
+            <h3 class="m-0">Recent Chats</h3>
         </div>
         <div id="noMessagesHeader" th:if="${#lists.isEmpty(recentChats)}" class="text-center">
             <h5>You have no recent messages!</h5>
             <button class="btn-primary btn">Make a new connection</button>
         </div>
-        <div class="overflow-auto" style="height: calc(100vh - 56px);" th:if="${!#lists.isEmpty(recentChats)}">
-            <div id="chatSection" th:each="chat : ${recentChats}" class="border-bottom">
-                <div th:id="${chat.key.id}">
-                    <form th:action="@{/message-home}" method="post" class="d-flex align-items-center w-100">
+        <div th:if="${!#lists.isEmpty(recentChats)}">
+            <div id="chatSection" th:each="chat : ${recentChats}" class="border-bottom" style="height: 125px;">
+                <div th:id="${chat.key.id}" class="h-100">
+                    <form th:action="@{/message-home}" method="post" class="d-flex align-items-center w-100 h-100">
                         <input type="hidden" name="userId" th:value="${chat.key.id}"/>
-                        <button type="submit" class="btn btn-link text-decoration-none text-dark w-100 open-chat">
+                        <button class="btn btn-link text-decoration-none text-dark w-100 open-chat">
                             <div class="d-flex align-items-center">
                                 <img class="rounded-circle border border-dark"
                                      th:src="@{'/users/' + ${chat.key.id} + '/profile-picture'}"
                                      style="width: 50px; height: 50px;" alt="profile picture">
                                 <div class="m-3 text-start">
                                     <h6 th:text="${chat.key.fullName}"></h6>
-                                    <p th:text="${chat.value}" th:title="${chat.value}"></p>
+                                    <p th:text="${chat.value}" th:title="${chat.value}" class="text-truncate m-0" style="max-width: 200px;"></p>
                                 </div>
                             </div>
                         </button>
@@ -96,23 +131,26 @@
             </div>
         </div>
     </div>
-
-    <main class="flex-grow-1 d-flex flex-column position-relative h-100 px-lg-4">
-        <div class="mt-4" id="messageWindow">
+<!--Main chat stuff-->
+    <main class="flex-grow-1 d-flex flex-column h-100 px-lg-4 full-height-lg">
+        <div class="pt-4 h-100" id="messageWindow">
             <div class="text-center align-items-center" th:if="${#lists.isEmpty(recentChats)}">
                 <h5>You have no recent messages!</h5>
                 <button class="btn-primary btn">Make a new connection</button>
             </div>
             <div th:if="${sentToUser}">
-                <div class="d-flex align-items-center justify-content-around" id="messageWindowHeader">
-                    <button type="button" id="backButton" class="btn btn-secondary"><</button>
+                <div class="d-flex align-items-center justify-content-around pb-2" id="messageWindowHeader">
+                    <!-- Mobile chat toggle button (hamburger icon) -->
+                    <button class="btn border-0 d-lg-none mb-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#chatDrawer" aria-controls="chatDrawer">
+                        <img th:src="@{/icons/chat-bar.svg}" width="30" height="30" alt="View Chats" />
+                    </button>
                     <h5 class="mb-0" th:text="${sentToUser.fullName}"></h5>
                     <img class="rounded-circle overflow-hidden border border-dark ms-lg-2"
                          th:src="@{'/users/' + ${sentToUser.id} + '/profile-picture'}"
                          style="width: 50px; height: 50px;"
                          alt="profile picture">
                 </div>
-                <div id="scrollbar" class="messages mt-3 p-3">
+                <div id="scrollbar" class="messages p-3">
                     <div th:each="messages: ${messagesMap}">
                         <div class="text-center mb-2">[[${dateFormatter.format(messages.key, DATE_FORMAT)}]]</div>
                         <div th:each="message : ${messages.value}">
@@ -143,7 +181,7 @@
                 <div class="send-message-container">
                     <form th:action="@{/users/message(id=${sentToUser.id})}" method="post" th:object="${messageDTO}">
                         <input type="hidden" name="submissionToken" th:value="${submissionToken}"/>
-                        <div class="d-flex gap-2">
+                        <div class="d-flex gap-2 py-3 bg-white px-2">
                             <textarea id="message" th:name="message" class="form-control flex-grow-1"
                                       style="resize: none;"
                                       placeholder="Enter message here..." autofocus></textarea>
@@ -153,7 +191,7 @@
                             </button>
                         </div>
                     </form>
-                    <span class="d-sm-block p-3"></span>
+<!--                    <span class="d-sm-block p-3"></span>-->
                 </div>
             </div>
         </div>
@@ -171,54 +209,54 @@
             }
         });
 
-        const scrollToBottom = (element) => {
-            element.scrollTop = element.scrollHeight;
-        };
-
-        const scrollbar = document.getElementById('scrollbar');
-        scrollToBottom(scrollbar);
-
+        // const scrollToBottom = (element) => {
+        //     element.scrollTop = element.scrollHeight;
+        // };
+        //
+        // const scrollbar = document.getElementById('scrollbar');
+        // scrollToBottom(scrollbar);
+        //
         const activeChatId = '[[${activeChat}]]';
         const activeChatDiv = document.getElementById(activeChatId);
 
         if (activeChatDiv) {
             activeChatDiv.classList.add('active-chat');
         }
-
-        const chatButtons = document.querySelectorAll('.open-chat');
-        const messageWindow = document.getElementById('messageWindow');
-        const messageWindowHeader = document.getElementById('messageWindowHeader');
-        const friendChatBar = document.getElementById('friendChatBar');
-        const backButton = document.getElementById('backButton');
-        const noMessagesHeader = document.getElementById('noMessagesHeader');
-
-        function handleChatToggle() {
-            if (window.innerWidth < 1000) {
-                chatButtons.forEach(button => {
-                    button.addEventListener('click', () => {
-                        friendChatBar.style.display = 'none';
-                        messageWindow.style.display = 'block';
-                    });
-                });
-
-                backButton.addEventListener('click', () => {
-                    messageWindow.style.display = 'none';
-                    friendChatBar.style.display = 'block';
-                    noMessagesHeader.style.display = 'inline';
-                });
-            } else {
-                messageWindow.style.display = 'block';
-                friendChatBar.style.display = 'block';
-                backButton.style.display = 'none';
-                messageWindowHeader.classList.remove('justify-content-around');
-                messageWindowHeader.classList.add('justify-content-start');
-                noMessagesHeader.style.display = 'none';
-            }
-        }
-
-        handleChatToggle();  // Execute on page load
-
-        window.addEventListener('resize', handleChatToggle);  // Re-apply on resize
+        //
+        // const chatButtons = document.querySelectorAll('.open-chat');
+        // const messageWindow = document.getElementById('messageWindow');
+        // const messageWindowHeader = document.getElementById('messageWindowHeader');
+        // const friendChatBar = document.getElementById('friendChatBar');
+        // const backButton = document.getElementById('backButton');
+        // const noMessagesHeader = document.getElementById('noMessagesHeader');
+        //
+        // function handleChatToggle() {
+        //     if (window.innerWidth < 1000) {
+        //         chatButtons.forEach(button => {
+        //             button.addEventListener('click', () => {
+        //                 friendChatBar.style.display = 'none';
+        //                 messageWindow.style.display = 'block';
+        //             });
+        //         });
+        //
+        //         backButton.addEventListener('click', () => {
+        //             messageWindow.style.display = 'none';
+        //             friendChatBar.style.display = 'block';
+        //             noMessagesHeader.style.display = 'inline';
+        //         });
+        //     } else {
+        //         messageWindow.style.display = 'block';
+        //         friendChatBar.style.display = 'block';
+        //         backButton.style.display = 'none';
+        //         messageWindowHeader.classList.remove('justify-content-around');
+        //         messageWindowHeader.classList.add('justify-content-start');
+        //         noMessagesHeader.style.display = 'none';
+        //     }
+        // }
+        //
+        // // handleChatToggle();  // Execute on page load
+        //
+        // window.addEventListener('resize', handleChatToggle);  // Re-apply on resize
     });
 
 </script>
