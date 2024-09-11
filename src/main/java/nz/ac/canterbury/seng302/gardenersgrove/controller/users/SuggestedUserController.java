@@ -1,6 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.SuggestedUserDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.SuggestedUserService;
 import org.slf4j.Logger;
@@ -15,7 +17,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.time.LocalDate;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,17 +29,19 @@ public class SuggestedUserController {
 
     private static final Logger logger = LoggerFactory.getLogger(SuggestedUserController.class);
 
+    private final FriendService friendService;
     private final GardenUserService gardenUserService;
     private final SuggestedUserService suggestedUserService;
-    private static final String PASSWORD = "password";
+    private final ObjectMapper objectMapper;
+
     private static final String SUCCESS = "success";
-    private final GardenUser user4 = new GardenUser("Max", "Doe", "max@gmail.com", PASSWORD,
-            LocalDate.of(1970, 1, 1));
 
     @Autowired
-    public SuggestedUserController(GardenUserService gardenUserService, SuggestedUserService suggestedUserService) {
+    public SuggestedUserController(FriendService friendService, GardenUserService gardenUserService, SuggestedUserService suggestedUserService, ObjectMapper objectMapper) {
+        this.friendService = friendService;
         this.gardenUserService = gardenUserService;
         this.suggestedUserService = suggestedUserService;
+        this.objectMapper = objectMapper;
     }
 
     /**
@@ -48,20 +53,23 @@ public class SuggestedUserController {
     public String home(Authentication authentication, Model model) {
         logger.info("GET /");
         try {
-            //  hard-coding a mock user for the card
-            gardenUserService.addUser(user4);
-            user4.setDescription("I am here to meet some handsome young men who love gardening as much as I do! In my spare time, I like to thrift, ice skate, and grow vege. The baby daddy is my former sugar daddy John Doe. He died of a heart attack on his yacht in Italy last summer.");
-            List<GardenUser> suggestedUsers = new ArrayList<>();
-            suggestedUsers.add(user4);
-
             Long userId = (Long) authentication.getPrincipal();
             GardenUser user = gardenUserService.getUserById(userId);
+            List<GardenUser> suggestedUsers = new ArrayList<>();
+            suggestedUsers.addAll(friendService.receivedConnectionRequests(user));
+            suggestedUsers.addAll(friendService.availableConnections(user));
 
-            if (user.getId() != null) {
-                model.addAttribute("userId", suggestedUsers.get(0).getId());
-                model.addAttribute("name", suggestedUsers.get(0).getFullName());
-                model.addAttribute("description", suggestedUsers.get(0).getDescription());
+            if (suggestedUsers.isEmpty()) {
+                return "home";
             }
+
+            model.addAttribute("userId", suggestedUsers.get(0).getId());
+            model.addAttribute("name", suggestedUsers.get(0).getFullName());
+            model.addAttribute("description", suggestedUsers.get(0).getDescription());
+
+            List<SuggestedUserDTO> userDtos = suggestedUsers.stream().map(SuggestedUserDTO::new).toList();
+            String jsonUsers = objectMapper.writeValueAsString(userDtos);
+            model.addAttribute("userList", jsonUsers);
         }
         catch (Exception e) {
             logger.error("Error getting suggested users", e);
@@ -72,7 +80,7 @@ public class SuggestedUserController {
     @PostMapping("/")
     public ResponseEntity<Map<String, Object>> handleAcceptDecline(
             @RequestParam(name = "action") String action,
-            @RequestParam(name = "suggestedId") Long suggestedId,
+            @RequestParam(name = "id") Long suggestedId,
             Authentication authentication,
             Model model) {
         logger.info("Post /");
@@ -97,7 +105,7 @@ public class SuggestedUserController {
                     boolean newRequestSent = suggestedUserService.sendNewPendingRequest(loggedInUser, suggestedUser);
                     if (!newRequestSent) {
                         logger.error("Users already have a pending request. Doing nothing");
-                        return ResponseEntity.status(HttpStatus.OK).body(response);
+                        break;
                     }
                 }
                 break;
@@ -110,7 +118,7 @@ public class SuggestedUserController {
                     boolean declineStatusSet = suggestedUserService.setDeclinedFriendship(loggedInUser, suggestedUser);
                     if (!declineStatusSet) {
                         logger.error("Something went wrong trying to set a declined friendship. Doing nothing");
-                        return ResponseEntity.status(HttpStatus.OK).body(response);
+                        break;
                     }
                 }
                 break;
