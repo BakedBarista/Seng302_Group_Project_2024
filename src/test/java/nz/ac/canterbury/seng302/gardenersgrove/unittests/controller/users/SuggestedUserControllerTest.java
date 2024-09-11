@@ -1,13 +1,16 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unittests.controller.users;
 
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.users.SuggestedUserController;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.SuggestedUserService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,17 +21,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.thymeleaf.TemplateEngine;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import nz.ac.canterbury.seng302.gardenersgrove.controller.users.SuggestedUserController;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.SuggestedUserService;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.when;
 
 class SuggestedUserControllerTest {
 
@@ -187,4 +185,24 @@ class SuggestedUserControllerTest {
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
         Assertions.assertNull(response.getBody().get("success"));
     }
+
+    @Test
+    void testGetHome_NoLoggedIn_LandingPageReturned() {
+        String result = suggestedUserController.home(null, model, request, response);
+
+        Assertions.assertEquals("home", result);
+    }
+
+    @Test
+    void testHandleAcceptDecline_NotLoggedIn_NothingHappens() {
+        when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+        when(gardenUserService.getUserById(loggedInUserId)).thenReturn(null);
+        when(gardenUserService.getUserById(suggestedUserId)).thenReturn(suggestedUser);
+
+        ResponseEntity<Map<String, Object>> response = suggestedUserController.handleAcceptDecline("decline", suggestedUserId, authentication, model);
+
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Assertions.assertEquals(false, response.getBody().get("success"));
+    }
+
 }
