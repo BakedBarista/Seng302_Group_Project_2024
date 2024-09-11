@@ -24,6 +24,7 @@ import org.springframework.validation.BindingResult;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,9 +35,9 @@ public class U800_3_1_MessageFeature {
     @Autowired
     private GardenUserService gardenUserService;
     @Autowired
-    private  FriendService friendService;
+    private FriendService friendService;
     @Autowired
-    private  MessageService messageService;
+    private MessageService messageService;
     @Autowired
     private MessageController messageController;
     @Autowired
@@ -53,7 +54,6 @@ public class U800_3_1_MessageFeature {
     private static MockHttpSession session;
     private static int currentMessages;
     private static BindingResult bindingResult;
-
 
     @BeforeAll
     public static void setup() {
@@ -94,6 +94,7 @@ public class U800_3_1_MessageFeature {
             gardenUserService.addUser(user);
         }
     }
+
     @Given("{string} and {string} are friends")
     public void and_are_friends(String username1, String username2) {
         GardenUser user1 = gardenUserService.getUserByEmail(username1 + "cucumber@email.com");
@@ -113,12 +114,12 @@ public class U800_3_1_MessageFeature {
         Mockito.when(authentication.getPrincipal()).thenReturn(myId);
         Long friendsId = gardenUserService.getUserByEmail(friendName + "cucumber@email.com").getId();
 
-        result = messageController.messageFriend(friendsId, authentication, model,session);
+        result = messageController.messageFriend(friendsId, authentication, model, session);
     }
 
     @Then("I am taken to the message page")
     public void i_am_taken_to_the_message_page() {
-        assertEquals("users/message", result);
+        assertEquals("users/message-home", result);
     }
 
     // AC5
@@ -127,6 +128,7 @@ public class U800_3_1_MessageFeature {
         receiverId = gardenUserService.getUserByEmail(friendName + "cucumber@email.com").getId();
         currentMessages = messageRepository.findMessagesBetweenUsers(myId, receiverId).size();
     }
+
     @When("I have typed a text-based message {string}")
     public void i_have_typed_a_text_based_message(String messageContent) {
         String token = UUID.randomUUID().toString();
@@ -137,7 +139,7 @@ public class U800_3_1_MessageFeature {
     @When("They have typed a text-based message {string}")
     public void they_have_typed_a_text_based_message(String messageContent) {
         String token = UUID.randomUUID().toString();
-        messageDTO = new MessageDTO(messageContent,token);
+        messageDTO = new MessageDTO(messageContent, token);
         session.setAttribute("submissionToken", token);
     }
 
@@ -170,9 +172,23 @@ public class U800_3_1_MessageFeature {
 
         Assertions.assertEquals(currentMessages + 4, messages.size());
         for (int i = 1; i < messages.size(); i++) {
-            Assertions.assertTrue(messages.get(i).getTimestamp().isAfter(messages.get(i-1).getTimestamp()));
+            Assertions.assertTrue(messages.get(i).getTimestamp().isAfter(messages.get(i - 1).getTimestamp()));
         }
     }
+
+    @Then("The {string} existing chats are displayed on the side in chronological order")
+    public void the_existing_chats_are_displayed_on_the_side_in_chronological_order(String numOfChats) {
+        int expectedChatCount = Integer.parseInt(numOfChats);
+
+        result = messageController.messageHomeSend(receiverId, authentication, model, session);
+        List<Message> allMessages = messageService.findAllRecentChats(myId);
+        Map<Long, Message> recentMessagesMap = messageService.getLatestMessages(allMessages, myId);
+        Map<GardenUser, String> recentChats = messageService.convertToPreview(recentMessagesMap);
+
+        assertEquals(expectedChatCount, recentChats.size());
+        assertEquals("users/message-home", result);
+    }
+
     @When("I send invalid message")
     public void i_send_invalid_message() {
         Mockito.when(authentication.getPrincipal()).thenReturn(myId);
