@@ -125,7 +125,7 @@ function addDeleteButton(selectedCard) {
 
     const button = document.createElement('a');
     button.className = 'btn-change position-absolute bg-danger top-0 end-0 m-1 p-1 d-flex ' +
-        'align-content-center justify-content-center rounded-3';
+        'align-content-center justify-content-center rounded-3 hoverable';
 
     const img = document.createElement('img');
     img.src = '../icons/delete.svg';
@@ -180,7 +180,7 @@ function updateCardAppearance(selectedCard, plantImage, plantName, plantId) {
 
 function clearCardAppearance(selectedCard) {
     selectedCard.className = 'card p-2 me-3 mb-3 border-0 rounded-3 shadow-sm public-profile-plant-card ' +
-        'justify-content-center card-wiggle bg-primary-grey';
+        'justify-content-center card-wiggle bg-primary-grey hoverable';
 
     const hiddenElement = document.getElementById("selectedPlantId" + selectedCardId)
 
