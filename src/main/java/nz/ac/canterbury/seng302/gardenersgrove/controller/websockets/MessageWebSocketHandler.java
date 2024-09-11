@@ -138,21 +138,7 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 		ObjectNode message = JsonNodeFactory.instance.objectNode();
 		message.put("type", "updateMessages");
 
-		String jsonMessage;
-		try {
-			jsonMessage = objectMapper.writeValueAsString(message);
-		} catch (JacksonException e) {
-			logger.error("Error encoding message", e);
-			return;
-		}
-
-		TextMessage wsMessage = new TextMessage(jsonMessage);
-		logger.info("Sending message: {}", wsMessage.getPayload());
-		try {
-			session.sendMessage(wsMessage);
-		} catch (IOException e) {
-			logger.error("Error sending message", e);
-		}
+		sendMessage(session, message);
 	}
 
 	private void sendError(WebSocketSession session, Set<ConstraintViolation<MessageDTO>> errors, String messageText) {
@@ -163,6 +149,10 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 		message.put("error", error);
 		message.put("message", messageText);
 
+		sendMessage(session, message);
+	}
+
+	private void sendMessage(WebSocketSession session, ObjectNode message) {
 		String jsonMessage;
 		try {
 			jsonMessage = objectMapper.writeValueAsString(message);
