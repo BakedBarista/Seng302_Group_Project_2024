@@ -108,7 +108,7 @@ public interface FriendsRepository extends CrudRepository<Friends, Long> {
     void deleteBySenderId(Long senderId);
 
     /**
-     *
+     * Get all users who are available to connect with a given user
      * @param userId user that is getting connections
      * @return a list of all the users who are available to connect with a given user
      */
