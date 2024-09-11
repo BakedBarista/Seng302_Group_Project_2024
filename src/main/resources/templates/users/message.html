@@ -54,53 +54,13 @@
             </div>
             <hr>
             <div id="scrollbar" class="messages mt-3 p-3">
-                <div th:each="messages: ${messagesMap}">
-                    <div class="text-center mb-2">[[${dateFormatter.format(messages.key, DATE_FORMAT)}]]</div>
-                    <div th:each="message : ${messages.value}">
-                        <!--friends msg-->
-                        <div th:if="${message.sender == sentToUser.id}" class="d-flex">
-                            <!--large screen-->
-                            <div class="card text-white bg-secondary shadow-sm mb-3 border-0 d-none d-md-block" style="max-width: 40%">
-                                <div class="card-body">
-                                    <small>[[${dateFormatter.format(message.timestamp, TIMESTAMP_FORMAT)}]]</small>
-                                    <p class="card-text mt-2">[[${message.messageContent}]]</p>
-                                </div>
-                            </div>
-
-                            <!--small screen-->
-                            <div class="card text-white bg-secondary shadow-sm mb-3 border-0 d-block d-md-none" style="max-width: 80%">
-                                <div class="card-body">
-                                    <small>[[${dateFormatter.format(message.timestamp, TIMESTAMP_FORMAT)}]]</small>
-                                    <p class="card-text mt-2">[[${message.messageContent}]]</p>
-                                </div>
-                            </div>
-                        </div>
-                        <!--logged in users msg-->
-                        <div th:if="${message.receiver == sentToUser.id}" class="d-flex justify-content-end">
-                            <div class="card text-white bg-primary shadow-sm mb-3 border-0 d-none d-md-block" style="max-width: 40%">
-                                <div class="card-body">
-                                    <small>[[${dateFormatter.format(message.timestamp, TIMESTAMP_FORMAT)}]]</small>
-                                    <p class="card-text mt-2">[[${message.messageContent}]]</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div th:if="${message.receiver == sentToUser.id}" class="d-flex justify-content-end">
-                            <div class="card text-white bg-primary shadow-sm mb-3 border-0 d-block d-md-none" style="max-width: 80%">
-                                <div class="card-body">
-                                    <small>[[${dateFormatter.format(message.timestamp, TIMESTAMP_FORMAT)}]]</small>
-                                    <p class="card-text mt-2">[[${message.messageContent}]]</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <th:block th:insert="~{users/messagesList}"></th:block>
             </div>
 
 
             <!-- message and send message box-->
             <div class="send-message-container">
-                <form th:action="@{/users/message(id=${sentToUser.id})}" method="post" th:object="${messageDTO}">
+                <form th:action="@{/users/message(id=${sentToUser.id})}" method="post" th:object="${messageDTO}" id="sendMessageForm">
                     <input type="hidden" name="submissionToken" th:value="${submissionToken}" />
                     <div class="d-flex gap-2">
                         <div class="d-flex flex-fill flex-wrap">
@@ -117,6 +77,7 @@
                                 </button>
                             </div>
                                 <div class="invalid-feedback" th:if="${#fields.hasErrors('message')}" th:errors="*{message}"></div>
+                                <div class="invalid-feedback" id="invalidFeedback"></div>
                         </div>
                     </div>
                 </form>
@@ -132,7 +93,7 @@
             textarea.addEventListener("keydown", function(event) {
                 if (event.key === "Enter" && !event.shiftKey && !(textarea.value.length < 0 || messageField.value.trim().length === 0) ) {
                     event.preventDefault();
-                    this.form.submit();
+                    sendMessage();
                 }
             });
         });
@@ -154,5 +115,6 @@
             button.disabled = messageField.value.length <= 0 || messageField.value.trim().length === 0;
         })
     </script>
+    <script th:src="@{/js/message.js}"></script>
 </body>
 </html>
