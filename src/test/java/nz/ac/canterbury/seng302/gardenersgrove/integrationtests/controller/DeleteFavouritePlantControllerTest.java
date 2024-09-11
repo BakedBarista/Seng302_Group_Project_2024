@@ -25,7 +25,7 @@ import static org.mockito.Mockito.mock;
 
 @SuppressWarnings("SpringJavaInjectionsPointsAutowiringInspection")
 @SpringBootTest
-public class DeleteFavouritePlantControllerTest {
+class DeleteFavouritePlantControllerTest {
 
     @Autowired
     private DeleteFavouritePlantController controller;

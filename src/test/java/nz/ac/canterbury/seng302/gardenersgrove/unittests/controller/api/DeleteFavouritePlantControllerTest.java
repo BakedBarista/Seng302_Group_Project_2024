@@ -13,7 +13,7 @@ import java.util.Map;
 
 import static org.mockito.Mockito.mock;
 
-public class DeleteFavouritePlantControllerTest {
+class DeleteFavouritePlantControllerTest {
 
     private static GardenUserService gardenUserService;
 
