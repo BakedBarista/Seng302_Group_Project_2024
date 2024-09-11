@@ -284,7 +284,6 @@ public class GardenUserService {
             user.removeFavouritePlant(plantId);
             addUser(user);
         }
-
         return match;
     }
 }

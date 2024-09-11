@@ -145,6 +145,12 @@ public class PlantService {
         return plantRepository.findPlantsFromSearch(gardenUser, searchTerm);
     }
 
+    /**
+     * Set the favourite garden of the plant to be null
+     * and then save the plant - used for removing plant from
+     * favourite plants list
+     * @param plantId id of plant that is being removed
+     */
     public void updatePlantUnfavourited(Long plantId) {
         Optional<Plant> optionalPlant = this.getPlantById(plantId);
         if (optionalPlant.isPresent()) {
