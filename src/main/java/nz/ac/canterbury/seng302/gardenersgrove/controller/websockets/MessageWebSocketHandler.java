@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.websockets;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -71,7 +72,7 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 				updateMessages(session);
 				break;
 			case "sendMessage":
-				Long sender = Long.parseLong(session.getPrincipal().getName());
+				Long sender = getCurrentUserId(session);
 				Long reciever = message.get("reciever").asLong();
 				String messageText = message.get("message").asText();
 				logger.info("sendMessage {} {} {}", sender, reciever, messageText);
@@ -101,13 +102,22 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 		}
 	}
 
+	private long getCurrentUserId(WebSocketSession session) {
+		Principal principal = session.getPrincipal();
+		if (principal == null) {
+			logger.error("Session is missing principal");
+			throw new IllegalStateException("Websocket session is missing principal");
+		}
+		return Long.parseLong(principal.getName());
+	}
+
 	/**
 	 * Sends an `updateMessages` message to each of the given users.
 	 * @param userIds A list of user IDs to broadcast the message to
 	 */
 	private void updateMessagesBroadcast(List<Long> userIds) {
 		for (WebSocketSession session : Set.copyOf(activeSessions)) {
-			long userId = Long.parseLong(session.getPrincipal().getName());
+			long userId = getCurrentUserId(session);
 			if (userIds == null || !userIds.contains(userId)) {
 				continue;
 			}

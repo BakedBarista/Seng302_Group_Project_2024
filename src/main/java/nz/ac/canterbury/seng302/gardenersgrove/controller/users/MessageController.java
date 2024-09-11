@@ -61,8 +61,8 @@ public class MessageController {
 
         String submissionToken = UUID.randomUUID().toString();
         session.setAttribute("submissionToken", submissionToken);
+        model.addAttribute("submissionToken", submissionToken);
         Long loggedInUserId = (Long) authentication.getPrincipal();
-        GardenUser sentToUser = userService.getUserById(requestedUserId);
 
         // need to be friends to send a message
         Friends isFriend = friendService.getFriendship(loggedInUserId, requestedUserId);
@@ -70,13 +70,7 @@ public class MessageController {
             return "redirect:/users/manage-friends";
         }
 
-        model.addAttribute("dateFormatter", new ThymeLeafDateFormatter());
-        model.addAttribute("TIMESTAMP_FORMAT", TIMESTAMP_FORMAT);
-        model.addAttribute("DATE_FORMAT", WEATHER_CARD_FORMAT_DATE);
-        model.addAttribute("submissionToken", submissionToken);
-        model.addAttribute("messagesMap", messageService.getMessagesBetweenFriends(loggedInUserId, requestedUserId));
-        model.addAttribute("messageDTO", new MessageDTO("", ""));
-        model.addAttribute("sentToUser", sentToUser);
+        messageFriendList(requestedUserId, authentication, model, session);
 
         return "users/message";
     }
