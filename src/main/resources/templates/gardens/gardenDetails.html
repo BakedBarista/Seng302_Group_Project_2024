@@ -193,14 +193,14 @@
         <a type="button" th:if="${currentUser.id == garden.owner.id}" th:href="@{/gardens/{id}/add-plant(id=${garden.id})}" class="btn btn-primary ms-auto">
             <img th:src="@{/icons/add-square-white.svg}" alt="" width="20" height="20" /> New Plant</a>
     </div>
-    <div class="mx-4 card shadow=sm">
+    <div class="mx-3 card p-3 shadow-sm">
         <div th:if="${plants.empty}">
             <p th:text="${currentUser.id == owner.id} ? 'Please add a plant first' : ${garden.name} + ' does not currently contain any plants'"></p>
         </div>
 
         <!-- Plant card -->
         <div class="flex">
-            <div class="row gap-2 justify-content-center">
+            <div class="row gap-3 justify-content-center">
                 <!-- small plant card -->
                 <div th:each="plant: ${plants}" class="card rounded-3 border-0 shadow-sm mb-3 d-lg-none" style="max-width: 540px;">
                     <div class="row g-0">

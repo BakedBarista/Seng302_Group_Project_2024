@@ -74,16 +74,19 @@ public class SuggestedUserController {
             suggestedUsers.addAll(friendService.availableConnections(user));
 
             if (suggestedUsers.isEmpty()) {
-                return "home";
+                return "suggestedFriends";
             }
 
             model.addAttribute("userId", suggestedUsers.get(0).getId());
             model.addAttribute("name", suggestedUsers.get(0).getFullName());
             model.addAttribute("description", suggestedUsers.get(0).getDescription());
+            logger.info("Description: {}", suggestedUsers.get(0).getDescription());
 
             List<SuggestedUserDTO> userDtos = suggestedUsers.stream().map((GardenUser u) -> makeSuggestedUserDTO(u, request, response)).toList();
             String jsonUsers = objectMapper.writeValueAsString(userDtos);
             model.addAttribute("userList", jsonUsers);
+        } catch (Exception e) {
+            logger.error("Error getting suggested users", e);
         }
         return "suggestedFriends";
     }

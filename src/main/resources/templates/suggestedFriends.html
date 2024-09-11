@@ -31,14 +31,11 @@
         border-color: transparent;
     }
 
-    @media screen and (max-height: 850px) {
+    @media screen and (max-height: 1000px) {
         .flip-card {
-            height: 850px; /* Set your fixed height here */
+            height: 85vh; /* Set your fixed height here */
         }
 
-        .action-buttons {
-            padding: 2rem;
-        }
     }
 </style>
 <body>
@@ -70,14 +67,14 @@
                             th:src="@{'/users/' + ${userId} + '/profile-picture'}"
                             id="cardImage"
                             alt="profile picture"
-                            style="height:50vh; object-fit: cover; border-radius: 15px;"
+                            style="object-fit: cover; border-radius: 15px;"
                     />
                 </div>
                 <div class="d-flex flex-column pt-2">
                     <span th:if="${name.length() >= 12}"><span class="d-sm-none d-flex mt-5"></span></span>
                     <h2 class="mb-1 text-white" id="cardName">[[${name}]]</h2>
                 </div>
-                <div style="max-height: 150px;">
+                <div class="overflow-y-auto" style="max-height: 150px;">
                     <p class="text-white" id="cardDescription">[[${description}]]</p>
                 </div>
                 <div class="d-flex justify-content-center">
