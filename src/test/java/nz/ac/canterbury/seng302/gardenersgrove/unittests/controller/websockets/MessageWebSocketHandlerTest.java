@@ -1,7 +1,9 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unittests.controller.websockets;
 
 import java.io.IOException;
+import java.security.Principal;
 
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.MessageDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -11,23 +13,43 @@ import org.springframework.web.socket.WebSocketSession;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jakarta.validation.Validation;
+import jakarta.validation.ValidatorFactory;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.websockets.MessageWebSocketHandler;
+import nz.ac.canterbury.seng302.gardenersgrove.service.MessageService;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class MessageWebSocketHandlerTest {
 
+    private MessageService messageService;
     private MessageWebSocketHandler testWebSocketHandler;
     private WebSocketSession session1;
     private WebSocketSession session2;
+    private Principal principal1;
+    private Principal principal2;
     
     @BeforeEach
     void setUp() {
+        messageService = mock(MessageService.class);
         ObjectMapper objectMapper = new ObjectMapper();
-        testWebSocketHandler = new MessageWebSocketHandler(objectMapper);
+        ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
+        testWebSocketHandler = new MessageWebSocketHandler(messageService, objectMapper, validatorFactory);
 
         session1 = mock(WebSocketSession.class);
         session2 = mock(WebSocketSession.class);
+        principal1 = mock(Principal.class);
+        principal2 = mock(Principal.class);
+    }
+
+    @Test
+    void whenPing_thenPong() throws IOException {
+        TextMessage subscribe = new TextMessage("{\"type\":\"ping\"}");
+
+        testWebSocketHandler.handleTextMessage(session1, subscribe);
+
+        verify(session1, times(1)).sendMessage(new TextMessage("{\"type\":\"pong\"}"));
     }
 
     @Test
@@ -36,49 +58,90 @@ class MessageWebSocketHandlerTest {
 
         testWebSocketHandler.handleTextMessage(session1, subscribe);
 
-        verify(session1).sendMessage(new TextMessage("{\"type\":\"value\",\"value\":0}"));
+        verify(session1, times(1)).sendMessage(new TextMessage("{\"type\":\"updateMessages\"}"));
     }
 
     @Test
-    void whenIncrement_thenSendsUpdatedState() throws IOException {
+    void whenSendMessage_thenSavesMessage() throws IOException {
         when(session1.isOpen()).thenReturn(true);
+        when(session1.getPrincipal()).thenReturn(principal1);
+        when(principal1.getName()).thenReturn("1");
 
         TextMessage subscribe = new TextMessage("{\"type\":\"subscribe\"}");
-        TextMessage increment = new TextMessage("{\"type\":\"increment\"}");
+        TextMessage increment = new TextMessage("{\"type\":\"sendMessage\",\"reciever\":2,\"message\":\"test\"}");
 
         testWebSocketHandler.handleTextMessage(session1, subscribe);
         testWebSocketHandler.handleTextMessage(session1, increment);
 
-        verify(session1).sendMessage(new TextMessage("{\"type\":\"value\",\"value\":1}"));
+        verify(messageService).sendMessage(eq(1L), eq(2L), assertArg((MessageDTO message) -> {
+            assertEquals("test", message.getMessage());
+        }));
     }
 
     @Test
-    void whenIncrement_thenSendsUpdatedStateToAllClients() throws IOException {
+    void whenSendInvalidMessage_thenDoesNotSaveMessage() throws IOException {
         when(session1.isOpen()).thenReturn(true);
-        when(session2.isOpen()).thenReturn(true);
+        when(session1.getPrincipal()).thenReturn(principal1);
+        when(principal1.getName()).thenReturn("1");
 
         TextMessage subscribe = new TextMessage("{\"type\":\"subscribe\"}");
-        TextMessage increment = new TextMessage("{\"type\":\"increment\"}");
+        String longMessage = "test.".repeat(40);
+        TextMessage increment = new TextMessage("{\"type\":\"sendMessage\",\"reciever\":2,\"message\":\"" + longMessage + "\"}");
+
+        testWebSocketHandler.handleTextMessage(session1, subscribe);
+        testWebSocketHandler.handleTextMessage(session1, increment);
+
+        verify(messageService, never()).sendMessage(any(), any(), any());
+    }
+
+    @Test
+    void whenSendMessage_thenSendsUpdatedState() throws IOException {
+        when(session1.isOpen()).thenReturn(true);
+        when(session1.getPrincipal()).thenReturn(principal1);
+        when(principal1.getName()).thenReturn("1");
+
+        TextMessage subscribe = new TextMessage("{\"type\":\"subscribe\"}");
+        TextMessage increment = new TextMessage("{\"type\":\"sendMessage\",\"reciever\":2,\"message\":\"test\"}");
+
+        testWebSocketHandler.handleTextMessage(session1, subscribe);
+        testWebSocketHandler.handleTextMessage(session1, increment);
+
+        verify(session1, times(2)).sendMessage(new TextMessage("{\"type\":\"updateMessages\"}"));
+    }
+
+    @Test
+    void whenSendMessage_thenSendsUpdatedStateToAllClients() throws IOException {
+        when(session1.isOpen()).thenReturn(true);
+        when(session2.isOpen()).thenReturn(true);
+        when(session1.getPrincipal()).thenReturn(principal1);
+        when(session2.getPrincipal()).thenReturn(principal2);
+        when(principal1.getName()).thenReturn("1");
+        when(principal2.getName()).thenReturn("2");
+
+        TextMessage subscribe = new TextMessage("{\"type\":\"subscribe\"}");
+        TextMessage increment = new TextMessage("{\"type\":\"sendMessage\",\"reciever\":2,\"message\":\"test\"}");
 
         testWebSocketHandler.handleTextMessage(session1, subscribe);
         testWebSocketHandler.handleTextMessage(session2, subscribe);
         testWebSocketHandler.handleTextMessage(session1, increment);
 
-        verify(session1).sendMessage(new TextMessage("{\"type\":\"value\",\"value\":1}"));
-        verify(session2).sendMessage(new TextMessage("{\"type\":\"value\",\"value\":1}"));
+        verify(session1, times(2)).sendMessage(new TextMessage("{\"type\":\"updateMessages\"}"));
+        verify(session2, times(2)).sendMessage(new TextMessage("{\"type\":\"updateMessages\"}"));
     }
 
     @Test
-    void givenConnectionClosed_whenIncrement_thenDoesNotSendUpdatedState() throws IOException {
+    void givenConnectionClosed_whenSendMessage_thenDoesNotSendUpdatedState() throws IOException {
         when(session1.isOpen()).thenReturn(false);
+        when(session1.getPrincipal()).thenReturn(principal1);
+        when(principal1.getName()).thenReturn("1");
 
         TextMessage subscribe = new TextMessage("{\"type\":\"subscribe\"}");
-        TextMessage increment = new TextMessage("{\"type\":\"increment\"}");
+        TextMessage increment = new TextMessage("{\"type\":\"sendMessage\",\"reciever\":1,\"message\":\"test\"}");
 
         testWebSocketHandler.handleTextMessage(session1, subscribe);
         testWebSocketHandler.handleTextMessage(session1, increment);
 
-        verify(session1, never()).sendMessage(new TextMessage("{\"type\":\"value\",\"value\":1}"));
+        verify(session1, times(1)).sendMessage(new TextMessage("{\"type\":\"updateMessages\"}"));
     }
 
     @ParameterizedTest
