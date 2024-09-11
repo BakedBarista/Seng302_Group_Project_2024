@@ -71,6 +71,7 @@ public class MessageController {
         }
 
         messageFriendList(requestedUserId, authentication, model, session);
+        model.addAttribute("messageDTO", new MessageDTO("", ""));
 
         return "users/message";
     }
