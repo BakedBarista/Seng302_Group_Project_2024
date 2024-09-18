@@ -6,6 +6,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,10 +44,10 @@ class WikidataAPIControllerTest {
         });
         when(wikidataService.getPlantInfo("tomato")).thenReturn(plantInfoList);
 
-        ResponseEntity<JsonNode> response = wikiDataAPIController.searchPlantAutocomplete("tomato");
+        CompletableFuture<ResponseEntity<JsonNode>> response = wikiDataAPIController.searchPlantAutocomplete("tomato");
 
         String expected = "{\"results\":[{\"label\":\"Tomato\",\"description\":\"A red fruit\",\"id\":\"Q235\",\"image\":\"https://commons.wikimedia.org/wiki/Special:FilePath/Tomato.jpg\",\"formatted\":\"<strong>Tomato</strong> &ndash; <em>A red fruit</em>\"}]}";
-        assertEquals(expected, response.getBody().toString());
+        assertEquals(expected, response.join().getBody().toString());
     }
 
     @Test
@@ -58,9 +59,9 @@ class WikidataAPIControllerTest {
         when(localPlantDataService.getSimilarPlantInfo(anyString())).thenReturn(plantInfoList);
         when(wikidataService.getPlantInfo("tomato")).thenReturn(plantInfoList);
 
-        ResponseEntity<JsonNode> response = wikiDataAPIController.searchPlantAutocomplete("nonexistentplant");
+        CompletableFuture<ResponseEntity<JsonNode>> response = wikiDataAPIController.searchPlantAutocomplete("nonexistentplant");
 
         String expected = "{\"results\":[]}";
-        assertEquals(expected, response.getBody().toString());
+        assertEquals(expected, response.join().getBody().toString());
     }
 }
