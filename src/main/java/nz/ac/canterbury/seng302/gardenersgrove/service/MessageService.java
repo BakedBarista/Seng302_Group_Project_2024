@@ -4,9 +4,12 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Message;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.MessageDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.MessageRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -20,11 +23,15 @@ import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats
  */
 @Service
 public class MessageService {
+    Logger logger = LoggerFactory.getLogger(MessageService.class);
 
     private final MessageRepository messageRepository;
     private final Clock clock;
 
     private final GardenUserService userService;
+
+    private static final Set<String> ACCEPTED_FILE_TYPES = Set.of("image/jpeg", "image/jpg", "image/png", "image/svg");
+    private static final int MAX_FILE_SIZE = 10 * 1024 * 1024;
 
     @Autowired
     public MessageService(MessageRepository messageRepository, Clock clock, GardenUserService userService) {
@@ -223,5 +230,28 @@ public class MessageService {
         model.addAttribute("sentToUser", sentToUser);
         model.addAttribute("recentChats", recentChats);
         model.addAttribute("activeChat", requestedUserId);
+    }
+
+    public void setMessageImage(long id, MultipartFile messageImage) {
+        if (validateImage(messageImage)) {
+            var message = messageRepository.findById(id);
+            if (message.isEmpty()) {
+                return;
+            }
+
+            try {
+                message.get().setImage(messageImage.getContentType(), messageImage.getBytes());
+                messageRepository.save(message.get());
+            } catch (Exception e) {
+                logger.error("Exception ", e);
+            }
+        } else {
+            logger.error("Plant image is too large or not of correct type");
+        }
+    }
+
+    public boolean validateImage(MultipartFile plantImage) {
+        return ACCEPTED_FILE_TYPES.contains(plantImage.getContentType())
+                && (plantImage.getSize() <= MAX_FILE_SIZE);
     }
 }
