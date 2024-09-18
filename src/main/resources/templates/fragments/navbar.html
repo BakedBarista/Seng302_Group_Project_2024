@@ -6,7 +6,7 @@
 </head>
 <body>
 <div th:fragment="navbar">
-  <nav class="nav-drawer">
+  <nav class="nav-drawer" data-bs-theme="dark">
     <h5 class="d-flex align-items-center">
       <a href="#navDrawer" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="navDrawer" class="d-md-none"><img
           class="link-icon" th:src="@{/icons/menu-01-stroke-rounded-white.svg}" width="24" height="24" alt="Menu" /></a>
@@ -72,11 +72,15 @@
     
     
       </ul>
+      <div th:if="${!isAuthenticated}">
+        <div th:replace="~{fragments/darkmode-toggle :: darkmode-toggle}"></div>
+      </div>
       <ul th:if="${isAuthenticated}" class="pt-3">
         <li>
           <a href="#profileOptions" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="profileOptions">
             <img class="link-icon" th:src="@{/icons/user-stroke-rounded-white.svg}" width="24" height="24" alt="User" />
             <span th:text="${currentUserFullName}">User</span>
+            <div th:replace="~{fragments/darkmode-toggle :: darkmode-toggle}"></div>
           </a>
         </li>
       </ul>
