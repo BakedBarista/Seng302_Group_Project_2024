@@ -71,6 +71,10 @@ public class MessageController {
             Authentication authentication,
             Model model,
             HttpSession session) {
+        
+        Long loggedInUserId = (Long) authentication.getPrincipal();
+        friendService.setLastReadMessageTime(requestedUserId, loggedInUserId);
+
         return setupMessagePage(requestedUserId, authentication, model, session);
     }
 
@@ -89,7 +93,12 @@ public class MessageController {
     public String messageHome(Authentication authentication,
             Model model,
             HttpSession session) {
+            
         Long requestedUserId = getLatestRequestedUserId(authentication);
+            
+        Long loggedInUserId = (Long) authentication.getPrincipal();
+        friendService.setLastReadMessageTime(requestedUserId, loggedInUserId);
+        
         return setupMessagePage(requestedUserId, authentication, model, session);
     }
 

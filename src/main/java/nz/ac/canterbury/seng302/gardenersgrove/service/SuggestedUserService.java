@@ -130,7 +130,7 @@ public class SuggestedUserService {
         }
 
         logger.info("Sending a pending request from ID: {} to ID: {}", loggedInUser.getId(), suggestedUser.getId());
-        Friends pendingRequest = new Friends(loggedInUser, suggestedUser, PENDING);
+        Friends pendingRequest = new Friends(loggedInUser, suggestedUser, PENDING, null);
         friendService.save(pendingRequest);
         return true;
     }
@@ -150,7 +150,7 @@ public class SuggestedUserService {
         }
 
         logger.info("Creating a new declined request from ID: {} to ID: {}", loggedInUser.getId(), suggestedUser.getId());
-        Friends declinedRequest = new Friends(loggedInUser, suggestedUser, DECLINED);
+        Friends declinedRequest = new Friends(loggedInUser, suggestedUser, DECLINED, null);
         friendService.save(declinedRequest);
         return true;
     }

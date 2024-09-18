@@ -26,7 +26,6 @@ import static nz.ac.canterbury.seng302.gardenersgrove.entity.Friends.Status.ACCE
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.mock;
 
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 @SpringBootTest
@@ -126,7 +125,7 @@ class MessageControllerTest {
         LocalDateTime testTime = LocalDateTime.of(2024, 9, 10, 15, 30, 0);
         Message testMessage = new Message(user1.getId(), user2.getId(), testTime, "HI");
         messageRepository.save(testMessage);
-        Friends friend = new Friends(user1, user2, ACCEPTED);
+        Friends friend = new Friends(user1, user2, ACCEPTED, null);
 
         when(gardenUserService.getUserById(user2.getId())).thenReturn(user2);
         when(mockedFriendService.getFriendship(user1.getId(), user2.getId())).thenReturn(friend);
@@ -148,7 +147,7 @@ class MessageControllerTest {
         LocalDateTime testTime = LocalDateTime.of(2024, 9, 10, 15, 30, 0);
         Message testMessage = new Message(user1.getId(), user2.getId(), testTime, "HI");
         messageRepository.save(testMessage);
-        Friends friend = new Friends(user1, user2, ACCEPTED);
+        Friends friend = new Friends(user1, user2, ACCEPTED, null);
 
         when(gardenUserService.getUserById(user2.getId())).thenReturn(user2);
         when(mockedFriendService.getFriendship(user1.getId(), user2.getId())).thenReturn(friend);

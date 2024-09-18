@@ -78,7 +78,7 @@ class MessageControllerTest {
         if (hasNotSetUp) {
             gardenUserService.addUser(sender);
             gardenUserService.addUser(receiver);
-            Friends friendship = new Friends(sender, receiver, Friends.Status.ACCEPTED);
+            Friends friendship = new Friends(sender, receiver, Friends.Status.ACCEPTED, null);
 
             friendService.save(friendship);
 
@@ -116,7 +116,7 @@ class MessageControllerTest {
         Mockito.when(authentication.getPrincipal()).thenReturn(sender.getId());
         Mockito.when(bindingResult.hasErrors()).thenReturn(false);
 
-        messageController.sendMessage(receiver.getId(), messageDTO, bindingResult, authentication, model, session);
+        String endPoint = messageController.sendMessage(receiver.getId(), messageDTO, bindingResult, authentication, model, session);
         List<Message> savedMessages = messageRepository.findMessagesBetweenUsers(sender.getId(), receiver.getId());
 
         // verify message is saved to repository
@@ -132,7 +132,7 @@ class MessageControllerTest {
         Mockito.when(authentication.getPrincipal()).thenReturn(sender.getId());
         Mockito.when(bindingResult.hasErrors()).thenReturn(false);
 
-        messageController.sendMessage(receiver.getId(), messageDTO, bindingResult, authentication, model, session);
+        String endPoint = messageController.sendMessage(receiver.getId(), messageDTO, bindingResult, authentication, model, session);
         List<Message> savedMessages = messageRepository.findMessagesBetweenUsers(sender.getId(), receiver.getId());
 
         // verify message is saved to repository

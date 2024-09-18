@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -194,6 +195,12 @@ public class FriendService {
      */
     public Optional<Friends> getPendingOrDeclinedRequests(Long user1Id, Long user2Id) {
         return friendsRepository.findPendingOrDeclinedFriendship(user1Id, user2Id);
+    }
+
+    public void setLastReadMessageTime(Long user1, Long user2){
+        Friends friendship = getFriendship(user1, user2);
+        friendship.setLastReadMessage(LocalDateTime.now());
+        friendsRepository.save(friendship);
     }
 
 }

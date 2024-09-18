@@ -638,7 +638,7 @@ public class GardenController {
             GardenUser user1 = new GardenUser("Luke", "Stynes", "stynesluke@gmail.com", "password", LocalDate.of(1970, 1, 1));
             gardenUserService.addUser(user1);
 
-            Friends friendship = new Friends(user,user1, Friends.Status.ACCEPTED);
+            Friends friendship = new Friends(user,user1, Friends.Status.ACCEPTED, null);
             friendService.save(friendship);
             logger.info("User {} added",user.getFullName() );
 

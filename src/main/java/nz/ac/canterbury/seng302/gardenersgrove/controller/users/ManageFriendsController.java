@@ -98,7 +98,7 @@ public class ManageFriendsController {
             return "redirect:/users/manage-friends";
         }
 
-        Friends newFriends = new Friends(loggedInUser, sentToUser, PENDING);
+        Friends newFriends = new Friends(loggedInUser, sentToUser, PENDING, null);
         friendService.save(newFriends);
 
         return "redirect:/users/manage-friends";
