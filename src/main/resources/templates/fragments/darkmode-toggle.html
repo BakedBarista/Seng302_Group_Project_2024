@@ -1,0 +1,11 @@
+<div th:fragment="darkmode-toggle">
+    <div class="theme-switch-wrapper">
+        <label class="theme-switch" for="checkbox">
+            <input type="checkbox" id="checkbox" />
+            <div class="slider round" style="background-color: white;">
+                <img class="icon moon-icon" th:src="@{/icons/light-mode.svg}" width="20" height="20" alt="Light" />
+                <img class="icon sun-icon" th:src="@{/icons/dark-mode.svg}" width="20" height="20" alt="Dark" />
+            </div>
+        </label>
+    </div>
+</div>
