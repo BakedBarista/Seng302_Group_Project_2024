@@ -129,10 +129,15 @@
                             <div class="d-flex flex-fill flex-wrap">
                                 <label for="message" th:class="'form-label ' + ${#fields.hasErrors('message') ? 'is-invalid' : ''}"></label>
                                 <div class="d-flex flex-fill gap-2">
-                                    <label type="input" class="btn btn-primary px-4 py-3" id="imageButton" for="image">
+                                    <label type="input" class="btn btn-primary px-2 py-3" id="imageButton" for="addImage">
                                         <img th:src="@{/icons/image-icon.svg}" alt="Add Image">
                                     </label>
-                                    <input id="image" name="image" class="d-none" type="file" accept=".png,.jpg,.jpeg,.svg" tabindex="0"/>
+                                    <input id="addImage" name="addImage" class="d-none" type="file" accept=".png,.jpg,.jpeg,.svg" tabindex="0"/>
+
+                                    <label type="input" class="btn btn-primary px-2 py-3 d-md-none" id="takePhotoButton" for="takePhoto">
+                                        <img th:src="@{/icons/camera-icon.svg}" alt="Take Photo">
+                                    </label>
+                                    <input id="takePhoto" name="takePhoto" class="d-none" type="file" accept="image/*" capture="environment" tabindex="0"/>
 
                                     <textarea id="message"
                                           th:name="message"
