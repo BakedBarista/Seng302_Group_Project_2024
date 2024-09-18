@@ -129,7 +129,12 @@
                             <div class="d-flex flex-fill flex-wrap">
                                 <label for="message" th:class="'form-label ' + ${#fields.hasErrors('message') ? 'is-invalid' : ''}"></label>
                                 <div class="d-flex flex-fill gap-2">
-                                <textarea id="message"
+                                    <label type="input" class="btn btn-primary px-4 py-3" id="imageButton" for="image">
+                                        <img th:src="@{/icons/image-icon.svg}" alt="Add Image">
+                                    </label>
+                                    <input id="image" name="image" class="d-none" type="file" accept=".png,.jpg,.jpeg,.svg" tabindex="0"/>
+
+                                    <textarea id="message"
                                           th:name="message"
                                           class="form-control flex-grow-1"
                                           style="resize: none;"
