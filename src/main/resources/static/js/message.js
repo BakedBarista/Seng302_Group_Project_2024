@@ -30,6 +30,7 @@ ws.addEventListener('message', (ev) => {
         case 'updateMessages':
             console.log('updateMessages');
             updateMessages();
+            markMessagesAsRead();
             break;
         case 'error':
             invalidFeedback.textContent = data.error;
@@ -44,6 +45,13 @@ sendMessageForm.addEventListener('submit', (ev) => {
 
     sendMessage();
 });
+
+function markMessagesAsRead() {
+    ws.send(JSON.stringify({
+        type: 'markAsRead',
+        receiver: otherUserId
+    }));
+}
 
 function sendMessage() {
     const message = textArea.value;
