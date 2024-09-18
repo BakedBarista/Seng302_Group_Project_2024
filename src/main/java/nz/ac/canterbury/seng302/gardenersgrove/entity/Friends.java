@@ -57,7 +57,7 @@ public class Friends {
         return receiver;
     }
 
-    public LocalDateTime getReadLastMessage() {
+    public LocalDateTime getLastReadMessage() {
         return lastReadMessage;
     }
 

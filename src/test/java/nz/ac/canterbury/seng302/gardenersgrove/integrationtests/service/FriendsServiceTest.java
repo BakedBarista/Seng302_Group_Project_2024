@@ -16,7 +16,6 @@ import java.util.Optional;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.entity.Friends.Status.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.ignoreStubs;
 
 @DataJpaTest
 @Import(FriendService.class)
@@ -244,6 +243,13 @@ public class FriendsServiceTest {
         var feed = friendService.availableConnections(testUser1);
 
         assertFalse(feed.contains(testUser1));
+    }
+
+    @Test
+    void whenFriendShipExistsAndUserReadsMessage_ThenTimestampSavedInDB () {
+        friendService.setLastReadMessageTime(testUser1.getId(), testUser2.getId());
+        Friends updatedRelationship = friendService.getFriendship(testUser1.getId(), testUser2.getId());
+        assertNotNull(updatedRelationship.getLastReadMessage());
     }
 
 }
