@@ -1,0 +1,54 @@
+.theme-switch-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.theme-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 30px;
+}
+
+.theme-switch input {
+    display: none;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 5px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    transition: 0.4s;
+    border-radius: 50%;
+    top: 4px;
+    left: 4px;
+    background-color: #CB9F01;
+}
+
+/* Move the slider to the right when checked */
+input:checked + .slider:before {
+    transform: translateX(30px);
+}
+
+/* Extra rounding */
+.slider.round {
+    border-radius: 34px;
+}
