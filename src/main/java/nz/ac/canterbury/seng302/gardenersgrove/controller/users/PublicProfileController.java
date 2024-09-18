@@ -228,10 +228,7 @@ public class PublicProfileController {
         } catch (ProfanityDetectedException e) {
             model.addAttribute("profanity", "There cannot be any profanity in the 'About me' section");
             errorFlag = true;
-        } catch (IllegalArgumentException e) {
-            model.addAttribute("profanity", "The 'About me' section cannot exceed 256 characters");
-            errorFlag = true;
-        }
+        } 
 
         if (bindingResult.hasFieldErrors(DESCRIPTION)) {errorFlag = true;}
 
@@ -301,16 +298,11 @@ public class PublicProfileController {
      *
      * @param description The name of the tag.
      */
-    public void isValidDescription(String description) throws ProfanityDetectedException , IllegalArgumentException {
-        if (description.length() > 256) {
-            throw new IllegalArgumentException("Description exceeds the maximum allowed length of 256 characters.");
-        }
-
+    public void isValidDescription(String description) throws ProfanityDetectedException {
         boolean profanityExists = !(profanityService.badWordsFound(description).isEmpty());
         if (profanityExists) {
             throw new ProfanityDetectedException();
         }
-
     }
 
 
