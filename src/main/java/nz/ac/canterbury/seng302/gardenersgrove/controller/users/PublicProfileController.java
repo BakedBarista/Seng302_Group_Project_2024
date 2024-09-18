@@ -226,15 +226,27 @@ public class PublicProfileController {
         try {
             isValidDescription(description);
         } catch (ProfanityDetectedException e) {
+            model.addAttribute("profanity", "There cannot be any profanity in the 'About me' section");
+            errorFlag = true;
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("profanity", "The 'About me' section cannot exceed 256 characters");
             errorFlag = true;
         }
 
         if (bindingResult.hasFieldErrors(DESCRIPTION)) {errorFlag = true;}
 
         if (errorFlag) {
+            model.addAttribute(FAVOURITE_GARDEN, user.getFavoriteGarden());
+            Set<Plant> favouritePlants = user.getFavouritePlants();
+            model.addAttribute(FAVOURITE_PLANTS, favouritePlants);
+            List<FavouritePlantDTO> favouritePlantDTOs = favouritePlants.stream()
+                    .map(this::convertToFavouritePlantDTO)
+                    .toList();
+            ObjectMapper objectMapper = new ObjectMapper();
+            String favouritePlantsJson = objectMapper.writeValueAsString(favouritePlantDTOs);
+            model.addAttribute("favouritePlantsJson", favouritePlantsJson);
             model.addAttribute("name", user.getFullName());
             model.addAttribute("editUserDTO", editUserDTO);
-            model.addAttribute("profanity", "There cannot be any profanity in the 'About me' section");
             return "users/edit-public-profile";
         }
 
@@ -289,11 +301,16 @@ public class PublicProfileController {
      *
      * @param description The name of the tag.
      */
-    public void isValidDescription(String description) throws ProfanityDetectedException {
+    public void isValidDescription(String description) throws ProfanityDetectedException , IllegalArgumentException {
+        if (description.length() > 256) {
+            throw new IllegalArgumentException("Description exceeds the maximum allowed length of 256 characters.");
+        }
+
         boolean profanityExists = !(profanityService.badWordsFound(description).isEmpty());
         if (profanityExists) {
             throw new ProfanityDetectedException();
         }
+
     }
 
 
