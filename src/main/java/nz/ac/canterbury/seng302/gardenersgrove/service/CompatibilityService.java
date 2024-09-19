@@ -141,7 +141,7 @@ public class CompatibilityService {
      * @param user2 Second garden user
      * @return similarity percentage
      */
-    private double calculatePlantSimilarity(GardenUser user1, GardenUser user2) {
+    public double calculatePlantSimilarity(GardenUser user1, GardenUser user2) {
         List<Plant> user1PlantList = plantService.getAllPlantsForUser(user1);
         List<Plant> user2PlantList = plantService.getAllPlantsForUser(user2);
 

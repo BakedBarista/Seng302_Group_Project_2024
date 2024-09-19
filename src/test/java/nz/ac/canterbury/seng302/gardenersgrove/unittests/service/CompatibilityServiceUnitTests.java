@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.CompatibilityService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
@@ -41,6 +42,10 @@ class CompatibilityServiceUnitTests {
 
     private Garden gardenWithCoords(Double lat, Double lon) {
         return new Garden("garden1", "", "", "", "", "", "", lat, lon, "", null, null, null);
+    }
+
+    private Plant plantWithName(String name) {
+        return new Plant(name, null, null, null);
     }
 
     @Test
@@ -131,5 +136,41 @@ class CompatibilityServiceUnitTests {
         Double result = compatibilityService.calculateProximityQuotient(user1, user2);
 
         assertEquals(0., result, 10.);
+    }
+
+    @Test
+    void givenBothUsersHaveNoPlants_whenCalculatePlantSimilarity_thenReturn0() {
+        List<Plant> user1Plants = List.of();
+        List<Plant> user2Plants = List.of();
+        when(plantService.getAllPlantsForUser(user1)).thenReturn(user1Plants);
+        when(plantService.getAllPlantsForUser(user2)).thenReturn(user2Plants);
+
+        double result = compatibilityService.calculatePlantSimilarity(user1, user2);
+
+        assertEquals(0., result, 0.1);
+    }
+
+    @Test
+    void givenNoPlantsInCommon_whenCalculatePlantSimilarity_thenReturn0() {
+        List<Plant> user1Plants = List.of(plantWithName("Apple Tree"), plantWithName("Beetroot"));
+        List<Plant> user2Plants = List.of(plantWithName("Cabbage"));
+        when(plantService.getAllPlantsForUser(user1)).thenReturn(user1Plants);
+        when(plantService.getAllPlantsForUser(user2)).thenReturn(user2Plants);
+
+        double result = compatibilityService.calculatePlantSimilarity(user1, user2);
+
+        assertEquals(0., result, 0.1);
+    }
+
+    @Test
+    void givenSomePlantsInCommon_whenCalculatePlantSimilarity_thenReturnJaccardSimilarity() {
+        List<Plant> user1Plants = List.of(plantWithName("Apple Tree"), plantWithName("Beetroot"));
+        List<Plant> user2Plants = List.of(plantWithName("Beetroot"), plantWithName("Cabbage"));
+        when(plantService.getAllPlantsForUser(user1)).thenReturn(user1Plants);
+        when(plantService.getAllPlantsForUser(user2)).thenReturn(user2Plants);
+
+        double result = compatibilityService.calculatePlantSimilarity(user1, user2);
+
+        assertEquals(33.3, result, 0.1);
     }
 }
