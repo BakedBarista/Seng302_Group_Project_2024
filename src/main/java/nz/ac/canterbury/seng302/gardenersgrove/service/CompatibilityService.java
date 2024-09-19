@@ -157,8 +157,14 @@ public class CompatibilityService {
         List<Plant> user1PlantList = plantService.getAllPlantsForUser(user1);
         List<Plant> user2PlantList = plantService.getAllPlantsForUser(user2);
 
-        Set<String> user1PlantNameSet = user1PlantList.stream().map(BasePlant::getName).collect(Collectors.toSet());
-        Set<String> user2PlantNameSet = user2PlantList.stream().map(BasePlant::getName).collect(Collectors.toSet());
+        Set<String> user1PlantNameSet = user1PlantList.stream()
+                .filter(Objects::nonNull)
+                .map(BasePlant::getName)
+                .collect(Collectors.toSet());
+        Set<String> user2PlantNameSet = user2PlantList.stream()
+                .filter(Objects::nonNull)
+                .map(BasePlant::getName)
+                .collect(Collectors.toSet());
 
         int totalPlants = calculateUniquePlantNum(user1PlantNameSet, user2PlantNameSet);
         int commonPlants = calculateCommonPlantNum(user1PlantNameSet, user2PlantNameSet);
