@@ -27,6 +27,7 @@ public class CompatibilityService {
         this.plantService = plantService;
         this.clock = clock;
     }
+
     /**
      * Calculates the geographic distance between the average garden locations
      *
@@ -95,14 +96,14 @@ public class CompatibilityService {
      * @param user2 Second garden user
      * @return proximity quotient or null if it cannot be calculated
      */
-    private Double calculateProximityQuotient(GardenUser user1, GardenUser user2) {
+    public Double calculateProximityQuotient(GardenUser user1, GardenUser user2) {
         Double distance = calculateGeographicDistance(user1, user2);
 
         if (distance == null) {
             return null;
         }
 
-        return 100 * Math.exp(0.5 - 0.01 * distance);
+        return 100 * Math.exp(-0.001 * distance);
     }
 
     /**
@@ -207,7 +208,5 @@ public class CompatibilityService {
 
         return 0.4 * proximityQuotient + 0.4 * plantSimilarity + 0.2 * ageQuotient;
     }
-
-
 
 }
