@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -53,6 +54,11 @@ public class MessageService {
         return sendMessageWithTimestamp(sender, receiver, messageDTO, timestamp);
     }
 
+    public Message sendImage(Long sender, Long receiver, MessageDTO messageDTO, MultipartFile file) throws IOException {
+        LocalDateTime timestamp = clock.instant().atZone(clock.getZone()).toLocalDateTime();
+        return sendImageWithTimestamp(sender, receiver, messageDTO, timestamp,file);
+    }
+
     /**
      * Sends a message between users and saves it to the database - allows the
      * specification of a timestamp.
@@ -67,6 +73,21 @@ public class MessageService {
         Message message = new Message(sender, receiver, timestamp, messageDTO.getMessage());
         messageRepository.save(message);
         return message;
+    }
+
+    public Message sendImageWithTimestamp(Long sender, Long receiver, MessageDTO messageDTO,
+                                          LocalDateTime timestamp, MultipartFile file) throws IOException {
+        if(validateImage(file)) {
+            Message message = new Message(sender, receiver, timestamp, messageDTO.getMessage());
+            message.setImage(file.getContentType(),file.getBytes());
+            messageRepository.save(message);
+            return message;
+        } else {
+            logger.error("Image is too large or wrong format");
+            throw new IOException("Image is too large or wrong format");
+
+        }
+
     }
 
     /**
@@ -123,7 +144,6 @@ public class MessageService {
 
     /**
      * Retrieves the latest message for each user from a list of all messages.
-     * 
      * The sorting approach used here was suggested by ChatGPT, which helped us sort
      * the map by timestamp to prioritise recent messages.
      *
@@ -230,24 +250,6 @@ public class MessageService {
         model.addAttribute("sentToUser", sentToUser);
         model.addAttribute("recentChats", recentChats);
         model.addAttribute("activeChat", requestedUserId);
-    }
-
-    public void setMessageImage(long id, MultipartFile messageImage) {
-        if (validateImage(messageImage)) {
-            var message = messageRepository.findById(id);
-            if (message.isEmpty()) {
-                return;
-            }
-
-            try {
-                message.get().setImage(messageImage.getContentType(), messageImage.getBytes());
-                messageRepository.save(message.get());
-            } catch (Exception e) {
-                logger.error("Exception ", e);
-            }
-        } else {
-            logger.error("Plant image is too large or not of correct type");
-        }
     }
 
     public boolean validateImage(MultipartFile plantImage) {

@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,7 @@ import org.springframework.validation.BindingResult;
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.TIMESTAMP_FORMAT;
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.WEATHER_CARD_FORMAT_DATE;
 import nz.ac.canterbury.seng302.gardenersgrove.service.ThymeLeafDateFormatter;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 public class MessageController {
@@ -173,7 +175,8 @@ public class MessageController {
             BindingResult bindingResult,
             Authentication authentication,
             Model model,
-            HttpSession session) {
+            HttpSession session,
+            @RequestParam(value = "addImage", required = false) MultipartFile file) {
         logger.info("POST send message to {}", receiver);
 
         String tokenFromForm = messageDTO.getSubmissionToken();
@@ -196,7 +199,20 @@ public class MessageController {
 
         if (sessionToken != null && sessionToken.equals(tokenFromForm)) {
             Long sender = (Long) authentication.getPrincipal();
-            messageService.sendMessage(sender, receiver, messageDTO);
+
+            if (file != null && !file.isEmpty()) {
+                logger.info("Processing image upload for user {}", sender);
+                try {
+                    Message messageWithImage = messageService.sendImage(sender, receiver, messageDTO, file);
+                    model.addAttribute("imageMessage", messageWithImage);
+                } catch (IOException e) {
+                    logger.error("Error uploading image", e);
+                    model.addAttribute("fileError", "File too large or wrong file type");
+                    return messageFriend(receiver, authentication, model, session);
+                }
+            } else {
+                messageService.sendMessage(sender, receiver, messageDTO);
+            }
             session.removeAttribute(SUBMISSION_TOKEN);
         }
         return messageFriend(receiver, authentication, model, session);
