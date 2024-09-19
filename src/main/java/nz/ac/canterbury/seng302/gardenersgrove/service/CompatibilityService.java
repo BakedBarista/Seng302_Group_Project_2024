@@ -54,11 +54,11 @@ public class CompatibilityService {
         List<Garden> user2Gardens = gardenService.getPublicGardensByOwnerId(user2);
 
         if (user1Gardens.isEmpty() || user1Gardens.stream()
-                .allMatch(garden -> garden.getLat() == null && garden.getLon() == null)) {
+                .allMatch(garden -> garden.getLat() == null || garden.getLon() == null)) {
             return null;
         }
         if (user2Gardens.isEmpty() || user2Gardens.stream()
-                .allMatch(garden -> garden.getLat() == null && garden.getLon() == null)) {
+                .allMatch(garden -> garden.getLat() == null || garden.getLon() == null)) {
             return null;
         }
 
