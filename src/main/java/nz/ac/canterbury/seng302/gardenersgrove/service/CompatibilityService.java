@@ -215,7 +215,7 @@ public class CompatibilityService {
      * @param user2 Second garden user
      * @return compatibility quotient
      */
-    public Double friendshipCompatibilityQuotient(GardenUser user1, GardenUser user2) {
+    public double friendshipCompatibilityQuotient(GardenUser user1, GardenUser user2) {
         Double proximityQuotient = calculateProximityQuotient(user1, user2);
         double plantSimilarity = calculatePlantSimilarity(user1, user2);
         Double ageQuotient = calculateAgeQuotient(user1, user2);
