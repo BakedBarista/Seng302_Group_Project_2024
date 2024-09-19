@@ -221,7 +221,7 @@ class MessageControllerTest {
         Mockito.when(gardenUserService.getUserById(sender)).thenReturn(new GardenUser());
         Mockito.when(bindingResult.hasErrors()).thenReturn(false);
         Mockito.doThrow(new IOException("Invalid file type"))
-                .when(mockedMessageService).sendImage(eq(sender), eq(receiver), eq(messageDTO), eq(file));
+                .when(mockedMessageService).sendImage(sender, receiver, messageDTO, file);
         String result = messageController.sendMessage(receiver, messageDTO, bindingResult, authentication, model, session, file);
         assertEquals("users/message-home", result);
         verify(model).addAttribute("fileError","File too large or wrong file type");
