@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     const card = document.getElementById('card');
     const cardName = document.getElementById('cardName');
+    const cardCompatibility = document.getElementById('cardCompatibility');
     const cardDescription = document.getElementById('cardDescription');
     const cardImage = document.getElementById('cardImage');
     const favouriteGarden = document.getElementById('favouriteGarden');
@@ -30,6 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log(user);
 
         cardName.textContent = user.fullName;
+        cardCompatibility.textContent = user.compatibility;
         cardDescription.textContent = user.description;
         cardImage.src = `${baseUrl}users/${user.id}/profile-picture`;
 

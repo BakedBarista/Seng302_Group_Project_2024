@@ -73,6 +73,7 @@
                 <div class="d-flex flex-column pt-2">
                     <span th:if="${name.length() >= 12}"><span class="d-sm-none d-flex mt-5"></span></span>
                     <h2 class="mb-1 text-white" id="cardName">[[${name}]]</h2>
+                    <h5 class="mb-1 text-white"><span id="cardCompatibility">&hellip;</span>% compatible</h5>
                 </div>
                 <div class="overflow-y-auto" style="max-height: 150px;">
                     <p class="text-white" id="cardDescription">[[${description}]]</p>

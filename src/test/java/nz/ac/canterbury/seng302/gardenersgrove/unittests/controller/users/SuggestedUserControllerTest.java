@@ -61,7 +61,7 @@ class SuggestedUserControllerTest {
         request = Mockito.mock(HttpServletRequest.class);
         response = Mockito.mock(HttpServletResponse.class);
         context = Mockito.mock(ServletContext.class);
-        suggestedUserController = new SuggestedUserController(friendService, gardenUserService, suggestedUserService, objectMapper, templateEngine);
+        suggestedUserController = new SuggestedUserController(friendService, gardenUserService, suggestedUserService, null, objectMapper, templateEngine);
 
         loggedInUser = new GardenUser();
         loggedInUser.setId(loggedInUserId);
