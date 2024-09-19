@@ -150,6 +150,9 @@ public class CompatibilityService {
 
         int totalPlants = calculateUniquePlantNum(user1PlantNameSet, user2PlantNameSet);
         int commonPlants = calculateCommonPlantNum(user1PlantNameSet, user2PlantNameSet);
+        if (totalPlants == 0) {
+            return 0;
+        }
         return 100. * commonPlants / totalPlants;
     }
 
