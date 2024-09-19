@@ -3,6 +3,8 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
 
 import java.time.Clock;
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.HashSet;
@@ -17,6 +19,10 @@ public class CompatibilityService {
      * The Earth's radius in km
      */
     private static final int EARTH_RADIUS = 6371;
+    /**
+     * The number of seconds in a year
+     */
+    private static final double SECONDS_IN_YEAR = 365.25 * 24 * 60 * 60;
 
     private GardenService gardenService;
     private PlantService plantService;
@@ -162,13 +168,14 @@ public class CompatibilityService {
      * @param user Garden user
      * @return age or null
      */
-    private Integer calculateAge(GardenUser user) {
-        LocalDate now = clock.instant().atZone(clock.getZone()).toLocalDate();
+    private Double calculateAge(GardenUser user) {
+        Instant now = clock.instant();
 
         if (user.getDateOfBirth() == null) {
             return null;
         }
-        return Period.between(user.getDateOfBirth(), now).getYears();
+        Instant dob = user.getDateOfBirth().atStartOfDay().atZone(clock.getZone()).toInstant();
+        return Duration.between(dob, now).getSeconds() / SECONDS_IN_YEAR;
     }
 
     /**
@@ -178,15 +185,15 @@ public class CompatibilityService {
      * @param user2 Second garden user
      * @return age quotient or null
      */
-    private Double calculateAgeQuotient(GardenUser user1, GardenUser user2) {
-        Integer user1Age = calculateAge(user1);
-        Integer user2Age = calculateAge(user2);
+    public Double calculateAgeQuotient(GardenUser user1, GardenUser user2) {
+        Double user1Age = calculateAge(user1);
+        Double user2Age = calculateAge(user2);
 
         if (user1Age == null || user2Age == null) {
             return null;
         }
 
-        return 100 * Math.exp(0.5 - 0.05 * Math.abs(user1Age - user2Age));
+        return 100 * Math.exp(-0.05 * Math.abs(user1Age - user2Age));
     }
 
     /**

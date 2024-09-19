@@ -6,6 +6,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.time.Clock;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -28,6 +31,8 @@ class CompatibilityServiceUnitTests {
 
     private GardenUser user1;
     private GardenUser user2;
+    private ZoneId timeZone;
+    private Instant now;
 
     @BeforeEach
     void setUp() {
@@ -40,6 +45,9 @@ class CompatibilityServiceUnitTests {
         user1.setId(1L);
         user2 = new GardenUser();
         user2.setId(2L);
+
+        timeZone = ZoneId.of("Pacific/Auckland");
+        now = LocalDate.of(2024, 1, 1).atStartOfDay(timeZone).toInstant();
     }
 
     private Garden gardenWithCoords(Double lat, Double lon) {
@@ -141,5 +149,37 @@ class CompatibilityServiceUnitTests {
         double result = compatibilityService.calculatePlantSimilarity(user1, user2);
 
         assertEquals(33.3, result, 0.1);
+    }
+
+    @ParameterizedTest
+    @CsvSource({ ",2000-01-01", "2000-01-01,", "," })
+    void givenEitherUserHasNoBirthday_whenCalculateAgeQuotient_thenReturnNull(LocalDate birthday1, LocalDate birthday2) {
+        user1.setDateOfBirth(birthday1);
+        user2.setDateOfBirth(birthday2);
+        when(clock.getZone()).thenReturn(timeZone);
+        when(clock.instant()).thenReturn(now);
+
+        Double result = compatibilityService.calculateAgeQuotient(user1, user2);
+
+        assertNull(result);
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "2000-01-01,2000-01-01,100",
+        "2001-01-01,2000-01-01,95",
+        "2000-01-01,2004-01-01,80",
+        "2000-01-01,2007-01-01,70",
+        "2000-01-01,1970-01-01,20",
+    })
+    void givenUsersHaveBirthdays_whenCalculateAgeQuotient_thenReturnPercentage(LocalDate birthday1, LocalDate birthday2, Double expected) {
+        user1.setDateOfBirth(birthday1);
+        user2.setDateOfBirth(birthday2);
+        when(clock.getZone()).thenReturn(timeZone);
+        when(clock.instant()).thenReturn(now);
+
+        Double result = compatibilityService.calculateAgeQuotient(user1, user2);
+
+        assertEquals(expected, result, 5.);
     }
 }
