@@ -217,6 +217,6 @@ class CompatibilityServiceUnitTests {
 
         double result = compatibilityService.friendshipCompatibilityQuotient(user1, user2);
 
-        assertEquals(50., result, 40.);
+        assertEquals(50., result, 10.);
     }
 }

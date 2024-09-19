@@ -1,7 +1,5 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
-import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
-
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
@@ -11,6 +9,18 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.springframework.stereotype.Service;
+
+import nz.ac.canterbury.seng302.gardenersgrove.entity.BaseGarden;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
+
+/**
+ * Service class for calculating friendship compatibility between users
+ */
+@Service
 public class CompatibilityService {
 
     /**
