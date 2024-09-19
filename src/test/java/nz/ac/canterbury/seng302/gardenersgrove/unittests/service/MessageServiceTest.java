@@ -1,12 +1,13 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unittests.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Message;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.message.ChatPreview;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.message.Message;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.MessageDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.MessageReadRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.MessageRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.MessageService;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -34,9 +35,10 @@ class MessageServiceTest {
     @BeforeEach
     public void setUp() {
         messageRepository = mock(MessageRepository.class);
+        MessageReadRepository messageReadRepository = mock(MessageReadRepository.class);
         clock = mock(Clock.class);
         userService = mock(GardenUserService.class);
-        messageService = new MessageService(messageRepository, clock, userService);
+        messageService = new MessageService(messageRepository, messageReadRepository, clock, userService);
         timestamp = Instant.ofEpochSecond(0);
     }
 
@@ -136,11 +138,12 @@ class MessageServiceTest {
         Map<Long, Message> recentMessagesMap = new HashMap<>();
         recentMessagesMap.put(userId2, message);
 
-        Map<GardenUser, String> result = messageService.convertToPreview(recentMessagesMap);
+        Map<GardenUser, ChatPreview> result = messageService.convertToPreview(userId1, recentMessagesMap);
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals("Hey", result.get(user));
+        assertEquals("Hey", result.get(user).lastMessage());
+        assertEquals(1L, result.get(user).unreadMessages());
     }
 
     @Test

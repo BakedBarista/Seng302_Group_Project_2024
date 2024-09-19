@@ -1,11 +1,15 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
+import nz.ac.canterbury.seng302.gardenersgrove.controller.websockets.MessageWebSocketHandler;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.message.ChatPreview;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Message;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.MessageRead;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.message.Message;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.message.MessageRead;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.MessageDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.MessageReadRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.MessageRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
@@ -23,17 +27,22 @@ import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats
 @Service
 public class MessageService {
 
+    private final Logger logger = LoggerFactory.getLogger(MessageService.class);
+
     private final MessageRepository messageRepository;
     private final Clock clock;
 
     private final GardenUserService userService;
 
-    @Autowired
-    private  MessageReadRepository messageReadRepository;
+    private final MessageReadRepository messageReadRepository;
 
     @Autowired
-    public MessageService(MessageRepository messageRepository, Clock clock, GardenUserService userService) {
+    public MessageService(MessageRepository messageRepository,
+                          MessageReadRepository messageReadRepository,
+                          Clock clock,
+                          GardenUserService userService) {
         this.messageRepository = messageRepository;
+        this.messageReadRepository = messageReadRepository;
         this.clock = clock;
         this.userService = userService;
     }
@@ -162,22 +171,24 @@ public class MessageService {
 
     /**
      * Converts a map of recent messages into a map of user previews.
-     *
+     * @param receiverId id of the user who is requesting chat preview
      * @param recentMessagesMap a map of user IDs to their most recent message.
      * @return a map where each key is a user and each value is their most recent
      *         message.
      */
-    public Map<GardenUser, String> convertToPreview(Map<Long, Message> recentMessagesMap) {
-        Map<GardenUser, String> recentChats = new LinkedHashMap<>();
+    public Map<GardenUser, ChatPreview> convertToPreview(Long receiverId, Map<Long, Message> recentMessagesMap) {
+        Map<GardenUser, ChatPreview> recentChats = new LinkedHashMap<>();
 
         for (Map.Entry<Long, Message> entry : recentMessagesMap.entrySet()) {
-            Long userId = entry.getKey();
+            Long senderId = entry.getKey();
+
+            Long unreadMessages = getCountOfUnreadMessages(receiverId, senderId);
             Message msg = entry.getValue();
 
-            GardenUser user = userService.getUserById(userId);
-            String messagePreview = msg.getMessageContent();
 
-            recentChats.put(user, messagePreview);
+            GardenUser user = userService.getUserById(senderId);
+            ChatPreview feedPreview = new ChatPreview(msg.getMessageContent(), unreadMessages);
+            recentChats.put(user, feedPreview);
         }
         return recentChats;
     }
@@ -219,7 +230,7 @@ public class MessageService {
      *                        submissions
      */
     public void setupModelAttributes(Model model, Long loggedInUserId, Long requestedUserId, GardenUser sentToUser,
-            Map<GardenUser, String> recentChats, String submissionToken) {
+            Map<GardenUser, ChatPreview> recentChats, String submissionToken) {
         model.addAttribute("dateFormatter", new ThymeLeafDateFormatter());
         model.addAttribute("TIMESTAMP_FORMAT", TIMESTAMP_FORMAT);
         model.addAttribute("DATE_FORMAT", WEATHER_CARD_FORMAT_DATE);
@@ -231,15 +242,30 @@ public class MessageService {
     }
 
     public void setReadTime(Long receiverId, Long userId) {
+        logger.info("user {} read messages from user {}", receiverId, userId);
         Optional<MessageRead> optionalMessageRead = messageReadRepository.findByReceiverIdAndUserId(receiverId, userId);
-        MessageRead messageRead;
-        if (optionalMessageRead.isPresent()) {
-            messageRead = optionalMessageRead.get();
-        } else {
-            messageRead = new MessageRead(receiverId, userId);
-        }
+        MessageRead messageRead = optionalMessageRead.orElseGet(() -> new MessageRead(receiverId, userId));
         messageRead.setLastReadMessage(LocalDateTime.now());
         messageReadRepository.save(messageRead);
+    }
+
+    /**
+     * Gets a count of unread messages from the senderId to the receiverId
+     * @param receiverId id of the receiver
+     * @param senderId id of the sender
+     * @return count of unread messages from sender to receiver
+     */
+    public Long getCountOfUnreadMessages(Long receiverId, Long senderId) {
+        Optional<MessageRead> optionalMessageRead = messageReadRepository.findByReceiverIdAndUserId(receiverId, senderId);
+        MessageRead messageRead = optionalMessageRead.orElseGet(() -> new MessageRead(receiverId, senderId));
+        LocalDateTime lastRead = messageRead.getLastReadMessage();
+        List<Message> messages = messageRepository.findMessagesBetweenUsers(receiverId, senderId);
+
+        if (lastRead == null) {
+            return (long) messages.size();
+        } else {
+            return messages.stream().filter(message -> message.getTimestamp().isAfter(lastRead)).count();
+        }
     }
 
 }

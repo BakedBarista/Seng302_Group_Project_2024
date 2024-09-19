@@ -45,7 +45,6 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 
 	/**
 	 * Handles an incoming WebSocket message.
-	 * @throws IOException 
 	 */
 	@Override
 	public void handleTextMessage(WebSocketSession session, TextMessage wsMessage) {
@@ -79,7 +78,6 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 				messageService.setReadTime(messageId, userId);
 				logger.info("Messages marked as read by user {}", userId);
 				break;
-
 			case "sendMessage":
 				Long sender = getCurrentUserId(session);
 				Long receiver = message.get("receiver").asLong();
