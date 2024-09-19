@@ -84,7 +84,8 @@ class CompatibilityServiceUnitTests {
 
     @ParameterizedTest
     @CsvSource({ ",,0,0", "0,0,,", ",,," })
-    void givenEitherUserHasNoGardensWithCoords_whenCalculateProximityQuotient_thenReturnNull(Double lat1, Double lon1, Double lat2, Double lon2) {
+    void givenEitherUserHasNoGardensWithCoords_whenCalculateProximityQuotient_thenReturnNull(Double lat1, Double lon1,
+            Double lat2, Double lon2) {
         List<Garden> user1Gardens = List.of(gardenWithCoords(lat1, lon1));
         List<Garden> user2Gardens = List.of(gardenWithCoords(lat2, lon2));
         when(gardenService.getPublicGardensByOwnerId(user1)).thenReturn(user1Gardens);
@@ -97,14 +98,15 @@ class CompatibilityServiceUnitTests {
 
     @ParameterizedTest
     @CsvSource({
-        // Jack Erskine, Jack Erskine, 100
-        "-43.522562, 172.581187, -43.522562, 172.581187, 100",
-        // Jack Erskine, Town Hall, 75
-        "-43.522562, 172.581187, -43.526812, 172.635688, 75",
-        // Jack Erskine, Beehive, 0
-        "-43.522562, 172.581187, -41.278437, 174.776687, 0"
+            // Jack Erskine, Jack Erskine, 100
+            "-43.522562, 172.581187, -43.522562, 172.581187, 100",
+            // Jack Erskine, Town Hall, 75
+            "-43.522562, 172.581187, -43.526812, 172.635688, 75",
+            // Jack Erskine, Beehive, 0
+            "-43.522562, 172.581187, -41.278437, 174.776687, 0"
     })
-    void givenUsersInLocations_whenCalculateProximityQuotient_thenReturnPercentage(Double lat1, Double lon1, Double lat2, Double lon2, Double expected) {
+    void givenUsersInLocations_whenCalculateProximityQuotient_thenReturnPercentage(Double lat1, Double lon1,
+            Double lat2, Double lon2, Double expected) {
         List<Garden> user1Gardens = List.of(gardenWithCoords(lat1, lon1));
         List<Garden> user2Gardens = List.of(gardenWithCoords(lat2, lon2));
         when(gardenService.getPublicGardensByOwnerId(user1)).thenReturn(user1Gardens);
@@ -153,7 +155,8 @@ class CompatibilityServiceUnitTests {
 
     @ParameterizedTest
     @CsvSource({ ",2000-01-01", "2000-01-01,", "," })
-    void givenEitherUserHasNoBirthday_whenCalculateAgeQuotient_thenReturnNull(LocalDate birthday1, LocalDate birthday2) {
+    void givenEitherUserHasNoBirthday_whenCalculateAgeQuotient_thenReturnNull(LocalDate birthday1,
+            LocalDate birthday2) {
         user1.setDateOfBirth(birthday1);
         user2.setDateOfBirth(birthday2);
         when(clock.getZone()).thenReturn(timeZone);
@@ -166,13 +169,14 @@ class CompatibilityServiceUnitTests {
 
     @ParameterizedTest
     @CsvSource({
-        "2000-01-01,2000-01-01,100",
-        "2001-01-01,2000-01-01,95",
-        "2000-01-01,2004-01-01,80",
-        "2000-01-01,2007-01-01,70",
-        "2000-01-01,1970-01-01,20",
+            "2000-01-01,2000-01-01,100",
+            "2001-01-01,2000-01-01,95",
+            "2000-01-01,2004-01-01,80",
+            "2000-01-01,2007-01-01,70",
+            "2000-01-01,1970-01-01,20",
     })
-    void givenUsersHaveBirthdays_whenCalculateAgeQuotient_thenReturnPercentage(LocalDate birthday1, LocalDate birthday2, Double expected) {
+    void givenUsersHaveBirthdays_whenCalculateAgeQuotient_thenReturnPercentage(LocalDate birthday1, LocalDate birthday2,
+            Double expected) {
         user1.setDateOfBirth(birthday1);
         user2.setDateOfBirth(birthday2);
         when(clock.getZone()).thenReturn(timeZone);
@@ -181,5 +185,38 @@ class CompatibilityServiceUnitTests {
         Double result = compatibilityService.calculateAgeQuotient(user1, user2);
 
         assertEquals(expected, result, 5.);
+    }
+
+    @Test
+    void givenBlankUsers_whenCalculateFriendshipCompatibility_thenReturn0() {
+        when(gardenService.getPublicGardensByOwnerId(user1)).thenReturn(List.of());
+        when(gardenService.getPublicGardensByOwnerId(user2)).thenReturn(List.of());
+        when(plantService.getAllPlantsForUser(user1)).thenReturn(List.of());
+        when(plantService.getAllPlantsForUser(user2)).thenReturn(List.of());
+
+        double result = compatibilityService.friendshipCompatibilityQuotient(user1, user2);
+
+        assertEquals(0., result, 0.1);
+    }
+
+    @Test
+    void givenReasonableUsers_whenCalculateFriendshipCompatibility_thenReturnReasonableValue() {
+        user1.setDateOfBirth(LocalDate.of(2000, 1, 1));
+        user2.setDateOfBirth(LocalDate.of(1970, 1, 1));
+
+        when(gardenService.getPublicGardensByOwnerId(user1)).thenReturn(List.of(
+                gardenWithCoords(-43.522562, 172.581187)));
+        when(gardenService.getPublicGardensByOwnerId(user2)).thenReturn(List.of(
+                gardenWithCoords(-43.526812, 172.635688)));
+
+        when(plantService.getAllPlantsForUser(user1)).thenReturn(List.of(plantWithName("Tomato"), plantWithName("Cucumber")));
+        when(plantService.getAllPlantsForUser(user2)).thenReturn(List.of(plantWithName("Tomato"), plantWithName("Cabbage")));
+
+        when(clock.getZone()).thenReturn(timeZone);
+        when(clock.instant()).thenReturn(now);
+
+        double result = compatibilityService.friendshipCompatibilityQuotient(user1, user2);
+
+        assertEquals(50., result, 40.);
     }
 }

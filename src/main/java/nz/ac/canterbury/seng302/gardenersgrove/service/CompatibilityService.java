@@ -5,8 +5,6 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
-import java.time.LocalDate;
-import java.time.Period;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -24,9 +22,9 @@ public class CompatibilityService {
      */
     private static final double SECONDS_IN_YEAR = 365.25 * 24 * 60 * 60;
 
-    private GardenService gardenService;
-    private PlantService plantService;
-    private Clock clock;
+    private final GardenService gardenService;
+    private final PlantService plantService;
+    private final Clock clock;
 
     public CompatibilityService(GardenService gardenService, PlantService plantService, Clock clock) {
         this.gardenService = gardenService;
@@ -74,9 +72,7 @@ public class CompatibilityService {
                 .filter(Objects::nonNull)
                 .collect(Collectors.averagingDouble(Double::doubleValue));
 
-        Double distance = calculateDistance(user1LatAverage, user1LongAverage, user2LatAverage, user2LongAverage);
-
-        return distance;
+        return calculateDistance(user1LatAverage, user1LongAverage, user2LatAverage, user2LongAverage);
     }
 
     /**
