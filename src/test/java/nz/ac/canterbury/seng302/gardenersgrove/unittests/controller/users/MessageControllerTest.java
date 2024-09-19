@@ -208,4 +208,25 @@ class MessageControllerTest {
         messageController.sendMessage(receiver, messageDTO, bindingResult, authentication, model, session, file);
         Mockito.verify(mockedMessageService).sendImage(sender, receiver, messageDTO,file);
     }
+
+    @Test
+    void whenWrongImageType_thenThrowException() throws IOException {
+        Long sender = 1L;
+        Long receiver = 2L;
+        MessageDTO messageDTO = new MessageDTO("","token");
+        MockMultipartFile file = new MockMultipartFile("text", "test.txt", "text", "test".getBytes());
+        session.setAttribute("submissionToken", "token");
+        Mockito.when(authentication.getPrincipal()).thenReturn(sender);
+        Mockito.when(mockedFriendService.getFriendship(any(), any())).thenReturn(new Friends());
+        Mockito.when(gardenUserService.getUserById(sender)).thenReturn(new GardenUser());
+        Mockito.when(bindingResult.hasErrors()).thenReturn(false);
+        Mockito.doThrow(new IOException("Invalid file type"))
+                .when(mockedMessageService).sendImage(eq(sender), eq(receiver), eq(messageDTO), eq(file));
+        String result = messageController.sendMessage(receiver, messageDTO, bindingResult, authentication, model, session, file);
+        assertEquals("users/message-home", result);
+        verify(model).addAttribute("fileError","File too large or wrong file type");
+        verify(mockedMessageService).sendImage(sender, receiver, messageDTO,file);
+
+
+    }
 }
