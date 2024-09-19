@@ -45,6 +45,8 @@ public class WebSocketConfig implements WebSocketConfigurer {
         registry.addHandler(testWebSocketHandler(), "/api/messages")
                 .setAllowedOrigins(serverOrigin)
                 .addInterceptors(new HttpSessionHandshakeInterceptor());
+
+
 	}
 
     /**
@@ -53,6 +55,6 @@ public class WebSocketConfig implements WebSocketConfigurer {
      */
     @Bean
     public WebSocketHandler testWebSocketHandler() {
-        return new MessageWebSocketHandler(messageService, objectMapper, validatorFactory, friendService);
+        return new MessageWebSocketHandler(messageService, objectMapper, validatorFactory);
     }
 }

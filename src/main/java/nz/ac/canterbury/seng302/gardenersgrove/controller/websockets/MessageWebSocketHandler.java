@@ -37,11 +37,10 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 	private Set<WebSocketSession> activeSessions = new HashSet<>();
 	private FriendService friendService; 
 
-	public MessageWebSocketHandler(MessageService messageService, ObjectMapper objectMapper, ValidatorFactory validatorFactory, FriendService friendService) {
+	public MessageWebSocketHandler(MessageService messageService, ObjectMapper objectMapper, ValidatorFactory validatorFactory) {
 		this.messageService = messageService;
 		this.objectMapper = objectMapper;
-		this.validatorFactory = validatorFactory;
-		this.friendService = friendService;
+		this.validatorFactory = validatorFactory;;
 	}
 
 	/**
@@ -74,14 +73,13 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 				// Refresh messages on page load to avoid a race condition
 				updateMessages(session);
 				break;
-			case "markAsRead":
-				Long sender1 = getCurrentUserId(session);
-				Long receiver1 = message.get("receiver").asLong();
-
-				friendService.setLastReadMessageTime(sender1, receiver1);
-				logger.info("Messages marked as read by user {}", sender1);
-			
+			case "readMessage":
+				Long messageId = message.get("receiver").asLong();
+				Long userId = getCurrentUserId(session);
+				messageService.setReadTime(messageId, userId);
+				logger.info("Messages marked as read by user {}", userId);
 				break;
+
 			case "sendMessage":
 				Long sender = getCurrentUserId(session);
 				Long receiver = message.get("receiver").asLong();

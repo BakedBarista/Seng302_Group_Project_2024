@@ -133,7 +133,7 @@ public class U800_2_1_ConnectionFeed {
 
     @When("I click the decline button on a person who I do have a pending friend request from")
     public void i_click_the_red_cross_button_on_a_person_who_i_do_have_a_pending_friend_request_from() {
-        Friends request = new Friends(userBen, userLiam, PENDING, null);
+        Friends request = new Friends(userBen, userLiam, PENDING);
         friendsRepository.save(request);
 
         ResponseEntity<Map<String, Object>> result = suggestedUserController.handleAcceptDecline("decline", userBen.getId(), authentication, model);
@@ -144,7 +144,7 @@ public class U800_2_1_ConnectionFeed {
 
     @When("I click the accept button on a person who I have a pending friend request from")
     public void i_click_the_green_love_heart_button_on_a_person_who_i_have_a_pending_friend_request_from() {
-        Friends request = new Friends(userBen, userLiam, PENDING, null);
+        Friends request = new Friends(userBen, userLiam, PENDING);
         friendsRepository.save(request);
 
         ResponseEntity<Map<String, Object>> result = suggestedUserController.handleAcceptDecline("accept", userBen.getId(), authentication, model);
@@ -190,7 +190,7 @@ public class U800_2_1_ConnectionFeed {
 
     @When("I am viewing the potential new connections stack")
     public void i_am_viewing_the_potential_new_connections_stack() {
-        Friends request = new Friends(userImmy, userLiam, PENDING, null);
+        Friends request = new Friends(userImmy, userLiam, PENDING);
         friendsRepository.save(request);
 
         clearInvocations(model);
@@ -226,7 +226,7 @@ public class U800_2_1_ConnectionFeed {
                 continue;
             }
 
-            Friends request = new Friends(userLiam, user, PENDING, null);
+            Friends request = new Friends(userLiam, user, PENDING);
             friendsRepository.save(request);
         }
 

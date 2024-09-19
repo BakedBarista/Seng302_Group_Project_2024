@@ -63,7 +63,7 @@ public class U18CancelRequestFeature {
         GardenUser friend = new GardenUser(fName, lName, "john.doe@gmail.com", "password", LocalDate.of(1999, 1, 1));
 
         if(user != null) {
-            Friends friendRequest = new Friends(user, friend, PENDING, null);
+            Friends friendRequest = new Friends(user, friend, PENDING);
             friendService.save(friendRequest);
         } else {
             throw new IllegalArgumentException("No user found with username");

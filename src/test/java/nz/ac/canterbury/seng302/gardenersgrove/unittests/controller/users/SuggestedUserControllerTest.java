@@ -75,8 +75,8 @@ class SuggestedUserControllerTest {
         suggestedUser = new GardenUser();
         suggestedUser.setId(suggestedUserId);
         //sender-receiver-status
-        friendRequestReceive = new Friends(suggestedUser, loggedInUser, Friends.Status.PENDING, null);
-        friendRequestSend = new Friends(loggedInUser, suggestedUser, Friends.Status.PENDING, null);
+        friendRequestReceive = new Friends(suggestedUser, loggedInUser, Friends.Status.PENDING);
+        friendRequestSend = new Friends(loggedInUser, suggestedUser, Friends.Status.PENDING);
 
         when(authentication.getPrincipal()).thenReturn(loggedInUser.getId());
         when(gardenUserService.getUserById(loggedInUser.getId())).thenReturn(loggedInUser);

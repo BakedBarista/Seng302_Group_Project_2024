@@ -35,6 +35,7 @@ class MessageWebSocketHandlerTest {
         messageService = mock(MessageService.class);
         ObjectMapper objectMapper = new ObjectMapper();
         ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
+
         testWebSocketHandler = new MessageWebSocketHandler(messageService, objectMapper, validatorFactory);
 
         session1 = mock(WebSocketSession.class);

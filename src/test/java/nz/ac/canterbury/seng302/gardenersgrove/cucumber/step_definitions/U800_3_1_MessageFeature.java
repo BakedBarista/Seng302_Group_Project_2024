@@ -100,7 +100,7 @@ public class U800_3_1_MessageFeature {
         GardenUser user1 = gardenUserService.getUserByEmail(username1 + "cucumber@email.com");
         GardenUser user2 = gardenUserService.getUserByEmail(username2 + "cucumber@email.com");
 
-        Friends friendship = new Friends(user1, user2, Friends.Status.ACCEPTED, null);
+        Friends friendship = new Friends(user1, user2, Friends.Status.ACCEPTED);
         friendService.save(friendship);
     }
 

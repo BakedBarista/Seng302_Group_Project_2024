@@ -41,7 +41,7 @@ class SuggestedUserServiceTest {
 
     @Test
     void whenPendingRecordExists_thenReturnTrue() {
-        Friends friendRecord = new Friends(loggedInUser, suggestedUser, PENDING, null);
+        Friends friendRecord = new Friends(loggedInUser, suggestedUser, PENDING);
         Mockito.when(friendService.getSentRequests(loggedInUserId)).thenReturn(List.of(friendRecord));
 
         boolean result = suggestedUserService.friendRecordExists(loggedInUserId, suggestedUserId);
@@ -51,7 +51,7 @@ class SuggestedUserServiceTest {
 
     @Test
     void whenDeclinedRecordExists_thenReturnTrue() {
-        Friends friendRecord = new Friends(loggedInUser, suggestedUser, DECLINED, null);
+        Friends friendRecord = new Friends(loggedInUser, suggestedUser, DECLINED);
         Mockito.when(friendService.getSentRequests(loggedInUserId)).thenReturn(List.of(friendRecord));
 
         boolean result = suggestedUserService.friendRecordExists(loggedInUserId, suggestedUserId);
@@ -70,7 +70,7 @@ class SuggestedUserServiceTest {
 
     @Test
     void whenAcceptedRecordExists_thenReturnFalse() {
-        Friends friendRecord = new Friends(loggedInUser, suggestedUser, ACCEPTED, null);
+        Friends friendRecord = new Friends(loggedInUser, suggestedUser, ACCEPTED);
         Mockito.when(friendService.getSentRequests(loggedInUserId)).thenReturn(List.of(friendRecord));
 
         boolean result = suggestedUserService.friendRecordExists(loggedInUserId, suggestedUserId);
@@ -161,7 +161,7 @@ class SuggestedUserServiceTest {
 
     @Test
     void testSetDeclinedFriendship_AcceptedRecordExists_NothingSentReturnFalse() {
-        Mockito.when(friendService.getAcceptedFriendship(loggedInUserId, suggestedUserId)).thenReturn(new Friends(loggedInUser, suggestedUser, ACCEPTED, null));
+        Mockito.when(friendService.getAcceptedFriendship(loggedInUserId, suggestedUserId)).thenReturn(new Friends(loggedInUser, suggestedUser, ACCEPTED));
 
         boolean result = suggestedUserService.setDeclinedFriendship(loggedInUser, suggestedUser);
 

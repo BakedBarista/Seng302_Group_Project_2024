@@ -26,8 +26,6 @@ public class Friends {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @Column()
-    private LocalDateTime lastReadMessage;
 
     /**
      * Creates a new FormResult object
@@ -35,11 +33,10 @@ public class Friends {
      * @param receiver user to be added as friend to sender
      * @param status pending accepted or denied
      */
-    public Friends(GardenUser sender, GardenUser receiver, Status status, LocalDateTime lastReadMessage) {
+    public Friends(GardenUser sender, GardenUser receiver, Status status) {
         this.sender = sender;
         this.receiver = receiver;
         this.status = status;
-        this.lastReadMessage = lastReadMessage;
     }
 
     public Friends() {
@@ -55,14 +52,6 @@ public class Friends {
 
     public GardenUser getReceiver() {
         return receiver;
-    }
-
-    public LocalDateTime getLastReadMessage() {
-        return lastReadMessage;
-    }
-
-    public void setLastReadMessage(LocalDateTime lastReadMessage) {
-        this.lastReadMessage = lastReadMessage;
     }
 
     public Status getStatus() { return status; }

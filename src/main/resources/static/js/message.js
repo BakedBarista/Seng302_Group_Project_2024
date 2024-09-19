@@ -30,7 +30,6 @@ ws.addEventListener('message', (ev) => {
         case 'updateMessages':
             console.log('updateMessages');
             updateMessages();
-            markMessagesAsRead();
             break;
         case 'error':
             invalidFeedback.textContent = data.error;
@@ -48,7 +47,7 @@ sendMessageForm.addEventListener('submit', (ev) => {
 
 function markMessagesAsRead() {
     ws.send(JSON.stringify({
-        type: 'markAsRead',
+        type: 'readMessage',
         receiver: otherUserId
     }));
 }
@@ -71,3 +70,17 @@ async function updateMessages() {
 
     scrollToBottom(messagesContainer);
 }
+
+messagesContainer.addEventListener('focus', markMessagesAsRead);
+messagesContainer.addEventListener('click', markMessagesAsRead);
+
+messagesContainer.addEventListener('scroll', () => {
+    if (isScrolledToBottom(messagesContainer)) {
+        markMessagesAsRead();
+    }
+});
+
+function isScrolledToBottom(container) {
+    return container.scrollHeight - container.scrollTop === container.clientHeight;
+}
+

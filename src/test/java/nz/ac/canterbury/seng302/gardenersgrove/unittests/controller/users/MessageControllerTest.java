@@ -125,7 +125,7 @@ class MessageControllerTest {
         LocalDateTime testTime = LocalDateTime.of(2024, 9, 10, 15, 30, 0);
         Message testMessage = new Message(user1.getId(), user2.getId(), testTime, "HI");
         messageRepository.save(testMessage);
-        Friends friend = new Friends(user1, user2, ACCEPTED, null);
+        Friends friend = new Friends(user1, user2, ACCEPTED);
 
         when(gardenUserService.getUserById(user2.getId())).thenReturn(user2);
         when(mockedFriendService.getFriendship(user1.getId(), user2.getId())).thenReturn(friend);
@@ -147,7 +147,7 @@ class MessageControllerTest {
         LocalDateTime testTime = LocalDateTime.of(2024, 9, 10, 15, 30, 0);
         Message testMessage = new Message(user1.getId(), user2.getId(), testTime, "HI");
         messageRepository.save(testMessage);
-        Friends friend = new Friends(user1, user2, ACCEPTED, null);
+        Friends friend = new Friends(user1, user2, ACCEPTED);
 
         when(gardenUserService.getUserById(user2.getId())).thenReturn(user2);
         when(mockedFriendService.getFriendship(user1.getId(), user2.getId())).thenReturn(friend);

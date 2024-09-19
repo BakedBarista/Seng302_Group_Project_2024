@@ -197,11 +197,5 @@ public class FriendService {
         return friendsRepository.findPendingOrDeclinedFriendship(user1Id, user2Id);
     }
 
-    public void setLastReadMessageTime(Long senderId, Long recieverId){
-
-        Friends friendship = getFriendship(senderId, recieverId);
-        friendship.setLastReadMessage(LocalDateTime.now());
-        friendsRepository.save(friendship);
-    }
 
 }

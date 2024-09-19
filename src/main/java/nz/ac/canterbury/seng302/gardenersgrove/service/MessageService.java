@@ -2,7 +2,9 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Message;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.MessageRead;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.MessageDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.MessageReadRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,9 @@ public class MessageService {
     private final Clock clock;
 
     private final GardenUserService userService;
+
+    @Autowired
+    private  MessageReadRepository messageReadRepository;
 
     @Autowired
     public MessageService(MessageRepository messageRepository, Clock clock, GardenUserService userService) {
@@ -224,4 +229,17 @@ public class MessageService {
         model.addAttribute("recentChats", recentChats);
         model.addAttribute("activeChat", requestedUserId);
     }
+
+    public void setReadTime(Long receiverId, Long userId) {
+        Optional<MessageRead> optionalMessageRead = messageReadRepository.findByReceiverIdAndUserId(receiverId, userId);
+        MessageRead messageRead;
+        if (optionalMessageRead.isPresent()) {
+            messageRead = optionalMessageRead.get();
+        } else {
+            messageRead = new MessageRead(receiverId, userId);
+        }
+        messageRead.setLastReadMessage(LocalDateTime.now());
+        messageReadRepository.save(messageRead);
+    }
+
 }

@@ -78,7 +78,7 @@ class MessageControllerTest {
         if (hasNotSetUp) {
             gardenUserService.addUser(sender);
             gardenUserService.addUser(receiver);
-            Friends friendship = new Friends(sender, receiver, Friends.Status.ACCEPTED, null);
+            Friends friendship = new Friends(sender, receiver, Friends.Status.ACCEPTED);
 
             friendService.save(friendship);
 
