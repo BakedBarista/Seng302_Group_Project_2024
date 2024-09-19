@@ -13,14 +13,16 @@ import java.util.stream.Collectors;
 
 public class CompatibilityService {
 
+    /**
+     * The Earth's radius in km
+     */
     private static final int EARTH_RADIUS = 6371;
-    private GardenUserService gardenUserService;
+
     private GardenService gardenService;
     private PlantService plantService;
     private Clock clock;
 
-    public CompatibilityService (GardenUserService gardenUserService, GardenService gardenService, PlantService plantService, Clock clock) {
-        this.gardenUserService = gardenUserService;
+    public CompatibilityService(GardenService gardenService, PlantService plantService, Clock clock) {
         this.gardenService = gardenService;
         this.plantService = plantService;
         this.clock = clock;
@@ -28,80 +30,91 @@ public class CompatibilityService {
     /**
      * Calculates the geographic distance between the average garden locations
      *
-     * @param gardenUser1 First garden user
-     * @param gardenUser2 Second garden user
+     * @param user1 First garden user
+     * @param user2 Second garden user
      * @return distance or null if it cannot be calculated
      */
-    private Double calculateGeographicDistance(GardenUser gardenUser1, GardenUser gardenUser2) {
-        List<Garden> gardenUser1gardensList = gardenService.getPublicGardensByOwnerId(gardenUser1);
-        List<Garden> gardenUser2gardensList = gardenService.getPublicGardensByOwnerId(gardenUser2);
+    private Double calculateGeographicDistance(GardenUser user1, GardenUser user2) {
+        List<Garden> user1Gardens = gardenService.getPublicGardensByOwnerId(user1);
+        List<Garden> user2Gardens = gardenService.getPublicGardensByOwnerId(user2);
 
-        if (gardenUser1gardensList.isEmpty()
-                || gardenUser1gardensList.stream()
+        if (user1Gardens.isEmpty() || user1Gardens.stream()
                 .allMatch(garden -> garden.getLat() == null && garden.getLon() == null)) {
             return null;
         }
-        if (gardenUser2gardensList.isEmpty()
-                || gardenUser2gardensList.stream()
+        if (user2Gardens.isEmpty() || user2Gardens.stream()
                 .allMatch(garden -> garden.getLat() == null && garden.getLon() == null)) {
             return null;
         }
 
-        Double user1LatAverage = gardenUser1gardensList.stream()
+        Double user1LatAverage = user1Gardens.stream()
                 .map(BaseGarden::getLat)
                 .filter(Objects::nonNull)
                 .collect(Collectors.averagingDouble(Double::doubleValue));
 
-        Double user1LongAverage = gardenUser1gardensList.stream()
+        Double user1LongAverage = user1Gardens.stream()
                 .map(BaseGarden::getLon)
                 .filter(Objects::nonNull)
                 .collect(Collectors.averagingDouble(Double::doubleValue));
 
-        Double user2LatAverage = gardenUser2gardensList.stream()
+        Double user2LatAverage = user2Gardens.stream()
                 .map(BaseGarden::getLat)
                 .filter(Objects::nonNull)
                 .collect(Collectors.averagingDouble(Double::doubleValue));
 
-        Double user2LongAverage = gardenUser2gardensList.stream()
+        Double user2LongAverage = user2Gardens.stream()
                 .map(BaseGarden::getLon)
                 .filter(Objects::nonNull)
                 .collect(Collectors.averagingDouble(Double::doubleValue));
 
-        Double distance = Math.acos(Math.sin(user1LatAverage) * Math.sin(user2LatAverage)
-                + Math.cos(user1LatAverage) * Math.cos(user2LatAverage) * Math.cos(user2LongAverage - user1LongAverage))
-                * EARTH_RADIUS;
+        Double distance = calculateDistance(user1LatAverage, user1LongAverage, user2LatAverage, user2LongAverage);
 
         return distance;
     }
 
     /**
+     * Calculates the distance between two points on the Earth's surface
+     *
+     * @param lat1 Latitude of the first point
+     * @param lon1 Longitude of the first point
+     * @param lat2 Latitude of the second point
+     * @param lon2 Longitude of the second point
+     * @return distance in km
+     */
+    private Double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+        // https://community.fabric.microsoft.com/t5/Desktop/Distance-Calculation-in-Power-BI/m-p/207848/highlight/true#M91602
+        return Math.acos(Math.sin(lat1) * Math.sin(lat2)
+                + Math.cos(lat1) * Math.cos(lat2) * Math.cos(lon2 - lon1))
+                * EARTH_RADIUS;
+    }
+
+    /**
      * Calculates the proximity quotient
      *
-     * @param gardenUser1 First garden user
-     * @param gardenUser2 Second garden user
+     * @param user1 First garden user
+     * @param user2 Second garden user
      * @return proximity quotient or null if it cannot be calculated
      */
-    private Double calculateProximityQuotient(GardenUser gardenUser1, GardenUser gardenUser2) {
-        Double geographicDistance = calculateGeographicDistance(gardenUser1, gardenUser2);
+    private Double calculateProximityQuotient(GardenUser user1, GardenUser user2) {
+        Double distance = calculateGeographicDistance(user1, user2);
 
-        if (geographicDistance == null) {
+        if (distance == null) {
             return null;
         }
 
-        return 100 * Math.exp(0.5 - 0.01 * geographicDistance);
+        return 100 * Math.exp(0.5 - 0.01 * distance);
     }
 
     /**
      * Calculates the number of common plant names between garden users
      *
-     * @param gardenUser1 First garden user
-     * @param gardenUser2 Second garden user
+     * @param user1 First garden user
+     * @param user2 Second garden user
      * @return number of common plant names
      */
-    private int calculateCommonPlantNum(GardenUser gardenUser1, GardenUser gardenUser2) {
-
-        List<Plant> user1PlantList = plantService.getAllPlantsForUser(gardenUser1);
-        List<Plant> user2PlantList = plantService.getAllPlantsForUser(gardenUser2);
+    private int calculateCommonPlantNum(GardenUser user1, GardenUser user2) {
+        List<Plant> user1PlantList = plantService.getAllPlantsForUser(user1);
+        List<Plant> user2PlantList = plantService.getAllPlantsForUser(user2);
 
         Set<String> user1PlantNameSet = user1PlantList.stream().map(BasePlant::getName).collect(Collectors.toSet());
         Set<String> user2PlantNameSet = user2PlantList.stream().map(BasePlant::getName).collect(Collectors.toSet());
@@ -110,19 +123,18 @@ public class CompatibilityService {
         commonNames.retainAll(user2PlantNameSet);
 
         return commonNames.size();
-
     }
 
     /**
      * Calculate the number of total plants ignoring duplicate names
      *
-     * @param gardenUser1 First garden user
-     * @param gardenUser2 Second garden user
+     * @param user1 First garden user
+     * @param user2 Second garden user
      * @return number of unique total plants
      */
-    private int calculateUniquePlantNum(GardenUser gardenUser1, GardenUser gardenUser2) {
-        List<Plant> user1PlantList = plantService.getAllPlantsForUser(gardenUser1);
-        List<Plant> user2PlantList = plantService.getAllPlantsForUser(gardenUser2);
+    private int calculateUniquePlantNum(GardenUser user1, GardenUser user2) {
+        List<Plant> user1PlantList = plantService.getAllPlantsForUser(user1);
+        List<Plant> user2PlantList = plantService.getAllPlantsForUser(user2);
 
         Set<String> user1PlantNameSet = user1PlantList.stream().map(BasePlant::getName).collect(Collectors.toSet());
         Set<String> user2PlantNameSet = user2PlantList.stream().map(BasePlant::getName).collect(Collectors.toSet());
@@ -136,60 +148,60 @@ public class CompatibilityService {
     /**
      * Calculates the Jaccard similarity as a percentage
      *
-     * @param gardenUser1 First garden user
-     * @param gardenUser2 Second garden user
+     * @param user1 First garden user
+     * @param user2 Second garden user
      * @return similarity percentage
      */
-    private double calculatePlantSimilarity(GardenUser gardenUser1, GardenUser gardenUser2) {
-        int totalPlants = calculateUniquePlantNum(gardenUser1, gardenUser2);
-        int commonPlants = calculateCommonPlantNum(gardenUser1, gardenUser2);
+    private double calculatePlantSimilarity(GardenUser user1, GardenUser user2) {
+        int totalPlants = calculateUniquePlantNum(user1, user2);
+        int commonPlants = calculateCommonPlantNum(user1, user2);
         return 100. * commonPlants / totalPlants;
     }
 
     /**
      * Calculates the age of a user from their date of birth
      *
-     * @param gardenUser Garden user
+     * @param user Garden user
      * @return age or null
      */
-    private Integer calculateAge(GardenUser gardenUser) {
+    private Integer calculateAge(GardenUser user) {
         LocalDate now = clock.instant().atZone(clock.getZone()).toLocalDate();
 
-        if (gardenUser.getDateOfBirth() == null) {
+        if (user.getDateOfBirth() == null) {
             return null;
         }
-        return Period.between(gardenUser.getDateOfBirth(), now).getYears();
+        return Period.between(user.getDateOfBirth(), now).getYears();
     }
 
     /**
      * Calculates the age quotient
      *
-     * @param gardenUser1 First garden user
-     * @param gardenUser2 Second garden user
+     * @param user1 First garden user
+     * @param user2 Second garden user
      * @return age quotient or null
      */
-    private Double calculateAgeQuotient(GardenUser gardenUser1, GardenUser gardenUser2) {
-        Integer gardenUser1Age = calculateAge(gardenUser1);
-        Integer gardenUser2Age = calculateAge(gardenUser2);
+    private Double calculateAgeQuotient(GardenUser user1, GardenUser user2) {
+        Integer user1Age = calculateAge(user1);
+        Integer user2Age = calculateAge(user2);
 
-        if (gardenUser1Age == null || gardenUser2Age == null) {
+        if (user1Age == null || user2Age == null) {
             return null;
         }
 
-        return 100 * Math.exp(0.5 - 0.05 * Math.abs(gardenUser1Age - gardenUser2Age));
+        return 100 * Math.exp(0.5 - 0.05 * Math.abs(user1Age - user2Age));
     }
 
     /**
      * Calculates the compatibility quotient
      *
-     * @param gardenUser1 First garden user
-     * @param gardenUser2 Second garden user
+     * @param user1 First garden user
+     * @param user2 Second garden user
      * @return compatibility quotient
      */
-    public Double friendshipCompatibilityQuotient(GardenUser gardenUser1, GardenUser gardenUser2) {
-        Double proximityQuotient = calculateProximityQuotient(gardenUser1, gardenUser2);
-        double plantSimilarity = calculatePlantSimilarity(gardenUser1, gardenUser2);
-        Double ageQuotient = calculateAgeQuotient(gardenUser1, gardenUser2);
+    public Double friendshipCompatibilityQuotient(GardenUser user1, GardenUser user2) {
+        Double proximityQuotient = calculateProximityQuotient(user1, user2);
+        double plantSimilarity = calculatePlantSimilarity(user1, user2);
+        Double ageQuotient = calculateAgeQuotient(user1, user2);
 
         if (proximityQuotient == null) {
             proximityQuotient = 0.;
