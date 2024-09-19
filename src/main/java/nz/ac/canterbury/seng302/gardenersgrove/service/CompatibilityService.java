@@ -108,17 +108,11 @@ public class CompatibilityService {
     /**
      * Calculates the number of common plant names between garden users
      *
-     * @param user1 First garden user
-     * @param user2 Second garden user
+     * @param user1PlantNameSet Set of plant names for the first garden user
+     * @param user2PlantNameSet Set of plant names for the second garden user
      * @return number of common plant names
      */
-    private int calculateCommonPlantNum(GardenUser user1, GardenUser user2) {
-        List<Plant> user1PlantList = plantService.getAllPlantsForUser(user1);
-        List<Plant> user2PlantList = plantService.getAllPlantsForUser(user2);
-
-        Set<String> user1PlantNameSet = user1PlantList.stream().map(BasePlant::getName).collect(Collectors.toSet());
-        Set<String> user2PlantNameSet = user2PlantList.stream().map(BasePlant::getName).collect(Collectors.toSet());
-
+    private int calculateCommonPlantNum(Set<String> user1PlantNameSet, Set<String> user2PlantNameSet) {
         Set<String> commonNames = new HashSet<>(user1PlantNameSet);
         commonNames.retainAll(user2PlantNameSet);
 
@@ -128,17 +122,11 @@ public class CompatibilityService {
     /**
      * Calculate the number of total plants ignoring duplicate names
      *
-     * @param user1 First garden user
-     * @param user2 Second garden user
+     * @param user1PlantNameSet Set of plant names for the first garden user
+     * @param user2PlantNameSet Set of plant names for the second garden user
      * @return number of unique total plants
      */
-    private int calculateUniquePlantNum(GardenUser user1, GardenUser user2) {
-        List<Plant> user1PlantList = plantService.getAllPlantsForUser(user1);
-        List<Plant> user2PlantList = plantService.getAllPlantsForUser(user2);
-
-        Set<String> user1PlantNameSet = user1PlantList.stream().map(BasePlant::getName).collect(Collectors.toSet());
-        Set<String> user2PlantNameSet = user2PlantList.stream().map(BasePlant::getName).collect(Collectors.toSet());
-
+    private int calculateUniquePlantNum(Set<String> user1PlantNameSet, Set<String> user2PlantNameSet) {
         Set<String> uniqueNames = new HashSet<>(user1PlantNameSet);
         uniqueNames.addAll(user2PlantNameSet);
 
@@ -153,8 +141,14 @@ public class CompatibilityService {
      * @return similarity percentage
      */
     private double calculatePlantSimilarity(GardenUser user1, GardenUser user2) {
-        int totalPlants = calculateUniquePlantNum(user1, user2);
-        int commonPlants = calculateCommonPlantNum(user1, user2);
+        List<Plant> user1PlantList = plantService.getAllPlantsForUser(user1);
+        List<Plant> user2PlantList = plantService.getAllPlantsForUser(user2);
+
+        Set<String> user1PlantNameSet = user1PlantList.stream().map(BasePlant::getName).collect(Collectors.toSet());
+        Set<String> user2PlantNameSet = user2PlantList.stream().map(BasePlant::getName).collect(Collectors.toSet());
+
+        int totalPlants = calculateUniquePlantNum(user1PlantNameSet, user2PlantNameSet);
+        int commonPlants = calculateCommonPlantNum(user1PlantNameSet, user2PlantNameSet);
         return 100. * commonPlants / totalPlants;
     }
 
