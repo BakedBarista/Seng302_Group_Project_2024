@@ -10,6 +10,8 @@ import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
@@ -72,10 +74,11 @@ class CompatibilityServiceUnitTests {
         assertNull(result);
     }
 
-    @Test
-    void givenUser1HasNoGardensWithCoords_whenCalculateProximityQuotient_thenReturnNull() {
-        List<Garden> user1Gardens = List.of(gardenWithCoords(null, null));
-        List<Garden> user2Gardens = List.of(gardenWithCoords(0., 0.));
+    @ParameterizedTest
+    @CsvSource({ ",,0,0", "0,0,,", ",,," })
+    void givenEitherUserHasNoGardensWithCoords_whenCalculateProximityQuotient_thenReturnNull(Double lat1, Double lon1, Double lat2, Double lon2) {
+        List<Garden> user1Gardens = List.of(gardenWithCoords(lat1, lon1));
+        List<Garden> user2Gardens = List.of(gardenWithCoords(lat2, lon2));
         when(gardenService.getPublicGardensByOwnerId(user1)).thenReturn(user1Gardens);
         when(gardenService.getPublicGardensByOwnerId(user2)).thenReturn(user2Gardens);
 
@@ -84,58 +87,24 @@ class CompatibilityServiceUnitTests {
         assertNull(result);
     }
 
-    @Test
-    void givenUser2HasNoGardensWithCoords_whenCalculateProximityQuotient_thenReturnNull() {
-        List<Garden> user1Gardens = List.of(gardenWithCoords(0., 0.));
-        List<Garden> user2Gardens = List.of(gardenWithCoords(null, null));
+    @ParameterizedTest
+    @CsvSource({
+        // Jack Erskine, Jack Erskine, 100
+        "-43.522562, 172.581187, -43.522562, 172.581187, 100",
+        // Jack Erskine, Town Hall, 75
+        "-43.522562, 172.581187, -43.526812, 172.635688, 75",
+        // Jack Erskine, Beehive, 0
+        "-43.522562, 172.581187, -41.278437, 174.776687, 0"
+    })
+    void givenUsersInLocations_whenCalculateProximityQuotient_thenReturnPercentage(Double lat1, Double lon1, Double lat2, Double lon2, Double expected) {
+        List<Garden> user1Gardens = List.of(gardenWithCoords(lat1, lon1));
+        List<Garden> user2Gardens = List.of(gardenWithCoords(lat2, lon2));
         when(gardenService.getPublicGardensByOwnerId(user1)).thenReturn(user1Gardens);
         when(gardenService.getPublicGardensByOwnerId(user2)).thenReturn(user2Gardens);
 
         Double result = compatibilityService.calculateProximityQuotient(user1, user2);
 
-        assertNull(result);
-    }
-
-    @Test
-    void givenUsersInExactSameLocation_whenCalculateProximityQuotient_thenReturn100() {
-        // Jack Erskine
-        List<Garden> user1Gardens = List.of(gardenWithCoords(-43.522562, 172.581187));
-        // Jack Erskine
-        List<Garden> user2Gardens = List.of(gardenWithCoords(-43.522562, 172.581187));
-        when(gardenService.getPublicGardensByOwnerId(user1)).thenReturn(user1Gardens);
-        when(gardenService.getPublicGardensByOwnerId(user2)).thenReturn(user2Gardens);
-
-        Double result = compatibilityService.calculateProximityQuotient(user1, user2);
-
-        assertEquals(100., result, 0.1);
-    }
-
-    @Test
-    void givenUsersInSameCity_whenCalculateProximityQuotient_thenReturnApprox75() {
-        // Jack Erskine
-        List<Garden> user1Gardens = List.of(gardenWithCoords(-43.522562, 172.581187));
-        // Town Hall
-        List<Garden> user2Gardens = List.of(gardenWithCoords(-43.526812, 172.635688));
-        when(gardenService.getPublicGardensByOwnerId(user1)).thenReturn(user1Gardens);
-        when(gardenService.getPublicGardensByOwnerId(user2)).thenReturn(user2Gardens);
-
-        Double result = compatibilityService.calculateProximityQuotient(user1, user2);
-
-        assertEquals(75., result, 10.);
-    }
-
-    @Test
-    void givenUsersInDifferentCities_whenCalculateProximityQuotient_thenReturnApprox0() {
-        // Jack Erskine
-        List<Garden> user1Gardens = List.of(gardenWithCoords(-43.522562, 172.581187));
-        // Beehive
-        List<Garden> user2Gardens = List.of(gardenWithCoords(-41.278437, 174.776687));
-        when(gardenService.getPublicGardensByOwnerId(user1)).thenReturn(user1Gardens);
-        when(gardenService.getPublicGardensByOwnerId(user2)).thenReturn(user2Gardens);
-
-        Double result = compatibilityService.calculateProximityQuotient(user1, user2);
-
-        assertEquals(0., result, 10.);
+        assertEquals(expected, result, 5.);
     }
 
     @Test
