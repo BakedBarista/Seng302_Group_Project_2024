@@ -54,6 +54,14 @@ public class MessageService {
         return sendMessageWithTimestamp(sender, receiver, messageDTO, timestamp);
     }
 
+    /**
+     * Send image message
+     * @param sender the message sender
+     * @param receiver the receiver
+     * @param messageDTO message object
+     * @param file image file
+     * @return the message that was sent
+     */
     public Message sendImage(Long sender, Long receiver, MessageDTO messageDTO, MultipartFile file) throws IOException {
         LocalDateTime timestamp = clock.instant().atZone(clock.getZone()).toLocalDateTime();
         return sendImageWithTimestamp(sender, receiver, messageDTO, timestamp,file);
@@ -75,6 +83,14 @@ public class MessageService {
         return message;
     }
 
+    /**
+     * Adds timestamp to the message
+     * @param sender    the message sender
+     * @param receiver  the person who will receive the message
+     * @param messageDTO the message object
+     * @param file      the image file
+     * @return the message that was sent
+     */
     public Message sendImageWithTimestamp(Long sender, Long receiver, MessageDTO messageDTO,
                                           LocalDateTime timestamp, MultipartFile file) throws IOException {
         if(validateImage(file)) {

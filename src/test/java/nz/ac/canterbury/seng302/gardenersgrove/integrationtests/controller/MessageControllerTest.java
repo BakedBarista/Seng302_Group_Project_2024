@@ -98,8 +98,8 @@ class MessageControllerTest {
         Mockito.when(authentication.getPrincipal()).thenReturn(sender.getId());
         when(bindingResult.hasErrors()).thenReturn(false);
 
-        messageController.sendMessage(receiver.getId(), messageDTO,bindingResult, authentication, model, session);
-        String redirect = messageController.sendMessage(receiver.getId(), messageDTO, bindingResult, authentication, model, session);
+        messageController.sendMessage(receiver.getId(), messageDTO,bindingResult, authentication, model, session,null);
+        String redirect = messageController.sendMessage(receiver.getId(), messageDTO, bindingResult, authentication, model, session, null);
         List<Message> savedMessages = messageRepository.findMessagesBetweenUsers(sender.getId(), receiver.getId());
         Assertions.assertEquals("users/message-home", redirect);
 
@@ -116,7 +116,7 @@ class MessageControllerTest {
         Mockito.when(authentication.getPrincipal()).thenReturn(sender.getId());
         Mockito.when(bindingResult.hasErrors()).thenReturn(false);
 
-        messageController.sendMessage(receiver.getId(), messageDTO, bindingResult, authentication, model, session);
+        messageController.sendMessage(receiver.getId(), messageDTO, bindingResult, authentication, model, session, null);
         List<Message> savedMessages = messageRepository.findMessagesBetweenUsers(sender.getId(), receiver.getId());
 
         // verify message is saved to repository
@@ -132,7 +132,7 @@ class MessageControllerTest {
         Mockito.when(authentication.getPrincipal()).thenReturn(sender.getId());
         Mockito.when(bindingResult.hasErrors()).thenReturn(false);
 
-        messageController.sendMessage(receiver.getId(), messageDTO, bindingResult, authentication, model, session);
+        messageController.sendMessage(receiver.getId(), messageDTO, bindingResult, authentication, model, session, null);
         List<Message> savedMessages = messageRepository.findMessagesBetweenUsers(sender.getId(), receiver.getId());
 
         // verify message is saved to repository
