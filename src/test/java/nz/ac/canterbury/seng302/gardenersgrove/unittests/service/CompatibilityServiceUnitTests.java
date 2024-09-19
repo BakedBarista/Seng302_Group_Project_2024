@@ -83,7 +83,7 @@ class CompatibilityServiceUnitTests {
     }
 
     @ParameterizedTest
-    @CsvSource({ ",,0,0", "0,0,,", ",,," })
+    @CsvSource({ ",,0,0", "0,0,,", ",,,", "0,,,", ",0,,", ",,0,", ",,,0" })
     void givenEitherUserHasNoGardensWithCoords_whenCalculateProximityQuotient_thenReturnNull(Double lat1, Double lon1,
             Double lat2, Double lon2) {
         List<Garden> user1Gardens = List.of(gardenWithCoords(lat1, lon1));
