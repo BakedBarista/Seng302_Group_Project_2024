@@ -4,8 +4,8 @@ const otherUserId = activeChatId;
 
 /**@type {HTMLFormElement} */
 const sendMessageForm = document.getElementById('sendMessageForm');
-const label = sendMessageForm.querySelector('label');
-const textArea = sendMessageForm.querySelector('textarea');
+const label = sendMessageForm?.querySelector('label');
+const textArea = sendMessageForm?.querySelector('textarea');
 const messagesContainer = document.getElementById('scrollbar');
 const invalidFeedback = document.getElementById('invalidFeedback');
 
@@ -18,7 +18,6 @@ ws.addEventListener('open', () => {
         ws.send(JSON.stringify({ type: 'ping' }));
     }, 5000);
 });
-
 
 ws.addEventListener('message', (ev) => {
     const data = JSON.parse(ev.data);
@@ -71,14 +70,6 @@ async function updateMessages() {
     scrollToBottom(messagesContainer);
 }
 
-messagesContainer.addEventListener('focus', markMessagesAsRead);
-messagesContainer.addEventListener('click', markMessagesAsRead);
-
-messagesContainer.addEventListener('scroll', () => {
-    if (isScrolledToBottom(messagesContainer)) {
-        markMessagesAsRead();
-    }
-});
 
 function isScrolledToBottom(container) {
     return container.scrollHeight - container.scrollTop === container.clientHeight;
