@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.websockets.MessageWebSocketHandler;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Message;
@@ -213,6 +214,7 @@ public class MessageController {
             } else {
                 messageService.sendMessage(sender, receiver, messageDTO);
             }
+            MessageWebSocketHandler.getInstance().updateMessagesBroadcast(List.of(sender, receiver));
             session.removeAttribute(SUBMISSION_TOKEN);
         }
         return messageFriend(receiver, authentication, model, session);

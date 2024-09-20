@@ -30,6 +30,8 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.MessageService;
 public class MessageWebSocketHandler extends TextWebSocketHandler {
     private final Logger logger = LoggerFactory.getLogger(MessageWebSocketHandler.class);
 
+	private static MessageWebSocketHandler instance;
+
 	private MessageService messageService;
 	private ObjectMapper objectMapper;
 	private ValidatorFactory validatorFactory;
@@ -39,6 +41,20 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 		this.messageService = messageService;
 		this.objectMapper = objectMapper;
 		this.validatorFactory = validatorFactory;
+
+		instance = this;
+	}
+
+	/**
+	 * Gets the singleton instance of the MessageWebSocketHandler.
+	 *
+	 * @return the singleton instance
+	 */
+	public static MessageWebSocketHandler getInstance() {
+		if (instance == null) {
+			throw new IllegalStateException("MessageWebSocketHandler has not been initialized");
+		}
+		return instance;
 	}
 
 	/**
@@ -115,7 +131,7 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 	 * Sends an `updateMessages` message to each of the given users.
 	 * @param userIds A list of user IDs to broadcast the message to
 	 */
-	private void updateMessagesBroadcast(List<Long> userIds) {
+	public void updateMessagesBroadcast(List<Long> userIds) {
 		for (WebSocketSession session : Set.copyOf(activeSessions)) {
 			long userId = getCurrentUserId(session);
 			if (userIds == null || !userIds.contains(userId)) {
