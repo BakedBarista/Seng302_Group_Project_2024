@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
@@ -232,5 +233,17 @@ class MessageControllerTest {
         verify(mockedMessageService).sendImage(sender, receiver, messageDTO,file);
 
 
+    }
+
+    @Test
+    void whenFetchMessageImage_thenImageReturned() {
+        Message message = new Message();
+        message.setImage("image/jpeg", new byte[] { 1, 2, 3 });
+        when(mockedMessageService.getMessageById(42L)).thenReturn(message);
+
+        ResponseEntity<byte[]> response = messageController.messageImage(42L);
+
+        assertEquals("image/jpeg", response.getHeaders().getContentType().toString());
+        assertEquals(message.getImageContent(), response.getBody());
     }
 }
