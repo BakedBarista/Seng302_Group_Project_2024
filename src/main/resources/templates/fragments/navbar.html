@@ -13,6 +13,9 @@
       <a th:href="@{/}" class="d-flex justify-content-center w-100">
         <img th:src="@{/img/logo.svg}" aria-hidden alt="Pollinat*r" style="margin-left: -5px;" id="navbarLogo"/>
       </a>
+      <div class="d-md-none d-block">
+        <div th:replace="~{fragments/darkmode-toggle :: darkmode-toggle}"></div>
+      </div>
     </h5>
     <section class="collapse flex-grow-1 d-md-flex flex-column" id="navDrawer">
       <ul th:if="${!isAuthenticated}" class="main-list">
@@ -69,19 +72,24 @@
             Messages
           </a>
         </li>
-    
-    
       </ul>
-      <div th:if="${!isAuthenticated}">
+      <div class="d-none d-md-block" th:if="${!isAuthenticated}">
         <div th:replace="~{fragments/darkmode-toggle :: darkmode-toggle}"></div>
       </div>
       <ul th:if="${isAuthenticated}" class="pt-3">
-        <li>
-          <a href="#profileOptions" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="profileOptions">
+        <li class="d-flex">
+          <a class="w-100"
+             href="#profileOptions"
+             data-bs-toggle="collapse"
+             role="button"
+             aria-expanded="false"
+             aria-controls="profileOptions">
             <img class="link-icon" th:src="@{/icons/user-stroke-rounded-white.svg}" width="24" height="24" alt="User" />
             <span th:text="${currentUserFullName}">User</span>
-            <div th:replace="~{fragments/darkmode-toggle :: darkmode-toggle}"></div>
           </a>
+          <div class="d-none d-md-block justify-content-end d-flex w-auto align-content-center mx-3">
+            <div th:replace="~{fragments/darkmode-toggle :: darkmode-toggle}"></div>
+          </div>
         </li>
       </ul>
       <section class="collapse" id="profileOptions">

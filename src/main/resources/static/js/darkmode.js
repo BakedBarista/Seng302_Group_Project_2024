@@ -2,7 +2,7 @@
     // Saves the theme to local storage
     const getStoredTheme = () => localStorage.getItem('theme')
     const setStoredTheme = theme => localStorage.setItem('theme', theme)
-    const checkbox = document.getElementById('checkbox');
+    const checkboxes = document.getElementsByName("checkbox")
 
     const setTheme = theme => {
         document.documentElement.setAttribute('data-bs-theme', theme)
@@ -14,12 +14,18 @@
 
         if (!storedTheme) {
             setTheme('light');
-            checkbox.checked = false;
+            for (let checkbox of checkboxes) {
+                checkbox.checked = false;
+            }
         } else if (storedTheme === 'dark') {
-            checkbox.checked = true;
+            for (let checkbox of checkboxes) {
+                checkbox.checked = true;
+            }
             setTheme('dark');
         } else {
-            checkbox.checkbox = false;
+            for (let checkbox of checkboxes) {
+                checkbox.checked = false;
+            }
             setTheme('light');
         }
     }
@@ -27,12 +33,20 @@
     window.addEventListener('DOMContentLoaded', () => {
         // Loads the theme on DOM load
         loadTheme();
-        checkbox.addEventListener('change', () => {
-            if (checkbox.checked) {
-                setTheme('dark');
-            } else {
-                setTheme('light');
-            }
-        });
+        for (let checkbox of checkboxes) {
+            checkbox.addEventListener('change', () => {
+                if (checkbox.checked) {
+                    for (let checkbox_ of checkboxes) {
+                        checkbox_.checked = true;
+                    }
+                    setTheme('dark');
+                } else {
+                    for (let checkbox_ of checkboxes) {
+                        checkbox_.checked = false;
+                    }
+                    setTheme('light');
+                }
+            });
+        }
     })
 })()
