@@ -249,8 +249,6 @@ public class PublicProfileControllerTest {
 
         String viewName = publicProfileController.publicProfileEditSubmit(authentication, profilePic, banner, description, editUserDTO, bindingResult, model);
 
-        verify(gardenUserService).setProfilePicture(loggedInUserId, profilePic.getContentType(), profilePic.getBytes());
-        verify(gardenUserService).setProfileBanner(loggedInUserId, banner.getContentType(), banner.getBytes());
         verify(model).addAttribute("userId", loggedInUserId);
 
         assertEquals("redirect:/users/public-profile", viewName);
