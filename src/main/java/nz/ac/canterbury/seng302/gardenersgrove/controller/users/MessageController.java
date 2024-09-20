@@ -13,6 +13,8 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.MessageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,7 +30,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import org.springframework.validation.BindingResult;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.TIMESTAMP_FORMAT;
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.WEATHER_CARD_FORMAT_DATE;
@@ -203,8 +204,7 @@ public class MessageController {
             if (file != null && !file.isEmpty()) {
                 logger.info("Processing image upload for user {}", sender);
                 try {
-                    Message messageWithImage = messageService.sendImage(sender, receiver, messageDTO, file);
-                    model.addAttribute("imageMessage", messageWithImage);
+                    messageService.sendImage(sender, receiver, messageDTO, file);
                 } catch (IOException e) {
                     logger.error("Error uploading image", e);
                     model.addAttribute("fileError", "File too large or wrong file type");
@@ -317,5 +317,15 @@ public class MessageController {
         }
         model.addAttribute("messageDTO", new MessageDTO("", ""));
         return MSG_HOME_ENDPOINT;
+    }
+
+    @GetMapping("api/messages/id/{id}/image")
+    public ResponseEntity<byte[]> messageImage(@PathVariable("id") Long id) {
+        logger.info("GET messageImage");
+
+        Message message = messageService.getMessageById(id);
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(message.getImageContentType()))
+                .body(message.getImageContent());
     }
 }

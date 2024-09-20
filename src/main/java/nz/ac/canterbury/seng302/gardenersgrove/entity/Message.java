@@ -45,6 +45,10 @@ public class Message {
         this.messageContent = message;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public Long getSender() {
         return sender;
     }

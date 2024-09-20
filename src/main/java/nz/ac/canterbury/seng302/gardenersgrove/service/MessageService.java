@@ -272,4 +272,8 @@ public class MessageService {
         return ACCEPTED_FILE_TYPES.contains(plantImage.getContentType())
                 && (plantImage.getSize() <= MAX_FILE_SIZE);
     }
+
+    public Message getMessageById(Long id) {
+        return messageRepository.findById(id).orElse(null);
+    }
 }
