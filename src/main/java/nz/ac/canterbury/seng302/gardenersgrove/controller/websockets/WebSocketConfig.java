@@ -25,15 +25,13 @@ public class WebSocketConfig implements WebSocketConfigurer {
     private ObjectMapper objectMapper;
     private ValidatorFactory validatorFactory;
     private String serverOrigin;
-    private FriendService friendService;
 
-    public WebSocketConfig(MessageService messageService, ObjectMapper objectMapper, ValidatorFactory validatorFactory, FriendService friendService,
+    public WebSocketConfig(MessageService messageService, ObjectMapper objectMapper, ValidatorFactory validatorFactory,
                     @Value("${gardenersgrove.server.origin:*}") String serverOrigin) {
         this.messageService = messageService;
         this.objectMapper = objectMapper;
         this.validatorFactory = validatorFactory;
         this.serverOrigin = serverOrigin;
-        this.friendService = friendService;
     }
 
     /**

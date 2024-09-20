@@ -28,14 +28,14 @@ public class MessageService {
 
     private final GardenUserService userService;
 
-    @Autowired
     private  MessageReadRepository messageReadRepository;
 
     @Autowired
-    public MessageService(MessageRepository messageRepository, Clock clock, GardenUserService userService) {
+    public MessageService(MessageRepository messageRepository, Clock clock, GardenUserService userService, MessageReadRepository messageReadRepository){
         this.messageRepository = messageRepository;
         this.clock = clock;
         this.userService = userService;
+        this.messageReadRepository = messageReadRepository;
     }
 
     /**

@@ -35,7 +35,6 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 	private ObjectMapper objectMapper;
 	private ValidatorFactory validatorFactory;
 	private Set<WebSocketSession> activeSessions = new HashSet<>();
-	private FriendService friendService; 
 
 	public MessageWebSocketHandler(MessageService messageService, ObjectMapper objectMapper, ValidatorFactory validatorFactory) {
 		this.messageService = messageService;
