@@ -44,6 +44,7 @@ public class MessageController {
     private final GardenUserService userService;
     private final FriendService friendService;
     private final MessageService messageService;
+    private final MessageWebSocketHandler messageWebSocketHandler;
 
     private static final String SUBMISSION_TOKEN = "submissionToken";
     private static final String MSG_HOME_ENDPOINT = "users/message-home";
@@ -52,10 +53,12 @@ public class MessageController {
     @Autowired
     public MessageController(GardenUserService userService,
             FriendService friendService,
-            MessageService messageService) {
+            MessageService messageService,
+            MessageWebSocketHandler messageWebSocketHandler) {
         this.userService = userService;
         this.friendService = friendService;
         this.messageService = messageService;
+        this.messageWebSocketHandler = messageWebSocketHandler;
     }
 
     /**
@@ -214,7 +217,7 @@ public class MessageController {
             } else {
                 messageService.sendMessage(sender, receiver, messageDTO);
             }
-            MessageWebSocketHandler.getInstance().updateMessagesBroadcast(List.of(sender, receiver));
+            messageWebSocketHandler.updateMessagesBroadcast(List.of(sender, receiver));
             session.removeAttribute(SUBMISSION_TOKEN);
         }
         return messageFriend(receiver, authentication, model, session);

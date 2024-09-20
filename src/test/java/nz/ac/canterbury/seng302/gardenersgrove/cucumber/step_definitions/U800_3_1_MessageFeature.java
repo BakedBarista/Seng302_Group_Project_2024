@@ -6,6 +6,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.MessageController;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.websockets.MessageWebSocketHandler;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Message;
@@ -42,6 +43,8 @@ public class U800_3_1_MessageFeature {
     private MessageController messageController;
     @Autowired
     private MessageRepository messageRepository;
+    @Autowired
+    private MessageWebSocketHandler messageWebSocketHandler;
 
     private static Model model;
     private String result;
@@ -106,7 +109,7 @@ public class U800_3_1_MessageFeature {
 
     @Given("I am viewing my friends list")
     public void i_am_viewing_my_friends_list() {
-        messageController = new MessageController(gardenUserService, friendService, messageService);
+        messageController = new MessageController(gardenUserService, friendService, messageService, messageWebSocketHandler);
     }
 
     @When("I click the message button next to my friend {string}")

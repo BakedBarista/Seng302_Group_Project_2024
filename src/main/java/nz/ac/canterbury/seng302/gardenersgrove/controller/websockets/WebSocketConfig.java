@@ -39,17 +39,17 @@ public class WebSocketConfig implements WebSocketConfigurer {
      */
 	@Override
 	public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(testWebSocketHandler(), "/api/messages")
+        registry.addHandler(messageWebSocketHandler(), "/api/messages")
                 .setAllowedOrigins(serverOrigin)
                 .addInterceptors(new HttpSessionHandshakeInterceptor());
 	}
 
     /**
-     * Constructs a new TestWebSocketHandler.
-     * @return a new TestWebSocketHandler
+     * Constructs a new MessageWebSocketHandler.
+     * @return a new MessageWebSocketHandler
      */
     @Bean
-    public WebSocketHandler testWebSocketHandler() {
+    public MessageWebSocketHandler messageWebSocketHandler() {
         return new MessageWebSocketHandler(messageService, objectMapper, validatorFactory);
     }
 }

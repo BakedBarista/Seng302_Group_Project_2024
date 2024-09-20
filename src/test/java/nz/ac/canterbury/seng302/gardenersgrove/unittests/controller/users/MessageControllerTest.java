@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.unittests.controller.users;
 
 import jakarta.servlet.http.HttpSession;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.MessageController;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.websockets.MessageWebSocketHandler;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Message;
@@ -54,6 +55,9 @@ class MessageControllerTest {
     private MessageService messageService;
 
     @Autowired
+    private MessageWebSocketHandler messageWebSocketHandler;
+
+    @Autowired
     private MessageRepository messageRepository;
 
     private static Authentication authentication;
@@ -72,9 +76,9 @@ class MessageControllerTest {
         mockedMessageService = mock(MessageService.class);
         bindingResult = mock(BindingResult.class);
 
-        messageController = new MessageController(gardenUserService, mockedFriendService, mockedMessageService);
+        messageController = new MessageController(gardenUserService, mockedFriendService, mockedMessageService, messageWebSocketHandler);
 
-        messageController2 = new MessageController(gardenUserService, mockedFriendService, messageService);
+        messageController2 = new MessageController(gardenUserService, mockedFriendService, messageService, messageWebSocketHandler);
 
     }
 
