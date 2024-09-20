@@ -321,6 +321,12 @@ public class MessageController {
         return MSG_HOME_ENDPOINT;
     }
 
+    /**
+     * Retrieves the image of a message by its ID.
+     *
+     * @param id the ID of the message
+     * @return the image of the message
+     */
     @GetMapping("api/messages/id/{id}/image")
     public ResponseEntity<byte[]> messageImage(@PathVariable("id") Long id) {
         logger.info("GET messageImage");
