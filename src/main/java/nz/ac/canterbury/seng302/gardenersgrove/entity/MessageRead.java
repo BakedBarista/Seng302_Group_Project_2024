@@ -34,17 +34,12 @@ public class MessageRead {
         return receiverId;
     }
 
-    public void setReceiverId(Long receiverId) {
-        this.receiverId = receiverId;
-    }
+
 
     public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
 
     public LocalDateTime getLastReadMessage() {
         return lastReadMessage;
