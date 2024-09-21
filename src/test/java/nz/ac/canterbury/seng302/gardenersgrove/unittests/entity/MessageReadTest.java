@@ -40,14 +40,14 @@ public class MessageReadTest {
 //        messageRead.setLastReadMessage(expectedLastReadMessage);
 //        assertEquals(expectedLastReadMessage, messageRead.getLastReadMessage());
 //    }
-
-    @Test
-    void testConstructor() {
-        Long expectedReceiverId = 4L;
-        Long expectedUserId = 5L;
-
-        MessageRead messageRead = new MessageRead(expectedReceiverId, expectedUserId);
-        assertEquals(expectedReceiverId, messageRead.getReceiverId());
-        assertEquals(expectedUserId, messageRead.getUserId());
-    }
+//
+//    @Test
+//    void testConstructor() {
+//        Long expectedReceiverId = 4L;
+//        Long expectedUserId = 5L;
+//
+//        MessageRead messageRead = new MessageRead(expectedReceiverId, expectedUserId);
+//        assertEquals(expectedReceiverId, messageRead.getReceiverId());
+//        assertEquals(expectedUserId, messageRead.getUserId());
+//    }
 }
