@@ -22,7 +22,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ValidatorFactory;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.MessageDTO;
-import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.MessageService;
 
 /**

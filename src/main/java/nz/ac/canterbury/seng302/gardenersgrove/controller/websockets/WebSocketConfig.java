@@ -12,7 +12,6 @@ import org.springframework.web.socket.server.support.HttpSessionHandshakeInterce
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.validation.ValidatorFactory;
-import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.MessageService;
 
 /**

@@ -165,7 +165,7 @@ class MessageServiceTest {
     }
 
     @Test
-    public void testSetReadTime_MessageReadExists() {
+    void testSetReadTime_MessageReadExists() {
         Long receiverId = 1L;
         Long userId = 2L;
         MessageRead existingMessageRead = new MessageRead(receiverId, userId);
@@ -186,7 +186,7 @@ class MessageServiceTest {
     }
 
     @Test
-    public void testSetReadTime_MessageReadDoesNotExist() {
+    void testSetReadTime_MessageReadDoesNotExist() {
         Long receiverId = 1L;
         Long userId = 2L;
 
