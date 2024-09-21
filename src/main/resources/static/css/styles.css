@@ -927,3 +927,29 @@ h1, h2, h3, h4, h5, h6 {
     background-color: #e0f7fa; /* Highlight color */
     border-color: #00796b; /* Highlight border color */
 }
+
+.progress {
+    height: 17px;
+    background: white;
+    border-radius: 15px;
+    margin-bottom: 10px;
+    overflow: visible;
+}
+
+.progress .progress-bar{
+    border-radius: 15px;
+    position: relative;
+    height: 100%;
+    background: red;
+    width: 65%; /* compatibility score here */
+    overflow: visible;
+
+}
+.progress .progress-value{
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    background: #a83a82;
+    position: absolute;
+    right: -5px;
+}
