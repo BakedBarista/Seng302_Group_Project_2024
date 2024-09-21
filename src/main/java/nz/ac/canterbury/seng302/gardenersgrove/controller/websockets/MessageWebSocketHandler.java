@@ -38,7 +38,7 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 	public MessageWebSocketHandler(MessageService messageService, ObjectMapper objectMapper, ValidatorFactory validatorFactory) {
 		this.messageService = messageService;
 		this.objectMapper = objectMapper;
-		this.validatorFactory = validatorFactory;;
+		this.validatorFactory = validatorFactory;
 	}
 
 	/**
