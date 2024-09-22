@@ -35,13 +35,11 @@
         .hero-content h1 {
             font-size: 4rem;
             margin-bottom: 20px;
-            color: #333;
         }
 
         .hero-content p {
             font-size: 1.5rem;
             margin-bottom: 30px;
-            color: #666;
         }
         .btn-custom-light {
             background-color: #CB9F03;
@@ -79,7 +77,7 @@
         }
 
         .section {
-            padding: 100px 0;
+            padding: 50px 0;
             background-color: white;
         }
 
@@ -110,22 +108,19 @@
             background-color: #453704;
         }
 
-        /*@media (max-width: 767.98px) {*/
-        /*    .redirect-link {*/
-        /*        margin-left: 0;*/
-        /*        background-color: #CB9F03;*/
-        /*    }*/
+        [data-bs-theme="dark"] :is(main, section) {
+            background: var(--gg-black);
+            color: white;
+        }
 
-        /*    .hero-section {*/
-        /*        margin-top: 0;*/
-        /*        height: calc(100vh - 57px);*/
-        /*    }*/
-        /*}*/
-        /*@media (min-width: 768px) {*/
-        /*    main {*/
-        /*        margin-top: 76px;*/
-        /*    }*/
-        /*}*/
+        [data-bs-theme="dark"] :is(h1, h2, p) {
+            color: white;
+        }
+
+        [data-bs-theme="dark"] p.card-text {
+            color: #c5c5c5;
+        }
+
     </style>
 </head>
 
@@ -158,13 +153,16 @@
                 </li>
             </ul>
         </div>
+        <div class="ms-3" >
+            <div th:replace="~{fragments/darkmode-toggle :: darkmode-toggle}"></div>
+        </div>
     </div>
 </nav>
 
 <!-- Hero Section -->
 <main>
-<section class="hero-section my-3" id="home">
-    <div class="container d-lg-flex align-items-center d-none">
+<section class="hero-section py-3" id="home" style="min-height: calc(100vh - 57.81px);">
+    <div class="container d-lg-flex align-items-center d-none ">
         <div class="hero-content">
             <h1>Welcome to Pollinat*r</h1>
             <p>Your garden, your community. Discover a world where gardeners come together to share their passion, swap tips, and celebrate the beauty of nature.</p>
@@ -172,11 +170,11 @@
             <a th:href="@{/users/register}" class="btn btn-custom-light">Join the Community</a>
         </div>
         <div class="hero-image">
-            <img th:src="@{/img/mockup.png}" alt="Phone Mockup">
+            <img th:src="@{/img/mockup.png}" alt="Phone Mockup" style="height: 500px">
         </div>
     </div>
     <div class="container d-lg-none d-block">
-        <div class="hero-content">
+        <div class="hero-content" >
             <h1 class="text-center" style="font-size: 30pt;">Welcome to Pollinat*r</h1>
             <div class="hero-image d-flex justify-content-center pb-2">
                 <img th:src="@{/img/mockup.png}" alt="Phone Mockup" width="300px">
