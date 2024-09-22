@@ -26,7 +26,6 @@ import static nz.ac.canterbury.seng302.gardenersgrove.entity.Friends.Status.ACCE
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.mock;
 
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 @SpringBootTest

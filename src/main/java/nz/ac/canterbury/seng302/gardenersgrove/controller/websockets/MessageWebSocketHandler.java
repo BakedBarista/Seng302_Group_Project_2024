@@ -71,6 +71,7 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 				// Refresh messages on page load to avoid a race condition
 				updateMessages(session);
 				break;
+
 			case "sendMessage":
 				Long sender = getCurrentUserId(session);
 				Long receiver = message.get("receiver").asLong();

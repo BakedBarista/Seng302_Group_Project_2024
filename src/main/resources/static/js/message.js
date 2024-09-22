@@ -4,8 +4,8 @@ const otherUserId = activeChatId;
 
 /**@type {HTMLFormElement} */
 const sendMessageForm = document.getElementById('sendMessageForm');
-const label = sendMessageForm.querySelector('label');
-const textArea = sendMessageForm.querySelector('textarea');
+const label = sendMessageForm?.querySelector('label');
+const textArea = sendMessageForm?.querySelector('textarea');
 const messagesContainer = document.getElementById('scrollbar');
 const invalidFeedback = document.getElementById('invalidFeedback');
 
@@ -18,7 +18,6 @@ ws.addEventListener('open', () => {
         ws.send(JSON.stringify({ type: 'ping' }));
     }, 5000);
 });
-
 
 ws.addEventListener('message', (ev) => {
     const data = JSON.parse(ev.data);
@@ -45,6 +44,13 @@ sendMessageForm.addEventListener('submit', (ev) => {
     sendMessage();
 });
 
+function markMessagesAsRead() {
+    ws.send(JSON.stringify({
+        type: 'readMessage',
+        receiver: otherUserId
+    }));
+}
+
 function sendMessage() {
     const message = textArea.value;
     ws.send(
@@ -63,3 +69,9 @@ async function updateMessages() {
 
     scrollToBottom(messagesContainer);
 }
+
+
+function isScrolledToBottom(container) {
+    return container.scrollHeight - container.scrollTop === container.clientHeight;
+}
+

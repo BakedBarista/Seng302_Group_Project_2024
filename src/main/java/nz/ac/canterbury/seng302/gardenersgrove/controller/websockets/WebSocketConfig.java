@@ -42,6 +42,8 @@ public class WebSocketConfig implements WebSocketConfigurer {
         registry.addHandler(testWebSocketHandler(), "/api/messages")
                 .setAllowedOrigins(serverOrigin)
                 .addInterceptors(new HttpSessionHandshakeInterceptor());
+
+
 	}
 
     /**
