@@ -52,3 +52,11 @@ input:checked + .slider:before {
 .slider.round {
     border-radius: 34px;
 }
+
+#darkToggleBackground {
+    background-color: white;
+}
+
+[data-bs-theme="dark"] #darkToggleBackground {
+    background-color: var(--gg-black);
+}
