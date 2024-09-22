@@ -6,11 +6,12 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.MessageDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.MessageRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.MessageService;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.mock.web.MockMultipartFile;
 
+import java.io.IOException;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -19,8 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class MessageServiceTest {
@@ -28,8 +28,9 @@ class MessageServiceTest {
     private MessageRepository messageRepository;
     private Clock clock;
     private Instant timestamp;
-
     private GardenUserService userService;
+    private LocalDateTime fixedTimestamp;
+    private static final int MAX_FILE_SIZE = 10 * 1024 * 1024;
 
     @BeforeEach
     public void setUp() {
@@ -37,7 +38,12 @@ class MessageServiceTest {
         clock = mock(Clock.class);
         userService = mock(GardenUserService.class);
         messageService = new MessageService(messageRepository, clock, userService);
-        timestamp = Instant.ofEpochSecond(0);
+
+        timestamp = Instant.now();
+        when(clock.instant()).thenReturn(timestamp);
+        when(clock.getZone()).thenReturn(ZoneId.systemDefault());
+
+        fixedTimestamp = LocalDateTime.of(2024, 9, 22, 12, 0); // Fixed date and time
     }
 
     @Test
@@ -156,5 +162,71 @@ class MessageServiceTest {
 
         assertEquals(3L, result);
     }
-}
 
+    @Test
+    void whenSendImage_thenImageMessageIsSaved() throws IOException {
+        Long senderId = 1L;
+        Long receiverId = 2L;
+        MessageDTO messageDTO = new MessageDTO("Hello with image", "token");
+        MockMultipartFile file = new MockMultipartFile("image", "image.png", "image/png", new byte[]{1, 2, 3});
+
+        Message message = messageService.sendImage(senderId, receiverId, messageDTO, file);
+
+        assertNotNull(message);
+        assertEquals("Hello with image", message.getMessageContent());
+        verify(messageRepository, times(1)).save(any(Message.class));
+    }
+
+    @Test
+    void whenSendImageWithTimestamp_thenMessageCreatedWithTimestamp() throws IOException {
+        Long senderId = 1L;
+        Long receiverId = 2L;
+        MessageDTO messageDTO = new MessageDTO("Hello with image and timestamp", "token");
+        MockMultipartFile file = new MockMultipartFile("image", "image.png", "image/png", new byte[]{1, 2, 3});
+
+        Message message = messageService.sendImageWithTimestamp(senderId, receiverId, messageDTO, fixedTimestamp, file);
+
+        assertNotNull(message);
+        assertEquals(senderId, message.getSender());
+        assertEquals(receiverId, message.getReceiver());
+        assertEquals("Hello with image and timestamp", message.getMessageContent());
+        assertEquals(fixedTimestamp, message.getTimestamp());
+        verify(messageRepository, times(1)).save(any(Message.class));
+    }
+
+    @Test
+    void whenSendImageWithInvalidFile_thenExceptionIsThrown() {
+        Long senderId = 1L;
+        Long receiverId = 2L;
+        MessageDTO messageDTO = new MessageDTO("Invalid image", "token");
+        MockMultipartFile file = new MockMultipartFile("image", "image.txt", "text/plain", new byte[]{1, 2, 3});
+
+        IOException exception = assertThrows(IOException.class, () ->
+                messageService.sendImageWithTimestamp(senderId, receiverId, messageDTO, fixedTimestamp, file));
+
+        assertEquals("Image is too large or wrong format", exception.getMessage());
+        verify(messageRepository, never()).save(any(Message.class));
+    }
+
+    @Test
+    void whenValidateImage_thenValidationIsSuccessful() {
+        MockMultipartFile validImage = new MockMultipartFile("image", "valid.png", "image/png", new byte[1024]);
+        boolean isValid = messageService.validateImage(validImage);
+        assertTrue(isValid);
+    }
+
+    @Test
+    void whenValidateImageWithInvalidType_thenValidationFails() {
+        MockMultipartFile invalidImage = new MockMultipartFile("image", "invalid.txt", "text/plain", new byte[1024]);
+        boolean isValid = messageService.validateImage(invalidImage);
+        assertFalse(isValid);
+    }
+
+    @Test
+    void whenValidateImageWithOversizedFile_thenValidationFails() {
+        byte[] largeImage = new byte[MAX_FILE_SIZE + 1];
+        MockMultipartFile oversizedImage = new MockMultipartFile("image", "oversize.png", "image/png", largeImage);
+        boolean isValid = messageService.validateImage(oversizedImage);
+        assertFalse(isValid);
+    }
+}
