@@ -929,7 +929,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .progress {
-    height: 17px;
+    width: 87%;
+    height: 25px;
     background: white;
     border-radius: 15px;
     margin-bottom: 10px;
@@ -940,16 +941,14 @@ h1, h2, h3, h4, h5, h6 {
     border-radius: 15px;
     position: relative;
     height: 100%;
-    background: red;
-    width: 65%; /* compatibility score here */
+    background: #e7d6a8;
     overflow: visible;
-
 }
+.progress .progress-icon,
 .progress .progress-value{
     border-radius: 50%;
     width: 20px;
     height: 20px;
-    background: #a83a82;
     position: absolute;
-    right: -5px;
+    right: -4px;
 }
