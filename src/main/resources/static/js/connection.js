@@ -35,12 +35,12 @@ document.addEventListener('DOMContentLoaded', function() {
         cardDescription.textContent = user.description;
         cardImage.src = `${baseUrl}users/${user.id}/profile-picture`;
 
+        favouriteGarden.innerHTML = user.favouriteGardenHtml;
+        favouritePlants.innerHTML = user.favouritePlantsHtml;
+
         // Update the progress bar used as the compatibility measure
         const progressBar = document.querySelector('.progress-bar');
         progressBar.style.width = `${user.compatibility}%`;
-
-        favouriteGarden.innerHTML = user.favouriteGardenHtml;
-        favouritePlants.innerHTML = user.favouritePlantsHtml;
     }
     showCurrentUserCard();
 
@@ -122,6 +122,4 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.error('There was a problem with the fetch operation:', error);
             });
     }
-
-
 });
