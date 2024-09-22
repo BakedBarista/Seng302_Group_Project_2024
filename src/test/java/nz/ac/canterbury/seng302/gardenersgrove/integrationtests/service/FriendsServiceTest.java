@@ -16,7 +16,6 @@ import java.util.Optional;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.entity.Friends.Status.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.ignoreStubs;
 
 @DataJpaTest
 @Import(FriendService.class)
@@ -245,6 +244,7 @@ public class FriendsServiceTest {
 
         assertFalse(feed.contains(testUser1));
     }
+
 
 }
 

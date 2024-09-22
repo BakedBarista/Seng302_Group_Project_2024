@@ -2,12 +2,15 @@ package nz.ac.canterbury.seng302.gardenersgrove.unittests.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Message;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.MessageRead;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.MessageDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.MessageReadRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.MessageRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.MessageService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockMultipartFile;
 
@@ -19,6 +22,7 @@ import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -32,12 +36,16 @@ class MessageServiceTest {
     private LocalDateTime fixedTimestamp;
     private static final int MAX_FILE_SIZE = 10 * 1024 * 1024;
 
+
+    private MessageReadRepository messageReadRepository;
+
     @BeforeEach
     public void setUp() {
+        messageReadRepository = mock(MessageReadRepository.class);
         messageRepository = mock(MessageRepository.class);
         clock = mock(Clock.class);
         userService = mock(GardenUserService.class);
-        messageService = new MessageService(messageRepository, clock, userService);
+        messageService = new MessageService(messageRepository, clock, userService, messageReadRepository);
 
         timestamp = Instant.now();
         when(clock.instant()).thenReturn(timestamp);
@@ -51,7 +59,7 @@ class MessageServiceTest {
         Long sender = 1L;
         Long receiver = 2L;
         String messageWord = "Hello";
-        MessageDTO messageDTO = new MessageDTO(messageWord,"token");
+        MessageDTO messageDTO = new MessageDTO(messageWord, "token");
 
         when(clock.getZone()).thenReturn(ZoneId.systemDefault());
         when(clock.instant()).thenReturn(timestamp);
@@ -69,7 +77,7 @@ class MessageServiceTest {
         Long sender = 1L;
         Long receiver = 2L;
         String messageWord = "Hello";
-        MessageDTO messageDTO = new MessageDTO(messageWord,"token");
+        MessageDTO messageDTO = new MessageDTO(messageWord, "token");
 
         when(clock.getZone()).thenReturn(ZoneId.systemDefault());
         when(clock.instant()).thenReturn(timestamp);
@@ -228,5 +236,52 @@ class MessageServiceTest {
         MockMultipartFile oversizedImage = new MockMultipartFile("image", "oversize.png", "image/png", largeImage);
         boolean isValid = messageService.validateImage(oversizedImage);
         assertFalse(isValid);
+    }
+
+    @Test
+    void testSetReadTime_MessageReadExists() {
+        Long receiverId = 1L;
+        Long userId = 2L;
+        MessageRead existingMessageRead = new MessageRead(receiverId, userId);
+        LocalDateTime previousTime = LocalDateTime.of(2023, 9, 20, 10, 0);
+        existingMessageRead.setLastReadMessage(previousTime);
+
+        when(messageReadRepository.findByReceiverIdAndUserId(receiverId, userId))
+                .thenReturn(Optional.of(existingMessageRead));
+
+        messageService.setReadTime(receiverId, userId);
+
+        verify(messageReadRepository, times(1)).findByReceiverIdAndUserId(receiverId, userId);
+        verify(messageReadRepository, times(1)).save(existingMessageRead);
+
+
+        assertNotEquals(previousTime, existingMessageRead.getLastReadMessage());
+        assertTrue(existingMessageRead.getLastReadMessage().isAfter(previousTime));
+    }
+
+    @Test
+    void testSetReadTime_MessageReadDoesNotExist() {
+        Long receiverId = 1L;
+        Long userId = 2L;
+
+        // Mock the repository to return empty
+        when(messageReadRepository.findByReceiverIdAndUserId(receiverId, userId))
+                .thenReturn(Optional.empty());
+
+        messageService.setReadTime(receiverId, userId);
+
+
+        verify(messageReadRepository, times(1)).findByReceiverIdAndUserId(receiverId, userId);
+
+        // Capture the MessageRead object that was passed to the save method
+        ArgumentCaptor<MessageRead> messageReadCaptor = ArgumentCaptor.forClass(MessageRead.class);
+        verify(messageReadRepository, times(1)).save(messageReadCaptor.capture());
+
+        MessageRead savedMessageRead = messageReadCaptor.getValue();
+
+        assertNotNull(savedMessageRead.getLastReadMessage());
+        assertEquals(receiverId, savedMessageRead.getReceiverId());
+        assertEquals(userId, savedMessageRead.getUserId());
+
     }
 }

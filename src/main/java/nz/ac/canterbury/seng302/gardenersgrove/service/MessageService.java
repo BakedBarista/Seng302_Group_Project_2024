@@ -2,7 +2,9 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Message;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.MessageRead;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.MessageDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.MessageReadRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.MessageRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,14 +33,17 @@ public class MessageService {
 
     private final GardenUserService userService;
 
+    private  MessageReadRepository messageReadRepository;
+
     private static final Set<String> ACCEPTED_FILE_TYPES = Set.of("image/jpeg", "image/jpg", "image/png", "image/svg");
     private static final int MAX_FILE_SIZE = 10 * 1024 * 1024;
 
     @Autowired
-    public MessageService(MessageRepository messageRepository, Clock clock, GardenUserService userService) {
+    public MessageService(MessageRepository messageRepository, Clock clock, GardenUserService userService, MessageReadRepository messageReadRepository){
         this.messageRepository = messageRepository;
         this.clock = clock;
         this.userService = userService;
+        this.messageReadRepository = messageReadRepository;
     }
 
     /**
@@ -160,6 +165,7 @@ public class MessageService {
 
     /**
      * Retrieves the latest message for each user from a list of all messages.
+     * 
      * The sorting approach used here was suggested by ChatGPT, which helped us sort
      * the map by timestamp to prioritise recent messages.
      *
@@ -272,4 +278,17 @@ public class MessageService {
         return ACCEPTED_FILE_TYPES.contains(plantImage.getContentType())
                 && (plantImage.getSize() <= MAX_FILE_SIZE);
     }
+
+    public void setReadTime(Long receiverId, Long userId) {
+        Optional<MessageRead> optionalMessageRead = messageReadRepository.findByReceiverIdAndUserId(receiverId, userId);
+        MessageRead messageRead;
+        if (optionalMessageRead.isPresent()) {
+            messageRead = optionalMessageRead.get();
+        } else {
+            messageRead = new MessageRead(receiverId, userId);
+        }
+        messageRead.setLastReadMessage(LocalDateTime.now());
+        messageReadRepository.save(messageRead);
+    }
+
 }

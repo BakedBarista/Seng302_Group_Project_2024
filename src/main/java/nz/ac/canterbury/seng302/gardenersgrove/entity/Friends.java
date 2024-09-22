@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
+
 import jakarta.persistence.*;
 
 /**
@@ -23,6 +24,7 @@ public class Friends {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Status status;
+
 
     /**
      * Creates a new FormResult object
