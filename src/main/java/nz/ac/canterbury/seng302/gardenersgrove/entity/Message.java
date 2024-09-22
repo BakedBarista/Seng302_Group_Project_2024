@@ -25,6 +25,13 @@ public class Message {
     @Column(length = 512)
     private String messageContent;
 
+    @Column
+    private String imageContentType;
+
+    @Column(columnDefinition = "MEDIUMBLOB")
+    @Lob
+    private byte[] imageContent;
+
     /**
      * Empty constructor - required for JPA since this is an @Entity
      */
@@ -52,6 +59,15 @@ public class Message {
 
     public String getMessageContent() {
         return messageContent;
+    }
+
+    public String getImageContentType() { return imageContentType; }
+
+    public byte[] getImageContent() { return imageContent; }
+
+    public void setImage(String imageContentType, byte[] imageContent) {
+        this.imageContentType = imageContentType;
+        this.imageContent = imageContent;
     }
 
 }
