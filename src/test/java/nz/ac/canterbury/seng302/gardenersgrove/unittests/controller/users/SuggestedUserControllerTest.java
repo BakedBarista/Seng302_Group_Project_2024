@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.SuggestedUserController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.SuggestedUserDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.CompatibilityService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
@@ -22,10 +23,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.thymeleaf.TemplateEngine;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static nz.ac.canterbury.seng302.gardenersgrove.entity.Friends.Status.PENDING;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
@@ -35,6 +39,7 @@ class SuggestedUserControllerTest {
     private GardenUserService gardenUserService;
     private Model model;
     private Authentication authentication;
+    
 
     private FriendService friendService;
     private SuggestedUserService suggestedUserService;
@@ -64,6 +69,8 @@ class SuggestedUserControllerTest {
         request = Mockito.mock(HttpServletRequest.class);
         response = Mockito.mock(HttpServletResponse.class);
         context = Mockito.mock(ServletContext.class);
+        when(request.getServletContext()).thenReturn(context);
+
         suggestedUserController = new SuggestedUserController(friendService, gardenUserService, suggestedUserService, compatibilityService, objectMapper, templateEngine);
 
         loggedInUser = new GardenUser();
@@ -78,8 +85,8 @@ class SuggestedUserControllerTest {
         suggestedUser = new GardenUser();
         suggestedUser.setId(suggestedUserId);
         //sender-receiver-status
-        friendRequestReceive = new Friends(suggestedUser, loggedInUser, Friends.Status.PENDING);
-        friendRequestSend = new Friends(loggedInUser, suggestedUser, Friends.Status.PENDING);
+        friendRequestReceive = new Friends(suggestedUser, loggedInUser, PENDING);
+        friendRequestSend = new Friends(loggedInUser, suggestedUser, PENDING);
 
         when(authentication.getPrincipal()).thenReturn(loggedInUser.getId());
         when(gardenUserService.getUserById(loggedInUser.getId())).thenReturn(loggedInUser);
@@ -208,4 +215,40 @@ class SuggestedUserControllerTest {
         Assertions.assertEquals(false, response.getBody().get("success"));
     }
 
+    @Test
+    public void testGetSortedSuggestedUserDTOs_NonEmptyList() {
+        GardenUser user = new GardenUser();
+        GardenUser user1 = new GardenUser();
+        GardenUser user2 = new GardenUser();
+        user1.setId(1L);
+        user2.setId(2L);
+
+        Mockito.when(compatibilityService.friendshipCompatibilityQuotient(user, user1)).thenReturn(70.0);
+        Mockito.when(compatibilityService.friendshipCompatibilityQuotient(user, user2)).thenReturn(90.0);
+        List<GardenUser> connectionListMinusFriends = Arrays.asList(user1, user2);
+
+        List<SuggestedUserDTO> result = suggestedUserController.getSortedSuggestedUserDTOs(connectionListMinusFriends, user, request, response);
+
+        // checking the right order
+        assertEquals(90, result.get(0).getCompatibility());
+        assertEquals(70, result.get(1).getCompatibility());
+    }
+
+
+//    @Test
+//    public void givenLowCompatibility_andUserSentRequest_whenCardsShown_thenSentRequestShowsFirst() {
+//        GardenUser user = new GardenUser();
+//        GardenUser highCompatibilityUser = new GardenUser();
+//        GardenUser lowCompatibilitySentRequest = new GardenUser();
+//        Friends friendship = new Friends(lowCompatibilitySentRequest, highCompatibilityUser, PENDING);
+//        highCompatibilityUser.setId(1L);
+//        lowCompatibilitySentRequest.setId(1L);
+//
+//        Mockito.when(compatibilityService.friendshipCompatibilityQuotient(user, highCompatibilityUser)).thenReturn(70.0);
+//        Mockito.when(compatibilityService.friendshipCompatibilityQuotient(user, lowCompatibilitySentRequest)).thenReturn(30.0);
+//        Mockito.when(friendService.getReceivedRequests(1L)).thenReturn((List<Friends>) friendship);
+//
+//        String result = suggestedUserController.home(null, model, request, response);
+//
+//    }
 }
