@@ -36,7 +36,7 @@ public class EditUserDTO {
     @AgeRange(maxAge = USER_MAX_AGE, message = "The maximum age allowed is 120 years")
     private String dateOfBirth;
 
-    @Size(max = 256, message = "'About me' section cannot be longer than 256 characters")
+    @Size(max = 256, message = "Your description must be less than 256 characters")
     private String description;
 
     public String getFname() {
