@@ -1,7 +1,4 @@
 // Trigger default search with empty search term when modal loads
-document.getElementById('gardenSelectorModal').addEventListener('shown.bs.modal', function () {
-    showGardenSearchResults(""); // Call the search with empty string on modal load
-});
 
 // Set up the form submit event listener
 document.getElementById("searchGardenForm").addEventListener('submit', function(e) {
@@ -10,7 +7,7 @@ document.getElementById("searchGardenForm").addEventListener('submit', function(
     showGardenSearchResults(searchTerm); // Call the search with the current input value
 });
 
-function showGardenSearchResults(searchTerm = "") {
+function showGardenSearchResults(searchTerm) {
     const searchResultsContainer = document.getElementById("searchGardenResults");
     fetch(`edit-public-profile/favourite-garden?search=` + encodeURIComponent(searchTerm), {
         method: 'POST',
