@@ -57,6 +57,4 @@ input:checked + .slider:before {
     background-color: white;
 }
 
-[data-bs-theme="dark"] #darkToggleBackground {
-    background-color: var(--gg-black);
-}
+
