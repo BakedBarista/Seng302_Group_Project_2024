@@ -18,13 +18,16 @@
         <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Averia+Serif+Libre:wght@400;700&family=DM+Serif+Display:ital@0;1&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
         <link th:href="@{/css/styles.css}" rel="stylesheet" />
+        <link th:href="@{/css/darkmodeToggle.css}" rel="stylesheet" />
         <script th:src="@{/js/main.js}"></script>
+        <script th:src="@{/js/darkmode.js}"></script>
         <title></title>
     </head>
     <body>
         <div th:fragment="bs-scripts">
             <script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>
             <script th:src="@{/webjars/jquery/3.7.1/jquery.min.js}"></script>
+            <script th:src="@{/js/darkmode.js}"></script>
         </div>"
     </body>
 </html>
