@@ -13,8 +13,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const favouritePlants = document.getElementById('favouritePlants');
     
     const userListJson = getMeta('_userList') || '[]';
-    const userList = JSON.parse(userListJson);
-    
+    let userList = JSON.parse(userListJson);
+    userList.sort((a, b) => b.compatibility - a.compatibility);
+    console.log(userList)
     let userIndex = 0;
     function currentUser() {
         return userList[userIndex];
