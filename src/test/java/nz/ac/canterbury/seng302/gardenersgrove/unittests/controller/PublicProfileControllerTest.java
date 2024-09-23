@@ -116,8 +116,6 @@ public class PublicProfileControllerTest {
 
 
 
-
-
         mockMvc = MockMvcBuilders.standaloneSetup(publicProfileController).build();
 
     }
@@ -251,8 +249,6 @@ public class PublicProfileControllerTest {
 
         String viewName = publicProfileController.publicProfileEditSubmit(authentication, profilePic, banner, description, editUserDTO, bindingResult, model);
 
-        verify(gardenUserService).setProfilePicture(loggedInUserId, profilePic.getContentType(), profilePic.getBytes());
-        verify(gardenUserService).setProfileBanner(loggedInUserId, banner.getContentType(), banner.getBytes());
         verify(model).addAttribute("userId", loggedInUserId);
 
         assertEquals("redirect:/users/public-profile", viewName);
@@ -311,4 +307,34 @@ public class PublicProfileControllerTest {
         assertEquals("/img/default-garden.svg", response.getHeaders().getFirst(HttpHeaders.LOCATION));
     }
 
+
+    @Test
+    void testSubmitForm_ValidationFails() throws IOException {
+        Model model = mock(Model.class);
+
+        MultipartFile profilePic = new MockMultipartFile(
+            "image",
+            "profile.png",
+            "image/png",
+            "profile picture content".getBytes()
+        );
+
+        String description = "This is a description is 257 charcters long dcwqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqThis is a description is 257 charcters long dcwqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq";
+        
+
+        MultipartFile banner = new MockMultipartFile(
+            "bannerImage",
+            "banner.png",
+            "image/png",
+            "banner content".getBytes()
+        );
+
+        String viewName = publicProfileController.publicProfileEditSubmit(authentication, profilePic, banner, description, editUserDTO, bindingResult, model);
+
+        verify(gardenUserService).setProfilePicture(loggedInUserId, profilePic.getContentType(), profilePic.getBytes());
+        verify(gardenUserService).setProfileBanner(loggedInUserId, banner.getContentType(), banner.getBytes());
+        verify(model).addAttribute("userId", loggedInUserId);
+
+        assertEquals("redirect:/users/public-profile", viewName);
+    }
 }
