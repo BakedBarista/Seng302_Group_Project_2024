@@ -1,5 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.SuggestedUserDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.CompatibilityService;
@@ -27,9 +29,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 public class SuggestedUserController {
@@ -79,14 +84,29 @@ public class SuggestedUserController {
             if (suggestedUsers.isEmpty()) {
                 return "suggestedFriends";
             }
-
+            logger.info("4");
             model.addAttribute("userId", suggestedUsers.get(0).getId());
             model.addAttribute("name", suggestedUsers.get(0).getFullName());
             model.addAttribute("description", suggestedUsers.get(0).getDescription());
             logger.info("Description: {}", suggestedUsers.get(0).getDescription());
 
-            List<SuggestedUserDTO> userDtos = suggestedUsers.stream().map((GardenUser u) -> makeSuggestedUserDTO(user, u, request, response)).toList();
-            String jsonUsers = objectMapper.writeValueAsString(userDtos);
+            List<Friends> friendList = friendService.getReceivedRequests(userId);
+            List<GardenUser> friends = friendService.getPendingRequestGardenUser(friendList, userId);
+
+            //sorting incoming pending requests
+            List<SuggestedUserDTO> pendingRequestList = getSortedSuggestedUserDTOs(friends, user, request, response);
+
+            // this is to sort people that arnt incoming pending requests
+            List<GardenUser> connectionListMinusFriends = suggestedUsers.stream().filter( x -> !friends.contains(x)).toList();
+
+            List<SuggestedUserDTO> sortedOtherConnections = getSortedSuggestedUserDTOs(connectionListMinusFriends, user, request, response);
+
+            // combining into a full sorted list
+            List<SuggestedUserDTO> combinedList = new ArrayList<>(pendingRequestList);
+
+            combinedList.addAll(sortedOtherConnections);
+      
+            String jsonUsers = objectMapper.writeValueAsString(combinedList);
             model.addAttribute("userList", jsonUsers);
         } catch (Exception e) {
             logger.error("Error getting suggested users", e);
@@ -123,6 +143,20 @@ public class SuggestedUserController {
         }
 
         return dto;
+    }
+
+    public List<SuggestedUserDTO> getSortedSuggestedUserDTOs(List<GardenUser> connectionListMinusFriends, GardenUser user, HttpServletRequest request, HttpServletResponse response){
+        List<SuggestedUserDTO> otherConnections = new ArrayList<SuggestedUserDTO>();
+        List<SuggestedUserDTO> sortedOtherConnections = new ArrayList<>();
+
+        if(!connectionListMinusFriends.isEmpty()){
+                otherConnections = connectionListMinusFriends.stream().map((GardenUser u) -> makeSuggestedUserDTO(user, u, request, response)).toList();
+                 for (SuggestedUserDTO dto : otherConnections) {
+                    sortedOtherConnections.add(dto);
+                }
+                sortedOtherConnections.sort(Comparator.comparingInt(SuggestedUserDTO::getCompatibility).reversed());
+        }
+        return sortedOtherConnections;
     }
 
     @PostMapping("/")
