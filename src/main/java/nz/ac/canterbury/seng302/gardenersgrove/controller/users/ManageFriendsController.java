@@ -2,9 +2,11 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.MessageRead;
 import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 
+import nz.ac.canterbury.seng302.gardenersgrove.service.MessageService;
 import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -30,10 +32,13 @@ public class ManageFriendsController {
     private FriendService friendService;
     private GardenUserService userService;
 
+    private MessageService messageService;
+
     @Autowired
-    public ManageFriendsController(FriendService friendService, GardenUserService userService) {
+    public ManageFriendsController(FriendService friendService, GardenUserService userService,MessageService messageService) {
         this.userService = userService;
         this.friendService = friendService;
+        this.messageService = messageService;
     }
 
     /**
@@ -118,7 +123,8 @@ public class ManageFriendsController {
             @RequestParam(name = "acceptUser", required = false) Long acceptUserId) {
 
         Long loggedInUserId = (Long) authentication.getPrincipal();
-
+        messageService.setReadTime(loggedInUserId,acceptUserId);
+        messageService.setReadTime(acceptUserId,loggedInUserId);
         List<Friends> sentAndDeclinedList = friendService.getSentRequestsDeclined(loggedInUserId);
         for (Friends request : sentAndDeclinedList) {
             if (request.getSender().getId().equals(loggedInUserId) && request.getReceiver().getId().equals(acceptUserId)) {

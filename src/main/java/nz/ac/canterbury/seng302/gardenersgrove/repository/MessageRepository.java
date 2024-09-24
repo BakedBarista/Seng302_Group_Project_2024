@@ -21,8 +21,7 @@ public interface MessageRepository extends CrudRepository<Message, Long>{
     @Query("SELECT m FROM Message m WHERE (m.sender = ?1 OR m.receiver = ?1)")
     List<Message> findAllRecentChats(Long user1);
 
-    @Query("SELECT COUNT(m) FROM Message m WHERE m.receiver = ?1 OR m.sender = ?2 AND m.timestamp > ?3")
-    Long countUnreadMessagesAfterTimestamp(Long receiverId, Long senderId, LocalDateTime lastReadTimestamp);
-
+    @Query("SELECT COUNT(m) FROM Message m WHERE (m.sender = :user1 OR m.receiver = :user1) AND m.timestamp > :lastRead")
+    Long countAllUnreadMessagesAfter(Long user1, LocalDateTime lastRead);
 
 }

@@ -295,11 +295,10 @@ public class MessageService {
         Optional<MessageRead> optionalMessageRead = messageReadRepository.findByReceiverIdAndUserId(receiverId, userId);
         if (optionalMessageRead.isPresent()) {
             LocalDateTime lastRead = optionalMessageRead.get().getLastReadMessage();
-            return messageRepository.countUnreadMessagesAfterTimestamp(receiverId, userId, lastRead);
+            return messageRepository.countAllUnreadMessagesAfter(userId,lastRead);
         } else {
             return null;
         }
     }
-
 
 }
