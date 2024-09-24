@@ -9,6 +9,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.controller.users.SuggestedUserCon
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.SuggestedUserDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.CompatibilityService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
@@ -17,12 +18,14 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.thymeleaf.TemplateEngine;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -31,6 +34,7 @@ import java.util.Map;
 import static nz.ac.canterbury.seng302.gardenersgrove.entity.Friends.Status.PENDING;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class SuggestedUserControllerTest {
@@ -39,6 +43,9 @@ class SuggestedUserControllerTest {
     private GardenUserService gardenUserService;
     private Model model;
     private Authentication authentication;
+
+    @Autowired
+    private GardenUserRepository gardenUserRepository;
     
 
     private FriendService friendService;
@@ -115,11 +122,11 @@ class SuggestedUserControllerTest {
 
         String page = suggestedUserController.home(authentication, model, request, response);
 
-        Mockito.verify(compatibilityService).friendshipCompatibilityQuotient(any(), any());
-        Mockito.verify(model).addAttribute(eq("userId"), any());
-        Mockito.verify(model).addAttribute(eq("name"), any());
-        Mockito.verify(model).addAttribute(eq("description"), any());
-        Mockito.verify(model).addAttribute(eq("userList"), assertArg((String s) -> {
+        verify(compatibilityService).friendshipCompatibilityQuotient(any(), any());
+        verify(model).addAttribute(eq("userId"), any());
+        verify(model).addAttribute(eq("name"), any());
+        verify(model).addAttribute(eq("description"), any());
+        verify(model).addAttribute(eq("userList"), assertArg((String s) -> {
             Assertions.assertTrue(s.contains("favouriteGarden"));
             Assertions.assertTrue(s.contains("favouritePlants"));
         }));
@@ -234,21 +241,29 @@ class SuggestedUserControllerTest {
         assertEquals(70, result.get(1).getCompatibility());
     }
 
-
 //    @Test
-//    public void givenLowCompatibility_andUserSentRequest_whenCardsShown_thenSentRequestShowsFirst() {
-//        GardenUser user = new GardenUser();
-//        GardenUser highCompatibilityUser = new GardenUser();
-//        GardenUser lowCompatibilitySentRequest = new GardenUser();
-//        Friends friendship = new Friends(lowCompatibilitySentRequest, highCompatibilityUser, PENDING);
-//        highCompatibilityUser.setId(1L);
-//        lowCompatibilitySentRequest.setId(1L);
+//    public void givenLowCompatibility_andUserSentRequest_whenCardsShown_thenSentRequestShowsFirst() throws JsonProcessingException {
+//        GardenUser Liam = new GardenUser("liam", "user", "laims@gmail.com", "password", LocalDate.of(1970, 10, 10));
 //
-//        Mockito.when(compatibilityService.friendshipCompatibilityQuotient(user, highCompatibilityUser)).thenReturn(70.0);
-//        Mockito.when(compatibilityService.friendshipCompatibilityQuotient(user, lowCompatibilitySentRequest)).thenReturn(30.0);
-//        Mockito.when(friendService.getReceivedRequests(1L)).thenReturn((List<Friends>) friendship);
+//        GardenUser highCompatibilityUser = new GardenUser("test", "user", "test@gmail.com", "password", LocalDate.of(1970, 10, 10));
+//        GardenUser lowCompatibilitySentRequest = new GardenUser("test2", "user", "test2@gmail.com", "password", LocalDate.of(1970, 10, 10));
+//
+//        List<SuggestedUserDTO> combinedList = Arrays.asList(
+//                new SuggestedUserDTO(highCompatibilityUser),
+//                new SuggestedUserDTO(lowCompatibilitySentRequest)
+//        );
+//
+//        String jsonUsers = objectMapper.writeValueAsString(combinedList);
+//
+//        when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+//        when(compatibilityService.friendshipCompatibilityQuotient(Liam, highCompatibilityUser)).thenReturn(70.0);
+//        when(compatibilityService.friendshipCompatibilityQuotient(Liam, lowCompatibilitySentRequest)).thenReturn(30.0);
+//        Mockito.when(friendService.availableConnections(loggedInUser)).thenReturn(List.of(highCompatibilityUser));
+//        when(friendService.receivedConnectionRequests(loggedInUser)).thenReturn(List.of(lowCompatibilitySentRequest));
 //
 //        String result = suggestedUserController.home(null, model, request, response);
 //
+//        Mockito.verify(model).addAttribute("userList", jsonUsers);
+//        assertEquals("suggestedFriends", result);
 //    }
 }
