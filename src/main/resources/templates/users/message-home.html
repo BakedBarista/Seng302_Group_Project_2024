@@ -47,7 +47,7 @@
             </div>
             <div th:if="${!#lists.isEmpty(recentChats)}">
                 <div id="chatSectionMobile" th:each="chat : ${recentChats}" class="border-bottom" style="height: 125px;">
-                    <div th:id="${chat.key.id}" class="h-100">
+                    <div th:id="${chat.key.id + 'Mobile'}" class="h-100">
                         <form th:action="@{/message-home}" method="post" class="d-flex align-items-center w-100 h-100">
                             <input type="hidden" name="userId" th:value="${chat.key.id}"/>
                             <button class="btn btn-link text-decoration-none text-dark w-100 open-chat">
@@ -70,7 +70,7 @@
     </div>
 
     <!--Big Screen Sidebar-->
-    <div class="sidebar border-end overflow-y-auto d-none d-lg-block" id="friendChatBar" style="min-width: 300px;">
+    <div class="sidebar border-end overflow-y-auto d-none d-lg-block" id="friendChatBar" style="min-width: 350px;">
         <div class="border-bottom text-center align-items-center py-3">
             <h3 class="m-0">Recent Chats</h3>
         </div>
@@ -80,7 +80,7 @@
         </div>
         <div th:if="${!#lists.isEmpty(recentChats)}">
             <div id="chatSection" th:each="chat : ${recentChats}" class="border-bottom" style="height: 125px;">
-                <div th:id="${chat.key.id + 'Mobile'}" class="h-100">
+                <div th:id="${chat.key.id}" class="h-100">
                     <form th:action="@{/message-home}" method="post" class="d-flex align-items-center w-100 h-100">
                         <input type="hidden" name="userId" th:value="${chat.key.id}"/>
                         <button class="btn btn-link text-decoration-none text-dark w-100 open-chat">
@@ -94,7 +94,9 @@
                                 </div>
                             </div>
                         </button>
-                        <span class="badge notification-badge">[[${chat.value.unreadMessages}]]</span>
+                        <div>
+                        <span th:if="${chat.value.unreadMessages != 0}" class="badge notification-badge me-3 bg-danger">[[${chat.value.unreadMessages}]]</span>
+                        </div>
                     </form>
                 </div>
             </div>
