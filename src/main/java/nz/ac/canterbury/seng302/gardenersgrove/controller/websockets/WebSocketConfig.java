@@ -12,7 +12,6 @@ import org.springframework.web.socket.server.support.HttpSessionHandshakeInterce
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.validation.ValidatorFactory;
-import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.MessageService;
 
 /**
@@ -25,15 +24,13 @@ public class WebSocketConfig implements WebSocketConfigurer {
     private ObjectMapper objectMapper;
     private ValidatorFactory validatorFactory;
     private String serverOrigin;
-    private FriendService friendService;
 
-    public WebSocketConfig(MessageService messageService, ObjectMapper objectMapper, ValidatorFactory validatorFactory, FriendService friendService,
+    public WebSocketConfig(MessageService messageService, ObjectMapper objectMapper, ValidatorFactory validatorFactory,
                     @Value("${gardenersgrove.server.origin:*}") String serverOrigin) {
         this.messageService = messageService;
         this.objectMapper = objectMapper;
         this.validatorFactory = validatorFactory;
         this.serverOrigin = serverOrigin;
-        this.friendService = friendService;
     }
 
     /**

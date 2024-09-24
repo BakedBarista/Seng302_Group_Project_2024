@@ -13,7 +13,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -26,7 +28,6 @@ import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats
  */
 @Service
 public class MessageService {
-
     private final Logger logger = LoggerFactory.getLogger(MessageService.class);
 
     private final MessageRepository messageRepository;
@@ -36,15 +37,18 @@ public class MessageService {
 
     private final MessageReadRepository messageReadRepository;
 
+    private static final Set<String> ACCEPTED_FILE_TYPES = Set.of("image/jpeg", "image/jpg", "image/png", "image/svg");
+    private static final int MAX_FILE_SIZE = 10 * 1024 * 1024;
+
     @Autowired
     public MessageService(MessageRepository messageRepository,
                           MessageReadRepository messageReadRepository,
                           Clock clock,
                           GardenUserService userService) {
         this.messageRepository = messageRepository;
-        this.messageReadRepository = messageReadRepository;
         this.clock = clock;
         this.userService = userService;
+        this.messageReadRepository = messageReadRepository;
     }
 
     /**
@@ -61,6 +65,19 @@ public class MessageService {
     }
 
     /**
+     * Send image message
+     * @param sender the message sender
+     * @param receiver the receiver
+     * @param messageDTO message object
+     * @param file image file
+     * @return the message that was sent
+     */
+    public Message sendImage(Long sender, Long receiver, MessageDTO messageDTO, MultipartFile file) throws IOException {
+        LocalDateTime timestamp = clock.instant().atZone(clock.getZone()).toLocalDateTime();
+        return sendImageWithTimestamp(sender, receiver, messageDTO, timestamp,file);
+    }
+
+    /**
      * Sends a message between users and saves it to the database - allows the
      * specification of a timestamp.
      * 
@@ -74,6 +91,29 @@ public class MessageService {
         Message message = new Message(sender, receiver, timestamp, messageDTO.getMessage());
         messageRepository.save(message);
         return message;
+    }
+
+    /**
+     * Adds timestamp to the message
+     * @param sender    the message sender
+     * @param receiver  the person who will receive the message
+     * @param messageDTO the message object
+     * @param file      the image file
+     * @return the message that was sent
+     */
+    public Message sendImageWithTimestamp(Long sender, Long receiver, MessageDTO messageDTO,
+                                          LocalDateTime timestamp, MultipartFile file) throws IOException {
+        if(validateImage(file)) {
+            Message message = new Message(sender, receiver, timestamp, messageDTO.getMessage());
+            message.setImage(file.getContentType(),file.getBytes());
+            messageRepository.save(message);
+            return message;
+        } else {
+            logger.error("Image is too large or wrong format");
+            throw new IOException("Image is too large or wrong format");
+
+        }
+
     }
 
     /**
@@ -239,6 +279,11 @@ public class MessageService {
         model.addAttribute("sentToUser", sentToUser);
         model.addAttribute("recentChats", recentChats);
         model.addAttribute("activeChat", requestedUserId);
+    }
+
+    public boolean validateImage(MultipartFile plantImage) {
+        return ACCEPTED_FILE_TYPES.contains(plantImage.getContentType())
+                && (plantImage.getSize() <= MAX_FILE_SIZE);
     }
 
     public void setReadTime(Long receiverId, Long userId) {

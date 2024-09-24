@@ -8,6 +8,7 @@ import io.cucumber.java.en.When;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.MessageController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.message.ChatPreview;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.message.Message;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.MessageDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.MessageRepository;
@@ -147,14 +148,14 @@ public class U800_3_1_MessageFeature {
     public void they_press_send() {
         Mockito.when(authentication.getPrincipal()).thenReturn(receiverId);
         Mockito.when(bindingResult.hasErrors()).thenReturn(false);
-        result = messageController.sendMessage(myId, messageDTO, bindingResult, authentication, model, session);
+        result = messageController.sendMessage(myId, messageDTO, bindingResult, authentication, model, session, null);
     }
 
     @When("I press Send")
     public void i_press_send() {
         Mockito.when(authentication.getPrincipal()).thenReturn(myId);
         Mockito.when(bindingResult.hasErrors()).thenReturn(false);
-        result = messageController.sendMessage(receiverId, messageDTO, bindingResult, authentication, model, session);
+        result = messageController.sendMessage(receiverId, messageDTO, bindingResult, authentication, model, session, null);
     }
 
     @Then("The message is sent to that friend.")
@@ -183,7 +184,7 @@ public class U800_3_1_MessageFeature {
         result = messageController.messageHomeSend(receiverId, authentication, model, session);
         List<Message> allMessages = messageService.findAllRecentChats(myId);
         Map<Long, Message> recentMessagesMap = messageService.getLatestMessages(allMessages, myId);
-        Map<GardenUser, String> recentChats = messageService.convertToPreview(recentMessagesMap);
+        Map<GardenUser, ChatPreview> recentChats = messageService.convertToPreview(receiverId, recentMessagesMap);
 
         assertEquals(expectedChatCount, recentChats.size());
         assertEquals("users/message-home", result);
@@ -193,7 +194,7 @@ public class U800_3_1_MessageFeature {
     public void i_send_invalid_message() {
         Mockito.when(authentication.getPrincipal()).thenReturn(myId);
         Mockito.when(bindingResult.hasErrors()).thenReturn(true);
-        result = messageController.sendMessage(receiverId, messageDTO, bindingResult, authentication, model, session);
+        result = messageController.sendMessage(receiverId, messageDTO, bindingResult, authentication, model, session, null);
     }
 
     @Then("The message is not sent.")

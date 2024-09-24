@@ -125,24 +125,38 @@
 
                 <!-- message and send message box-->
                 <div class="send-message-container">
-                    <form th:action="@{/users/message(id=${sentToUser.id})}" method="post" th:object="${messageDTO}" id="sendMessageForm">
+                    <form th:action="@{/users/message(id=${sentToUser.id})}" method="post" th:object="${messageDTO}" id="sendMessageForm" enctype="multipart/form-data">
                         <input type="hidden" name="submissionToken" th:value="${submissionToken}"/>
                         <div class="d-flex gap-2">
                             <div class="d-flex flex-fill flex-wrap">
                                 <label for="message" th:class="'form-label ' + ${#fields.hasErrors('message') ? 'is-invalid' : ''}"></label>
-                                <div class="d-flex flex-fill gap-2">
-                                <textarea id="message"
+                                <div class="d-flex flex-fill gap-2 px-1">
+                                    <label type="input" class="btn btn-primary px-sm-3 py-3" id="imageButton" for="addImage">
+                                        <img th:src="@{/icons/image-icon.svg}" alt="Add Image">
+                                    </label>
+                                    <input id="addImage" name="addImage" class="d-none" type="file" accept=".png,.jpg,.jpeg,.svg" tabindex="0"/>
+                                    <textarea id="message"
                                           th:name="message"
                                           class="form-control flex-grow-1"
                                           style="resize: none;"
                                           placeholder="Enter message here..."
                                           autofocus></textarea><!-- Do not new line this -->
-                                    <button type="submit" class="btn btn-primary px-4 py-0" id="sendButton" disabled>
+                                    <button type="submit" class="btn btn-primary px-sm-3 py-3" id="sendButton" disabled>
                                         <img th:src="@{/icons/sent-stroke-rounded.svg}" alt="Send">
                                     </button>
                                 </div>
                                 <div class="invalid-feedback" th:if="${#fields.hasErrors('message')}" th:errors="*{message}"></div>
                                 <div class="invalid-feedback" id="invalidFeedback"></div>
+                                <div class="toast-container position-fixed bottom-0 end-0 p-3">
+                                    <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" id="fileErrorToast">
+                                        <div class="toast-header">
+                                            <div id="fileErrorToastMessage"></div>
+                                            <div><button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button></div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div id="hiddenFileError" th:if="${fileError}" th:text="${fileError}" style="display:none;"></div>
                             </div>
                         </div>
                     </form>
@@ -184,6 +198,29 @@
     messageField.addEventListener("input", () => {
         button.disabled = messageField.value.length <= 0 || messageField.value.trim().length === 0;
     })
+</script>
+<script>
+    document.getElementById("addImage").addEventListener("change", function() {
+        if (this.files && this.files.length > 0) {
+            document.getElementById("sendMessageForm").submit();
+        }
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const fileError = document.getElementById("hiddenFileError");
+
+        // Check if the file error exists and is not empty
+        if (fileError && fileError.textContent.trim() !== "") {
+            // Set the toast message
+            document.getElementById("fileErrorToastMessage").textContent = fileError.textContent;
+
+            // Show the toast
+            var toastElement = document.getElementById("fileErrorToast");
+            var toast = new bootstrap.Toast(toastElement);
+            toast.show();
+        }
+    });
 </script>
 <script th:src="@{/js/message.js}"></script>
 </body>

@@ -22,7 +22,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ValidatorFactory;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.MessageDTO;
-import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.MessageService;
 
 /**
@@ -35,12 +34,11 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 	private ObjectMapper objectMapper;
 	private ValidatorFactory validatorFactory;
 	private Set<WebSocketSession> activeSessions = new HashSet<>();
-	private FriendService friendService; 
 
 	public MessageWebSocketHandler(MessageService messageService, ObjectMapper objectMapper, ValidatorFactory validatorFactory) {
 		this.messageService = messageService;
 		this.objectMapper = objectMapper;
-		this.validatorFactory = validatorFactory;;
+		this.validatorFactory = validatorFactory;
 	}
 
 	/**
@@ -78,6 +76,7 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 				messageService.setReadTime(messageId, userId);
 				logger.info("Messages marked as read by user {}", userId);
 				break;
+
 			case "sendMessage":
 				Long sender = getCurrentUserId(session);
 				Long receiver = message.get("receiver").asLong();
