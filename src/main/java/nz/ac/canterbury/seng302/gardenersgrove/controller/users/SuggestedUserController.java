@@ -84,7 +84,7 @@ public class SuggestedUserController {
             if (suggestedUsers.isEmpty()) {
                 return "suggestedFriends";
             }
-            logger.info("4");
+
             model.addAttribute("userId", suggestedUsers.get(0).getId());
             model.addAttribute("name", suggestedUsers.get(0).getFullName());
             model.addAttribute("description", suggestedUsers.get(0).getDescription());
