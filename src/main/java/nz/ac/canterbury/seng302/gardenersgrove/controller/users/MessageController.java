@@ -78,6 +78,10 @@ public class MessageController {
             Authentication authentication,
             Model model,
             HttpSession session) {
+        
+        Long loggedInUserId = (Long) authentication.getPrincipal();
+        messageService.setReadTime(loggedInUserId, requestedUserId);
+
         return setupMessagePage(requestedUserId, authentication, model, session);
     }
 
@@ -96,7 +100,9 @@ public class MessageController {
     public String messageHome(Authentication authentication,
             Model model,
             HttpSession session) {
+            
         Long requestedUserId = getLatestRequestedUserId(authentication);
+        
         return setupMessagePage(requestedUserId, authentication, model, session);
     }
 
@@ -240,6 +246,8 @@ public class MessageController {
 
         Long loggedInUserId = (Long) authentication.getPrincipal();
         GardenUser sentToUser = userService.getUserById(requestedUserId);
+        
+        messageService.setReadTime(loggedInUserId, requestedUserId);
 
         // need to be friends to send a message
         Friends isFriend = friendService.getFriendship(loggedInUserId, requestedUserId);
