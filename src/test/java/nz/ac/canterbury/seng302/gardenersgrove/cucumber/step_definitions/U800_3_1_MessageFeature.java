@@ -52,7 +52,7 @@ public class U800_3_1_MessageFeature {
 
     private static GardenUser user = new GardenUser();
     public static Long myId;
-    private static Long receiverId;
+    public static Long receiverId;
     private static MessageDTO messageDTO;
     private static MockHttpSession session;
     private static int currentMessages;
