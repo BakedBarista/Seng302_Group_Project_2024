@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.websockets;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -69,7 +70,7 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 				activeSessions.add(session);
 
 				// Refresh messages on page load to avoid a race condition
-				updateMessages(session);
+				updateMessages(session,null);
 				break;
 
 			case "sendMessage":
@@ -87,7 +88,7 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 				}
 				messageService.sendMessage(sender, receiver, messageDTO);
 
-				updateMessagesBroadcast(List.of(sender, receiver));
+				updateMessagesBroadcast(sender, receiver);
 				break;
 			case "ping":
 				try {
@@ -116,15 +117,16 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 	 * Sends an `updateMessages` message to each of the given users.
 	 * @param userIds A list of user IDs to broadcast the message to
 	 */
-	private void updateMessagesBroadcast(List<Long> userIds) {
+	private void updateMessagesBroadcast(Long senderId, Long receiverId) {
 		for (WebSocketSession session : Set.copyOf(activeSessions)) {
 			long userId = getCurrentUserId(session);
-			if (userIds == null || !userIds.contains(userId)) {
-				continue;
-			}
-
+			logger.info("current user: {}",userId);
 			if (session.isOpen()) {
-				updateMessages(session);
+				if (userId == senderId) {
+					updateMessages(session, receiverId);
+				} else {
+					updateMessages(session,null);
+				}
 			} else {
 				activeSessions.remove(session);
 			}
@@ -135,14 +137,15 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 	 * Sends an `updateMessages` to a given session.
 	 * @param session the session to send the message to
 	 */
-	private void updateMessages(WebSocketSession session) {
-		Long userId = getCurrentUserId(session);
-		Long unreadCount = messageService.getUnreadMessageCount(userId,userId);
-		logger.info("Unread count: {}", unreadCount);
+	private void updateMessages(WebSocketSession session, Long receiverId) {
+		Long currentUserId = getCurrentUserId(session);
 		ObjectNode message = JsonNodeFactory.instance.objectNode();
 		message.put("type", "updateMessages");
-		message.put("unreadCount", unreadCount);
-
+		if (receiverId != null) {
+			Long unreadCount = messageService.getUnreadMessageCount(currentUserId,receiverId);
+			logger.info("Unread count for {}:{}", receiverId, unreadCount);
+			message.put("unreadCount", unreadCount);
+		}
 		sendMessage(session, message);
 	}
 

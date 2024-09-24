@@ -9,6 +9,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.repository.MessageRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
@@ -291,14 +292,14 @@ public class MessageService {
         messageReadRepository.save(messageRead);
     }
 
-    public Long getUnreadMessageCount(Long receiverId, Long userId) {
-        Optional<MessageRead> optionalMessageRead = messageReadRepository.findByReceiverIdAndUserId(receiverId, userId);
-        if (optionalMessageRead.isPresent()) {
-            LocalDateTime lastRead = optionalMessageRead.get().getLastReadMessage();
-            return messageRepository.countAllUnreadMessagesAfter(userId,lastRead);
-        } else {
-            return null;
-        }
+    public Long getUnreadMessageCount(Long senderId, Long receiverId) {
+        logger.info("{} {}",senderId,receiverId);
+        Optional<MessageRead> optionalMessageRead = messageReadRepository.findByReceiverIdAndUserId(receiverId,senderId);
+        logger.info("{}",optionalMessageRead);
+        MessageRead messageRead = optionalMessageRead.get();
+        return messageRepository.countAllUnreadMessagesAfter(receiverId,messageRead.getLastReadMessage());
+
+
     }
 
 }

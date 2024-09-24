@@ -29,11 +29,9 @@ ws.addEventListener('message', (ev) => {
     switch (data.type) {
         case 'updateMessages':
             console.log('updateMessages');
-            updateMessages();
-            break;
-        case 'unreadCount':
-            console.log(`Unread messages: ${data.unreadCount}`);
             updateUnreadCount(data.unreadCount);
+            updateMessages();
+
             break;
         case 'error':
             invalidFeedback.textContent = data.error;
