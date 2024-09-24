@@ -8,6 +8,7 @@ const label = sendMessageForm?.querySelector('label');
 const textArea = sendMessageForm?.querySelector('textarea');
 const messagesContainer = document.getElementById('scrollbar');
 const invalidFeedback = document.getElementById('invalidFeedback');
+const unreadCountDisplay = document.getElementById('unreadCountDisplay');
 
 const ws = new WebSocket(url);
 ws.addEventListener('open', () => {
@@ -29,6 +30,10 @@ ws.addEventListener('message', (ev) => {
         case 'updateMessages':
             console.log('updateMessages');
             updateMessages();
+            break;
+        case 'unreadCount':
+            console.log(`Unread messages: ${data.unreadCount}`);
+            updateUnreadCount(data.unreadCount);
             break;
         case 'error':
             invalidFeedback.textContent = data.error;
@@ -70,7 +75,17 @@ async function updateMessages() {
     scrollToBottom(messagesContainer);
 }
 
+function updateUnreadCount(count) {
+    if (unreadCountDisplay) {
+        unreadCountDisplay.innerText = count;
 
+        if (count > 0) {
+            unreadCountDisplay.style.display = 'inline';
+        } else {
+            unreadCountDisplay.style.display = 'none';
+        }
+    }
+}
 function isScrolledToBottom(container) {
     return container.scrollHeight - container.scrollTop === container.clientHeight;
 }

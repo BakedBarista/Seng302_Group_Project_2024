@@ -136,8 +136,12 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 	 * @param session the session to send the message to
 	 */
 	private void updateMessages(WebSocketSession session) {
+		Long userId = getCurrentUserId(session);
+		Long unreadCount = messageService.getUnreadMessageCount(userId,userId);
+		logger.info("Unread count: {}", unreadCount);
 		ObjectNode message = JsonNodeFactory.instance.objectNode();
 		message.put("type", "updateMessages");
+		message.put("unreadCount", unreadCount);
 
 		sendMessage(session, message);
 	}
