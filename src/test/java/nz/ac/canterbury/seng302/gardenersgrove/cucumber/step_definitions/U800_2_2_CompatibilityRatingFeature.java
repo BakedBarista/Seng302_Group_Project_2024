@@ -1,13 +1,21 @@
 package nz.ac.canterbury.seng302.gardenersgrove.cucumber.step_definitions;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.SuggestedUserDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.Collections;
+import java.util.List;
 
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
@@ -18,6 +26,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.SuggestedUserController;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
@@ -40,6 +49,7 @@ public class U800_2_2_CompatibilityRatingFeature {
     private HttpServletResponse response;
 
     private String userList;
+    private ObjectMapper objectMapper;
 
     @Before
     public void setup() {
@@ -47,6 +57,7 @@ public class U800_2_2_CompatibilityRatingFeature {
         model = mock(Model.class);
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
+        objectMapper = new ObjectMapper();
     }
 
     @Given("I am on the home page")
@@ -67,15 +78,20 @@ public class U800_2_2_CompatibilityRatingFeature {
     }
 
     @Then("the profiles that are shown below the users who have sent me friend requests are ranked by a combination of geographic proximity, similarity of plants we grow, and similarity of age")
-    public void theProfilesThatAreShownBelowTheUsersWhoHaveSentMeFriendRequestsAreRankedByACombinationOfGeographicProximitySimilarityOfPlantsWeGrowAndSimilarityOfAge() {
+    public void theProfilesThatAreShownBelowTheUsersWhoHaveSentMeFriendRequestsAreRankedByACombinationOfGeographicProximitySimilarityOfPlantsWeGrowAndSimilarityOfAge() throws Exception {
         GardenUser user = new GardenUser("test", "user", "test@gmail.com", "password", LocalDate.of(1970, 10, 10));
         Garden garden = new Garden("Test Garden", "1", "test", "test suburb", "test city", "test country", "1234", 0.0, 0.0, "test description", 100D, null, null);
         gardenUserRepository.save(user);
         garden.setOwner(user);
         gardenRepository.save(garden);
 
-        System.out.println(userList);
+        List<SuggestedUserDTO> users = objectMapper.readValue(userList, new TypeReference<List<SuggestedUserDTO>>() {});
 
+        for (int i = 0; i < users.size() - 1; i++) {
+            int currentCompatibility = users.get(i).getCompatibility();
+            int nextCompatibility = users.get(i + 1).getCompatibility();
+            assertTrue(currentCompatibility >= nextCompatibility);
+        }
 
     }
 }
