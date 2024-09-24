@@ -1,11 +1,10 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
-import nz.ac.canterbury.seng302.gardenersgrove.controller.websockets.MessageWebSocketHandler;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.message.ChatPreview;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.MessageDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.message.ChatPreview;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.message.Message;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.message.MessageRead;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.MessageDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.MessageReadRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.MessageRepository;
 import org.slf4j.Logger;
@@ -20,6 +19,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.TIMESTAMP_FORMAT;
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.WEATHER_CARD_FORMAT_DATE;
 
@@ -286,11 +286,16 @@ public class MessageService {
                 && (plantImage.getSize() <= MAX_FILE_SIZE);
     }
 
+    /**
+     * Sets the last read time for the user who is viewing the messages
+     * @param receiverId the user's id who is viewing the messages
+     * @param userId the id of the user whose messages are being read
+     */
     public void setReadTime(Long receiverId, Long userId) {
         logger.info("user {} read messages from user {}", receiverId, userId);
         Optional<MessageRead> optionalMessageRead = messageReadRepository.findByReceiverIdAndUserId(receiverId, userId);
         MessageRead messageRead = optionalMessageRead.orElseGet(() -> new MessageRead(receiverId, userId));
-        messageRead.setLastReadMessage(LocalDateTime.now());
+        messageRead.setLastReadMessage(LocalDateTime.now(clock));
         messageReadRepository.save(messageRead);
     }
 
