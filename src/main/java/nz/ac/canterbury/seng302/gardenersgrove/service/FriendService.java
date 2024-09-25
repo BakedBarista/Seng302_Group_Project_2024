@@ -196,4 +196,5 @@ public class FriendService {
         return friendsRepository.findPendingOrDeclinedFriendship(user1Id, user2Id);
     }
 
+
 }

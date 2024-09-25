@@ -147,14 +147,14 @@ public class U800_3_1_MessageFeature {
     public void they_press_send() {
         Mockito.when(authentication.getPrincipal()).thenReturn(receiverId);
         Mockito.when(bindingResult.hasErrors()).thenReturn(false);
-        result = messageController.sendMessage(myId, messageDTO, bindingResult, authentication, model, session);
+        result = messageController.sendMessage(myId, messageDTO, bindingResult, authentication, model, session, null);
     }
 
     @When("I press Send")
     public void i_press_send() {
         Mockito.when(authentication.getPrincipal()).thenReturn(myId);
         Mockito.when(bindingResult.hasErrors()).thenReturn(false);
-        result = messageController.sendMessage(receiverId, messageDTO, bindingResult, authentication, model, session);
+        result = messageController.sendMessage(receiverId, messageDTO, bindingResult, authentication, model, session, null);
     }
 
     @Then("The message is sent to that friend.")
@@ -193,7 +193,7 @@ public class U800_3_1_MessageFeature {
     public void i_send_invalid_message() {
         Mockito.when(authentication.getPrincipal()).thenReturn(myId);
         Mockito.when(bindingResult.hasErrors()).thenReturn(true);
-        result = messageController.sendMessage(receiverId, messageDTO, bindingResult, authentication, model, session);
+        result = messageController.sendMessage(receiverId, messageDTO, bindingResult, authentication, model, session, null);
     }
 
     @Then("The message is not sent.")
