@@ -114,12 +114,15 @@ public class MessageController {
      * @return the view name for the message page or a redirect to manage friends if
      *         not friends
      */
-    private String setupMessagePage(Long requestedUserId,
+    public String setupMessagePage(Long requestedUserId,
             Authentication authentication,
             Model model,
             HttpSession session) {
         logger.info("GET message page opened to user {}", requestedUserId);
 
+        if(requestedUserId == null) {
+            return MSG_HOME_ENDPOINT;
+        }
         String submissionToken = UUID.randomUUID().toString();
         session.setAttribute(SUBMISSION_TOKEN, submissionToken);
 

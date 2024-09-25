@@ -226,6 +226,11 @@ class MessageControllerTest {
         verify(model).addAttribute("fileError","File too large or wrong file type");
         verify(mockedMessageService).sendImage(sender, receiver, messageDTO,file);
 
+    }
 
+    @Test
+    void whenNoChats_thenReturnMessagePage() {
+        String result = messageController.setupMessagePage(null,authentication, model, session);
+        assertEquals("users/message-home", result);
     }
 }

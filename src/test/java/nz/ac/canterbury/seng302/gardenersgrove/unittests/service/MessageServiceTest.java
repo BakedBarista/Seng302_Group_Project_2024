@@ -284,4 +284,15 @@ class MessageServiceTest {
         assertEquals(userId, savedMessageRead.getUserId());
 
     }
+
+    @Test
+    void testGetTotalUnreadMessages_thenTotalNumberIsReturned() {
+        Long receiverId = 1L;
+        Long userId = 2L;
+        MessageRead messageRead = new MessageRead(receiverId, userId);
+        when(messageReadRepository.findAllByUserId(userId)).thenReturn(List.of(messageRead));
+        when(messageRepository.countAllUnreadMessagesAfter(userId,messageRead.getLastReadMessage())).thenReturn(Long.valueOf(1));
+        Long result = messageService.getUnreadMessageCount(userId);
+        assertEquals(Long.valueOf(1), result);
+    }
 }

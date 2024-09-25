@@ -18,6 +18,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.TIMESTAMP_FORMAT;
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.WEATHER_CARD_FORMAT_DATE;
 
@@ -289,6 +290,21 @@ public class MessageService {
         }
         messageRead.setLastReadMessage(LocalDateTime.now());
         messageReadRepository.save(messageRead);
+    }
+
+    /**
+     * Calculates all unread messages for the user
+     * @param userId User ID to calculate the total number of unread message
+     * @return Total number of unread messages for the user
+     */
+    public Long getUnreadMessageCount(Long userId) {
+        List<MessageRead> messageReads = messageReadRepository.findAllByUserId(userId);
+        Long unreadMessageCount = 0L;
+        for (MessageRead messageRead : messageReads) {
+            unreadMessageCount = messageRepository.countAllUnreadMessagesAfter(userId,messageRead.getLastReadMessage());
+        }
+        return unreadMessageCount;
+
     }
 
 }
