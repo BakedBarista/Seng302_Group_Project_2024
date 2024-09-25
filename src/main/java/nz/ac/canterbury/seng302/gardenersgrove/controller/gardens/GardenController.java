@@ -208,6 +208,7 @@ public class GardenController {
 
         logger.info("GET /gardens/" + id + "/garden-image");
 
+
         Optional<Garden> garden = gardenService.getGardenById(id);
         Garden  existingGarden = new Garden();
 

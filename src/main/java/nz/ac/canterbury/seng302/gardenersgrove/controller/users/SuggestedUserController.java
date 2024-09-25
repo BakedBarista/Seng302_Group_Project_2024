@@ -1,7 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.SuggestedUserDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.CompatibilityService;
@@ -29,12 +28,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Controller
 public class SuggestedUserController {
@@ -146,14 +143,11 @@ public class SuggestedUserController {
         }
 
         public List<SuggestedUserDTO> getSortedSuggestedUserDTOs(List<GardenUser> connectionListMinusFriends, GardenUser user, HttpServletRequest request, HttpServletResponse response){
-            List<SuggestedUserDTO> otherConnections = new ArrayList<SuggestedUserDTO>();
             List<SuggestedUserDTO> sortedOtherConnections = new ArrayList<>();
 
             if(!connectionListMinusFriends.isEmpty()){
-                    otherConnections = connectionListMinusFriends.stream().map((GardenUser u) -> makeSuggestedUserDTO(user, u, request, response)).toList();
-                     for (SuggestedUserDTO dto : otherConnections) {
-                        sortedOtherConnections.add(dto);
-                    }
+                List<SuggestedUserDTO> otherConnections = connectionListMinusFriends.stream().map((GardenUser u) -> makeSuggestedUserDTO(user, u, request, response)).toList();
+                sortedOtherConnections.addAll(otherConnections);
                     sortedOtherConnections.sort(Comparator.comparingInt(SuggestedUserDTO::getCompatibility).reversed());
             }
             return sortedOtherConnections;

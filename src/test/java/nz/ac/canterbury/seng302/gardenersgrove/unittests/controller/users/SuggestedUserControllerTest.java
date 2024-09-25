@@ -44,7 +44,6 @@ class SuggestedUserControllerTest {
     private Model model;
     private Authentication authentication;
 
-    @Autowired
     private GardenUserRepository gardenUserRepository;
     
 
@@ -223,7 +222,7 @@ class SuggestedUserControllerTest {
     }
 
     @Test
-    public void testGetSortedSuggestedUserDTOs_NonEmptyList() {
+    void testGetSortedSuggestedUserDTOs_NonEmptyList() {
         GardenUser user = new GardenUser();
         GardenUser user1 = new GardenUser();
         GardenUser user2 = new GardenUser();
@@ -242,7 +241,7 @@ class SuggestedUserControllerTest {
     }
 
     @Test
-    public void givenLowCompatibility_andUserSentRequest_whenCardsShown_thenSentRequestShowsFirst() throws JsonProcessingException {
+    void givenLowCompatibility_andUserSentRequest_whenCardsShown_thenSentRequestShowsFirst() throws JsonProcessingException {
         GardenUser Liam = new GardenUser("liam", "user", "laims@gmail.com", "password", LocalDate.of(1970, 10, 10));
 
         GardenUser highCompatibilityUser = new GardenUser("test", "user", "test@gmail.com", "password", LocalDate.of(1970, 10, 10));
@@ -253,8 +252,6 @@ class SuggestedUserControllerTest {
                 new SuggestedUserDTO(highCompatibilityUser),
                 new SuggestedUserDTO(lowCompatibilitySentRequest)
         );
-
-        String jsonUsers = objectMapper.writeValueAsString(combinedList);
 
         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
         when(compatibilityService.friendshipCompatibilityQuotient(Liam, highCompatibilityUser)).thenReturn(70.0);
