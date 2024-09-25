@@ -275,7 +275,6 @@ public class MessageService {
         model.addAttribute("recentChats", recentChats);
         model.addAttribute("activeChat", requestedUserId);
         model.addAttribute("loggedInUserId", loggedInUserId);
-
     }
 
     public boolean validateImage(MultipartFile plantImage) {

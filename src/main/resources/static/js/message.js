@@ -68,8 +68,13 @@ async function updateMessages() {
     messagesContainer.innerHTML = html;
 
     scrollToBottom(messagesContainer);
+    await updateRecentChat();
 }
 
+async function updateRecentChat() {
+    const res = await fetch(`${apiBaseUrl}/messages/recent-chats`);
+    console.log(await res.json())
+}
 
 function isScrolledToBottom(container) {
     return container.scrollHeight - container.scrollTop === container.clientHeight;
