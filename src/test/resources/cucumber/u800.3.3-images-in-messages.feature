@@ -10,7 +10,8 @@ Feature: Sending images in messages
     When I send an image
     Then it shows up without me having to reload the page
 
-#  Scenario: AC3 - Receiving an image from a friend
-#    Given I am on the direct-messaging page for "Jane"
-#    When "Jane" sends me an image
-#    Then it shows up without me having to reload the page
+  Scenario: AC3 - Receiving an image from a friend
+    Given I am on a direct messaging page for my friend "Jeff"
+    And I am on the direct-messaging page for "Jeff"
+    When "Jeff" sends me an image
+    Then it shows up without me having to reload the page
