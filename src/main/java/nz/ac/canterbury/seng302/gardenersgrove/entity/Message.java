@@ -49,6 +49,10 @@ public class Message {
         this.reaction = null;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public Long getSender() {
         return sender;
     }
