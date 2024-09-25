@@ -51,25 +51,26 @@
                         <form th:action="@{/message-home}" method="post" class="d-flex align-items-center w-100 h-100">
                             <input type="hidden" name="userId" th:value="${chat.getKey().id}" />
                             <button class="btn btn-link text-decoration-none text-dark w-100 open-chat">
-                                <div class="d-flex align-items-center">
-                                    <img class="rounded-circle border border-dark"
-                                         th:src="@{'/users/' + ${chat.getKey().id} + '/profile-picture'}"
-                                         style="width: 50px; height: 50px;" alt="profile picture">
-                                    <div class="m-3 text-start">
-                                        <h6 th:text="${chat.getKey().fullName}"></h6>
-                                        <div th:if="${(chat.getValue().messageContent) != null && (chat.getValue().messageContent) == ''}">
-                                            <p th:if="${chat.getValue().receiver == loggedInUserId}">
-                                                Image 📷
-                                            </p>
-                                            <p th:if="${chat.getValue().sender == loggedInUserId}">
-                                                You: Image 📷
-                                            </p>
-                                        </div>
-                                        <p th:text="${chat.getValue().messageContent}" 
-                                           th:title="${chat.getValue().messageContent}" 
-                                           class="text-truncate m-0" 
-                                           style="max-width: 200px;"></p>
+                                <div class="m-3 text-start">
+                                    <h6 th:text="${chat.getKey().fullName}"></h6>
+                                    <div th:if="${(chat.getValue().messageContent) != null && (chat.getValue().messageContent) == ''}">
+                                        <p th:if="${chat.getValue().receiver == loggedInUserId}">
+                                            Image 📷
+                                        </p>
+                                        <p th:if="${chat.getValue().sender == loggedInUserId}">
+                                            You: Image 📷
+                                        </p>
                                     </div>
+
+                                    <p th:if="${chat.getValue().receiver == loggedInUserId}" th:text="${chat.getValue().messageContent}" 
+                                        th:title="${chat.getValue().messageContent}" 
+                                        class="text-truncate m-0" 
+                                        style="max-width: 200px;"></p>
+
+                                    <p th:if="${chat.getValue().sender == loggedInUserId}" th:text="'You: ' + ${chat.getValue().messageContent}" 
+                                    th:title="${chat.getValue().messageContent}" 
+                                    class="text-truncate m-0" 
+                                    style="max-width: 200px;"></p>
                                 </div>
                             </button>
                         </form>
