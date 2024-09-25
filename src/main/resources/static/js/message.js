@@ -10,6 +10,7 @@ async function updateMessages() {
     messagesContainer.innerHTML = html;
 
     scrollToBottom(messagesContainer);
+    ws.send(JSON.stringify({ type: 'markRead', otherUserId }));
 }
 
 function sendMessage() {
