@@ -241,29 +241,30 @@ class SuggestedUserControllerTest {
         assertEquals(70, result.get(1).getCompatibility());
     }
 
-//    @Test
-//    public void givenLowCompatibility_andUserSentRequest_whenCardsShown_thenSentRequestShowsFirst() throws JsonProcessingException {
-//        GardenUser Liam = new GardenUser("liam", "user", "laims@gmail.com", "password", LocalDate.of(1970, 10, 10));
-//
-//        GardenUser highCompatibilityUser = new GardenUser("test", "user", "test@gmail.com", "password", LocalDate.of(1970, 10, 10));
-//        GardenUser lowCompatibilitySentRequest = new GardenUser("test2", "user", "test2@gmail.com", "password", LocalDate.of(1970, 10, 10));
-//
-//        List<SuggestedUserDTO> combinedList = Arrays.asList(
-//                new SuggestedUserDTO(highCompatibilityUser),
-//                new SuggestedUserDTO(lowCompatibilitySentRequest)
-//        );
-//
-//        String jsonUsers = objectMapper.writeValueAsString(combinedList);
-//
-//        when(authentication.getPrincipal()).thenReturn(loggedInUserId);
-//        when(compatibilityService.friendshipCompatibilityQuotient(Liam, highCompatibilityUser)).thenReturn(70.0);
-//        when(compatibilityService.friendshipCompatibilityQuotient(Liam, lowCompatibilitySentRequest)).thenReturn(30.0);
-//        Mockito.when(friendService.availableConnections(loggedInUser)).thenReturn(List.of(highCompatibilityUser));
-//        when(friendService.receivedConnectionRequests(loggedInUser)).thenReturn(List.of(lowCompatibilitySentRequest));
-//
-//        String result = suggestedUserController.home(null, model, request, response);
-//
-//        Mockito.verify(model).addAttribute("userList", jsonUsers);
-//        assertEquals("suggestedFriends", result);
-//    }
+    @Test
+    public void givenLowCompatibility_andUserSentRequest_whenCardsShown_thenSentRequestShowsFirst() throws JsonProcessingException {
+        GardenUser Liam = new GardenUser("liam", "user", "laims@gmail.com", "password", LocalDate.of(1970, 10, 10));
+
+        GardenUser highCompatibilityUser = new GardenUser("test", "user", "test@gmail.com", "password", LocalDate.of(1970, 10, 10));
+        GardenUser lowCompatibilitySentRequest = new GardenUser("test2", "user", "test2@gmail.com", "password", LocalDate.of(1970, 10, 10));
+        model = Mockito.mock(Model.class);
+
+        List<SuggestedUserDTO> combinedList = Arrays.asList(
+                new SuggestedUserDTO(highCompatibilityUser),
+                new SuggestedUserDTO(lowCompatibilitySentRequest)
+        );
+
+        String jsonUsers = objectMapper.writeValueAsString(combinedList);
+
+        when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+        when(compatibilityService.friendshipCompatibilityQuotient(Liam, highCompatibilityUser)).thenReturn(70.0);
+        when(compatibilityService.friendshipCompatibilityQuotient(Liam, lowCompatibilitySentRequest)).thenReturn(30.0);
+        Mockito.when(friendService.availableConnections(loggedInUser)).thenReturn(List.of(highCompatibilityUser));
+        when(friendService.receivedConnectionRequests(loggedInUser)).thenReturn(List.of(lowCompatibilitySentRequest));
+
+        String result = suggestedUserController.home(authentication, model, request, response);
+
+        verify(model).addAttribute(eq("userList"), any());
+        assertEquals("suggestedFriends", result);
+    }
 }
