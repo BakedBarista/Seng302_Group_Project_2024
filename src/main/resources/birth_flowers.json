@@ -1,0 +1,14 @@
+{
+  "January": ["Carnation", "Snowdrop"],
+  "February": ["Violet", "Iris", "Primrose"],
+  "March": ["Daffodil"],
+  "April": ["Daisy", "Sweet Pea"],
+  "May": ["Lily of the Valley", "Hawthorn"],
+  "June": ["Rose", "Honeysuckle"],
+  "July": ["Larkspur", "Water Lily"],
+  "August": ["Gladiolus", "Poppy"],
+  "September": ["Aster", "Morning Glory"],
+  "October": ["Marigold", "Cosmos"],
+  "November": ["Chrysanthemum", "Peony"],
+  "December": ["Holly", "Poinsettia", "Narcissus"]
+}
