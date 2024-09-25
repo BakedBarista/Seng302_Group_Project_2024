@@ -53,6 +53,20 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     showCurrentUserCard();
 
+    async function nextUser(swipeDirection) {
+        userIndex++;
+
+        card.classList.add(swipeDirection);
+        await delay(500);
+        showCurrentUserCard();
+        await delay(500);
+        card.classList.remove(swipeDirection);
+    }
+
+    function delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
     if (declineButton) {
         declineButton.addEventListener('click', function(event) {
             event.preventDefault();
@@ -85,8 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('action', 'accept');
         formData.append('id', currentUser()?.id); // this needs to be the id of user.
 
-        userIndex++;
-        showCurrentUserCard();
+        nextUser('swipe-right');
 
         sendPost(formData);
     }
@@ -96,8 +109,7 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('action', 'decline');
         formData.append('id', currentUser()?.id); // this needs to be the id of user.
 
-        userIndex++;
-        showCurrentUserCard();
+        nextUser('swipe-left');
 
         sendPost(formData);
     }
