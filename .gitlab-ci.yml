@@ -24,7 +24,7 @@ junit:
   stage: test
   script:
     - echo Killing lingering gradle processes
-    - ps ax | grep gradle | awk '{ print $1 }' | xargs kill -KILL || true
+    - pkill -KILL -f gradle
     - ./gradlew unit integration cucumber
     - ls ./build/jacoco
   artifacts:
@@ -38,7 +38,7 @@ sonarqube-check:
     GIT_DEPTH: 0 # avoid shallow clone to give sonar all the info it needs
   script:
     - echo Killing lingering gradle processes
-    - ps ax | grep gradle | awk '{ print $1 }' | xargs kill -KILL || true
+    - pkill -KILL -f gradle
     - ./gradlew sonar
 
 # builds all branches, except dev and main
@@ -46,7 +46,7 @@ branch-build:
   stage: build
   script:
     - echo Killing lingering gradle processes
-    - ps ax | grep gradle | awk '{ print $1 }' | xargs kill -KILL || true
+    - pkill -KILL -f gradle
     - ./gradlew bootJar
   artifacts:
     paths:
@@ -60,7 +60,7 @@ deploy-staging:
   stage: deploy
   script:
     - echo Killing lingering gradle processes
-    - ps ax | grep gradle | awk '{ print $1 }' | xargs kill -KILL || true
+    - pkill -KILL -f gradle
     - ./gradlew bootJar
     - rm -rf /home/gitlab-runner/staging/ || true
     - mkdir /home/gitlab-runner/staging/
@@ -79,7 +79,7 @@ deploy-production:
   stage: deploy
   script:
     - echo Killing lingering gradle processes
-    - ps ax | grep gradle | awk '{ print $1 }' | xargs kill -KILL || true
+    - pkill -KILL -f gradle
     - ./gradlew bootJar
     - rm -rf /home/gitlab-runner/production/ || true
     - mkdir /home/gitlab-runner/production/
