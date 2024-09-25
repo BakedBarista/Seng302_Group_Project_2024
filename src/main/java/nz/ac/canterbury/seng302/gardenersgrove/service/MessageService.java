@@ -296,7 +296,7 @@ public class MessageService {
         List<MessageRead> messageReads = messageReadRepository.findAllByUserId(userId);
         Long unreadMessageCount = 0L;
         for (MessageRead messageRead : messageReads) {
-            unreadMessageCount += messageRepository.countAllUnreadMessagesAfter(userId,messageRead.getLastReadMessage());
+            unreadMessageCount = messageRepository.countAllUnreadMessagesAfter(userId,messageRead.getLastReadMessage());
         }
         return unreadMessageCount;
 

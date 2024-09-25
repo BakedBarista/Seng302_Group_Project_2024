@@ -92,9 +92,9 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 				break;
 			case "ping":
 				try {
-					/*Long currentUserId = getCurrentUserId(session);
-					Long unreadMessageCount = messageService.getUnreadMessageCount(currentUserId);*/
-					session.sendMessage(new TextMessage("{\"type\":\"pong\"}"));//,\"unreadMessageCount\":" + unreadMessageCount + "}"));
+					Long currentUserId = getCurrentUserId(session);
+					Long unreadMessageCount = messageService.getUnreadMessageCount(currentUserId);
+					session.sendMessage(new TextMessage("{\"type\":\"pong\",\"unreadMessageCount\":" + unreadMessageCount + "}"));
 				} catch (IOException e) {
 					// Ignore errors when responding to ping messages
 					return;
@@ -122,11 +122,11 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 	private void updateMessagesBroadcast(List<Long> userIds) {
 		for (WebSocketSession session : Set.copyOf(activeSessions)) {
 			long userId = getCurrentUserId(session);
-			if (userIds == null || userIds.contains(userId)) {
+			if (userIds == null || !userIds.contains(userId)) {
 				continue;
 			}
 			if (session.isOpen()) {
-					updateMessages(session);
+				updateMessages(session);
 			} else {
 				activeSessions.remove(session);
 			}
