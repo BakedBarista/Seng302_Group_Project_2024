@@ -120,6 +120,9 @@ public class MessageController {
             HttpSession session) {
         logger.info("GET message page opened to user {}", requestedUserId);
 
+        if(requestedUserId == null) {
+            return MSG_HOME_ENDPOINT;
+        }
         String submissionToken = UUID.randomUUID().toString();
         session.setAttribute(SUBMISSION_TOKEN, submissionToken);
 
