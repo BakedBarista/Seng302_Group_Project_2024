@@ -208,6 +208,8 @@
     openGardenSelectorModel = () => {
         const modal = new bootstrap.Modal(document.getElementById("gardenSelectorModal"))
         modal.show()
+        document.getElementById("searchGardenInput").value = "";
+        showGardenSearchResults("");
     }
 
   /** @type {HTMLInputElement} */
