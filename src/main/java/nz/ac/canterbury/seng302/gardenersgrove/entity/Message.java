@@ -32,6 +32,9 @@ public class Message {
     @Lob
     private byte[] imageContent;
 
+    @Column
+    private String reaction;
+
     /**
      * Empty constructor - required for JPA since this is an @Entity
      */
@@ -43,6 +46,7 @@ public class Message {
         this.receiver = receiver;
         this.timestamp = timestamp;
         this.messageContent = message;
+        this.reaction = null;
     }
 
     public Long getSender() {
@@ -70,4 +74,11 @@ public class Message {
         this.imageContent = imageContent;
     }
 
+    public String getReaction() {
+        return reaction;
+    }
+
+    public void setReaction(String reaction) {
+        this.reaction = reaction;
+    }
 }
