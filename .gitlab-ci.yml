@@ -24,7 +24,7 @@ cleanup:
   stage: build
   script:
     - echo Killing lingering gradle processes
-    - ps ax | grep gradle | awk '{ print $1 }' | xargs kill -KILL
+    - ps ax | grep gradle | awk '{ print $1 }' | xargs kill -KILL || true
 
 junit:
   stage: test
