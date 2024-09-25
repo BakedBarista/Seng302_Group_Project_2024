@@ -255,8 +255,11 @@ public class FriendsServiceTest {
 
         List<GardenUser> pendingList = friendService.getPendingRequestGardenUser(friends, testUser2.getId());
         assertEquals(1, pendingList.size());
+        assertTrue(!pendingList.contains(testUser2));
+
 
     }
+
 
 }
 
