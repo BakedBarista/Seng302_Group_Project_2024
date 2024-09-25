@@ -57,6 +57,9 @@
                                          style="width: 50px; height: 50px;" alt="profile picture">
                                     <div class="m-3 text-start">
                                         <h6 th:text="${chat.key.fullName}"></h6>
+                                        <div th:if="${chat.value != null && chat.value == ''}">
+                                            <p>Image sent.</p>
+                                        </div>
                                         <p th:text="${chat.value}" th:title="${chat.value}" class="text-truncate m-0" style="max-width: 200px;"></p>
                                     </div>
                                 </div>
