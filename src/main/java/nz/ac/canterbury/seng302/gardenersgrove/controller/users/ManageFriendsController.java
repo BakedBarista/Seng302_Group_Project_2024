@@ -123,8 +123,6 @@ public class ManageFriendsController {
             @RequestParam(name = "acceptUser", required = false) Long acceptUserId) {
 
         Long loggedInUserId = (Long) authentication.getPrincipal();
-        messageService.setReadTime(loggedInUserId,acceptUserId);
-        messageService.setReadTime(acceptUserId,loggedInUserId);
         List<Friends> sentAndDeclinedList = friendService.getSentRequestsDeclined(loggedInUserId);
         for (Friends request : sentAndDeclinedList) {
             if (request.getSender().getId().equals(loggedInUserId) && request.getReceiver().getId().equals(acceptUserId)) {
@@ -142,6 +140,8 @@ public class ManageFriendsController {
         if (friendShip != null) {
             friendShip.setStatus(ACCEPTED);
             friendService.save(friendShip);
+            messageService.setReadTime(loggedInUserId,acceptUserId);
+            messageService.setReadTime(acceptUserId,loggedInUserId);
         }
 
         return "redirect:/users/manage-friends";
