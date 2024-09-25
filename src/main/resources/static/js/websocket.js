@@ -27,7 +27,7 @@ function initWebSocket() {
                 break;
             case 'updateMessages':
                 console.log('Received updateMessages');
-                updateMessages();  // Optional: refresh message list if needed
+                updateMessages();
                 break;
             case 'error':
                 handleWebSocketError(data.error);  // Handle WebSocket errors
@@ -50,7 +50,7 @@ function reconnectWebSocket() {
 
 // Function to update unread message count on the navbar
 function updateUnreadCount(count) {
-    const unreadCountDisplay = document.getElementById('unreadCountDisplay');  // Make sure this exists in your navbar
+    const unreadCountDisplay = document.getElementById('unreadCountDisplay');
     if (unreadCountDisplay) {
         if (count > 99) {
             unreadCountDisplay.innerText = '99+';

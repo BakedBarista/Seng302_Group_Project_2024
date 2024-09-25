@@ -292,6 +292,11 @@ public class MessageService {
         messageReadRepository.save(messageRead);
     }
 
+    /**
+     * Calculates all unread messages for the user
+     * @param userId User ID to calculate the total number of unread message
+     * @return Total number of unread messages for the user
+     */
     public Long getUnreadMessageCount(Long userId) {
         List<MessageRead> messageReads = messageReadRepository.findAllByUserId(userId);
         Long unreadMessageCount = 0L;
