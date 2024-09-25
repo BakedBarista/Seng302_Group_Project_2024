@@ -52,7 +52,11 @@ function reconnectWebSocket() {
 function updateUnreadCount(count) {
     const unreadCountDisplay = document.getElementById('unreadCountDisplay');  // Make sure this exists in your navbar
     if (unreadCountDisplay) {
-        unreadCountDisplay.innerText = count;
+        if (count > 99) {
+            unreadCountDisplay.innerText = '99+';
+        } else {
+            unreadCountDisplay.innerText = count;
+        }
 
         if (count > 0) {
             unreadCountDisplay.style.display = 'inline';
