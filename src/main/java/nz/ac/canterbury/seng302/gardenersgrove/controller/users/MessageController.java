@@ -247,7 +247,8 @@ public class MessageController {
         GardenUser sentToUser = userService.getUserById(requestedUserId);
         
         messageService.setReadTime(loggedInUserId, requestedUserId);
-
+        
+        
         // need to be friends to send a message
         Friends isFriend = friendService.getFriendship(loggedInUserId, requestedUserId);
         if (isFriend == null) {
