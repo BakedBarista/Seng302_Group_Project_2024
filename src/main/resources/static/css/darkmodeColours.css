@@ -1,0 +1,47 @@
+:root {
+    --gg-white: #F5F5F5;
+
+}
+
+
+
+[data-bs-theme="dark"] {
+    --bs-primary: #CB9F03;
+    --bs-secondary: #FFFFFF;
+    .nav-drawer {
+        background-color: #302E2E;
+        color: var(--gg-white);
+    }
+    .nav-drawer li a:hover {
+        background-color: #464444;
+    }
+    body {
+        background-color: #1E1E1E;
+
+    }
+    .card {
+        background-color: #464444;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        color: #F8F3C4;
+    }
+
+    .btn-outline-secondary {
+        --bs-btn-color: var(--gg-white);
+        --bs-btn-border-color: var(--gg-white);
+
+    }
+
+    .required-field::after {
+        color: var(--gg-white);
+    }
+
+    .form-control:disabled{
+        background-color: #575454;
+    }
+    .card-footer{
+        background-color: #464444;
+    }
+
+}

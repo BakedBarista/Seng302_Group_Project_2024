@@ -30,23 +30,20 @@
         }
     }
 
-    window.addEventListener('DOMContentLoaded', () => {
-        // Loads the theme on DOM load
-        loadTheme();
-        for (let checkbox of checkboxes) {
-            checkbox.addEventListener('change', () => {
-                if (checkbox.checked) {
-                    for (let checkbox_ of checkboxes) {
-                        checkbox_.checked = true;
-                    }
-                    setTheme('dark');
-                } else {
-                    for (let checkbox_ of checkboxes) {
-                        checkbox_.checked = false;
-                    }
-                    setTheme('light');
+    loadTheme();
+    for (let checkbox of checkboxes) {
+        checkbox.addEventListener('change', () => {
+            if (checkbox.checked) {
+                for (let checkbox_ of checkboxes) {
+                    checkbox_.checked = true;
                 }
-            });
-        }
-    })
+                setTheme('dark');
+            } else {
+                for (let checkbox_ of checkboxes) {
+                    checkbox_.checked = false;
+                }
+                setTheme('light');
+            }
+        });
+    }
 })()
