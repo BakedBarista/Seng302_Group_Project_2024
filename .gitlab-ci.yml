@@ -20,6 +20,12 @@ tag-checker:
   only:
     - tags
 
+cleanup:
+  stage: build
+  script:
+    - echo Killing lingering gradle processes
+    - ps ax | grep gradle | awk '{ print $1 }' | xargs kill -KILL
+
 junit:
   stage: test
   script:
