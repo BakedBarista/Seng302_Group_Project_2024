@@ -114,7 +114,7 @@ public class MessageController {
      * @return the view name for the message page or a redirect to manage friends if
      *         not friends
      */
-    private String setupMessagePage(Long requestedUserId,
+    public String setupMessagePage(Long requestedUserId,
             Authentication authentication,
             Model model,
             HttpSession session) {
