@@ -292,13 +292,13 @@ public class MessageService {
         messageReadRepository.save(messageRead);
     }
 
-    public Long getUnreadMessageCount(Long senderId, Long receiverId) {
-        logger.info("{} {}",senderId,receiverId);
-        Optional<MessageRead> optionalMessageRead = messageReadRepository.findByReceiverIdAndUserId(receiverId,senderId);
-        logger.info("{}",optionalMessageRead);
-        MessageRead messageRead = optionalMessageRead.get();
-        return messageRepository.countAllUnreadMessagesAfter(receiverId,messageRead.getLastReadMessage());
-
+    public Long getUnreadMessageCount(Long userId) {
+        List<MessageRead> messageReads = messageReadRepository.findAllByUserId(userId);
+        Long unreadMessageCount = 0L;
+        for (MessageRead messageRead : messageReads) {
+            unreadMessageCount += messageRepository.countAllUnreadMessagesAfter(userId,messageRead.getLastReadMessage());
+        }
+        return unreadMessageCount;
 
     }
 

@@ -70,7 +70,7 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 				activeSessions.add(session);
 
 				// Refresh messages on page load to avoid a race condition
-				updateMessages(session,null);
+				updateMessages(session);
 				break;
 
 			case "sendMessage":
@@ -88,11 +88,13 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 				}
 				messageService.sendMessage(sender, receiver, messageDTO);
 
-				updateMessagesBroadcast(sender, receiver);
+				updateMessagesBroadcast(List.of(sender, receiver));
 				break;
 			case "ping":
 				try {
-					session.sendMessage(new TextMessage("{\"type\":\"pong\"}"));
+					/*Long currentUserId = getCurrentUserId(session);
+					Long unreadMessageCount = messageService.getUnreadMessageCount(currentUserId);*/
+					session.sendMessage(new TextMessage("{\"type\":\"pong\"}"));//,\"unreadMessageCount\":" + unreadMessageCount + "}"));
 				} catch (IOException e) {
 					// Ignore errors when responding to ping messages
 					return;
@@ -117,16 +119,14 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 	 * Sends an `updateMessages` message to each of the given users.
 	 * @param userIds A list of user IDs to broadcast the message to
 	 */
-	private void updateMessagesBroadcast(Long senderId, Long receiverId) {
+	private void updateMessagesBroadcast(List<Long> userIds) {
 		for (WebSocketSession session : Set.copyOf(activeSessions)) {
 			long userId = getCurrentUserId(session);
-			logger.info("current user: {}",userId);
+			if (userIds == null || userIds.contains(userId)) {
+				continue;
+			}
 			if (session.isOpen()) {
-				if (userId == senderId) {
-					updateMessages(session, receiverId);
-				} else {
-					updateMessages(session,null);
-				}
+					updateMessages(session);
 			} else {
 				activeSessions.remove(session);
 			}
@@ -137,15 +137,9 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 	 * Sends an `updateMessages` to a given session.
 	 * @param session the session to send the message to
 	 */
-	private void updateMessages(WebSocketSession session, Long receiverId) {
-		Long currentUserId = getCurrentUserId(session);
+	private void updateMessages(WebSocketSession session) {
 		ObjectNode message = JsonNodeFactory.instance.objectNode();
 		message.put("type", "updateMessages");
-		if (receiverId != null) {
-			Long unreadCount = messageService.getUnreadMessageCount(currentUserId,receiverId);
-			logger.info("Unread count for {}:{}", receiverId, unreadCount);
-			message.put("unreadCount", unreadCount);
-		}
 		sendMessage(session, message);
 	}
 

@@ -29,7 +29,6 @@ ws.addEventListener('message', (ev) => {
     switch (data.type) {
         case 'updateMessages':
             console.log('updateMessages');
-            updateUnreadCount(data.unreadCount);
             updateMessages();
 
             break;
