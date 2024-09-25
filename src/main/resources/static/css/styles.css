@@ -923,3 +923,76 @@ h1, h2, h3, h4, h5, h6 {
     background-color: #e0f7fa; /* Highlight color */
     border-color: #00796b; /* Highlight border color */
 }
+
+.progress {
+    width: 87%;
+    height: 25px;
+    background: #e7d6a8;
+    border-radius: 15px;
+    margin-bottom: 10px;
+    overflow: visible;
+}
+
+.progress .progress-bar{
+    border-radius: 15px;
+    position: relative;
+    height: 100%;
+    overflow: visible;
+}
+
+.progress .progress-icon,
+.progress .progress-value{
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    right: -4px;
+}
+
+.flip-card.swipe-right {
+    animation: flip-card-swipe-right 1s ease-in-out;
+    transform-origin: center 200%;
+}
+
+.flip-card.swipe-left {
+    animation: flip-card-swipe-left 1s ease-in-out;
+    transform-origin: center 200%;
+}
+
+@keyframes flip-card-swipe-right {
+    0% {
+        transform: none;
+        opacity: 1;
+    }
+    49% {
+        transform: rotate(30deg);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    100% {
+        transform: none;
+        opacity: 1;
+    }
+}
+
+@keyframes flip-card-swipe-left {
+    0% {
+        transform: none;
+        opacity: 1;
+    }
+    49% {
+        transform: rotate(-30deg);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    100% {
+        transform: none;
+        opacity: 1;
+    }
+}

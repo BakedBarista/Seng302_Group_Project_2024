@@ -128,6 +128,14 @@ public class GardenUser {
     }
 
     /**
+     * Sets the id of user
+     * @param id the id of user
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    /**
      * Retrieves the id of user
      * @return id of user
      */
