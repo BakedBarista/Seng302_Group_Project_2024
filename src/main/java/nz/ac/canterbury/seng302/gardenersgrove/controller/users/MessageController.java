@@ -3,12 +3,15 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.message.ChatPreview;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.message.Message;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.MessageDTO;
-import nz.ac.canterbury.seng302.gardenersgrove.service.*;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.message.ChatPreview;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.message.Message;
+import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.MessageService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.ThymeLeafDateFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +19,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -30,8 +30,6 @@ import java.util.UUID;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.TIMESTAMP_FORMAT;
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.WEATHER_CARD_FORMAT_DATE;
-import nz.ac.canterbury.seng302.gardenersgrove.service.ThymeLeafDateFormatter;
-import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 public class MessageController {
@@ -96,8 +94,10 @@ public class MessageController {
 
         logger.info("GET /message-home");
 
+        Long loggedInUserId = (Long) authentication.getPrincipal();
         Long requestedUserId = getLatestRequestedUserId(authentication);
-        
+        messageService.setReadTime(loggedInUserId, requestedUserId);
+
         return setupMessagePage(requestedUserId, authentication, model, session);
     }
 

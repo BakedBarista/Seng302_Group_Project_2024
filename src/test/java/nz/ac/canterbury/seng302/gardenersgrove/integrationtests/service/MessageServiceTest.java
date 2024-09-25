@@ -41,10 +41,8 @@ class MessageServiceTest {
 
     @BeforeEach
     void setup() {
-        // Clear the repository to avoid state being carried over between tests
         messageReadRepository.deleteAll();
 
-        // Ensure users exist before running the tests
         GardenUser john = gardenUserService.getUserByEmail("johnmessageservice@gmail.com");
         if (john == null) {
             john = new GardenUser("John", "Doe", "johnmessageservice@gmail.com", "password", null);

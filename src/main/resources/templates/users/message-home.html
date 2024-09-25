@@ -95,7 +95,14 @@
                             </div>
                         </button>
                         <div>
-                        <span th:if="${chat.value.unreadMessages != 0}" class="badge notification-badge me-3 bg-danger">[[${chat.value.unreadMessages}]]</span>
+                            <span th:if="${chat.value.unreadMessages != 0 && chat.value.unreadMessages > 99}"
+                                  class="badge notification-badge me-3 bg-danger">
+                                99+
+                            </span>
+                            <span th:if="${chat.value.unreadMessages != 0 && chat.value.unreadMessages <= 99}"
+                                  class="badge notification-badge me-3 bg-danger">
+                                [[${chat.value.unreadMessages}]]
+                            </span>
                         </div>
                     </form>
                 </div>
