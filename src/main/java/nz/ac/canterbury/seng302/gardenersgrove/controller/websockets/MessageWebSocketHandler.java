@@ -87,11 +87,18 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 
 				updateMessagesBroadcast(List.of(sender, receiver));
 				break;
+			case "markRead": 
+				Long currentUserId = getCurrentUserId(session);
+				Long unreadMessageCount = messageService.getUnreadMessageCount(currentUserId);
+
+				ObjectNode newMessage = JsonNodeFactory.instance.objectNode();
+				newMessage.put("type", "updateUnread");
+				newMessage.put("unreadMessageCount", unreadMessageCount);
+				sendMessage(session, newMessage);
+				break;
 			case "ping":
 				try {
-					Long currentUserId = getCurrentUserId(session);
-					Long unreadMessageCount = messageService.getUnreadMessageCount(currentUserId);
-					session.sendMessage(new TextMessage("{\"type\":\"pong\",\"unreadMessageCount\":" + unreadMessageCount + "}"));
+					session.sendMessage(new TextMessage("{\"type\":\"pong\"}"));
 				} catch (IOException e) {
 					// Ignore errors when responding to ping messages
 					return;
@@ -135,8 +142,12 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 	 * @param session the session to send the message to
 	 */
 	private void updateMessages(WebSocketSession session) {
+		Long currentUserId = getCurrentUserId(session);
+		Long unreadMessageCount = messageService.getUnreadMessageCount(currentUserId);
+
 		ObjectNode message = JsonNodeFactory.instance.objectNode();
 		message.put("type", "updateMessages");
+		message.put("unreadMessageCount", unreadMessageCount);
 		sendMessage(session, message);
 	}
 

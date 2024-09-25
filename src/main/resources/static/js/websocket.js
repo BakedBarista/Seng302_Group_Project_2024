@@ -23,11 +23,15 @@ function initWebSocket() {
         switch (data.type) {
             case 'pong':
                 console.log('Received pong');
-                updateUnreadCount(data.unreadMessageCount);  // Update unread message count in navbar
                 break;
             case 'updateMessages':
                 console.log('Received updateMessages');
+                updateUnreadCount(data.unreadMessageCount);  // Update unread message count in navbar
                 updateMessages();
+                break;
+            case 'updateUnread':
+                console.log('Received updateUnread');
+                updateUnreadCount(data.unreadMessageCount);  // Update unread message count in navbar
                 break;
             case 'error':
                 handleWebSocketError(data.error);  // Handle WebSocket errors
