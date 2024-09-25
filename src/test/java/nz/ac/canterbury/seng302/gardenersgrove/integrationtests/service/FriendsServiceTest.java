@@ -253,10 +253,9 @@ public class FriendsServiceTest {
         Friends friendship = new Friends(testUser1, testUser2, PENDING);
         friends.add(friendship);
 
-        List<GardenUser> pendingList = friendService.getPendingRequestGardenUser(friends, testUser2.getId());
+        var pendingList = friendService.getPendingRequestGardenUser(friends, testUser2.getId());
         assertEquals(1, pendingList.size());
         assertTrue(!pendingList.contains(testUser2));
-
 
     }
 
