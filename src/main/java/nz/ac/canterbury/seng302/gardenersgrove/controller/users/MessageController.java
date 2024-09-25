@@ -10,6 +10,8 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.MessageDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.MessageService;
+import nz.ac.canterbury.seng302.gardenersgrove.model.Pair;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -136,7 +138,9 @@ public class MessageController {
 
         Map<Long, Message> recentMessagesMap = messageService.getLatestMessages(allMessages, loggedInUserId);
 
-        Map<GardenUser, String> recentChats = messageService.convertToPreview(recentMessagesMap);
+        List<Pair<GardenUser, Message>> recentChats = messageService.convertToPreview(recentMessagesMap);
+        
+
 
         messageService.setupModelAttributes(model, loggedInUserId, requestedUserId, sentToUser, recentChats,
                 submissionToken);
@@ -309,7 +313,7 @@ public class MessageController {
 
             Map<Long, Message> recentMessagesMap = messageService.getLatestMessages(allMessages, loggedInUserId);
 
-            Map<GardenUser, String> recentChats = messageService.convertToPreview(recentMessagesMap);
+            List<Pair<GardenUser, Message>> recentChats = messageService.convertToPreview(recentMessagesMap);
 
             String submissionToken = UUID.randomUUID().toString();
             session.setAttribute(SUBMISSION_TOKEN, submissionToken);

@@ -6,6 +6,8 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.MessageRead;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.MessageDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.MessageReadRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.MessageRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.model.Pair;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -211,19 +213,19 @@ public class MessageService {
      * @return a map where each key is a user and each value is their most recent
      *         message.
      */
-    public Map<GardenUser, String> convertToPreview(Map<Long, Message> recentMessagesMap) {
-        Map<GardenUser, String> recentChats = new LinkedHashMap<>();
-
+    public List<Pair<GardenUser, Message>> convertToPreview(Map<Long, Message> recentMessagesMap) {
+        List<Pair<GardenUser, Message>> recentChatsAsList = new ArrayList<>();
+    
         for (Map.Entry<Long, Message> entry : recentMessagesMap.entrySet()) {
             Long userId = entry.getKey();
             Message msg = entry.getValue();
-
+    
             GardenUser user = userService.getUserById(userId);
-            String messagePreview = msg.getMessageContent();
-
-            recentChats.put(user, messagePreview);
+    
+            // Use the custom Pair class
+            recentChatsAsList.add(new Pair<>(user, msg));
         }
-        return recentChats;
+        return recentChatsAsList;
     }
 
     /**
@@ -263,7 +265,7 @@ public class MessageService {
      *                        submissions
      */
     public void setupModelAttributes(Model model, Long loggedInUserId, Long requestedUserId, GardenUser sentToUser,
-            Map<GardenUser, String> recentChats, String submissionToken) {
+            List<Pair<GardenUser, Message>> recentChats, String submissionToken) {
         model.addAttribute("dateFormatter", new ThymeLeafDateFormatter());
         model.addAttribute("TIMESTAMP_FORMAT", TIMESTAMP_FORMAT);
         model.addAttribute("DATE_FORMAT", WEATHER_CARD_FORMAT_DATE);

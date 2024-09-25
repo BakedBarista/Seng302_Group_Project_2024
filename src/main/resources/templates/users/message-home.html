@@ -47,20 +47,23 @@
             </div>
             <div th:if="${!#lists.isEmpty(recentChats)}">
                 <div id="chatSectionMobile" th:each="chat : ${recentChats}" class="border-bottom" style="height: 125px;">
-                    <div th:id="${chat.key.id}" class="h-100">
+                    <div th:id="${chat.getKey().id}" class="h-100">
                         <form th:action="@{/message-home}" method="post" class="d-flex align-items-center w-100 h-100">
-                            <input type="hidden" name="userId" th:value="${chat.key.id}"/>
+                            <input type="hidden" name="userId" th:value="${chat.getKey().id}" />
                             <button class="btn btn-link text-decoration-none text-dark w-100 open-chat">
                                 <div class="d-flex align-items-center">
                                     <img class="rounded-circle border border-dark"
-                                         th:src="@{'/users/' + ${chat.key.id} + '/profile-picture'}"
+                                         th:src="@{'/users/' + ${chat.getKey().id} + '/profile-picture'}"
                                          style="width: 50px; height: 50px;" alt="profile picture">
                                     <div class="m-3 text-start">
-                                        <h6 th:text="${chat.key.fullName}"></h6>
-                                        <div th:if="${chat.value != null && chat.value == ''}">
+                                        <h6 th:text="${chat.getKey().fullName}"></h6>
+                                        <div th:if="${(chat.getValue().messageContent) != null && (chat.getValue().messageContent) == ''}">
                                             <p>Image sent.</p>
                                         </div>
-                                        <p th:text="${chat.value}" th:title="${chat.value}" class="text-truncate m-0" style="max-width: 200px;"></p>
+                                        <p th:text="${chat.getValue().messageContent}" 
+                                           th:title="${chat.getValue().messageContent}" 
+                                           class="text-truncate m-0" 
+                                           style="max-width: 200px;"></p>
                                     </div>
                                 </div>
                             </button>
@@ -82,17 +85,23 @@
         </div>
         <div th:if="${!#lists.isEmpty(recentChats)}">
             <div id="chatSection" th:each="chat : ${recentChats}" class="border-bottom" style="height: 125px;">
-                <div th:id="${chat.key.id + 'Mobile'}" class="h-100">
+                <div th:id="${chat.getKey().id + 'Mobile'}" class="h-100">
                     <form th:action="@{/message-home}" method="post" class="d-flex align-items-center w-100 h-100">
-                        <input type="hidden" name="userId" th:value="${chat.key.id}"/>
+                        <input type="hidden" name="userId" th:value="${chat.getKey().id}"/>
                         <button class="btn btn-link text-decoration-none text-dark w-100 open-chat">
                             <div class="d-flex align-items-center">
                                 <img class="rounded-circle border border-dark"
-                                     th:src="@{'/users/' + ${chat.key.id} + '/profile-picture'}"
+                                     th:src="@{'/users/' + ${chat.getKey().id} + '/profile-picture'}"
                                      style="width: 50px; height: 50px;" alt="profile picture">
                                 <div class="m-3 text-start">
-                                    <h6 th:text="${chat.key.fullName}"></h6>
-                                    <p th:text="${chat.value}" th:title="${chat.value}" class="text-truncate m-0" style="max-width: 200px;"></p>
+                                    <h6 th:text="${chat.getKey().fullName}"></h6>
+                                    <div th:if="${(chat.getValue().messageContent) != null && (chat.getValue().messageContent) == ''}">
+                                        <p>Image sent.</p>
+                                    </div>
+                                    <p th:text="${chat.getValue().messageContent}" 
+                                        th:title="${chat.getValue().messageContent}" 
+                                        class="text-truncate m-0" 
+                                        style="max-width: 200px;"></p>
                                 </div>
                             </div>
                         </button>
