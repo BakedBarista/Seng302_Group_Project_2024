@@ -17,7 +17,6 @@ import java.util.Optional;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.entity.Friends.Status.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.ignoreStubs;
 
 @DataJpaTest
 @Import(FriendService.class)
@@ -255,7 +254,7 @@ public class FriendsServiceTest {
 
         var pendingList = friendService.getPendingRequestGardenUser(friends, testUser2.getId());
         assertEquals(1, pendingList.size());
-        assertTrue(!pendingList.contains(testUser2));
+        assertFalse(pendingList.contains(testUser2));
 
     }
 

@@ -237,10 +237,6 @@ h1, h2, h3, h4, h5, h6 {
     margin: 0 var(--gg-nav-drawer-padding);
 }
 
-.nav-drawer div {
-    margin: 0 var(--gg-nav-drawer-padding);
-}
-
 .nav-drawer .main-list {
     flex-grow: 1;
     margin-top: 40px;
@@ -931,7 +927,7 @@ h1, h2, h3, h4, h5, h6 {
 .progress {
     width: 87%;
     height: 25px;
-    background: white;
+    background: #e7d6a8;
     border-radius: 15px;
     margin-bottom: 10px;
     overflow: visible;
@@ -941,9 +937,9 @@ h1, h2, h3, h4, h5, h6 {
     border-radius: 15px;
     position: relative;
     height: 100%;
-    background: #e7d6a8;
     overflow: visible;
 }
+
 .progress .progress-icon,
 .progress .progress-value{
     border-radius: 50%;
@@ -951,4 +947,52 @@ h1, h2, h3, h4, h5, h6 {
     height: 20px;
     position: absolute;
     right: -4px;
+}
+
+.flip-card.swipe-right {
+    animation: flip-card-swipe-right 1s ease-in-out;
+    transform-origin: center 200%;
+}
+
+.flip-card.swipe-left {
+    animation: flip-card-swipe-left 1s ease-in-out;
+    transform-origin: center 200%;
+}
+
+@keyframes flip-card-swipe-right {
+    0% {
+        transform: none;
+        opacity: 1;
+    }
+    49% {
+        transform: rotate(30deg);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    100% {
+        transform: none;
+        opacity: 1;
+    }
+}
+
+@keyframes flip-card-swipe-left {
+    0% {
+        transform: none;
+        opacity: 1;
+    }
+    49% {
+        transform: rotate(-30deg);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    100% {
+        transform: none;
+        opacity: 1;
+    }
 }

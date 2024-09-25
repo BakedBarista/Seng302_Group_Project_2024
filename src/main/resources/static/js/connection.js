@@ -41,8 +41,31 @@ document.addEventListener('DOMContentLoaded', function() {
         // Update the progress bar used as the compatibility measure
         const progressBar = document.querySelector('.progress-bar');
         progressBar.style.width = `${user.compatibility}%`;
+
+        if (user.compatibility <= 30) {
+            progressBar.style.background = '#d47b7b';
+        } else if (user.compatibility <= 60) {
+            progressBar.style.background = '#cb9f03';
+        } else {
+            progressBar.style.background = '#93d77b';
+        }
+
     }
     showCurrentUserCard();
+
+    async function nextUser(swipeDirection) {
+        userIndex++;
+
+        card.classList.add(swipeDirection);
+        await delay(500);
+        showCurrentUserCard();
+        await delay(500);
+        card.classList.remove(swipeDirection);
+    }
+
+    function delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
 
     if (declineButton) {
         declineButton.addEventListener('click', function(event) {
@@ -76,8 +99,8 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('action', 'accept');
         formData.append('id', currentUser()?.id); // this needs to be the id of user.
 
-        userIndex++;
-        showCurrentUserCard();
+        navigator.vibrate([100, 100, 100]);
+        nextUser('swipe-right');
 
         sendPost(formData);
     }
@@ -87,8 +110,8 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('action', 'decline');
         formData.append('id', currentUser()?.id); // this needs to be the id of user.
 
-        userIndex++;
-        showCurrentUserCard();
+        navigator.vibrate([300]);
+        nextUser('swipe-left');
 
         sendPost(formData);
     }

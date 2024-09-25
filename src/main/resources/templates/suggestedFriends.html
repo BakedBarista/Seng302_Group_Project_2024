@@ -41,7 +41,7 @@
 <body>
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 <main class="d-flex flex-column align-items-center justify-content-center" style="margin: 10px">
-    <h1 class="my-3 text-center">Suggested Connections</h1>
+    <h1 class="mb-3 mt-md-3 text-center">Suggested Connections</h1>
     <div id="card" class="col-sm-10 flip-card flex-grow-1 flex-column">
         <div class="flip-card-inner border-0 w-100 card" th:if="${name != null}">
             <div class="flip-card-front d-flex justify-content-between flex-column px-3 py-2 shadow" style="border-radius: 30px; min-height: 100%;">
@@ -50,13 +50,6 @@
                         <img
                                 th:src="@{/icons/flip-card.svg}"
                                 alt="Flip card"
-                                style="height: 35px; width:35px"
-                        />
-                    </button>
-                    <button class="upper-control" data-bs-toggle="tooltip" title="Skip user">
-                        <img
-                                th:src="@{/icons/skip-connection.svg}"
-                                alt="Skip user"
                                 style="height: 35px; width:35px"
                         />
                     </button>
@@ -106,24 +99,10 @@
                                 style="height: 35px; width:35px"
                         />
                     </button>
-                    <button class="upper-control" data-bs-toggle="tooltip" title="Skip user">
-                        <img
-                                th:src="@{/icons/skip-connection.svg}"
-                                alt="Skip user"
-                                style="height: 35px; width:35px"
-                        />
-                    </button>
                 </div>
-                <div class="d-flex flex-column flex-grow-1">
-                    <h5 class="m-2 mb-1 about-me text-white">My Favourite Garden</h5>
-                    <div id="favouriteGarden"></div>
-                    <div class="flex-grow-1"></div>
-                    <h5 class="m-2 mb-1 about-me text-white">My Favourite Plants</h5>
-                    <div id="favouritePlants"></div>
-                    <div class="flex-grow-1"></div>
-
+                <div class="d-flex flex-column flex-grow-1 overflow-y-auto">
                     <!--compatibility score-->
-                    <h5 class="m-2 mb-1 about-me text-white">Compatibility</h5>
+                    <h5 class="m-2 mb-1 about-me text-white">Your compatibility score</h5>
                     <div class="container" style="padding-left: 50px;padding-top: 10px;padding-bottom: 30px;">
                         <div class="progress">
                             <div class="progress-bar" id="progress-bar">
@@ -132,12 +111,19 @@
                                          id="compatibility-icon"/>
                                 </div>
                                 <div class="progress-value" style="overflow: visible; right: -18px; top: 4px">
-                                    <h6 class="mb-1 text" style="color: #857a55">
-                                        <span id="cardCompatibility">&hellip;</span></h6>
+                                    <h6 class="mb-1 text" style="color: #353535">
+                                        <span id="cardCompatibility" style="font-weight: bolder">&hellip;</span></h6>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    <h5 class="m-2 mb-1 about-me text-white">My Favourite Garden</h5>
+                    <div id="favouriteGarden"></div>
+                    <div class="flex-grow-1"></div>
+                    <h5 class="m-2 mb-1 about-me text-white">My Favourite Plants</h5>
+                    <div id="favouritePlants"></div>
+                    <div class="flex-grow-1"></div>
                 </div>
 
 
