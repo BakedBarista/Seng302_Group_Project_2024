@@ -47,10 +47,12 @@ class MessageWebSocketHandlerTest {
     @Test
     void whenPing_thenPong() throws IOException {
         TextMessage subscribe = new TextMessage("{\"type\":\"ping\"}");
-
+        when(session1.isOpen()).thenReturn(true);
+        when(session1.getPrincipal()).thenReturn(principal1);
+        when(principal1.getName()).thenReturn("1");
         testWebSocketHandler.handleTextMessage(session1, subscribe);
 
-        verify(session1, times(1)).sendMessage(new TextMessage("{\"type\":\"pong\"}"));
+        verify(session1, times(1)).sendMessage(new TextMessage("{\"type\":\"pong\",\"unreadMessageCount\":0}"));
     }
 
     @Test
