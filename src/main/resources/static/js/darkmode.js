@@ -10,10 +10,14 @@
 
 
     const navLogo = document.getElementById("navbarLogo");
+    const locationIcon = document.getElementById("locationIcon");
     const setTheme = theme => {
         document.documentElement.setAttribute('data-bs-theme', theme)
         setStoredTheme(theme);
-        navLogo.src = theme === 'dark' ? `${baseUrl}img/yellow-logo.svg` : `${baseUrl}img/logo.svg`;
+        if(navLogo != null) {
+            navLogo.src = theme === 'dark' ? `${baseUrl}img/yellow-logo.svg` : `${baseUrl}img/logo.svg`;
+            locationIcon
+        }
         document.cookie = `theme=${theme}; path=/`;
     }
 

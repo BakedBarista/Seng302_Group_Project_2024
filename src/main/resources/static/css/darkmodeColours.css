@@ -53,4 +53,30 @@
         background-color: #464444;
     }
 
+    .send-message-div,
+    .autocomplete-items {
+        background-color: #302E2E;
+    }
+
+    #yourPlantsTitleDiv {
+        background-color: #464444;
+    }
+    .friend-header,
+    #plantNameEach {
+        color: var(--gg-heading-colour);
+    }
+
+    .active-chat {
+        background-color: #464444;
+    }
+
+    #messagePreview {
+        color: white;
+    }
+
+    #messageDate {
+        color:white;
+    }
+
+
 }

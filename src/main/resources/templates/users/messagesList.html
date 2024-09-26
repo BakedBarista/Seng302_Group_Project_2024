@@ -1,5 +1,5 @@
 <div th:each="messages: ${messagesMap}">
-    <div class="text-center mb-2">[[${dateFormatter.format(messages.key, DATE_FORMAT)}]]</div>
+    <div th:id="messageDate" class="text-center mb-2">[[${dateFormatter.format(messages.key, DATE_FORMAT)}]]</div>
     <div th:each="message : ${messages.value}">
         <!--friends msg-->
         <div th:if="${message.sender == sentToUser.id}" class="d-flex">
