@@ -75,7 +75,7 @@ public class U800_3_7_UnreadMessageFeature {
         GardenUser user = previewMap.keySet().stream()
                 .filter(gardenUser -> Objects.equals(gardenUser.getId(), senderId)).findFirst().get();
 
-        Assertions.assertEquals(badgeInt, previewMap.get(user).unreadMessages());
+        Assertions.assertEquals(badgeInt, previewMap.get(user).getUnreadMessages());
     }
 
     @Then("I do not see an unread message badge next to {string}")
@@ -89,6 +89,6 @@ public class U800_3_7_UnreadMessageFeature {
         GardenUser user = previewMap.keySet().stream()
                 .filter(gardenUser -> Objects.equals(gardenUser.getId(), senderId)).findFirst().get();
 
-        Assertions.assertEquals(badgeInt, previewMap.get(user).unreadMessages());
+        Assertions.assertEquals(badgeInt, previewMap.get(user).getUnreadMessages());
     }
 }

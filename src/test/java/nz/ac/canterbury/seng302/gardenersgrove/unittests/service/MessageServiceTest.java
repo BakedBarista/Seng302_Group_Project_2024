@@ -156,7 +156,7 @@ class MessageServiceTest {
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals("Hey", result.get(user).lastMessage());
+        assertEquals("Hey", result.get(user).getLastMessage());
     }
 
     @Test
