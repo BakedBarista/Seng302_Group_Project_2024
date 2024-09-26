@@ -67,6 +67,17 @@ class MessageWebSocketHandlerTest {
     }
 
     @Test
+    void whenMarkRead_thenSendsState() throws IOException {
+        TextMessage subscribe = new TextMessage("{\"type\":\"markRead\"}");
+        when(session1.isOpen()).thenReturn(true);
+        when(session1.getPrincipal()).thenReturn(principal1);
+        when(principal1.getName()).thenReturn("1");
+        testWebSocketHandler.handleTextMessage(session1, subscribe);
+
+        verify(session1, times(1)).sendMessage(new TextMessage("{\"type\":\"updateUnread\",\"unreadMessageCount\":0}"));
+    }
+
+    @Test
     void whenSendMessage_thenSavesMessage() throws IOException {
         when(session1.isOpen()).thenReturn(true);
         when(session1.getPrincipal()).thenReturn(principal1);
