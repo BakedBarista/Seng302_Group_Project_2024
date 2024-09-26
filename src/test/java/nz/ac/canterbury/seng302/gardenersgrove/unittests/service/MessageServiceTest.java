@@ -365,4 +365,17 @@ class MessageServiceTest {
         Long result = messageService.getUnreadMessageCount(userId);
         assertEquals(Long.valueOf(1), result);
     }
+
+    @Test
+    void whenCallingRemoveHistory_thenMessagesAreDeleted() {
+        Long receiverId = 1L;
+        Long userId = 2L;
+        Message message = new Message();
+        when(messageRepository.findMessagesBetweenUsers(userId,receiverId)).thenReturn(List.of(message));
+        messageService.removeMessageHistory(userId,receiverId);
+
+        verify(messageRepository, times(1)).findMessagesBetweenUsers(userId,receiverId);
+        verify(messageRepository, times(1)).deleteAll(List.of(message));
+
+    }
 }

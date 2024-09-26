@@ -337,4 +337,15 @@ public class MessageService {
 
     }
 
+    /**
+     * Removes chat history between two users
+     * @param userId UserId
+     * @param friendId FriendId
+     */
+    public void removeMessageHistory(Long userId, Long friendId) {
+        logger.info("removing history");
+        List<Message> messages = messageRepository.findMessagesBetweenUsers(userId,friendId);
+        messageRepository.deleteAll(messages);
+    }
+
 }

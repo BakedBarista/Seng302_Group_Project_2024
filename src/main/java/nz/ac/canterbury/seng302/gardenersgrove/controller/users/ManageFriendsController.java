@@ -31,6 +31,7 @@ public class ManageFriendsController {
 
     private MessageService messageService;
 
+
     @Autowired
     public ManageFriendsController(FriendService friendService, GardenUserService userService,MessageService messageService) {
         this.userService = userService;
@@ -269,6 +270,8 @@ public class ManageFriendsController {
     public String removeFriend(Authentication authentication, @RequestParam(name = "friendId") Long friendId) {
         Long loggedInUserId = (Long) authentication.getPrincipal();
         friendService.removeFriend(loggedInUserId, friendId);
+        messageService.removeMessageHistory(loggedInUserId,friendId);
+
         return "redirect:/users/manage-friends";
     }
 

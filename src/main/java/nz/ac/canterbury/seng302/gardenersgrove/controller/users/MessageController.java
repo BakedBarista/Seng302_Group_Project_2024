@@ -188,7 +188,11 @@ public class MessageController {
             HttpSession session,
             @RequestParam(value = "addImage", required = false) MultipartFile file) {
         logger.info("POST send message to {}", receiver);
-
+        Long sender = (Long) authentication.getPrincipal();
+        Friends friends = friendService.getFriendship(sender,receiver);
+        if (!friends.getStatus().toString().equals("ACCEPTED")) {
+            return "users/message-home";
+        }
         String tokenFromForm = messageDTO.getSubmissionToken();
         String sessionToken = (String) session.getAttribute(SUBMISSION_TOKEN);
 
@@ -208,7 +212,6 @@ public class MessageController {
         }
 
         if (sessionToken != null && sessionToken.equals(tokenFromForm)) {
-            Long sender = (Long) authentication.getPrincipal();
 
             if (file != null && !file.isEmpty()) {
                 logger.info("Processing image upload for user {}", sender);
