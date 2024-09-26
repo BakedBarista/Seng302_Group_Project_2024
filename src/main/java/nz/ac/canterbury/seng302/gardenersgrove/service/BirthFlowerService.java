@@ -53,10 +53,20 @@ public class BirthFlowerService {
 
     /**
      * Get the list of possible flowers for a birth month
+     * @param date users birthdate (usually)
      * @return list of possible flowers
      */
     public List<String> getFlowersByMonth(LocalDate date) {
         Integer month = date.getMonthValue();
         return monthFlowersMap.get(month);
+    }
+
+    /**
+     * Get the default birth flower for a date
+     * @param date users birthdate (usually)
+     * @return single flower that is default
+     */
+    public String getDefaultBirthFlower(LocalDate date) {
+        return getFlowersByMonth(date).get(0);
     }
 }
