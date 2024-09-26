@@ -219,6 +219,10 @@ public class MessageService {
     public Map<GardenUser, ChatPreview> convertToPreview(Long receiverId, Map<Long, Message> recentMessagesMap) {
         Map<GardenUser, ChatPreview> recentChats = new LinkedHashMap<>();
 
+        if (recentMessagesMap == null) {
+            return recentChats;
+        }
+
         for (Map.Entry<Long, Message> entry : recentMessagesMap.entrySet()) {
             Long senderId = entry.getKey();
 

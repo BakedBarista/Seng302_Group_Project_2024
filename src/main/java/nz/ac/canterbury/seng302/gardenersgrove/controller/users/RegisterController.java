@@ -1,18 +1,5 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
-import java.util.Objects;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -22,8 +9,19 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.URLService;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import java.util.Objects;
 
 /**
  * Controller for registering new users
@@ -144,12 +142,6 @@ public class RegisterController {
             GardenUser user = new GardenUser("John", "Doe", "john.doe@gmail.com", password,
                     LocalDate.of(1970, 1, 1));
             userService.addUser(user);
-            GardenUser user1 = new GardenUser("Immy", null, "immy@gmail.com", password,
-                    LocalDate.of(1970, 1, 1));
-            userService.addUser(user1);
-            GardenUser user2 = new GardenUser("Liam", "Doe", "liam@gmail.com", password,
-                    LocalDate.of(1970, 1, 1));
-            userService.addUser(user2);
             GardenUser user3 = new GardenUser("Liam", "Doe", "liam2@gmail.com", password,
                     LocalDate.of(1970, 1, 1));
             userService.addUser(user3);

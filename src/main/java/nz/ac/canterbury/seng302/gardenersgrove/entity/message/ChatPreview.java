@@ -1,9 +1,24 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity.message;
 
 /**
- * Simple store for storing data that is shown on the feed
- * @param lastMessage string of the last sent messages
- * @param unreadMessages number of messages unread by the viewing user
+ * Simple class for storing data that is shown on the feed
  */
-public record ChatPreview(String lastMessage, Long unreadMessages) {
+public class ChatPreview {
+
+    private final String lastMessage;
+
+    private final Long unreadMessages;
+
+    public ChatPreview(String lastMessage, Long unreadMessages) {
+        this.lastMessage = lastMessage;
+        this.unreadMessages = unreadMessages;
+    }
+
+    public Long getUnreadMessages() {
+        return unreadMessages;
+    }
+
+    public String getLastMessage() {
+        return lastMessage;
+    }
 }
