@@ -5,35 +5,32 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Message;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.MessageDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.message.ChatPreview;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.message.Message;
 import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.MessageService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.ThymeLeafDateFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import org.springframework.validation.BindingResult;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.TIMESTAMP_FORMAT;
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.WEATHER_CARD_FORMAT_DATE;
-import nz.ac.canterbury.seng302.gardenersgrove.service.ThymeLeafDateFormatter;
-import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 public class MessageController {
@@ -95,9 +92,13 @@ public class MessageController {
     public String messageHome(Authentication authentication,
             Model model,
             HttpSession session) {
-            
+
+        logger.info("GET /message-home");
+
+        Long loggedInUserId = (Long) authentication.getPrincipal();
         Long requestedUserId = getLatestRequestedUserId(authentication);
-        
+        messageService.setReadTime(loggedInUserId, requestedUserId);
+
         return setupMessagePage(requestedUserId, authentication, model, session);
     }
 
@@ -139,7 +140,7 @@ public class MessageController {
 
         Map<Long, Message> recentMessagesMap = messageService.getLatestMessages(allMessages, loggedInUserId);
 
-        Map<GardenUser, String> recentChats = messageService.convertToPreview(recentMessagesMap);
+        Map<GardenUser, ChatPreview> recentChats = messageService.convertToPreview(loggedInUserId, recentMessagesMap);
 
         messageService.setupModelAttributes(model, loggedInUserId, requestedUserId, sentToUser, recentChats,
                 submissionToken);
@@ -244,7 +245,7 @@ public class MessageController {
 
         Long loggedInUserId = (Long) authentication.getPrincipal();
         GardenUser sentToUser = userService.getUserById(requestedUserId);
-        
+
         messageService.setReadTime(loggedInUserId, requestedUserId);
 
         // need to be friends to send a message
@@ -262,30 +263,6 @@ public class MessageController {
         return "users/messagesList";
     }
 
-    @PostConstruct
-    public void dummyMessages() {
-        String token = "token";
-        GardenUser u1 = userService.getUserByEmail("stynesluke@gmail.com");
-        GardenUser u2 = userService.getUserByEmail("jan.doe@gmail.com");
-        if (u1 != null && u2 != null) {
-            messageService.sendMessageWithTimestamp(u1.getId(), u2.getId(),
-                    new MessageDTO("Hello I am Luke Stynes! :)", token), LocalDateTime.now().minusDays(2));
-            messageService.sendMessageWithTimestamp(u2.getId(), u1.getId(),
-                    new MessageDTO("Hello Luke Stynes, I am Jan Doe.", token), LocalDateTime.now().minusDays(1));
-            messageService.sendMessageWithTimestamp(u1.getId(), u2.getId(),
-                    new MessageDTO("Wow! What great bananas you grow Jan Doe.", token),
-                    LocalDateTime.now().minusDays(1));
-            messageService.sendMessageWithTimestamp(u1.getId(), u2.getId(),
-                    new MessageDTO(
-                            "I'm sending a really really long message here so that Ryan does not have to manually " +
-                                    "write in a really long message each time he runs the application locally, it is really "
-                                    +
-                                    "annoying so he asked me to write one that goes past the end of the screen",
-                            token),
-                    LocalDateTime.now());
-        }
-    }
-
     /**
      * Processes a POST request to update the message home view.
      *
@@ -301,18 +278,18 @@ public class MessageController {
             Model model,
             HttpSession session) {
 
-        logger.info("POST message Home");
+        logger.info("POST /message-home");
         logger.info(String.valueOf(requestedUserId));
 
         Long loggedInUserId = (Long) authentication.getPrincipal();
 
         List<Message> allMessages = messageService.findAllRecentChats(loggedInUserId);
 
+        messageService.setReadTime(loggedInUserId, requestedUserId);
+
         if (!allMessages.isEmpty()) {
-
             Map<Long, Message> recentMessagesMap = messageService.getLatestMessages(allMessages, loggedInUserId);
-
-            Map<GardenUser, String> recentChats = messageService.convertToPreview(recentMessagesMap);
+            Map<GardenUser, ChatPreview> recentChats = messageService.convertToPreview(loggedInUserId, recentMessagesMap);
 
             String submissionToken = UUID.randomUUID().toString();
             session.setAttribute(SUBMISSION_TOKEN, submissionToken);

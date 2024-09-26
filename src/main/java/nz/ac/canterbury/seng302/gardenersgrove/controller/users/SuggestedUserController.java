@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.SuggestedUserDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.service.CompatibilityService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.SuggestedUserService;
@@ -38,16 +39,18 @@ public class SuggestedUserController {
     private final FriendService friendService;
     private final GardenUserService gardenUserService;
     private final SuggestedUserService suggestedUserService;
+    private final CompatibilityService compatibilityService;
     private final ObjectMapper objectMapper;
     private final TemplateEngine templateEngine;
 
     private static final String SUCCESS = "success";
 
     @Autowired
-    public SuggestedUserController(FriendService friendService, GardenUserService gardenUserService, SuggestedUserService suggestedUserService, ObjectMapper objectMapper, TemplateEngine templateEngine) {
+    public SuggestedUserController(FriendService friendService, GardenUserService gardenUserService, SuggestedUserService suggestedUserService, CompatibilityService compatibilityService, ObjectMapper objectMapper, TemplateEngine templateEngine) {
         this.friendService = friendService;
         this.gardenUserService = gardenUserService;
         this.suggestedUserService = suggestedUserService;
+        this.compatibilityService = compatibilityService;
         this.objectMapper = objectMapper;
         this.templateEngine = templateEngine;
     }
@@ -82,7 +85,7 @@ public class SuggestedUserController {
             model.addAttribute("description", suggestedUsers.get(0).getDescription());
             logger.info("Description: {}", suggestedUsers.get(0).getDescription());
 
-            List<SuggestedUserDTO> userDtos = suggestedUsers.stream().map((GardenUser u) -> makeSuggestedUserDTO(u, request, response)).toList();
+            List<SuggestedUserDTO> userDtos = suggestedUsers.stream().map((GardenUser u) -> makeSuggestedUserDTO(user, u, request, response)).toList();
             String jsonUsers = objectMapper.writeValueAsString(userDtos);
             model.addAttribute("userList", jsonUsers);
         } catch (Exception e) {
@@ -91,9 +94,12 @@ public class SuggestedUserController {
         return "suggestedFriends";
     }
 
-    private SuggestedUserDTO makeSuggestedUserDTO(GardenUser user, HttpServletRequest request,
+    private SuggestedUserDTO makeSuggestedUserDTO(GardenUser self, GardenUser user, HttpServletRequest request,
             HttpServletResponse response) {
         SuggestedUserDTO dto = new SuggestedUserDTO(user);
+
+        double compatibility = compatibilityService.friendshipCompatibilityQuotient(self, user);
+        dto.setCompatibility((int) Math.round(compatibility));
 
         Map<String, Object> variables = new HashMap<>();
         variables.put("userId", user.getId());

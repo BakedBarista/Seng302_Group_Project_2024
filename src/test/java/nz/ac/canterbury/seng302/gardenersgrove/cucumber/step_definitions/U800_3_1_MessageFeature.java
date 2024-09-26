@@ -8,7 +8,8 @@ import io.cucumber.java.en.When;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.MessageController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Message;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.message.ChatPreview;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.message.Message;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.MessageDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.MessageRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
@@ -183,7 +184,7 @@ public class U800_3_1_MessageFeature {
         result = messageController.messageHomeSend(receiverId, authentication, model, session);
         List<Message> allMessages = messageService.findAllRecentChats(myId);
         Map<Long, Message> recentMessagesMap = messageService.getLatestMessages(allMessages, myId);
-        Map<GardenUser, String> recentChats = messageService.convertToPreview(recentMessagesMap);
+        Map<GardenUser, ChatPreview> recentChats = messageService.convertToPreview(receiverId, recentMessagesMap);
 
         assertEquals(expectedChatCount, recentChats.size());
         assertEquals("users/message-home", result);
