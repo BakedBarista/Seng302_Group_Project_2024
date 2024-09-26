@@ -102,23 +102,15 @@
                                 <div class="m-3 text-start">
                                     <h6 th:text="${chat.getKey().fullName}"></h6>
                                     <div th:if="${(chat.getValue().messageContent) != null && (chat.getValue().messageContent) == ''}">
-                                        <p th:if="${chat.getValue().receiver == loggedInUserId}">
+                                        <p th:id="${'messagePreviewImage-' + chat.getKey().id}">
                                             Image 📷
-                                        </p>
-                                        <p th:if="${chat.getValue().sender == loggedInUserId}">
-                                            You: Image 📷
                                         </p>
                                     </div>
 
-                                    <p th:if="${chat.getValue().receiver == loggedInUserId}" th:text="${chat.getValue().messageContent}" 
+                                    <p th:id="${'messagePreview-' + chat.getKey().id}" th:text="${chat.getValue().messageContent}"
                                         th:title="${chat.getValue().messageContent}" 
                                         class="text-truncate m-0" 
                                         style="max-width: 200px;"></p>
-
-                                    <p th:if="${chat.getValue().sender == loggedInUserId}" th:text="'You: ' + ${chat.getValue().messageContent}" 
-                                    th:title="${chat.getValue().messageContent}" 
-                                    class="text-truncate m-0" 
-                                    style="max-width: 200px;"></p>
                                 </div>
                             </div>
                         </button>

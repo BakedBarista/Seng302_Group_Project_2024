@@ -73,7 +73,51 @@ async function updateMessages() {
 
 async function updateRecentChat() {
     const res = await fetch(`${apiBaseUrl}/messages/recent-chats`);
-    console.log(await res.json())
+    const data = await res.json();
+    console.log(data);
+
+    for (const [chatId, chat] of Object.entries(data)) {
+        console.log("ID: ", chatId);  // Access the chat ID
+        console.log("CONTENT: ", chat.messageContent);  // Access message content
+        updateMessagePreview(chatId, chat.messageContent);
+    }
+}
+
+function updateMessagePreview(userId, newMessageContent) {
+    // Determine the correct element ID based on whether the logged-in user is the sender or receiver
+    const previewId = `messagePreview-${userId}`;
+
+    const previewIdImage = `messagePreviewImage-${userId}`;
+
+    console.log("PREVIEW ID:", previewId);
+    console.log("IMAGE ID:", previewIdImage);
+
+    // If an image
+    if (newMessageContent == null) {
+        console.log("DOING AN IMAGE");
+        // Find the element by its ID
+        const messagePreviewElement = document.getElementById(previewIdImage);
+
+        if (messagePreviewElement) {
+            messagePreviewElement.textContent = `Image 📷`;
+            messagePreviewElement.title = newMessageContent;
+            // messagePreviewElementImage.className = "d-block";
+        }
+    } else {
+        const messagePreviewElement = document.getElementById(previewId);
+
+        if (messagePreviewElement) {
+            messagePreviewElement.textContent = newMessageContent;
+            messagePreviewElement.title = newMessageContent;
+        }
+
+        // const messagePreviewElementImage = document.getElementById(previewIdImage);
+        //
+        // if (messagePreviewElementImage) {
+        //     messagePreviewElementImage.className = "d-none";
+        // }
+    }
+
 }
 
 function isScrolledToBottom(container) {
