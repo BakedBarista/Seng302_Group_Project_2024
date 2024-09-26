@@ -92,9 +92,8 @@ class MessageControllerTest {
         Long sender = 1L;
         Long receiver = 2L;
         MessageDTO messageDTO = new MessageDTO("Hello", "token");
-
         Mockito.when(authentication.getPrincipal()).thenReturn(sender);
-        Mockito.when(mockedFriendService.getFriendship(any(), any())).thenReturn(new Friends());
+        Mockito.when(mockedFriendService.getFriendship(any(), any())).thenReturn(new Friends(new GardenUser(), new GardenUser(),ACCEPTED));
         Mockito.when(gardenUserService.getUserById(sender)).thenReturn(new GardenUser());
         Mockito.when(bindingResult.hasErrors()).thenReturn(false);
 
@@ -110,7 +109,7 @@ class MessageControllerTest {
         MessageDTO messageDTO = new MessageDTO("Hello", "token");
         session.setAttribute("submissionToken", "token");
         Mockito.when(authentication.getPrincipal()).thenReturn(sender);
-        Mockito.when(mockedFriendService.getFriendship(any(), any())).thenReturn(new Friends());
+        Mockito.when(mockedFriendService.getFriendship(any(), any())).thenReturn(new Friends(new GardenUser(), new GardenUser(),ACCEPTED));
         Mockito.when(gardenUserService.getUserById(sender)).thenReturn(new GardenUser());
         Mockito.when(bindingResult.hasErrors()).thenReturn(false);
 
@@ -171,7 +170,7 @@ class MessageControllerTest {
         session.setAttribute("submissionToken", "token");
 
         Mockito.when(authentication.getPrincipal()).thenReturn(sender);
-        Mockito.when(mockedFriendService.getFriendship(any(), any())).thenReturn(new Friends());
+        Mockito.when(mockedFriendService.getFriendship(any(), any())).thenReturn(new Friends(new GardenUser(), new GardenUser(),ACCEPTED));
         Mockito.when(gardenUserService.getUserById(sender)).thenReturn(new GardenUser());
         Mockito.when(bindingResult.hasErrors()).thenReturn(true);
 
@@ -201,7 +200,7 @@ class MessageControllerTest {
         MockMultipartFile file = new MockMultipartFile("image", "test.jpg", "image/jpeg", "test".getBytes());
         session.setAttribute("submissionToken", "token");
         Mockito.when(authentication.getPrincipal()).thenReturn(sender);
-        Mockito.when(mockedFriendService.getFriendship(any(), any())).thenReturn(new Friends());
+        Mockito.when(mockedFriendService.getFriendship(any(), any())).thenReturn(new Friends(new GardenUser(), new GardenUser(),ACCEPTED));
         Mockito.when(gardenUserService.getUserById(sender)).thenReturn(new GardenUser());
         Mockito.when(bindingResult.hasErrors()).thenReturn(false);
         messageController.sendMessage(receiver, messageDTO, bindingResult, authentication, model, session, file);
@@ -216,7 +215,7 @@ class MessageControllerTest {
         MockMultipartFile file = new MockMultipartFile("text", "test.txt", "text", "test".getBytes());
         session.setAttribute("submissionToken", "token");
         Mockito.when(authentication.getPrincipal()).thenReturn(sender);
-        Mockito.when(mockedFriendService.getFriendship(any(), any())).thenReturn(new Friends());
+        Mockito.when(mockedFriendService.getFriendship(any(), any())).thenReturn(new Friends(new GardenUser(), new GardenUser(),ACCEPTED));
         Mockito.when(gardenUserService.getUserById(sender)).thenReturn(new GardenUser());
         Mockito.when(bindingResult.hasErrors()).thenReturn(false);
         Mockito.doThrow(new IOException("Invalid file type"))
