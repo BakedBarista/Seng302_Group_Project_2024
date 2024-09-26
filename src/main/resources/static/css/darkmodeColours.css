@@ -1,5 +1,6 @@
 :root {
     --gg-white: #F5F5F5;
+    --gg-heading-colour: #F8F3C4;
 
 }
 
@@ -24,13 +25,21 @@
     }
 
     h1, h2, h3, h4, h5, h6 {
-        color: #F8F3C4;
+        color: var(--gg-heading-colour);
     }
 
     .btn-outline-secondary {
         --bs-btn-color: var(--gg-white);
         --bs-btn-border-color: var(--gg-white);
 
+    }
+
+    .btn-outline-primary {
+        background-color: var(--gg-heading-colour);
+    }
+
+    .btn-outline-primary:hover {
+        background-color: #CB9F03;
     }
 
     .required-field::after {
