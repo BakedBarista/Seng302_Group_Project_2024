@@ -4,6 +4,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.gardens;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.Cookie;
 import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.GardenDTO;
@@ -206,6 +207,8 @@ public class GardenController {
     public ResponseEntity<byte[]> gardenImage(@PathVariable("id") long id,
         HttpServletRequest request) {
 
+        Cookie[] cookies = request.getCookies();
+
         logger.info("GET /gardens/" + id + "/garden-image");
 
         Optional<Garden> garden = gardenService.getGardenById(id);
@@ -214,10 +217,21 @@ public class GardenController {
         if (garden.isPresent()) {
             existingGarden = garden.get();
         }
+        String theme = "light"; // default theme
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("theme".equals(cookie.getName())) {
+                    theme = cookie.getValue(); // get the theme value from cookie
+                    break;
+                }
+            }
+        }
+
         // Return the default image if nothing specified
         if (existingGarden.getGardenImage() == null || existingGarden.getGardenImageContentType() == null) {
             logger.info("Returning default plant image");
-            return ResponseEntity.status(302).header(HttpHeaders.LOCATION, request.getContextPath() + "/img/default-garden.svg").build();
+            String defaultImage = theme.equals("dark") ? "/img/default-garden-dark.svg" : "/img/default-garden.svg";
+            return ResponseEntity.status(302).header(HttpHeaders.LOCATION, request.getContextPath() + defaultImage).build();
         }
 
         // Return the saved image from DB

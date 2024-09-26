@@ -1,13 +1,23 @@
 (() => {
+
+
     // Saves the theme to local storage
     const getStoredTheme = () => localStorage.getItem('theme')
-    const setStoredTheme = theme => localStorage.setItem('theme', theme)
+    const setStoredTheme = theme => {
+        localStorage.setItem('theme', theme)
+    }
     const checkboxes = document.getElementsByName("checkbox")
 
+
+    const navLogo = document.getElementById("navbarLogo");
     const setTheme = theme => {
         document.documentElement.setAttribute('data-bs-theme', theme)
         setStoredTheme(theme);
+        navLogo.src = theme === 'dark' ? `${baseUrl}img/yellow-logo.svg` : `${baseUrl}img/logo.svg`;
+        document.cookie = `theme=${theme}; path=/`;
     }
+
+
 
     const loadTheme = () => {
         const storedTheme = getStoredTheme()
@@ -46,4 +56,5 @@
             }
         });
     }
+
 })()
