@@ -48,8 +48,8 @@ public class BirthFlowerServiceTest {
         int month = 1;
         List<String> result = flowerService.getFlowersByMonth(LocalDate.of(2000,month,1));
         Assertions.assertEquals(result.size(), 2);
-        Assertions.assertTrue(result.get(month).contains("Carnation"));
-        Assertions.assertTrue(result.get(month).contains("Snowdrop"));
+        Assertions.assertTrue(result.contains("Carnation"));
+        Assertions.assertTrue(result.contains("Snowdrop"));
     }
 
     @ParameterizedTest
