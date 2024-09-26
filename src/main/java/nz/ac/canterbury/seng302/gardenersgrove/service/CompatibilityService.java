@@ -219,6 +219,7 @@ public class CompatibilityService {
         Double proximityQuotient = calculateProximityQuotient(user1, user2);
         double plantSimilarity = calculatePlantSimilarity(user1, user2);
         Double ageQuotient = calculateAgeQuotient(user1, user2);
+        Double monthQuotient = calculateMonthQuotient(user1, user2);
 
         if (proximityQuotient == null) {
             proximityQuotient = 0.;
@@ -228,7 +229,35 @@ public class CompatibilityService {
             ageQuotient = 0.;
         }
 
-        return 0.4 * proximityQuotient + 0.4 * plantSimilarity + 0.2 * ageQuotient;
+        if (monthQuotient == null) {
+            monthQuotient = 0.;
+        }
+
+        return 0.4 * proximityQuotient + 0.4 * plantSimilarity + 0.2 * ageQuotient + 0.1 * monthQuotient;
+    }
+
+    /**
+     * Calculates the month quotient based on users' birth months
+     *
+     * @param user1 First garden user
+     * @param user2 Second garden user
+     * @return month quotient or null
+     */
+    public Double calculateMonthQuotient(GardenUser user1, GardenUser user2) {
+        if (user1.getDateOfBirth() == null || user2.getDateOfBirth() == null) {
+            return null;
+        }
+
+        int user1Month = user1.getDateOfBirth().getMonthValue();
+        int user2Month = user2.getDateOfBirth().getMonthValue();
+
+        int monthDifference = Math.abs(user1Month - user2Month);
+        if (monthDifference > 6) {
+            monthDifference = 12 - monthDifference;
+        }
+
+        // Comping bens decay for months aswell
+        return 100 * Math.exp(-0.3  * monthDifference);
     }
 
 }

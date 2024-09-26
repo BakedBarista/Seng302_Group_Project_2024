@@ -219,4 +219,33 @@ class CompatibilityServiceUnitTests {
 
         assertEquals(50., result, 10.);
     }
+
+    @ParameterizedTest
+    @CsvSource({
+        "1, 7, 16.5",  
+        "1, 12, 74.1", 
+        "3, 9, 16.5",  
+        "4, 5, 74.1", 
+        "2, 11, 40.7", 
+        "11, 11, 100"
+    })
+    
+    void givenUsersHaveDifferentBirthMonths_whenCalculateMonthQuotient_thenReturnCalculatedValue(int month1, int month2, double expected) {
+        user1.setDateOfBirth(LocalDate.of(2000, month1, 1));
+        user2.setDateOfBirth(LocalDate.of(2000, month2, 1));
+
+        Double result = compatibilityService.calculateMonthQuotient(user1, user2);
+
+        assertEquals(expected, result, 0.1);
+    }
+
+    @Test
+    void givenOneUserHasNullBirthday_whenCalculateMonthQuotient_thenReturnNull() {
+        user1.setDateOfBirth(LocalDate.of(2000, 1, 1));
+        user2.setDateOfBirth(null);
+
+        Double result = compatibilityService.calculateMonthQuotient(user1, user2);
+
+        assertNull(result);
+    }
 }
