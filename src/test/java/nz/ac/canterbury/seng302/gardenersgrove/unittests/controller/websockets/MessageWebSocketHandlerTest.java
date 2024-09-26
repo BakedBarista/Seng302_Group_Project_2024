@@ -52,16 +52,18 @@ class MessageWebSocketHandlerTest {
         when(principal1.getName()).thenReturn("1");
         testWebSocketHandler.handleTextMessage(session1, subscribe);
 
-        verify(session1, times(1)).sendMessage(new TextMessage("{\"type\":\"pong\",\"unreadMessageCount\":0}"));
+        verify(session1, times(1)).sendMessage(new TextMessage("{\"type\":\"pong\"}"));
     }
 
     @Test
     void whenSubscribe_thenSendsState() throws IOException {
         TextMessage subscribe = new TextMessage("{\"type\":\"subscribe\"}");
-
+        when(session1.isOpen()).thenReturn(true);
+        when(session1.getPrincipal()).thenReturn(principal1);
+        when(principal1.getName()).thenReturn("1");
         testWebSocketHandler.handleTextMessage(session1, subscribe);
 
-        verify(session1, times(1)).sendMessage(new TextMessage("{\"type\":\"updateMessages\"}"));
+        verify(session1, times(1)).sendMessage(new TextMessage("{\"type\":\"updateMessages\",\"unreadMessageCount\":0}"));
     }
 
     @Test
@@ -109,7 +111,7 @@ class MessageWebSocketHandlerTest {
         testWebSocketHandler.handleTextMessage(session1, subscribe);
         testWebSocketHandler.handleTextMessage(session1, increment);
 
-        verify(session1, times(2)).sendMessage(new TextMessage("{\"type\":\"updateMessages\"}"));
+        verify(session1, times(2)).sendMessage(new TextMessage("{\"type\":\"updateMessages\",\"unreadMessageCount\":0}"));
     }
 
     @Test
@@ -128,8 +130,8 @@ class MessageWebSocketHandlerTest {
         testWebSocketHandler.handleTextMessage(session2, subscribe);
         testWebSocketHandler.handleTextMessage(session1, increment);
 
-        verify(session1, times(2)).sendMessage(new TextMessage("{\"type\":\"updateMessages\"}"));
-        verify(session2, times(2)).sendMessage(new TextMessage("{\"type\":\"updateMessages\"}"));
+        verify(session1, times(2)).sendMessage(new TextMessage("{\"type\":\"updateMessages\",\"unreadMessageCount\":0}"));
+        verify(session2, times(2)).sendMessage(new TextMessage("{\"type\":\"updateMessages\",\"unreadMessageCount\":0}"));
     }
 
     @Test
@@ -144,7 +146,7 @@ class MessageWebSocketHandlerTest {
         testWebSocketHandler.handleTextMessage(session1, subscribe);
         testWebSocketHandler.handleTextMessage(session1, increment);
 
-        verify(session1, times(1)).sendMessage(new TextMessage("{\"type\":\"updateMessages\"}"));
+        verify(session1, times(1)).sendMessage(new TextMessage("{\"type\":\"updateMessages\",\"unreadMessageCount\":0}"));
     }
 
     @ParameterizedTest
