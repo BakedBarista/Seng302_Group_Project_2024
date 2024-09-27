@@ -73,7 +73,7 @@ deploy-staging:
     paths:
       - build/libs
   only:
-    - no-websockets
+    - dev
 
 deploy-production:
   stage: deploy
