@@ -1,8 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
-import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.websockets.MessageWebSocketHandler;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.MessageDTO;
@@ -15,7 +15,8 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.ThymeLeafDateFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,7 +25,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -39,6 +39,7 @@ public class MessageController {
     private final GardenUserService userService;
     private final FriendService friendService;
     private final MessageService messageService;
+    private final MessageWebSocketHandler messageWebSocketHandler;
 
     private static final String SUBMISSION_TOKEN = "submissionToken";
     private static final String MSG_HOME_ENDPOINT = "users/message-home";
@@ -47,10 +48,12 @@ public class MessageController {
     @Autowired
     public MessageController(GardenUserService userService,
             FriendService friendService,
-            MessageService messageService) {
+            MessageService messageService,
+            MessageWebSocketHandler messageWebSocketHandler) {
         this.userService = userService;
         this.friendService = friendService;
         this.messageService = messageService;
+        this.messageWebSocketHandler = messageWebSocketHandler;
     }
 
     /**
@@ -115,12 +118,15 @@ public class MessageController {
      * @return the view name for the message page or a redirect to manage friends if
      *         not friends
      */
-    private String setupMessagePage(Long requestedUserId,
+    public String setupMessagePage(Long requestedUserId,
             Authentication authentication,
             Model model,
             HttpSession session) {
         logger.info("GET message page opened to user {}", requestedUserId);
 
+        if(requestedUserId == null) {
+            return MSG_HOME_ENDPOINT;
+        }
         String submissionToken = UUID.randomUUID().toString();
         session.setAttribute(SUBMISSION_TOKEN, submissionToken);
 
@@ -185,7 +191,11 @@ public class MessageController {
             HttpSession session,
             @RequestParam(value = "addImage", required = false) MultipartFile file) {
         logger.info("POST send message to {}", receiver);
-
+        Long sender = (Long) authentication.getPrincipal();
+        Friends friends = friendService.getFriendship(sender,receiver);
+        if (!friends.getStatus().toString().equals("ACCEPTED")) {
+            return MSG_HOME_ENDPOINT;
+        }
         String tokenFromForm = messageDTO.getSubmissionToken();
         String sessionToken = (String) session.getAttribute(SUBMISSION_TOKEN);
 
@@ -205,13 +215,11 @@ public class MessageController {
         }
 
         if (sessionToken != null && sessionToken.equals(tokenFromForm)) {
-            Long sender = (Long) authentication.getPrincipal();
 
             if (file != null && !file.isEmpty()) {
                 logger.info("Processing image upload for user {}", sender);
                 try {
-                    Message messageWithImage = messageService.sendImage(sender, receiver, messageDTO, file);
-                    model.addAttribute("imageMessage", messageWithImage);
+                    messageService.sendImage(sender, receiver, messageDTO, file);
                 } catch (IOException e) {
                     logger.error("Error uploading image", e);
                     model.addAttribute("fileError", "File too large or wrong file type");
@@ -220,6 +228,7 @@ public class MessageController {
             } else {
                 messageService.sendMessage(sender, receiver, messageDTO);
             }
+            messageWebSocketHandler.updateMessagesBroadcast(List.of(sender, receiver));
             session.removeAttribute(SUBMISSION_TOKEN);
         }
         return messageFriend(receiver, authentication, model, session);
@@ -302,5 +311,21 @@ public class MessageController {
         }
         model.addAttribute("messageDTO", new MessageDTO("", ""));
         return MSG_HOME_ENDPOINT;
+    }
+
+    /**
+     * Retrieves the image of a message by its ID.
+     *
+     * @param id the ID of the message
+     * @return the image of the message
+     */
+    @GetMapping("api/messages/id/{id}/image")
+    public ResponseEntity<byte[]> messageImage(@PathVariable("id") Long id) {
+        logger.info("GET messageImage");
+
+        Message message = messageService.getMessageById(id);
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(message.getImageContentType()))
+                .body(message.getImageContent());
     }
 }

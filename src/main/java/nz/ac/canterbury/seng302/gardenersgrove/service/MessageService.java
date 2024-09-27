@@ -170,7 +170,7 @@ public class MessageService {
 
     /**
      * Retrieves the latest message for each user from a list of all messages.
-     * 
+     *
      * The sorting approach used here was suggested by ChatGPT, which helped us sort
      * the map by timestamp to prioritise recent messages.
      *
@@ -322,4 +322,34 @@ public class MessageService {
         }
     }
 
+    /**
+     * Calculates all unread messages for the user
+     * @param userId User ID to calculate the total number of unread message
+     * @return Total number of unread messages for the user
+     */
+    public Long getUnreadMessageCount(Long userId) {
+        List<MessageRead> messageReads = messageReadRepository.findAllByUserId(userId);
+        Long unreadMessageCount = 0L;
+        for (MessageRead messageRead : messageReads) {
+            unreadMessageCount = messageRepository.countAllUnreadMessagesAfter(userId,messageRead.getLastReadMessage());
+        }
+        return unreadMessageCount;
+
+    }
+
+    /**
+     * Removes chat history between two users
+     * @param userId UserId
+     * @param friendId FriendId
+     */
+    public void removeMessageHistory(Long userId, Long friendId) {
+        logger.info("removing history");
+        List<Message> messages = messageRepository.findMessagesBetweenUsers(userId,friendId);
+        messageRepository.deleteAll(messages);
+    }
+
+
+    public Message getMessageById(Long id) {
+        return messageRepository.findById(id).orElse(null);
+    }
 }
