@@ -32,7 +32,7 @@
             <span class="d-inline">
                 <img th:src="@{/icons/friend-request-icon.svg}" alt="Friend request tab icon">
             </span>
-                <span class="d-none d-sm-inline">Requests </span><span class="badge request-notification-badge"></span>
+                <span class="d-none d-sm-inline">Requests </span><span class="badge notification-badge"></span>
             </a>
         </li>
         <li class="nav-item">
@@ -430,7 +430,7 @@
     }
 
     function updateRequestBadge() {
-        const badge = document.querySelector('.request-notification-badge');
+        const badge = document.querySelector('.notification-badge');
         if (badge) {
             badge.textContent = countReceivedRequests().toString();
         }

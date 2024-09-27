@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng302.gardenersgrove.entity;
+package nz.ac.canterbury.seng302.gardenersgrove.entity.message;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;

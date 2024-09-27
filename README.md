@@ -1,23 +1,21 @@
 # SENG302 Team 800 Gardener's Grove Project
+
 Team 800's Gardener's Grove Project uses `gradle`, `Spring Boot`, `Thymeleaf`, `GitLab CI`, `H2`, `MariaDB`, `Bootstrap`, `JQuery`, `Jackson`, `Cucumber`, `JUnit`, `jacoco`, and `SonarQube`.
 
-## Notes on Deployed Instances
-We had the prod instance working but we are having database issues so pretty please don't use that for marking we will fix it before next sprint :D
-
-## API Keys for Local Running (temporary until prod works)
-https://share.1password.com/s#3VGBoJNgAN2wypWSgNpeuS3shOLqBYkzkbDKNF_RIzE
-
-
 ## How to run
+
 ### 1 - Running the project
+
 From the root directory ...
 
 On Linux:
+
 ```
 ./gradlew bootRun
 ```
 
 On Windows:
+
 ```
 gradlew bootRun
 ```
@@ -25,14 +23,15 @@ gradlew bootRun
 By default, the application will run on local port 8080 [http://localhost:8080/test](http://localhost:8080/test)
 
 ### 2 - Using the application
-- Default user credentials: 
-   - {First Name: "John", Last Name: "Doe", Email: "john.doe@gmail.com", Password: "password"}
-   - {First Name: "Liam", Last Name: "Doe", Email: "liam@gmail.com", Password: "password"}
-   - {First Name: "Liam", Last Name: "Doe", Email: "liam2@gmail.com", Password: "password"}
-   - {First Name: "Immy", Last Name: null, Email: "immy@gmail.com", Password: "password"}
-   - {First Name: "Jan", Last Name: "Doe, Email: "jan.doe@gmail.com", Password: "password"}
 
-We have created multiple default users for the sake of manually testing **U17 - Send Friend Request** and **U18 - Cancel Friend Request**. 
+- Default user credentials:
+  - {First Name: "John", Last Name: "Doe", Email: "john.doe@gmail.com", Password: "password"}
+  - {First Name: "Liam", Last Name: "Doe", Email: "liam@gmail.com", Password: "password"}
+  - {First Name: "Liam", Last Name: "Doe", Email: "liam2@gmail.com", Password: "password"}
+  - {First Name: "Immy", Last Name: null, Email: "immy@gmail.com", Password: "password"}
+  - {First Name: "Jan", Last Name: "Doe, Email: "jan.doe@gmail.com", Password: "password"}
+
+We have created multiple default users for the sake of manually testing **U17 - Send Friend Request** and **U18 - Cancel Friend Request**.
 
 Please note that the user "Immy" does not have a last name in order to double check that it does not break anything when a user does not have a last name.
 
@@ -40,19 +39,21 @@ Please note that the user "Immy" does not have a last name in order to double ch
 - Known Issues: None
 
 ## How to run tests
+
 To run the tests:
 From the root directory ...
 
 On Linux:
+
 ```
 ./gradlew test
 ```
 
 On Windows:
+
 ```
 gradlew test
 ```
-
 
 ## Licenses
 

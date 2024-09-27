@@ -1,18 +1,19 @@
 <div th:each="messages: ${messagesMap}">
     <div class="text-center mb-2">[[${dateFormatter.format(messages.key, DATE_FORMAT)}]]</div>
-    <div th:each="message : ${messages.value}">
+    <div th:each="message : ${messages.value}" class="message" th:data-message-id="${message.id}">
         <!--friends msg-->
-        <div th:if="${message.sender == sentToUser.id}" class="d-flex flex-column">
+        <div th:if="${message.sender == sentToUser.id}" class="d-flex from-other">
             <!--large screen-->
-            <div class="position-relative">
-                <div class="card text-white bg-secondary shadow-sm border-0 d-none d-md-block" style="max-width: 40%">
-                    <div class="card-body">
-                        <small>[[${dateFormatter.format(message.timestamp, TIMESTAMP_FORMAT)}]]</small>
-                        <p class="card-text mt-2">[[${message.messageContent}]]</p>
-                    </div>
+            <div class="card text-white bg-secondary shadow-sm mb-3 border-0 d-none d-md-block" style="max-width: 40%">
+                <div class="card-body">
+                    <small>[[${dateFormatter.format(message.timestamp, TIMESTAMP_FORMAT)}]]</small>
+                    <pre class="card-text mt-2">[[${message.messageContent}]]</pre>
+                    <img
+                        th:if="${message.imageContent != null}"
+                        th:src="@{'/api/messages/id/' + ${message.id} + '/image'}"
+                        alt="Image sent by them"
+                        style="max-width: min(300px, 100%);">
                 </div>
-
-                <!-- Emoji reaction section below the card, with half overlap -->
                 <div class="emoji-container position-absolute bottom-0 start-0 translate-middle-y">
                     <span class="emoji-badge">&#128512;</span> <!-- 😀 -->
                 </div>
@@ -25,7 +26,12 @@
             <div class="card text-white bg-secondary shadow-sm mb-3 border-0 d-block d-md-none" style="max-width: 80%">
                 <div class="card-body">
                     <small>[[${dateFormatter.format(message.timestamp, TIMESTAMP_FORMAT)}]]</small>
-                    <p class="card-text mt-2">[[${message.messageContent}]]</p>
+                    <pre class="card-text mt-2">[[${message.messageContent}]]</pre>
+                    <img
+                        th:if="${message.imageContent != null}"
+                        th:src="@{'/api/messages/id/' + ${message.id} + '/image'}"
+                        alt="Image sent by them"
+                        style="max-width: min(200px, 100%);">
                 </div>
             </div>
         </div>
@@ -34,7 +40,12 @@
             <div class="card text-white bg-primary shadow-sm mb-3 border-0 d-none d-md-block" style="max-width: 40%">
                 <div class="card-body">
                     <small>[[${dateFormatter.format(message.timestamp, TIMESTAMP_FORMAT)}]]</small>
-                    <p class="card-text mt-2">[[${message.messageContent}]]</p>
+                    <pre class="card-text mt-2">[[${message.messageContent}]]</pre>
+                    <img
+                        th:if="${message.imageContent != null}"
+                        th:src="@{'/api/messages/id/' + ${message.id} + '/image'}"
+                        alt="Image sent by you"
+                        style="max-width: min(300px, 100%);">
                 </div>
             </div>
         </div>
@@ -43,7 +54,12 @@
             <div class="card text-white bg-primary shadow-sm mb-3 border-0 d-block d-md-none" style="max-width: 80%">
                 <div class="card-body">
                     <small>[[${dateFormatter.format(message.timestamp, TIMESTAMP_FORMAT)}]]</small>
-                    <p class="card-text mt-2">[[${message.messageContent}]]</p>
+                    <pre class="card-text mt-2">[[${message.messageContent}]]</pre>
+                    <img
+                        th:if="${message.imageContent != null}"
+                        th:src="@{'/api/messages/id/' + ${message.id} + '/image'}"
+                        alt="Image sent by you"
+                        style="max-width: min(200px, 100%);">
                 </div>
             </div>
         </div>

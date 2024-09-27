@@ -70,8 +70,8 @@ public class ModerationService {
 
     /**
      * Check if description is flagged as inappropriate
-     * @param description
-     * @return
+     * @param description text to be checked for profanity
+     * @return true if flagged as inappropriate
      */
     public boolean checkIfDescriptionIsFlagged(String description) {
         if (description == null || description.isEmpty()) {
