@@ -187,7 +187,7 @@ public class U800_3_1_MessageFeature {
         result = messageController.messageHomeSend(otherUserId, authentication, model, session);
         List<Message> allMessages = messageService.findAllRecentChats(myId);
         Map<Long, Message> recentMessagesMap = messageService.getLatestMessages(allMessages, myId);
-        Map<GardenUser, ChatPreview> recentChats = messageService.convertToPreview(receiverId, recentMessagesMap);
+        Map<GardenUser, ChatPreview> recentChats = messageService.convertToPreview(otherUserId, recentMessagesMap);
 
         assertEquals(expectedChatCount, recentChats.size());
         assertEquals("users/message-home", result);
