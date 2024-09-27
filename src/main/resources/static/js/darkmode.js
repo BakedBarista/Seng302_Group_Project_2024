@@ -12,14 +12,17 @@
     const navLogo = document.getElementById("navbarLogo");
     const locationIcon = document.getElementById("locationIcon");
     const setTheme = theme => {
-        document.documentElement.setAttribute('data-bs-theme', theme)
-        setStoredTheme(theme);
-        if(navLogo != null) {
-            navLogo.src = theme === 'dark' ? `${baseUrl}img/yellow-logo.svg` : `${baseUrl}img/logo.svg`;
-            locationIcon
+        try {
+            document.documentElement.setAttribute('data-bs-theme', theme);
+            setStoredTheme(theme);
+            if (navLogo != null) {
+                navLogo.src = theme === 'dark' ? `${baseUrl}img/yellow-logo.svg` : `${baseUrl}img/logo.svg`;
+            }
+
+        } catch (error) {
+            console.error('Error setting theme:', error);
         }
-        document.cookie = `theme=${theme}; path=/`;
-    }
+    };
 
 
 
