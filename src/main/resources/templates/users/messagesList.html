@@ -19,6 +19,10 @@
                 </div>
             </div>
         </div>
+        <div th:id="emoji-picker- + ${message.getId()}" class="d-none">
+            <div th:replace="~{fragments/emoji-picker :: emoji-picker}"></div>
+        </div>
+
         <!--logged in users msg-->
         <div th:if="${message.receiver == sentToUser.id}" class="d-flex justify-content-end">
             <div class="card text-white bg-primary shadow-sm mb-3 border-0 d-none d-md-block" style="max-width: 40%">

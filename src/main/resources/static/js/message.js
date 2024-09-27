@@ -51,7 +51,8 @@ function addEventListenersToMessages() {
 }
 
 function longPressHandler(messageId) {
-    alert('Long press detected! ' + messageId);
+    const emojiPicker = document.getElementById( "emoji-picker-" + messageId);
+    emojiPicker.className = "";
 }
 
 function sendMessage() {
