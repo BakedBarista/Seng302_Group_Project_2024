@@ -52,7 +52,7 @@ function addEventListenersToMessages() {
 
 function longPressHandler(messageId) {
     const emojiPicker = document.getElementById( "emoji-picker-" + messageId);
-    emojiPicker.className = "";
+    emojiPicker.className = 'flap-in';
 }
 
 function sendMessage() {
