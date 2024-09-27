@@ -639,14 +639,14 @@ public class GardenController {
             GardenUser user3 = new GardenUser("Liam", "Doe", "liam@gmail.com", "password", LocalDate.of(1970, 1, 1));
             gardenUserService.addUser(user3);
 
-            Friends friendship = new Friends(user,user1, Friends.Status.ACCEPTED);
+            Friends friendship = new Friends(user, user1, Friends.Status.ACCEPTED);
             friendService.save(friendship);
-            logger.info("User {} added",user.getFullName() );
+            logger.info("User {} added", user.getFullName());
 
-            Friends friendship1 = new Friends(user,user2, Friends.Status.ACCEPTED);
+            Friends friendship1 = new Friends(user, user2, Friends.Status.ACCEPTED);
             friendService.save(friendship1);
 
-            Friends friendship2 = new Friends(user,user3, Friends.Status.ACCEPTED);
+            Friends friendship2 = new Friends(user, user3, Friends.Status.ACCEPTED);
             friendService.save(friendship2);
 
 
