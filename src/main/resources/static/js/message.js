@@ -67,7 +67,12 @@ function longPressHandler(messageId) {
 }
 
 function addEmoji(event) {
-    const emojiBadge = document.getElementById( "emoji-picker-" + messageId);
+    const emojiBadge = event.target;
+    const emoji = emojiBadge.textContent;
+
+    ws.send(
+        JSON.stringify({ type: 'addEmoji', messageId: currentMessageEmojiId, emoji })
+    );
 }
 
 function sendMessage() {

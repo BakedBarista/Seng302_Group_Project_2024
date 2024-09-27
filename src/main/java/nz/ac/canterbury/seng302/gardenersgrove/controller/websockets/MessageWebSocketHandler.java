@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ValidatorFactory;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.MessageDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.message.Message;
 import nz.ac.canterbury.seng302.gardenersgrove.service.MessageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,7 +76,6 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 				messageService.setReadTime(messageId, userId);
 				logger.info("Messages marked as read by user {}", userId);
 				break;
-
 			case "sendMessage":
 				Long sender = getCurrentUserId(session);
 				Long receiver = message.get("receiver").asLong();
@@ -93,7 +93,7 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 
 				updateMessagesBroadcast(List.of(sender, receiver));
 				break;
-			case "markRead": 
+			case "markRead":
 				Long currentUserId = getCurrentUserId(session);
 				Long unreadMessageCount = messageService.getUnreadMessageCount(currentUserId);
 
@@ -111,7 +111,16 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 				}
 				break;
 			case "addEmoji":
+				Long emojiMessageId = message.get("messageId").asLong();
+				String emoji = message.get("emoji").asText();
 
+				Message emojiMessage = messageService.getById(emojiMessageId);
+				emojiMessage.setReaction(emoji);
+
+				messageService.save(emojiMessage);
+
+				updateMessagesBroadcast(List.of(emojiMessage.getSender(), emojiMessage.getReceiver()));
+				break;
 			default:
 				logger.error("Unknown message type: {}", message.get("type").asText());
 				break;

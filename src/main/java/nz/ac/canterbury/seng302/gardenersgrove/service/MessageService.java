@@ -348,4 +348,20 @@ public class MessageService {
         messageRepository.deleteAll(messages);
     }
 
+    /**
+     * Get the message with id
+     * @param id of the message
+     * @return message with id
+     */
+    public Message getById(Long id) {
+        return messageRepository.findById(id).orElse(null);
+    }
+
+    /**
+     * Saves the message to repository
+     * @param message message to be saved
+     */
+    public void save(Message message) {
+        messageRepository.save(message);
+    }
 }
