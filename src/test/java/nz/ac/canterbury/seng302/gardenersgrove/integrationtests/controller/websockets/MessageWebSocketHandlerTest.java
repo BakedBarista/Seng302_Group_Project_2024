@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 
 @SuppressWarnings("SpringJavaInjectionsPointsAutowiringInspection")
 @SpringBootTest
-public class MessageWebSocketHandlerTest {
+class MessageWebSocketHandlerTest {
 
     @Autowired
     private MessageService messageService;
