@@ -71,53 +71,48 @@ async function updateMessages() {
     await updateRecentChat();
 }
 
+/**
+ * Updates the recent chat feed in realtime using websockets.
+ * @returns {Promise<void>}
+ */
 async function updateRecentChat() {
     const res = await fetch(`${apiBaseUrl}/messages/recent-chats`);
     const data = await res.json();
-    console.log(data);
 
     for (const [chatId, chat] of Object.entries(data)) {
-        console.log("ID: ", chatId);  // Access the chat ID
-        console.log("CONTENT: ", chat.messageContent);  // Access message content
-        updateMessagePreview(chatId, chat.messageContent);
+        updateMessagePreview(chatId, chat.messageContent, chatId === chat.receiver.toString());
     }
 }
 
-function updateMessagePreview(userId, newMessageContent) {
-    // Determine the correct element ID based on whether the logged-in user is the sender or receiver
+/**
+ * Internal function used to update the text section of the recent chat feed in realtime.
+ * Used by updateRecentChats()
+ * @param userId the ID of the other user the chat is with
+ * @param newMessageContent the content to display in the chat feed
+ * @param isSender whether or not to display 'You: ' as a prefix to the message content.
+ */
+function updateMessagePreview(userId, newMessageContent, isSender) {
     const previewId = `messagePreview-${userId}`;
-
     const previewIdImage = `messagePreviewImage-${userId}`;
-
-    console.log("PREVIEW ID:", previewId);
-    console.log("IMAGE ID:", previewIdImage);
+    const messagePreviewElement = document.getElementById(previewId);
+    const messagePreviewImageElement = document.getElementById(previewIdImage);
 
     // If an image
-    if (newMessageContent == null) {
-        console.log("DOING AN IMAGE");
-        // Find the element by its ID
-        const messagePreviewElement = document.getElementById(previewIdImage);
-
-        if (messagePreviewElement) {
-            messagePreviewElement.textContent = `Image 📷`;
-            messagePreviewElement.title = newMessageContent;
-            // messagePreviewElementImage.className = "d-block";
+    if (newMessageContent === null || newMessageContent === '') {
+        if (messagePreviewImageElement) {
+           messagePreviewImageElement.textContent = `${isSender === true ? "You: ": ""}Image 📷`;
+           messagePreviewImageElement.title = 'Image';
+           messagePreviewElement.className = "d-none";
+           messagePreviewImageElement.className = "d-block";
         }
     } else {
-        const messagePreviewElement = document.getElementById(previewId);
-
         if (messagePreviewElement) {
-            messagePreviewElement.textContent = newMessageContent;
+            messagePreviewElement.textContent = `${isSender === true ? "You: ": ""} ${newMessageContent}`;
             messagePreviewElement.title = newMessageContent;
+            messagePreviewElement.className = "d-block text-truncate m-0";
+            messagePreviewImageElement.className = "d-none"
         }
-
-        // const messagePreviewElementImage = document.getElementById(previewIdImage);
-        //
-        // if (messagePreviewElementImage) {
-        //     messagePreviewElementImage.className = "d-none";
-        // }
     }
-
 }
 
 function isScrolledToBottom(container) {
