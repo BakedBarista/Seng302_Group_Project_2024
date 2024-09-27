@@ -322,4 +322,30 @@ public class MessageService {
         }
     }
 
+    /**
+     * Calculates all unread messages for the user
+     * @param userId User ID to calculate the total number of unread message
+     * @return Total number of unread messages for the user
+     */
+    public Long getUnreadMessageCount(Long userId) {
+        List<MessageRead> messageReads = messageReadRepository.findAllByUserId(userId);
+        Long unreadMessageCount = 0L;
+        for (MessageRead messageRead : messageReads) {
+            unreadMessageCount = messageRepository.countAllUnreadMessagesAfter(userId,messageRead.getLastReadMessage());
+        }
+        return unreadMessageCount;
+
+    }
+
+    /**
+     * Removes chat history between two users
+     * @param userId UserId
+     * @param friendId FriendId
+     */
+    public void removeMessageHistory(Long userId, Long friendId) {
+        logger.info("removing history");
+        List<Message> messages = messageRepository.findMessagesBetweenUsers(userId,friendId);
+        messageRepository.deleteAll(messages);
+    }
+
 }

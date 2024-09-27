@@ -76,7 +76,7 @@
         </div>
         <div id="noMessagesHeader" th:if="${#lists.isEmpty(recentChats)}" class="text-center">
             <h5>You have no recent messages!</h5>
-            <button class="btn-primary btn">Make a new connection</button>
+            <a class="btn-primary btn" th:href="@{/users/manage-friends}">Make a new connection</a>
         </div>
         <div th:if="${!#lists.isEmpty(recentChats)}">
             <div id="chatSection" th:each="chat : ${recentChats}" class="border-bottom" style="height: 125px;">
@@ -114,7 +114,7 @@
         <div class="pt-4 h-100" id="messageWindow">
             <div class="text-center align-items-center" th:if="${#lists.isEmpty(recentChats)}">
                 <h5>You have no recent messages!</h5>
-                <button class="btn-primary btn">Make a new connection</button>
+                <a class="btn-primary btn" th:href="@{/users/manage-friends}">Make a new connection</a>
             </div>
             <div th:if="${sentToUser}">
                 <div class="d-flex align-items-center justify-content-around pb-2" id="messageWindowHeader">

@@ -115,12 +115,15 @@ public class MessageController {
      * @return the view name for the message page or a redirect to manage friends if
      *         not friends
      */
-    private String setupMessagePage(Long requestedUserId,
+    public String setupMessagePage(Long requestedUserId,
             Authentication authentication,
             Model model,
             HttpSession session) {
         logger.info("GET message page opened to user {}", requestedUserId);
 
+        if(requestedUserId == null) {
+            return MSG_HOME_ENDPOINT;
+        }
         String submissionToken = UUID.randomUUID().toString();
         session.setAttribute(SUBMISSION_TOKEN, submissionToken);
 
@@ -185,7 +188,11 @@ public class MessageController {
             HttpSession session,
             @RequestParam(value = "addImage", required = false) MultipartFile file) {
         logger.info("POST send message to {}", receiver);
-
+        Long sender = (Long) authentication.getPrincipal();
+        Friends friends = friendService.getFriendship(sender,receiver);
+        if (!friends.getStatus().toString().equals("ACCEPTED")) {
+            return MSG_HOME_ENDPOINT;
+        }
         String tokenFromForm = messageDTO.getSubmissionToken();
         String sessionToken = (String) session.getAttribute(SUBMISSION_TOKEN);
 
@@ -205,7 +212,6 @@ public class MessageController {
         }
 
         if (sessionToken != null && sessionToken.equals(tokenFromForm)) {
-            Long sender = (Long) authentication.getPrincipal();
 
             if (file != null && !file.isEmpty()) {
                 logger.info("Processing image upload for user {}", sender);

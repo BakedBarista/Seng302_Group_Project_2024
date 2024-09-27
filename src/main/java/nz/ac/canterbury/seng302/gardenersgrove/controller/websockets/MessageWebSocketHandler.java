@@ -1,28 +1,26 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.websockets;
 
-import java.io.IOException;
-import java.security.Principal;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import com.fasterxml.jackson.core.JacksonException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ValidatorFactory;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.MessageDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.service.MessageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-import com.fasterxml.jackson.core.JacksonException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.ValidatorFactory;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.MessageDTO;
-import nz.ac.canterbury.seng302.gardenersgrove.service.MessageService;
+import java.io.IOException;
+import java.security.Principal;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * A WebSocketHandler for real-time messaging.
@@ -94,6 +92,15 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 
 				updateMessagesBroadcast(List.of(sender, receiver));
 				break;
+			case "markRead": 
+				Long currentUserId = getCurrentUserId(session);
+				Long unreadMessageCount = messageService.getUnreadMessageCount(currentUserId);
+
+				ObjectNode newMessage = JsonNodeFactory.instance.objectNode();
+				newMessage.put("type", "updateUnread");
+				newMessage.put("unreadMessageCount", unreadMessageCount);
+				sendMessage(session, newMessage);
+				break;
 			case "ping":
 				try {
 					session.sendMessage(new TextMessage("{\"type\":\"pong\"}"));
@@ -127,7 +134,6 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 			if (userIds == null || !userIds.contains(userId)) {
 				continue;
 			}
-
 			if (session.isOpen()) {
 				updateMessages(session);
 			} else {
@@ -141,9 +147,12 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 	 * @param session the session to send the message to
 	 */
 	private void updateMessages(WebSocketSession session) {
+		Long currentUserId = getCurrentUserId(session);
+		Long unreadMessageCount = messageService.getUnreadMessageCount(currentUserId);
+
 		ObjectNode message = JsonNodeFactory.instance.objectNode();
 		message.put("type", "updateMessages");
-
+		message.put("unreadMessageCount", unreadMessageCount);
 		sendMessage(session, message);
 	}
 
