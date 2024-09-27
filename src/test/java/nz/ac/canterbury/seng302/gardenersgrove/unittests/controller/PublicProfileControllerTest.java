@@ -9,11 +9,8 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import com.fasterxml.jackson.core.type.TypeReference;
-import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.ProfanityService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -68,6 +65,8 @@ public class PublicProfileControllerTest {
     private static Long userId;
     private static ProfanityService profanityService;
 
+    private static BirthFlowerService birthFlowerService;
+
 
     static Long loggedInUserId = 2L;
     static GardenUser loggedInUser;
@@ -93,8 +92,9 @@ public class PublicProfileControllerTest {
         gardenService = Mockito.mock(GardenService.class);
         authentication = Mockito.mock(Authentication.class);
         plantRepository = Mockito.mock(PlantRepository.class);
+        birthFlowerService = Mockito.mock(BirthFlowerService.class);
         user = new GardenUser();
-        publicProfileController = new PublicProfileController(gardenUserService, profanityService, plantService);
+        publicProfileController = new PublicProfileController(gardenUserService, profanityService, plantService, birthFlowerService);
         favouritePlantsController = new FavouritePlantsController(gardenUserService, plantService);
         loggedInUser = new GardenUser();
         loggedInUser.setId(loggedInUserId);
@@ -102,6 +102,7 @@ public class PublicProfileControllerTest {
         loggedInUser.setFname("Current");
         loggedInUser.setLname("User");
         loggedInUser.setDescription("This is a description");
+        loggedInUser.setDateOfBirth(LocalDate.of(2000,1,1));
         when(gardenUserService.getUserById(loggedInUserId)).thenReturn(loggedInUser);
         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
 
@@ -336,5 +337,16 @@ public class PublicProfileControllerTest {
         verify(model).addAttribute("userId", loggedInUserId);
 
         assertEquals("redirect:/users/public-profile", viewName);
+    }
+
+    @Test
+    void whenRequestingBirthMonthFlower_thenBirthMonthFlowerIsAddedToModel() throws JsonProcessingException {
+        List<String> flowers = List.of("Carnation","Snow Pea");
+        Model model = mock(Model.class);
+        when(birthFlowerService.getFlowersByMonth(loggedInUser.getDateOfBirth())).thenReturn(flowers);
+        when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+        publicProfileController.editPublicProfile(authentication,model);
+
+        verify(model).addAttribute("flowers",flowers);
     }
 }
