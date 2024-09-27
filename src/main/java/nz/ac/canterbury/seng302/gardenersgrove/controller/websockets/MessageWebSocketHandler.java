@@ -35,6 +35,8 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 	private ValidatorFactory validatorFactory;
 	private Set<WebSocketSession> activeSessions = new HashSet<>();
 
+	private static final List<String> allowedEmojis = List.of("😂", "😢", "🔥", "💀", "🐝");
+
 	public MessageWebSocketHandler(MessageService messageService, ObjectMapper objectMapper, ValidatorFactory validatorFactory) {
 		this.messageService = messageService;
 		this.objectMapper = objectMapper;
@@ -114,12 +116,16 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 				Long emojiMessageId = message.get("messageId").asLong();
 				String emoji = message.get("emoji").asText();
 
-				Message emojiMessage = messageService.getById(emojiMessageId);
-				emojiMessage.setReaction(emoji);
+				if (allowedEmojis.contains(emoji)) {
+					Message emojiMessage = messageService.getById(emojiMessageId);
+					emojiMessage.setReaction(emoji);
+					messageService.save(emojiMessage);
 
-				messageService.save(emojiMessage);
+					updateMessagesBroadcast(List.of(emojiMessage.getSender(), emojiMessage.getReceiver()));
+				} else {
+					logger.warn("unknown emoji: {}", emoji);
+				}
 
-				updateMessagesBroadcast(List.of(emojiMessage.getSender(), emojiMessage.getReceiver()));
 				break;
 			default:
 				logger.error("Unknown message type: {}", message.get("type").asText());
