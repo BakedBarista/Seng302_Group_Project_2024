@@ -170,7 +170,6 @@ public class MessageService {
 
     /**
      * Retrieves the latest message for each user from a list of all messages.
-     * 
      * The sorting approach used here was suggested by ChatGPT, which helped us sort
      * the map by timestamp to prioritise recent messages.
      *
@@ -348,12 +347,13 @@ public class MessageService {
         messageRepository.deleteAll(messages);
     }
 
+
     /**
      * Get the message with id
      * @param id of the message
      * @return message with id
      */
-    public Message getById(Long id) {
+    public Message getMessageById(Long id) {
         return messageRepository.findById(id).orElse(null);
     }
 

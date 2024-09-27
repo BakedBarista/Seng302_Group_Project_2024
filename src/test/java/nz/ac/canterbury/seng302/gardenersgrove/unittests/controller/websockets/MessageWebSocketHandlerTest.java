@@ -177,7 +177,7 @@ class MessageWebSocketHandlerTest {
         when(principal1.getName()).thenReturn("1");
 
         Message message = new Message(1L, 2L, null, "hello");
-        when(messageService.getById(2L)).thenReturn(message);
+        when(messageService.getMessageById(2L)).thenReturn(message);
 
         TextMessage subscribe = new TextMessage("{\"type\":\"subscribe\"}");
         TextMessage addEmojiMessage = new TextMessage("{\"type\":\"addEmoji\",\"messageId\":2,\"emoji\":\"🐝\"}");
@@ -196,7 +196,7 @@ class MessageWebSocketHandlerTest {
         when(principal1.getName()).thenReturn("1");
 
         Message message = new Message(1L, 2L, null, "hello");
-        when(messageService.getById(2L)).thenReturn(message);
+        when(messageService.getMessageById(2L)).thenReturn(message);
 
         TextMessage subscribe = new TextMessage("{\"type\":\"subscribe\"}");
         TextMessage addEmojiMessage = new TextMessage("{\"type\":\"addEmoji\",\"messageId\":2,\"emoji\":\"lol\"}");
@@ -218,7 +218,7 @@ class MessageWebSocketHandlerTest {
         when(principal2.getName()).thenReturn("2");
 
         Message message = new Message(2L, 1L, null, "hello");
-        when(messageService.getById(2L)).thenReturn(message);
+        when(messageService.getMessageById(2L)).thenReturn(message);
 
         TextMessage subscribe = new TextMessage("{\"type\":\"subscribe\"}");
         TextMessage addEmojiMessage = new TextMessage("{\"type\":\"addEmoji\",\"messageId\":2,\"emoji\":\"🐝\"}");

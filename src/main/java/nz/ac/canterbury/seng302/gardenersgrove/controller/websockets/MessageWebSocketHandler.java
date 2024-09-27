@@ -117,7 +117,7 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 				String emoji = message.get("emoji").asText();
 
 				if (allowedEmojis.contains(emoji)) {
-					Message emojiMessage = messageService.getById(emojiMessageId);
+					Message emojiMessage = messageService.getMessageById(emojiMessageId);
 					emojiMessage.setReaction(emoji);
 					messageService.save(emojiMessage);
 
@@ -154,7 +154,7 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 	 * Sends an `updateMessages` message to each of the given users.
 	 * @param userIds A list of user IDs to broadcast the message to
 	 */
-	private void updateMessagesBroadcast(List<Long> userIds) {
+	public void updateMessagesBroadcast(List<Long> userIds) {
 		for (WebSocketSession session : Set.copyOf(activeSessions)) {
 			long userId = getCurrentUserId(session);
 			if (userIds == null || !userIds.contains(userId)) {

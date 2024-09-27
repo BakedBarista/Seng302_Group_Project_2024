@@ -7,7 +7,12 @@
             <div class="card text-white bg-secondary shadow-sm mb-3 border-0 d-none d-md-block" style="max-width: 40%">
                 <div class="card-body">
                     <small>[[${dateFormatter.format(message.timestamp, TIMESTAMP_FORMAT)}]]</small>
-                    <p class="card-text mt-2">[[${message.messageContent}]]</p>
+                    <pre class="card-text mt-2">[[${message.messageContent}]]</pre>
+                    <img
+                        th:if="${message.imageContent != null}"
+                        th:src="@{'/api/messages/id/' + ${message.id} + '/image'}"
+                        alt="Image sent by them"
+                        style="max-width: min(300px, 100%);">
                 </div>
             </div>
 
@@ -15,7 +20,12 @@
             <div class="card text-white bg-secondary shadow-sm mb-3 border-0 d-block d-md-none" style="max-width: 80%">
                 <div class="card-body">
                     <small>[[${dateFormatter.format(message.timestamp, TIMESTAMP_FORMAT)}]]</small>
-                    <p class="card-text mt-2">[[${message.messageContent}]]</p>
+                    <pre class="card-text mt-2">[[${message.messageContent}]]</pre>
+                    <img
+                        th:if="${message.imageContent != null}"
+                        th:src="@{'/api/messages/id/' + ${message.id} + '/image'}"
+                        alt="Image sent by them"
+                        style="max-width: min(200px, 100%);">
                 </div>
             </div>
         </div>
@@ -28,7 +38,12 @@
             <div class="card text-white bg-primary shadow-sm mb-3 border-0 d-none d-md-block" style="max-width: 40%">
                 <div class="card-body">
                     <small>[[${dateFormatter.format(message.timestamp, TIMESTAMP_FORMAT)}]]</small>
-                    <p class="card-text mt-2">[[${message.messageContent}]]</p>
+                    <pre class="card-text mt-2">[[${message.messageContent}]]</pre>
+                    <img
+                        th:if="${message.imageContent != null}"
+                        th:src="@{'/api/messages/id/' + ${message.id} + '/image'}"
+                        alt="Image sent by you"
+                        style="max-width: min(300px, 100%);">
                 </div>
             </div>
         </div>
@@ -37,7 +52,12 @@
             <div class="card text-white bg-primary shadow-sm mb-3 border-0 d-block d-md-none" style="max-width: 80%">
                 <div class="card-body">
                     <small>[[${dateFormatter.format(message.timestamp, TIMESTAMP_FORMAT)}]]</small>
-                    <p class="card-text mt-2">[[${message.messageContent}]]</p>
+                    <pre class="card-text mt-2">[[${message.messageContent}]]</pre>
+                    <img
+                        th:if="${message.imageContent != null}"
+                        th:src="@{'/api/messages/id/' + ${message.id} + '/image'}"
+                        alt="Image sent by you"
+                        style="max-width: min(200px, 100%);">
                 </div>
             </div>
         </div>
