@@ -61,13 +61,13 @@ function addEventListenersToMessages() {
 
 function longPressHandler(messageId) {
     const emojiPicker = document.getElementById( "emoji-picker-" + messageId);
-    emojiPicker.className = "";
+    emojiPicker.className = 'flap-in';
 
     setTimeout(() => currentMessageEmojiId = messageId, 1000)
 }
 
-function addEmoji() {
-
+function addEmoji(event) {
+    const emojiBadge = document.getElementById( "emoji-picker-" + messageId);
 }
 
 function sendMessage() {

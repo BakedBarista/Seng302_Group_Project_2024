@@ -1007,3 +1007,22 @@ h1, h2, h3, h4, h5, h6 {
     border-radius: 50%;
     padding: 3px 8px;
 }
+
+.flap-in {
+    perspective: 500px;
+}
+
+.flap-in .emoji-container {
+    animation: emoji-flap-in 500ms;
+    animation-timing-function: cubic-bezier(0.33, 0, 0.5, 3);
+    transform-origin: top;
+}
+
+@keyframes emoji-flap-in {
+    0% {
+        transform: rotateX(90deg);
+    }
+    100% {
+        transform: none;
+    }
+}
