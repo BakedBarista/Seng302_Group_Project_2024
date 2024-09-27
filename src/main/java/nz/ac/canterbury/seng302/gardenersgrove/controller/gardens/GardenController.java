@@ -621,13 +621,8 @@ public class GardenController {
         }
     }
 
-    /**
-     * Create test data
-     * @throws IOException When problem reading file.
-     * ChatGPT help with processing sql queries to arraylist
-     */
     @PostConstruct
-    public void dummyGardens() throws IOException {
+    public void dummyData() throws IOException {
         try {
             logger.info("Adding test data");
 
@@ -644,7 +639,7 @@ public class GardenController {
             GardenUser user3 = new GardenUser("Liam", "Doe", "liam@gmail.com", "password", LocalDate.of(1970, 1, 1));
             gardenUserService.addUser(user3);
 
-            Friends friendship = new Friends(user,user1, Friends.Status.ACCEPTED);
+            /*Friends friendship = new Friends(user,user1, Friends.Status.ACCEPTED);
             friendService.save(friendship);
             logger.info("User {} added",user.getFullName() );
 
@@ -652,7 +647,7 @@ public class GardenController {
             friendService.save(friendship1);
 
             Friends friendship2 = new Friends(user,user3, Friends.Status.ACCEPTED);
-            friendService.save(friendship2);
+            friendService.save(friendship2);*/
 
             // Garden names
             List<String> gardenNames = Arrays.asList(
@@ -731,6 +726,4 @@ public class GardenController {
             logger.info("Failed to add garden", e);
         }
     }
-
-
 }

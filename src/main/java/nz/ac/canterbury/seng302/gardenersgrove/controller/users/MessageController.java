@@ -191,7 +191,7 @@ public class MessageController {
         Long sender = (Long) authentication.getPrincipal();
         Friends friends = friendService.getFriendship(sender,receiver);
         if (!friends.getStatus().toString().equals("ACCEPTED")) {
-            return "users/message-home";
+            return MSG_HOME_ENDPOINT;
         }
         String tokenFromForm = messageDTO.getSubmissionToken();
         String sessionToken = (String) session.getAttribute(SUBMISSION_TOKEN);
