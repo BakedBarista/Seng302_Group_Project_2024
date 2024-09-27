@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @SpringBootTest
-public class BirthFlowerServiceTest {
+class BirthFlowerServiceTest {
     @Autowired
     BirthFlowerService flowerService;
 
@@ -47,7 +47,7 @@ public class BirthFlowerServiceTest {
     void givenBirthMonthProvide_thenReturnBirthMonthFlowers() {
         int month = 1;
         List<String> result = flowerService.getFlowersByMonth(LocalDate.of(2000,month,1));
-        Assertions.assertEquals(result.size(), 2);
+        Assertions.assertEquals(2, result.size());
         Assertions.assertTrue(result.contains("Carnation"));
         Assertions.assertTrue(result.contains("Snowdrop"));
     }
