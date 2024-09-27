@@ -8,6 +8,11 @@
                 <div class="card-body">
                     <small>[[${dateFormatter.format(message.timestamp, TIMESTAMP_FORMAT)}]]</small>
                     <p class="card-text mt-2">[[${message.messageContent}]]</p>
+                    <img
+                        th:if="${message.imageContent != null}"
+                        th:src="@{'/api/messages/id/' + ${message.id} + '/image'}"
+                        alt="Image sent by them"
+                        style="max-width: min(300px, 100%);">
                 </div>
             </div>
 
@@ -16,6 +21,11 @@
                 <div class="card-body">
                     <small>[[${dateFormatter.format(message.timestamp, TIMESTAMP_FORMAT)}]]</small>
                     <p class="card-text mt-2">[[${message.messageContent}]]</p>
+                    <img
+                        th:if="${message.imageContent != null}"
+                        th:src="@{'/api/messages/id/' + ${message.id} + '/image'}"
+                        alt="Image sent by them"
+                        style="max-width: min(200px, 100%);">
                 </div>
             </div>
         </div>
@@ -25,6 +35,11 @@
                 <div class="card-body">
                     <small>[[${dateFormatter.format(message.timestamp, TIMESTAMP_FORMAT)}]]</small>
                     <p class="card-text mt-2">[[${message.messageContent}]]</p>
+                    <img
+                        th:if="${message.imageContent != null}"
+                        th:src="@{'/api/messages/id/' + ${message.id} + '/image'}"
+                        alt="Image sent by you"
+                        style="max-width: min(300px, 100%);">
                 </div>
             </div>
         </div>
@@ -34,6 +49,11 @@
                 <div class="card-body">
                     <small>[[${dateFormatter.format(message.timestamp, TIMESTAMP_FORMAT)}]]</small>
                     <p class="card-text mt-2">[[${message.messageContent}]]</p>
+                    <img
+                        th:if="${message.imageContent != null}"
+                        th:src="@{'/api/messages/id/' + ${message.id} + '/image'}"
+                        alt="Image sent by you"
+                        style="max-width: min(200px, 100%);">
                 </div>
             </div>
         </div>

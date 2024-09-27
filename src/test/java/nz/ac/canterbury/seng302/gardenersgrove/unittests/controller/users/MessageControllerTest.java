@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.unittests.controller.users;
 
 import jakarta.servlet.http.HttpSession;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.MessageController;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.websockets.MessageWebSocketHandler;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.message.Message;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
@@ -53,6 +55,9 @@ class MessageControllerTest {
     private MessageService messageService;
 
     @Autowired
+    private MessageWebSocketHandler messageWebSocketHandler;
+
+    @Autowired
     private MessageRepository messageRepository;
 
     private static Authentication authentication;
@@ -71,9 +76,9 @@ class MessageControllerTest {
         mockedMessageService = mock(MessageService.class);
         bindingResult = mock(BindingResult.class);
 
-        messageController = new MessageController(gardenUserService, mockedFriendService, mockedMessageService);
+        messageController = new MessageController(gardenUserService, mockedFriendService, mockedMessageService, messageWebSocketHandler);
 
-        messageController2 = new MessageController(gardenUserService, mockedFriendService, messageService);
+        messageController2 = new MessageController(gardenUserService, mockedFriendService, messageService, messageWebSocketHandler);
 
     }
 
@@ -231,5 +236,17 @@ class MessageControllerTest {
     void whenNoChats_thenReturnMessagePage() {
         String result = messageController.setupMessagePage(null,authentication, model, session);
         assertEquals("users/message-home", result);
+    }
+
+    @Test
+    void whenFetchMessageImage_thenImageReturned() {
+        Message message = new Message();
+        message.setImage("image/jpeg", new byte[] { 1, 2, 3 });
+        when(mockedMessageService.getMessageById(42L)).thenReturn(message);
+
+        ResponseEntity<byte[]> response = messageController.messageImage(42L);
+
+        assertEquals("image/jpeg", response.getHeaders().getContentType().toString());
+        assertEquals(message.getImageContent(), response.getBody());
     }
 }
