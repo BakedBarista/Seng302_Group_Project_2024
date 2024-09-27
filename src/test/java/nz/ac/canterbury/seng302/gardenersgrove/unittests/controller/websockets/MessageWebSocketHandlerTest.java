@@ -180,8 +180,7 @@ class MessageWebSocketHandlerTest {
         when(messageService.getById(2L)).thenReturn(message);
 
         TextMessage subscribe = new TextMessage("{\"type\":\"subscribe\"}");
-        // emoji is bee emoji
-        TextMessage addEmojiMessage = new TextMessage("{\"type\":\"addEmoji\",\"messageId\":2,\"emoji\":\"\uD83D\uDC1D\"}");
+        TextMessage addEmojiMessage = new TextMessage("{\"type\":\"addEmoji\",\"messageId\":2,\"emoji\":\"🐝\"}");
 
         testWebSocketHandler.handleTextMessage(session1, subscribe);
         testWebSocketHandler.handleTextMessage(session1, addEmojiMessage);
@@ -222,7 +221,7 @@ class MessageWebSocketHandlerTest {
         when(messageService.getById(2L)).thenReturn(message);
 
         TextMessage subscribe = new TextMessage("{\"type\":\"subscribe\"}");
-        TextMessage addEmojiMessage = new TextMessage("{\"type\":\"addEmoji\",\"messageId\":2,\"emoji\":\"\uD83D\uDC1D\"}");
+        TextMessage addEmojiMessage = new TextMessage("{\"type\":\"addEmoji\",\"messageId\":2,\"emoji\":\"🐝\"}");
 
         testWebSocketHandler.handleTextMessage(session1, subscribe);
         testWebSocketHandler.handleTextMessage(session2, subscribe);
