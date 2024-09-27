@@ -12,7 +12,7 @@
                         th:if="${message.imageContent != null}"
                         th:src="@{'/api/messages/id/' + ${message.id} + '/image'}"
                         alt="Image sent by them"
-                        style="max-width: 300px;">
+                        style="max-width: min(300px, 100%);">
                 </div>
             </div>
 
@@ -25,7 +25,7 @@
                         th:if="${message.imageContent != null}"
                         th:src="@{'/api/messages/id/' + ${message.id} + '/image'}"
                         alt="Image sent by them"
-                        style="max-width: 200px;">
+                        style="max-width: min(200px, 100%);">
                 </div>
             </div>
         </div>
@@ -39,7 +39,7 @@
                         th:if="${message.imageContent != null}"
                         th:src="@{'/api/messages/id/' + ${message.id} + '/image'}"
                         alt="Image sent by you"
-                        style="max-width: 300px;">
+                        style="max-width: min(300px, 100%);">
                 </div>
             </div>
         </div>
@@ -53,7 +53,7 @@
                         th:if="${message.imageContent != null}"
                         th:src="@{'/api/messages/id/' + ${message.id} + '/image'}"
                         alt="Image sent by you"
-                        style="max-width: 200px;">
+                        style="max-width: min(200px, 100%);">
                 </div>
             </div>
         </div>
