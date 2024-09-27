@@ -124,11 +124,11 @@
                       <div class="d-flex align-items-center py-3">
                         <h5 class="mb-0 me-3">Birth Flower:</h5>
                         <div class="dropdown">
-                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                            th:text="${#lists.isEmpty(flowers) ? 'Select Flower' : flowers[0]}">
                                 Select a flower
                             </button>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item" href="#" onclick="updateButtonText('No Flower')" disabled>No Flower</a>
                                 <th:block th:each="flower : ${flowers}">
                                     <a class="dropdown-item" href="#" th:text="${flower}" onclick="updateButtonText(this.textContent)"></a>
                                 </th:block>
