@@ -10,8 +10,8 @@
 <body class="vh-100 overflow-x-hidden vw-100">
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 <main class="row mx-0">
-    <div class="col-lg-4 px-5 justify-content-center d-flex full-height-lg" style="background-color: var(--gg-side-panel)">
-        <div class="py-5">
+    <div class="col-lg-4 px-5 justify-content-center d-flex full-height-lg" id="gardenTLInfoBorder">
+        <div class="py-5" id="gardenTLInfoDiv">
             <div class="pb-3 d-flex justify-content-start">
                 <a class="btn btn-outline-primary" type="button" th:href="@{/gardens/{id}(id=${garden.id})}"><img th:src="@{/icons/back.svg}" alt="" width="20" height="20" /></a>
             </div>
@@ -26,18 +26,18 @@
                 </div>
             </div>
                 <div class="pt-3">
-                    <p class="fw-bold mb-1">
+                    <p class="fw-bold mb-1" id="gardenTLDescHeader">
                         Description:
                     </p>
                     <div>
-                        <p class="m-0" th:text="${garden.description}">Garden Description</p>
+                        <p class="m-0" id="gardenTLDesc" th:text="${garden.description}">Garden Description</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-lg-8 pb-5 px-5 overflow-y-auto overflow-x-hidden max-full-height-lg bg-white">
-        <div class="d-flex justify-content-center align-items-center mb-1 sticky-top p-5 bg-white">
+    <div class="col-lg-8 pb-5 px-5 overflow-y-auto overflow-x-hidden max-full-height-lg" id="gardenTimelineDiv">
+        <div class="d-flex justify-content-center align-items-center mb-1 sticky-top p-5" id="gardenTimelineTitle">
             <h1 class="flex-grow-1 text-center m-0">Garden Timeline</h1>
         </div>
 
@@ -52,7 +52,7 @@
                                 alt="" width="25" height="25" />
                         </span>
         
-                        <p class="fw-bold" th:text="${item.plant.name + ' ' + item.action.toString().toLowerCase()}"></p>
+                        <p class="fw-bold" id="plantHistoryEach" th:text="${item.plant.name + ' ' + item.action.toString().toLowerCase()}"></p>
                         <p class="text-muted mb-2 fw-bold" th:text="${dateFormatter.format(entry.key, HISTORY_FORMAT_DATE)}">
                         </p>
                     </li>

@@ -58,6 +58,8 @@
         background-color: #302E2E;
     }
 
+    #gardenTimelineTitle,
+    #gardenTimelineDiv,
     #yourPlantsTitleDiv {
         background-color: #464444;
     }
@@ -70,13 +72,17 @@
         background-color: #464444;
     }
 
-    #messagePreview {
-        color: white;
+    #gardenTLDesc,
+    #gardenTLDescHeader,
+    #plantHistoryEach,
+    #messageDate,
+    #chatPreview {
+        color: var(--gg-white);
     }
 
-    #messageDate {
-        color:white;
+    #gardenTLInfoBorder,
+    #gardenTLInfoDiv {
+        background-color: #1E1E1E;
     }
-
 
 }
