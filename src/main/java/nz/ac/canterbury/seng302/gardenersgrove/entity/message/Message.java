@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng302.gardenersgrove.entity;
+package nz.ac.canterbury.seng302.gardenersgrove.entity.message;
 
 import jakarta.persistence.*;
 
@@ -46,7 +46,6 @@ public class Message {
         this.receiver = receiver;
         this.timestamp = timestamp;
         this.messageContent = message;
-        this.reaction = null;
     }
 
     public Long getId() {
@@ -85,4 +84,20 @@ public class Message {
     public void setReaction(String reaction) {
         this.reaction = reaction;
     }
+
+    /**
+     * To string for logging and debugging
+     * @return string version of Message object
+     */
+    @Override
+    public String toString() {
+        return "Message{" +
+                "id=" + id +
+                ", senderId=" + sender +
+                ", receiverId=" + receiver +
+                ", timestamp=" + timestamp +
+                ", messageContent='" + messageContent + '\'' +
+                '}';
+    }
+
 }
