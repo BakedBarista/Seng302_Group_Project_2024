@@ -589,7 +589,7 @@ h1, h2, h3, h4, h5, h6 {
     transition: transform 0.2s ease;
     position: relative;
     border-radius: 50%;
-    padding: 3px 8px;
+    padding: 3px 3px;
 }
 
 
