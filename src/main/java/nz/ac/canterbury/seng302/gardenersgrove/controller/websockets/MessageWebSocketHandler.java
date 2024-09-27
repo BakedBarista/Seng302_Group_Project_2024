@@ -12,6 +12,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.MessageDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.MessageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
@@ -113,6 +114,14 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 				logger.error("Unknown message type: {}", message.get("type").asText());
 				break;
 		}
+	}
+
+	/**
+	 * Invoked after the WebSocket connection has been closed by either side, or after an error has occurred.
+	 */
+	@Override
+	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
+		activeSessions.remove(session);
 	}
 
 	private long getCurrentUserId(WebSocketSession session) {
