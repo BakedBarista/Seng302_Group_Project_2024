@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 public class SuggestedUserDTO {
     private Long id;
     private String fullName;
+    private int compatibility;
     private String description;
 
     private String favouriteGardenHtml;
@@ -22,6 +23,14 @@ public class SuggestedUserDTO {
 
     public String getFullName() {
         return fullName;
+    }
+
+    public void setCompatibility(int compatibility) {
+        this.compatibility = compatibility;
+    }
+
+    public int getCompatibility() {
+        return compatibility;
     }
 
     public String getDescription() {

@@ -47,7 +47,7 @@
             </div>
             <div th:if="${!#lists.isEmpty(recentChats)}">
                 <div id="chatSectionMobile" th:each="chat : ${recentChats}" class="border-bottom" style="height: 125px;">
-                    <div th:id="${chat.key.id}" class="h-100">
+                    <div th:id="${chat.key.id + 'Mobile'}" class="h-100">
                         <form th:action="@{/message-home}" method="post" class="d-flex align-items-center w-100 h-100">
                             <input type="hidden" name="userId" th:value="${chat.key.id}"/>
                             <button class="btn btn-link text-decoration-none text-dark w-100 open-chat">
@@ -57,10 +57,11 @@
                                          style="width: 50px; height: 50px;" alt="profile picture">
                                     <div class="m-3 text-start">
                                         <h6 th:text="${chat.key.fullName}"></h6>
-                                        <p th:text="${chat.value}" th:title="${chat.value}" class="text-truncate m-0" style="max-width: 200px;"></p>
+                                        <p th:text="${chat.value.lastMessage}" th:title="${chat.value.lastMessage}" class="text-truncate m-0" style="max-width: 200px;"></p>
                                     </div>
                                 </div>
                             </button>
+                            <span class="badge notification-badge">[[${chat.value.unreadMessages}]]</span>
                         </form>
                     </div>
                 </div>
@@ -69,17 +70,17 @@
     </div>
 
     <!--Big Screen Sidebar-->
-    <div class="sidebar border-end overflow-y-auto d-none d-lg-block" id="friendChatBar" style="min-width: 300px;">
+    <div class="sidebar border-end overflow-y-auto d-none d-lg-block" id="friendChatBar" style="min-width: 350px;">
         <div class="border-bottom text-center align-items-center py-3">
             <h3 class="m-0">Recent Chats</h3>
         </div>
         <div id="noMessagesHeader" th:if="${#lists.isEmpty(recentChats)}" class="text-center">
             <h5>You have no recent messages!</h5>
-            <button class="btn-primary btn">Make a new connection</button>
+            <a class="btn-primary btn" th:href="@{/users/manage-friends}">Make a new connection</a>
         </div>
         <div th:if="${!#lists.isEmpty(recentChats)}">
             <div id="chatSection" th:each="chat : ${recentChats}" class="border-bottom" style="height: 125px;">
-                <div th:id="${chat.key.id + 'Mobile'}" class="h-100">
+                <div th:id="${chat.key.id}" class="h-100">
                     <form th:action="@{/message-home}" method="post" class="d-flex align-items-center w-100 h-100">
                         <input type="hidden" name="userId" th:value="${chat.key.id}"/>
                         <button class="btn btn-link text-decoration-none text-dark w-100 open-chat">
@@ -89,10 +90,20 @@
                                      style="width: 50px; height: 50px;" alt="profile picture">
                                 <div class="m-3 text-start">
                                     <h6 th:text="${chat.key.fullName}"></h6>
-                                    <p th:text="${chat.value}" th:title="${chat.value}" class="text-truncate m-0" style="max-width: 200px;"></p>
+                                    <p th:text="${chat.value.lastMessage}" th:title="${chat.value.lastMessage}" class="text-truncate m-0" style="max-width: 200px;"></p>
                                 </div>
                             </div>
                         </button>
+                        <div>
+                            <span th:if="${chat.value.unreadMessages != 0 && chat.value.unreadMessages > 99}"
+                                  class="badge notification-badge me-3 bg-danger">
+                                99+
+                            </span>
+                            <span th:if="${chat.value.unreadMessages != 0 && chat.value.unreadMessages <= 99}"
+                                  class="badge notification-badge me-3 bg-danger">
+                                [[${chat.value.unreadMessages}]]
+                            </span>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -103,7 +114,7 @@
         <div class="pt-4 h-100" id="messageWindow">
             <div class="text-center align-items-center" th:if="${#lists.isEmpty(recentChats)}">
                 <h5>You have no recent messages!</h5>
-                <button class="btn-primary btn">Make a new connection</button>
+                <a class="btn-primary btn" th:href="@{/users/manage-friends}">Make a new connection</a>
             </div>
             <div th:if="${sentToUser}">
                 <div class="d-flex align-items-center justify-content-around pb-2" id="messageWindowHeader">

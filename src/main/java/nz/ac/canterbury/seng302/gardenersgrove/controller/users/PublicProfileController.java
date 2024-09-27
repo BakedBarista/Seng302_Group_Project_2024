@@ -176,6 +176,7 @@ public class PublicProfileController {
         model.addAttribute(FAVOURITE_GARDEN, user.getFavoriteGarden());
 
 
+
         Set<Plant> favouritePlants = user.getFavouritePlants();
         model.addAttribute(FAVOURITE_PLANTS, favouritePlants);
         List<FavouritePlantDTO> favouritePlantDTOs = favouritePlants.stream()

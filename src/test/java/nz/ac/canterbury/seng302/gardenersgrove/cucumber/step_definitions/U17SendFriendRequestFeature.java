@@ -28,6 +28,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.cucumber.java.BeforeAll;
+import nz.ac.canterbury.seng302.gardenersgrove.service.MessageService;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
@@ -37,6 +38,8 @@ public class U17SendFriendRequestFeature {
     private static FriendsRepository friendsRepository;
     private static GardenUserRepository gardenUserRepository;
     private static GardenUserService userService;
+
+    private static MessageService messageService;
     private static  FriendService friendService;
     private GardenUser user;
     private static Long loggedInUserId;
@@ -56,7 +59,7 @@ public class U17SendFriendRequestFeature {
         friendsRepository = mock(FriendsRepository.class);
         userService = new GardenUserService(gardenUserRepository);
         friendService = new FriendService(friendsRepository);
-        friendsController = new ManageFriendsController(friendService, userService);
+        friendsController = new ManageFriendsController(friendService, userService,messageService);
         authentication = mock(Authentication.class);
 
         loggedInUserId = 1L;

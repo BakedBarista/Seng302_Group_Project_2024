@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.SuggestedUserController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.service.CompatibilityService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.SuggestedUserService;
@@ -37,6 +38,7 @@ class SuggestedUserControllerTest {
 
     private FriendService friendService;
     private SuggestedUserService suggestedUserService;
+    private CompatibilityService compatibilityService;
     private ObjectMapper objectMapper;
     private TemplateEngine templateEngine;
     private HttpServletRequest request;
@@ -56,12 +58,13 @@ class SuggestedUserControllerTest {
         friendService = Mockito.mock(FriendService.class);
         authentication = Mockito.mock(Authentication.class);
         suggestedUserService = Mockito.mock(SuggestedUserService.class);
+        compatibilityService = Mockito.mock(CompatibilityService.class);
         objectMapper = new ObjectMapper();
         templateEngine = Mockito.mock(TemplateEngine.class);
         request = Mockito.mock(HttpServletRequest.class);
         response = Mockito.mock(HttpServletResponse.class);
         context = Mockito.mock(ServletContext.class);
-        suggestedUserController = new SuggestedUserController(friendService, gardenUserService, suggestedUserService, objectMapper, templateEngine);
+        suggestedUserController = new SuggestedUserController(friendService, gardenUserService, suggestedUserService, compatibilityService, objectMapper, templateEngine);
 
         loggedInUser = new GardenUser();
         loggedInUser.setId(loggedInUserId);
@@ -86,7 +89,6 @@ class SuggestedUserControllerTest {
 
     /**
      * Testing the get method of the home page
-     * HARD-CODED Test!!!!!
      */
     @Test
     void whenIViewMyPublicProfile_thenIAmTakenToThePublicProfilePage() throws JsonProcessingException {
@@ -106,6 +108,7 @@ class SuggestedUserControllerTest {
 
         String page = suggestedUserController.home(authentication, model, request, response);
 
+        Mockito.verify(compatibilityService).friendshipCompatibilityQuotient(any(), any());
         Mockito.verify(model).addAttribute(eq("userId"), any());
         Mockito.verify(model).addAttribute(eq("name"), any());
         Mockito.verify(model).addAttribute(eq("description"), any());

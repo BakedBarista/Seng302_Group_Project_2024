@@ -4,14 +4,13 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
-
-import org.springframework.ui.Model;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-
+import nz.ac.canterbury.seng302.gardenersgrove.service.MessageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,10 +29,14 @@ public class ManageFriendsController {
     private FriendService friendService;
     private GardenUserService userService;
 
+    private MessageService messageService;
+
+
     @Autowired
-    public ManageFriendsController(FriendService friendService, GardenUserService userService) {
+    public ManageFriendsController(FriendService friendService, GardenUserService userService,MessageService messageService) {
         this.userService = userService;
         this.friendService = friendService;
+        this.messageService = messageService;
     }
 
     /**
@@ -118,7 +121,6 @@ public class ManageFriendsController {
             @RequestParam(name = "acceptUser", required = false) Long acceptUserId) {
 
         Long loggedInUserId = (Long) authentication.getPrincipal();
-
         List<Friends> sentAndDeclinedList = friendService.getSentRequestsDeclined(loggedInUserId);
         for (Friends request : sentAndDeclinedList) {
             if (request.getSender().getId().equals(loggedInUserId) && request.getReceiver().getId().equals(acceptUserId)) {
@@ -136,6 +138,8 @@ public class ManageFriendsController {
         if (friendShip != null) {
             friendShip.setStatus(ACCEPTED);
             friendService.save(friendShip);
+            messageService.setReadTime(loggedInUserId,acceptUserId);
+            messageService.setReadTime(acceptUserId,loggedInUserId);
         }
 
         return "redirect:/users/manage-friends";
@@ -266,6 +270,8 @@ public class ManageFriendsController {
     public String removeFriend(Authentication authentication, @RequestParam(name = "friendId") Long friendId) {
         Long loggedInUserId = (Long) authentication.getPrincipal();
         friendService.removeFriend(loggedInUserId, friendId);
+        messageService.removeMessageHistory(loggedInUserId,friendId);
+
         return "redirect:/users/manage-friends";
     }
 

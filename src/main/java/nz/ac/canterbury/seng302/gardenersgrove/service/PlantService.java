@@ -159,6 +159,16 @@ public class PlantService {
             save(plant);
         }
     }
+
+    /**
+     * Gets all plants owned by user
+     *
+     * @param gardenUser Garden user
+     * @return list of plants
+     */
+    public List<Plant> getAllPlantsForUser(GardenUser gardenUser) {
+        return plantRepository.findByGardenUser(gardenUser);
+    }
 }
 
 
