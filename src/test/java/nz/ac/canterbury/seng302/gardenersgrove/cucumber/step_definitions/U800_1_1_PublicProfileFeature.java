@@ -13,10 +13,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.ProfanityService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
@@ -51,6 +48,8 @@ public class U800_1_1_PublicProfileFeature {
     private static PublicProfileController publicProfileController;
 
     private static FavouritePlantsController favouritePlantsController;
+
+    private static BirthFlowerService birthFlowerService;
 
     String invalidDescription;
 
@@ -97,7 +96,7 @@ public class U800_1_1_PublicProfileFeature {
         plantService = new PlantService(plantRepository, gardenRepository);
         gardenService = new GardenService(gardenRepository, gardenUserRepository);
         profanityService = new ProfanityService();
-        publicProfileController = new PublicProfileController(userService, profanityService, plantService);
+        publicProfileController = new PublicProfileController(userService, profanityService, plantService,birthFlowerService);
     }
 
      @Given("I am on my edit profile page")
