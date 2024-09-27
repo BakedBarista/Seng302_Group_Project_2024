@@ -10,6 +10,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Message;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.MessageDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.model.Pair;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.MessageRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
@@ -183,7 +184,7 @@ public class U800_3_1_MessageFeature {
         result = messageController.messageHomeSend(receiverId, authentication, model, session);
         List<Message> allMessages = messageService.findAllRecentChats(myId);
         Map<Long, Message> recentMessagesMap = messageService.getLatestMessages(allMessages, myId);
-        Map<GardenUser, String> recentChats = messageService.convertToPreview(recentMessagesMap);
+        List<Pair<GardenUser, Message>> recentChats = messageService.convertToPreview(recentMessagesMap);
 
         assertEquals(expectedChatCount, recentChats.size());
         assertEquals("users/message-home", result);

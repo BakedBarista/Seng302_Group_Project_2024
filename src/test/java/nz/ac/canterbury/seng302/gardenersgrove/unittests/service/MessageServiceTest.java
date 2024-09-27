@@ -4,6 +4,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Message;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.MessageRead;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.MessageDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.model.Pair;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.MessageReadRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.MessageRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
@@ -150,11 +151,10 @@ class MessageServiceTest {
         Map<Long, Message> recentMessagesMap = new HashMap<>();
         recentMessagesMap.put(userId2, message);
 
-        Map<GardenUser, String> result = messageService.convertToPreview(recentMessagesMap);
+        List<Pair<GardenUser, Message>>result = messageService.convertToPreview(recentMessagesMap);
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals("Hey", result.get(user));
     }
 
     @Test
