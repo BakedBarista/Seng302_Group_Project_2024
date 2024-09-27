@@ -28,7 +28,7 @@ function addEventListenersToMessages() {
         function touchStart() {
             timeout = setTimeout(() => {
                 longPressHandler(messageId);
-            }, 500);
+            }, 400);
         }
         function touchEnd() {
             if (timeout) {
