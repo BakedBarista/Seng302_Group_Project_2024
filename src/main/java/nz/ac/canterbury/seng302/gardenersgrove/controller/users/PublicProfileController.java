@@ -11,6 +11,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.FavouritePlantDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.exceptions.ProfanityDetectedException;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.BirthFlowerService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.ProfanityService;
 import org.slf4j.Logger;
@@ -36,6 +37,7 @@ public class PublicProfileController {
     private final GardenUserService userService;
     private final ProfanityService profanityService;
     private final PlantService plantService;
+    private final BirthFlowerService birthFlowerService;
 
 
     private static final String DEFAULT_PROFILE_BANNER_URL = "/img/default-banner.svg";
@@ -55,10 +57,11 @@ public class PublicProfileController {
     private static final int MAX_FILE_SIZE = 10 * 1024 * 1024;
 
     @Autowired
-    public PublicProfileController(GardenUserService userService, ProfanityService profanityService, PlantService plantService) {
+    public PublicProfileController(GardenUserService userService, ProfanityService profanityService, PlantService plantService, BirthFlowerService birthFlowerService) {
         this.userService = userService;
         this.profanityService = profanityService;
         this.plantService = plantService;
+        this.birthFlowerService = birthFlowerService;
     }
 
     /**
@@ -168,12 +171,15 @@ public class PublicProfileController {
         Long userId = (Long) authentication.getPrincipal();
         GardenUser user = userService.getUserById(userId);
         EditUserDTO editUserDTO = new EditUserDTO();
+        List<String> flowers = birthFlowerService.getFlowersByMonth(user.getDateOfBirth());
+
 
         model.addAttribute(USER_ID_ATTRIBUTE, userId);
         model.addAttribute("name", user.getFullName());
         editUserDTO.setDescription(user.getDescription());
         model.addAttribute("editUserDTO", editUserDTO);
         model.addAttribute(FAVOURITE_GARDEN, user.getFavoriteGarden());
+        model.addAttribute("flowers", flowers);
 
 
 
