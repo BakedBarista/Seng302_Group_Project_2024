@@ -110,6 +110,8 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 					return;
 				}
 				break;
+			case "addEmoji":
+
 			default:
 				logger.error("Unknown message type: {}", message.get("type").asText());
 				break;

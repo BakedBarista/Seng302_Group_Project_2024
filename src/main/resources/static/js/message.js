@@ -3,6 +3,15 @@ const sendMessageForm = document.getElementById('sendMessageForm');
 const label = sendMessageForm?.querySelector('label');
 const textArea = sendMessageForm?.querySelector('textarea');
 const messagesContainer = document.getElementById('scrollbar');
+let currentMessageEmojiId = null;
+
+document.body.addEventListener('click', () => {
+    if (currentMessageEmojiId != null) {
+        const emojiPicker = document.getElementById( "emoji-picker-" + currentMessageEmojiId);
+        emojiPicker.className = "d-none";
+        currentMessageEmojiId = null;
+    }
+})
 
 async function updateMessages() {
     const res = await fetch(`${apiBaseUrl}/messages/${otherUserId}`);
@@ -53,6 +62,12 @@ function addEventListenersToMessages() {
 function longPressHandler(messageId) {
     const emojiPicker = document.getElementById( "emoji-picker-" + messageId);
     emojiPicker.className = "";
+
+    setTimeout(() => currentMessageEmojiId = messageId, 1000)
+}
+
+function addEmoji() {
+
 }
 
 function sendMessage() {
