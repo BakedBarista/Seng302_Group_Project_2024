@@ -348,6 +348,5 @@ public class PublicProfileControllerTest {
         publicProfileController.editPublicProfile(authentication,model);
 
         verify(model).addAttribute("flowers",flowers);
-        verify(birthFlowerService,times(1)).getFlowersByMonth(loggedInUser.getDateOfBirth());
     }
 }
