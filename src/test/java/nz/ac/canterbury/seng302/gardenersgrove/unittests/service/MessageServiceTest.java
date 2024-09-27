@@ -27,6 +27,7 @@ import java.time.ZoneId;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class MessageServiceTest {
@@ -72,6 +73,9 @@ class MessageServiceTest {
         assertEquals(receiver, message.getReceiver());
         assertEquals(messageWord, message.getMessageContent());
         assertEquals(timestamp.atZone(clock.getZone()).toLocalDateTime(), message.getTimestamp());
+
+        message.setReaction("lol");
+        assertEquals("lol", message.getReaction());
     }
 
     @Test
