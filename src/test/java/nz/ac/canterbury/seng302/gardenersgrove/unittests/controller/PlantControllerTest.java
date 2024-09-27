@@ -578,7 +578,7 @@ class PlantControllerTest {
     void givenSearch_whenGetPlantInfo_returnsResults() throws ExternalServiceException {
         PlantInfoDTO plantInfo = new PlantInfoDTO();
         plantInfo.setLabel("Tomato");
-        when(wikidataService.getPlantInfo("tomato")).thenReturn(List.of(plantInfo));
+        when(wikidataService.getPlantInfoAsync("tomato")).thenReturn(List.of(plantInfo));
 
         String returnPage = plantController.plantInformationForm("tomato", model);
 

@@ -9,9 +9,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.PlantHistoryItem;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantHistoryItemDTO;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantInfoDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
-
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +26,11 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant.PlantStatus.HARVESTED;
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.HISTORY_FORMAT_DATE;
@@ -502,15 +504,16 @@ public class PlantController {
      * @return redirect to a more detailed page about a specific plant
      */
     @GetMapping("/plant-information")
-    public String plantInformationForm(
+    public CompletableFuture<String> plantInformationForm(
             @RequestParam(required = false) String q,
             Model model) throws ExternalServiceException {
         if (q != null) {
-            List<PlantInfoDTO> plants = wikidataService.getPlantInfo(q);
-            model.addAttribute("plants", plants);
+            return wikidataService.getPlantInfoAsync(q).thenApply(plants -> {
+                model.addAttribute("plants", plants);
+                return "plants/plantInformation";
+            });
         }
-
-        return "plants/plantInformation";
+        return CompletableFuture.completedFuture("plants/plantInformation");
     }
 
     /**

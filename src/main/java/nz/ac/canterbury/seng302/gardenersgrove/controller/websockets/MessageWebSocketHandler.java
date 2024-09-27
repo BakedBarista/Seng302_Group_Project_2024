@@ -1,28 +1,27 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.websockets;
 
+import com.fasterxml.jackson.core.JacksonException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ValidatorFactory;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.MessageDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.service.MessageService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.socket.CloseStatus;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.handler.TextWebSocketHandler;
+
 import java.io.IOException;
 import java.security.Principal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import com.fasterxml.jackson.databind.node.JsonNodeType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketSession;
-import org.springframework.web.socket.handler.TextWebSocketHandler;
-
-import com.fasterxml.jackson.core.JacksonException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.ValidatorFactory;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.MessageDTO;
-import nz.ac.canterbury.seng302.gardenersgrove.service.MessageService;
 
 /**
  * A WebSocketHandler for real-time messaging.
@@ -108,6 +107,7 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 		}
 	}
 
+
 	private long getCurrentUserId(WebSocketSession session) {
 		Principal principal = session.getPrincipal();
 		if (principal == null) {
@@ -174,6 +174,13 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 		} catch (IOException e) {
 			logger.error("Error sending message", e);
 		}
+	}
+
+	@Override
+	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+		logger.info("Connection closed: {}", session.getId());
+		activeSessions.remove(session);
+		super.afterConnectionClosed(session, status);
 	}
 
 }

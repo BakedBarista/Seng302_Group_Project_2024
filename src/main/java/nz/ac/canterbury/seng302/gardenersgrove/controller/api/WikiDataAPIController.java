@@ -1,12 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.api;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nz.ac.canterbury.seng302.gardenersgrove.service.ExternalServiceException;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantInfoDTO;
-import nz.ac.canterbury.seng302.gardenersgrove.service.ExternalServiceException;
 import nz.ac.canterbury.seng302.gardenersgrove.service.LocalPlantDataService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.WikidataService;
 import org.slf4j.Logger;
@@ -18,9 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
-
-import java.util.List;
 
 /**
  * Handles fetching plant data from WikiData API
@@ -45,27 +38,20 @@ public class WikiDataAPIController {
      * @return parsed json data from response
      */
     @GetMapping("/search-plant-autocomplete")
-    public CompletableFuture<ResponseEntity<JsonNode>> searchPlantAutocomplete(@RequestParam String currentValue) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                TimeUnit.MILLISECONDS.sleep(300);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-            return currentValue;
-        }).thenApply(value -> {
-            try {
-                List<PlantInfoDTO> plantInfo = wikidataService.getPlantInfo(value);
+    public CompletableFuture<ResponseEntity<ObjectNode>> searchPlantAutocomplete(@RequestParam String currentValue) {
+        return wikidataService.getPlantInfoAsync(currentValue)
+            .thenApply(plantInfo -> {
                 if (plantInfo.isEmpty()) {
-                    plantInfo = localPlantDataService.getSimilarPlantInfo(value);
+                    plantInfo = localPlantDataService.getSimilarPlantInfo(currentValue);
                 }
                 ObjectNode results = JsonNodeFactory.instance.objectNode();
                 results.set("results", objectMapper.valueToTree(plantInfo));
                 return ResponseEntity.ok(results);
-            } catch (ExternalServiceException e) {
-                JsonNode errorMessage = objectMapper.createObjectNode().put("error", "Plant information service is unavailable at the moment, please try again later");
+
+            }).exceptionally(ex -> {
+                ObjectNode errorMessage = objectMapper.createObjectNode().put("error", "Plant information service is unavailable at the moment, please try again later");
                 return ResponseEntity.status(503).body(errorMessage);
-            }
-        });
+            });
     }
 }
+

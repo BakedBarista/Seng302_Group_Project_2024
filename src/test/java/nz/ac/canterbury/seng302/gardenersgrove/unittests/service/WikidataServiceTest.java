@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unittests.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantInfoDTO;
@@ -58,7 +57,7 @@ class WikidataServiceTest {
         when(restTemplate.exchange(Mockito.contains("wbgetentities"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
                 .thenReturn(entityEntity);
 
-        List<PlantInfoDTO> result = wikidataService.getPlantInfo("tomato");
+        List<PlantInfoDTO> result = wikidataService.getPlantInfoAsync("tomato");
 
         assertEquals(1, result.size());
         assertEquals("Tomato", result.get(0).getLabel());
@@ -81,7 +80,7 @@ class WikidataServiceTest {
         when(restTemplate.exchange(Mockito.contains("wbsearchentities"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
                 .thenReturn(searchEntity);
 
-        List<PlantInfoDTO> result = wikidataService.getPlantInfo("nonexistentplant");
+        List<PlantInfoDTO> result = wikidataService.getPlantInfoAsync("nonexistentplant");
         assertTrue(result.isEmpty());
 
         ArgumentCaptor<HttpEntity> entityCaptor = ArgumentCaptor.forClass(HttpEntity.class);
@@ -98,7 +97,7 @@ class WikidataServiceTest {
                 .thenThrow(new RuntimeException("Network error"));
 
         // Verify that the exception is thrown
-        assertThrows(ExternalServiceException.class, () -> wikidataService.getPlantInfo("tomato"));
+        assertThrows(ExternalServiceException.class, () -> wikidataService.getPlantInfoAsync("tomato"));
     }
 
     @Test
@@ -113,7 +112,7 @@ class WikidataServiceTest {
         when(restTemplate.exchange(Mockito.contains("wbgetentities"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
                 .thenReturn(entityEntity);
 
-        List<PlantInfoDTO> result = wikidataService.getPlantInfo("tomato");
+        List<PlantInfoDTO> result = wikidataService.getPlantInfoAsync("tomato");
 
         assertEquals(1, result.size());
         assertEquals("", result.get(0).getLabel());
@@ -134,7 +133,7 @@ class WikidataServiceTest {
         when(restTemplate.exchange(Mockito.contains("wbgetentities"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
                 .thenReturn(entityEntity);
 
-        List<PlantInfoDTO> result = wikidataService.getPlantInfo("tomato");
+        List<PlantInfoDTO> result = wikidataService.getPlantInfoAsync("tomato");
 
         assertEquals(0, result.size());
     }

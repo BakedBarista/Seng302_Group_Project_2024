@@ -11,8 +11,6 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.LocalPlantDataService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.WikidataService;
 import org.mockito.Mockito;
 
-import java.util.Locale;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -30,7 +28,7 @@ public class U26PlantInformationFeature {
         wikidataService = mock(WikidataService.class);
         objectMapper = new ObjectMapper();
         wikiDataAPIController = new WikiDataAPIController(wikidataService,localPlantDataService,objectMapper);
-        when(wikidataService.getPlantInfo(Mockito.anyString())).thenThrow(new ExternalServiceException("Service unavailable"));
+        when(wikidataService.getPlantInfoAsync(Mockito.anyString())).thenThrow(new ExternalServiceException("Service unavailable"));
     }
 
     @When("I search for a plant named {string}")

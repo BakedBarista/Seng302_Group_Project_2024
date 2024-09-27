@@ -60,7 +60,7 @@ public class U26PlantSearch {
         String plantInfo = "[{\"label\":\"Tomato\",\"description\":\"A red fruit\",\"id\":\"Q235\",\"image\":\"https://commons.wikimedia.org/wiki/Special:FilePath/Tomato.jpg\"}]";
         List<PlantInfoDTO> plantInfoList = objectMapper.readValue(plantInfo, new TypeReference<List<PlantInfoDTO>>() {
         });
-        when(wikidataService.getPlantInfo(name)).thenReturn(plantInfoList);
+        when(wikidataService.getPlantInfoAsync(name)).thenReturn(plantInfoList);
 
         autocompleteData = wikidataAPIController.searchPlantAutocomplete(name).join().getBody();
         System.out.println(autocompleteData.get("results"));
@@ -84,7 +84,7 @@ public class U26PlantSearch {
 
     @When("I search a plant name {string} with no autocomplete")
     public void i_search_a_plant_name_with_no_autocomplete(String plantName) throws Exception {
-        when(wikidataService.getPlantInfo(plantName)).thenReturn(List.of());
+        when(wikidataService.getPlantInfoAsync(plantName)).thenReturn(List.of());
 
         autocompleteData = wikidataAPIController.searchPlantAutocomplete(plantName).join().getBody();
     }

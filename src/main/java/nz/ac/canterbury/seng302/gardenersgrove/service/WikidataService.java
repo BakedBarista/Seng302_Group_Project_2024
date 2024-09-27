@@ -1,11 +1,9 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantInfoDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.exceptions.JsonProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -16,11 +14,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriUtils;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantInfoDTO;
-import nz.ac.canterbury.seng302.gardenersgrove.exceptions.JsonProcessingException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Service for fetching plant information from Wikidata API.
@@ -54,48 +53,61 @@ public class WikidataService {
      * @param plantName to be searched
      * @return JsonNode with a list of PlantInfoDTOs
      */
-    public List<PlantInfoDTO> getPlantInfo(String plantName) throws ExternalServiceException {
-        String url = SEARCH_ENDPOINT + UriUtils.encode(plantName, "utf8");
-        logger.info("Sending search request...");
-        ResponseEntity<String> responseEntity;
-        try {
-            responseEntity = restTemplate.exchange(url, HttpMethod.GET, constructEntity(), String.class);
-        } catch (Exception e) {
-            throw new ExternalServiceException("Unable to fetch plant info from Wikidata");
-        }
+    public CompletableFuture<List<PlantInfoDTO>> getPlantInfoAsync(String plantName) {
+        return CompletableFuture.supplyAsync(() -> {
+            String url = SEARCH_ENDPOINT + UriUtils.encode(plantName, "utf8");
+            logger.info("Sending search request...");
+            ResponseEntity<String> responseEntity;
+            try {
+                responseEntity = restTemplate.exchange(url, HttpMethod.GET, constructEntity(), String.class);
+            } catch (Exception e) {
+                // Yes sonarcube will complain, no I don't care we can't use our exception in a Future
+                throw new RuntimeException("Unable to fetch plant info from Wikidata");
+            }
 
-        String response = responseEntity.getBody();
 
-        JsonNode jsonNode = readJson(response);
+            String response = responseEntity.getBody();
 
-        List<PlantInfoDTO> plantInfoList = new ArrayList<>();
-        if (jsonNode.has(SEARCH) && !jsonNode.get(SEARCH).isEmpty()) {
-            Map<String, JsonNode> metadata = getMetadataForEntities(jsonNode.get(SEARCH));
-            for (JsonNode entityNode : jsonNode.get(SEARCH)) {
-                // verify that entity node has an id, label and description before presenting it to the user
-                if (entityNode.get("id") == null
-                        || entityNode.get("label") == null
-                        || entityNode.get("description") == null) {
-                    continue;
+            JsonNode jsonNode = readJson(response);
+
+            List<PlantInfoDTO> plantInfoList = new ArrayList<>();
+            if (jsonNode.has(SEARCH) && !jsonNode.get(SEARCH).isEmpty()) {
+                Map<String, JsonNode> metadata = null;
+                try {
+                    metadata = getMetadataForEntities(jsonNode.get(SEARCH));
+                } catch (ExternalServiceException e) {
+                    throw new RuntimeException(e);
                 }
+                for (JsonNode entityNode : jsonNode.get(SEARCH)) {
+                    // verify that entity node has an id, label and description before presenting it to the user
+                    if (entityNode.get("id") == null
+                            || entityNode.get("label") == null
+                            || entityNode.get("description") == null) {
+                        continue;
+                    }
 
-                String entityId = entityNode.get("id").asText();
-                JsonNode entityMetadata = metadata.get(entityId);
-                if (isSubclassOfGardenPlants(entityMetadata)) {
-                    String label = entityNode.get("label").asText();
-                    String description = entityNode.get("description").asText();
-                    String imageUrl = getImageUrl(entityMetadata);
-                    PlantInfoDTO plantInfo = new PlantInfoDTO(
-                            capitalize(label),
-                            capitalize(description),
-                            entityId,
-                            imageUrl
-                    );
-                    plantInfoList.add(plantInfo);
+                    String entityId = entityNode.get("id").asText();
+                    JsonNode entityMetadata = metadata.get(entityId);
+                    if (isSubclassOfGardenPlants(entityMetadata)) {
+                        String label = entityNode.get("label").asText();
+                        String description = entityNode.get("description").asText();
+                        String imageUrl = getImageUrl(entityMetadata);
+                        PlantInfoDTO plantInfo = new PlantInfoDTO(
+                                capitalize(label),
+                                capitalize(description),
+                                entityId,
+                                imageUrl
+                        );
+                        plantInfoList.add(plantInfo);
+                    }
                 }
             }
-        }
-        return plantInfoList;
+            return plantInfoList;
+        }).exceptionally(ex -> {
+            logger.error("Failed to fetch plant info: {}", ex.getMessage(), ex);
+            // Return an empty list as a fallback if there's an error
+            return new ArrayList<>();
+        });
     }
 
     private JsonNode readJson(String response) {

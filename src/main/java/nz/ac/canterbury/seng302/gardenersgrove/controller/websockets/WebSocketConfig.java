@@ -1,5 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.websockets;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.validation.ValidatorFactory;
+import nz.ac.canterbury.seng302.gardenersgrove.service.MessageService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,11 +11,6 @@ import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import jakarta.validation.ValidatorFactory;
-import nz.ac.canterbury.seng302.gardenersgrove.service.MessageService;
 
 /**
  * Configures the WebSocket handlers for the application.

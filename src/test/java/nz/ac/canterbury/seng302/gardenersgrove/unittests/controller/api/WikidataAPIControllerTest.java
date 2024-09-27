@@ -42,7 +42,7 @@ class WikidataAPIControllerTest {
         String plantInfo = "[{\"label\":\"Tomato\",\"description\":\"A red fruit\",\"id\":\"Q235\",\"image\":\"https://commons.wikimedia.org/wiki/Special:FilePath/Tomato.jpg\"}]";
         List<PlantInfoDTO> plantInfoList = objectMapper.readValue(plantInfo, new TypeReference<List<PlantInfoDTO>>() {
         });
-        when(wikidataService.getPlantInfo("tomato")).thenReturn(plantInfoList);
+        when(wikidataService.getPlantInfoAsync("tomato")).thenReturn(plantInfoList);
 
         CompletableFuture<ResponseEntity<JsonNode>> response = wikiDataAPIController.searchPlantAutocomplete("tomato");
 
@@ -57,7 +57,7 @@ class WikidataAPIControllerTest {
         });
 
         when(localPlantDataService.getSimilarPlantInfo(anyString())).thenReturn(plantInfoList);
-        when(wikidataService.getPlantInfo("tomato")).thenReturn(plantInfoList);
+        when(wikidataService.getPlantInfoAsync("tomato")).thenReturn(plantInfoList);
 
         CompletableFuture<ResponseEntity<JsonNode>> response = wikiDataAPIController.searchPlantAutocomplete("nonexistentplant");
 
