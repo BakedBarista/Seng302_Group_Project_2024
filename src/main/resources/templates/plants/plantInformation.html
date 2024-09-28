@@ -27,7 +27,7 @@
         </div>
 
         <div id="plantCardsContainer" class="mt-3" th:if="${plants != null}">
-            <div th:each="plant : ${plants}" id="plantCard" class="mt-3den card p-4">
+            <div th:each="plant : ${plants}" id="plantCard" class="mt-3den mb-2 card p-4">
                 <h2 th:text="${plant.label}" id="plantCardLabel"></h2>
                 <p th:text="${plant.description}" id="plantCardDescription"></p>
                <img th:src="${plant.image}" alt="Plant image" id="plantCardImage" />

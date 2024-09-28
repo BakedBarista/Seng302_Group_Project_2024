@@ -10,7 +10,7 @@
 <body class="vh-100 overflow-x-hidden vw-100">
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 <main class="row mx-0">
-    <div class="col-lg-4 px-5 justify-content-center d-flex full-height-lg" style="background-color: var(--gg-side-panel)">
+    <div class="col-lg-4 px-5 justify-content-center d-flex full-height-lg plant-side-panel">
         <div class="text-center py-5">
             <div class="pb-3 d-flex justify-content-start">
                 <a class="btn btn-outline-primary" type="button" th:href="@{/gardens/{id}(id=${gardenId})}"><img th:src="@{/icons/back.svg}" alt="" width="20" height="20" /></a>
@@ -20,41 +20,49 @@
                 <h2 class="fw-bold"  th:text="${plant.name}">Plant Name</h2>
                 <div class="d-flex align-items-center justify-content-left ps-3">
                     <a class="ms-auto justify-content-end"  th:if="${currentUser.id == garden.owner.id}" th:href="@{/gardens/{gardenId}/plants/{plantId}/edit(gardenId=${garden.id}, plantId=${plant.id})}">
-                        <img class="mx-1" th:src="@{/icons/edit.svg}" alt="" width="25" height="25" />
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="25" height="25" color="currentColor" fill="none">
+                            <path d="M16.2141 4.98239L17.6158 3.58063C18.39 2.80646 19.6452 2.80646 20.4194 3.58063C21.1935 4.3548 21.1935 5.60998 20.4194 6.38415L19.0176 7.78591M16.2141 4.98239L10.9802 10.2163C9.93493 11.2616 9.41226 11.7842 9.05637 12.4211C8.70047 13.058 8.3424 14.5619 8 16C9.43809 15.6576 10.942 15.2995 11.5789 14.9436C12.2158 14.5877 12.7384 14.0651 13.7837 13.0198L19.0176 7.78591M16.2141 4.98239L19.0176 7.78591" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M21 12C21 16.2426 21 18.364 19.682 19.682C18.364 21 16.2426 21 12 21C7.75736 21 5.63604 21 4.31802 19.682C3 18.364 3 16.2426 3 12C3 7.75736 3 5.63604 4.31802 4.31802C5.63604 3 7.75736 3 12 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                        </svg>
                     </a>
                 </div>
             </div>
             <div class="text-start">
                 <div class="d-flex mb-1">
-                    <img th:src="@{/icons/calendar-03-stroke-rounded.svg}"
-                         alt=""
-                         width="20"
-                         height="20" />
-                    <p class="ms-1 my-0" th:text="${dateFormatter.format(plant.plantedDate, NZ_FORMAT_DATE)}">Planted Date</p>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" color="currentColor" fill="none">
+                        <path d="M18 2V4M6 2V4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M11.9955 13H12.0045M11.9955 17H12.0045M15.991 13H16M8 13H8.00897M8 17H8.00897" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M3.5 8H20.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M2.5 12.2432C2.5 7.88594 2.5 5.70728 3.75212 4.35364C5.00424 3 7.01949 3 11.05 3H12.95C16.9805 3 18.9958 3 20.2479 4.35364C21.5 5.70728 21.5 7.88594 21.5 12.2432V12.7568C21.5 17.1141 21.5 19.2927 20.2479 20.6464C18.9958 22 16.9805 22 12.95 22H11.05C7.01949 22 5.00424 22 3.75212 20.6464C2.5 19.2927 2.5 17.1141 2.5 12.7568V12.2432Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M3 8H21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    <p class="ms-1 my-0 darkText" th:text="${dateFormatter.format(plant.plantedDate, NZ_FORMAT_DATE)}">Planted Date</p>
                 </div>
                 <div class="d-flex">
                     <div class="d-flex">
-                        <img th:src="@{/icons/natural-food-stroke-rounded.svg}"
-                             alt=""
-                             width="20"
-                             height="20" />
-                        <p class="mb-0"><span class="mx-1" th:text="${plant.count}">Plant Count</span> planted</p>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" color="currentColor">
+                        <path d="M5.05857 11.7421C6.97712 11.9781 8.73113 10.5535 8.97628 8.56018C9.22142 6.56689 6.93885 4.64584 7.76802 2C3.66477 2.59449 2.25056 5.90113 2.02862 7.70572C1.78348 9.69901 3.14003 11.5062 5.05857 11.7421Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                        <path d="M7 20C5.07536 15.3242 4.76992 11.1941 5.13275 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M9.50786 17.6681C10.6828 20.0602 13.5206 20.7199 15.8463 19.1415C18.172 17.5631 18.5378 13.1898 22 11.6651C18.3054 7.57248 13.6971 9.04999 11.5916 10.4789C9.26587 12.0573 8.33296 15.276 9.50786 17.6681Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                        <path d="M6 22C8.37778 17.9044 11.2644 15.43 14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <p class="mb-0 darkText"><span class="mx-1" th:text="${plant.count}">Plant Count</span> planted</p>
                     </div>
                 </div>
                 <div class="pt-3">
-                    <p class="fw-bold mb-1">
+                    <p class="fw-bold mb-1 darkText">
                         Description:
                     </p>
                     <div>
-                        <p class="m-0" th:text="${plant.description}"><!--Plant Description goes here--></p>
+                        <p class="m-0 darkText" th:text="${plant.description}"><!--Plant Description goes here--></p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-lg-8 pb-5 px-5 overflow-y-auto overflow-x-hidden bg-white" style="max-height: 100vh;">
+    <div class="col-lg-8 pb-5 px-5 overflow-y-auto overflow-x-hidden" id="plantTimelineDiv" style="max-height: 100vh;">
 
-        <div class="d-flex justify-content-center align-items-center mb-1 sticky-top mt-3 bg-white p-3">
+        <div class="d-flex justify-content-center align-items-center mb-1 sticky-top mt-3  p-3" id="plantTimelineTitle">
             <hr />
             <h1 class="flex-grow-1 text-left text-lg-center m-0">Plant Timeline</h1>
             <span class="d-inline-block" tabindex="0" id="recordUpdateButtonTooltip">
@@ -99,7 +107,7 @@
               <span class="timeline-icon">
                 <img class="mx-1" th:src="@{/icons/first-planted.svg}" alt="" width="25" height="25" />
               </span>
-              <p class="fw-bold">First Planted!</p>
+              <p class="fw-bold darkText">First Planted!</p>
               <p th:text="${dateFormatter.format(plant.getPlantedDate, NZ_FORMAT_DATE)}" class="text-muted mb-2 fw-bold">24 June 2020</p>
               <p class="text-muted">
                   The day this plant was first planted.

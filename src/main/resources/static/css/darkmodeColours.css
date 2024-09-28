@@ -62,7 +62,10 @@
 
     #gardenTimelineTitle,
     #gardenTimelineDiv,
-    #yourPlantsTitleDiv {
+    #yourPlantsTitleDiv,
+    #plantTimelineDiv,
+    #plantTimelineTitle,
+    #recordUpdateButtonTooltip{
         background-color: #464444;
     }
     .friend-header,
@@ -83,7 +86,7 @@
     }
 
     #gardenTLInfoBorder,
-    #gardenTLInfoDiv {
+    #gardenTLInfoDiv, .plant-side-panel {
         background-color: #1E1E1E;
     }
     .weatherText {
@@ -120,6 +123,10 @@
     }
 
     .addGarden {
+        color: #F5F5F5;
+    }
+
+    .darkText {
         color: #F5F5F5;
     }
 

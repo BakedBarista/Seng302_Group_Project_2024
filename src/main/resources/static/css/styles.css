@@ -945,7 +945,7 @@ h1, h2, h3, h4, h5, h6 {
     background-color: #D3D3D3;
 }
 
-#gardenTLInfoBorder {
+#gardenTLInfoBorder, .plant-side-panel {
     background-color: var(--gg-side-panel)
 }
 
@@ -956,3 +956,9 @@ h1, h2, h3, h4, h5, h6 {
 .addGarden {
     color: black;
 }
+
+#plantTimelineDiv,
+#plantTimelineTitle{
+    background-color: white;
+}
+
