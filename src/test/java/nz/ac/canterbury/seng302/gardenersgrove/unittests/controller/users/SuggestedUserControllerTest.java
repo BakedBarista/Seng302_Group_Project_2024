@@ -9,7 +9,6 @@ import nz.ac.canterbury.seng302.gardenersgrove.controller.users.SuggestedUserCon
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.SuggestedUserDTO;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.CompatibilityService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
@@ -18,12 +17,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
-import org.thymeleaf.TemplateEngine;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -44,14 +41,10 @@ class SuggestedUserControllerTest {
     private Model model;
     private Authentication authentication;
 
-    private GardenUserRepository gardenUserRepository;
-    
-
     private FriendService friendService;
     private SuggestedUserService suggestedUserService;
     private CompatibilityService compatibilityService;
     private ObjectMapper objectMapper;
-    private TemplateEngine templateEngine;
     private HttpServletRequest request;
     private HttpServletResponse response;
     private ServletContext context;
@@ -71,13 +64,12 @@ class SuggestedUserControllerTest {
         suggestedUserService = Mockito.mock(SuggestedUserService.class);
         compatibilityService = Mockito.mock(CompatibilityService.class);
         objectMapper = new ObjectMapper();
-        templateEngine = Mockito.mock(TemplateEngine.class);
         request = Mockito.mock(HttpServletRequest.class);
         response = Mockito.mock(HttpServletResponse.class);
         context = Mockito.mock(ServletContext.class);
         when(request.getServletContext()).thenReturn(context);
 
-        suggestedUserController = new SuggestedUserController(friendService, gardenUserService, suggestedUserService, compatibilityService, objectMapper, templateEngine);
+        suggestedUserController = new SuggestedUserController(gardenUserService, suggestedUserService, objectMapper);
 
         loggedInUser = new GardenUser();
         loggedInUser.setId(loggedInUserId);

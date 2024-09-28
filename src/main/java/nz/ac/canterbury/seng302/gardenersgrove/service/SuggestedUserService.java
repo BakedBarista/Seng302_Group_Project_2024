@@ -1,9 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nz.ac.canterbury.seng302.gardenersgrove.controller.users.SuggestedUserController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 
@@ -211,22 +209,28 @@ public class SuggestedUserService {
     }
 
     /**
-     * Gets all the suggested user DTOs
+     * Gets all the suggested user DTOs, ordered as they should appear in the feed
      *
-     * @param connectionListMinusFriends Available connections not including friends list
-     * @param user Logged in garden user
+     * @param self Logged in garden user
      * @param request HTTP servlet request
      * @param response HTTP servlet response
      * @return list of all available connections
      */
-    public List<SuggestedUserDTO> getSortedSuggestedUserDTOs(List<GardenUser> connectionListMinusFriends, GardenUser user, HttpServletRequest request, HttpServletResponse response){
-        List<SuggestedUserDTO> sortedOtherConnections = new ArrayList<>();
+    public List<SuggestedUserDTO> getSuggestionFeedContents(GardenUser self, HttpServletRequest request, HttpServletResponse response) {
+        List<SuggestedUserDTO> receivedConnectionRequests = friendService.receivedConnectionRequests(self)
+            .stream()
+            .map(u -> makeSuggestedUserDTO(self, u, request, response))
+            .sorted(Comparator.comparingInt(SuggestedUserDTO::getCompatibility).reversed())
+            .toList();
+        List<SuggestedUserDTO> availableConnections = friendService.availableConnections(self)
+            .stream()
+            .map(u -> makeSuggestedUserDTO(self, u, request, response))
+            .sorted(Comparator.comparingInt(SuggestedUserDTO::getCompatibility).reversed())
+            .toList();
 
-        if(!connectionListMinusFriends.isEmpty()){
-            List<SuggestedUserDTO> otherConnections = connectionListMinusFriends.stream().map((GardenUser u) -> makeSuggestedUserDTO(user, u, request, response)).toList();
-            sortedOtherConnections.addAll(otherConnections);
-            sortedOtherConnections.sort(Comparator.comparingInt(SuggestedUserDTO::getCompatibility).reversed());
-        }
-        return sortedOtherConnections;
+        List<SuggestedUserDTO> feedContents = new ArrayList<>();
+        feedContents.addAll(receivedConnectionRequests);
+        feedContents.addAll(availableConnections);
+        return feedContents;
     }
 }
