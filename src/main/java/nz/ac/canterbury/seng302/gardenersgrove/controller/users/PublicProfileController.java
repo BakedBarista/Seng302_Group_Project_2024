@@ -80,10 +80,9 @@ public class PublicProfileController {
         model.addAttribute(USER_ID_ATTRIBUTE, userId);
         model.addAttribute("currentUser", userId);
         model.addAttribute("name", user.getFullName());
+        model.addAttribute("birthFlower", user.getBirthFlower());
         model.addAttribute(DESCRIPTION, user.getDescription());
         model.addAttribute(FAVOURITE_GARDEN, user.getFavoriteGarden());
-
-
         model.addAttribute(FAVOURITE_PLANTS, favouritePlants);
 
         return "users/public-profile";
@@ -135,6 +134,7 @@ public class PublicProfileController {
         model.addAttribute(USER_ID_ATTRIBUTE, id);
         model.addAttribute("currentUser", loggedInUserId);
         model.addAttribute("name", user.getFullName());
+        model.addAttribute("birthFlower", user.getBirthFlower());
         model.addAttribute(FAVOURITE_GARDEN, user.getFavoriteGarden());
         model.addAttribute(DESCRIPTION, user.getDescription());
         model.addAttribute(FAVOURITE_PLANTS, favouritePlants);
@@ -176,12 +176,11 @@ public class PublicProfileController {
 
         model.addAttribute(USER_ID_ATTRIBUTE, userId);
         model.addAttribute("name", user.getFullName());
+        model.addAttribute("birthFlower", user.getBirthFlower());
         editUserDTO.setDescription(user.getDescription());
         model.addAttribute("editUserDTO", editUserDTO);
         model.addAttribute(FAVOURITE_GARDEN, user.getFavoriteGarden());
         model.addAttribute("flowers", flowers);
-
-
 
         Set<Plant> favouritePlants = user.getFavouritePlants();
         model.addAttribute(FAVOURITE_PLANTS, favouritePlants);
@@ -220,6 +219,7 @@ public class PublicProfileController {
             @RequestParam("image") MultipartFile profilePic,
             @RequestParam("bannerImage") MultipartFile banner,
             @RequestParam(DESCRIPTION) String description,
+            @RequestParam("selectedFlower") String birthFlower,
             @Valid @ModelAttribute("editUserDTO") EditUserDTO editUserDTO,
             BindingResult bindingResult,
             Model model) throws IOException {
@@ -229,6 +229,11 @@ public class PublicProfileController {
         model.addAttribute(USER_ID_ATTRIBUTE, userId);
 
         boolean errorFlag = false;
+
+        if (birthFlower.isBlank()) {
+            logger.info("do i get here");
+            birthFlower = user.getBirthFlower();
+        }
 
         try {
             isValidDescription(description);
@@ -257,6 +262,7 @@ public class PublicProfileController {
         user.setDescription(description);
         editProfilePicture(userId, profilePic);
         editProfileBanner(userId, banner);
+        user.setBirthFlower(birthFlower);
 
         userService.addUser(user);
 
