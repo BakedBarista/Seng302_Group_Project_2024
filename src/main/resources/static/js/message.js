@@ -3,6 +3,15 @@ const sendMessageForm = document.getElementById('sendMessageForm');
 const label = sendMessageForm?.querySelector('label');
 const textArea = sendMessageForm?.querySelector('textarea');
 const messagesContainer = document.getElementById('scrollbar');
+let currentMessageEmojiId = null;
+
+document.body.addEventListener('click', () => {
+    if (currentMessageEmojiId != null) {
+        const emojiPicker = document.getElementById( "emoji-picker-" + currentMessageEmojiId);
+        emojiPicker.className = "d-none";
+        currentMessageEmojiId = null;
+    }
+})
 
 async function updateMessages() {
     const res = await fetch(`${apiBaseUrl}/messages/${otherUserId}`);
@@ -51,7 +60,19 @@ function addEventListenersToMessages() {
 }
 
 function longPressHandler(messageId) {
-    alert('Long press detected! ' + messageId);
+    const emojiPicker = document.getElementById( "emoji-picker-" + messageId);
+    emojiPicker.className = 'flap-in';
+
+    setTimeout(() => currentMessageEmojiId = messageId, 1000)
+}
+
+function addEmoji(event) {
+    const emojiBadge = event.target;
+    const emoji = emojiBadge.textContent;
+
+    ws.send(
+        JSON.stringify({ type: 'addEmoji', messageId: currentMessageEmojiId, emoji })
+    );
 }
 
 function sendMessage() {

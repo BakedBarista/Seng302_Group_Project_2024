@@ -7,7 +7,7 @@
             <div class="card text-white bg-secondary shadow-sm mb-3 border-0 d-none d-md-block" style="max-width: 40%">
                 <div class="card-body">
                     <small>[[${dateFormatter.format(message.timestamp, TIMESTAMP_FORMAT)}]]</small>
-                    <pre class="card-text mt-2">[[${message.messageContent}]]</pre>
+                    <pre class="card-text mt-2 preserve-format">[[${message.messageContent}]]</pre>
                     <img
                         th:if="${message.imageContent != null}"
                         th:src="@{'/api/messages/id/' + ${message.id} + '/image'}"
@@ -20,7 +20,7 @@
             <div class="card text-white bg-secondary shadow-sm mb-3 border-0 d-block d-md-none" style="max-width: 80%">
                 <div class="card-body">
                     <small>[[${dateFormatter.format(message.timestamp, TIMESTAMP_FORMAT)}]]</small>
-                    <pre class="card-text mt-2">[[${message.messageContent}]]</pre>
+                    <pre class="card-text mt-2 preserve-format">[[${message.messageContent}]]</pre>
                     <img
                         th:if="${message.imageContent != null}"
                         th:src="@{'/api/messages/id/' + ${message.id} + '/image'}"
@@ -29,12 +29,16 @@
                 </div>
             </div>
         </div>
+        <div th:id="emoji-picker- + ${message.getId()}" class="d-none">
+            <div th:replace="~{fragments/emoji-picker :: emoji-picker}"></div>
+        </div>
+
         <!--logged in users msg-->
         <div th:if="${message.receiver == sentToUser.id}" class="d-flex justify-content-end">
             <div class="card text-white bg-primary shadow-sm mb-3 border-0 d-none d-md-block" style="max-width: 40%">
                 <div class="card-body">
                     <small>[[${dateFormatter.format(message.timestamp, TIMESTAMP_FORMAT)}]]</small>
-                    <pre class="card-text mt-2">[[${message.messageContent}]]</pre>
+                    <pre class="card-text mt-2 preserve-format">[[${message.messageContent}]]</pre>
                     <img
                         th:if="${message.imageContent != null}"
                         th:src="@{'/api/messages/id/' + ${message.id} + '/image'}"
@@ -48,7 +52,7 @@
             <div class="card text-white bg-primary shadow-sm mb-3 border-0 d-block d-md-none" style="max-width: 80%">
                 <div class="card-body">
                     <small>[[${dateFormatter.format(message.timestamp, TIMESTAMP_FORMAT)}]]</small>
-                    <pre class="card-text mt-2">[[${message.messageContent}]]</pre>
+                    <pre class="card-text mt-2 preserve-format">[[${message.messageContent}]]</pre>
                     <img
                         th:if="${message.imageContent != null}"
                         th:src="@{'/api/messages/id/' + ${message.id} + '/image'}"
