@@ -219,20 +219,12 @@ public class GardenController {
         if (garden.isPresent()) {
             existingGarden = garden.get();
         }
-        String theme = "light"; // default theme
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("theme".equals(cookie.getName())) {
-                    theme = cookie.getValue(); // get the theme value from cookie
-                    break;
-                }
-            }
-        }
+
 
         // Return the default image if nothing specified
         if (existingGarden.getGardenImage() == null || existingGarden.getGardenImageContentType() == null) {
             logger.info("Returning default plant image");
-            String defaultImage = theme.equals("dark") ? "/img/default-garden-dark.svg" : "/img/default-garden.svg";
+            String defaultImage = "/img/default-garden.svg";
             return ResponseEntity.status(302).header(HttpHeaders.LOCATION, request.getContextPath() + defaultImage).build();
         }
 

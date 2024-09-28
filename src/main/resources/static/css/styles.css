@@ -952,3 +952,7 @@ h1, h2, h3, h4, h5, h6 {
 .favouriteGardenCard, .favouritePlantCard {
     background-color: #F9EFCC;
 }
+
+.addGarden {
+    color: black;
+}
