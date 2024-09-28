@@ -239,11 +239,6 @@ public class PublicProfileController {
 
         boolean errorFlag = false;
 
-        if (birthFlower.isBlank()) {
-            logger.info("do i get here");
-            birthFlower = user.getBirthFlower();
-        }
-
         try {
             isValidDescription(description);
         } catch (ProfanityDetectedException e) {
