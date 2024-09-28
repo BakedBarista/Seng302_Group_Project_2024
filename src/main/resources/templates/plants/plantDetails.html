@@ -15,7 +15,11 @@
             <div class="pb-3 d-flex justify-content-start">
                 <a class="btn btn-outline-primary" type="button" th:href="@{/gardens/{id}(id=${gardenId})}"><img th:src="@{/icons/back.svg}" alt="" width="20" height="20" /></a>
             </div>
-            <img th:src="@{'/plants/' + ${plant.id} + '/plant-image'}" alt="Plant Picture" class="w-100 rounded d-block" style="width: 300px; height: 300px;" />
+            <img th:src="@{(${plant.plantImage} != null) ? '/plants/' + ${plant.id} + '/plant-image' : '/img/default-plant.svg'}"
+                 alt="Plant Picture"
+                 class="w-100 rounded d-block"
+                 style="width: 300px; height: 300px;" />
+
             <div class="d-flex">
                 <h2 class="fw-bold"  th:text="${plant.name}">Plant Name</h2>
                 <div class="d-flex align-items-center justify-content-left ps-3">

@@ -57,7 +57,7 @@
                 <div style="position: relative;">
                     <img
                             class="suggest-user-picture card-img"
-                            th:src="@{'/users/' + ${userId} + '/profile-picture'}"
+                            th:src="@{(${profilePicture} != null) ? '/users/' + ${userId} + '/profile-picture' : '/img/default-profile.svg'}"
                             id="cardImage"
                             alt="profile picture"
                             style="object-fit: cover; border-radius: 15px;"

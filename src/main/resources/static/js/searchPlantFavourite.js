@@ -70,6 +70,9 @@ function showSearchResults() {
 
                         const imageElement = document.createElement('img');
                         imageElement.src = `${baseUrl}plants/${plant.id}/plant-image`;
+                        imageElement.onerror = function () {
+                            this.src = `${baseUrl}img/default-plant.svg`;
+                        }
                         imageElement.alt = plant.name;
                         imageElement.style.width = '50px';
                         imageElement.style.height = '50px';

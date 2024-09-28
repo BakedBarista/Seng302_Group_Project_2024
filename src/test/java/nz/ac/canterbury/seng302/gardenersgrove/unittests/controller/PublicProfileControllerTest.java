@@ -196,12 +196,11 @@ public class PublicProfileControllerTest {
         String path = "/my/path";
         user.setProfileBanner(null, null);
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        Mockito.when(request.getContextPath()).thenReturn(path);
         Mockito.when(gardenUserService.getUserById(userId)).thenReturn(user);
 
         ResponseEntity<byte[]> bannerContent = publicProfileController.getPublicProfileBanner(userId, request);
 
-        Assertions.assertEquals(path + "/img/default-banner.svg", bannerContent.getHeaders().getLocation().toString());
+        Assertions.assertNull(bannerContent);
     }
 
     @Test
@@ -297,15 +296,13 @@ public class PublicProfileControllerTest {
     @Test
     void givenUserHasNoGardenImage_whenGetFavouriteGardenImage_thenRedirectToDefaultImage() {
         when(gardenUserService.getUserById(1L)).thenReturn(user);
-        when(request.getContextPath()).thenReturn("");
         garden.setGardenImage(null, null);
 
         // Act
         ResponseEntity<byte[]> response = publicProfileController.favouriteGardenImage(1L, request);
 
         // Assert
-        assertEquals(HttpStatus.FOUND, response.getStatusCode());
-        assertEquals("/img/default-garden.svg", response.getHeaders().getFirst(HttpHeaders.LOCATION));
+        assertNull(response);
     }
 
 

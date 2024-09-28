@@ -78,6 +78,7 @@ public class PublicProfileController {
         GardenUser user = userService.getUserById(userId);
         Set<Plant> favouritePlants = user.getFavouritePlants();
         model.addAttribute(USER_ID_ATTRIBUTE, userId);
+        model.addAttribute("user",user);
         model.addAttribute("currentUser", userId);
         model.addAttribute("name", user.getFullName());
         model.addAttribute(DESCRIPTION, user.getDescription());
@@ -102,11 +103,11 @@ public class PublicProfileController {
         }
 
         GardenUser user = userService.getUserById(id);
-        if (user.getFavoriteGarden() == null || user.getFavoriteGarden().getGardenImage() == null) {
-            return ResponseEntity.status(302).header(HttpHeaders.LOCATION, request.getContextPath() + DEFAULT_GARDEN_IMAGE_URL).build();
+        if(user.getFavoriteGarden() != null && user.getFavoriteGarden().getGardenImage() != null) {
+            return ResponseEntity.ok().contentType(MediaType.parseMediaType(user.getFavoriteGarden().getGardenImageContentType()))
+                    .body(user.getFavoriteGarden().getGardenImage());
         }
-        return ResponseEntity.ok().contentType(MediaType.parseMediaType(user.getFavoriteGarden().getGardenImageContentType()))
-                .body(user.getFavoriteGarden().getGardenImage());
+        return null;
     }
 
     /**
@@ -133,6 +134,7 @@ public class PublicProfileController {
         logger.info("current user: {}",userService.getUserById(id).getFname());
         logger.info("logged in user {}",userService.getUserById(loggedInUserId).getFname());
         model.addAttribute(USER_ID_ATTRIBUTE, id);
+        model.addAttribute("user",user);
         model.addAttribute("currentUser", loggedInUserId);
         model.addAttribute("name", user.getFullName());
         model.addAttribute(FAVOURITE_GARDEN, user.getFavoriteGarden());
@@ -153,11 +155,11 @@ public class PublicProfileController {
         logger.info("GET /users/{}/profile-banner", id);
 
         GardenUser user = userService.getUserById(id);
-        if (user.getProfileBanner() == null) {
-            return ResponseEntity.status(302).header(HttpHeaders.LOCATION, request.getContextPath() + DEFAULT_PROFILE_BANNER_URL).build();
+        if(user.getProfileBanner() != null) {
+            return ResponseEntity.ok().contentType(MediaType.parseMediaType(user.getProfileBannerContentType()))
+                    .body(user.getProfileBanner());
         }
-        return ResponseEntity.ok().contentType(MediaType.parseMediaType(user.getProfileBannerContentType()))
-                .body(user.getProfileBanner());
+        return null;
     }
 
     /**
@@ -175,6 +177,7 @@ public class PublicProfileController {
 
 
         model.addAttribute(USER_ID_ATTRIBUTE, userId);
+        model.addAttribute("user",user);
         model.addAttribute("name", user.getFullName());
         editUserDTO.setDescription(user.getDescription());
         model.addAttribute("editUserDTO", editUserDTO);
