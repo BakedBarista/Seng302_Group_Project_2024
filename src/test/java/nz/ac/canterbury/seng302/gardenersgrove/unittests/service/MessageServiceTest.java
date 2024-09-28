@@ -27,6 +27,7 @@ import java.time.ZoneId;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class MessageServiceTest {
@@ -72,6 +73,9 @@ class MessageServiceTest {
         assertEquals(receiver, message.getReceiver());
         assertEquals(messageWord, message.getMessageContent());
         assertEquals(timestamp.atZone(clock.getZone()).toLocalDateTime(), message.getTimestamp());
+
+        message.setReaction("lol");
+        assertEquals("lol", message.getReaction());
     }
 
     @Test
@@ -353,5 +357,29 @@ class MessageServiceTest {
         Long count = messageService.getCountOfUnreadMessages(receiverId, senderId);
 
         Assertions.assertEquals(numberOfMessages, count);
+    }
+
+    @Test
+    void testGetTotalUnreadMessages_thenTotalNumberIsReturned() {
+        Long receiverId = 1L;
+        Long userId = 2L;
+        MessageRead messageRead = new MessageRead(receiverId, userId);
+        when(messageReadRepository.findAllByUserId(userId)).thenReturn(List.of(messageRead));
+        when(messageRepository.countAllUnreadMessagesAfter(userId,messageRead.getLastReadMessage())).thenReturn(Long.valueOf(1));
+        Long result = messageService.getUnreadMessageCount(userId);
+        assertEquals(Long.valueOf(1), result);
+    }
+
+    @Test
+    void whenCallingRemoveHistory_thenMessagesAreDeleted() {
+        Long receiverId = 1L;
+        Long userId = 2L;
+        Message message = new Message();
+        when(messageRepository.findMessagesBetweenUsers(userId,receiverId)).thenReturn(List.of(message));
+        messageService.removeMessageHistory(userId,receiverId);
+
+        verify(messageRepository, times(1)).findMessagesBetweenUsers(userId,receiverId);
+        verify(messageRepository, times(1)).deleteAll(List.of(message));
+
     }
 }
