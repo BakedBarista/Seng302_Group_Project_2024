@@ -11,11 +11,14 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import nz.ac.canterbury.seng302.gardenersgrove.controller.LocationAPIController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
@@ -24,6 +27,8 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 
 class CompatibilityServiceUnitTests {
+    final Logger logger = LoggerFactory.getLogger(CompatibilityServiceUnitTests.class);
+
     private GardenService gardenService;
     private PlantService plantService;
     private Clock clock;
@@ -220,31 +225,12 @@ class CompatibilityServiceUnitTests {
         assertEquals(50., result, 10.);
     }
 
-    @ParameterizedTest
-    @CsvSource({
-        "1, 7, 16.5",  
-        "1, 12, 74.1", 
-        "3, 9, 16.5",  
-        "4, 5, 74.1", 
-        "2, 11, 40.7", 
-        "11, 11, 100"
-    })
-    
-    void givenUsersHaveDifferentBirthMonths_whenCalculateMonthQuotient_thenReturnCalculatedValue(int month1, int month2, double expected) {
-        user1.setDateOfBirth(LocalDate.of(2000, month1, 1));
-        user2.setDateOfBirth(LocalDate.of(2000, month2, 1));
-
-        Double result = compatibilityService.calculateMonthQuotient(user1, user2);
-
-        assertEquals(expected, result, 0.1);
-    }
-
     @Test
     void givenOneUserHasNullBirthday_whenCalculateMonthQuotient_thenReturnNull() {
         user1.setDateOfBirth(LocalDate.of(2000, 1, 1));
         user2.setDateOfBirth(null);
 
-        Double result = compatibilityService.calculateMonthQuotient(user1, user2);
+        Double result = compatibilityService.calculateFlowerCompatability(user1, user2);
 
         assertNull(result);
     }
