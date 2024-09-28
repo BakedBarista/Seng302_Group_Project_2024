@@ -77,11 +77,15 @@ public class PublicProfileController {
 
         Long userId = (Long) authentication.getPrincipal();
         GardenUser user = userService.getUserById(userId);
+        String birthFlower = user.getBirthFlower();
+        if (birthFlower == null) {
+            birthFlower = birthFlowerService.getDefaultBirthFlower(user.getDateOfBirth());
+        }
         Set<Plant> favouritePlants = user.getFavouritePlants();
         model.addAttribute(USER_ID_ATTRIBUTE, userId);
         model.addAttribute("currentUser", userId);
         model.addAttribute("name", user.getFullName());
-        model.addAttribute(BIRTH_FLOWER, user.getBirthFlower());
+        model.addAttribute(BIRTH_FLOWER, birthFlower);
         model.addAttribute(DESCRIPTION, user.getDescription());
         model.addAttribute(FAVOURITE_GARDEN, user.getFavoriteGarden());
         model.addAttribute(FAVOURITE_PLANTS, favouritePlants);
@@ -129,13 +133,17 @@ public class PublicProfileController {
         if (isCurrentUser) {
             return viewPublicProfile(authentication, model);
         }
+        String birthFlower = user.getBirthFlower();
+        if (birthFlower == null) {
+            birthFlower = birthFlowerService.getDefaultBirthFlower(user.getDateOfBirth());
+        }
         Set<Plant> favouritePlants = user.getFavouritePlants();
         logger.info("current user: {}",userService.getUserById(id).getFname());
         logger.info("logged in user {}",userService.getUserById(loggedInUserId).getFname());
         model.addAttribute(USER_ID_ATTRIBUTE, id);
         model.addAttribute("currentUser", loggedInUserId);
         model.addAttribute("name", user.getFullName());
-        model.addAttribute(BIRTH_FLOWER, user.getBirthFlower());
+        model.addAttribute(BIRTH_FLOWER, birthFlower);
         model.addAttribute(FAVOURITE_GARDEN, user.getFavoriteGarden());
         model.addAttribute(DESCRIPTION, user.getDescription());
         model.addAttribute(FAVOURITE_PLANTS, favouritePlants);
