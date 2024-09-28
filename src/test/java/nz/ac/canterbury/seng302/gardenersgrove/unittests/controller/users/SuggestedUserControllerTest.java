@@ -96,24 +96,22 @@ class SuggestedUserControllerTest {
      * Testing the get method of the home page
      */
     @Test
-    void whenIViewMyPublicProfile_thenIAmTakenToThePublicProfilePage() throws JsonProcessingException {
+    void whenIViewMyFeed_thenIAmShownMyFeed() throws JsonProcessingException {
         model = Mockito.mock(Model.class);
 
         GardenUser suggestedUser = new GardenUser();
         suggestedUser.setId(3L);
         suggestedUser.setDescription("Another description");
 
-        List<GardenUser> suggestedUsers = Collections.singletonList(suggestedUser);
-
-
         Mockito.when(request.getServletContext()).thenReturn(context);
         Mockito.when(authentication.getPrincipal()).thenReturn(loggedInUserId);
         Mockito.when(gardenUserService.getUserById(loggedInUserId)).thenReturn(loggedInUser);
-        Mockito.when(friendService.availableConnections(loggedInUser)).thenReturn(suggestedUsers);
+        Mockito.when(suggestedUserService.getSuggestionFeedContents(loggedInUser, request, response))
+                .thenReturn(List.of(new SuggestedUserDTO(suggestedUser)));
 
         String page = suggestedUserController.home(authentication, model, request, response);
 
-        verify(compatibilityService).friendshipCompatibilityQuotient(any(), any());
+        verify(suggestedUserService).getSuggestionFeedContents(any(), any(), any());
         verify(model).addAttribute(eq("userId"), any());
         verify(model).addAttribute(eq("name"), any());
         verify(model).addAttribute(eq("description"), any());
@@ -214,25 +212,6 @@ class SuggestedUserControllerTest {
     }
 
     @Test
-    void testGetSortedSuggestedUserDTOs_NonEmptyList() {
-        GardenUser user = new GardenUser();
-        GardenUser user1 = new GardenUser();
-        GardenUser user2 = new GardenUser();
-        user1.setId(1L);
-        user2.setId(2L);
-
-        Mockito.when(compatibilityService.friendshipCompatibilityQuotient(user, user1)).thenReturn(70.0);
-        Mockito.when(compatibilityService.friendshipCompatibilityQuotient(user, user2)).thenReturn(90.0);
-        List<GardenUser> connectionListMinusFriends = Arrays.asList(user1, user2);
-
-        List<SuggestedUserDTO> result = suggestedUserController.getSortedSuggestedUserDTOs(connectionListMinusFriends, user, request, response);
-
-        // checking the right order
-        assertEquals(90, result.get(0).getCompatibility());
-        assertEquals(70, result.get(1).getCompatibility());
-    }
-
-    @Test
     void givenLowCompatibility_andUserSentRequest_whenCardsShown_thenSentRequestShowsFirst() throws JsonProcessingException {
         GardenUser Liam = new GardenUser("liam", "user", "laims@gmail.com", "password", LocalDate.of(1970, 10, 10));
 
@@ -246,10 +225,8 @@ class SuggestedUserControllerTest {
         );
 
         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
-        when(compatibilityService.friendshipCompatibilityQuotient(Liam, highCompatibilityUser)).thenReturn(70.0);
-        when(compatibilityService.friendshipCompatibilityQuotient(Liam, lowCompatibilitySentRequest)).thenReturn(30.0);
-        Mockito.when(friendService.availableConnections(loggedInUser)).thenReturn(List.of(highCompatibilityUser));
-        when(friendService.receivedConnectionRequests(loggedInUser)).thenReturn(List.of(lowCompatibilitySentRequest));
+        when(gardenUserService.getUserById(loggedInUserId)).thenReturn(Liam);
+        when(suggestedUserService.getSuggestionFeedContents(Liam, request, response)).thenReturn(combinedList);
 
         String result = suggestedUserController.home(authentication, model, request, response);
 

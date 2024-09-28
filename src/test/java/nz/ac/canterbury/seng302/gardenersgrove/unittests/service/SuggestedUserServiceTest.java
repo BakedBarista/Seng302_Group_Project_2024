@@ -1,21 +1,28 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unittests.service;
 
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.SuggestedUserDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.CompatibilityService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.SuggestedUserService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.thymeleaf.TemplateEngine;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.entity.Friends.Status.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -25,6 +32,9 @@ class SuggestedUserServiceTest {
     private FriendService friendService;
     private CompatibilityService compatibilityService;
     private TemplateEngine templateEngine;
+    private HttpServletRequest request;
+    private HttpServletResponse response;
+    private ServletContext servletContext;
 
     Long loggedInUserId = 1L;
     GardenUser loggedInUser;
@@ -36,6 +46,9 @@ class SuggestedUserServiceTest {
         friendService = Mockito.mock(FriendService.class);
         compatibilityService = Mockito.mock(CompatibilityService.class);
         templateEngine = Mockito.mock(TemplateEngine.class);
+        request = Mockito.mock(HttpServletRequest.class);
+        response = Mockito.mock(HttpServletResponse.class);
+        servletContext = Mockito.mock(ServletContext.class);
         suggestedUserService = new SuggestedUserService(friendService, compatibilityService, templateEngine);
 
         loggedInUser = new GardenUser();
@@ -220,5 +233,37 @@ class SuggestedUserServiceTest {
         boolean result = suggestedUserService.validationCheck(loggedInUserId, suggestedUserId);
 
         Assertions.assertTrue(result);
+    }
+
+    @Test
+    void whenGetSortedSuggestedUserDTOs_thenSortedCorrectly() {
+        GardenUser user = new GardenUser();
+        GardenUser user1 = new GardenUser();
+        GardenUser user2 = new GardenUser();
+        GardenUser user3 = new GardenUser();
+        GardenUser user4 = new GardenUser();
+        user1.setId(1L);
+        user2.setId(2L);
+        user3.setId(3L);
+        user4.setId(4L);
+
+        Mockito.when(compatibilityService.friendshipCompatibilityQuotient(user, user1)).thenReturn(70.0);
+        Mockito.when(compatibilityService.friendshipCompatibilityQuotient(user, user2)).thenReturn(90.0);
+        Mockito.when(compatibilityService.friendshipCompatibilityQuotient(user, user3)).thenReturn(60.0);
+        Mockito.when(compatibilityService.friendshipCompatibilityQuotient(user, user4)).thenReturn(80.0);
+
+        Mockito.when(friendService.receivedConnectionRequests(user)).thenReturn(List.of(user1, user2));
+        Mockito.when(friendService.availableConnections(user)).thenReturn(List.of(user3, user4));
+
+        Mockito.when(request.getServletContext()).thenReturn(servletContext);
+
+        List<SuggestedUserDTO> result = suggestedUserService.getSuggestionFeedContents(user, request, response);
+
+        // checking the right order
+        assertEquals(4, result.size());
+        assertEquals(2L, result.get(0).getId());
+        assertEquals(1L, result.get(1).getId());
+        assertEquals(4L, result.get(2).getId());
+        assertEquals(3L, result.get(3).getId());
     }
 }
