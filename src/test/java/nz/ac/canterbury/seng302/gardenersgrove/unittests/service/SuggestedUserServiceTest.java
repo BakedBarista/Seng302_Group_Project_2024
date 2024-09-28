@@ -2,12 +2,14 @@ package nz.ac.canterbury.seng302.gardenersgrove.unittests.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.service.CompatibilityService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.SuggestedUserService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.thymeleaf.TemplateEngine;
 
 import java.util.Collections;
 import java.util.List;
@@ -21,6 +23,8 @@ class SuggestedUserServiceTest {
 
     private SuggestedUserService suggestedUserService;
     private FriendService friendService;
+    private CompatibilityService compatibilityService;
+    private TemplateEngine templateEngine;
 
     Long loggedInUserId = 1L;
     GardenUser loggedInUser;
@@ -30,7 +34,9 @@ class SuggestedUserServiceTest {
     @BeforeEach
     public void setUp() {
         friendService = Mockito.mock(FriendService.class);
-        suggestedUserService = new SuggestedUserService(friendService);
+        compatibilityService = Mockito.mock(CompatibilityService.class);
+        templateEngine = Mockito.mock(TemplateEngine.class);
+        suggestedUserService = new SuggestedUserService(friendService, compatibilityService, templateEngine);
 
         loggedInUser = new GardenUser();
         suggestedUser = new GardenUser();

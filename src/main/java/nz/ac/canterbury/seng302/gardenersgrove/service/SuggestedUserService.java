@@ -1,15 +1,22 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.users.SuggestedUserController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.SuggestedUserDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.WebContext;
+import org.thymeleaf.web.servlet.JakartaServletWebApplication;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.entity.Friends.Status.*;
 
@@ -18,10 +25,17 @@ public class SuggestedUserService {
 
     private static final Logger logger = LoggerFactory.getLogger(SuggestedUserService.class);
     private final FriendService friendService;
+    private final CompatibilityService compatibilityService;
+    private final TemplateEngine templateEngine;
+
+
 
     @Autowired
-    public SuggestedUserService(FriendService friendService) {
+    public SuggestedUserService(FriendService friendService, CompatibilityService compatibilityService,
+                                TemplateEngine templateEngine) {
         this.friendService = friendService;
+        this.compatibilityService = compatibilityService;
+        this.templateEngine = templateEngine;
     }
 
     /**
@@ -154,5 +168,65 @@ public class SuggestedUserService {
         Friends declinedRequest = new Friends(loggedInUser, suggestedUser, DECLINED);
         friendService.save(declinedRequest);
         return true;
+    }
+
+    /**
+     * Creates a DTO for a suggested user by calculating the compatibility
+     *
+     * @param self Logged in garden user
+     * @param user Suggested garden user
+     * @param request HTTP servlet request
+     * @param response HTTP servlet response
+     * @return DTO of suggested user
+     */
+    private SuggestedUserDTO makeSuggestedUserDTO(GardenUser self, GardenUser user, HttpServletRequest request,
+                                                  HttpServletResponse response) {
+        SuggestedUserDTO dto = new SuggestedUserDTO(user);
+
+        double compatibility = compatibilityService.friendshipCompatibilityQuotient(self, user);
+        dto.setCompatibility((int) Math.round(compatibility));
+
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("userId", user.getId());
+        variables.put("favouriteGarden", user.getFavoriteGarden());
+        variables.put("favouritePlants", user.getFavouritePlants());
+
+        // Manually render thymeleaf fragments for the backside of each card
+        JakartaServletWebApplication application = JakartaServletWebApplication
+                .buildApplication(request.getServletContext());
+        WebContext context = new WebContext(application.buildExchange(request, response), request.getLocale(),
+                variables);
+        if (user.getFavoriteGarden() != null) {
+            dto.setFavouriteGardenHtml(templateEngine.process("fragments/favourite-garden.html", context));
+        } else {
+            dto.setFavouriteGardenHtml("<div class=\"text-center my-3 text-white\">No Favourite Garden Selected</div>");
+        }
+        if (user.getFavouritePlants() != null) {
+            dto.setFavouritePlantsHtml(templateEngine.process("fragments/favourite-plants.html", context));
+        } else {
+            dto.setFavouritePlantsHtml("<div class=\"text-center my-3 text-white\">No Favourite Plants Selected</div>");
+        }
+
+        return dto;
+    }
+
+    /**
+     * Gets all the suggested user DTOs
+     *
+     * @param connectionListMinusFriends Available connections not including friends list
+     * @param user Logged in garden user
+     * @param request HTTP servlet request
+     * @param response HTTP servlet response
+     * @return list of all available connections
+     */
+    public List<SuggestedUserDTO> getSortedSuggestedUserDTOs(List<GardenUser> connectionListMinusFriends, GardenUser user, HttpServletRequest request, HttpServletResponse response){
+        List<SuggestedUserDTO> sortedOtherConnections = new ArrayList<>();
+
+        if(!connectionListMinusFriends.isEmpty()){
+            List<SuggestedUserDTO> otherConnections = connectionListMinusFriends.stream().map((GardenUser u) -> makeSuggestedUserDTO(user, u, request, response)).toList();
+            sortedOtherConnections.addAll(otherConnections);
+            sortedOtherConnections.sort(Comparator.comparingInt(SuggestedUserDTO::getCompatibility).reversed());
+        }
+        return sortedOtherConnections;
     }
 }
