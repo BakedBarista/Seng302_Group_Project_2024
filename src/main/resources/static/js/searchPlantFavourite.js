@@ -65,6 +65,7 @@ function showSearchResults() {
                         const plantOption = document.createElement('div');
                         plantOption.style.marginBottom = '5px';
                         plantOption.classList.add('plant-option');
+                        plantOption.classList.add("darkText")
                         plantOption.setAttribute('data-id', plant.id);
                         plantOption.setAttribute('data-name', plant.name);
 
