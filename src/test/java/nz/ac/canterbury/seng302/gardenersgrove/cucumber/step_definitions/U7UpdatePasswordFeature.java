@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
+import nz.ac.canterbury.seng302.gardenersgrove.service.BirthFlowerService;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -33,6 +34,7 @@ public class U7UpdatePasswordFeature {
 
     private static GardenUserService userService;
     private static EditUserController editUserController;
+    private static BirthFlowerService birthFlowerService;
 
     private GardenUser user;
     private EditPasswordDTO editPasswordDTO;
@@ -41,12 +43,13 @@ public class U7UpdatePasswordFeature {
     public static void beforeAll() {
         userRepository = mock(GardenUserRepository.class);
         emailSenderService = mock(EmailSenderService.class);
+        birthFlowerService = mock(BirthFlowerService.class);
         bindingResult = mock(BindingResult.class);
         model = mock(Model.class);
         authentication = mock(Authentication.class);
 
         userService = new GardenUserService(userRepository);
-        editUserController = new EditUserController(userService, emailSenderService);
+        editUserController = new EditUserController(userService, emailSenderService, birthFlowerService);
     }
 
     @Given("I am on the change password form")

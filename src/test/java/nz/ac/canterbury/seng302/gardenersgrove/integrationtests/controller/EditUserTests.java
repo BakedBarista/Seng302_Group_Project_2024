@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditPasswordDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.service.BirthFlowerService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,6 +38,7 @@ class EditUserControllerTest {
     private EmailSenderService emailSenderService;
 
     private GardenUserRepository gardenUserRepository;
+    private BirthFlowerService birthFlowerService;
     private MultipartFile file;
     private Long userId = 1L;
 
@@ -45,11 +47,12 @@ class EditUserControllerTest {
     @BeforeEach
     void setUp() {
         gardenUserRepository = mock(GardenUserRepository.class);
+        birthFlowerService = mock(BirthFlowerService.class);
         authentication = mock(Authentication.class);
         model = mock(Model.class);
         userService = mock(GardenUserService.class);
         emailSenderService = mock(EmailSenderService.class);
-        controller = new EditUserController(userService, emailSenderService);
+        controller = new EditUserController(userService, emailSenderService, birthFlowerService);
         file = new MockMultipartFile("file", "filename.txt", "text/plain", "Some file content".getBytes());
     }
 
@@ -178,7 +181,7 @@ class EditUserControllerTest {
 
         when(userService.getUserById(userId)).thenReturn(user);
         when(authentication.getPrincipal()).thenReturn(userId);
-        EditUserController controller = new EditUserController(userService, emailSenderService);
+        EditUserController controller = new EditUserController(userService, emailSenderService, birthFlowerService);
         EditUserDTO editUser = new EditUserDTO();
         editUser.setFname("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
         editUser.setLname( "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");

@@ -34,7 +34,6 @@ public class RegisterController {
     private final TokenService tokenService;
     private final EmailSenderService emailSenderService;
     private final URLService urlService;
-
     private final BirthFlowerService birthFlowerService;
 
     /**
