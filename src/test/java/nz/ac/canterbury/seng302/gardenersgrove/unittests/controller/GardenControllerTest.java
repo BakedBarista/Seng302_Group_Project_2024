@@ -552,13 +552,12 @@ public class GardenControllerTest {
     }
 
     @Test
-    void whenGardenImageNotExist_returnGardenImage() {
+    void whenGardenImageNotExist_returnNull() {
         HttpServletRequest mockRequest = new MockHttpServletRequest();
         Garden garden = new Garden();
         when(gardenService.getGardenById(1L)).thenReturn(Optional.of(garden));
         ResponseEntity<byte[]> response = gardenController.gardenImage(1L, mockRequest);
-        assertEquals(HttpStatus.FOUND, response.getStatusCode());
-        assertEquals("/img/default-garden.svg", response.getHeaders().getFirst(HttpHeaders.LOCATION));
+        assertNull(response);
     }
 
 

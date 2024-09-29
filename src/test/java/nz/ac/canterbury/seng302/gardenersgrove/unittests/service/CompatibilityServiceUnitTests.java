@@ -12,11 +12,14 @@ import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import nz.ac.canterbury.seng302.gardenersgrove.controller.LocationAPIController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
@@ -25,6 +28,8 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 
 class CompatibilityServiceUnitTests {
+    final Logger logger = LoggerFactory.getLogger(CompatibilityServiceUnitTests.class);
+
     private GardenService gardenService;
     private PlantService plantService;
     private Clock clock;
@@ -254,5 +259,15 @@ class CompatibilityServiceUnitTests {
 
         double similarity = compatibilityService.calculatePlantSimilarity(user1, user2);
         assertEquals(33.333333333333336, similarity); 
+    }
+
+    @Test
+    void givenOneUserHasNullBirthday_whenCalculateMonthQuotient_thenReturnNull() {
+        user1.setDateOfBirth(LocalDate.of(2000, 1, 1));
+        user2.setDateOfBirth(null);
+
+        Double result = compatibilityService.calculateFlowerCompatability(user1, user2);
+
+        assertNull(result);
     }
 }

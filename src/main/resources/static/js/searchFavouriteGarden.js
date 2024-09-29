@@ -1,59 +1,60 @@
-function showGardenSearchResults() {
-    document.getElementById("searchGardenForm").addEventListener('submit', function(e) {
-        e.preventDefault();
-        const searchTerm = document.getElementById("searchGardenInput").value;
-        const searchResultsContainer = document.getElementById("searchGardenResults");
-        fetch(`edit-public-profile/favourite-garden?search=`+ encodeURIComponent(searchTerm),{
-            method: 'POST',
-            headers: {
-                'Content-Type':'application/json',
-                [csrfHeader]: csrf,
-            },
-            body:JSON.stringify({ searchTerm: searchTerm }),
-        }).then(response => response.json())
-            .then(response => {
-                console.log(response)
-                const gardenList = document.getElementById('searchGardenResults');
-                if(response.length > 0) {
-                    searchResultsContainer.innerHTML = '<h2>Results</h2>';
-                    const gardenSelection = document.createElement('select')
-                    gardenSelection.classList.add('form-select');
-                    gardenSelection.size = 10;
-                    gardenList.appendChild(gardenSelection);
+// Trigger default search with empty search term when modal loads
 
-                    response.forEach(garden => {
-                        const option = document.createElement('option');
-                        const gardenOption = document.createElement('div');
-                        const optionName = document.createElement('span');
-                        option.setAttribute('data-id', garden.id);
-                        option.setAttribute('data-location', garden.location);
-                        option.setAttribute('data-description', garden.description);
-                        option.setAttribute('data-size', garden.size);
-                        optionName.innerHTML = `${garden.name}`;
-                        gardenOption.appendChild(optionName);
-                        option.appendChild(gardenOption);
+// Set up the form submit event listener
+document.getElementById("searchGardenForm").addEventListener('submit', function(e) {
+    e.preventDefault(); // Prevent the default form submission
+    const searchTerm = document.getElementById("searchGardenInput").value; // Get the search term from input
+    showGardenSearchResults(searchTerm); // Call the search with the current input value
+});
 
-                        option.style.padding = '10px';
-                        option.style.borderRadius = '5px';
-                        option.style.border = '1px solid #ccc';
-                        option.style.cursor = 'pointer';
+function showGardenSearchResults(searchTerm) {
+    const searchResultsContainer = document.getElementById("searchGardenResults");
+    fetch(`edit-public-profile/favourite-garden?search=` + encodeURIComponent(searchTerm), {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            [csrfHeader]: csrf,
+        },
+        body: JSON.stringify({searchTerm: searchTerm}),
+    }).then(response => response.json())
+        .then(response => {
+            const gardenList = document.getElementById('searchGardenResults');
+            gardenList.innerHTML = ''; // Clear previous results
 
-                        gardenSelection.appendChild(option);
+            if (response.length > 0) {
+                searchResultsContainer.innerHTML = '<h2>Results</h2>';
+                const gardenSelection = document.createElement('select');
+                gardenSelection.classList.add('form-select');
+                gardenSelection.size = 10;
+                gardenList.appendChild(gardenSelection);
 
-                    })
-                    gardenSelection.addEventListener("change", function() {
-                        const selectedOption = gardenSelection.options[gardenSelection.selectedIndex];
-                        const gardenId = selectedOption.getAttribute('data-id');
-                        document.getElementById('selectedGardenId').value = gardenId;
-                    })
-                } else {
-                    searchResultsContainer.innerHTML = '<h2>No results found</h2>';
-                }
-            }).catch(error => {
-                console.log(error);
-        })
+                response.forEach(garden => {
+                    const option = document.createElement('option');
+                    option.setAttribute('data-id', garden.id);
+                    option.setAttribute('data-location', garden.location);
+                    option.setAttribute('data-description', garden.description);
+                    option.setAttribute('data-size', garden.size);
+                    option.textContent = `${garden.name}`;
 
-    })
+                    option.style.padding = '10px';
+                    option.style.borderRadius = '5px';
+                    option.style.border = '1px solid #ccc';
+                    option.style.cursor = 'pointer';
+
+                    gardenSelection.appendChild(option);
+                });
+
+                gardenSelection.addEventListener("change", function () {
+                    const selectedOption = gardenSelection.options[gardenSelection.selectedIndex];
+                    const gardenId = selectedOption.getAttribute('data-id');
+                    document.getElementById('selectedGardenId').value = gardenId;
+                });
+            } else {
+                searchResultsContainer.innerHTML = '<h2>No results found</h2>';
+            }
+        }).catch(error => {
+        console.log(error);
+    });
 
 
 }

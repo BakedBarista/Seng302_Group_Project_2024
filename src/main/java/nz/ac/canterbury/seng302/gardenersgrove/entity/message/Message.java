@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng302.gardenersgrove.entity;
+package nz.ac.canterbury.seng302.gardenersgrove.entity.message;
 
 import jakarta.persistence.*;
 
@@ -32,6 +32,9 @@ public class Message {
     @Lob
     private byte[] imageContent;
 
+    @Column
+    private String reaction;
+
     /**
      * Empty constructor - required for JPA since this is an @Entity
      */
@@ -43,6 +46,10 @@ public class Message {
         this.receiver = receiver;
         this.timestamp = timestamp;
         this.messageContent = message;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public Long getSender() {
@@ -68,6 +75,29 @@ public class Message {
     public void setImage(String imageContentType, byte[] imageContent) {
         this.imageContentType = imageContentType;
         this.imageContent = imageContent;
+    }
+
+    public String getReaction() {
+        return reaction;
+    }
+
+    public void setReaction(String reaction) {
+        this.reaction = reaction;
+    }
+
+    /**
+     * To string for logging and debugging
+     * @return string version of Message object
+     */
+    @Override
+    public String toString() {
+        return "Message{" +
+                "id=" + id +
+                ", senderId=" + sender +
+                ", receiverId=" + receiver +
+                ", timestamp=" + timestamp +
+                ", messageContent='" + messageContent + '\'' +
+                '}';
     }
 
 }
