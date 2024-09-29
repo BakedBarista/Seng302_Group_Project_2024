@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,8 +58,9 @@ public class BirthFlowerService {
      * @return list of possible flowers
      */
     public List<String> getFlowersByMonth(LocalDate date) {
+        logger.info("DOB is {}", date);
         if (date == null) {
-            return null;
+            return Collections.emptyList();
         }
         Integer month = date.getMonthValue();
         return monthFlowersMap.get(month);
@@ -73,6 +75,10 @@ public class BirthFlowerService {
         if (date == null) {
             return null;
         }
-        return getFlowersByMonth(date).get(0);
+        List<String> flowers = getFlowersByMonth(date);
+        if (flowers.isEmpty()) {
+            return null;
+        }
+        return flowers.get(0);
     }
 }
