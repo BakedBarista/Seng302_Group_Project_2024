@@ -242,7 +242,7 @@ public class PublicProfileController {
         }
         if (birthFlower.isBlank()) {
             birthFlower = user.getBirthFlower();
-        } else if (!flowersByMonth.contains(birthFlower)) {
+        } else if (flowersByMonth != null && !flowersByMonth.contains(birthFlower)) {
             birthFlower = birthFlowerService.getDefaultBirthFlower(user.getDateOfBirth());
         }
 

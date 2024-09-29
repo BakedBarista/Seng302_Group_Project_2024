@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.cucumber.step_definitions;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.BeforeAll;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -19,6 +20,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -84,6 +87,7 @@ public class U800_1_1_PublicProfileFeature {
 
     MultipartFile invaildBanner;
     MultipartFile invalidProfile;
+    private static ObjectMapper objectMapper;
 
     @BeforeAll
     public static void beforeAll() {
@@ -93,10 +97,13 @@ public class U800_1_1_PublicProfileFeature {
         gardenUserRepository = mock(GardenUserRepository.class);
         model = mock(Model.class);
         authentication = mock(Authentication.class);
+        objectMapper = mock(ObjectMapper.class);
 
         userService = new GardenUserService(userRepository);
         plantService = new PlantService(plantRepository, gardenRepository);
         gardenService = new GardenService(gardenRepository, gardenUserRepository);
+        birthFlowerService = new BirthFlowerService(objectMapper);
+
         profanityService = new ProfanityService();
         publicProfileController = new PublicProfileController(userService, profanityService, plantService,birthFlowerService);
     }
