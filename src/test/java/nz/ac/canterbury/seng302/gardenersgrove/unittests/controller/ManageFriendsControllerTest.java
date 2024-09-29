@@ -6,6 +6,7 @@
  import nz.ac.canterbury.seng302.gardenersgrove.repository.FriendsRepository;
  import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
  import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+ import nz.ac.canterbury.seng302.gardenersgrove.service.MessageService;
  import org.junit.jupiter.api.extension.ExtendWith;
  import org.mockito.Mockito;
  import org.mockito.junit.jupiter.MockitoExtension;
@@ -20,6 +21,7 @@
  import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
+ import java.time.LocalDateTime;
  import java.util.ArrayList;
  import java.util.Collections;
  import java.util.List;
@@ -39,6 +41,9 @@
 
      @Mock
      private GardenUserService gardenUserService;
+
+     @Mock
+     private MessageService messageService;
 
      @Mock
      private Authentication authentication;
@@ -231,10 +236,8 @@
 
          Friends existingRequest = new Friends(loggedInUser, otherUser, PENDING);
          when(friendService.getFriendship(loggedInUserId, otherUserId)).thenReturn(existingRequest);
-
          Friends declinedRequest = new Friends(loggedInUser, otherUser, DECLINED);
          when(friendService.getSentRequestsDeclined(loggedInUserId)).thenReturn(List.of(declinedRequest));
-
          manageFriendsController.manageFriendsAccept(authentication, otherUserId);
 
          verify(friendService).delete(declinedRequest);

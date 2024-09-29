@@ -23,6 +23,8 @@ tag-checker:
 junit:
   stage: test
   script:
+    - echo Killing lingering gradle processes
+    - pkill -KILL -f gradle || true
     - ./gradlew unit integration cucumber
     - ls ./build/jacoco
   artifacts:
@@ -35,12 +37,16 @@ sonarqube-check:
     GIT_STRATEGY: clone # clone entire repo instead of reusing workspace
     GIT_DEPTH: 0 # avoid shallow clone to give sonar all the info it needs
   script:
+    - echo Killing lingering gradle processes
+    - pkill -KILL -f gradle || true
     - ./gradlew sonar
 
 # builds all branches, except dev and main
 branch-build:
   stage: build
   script:
+    - echo Killing lingering gradle processes
+    - pkill -KILL -f gradle || true
     - ./gradlew bootJar
   artifacts:
     paths:
@@ -53,6 +59,8 @@ branch-build:
 deploy-staging:
   stage: deploy
   script:
+    - echo Killing lingering gradle processes
+    - pkill -KILL -f gradle || true
     - ./gradlew bootJar
     - rm -rf /home/gitlab-runner/staging/ || true
     - mkdir /home/gitlab-runner/staging/
@@ -70,6 +78,8 @@ deploy-staging:
 deploy-production:
   stage: deploy
   script:
+    - echo Killing lingering gradle processes
+    - pkill -KILL -f gradle || true
     - ./gradlew bootJar
     - rm -rf /home/gitlab-runner/production/ || true
     - mkdir /home/gitlab-runner/production/

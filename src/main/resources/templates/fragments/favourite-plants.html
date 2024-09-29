@@ -4,7 +4,7 @@
         <div th:each="plant : ${favouritePlants}" class="card p-2 me-3 mb-3 border-0 rounded-3 d-flex shadow-sm public-profile-plant-card bg-primary-temp">
             <img
                     class="mx-auto d-block pt-1"
-                    th:src="@{'/plants/' + ${plant.id} + '/plant-image'}"
+                    th:src="@{(${plant.plantImage} != null) ? '/plants/' + ${plant.id} + '/plant-image' : '/img/default-plant.svg'}"
                     style="width: 100%;height: 80%; object-fit: cover"
                     alt="plant image"
             />

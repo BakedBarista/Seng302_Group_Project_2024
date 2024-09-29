@@ -32,8 +32,6 @@ document.addEventListener('DOMContentLoaded', function() {
         cardName.textContent = user.fullName;
         cardCompatibility.textContent = user.compatibility;
         cardDescription.textContent = user.description;
-        cardImage.src = `${baseUrl}users/${user.id}/profile-picture`;
-
         favouriteGarden.innerHTML = user.favouriteGardenHtml;
         favouritePlants.innerHTML = user.favouritePlantsHtml;
 

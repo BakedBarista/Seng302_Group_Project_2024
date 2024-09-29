@@ -1,54 +1,78 @@
-const origin = location.origin.replace('http', 'ws');
-const url = `${origin}${apiBaseUrl}/messages`;
 const otherUserId = activeChatId;
-
-/**@type {HTMLFormElement} */
 const sendMessageForm = document.getElementById('sendMessageForm');
 const label = sendMessageForm?.querySelector('label');
 const textArea = sendMessageForm?.querySelector('textarea');
 const messagesContainer = document.getElementById('scrollbar');
-const invalidFeedback = document.getElementById('invalidFeedback');
+let currentMessageEmojiId = null;
 
-const ws = new WebSocket(url);
-ws.addEventListener('open', () => {
-    ws.send(JSON.stringify({ type: 'subscribe' }));
-
-    // Periodically send ping messages to keep the connection alive
-    setInterval(() => {
-        ws.send(JSON.stringify({ type: 'ping' }));
-    }, 5000);
-});
-
-ws.addEventListener('message', (ev) => {
-    const data = JSON.parse(ev.data);
-    if (data.type === 'pong') {
-        return;
+document.body.addEventListener('click', () => {
+    if (currentMessageEmojiId != null) {
+        const emojiPicker = document.getElementById( "emoji-picker-" + currentMessageEmojiId);
+        emojiPicker.className = "d-none";
+        currentMessageEmojiId = null;
     }
-    console.log(data);
-    switch (data.type) {
-        case 'updateMessages':
-            console.log('updateMessages');
-            updateMessages();
-            break;
-        case 'error':
-            invalidFeedback.textContent = data.error;
-            label.classList.add('is-invalid');
-            textArea.value = data.message;
-            break;
+})
+
+async function updateMessages() {
+    const res = await fetch(`${apiBaseUrl}/messages/${otherUserId}`);
+    const html = await res.text();
+    messagesContainer.innerHTML = html;
+
+    addEventListenersToMessages();
+
+    scrollToBottom(messagesContainer);
+    ws.send(JSON.stringify({ type: 'markRead', otherUserId }));
+}
+
+function addEventListenersToMessages() {
+    /**@type {NodeListOf<HTMLElement>} */
+    const messages = messagesContainer.querySelectorAll('.message');
+    for (const message of messages) {
+        const messageId = parseInt(message.getAttribute('data-message-id'));
+
+        message.style.userSelect = 'none';
+
+        /**@type {number | null} */
+        let timeout = null;
+        function touchStart() {
+            timeout = setTimeout(() => {
+                longPressHandler(messageId);
+            }, 400);
+        }
+        function touchEnd() {
+            if (timeout) {
+                clearTimeout(timeout);
+                timeout = null;
+            }
+        }
+
+        /**@type {NodeListOf<HTMLElement>} */
+        const cards = message.querySelectorAll('.from-other .card');
+        for (const card of cards) {
+            card.addEventListener('mousedown', touchStart);
+            card.addEventListener('mouseup', touchEnd);
+            card.addEventListener('mousemove', touchEnd);
+            card.addEventListener('touchstart', touchStart);
+            card.addEventListener('touchend', touchEnd);
+            card.addEventListener('touchmove', touchEnd);
+        }
     }
-});
+}
 
-sendMessageForm.addEventListener('submit', (ev) => {
-    ev.preventDefault();
+function longPressHandler(messageId) {
+    const emojiPicker = document.getElementById( "emoji-picker-" + messageId);
+    emojiPicker.className = 'flap-in';
 
-    sendMessage();
-});
+    setTimeout(() => currentMessageEmojiId = messageId, 1000)
+}
 
-function markMessagesAsRead() {
-    ws.send(JSON.stringify({
-        type: 'readMessage',
-        receiver: otherUserId
-    }));
+function addEmoji(event) {
+    const emojiBadge = event.target;
+    const emoji = emojiBadge.textContent;
+
+    ws.send(
+        JSON.stringify({ type: 'addEmoji', messageId: currentMessageEmojiId, emoji })
+    );
 }
 
 function sendMessage() {
@@ -62,16 +86,8 @@ function sendMessage() {
     label.classList.remove('is-invalid');
 }
 
-async function updateMessages() {
-    const res = await fetch(`${apiBaseUrl}/messages/${otherUserId}`);
-    const html = await res.text();
-    messagesContainer.innerHTML = html;
+sendMessageForm.addEventListener('submit', (ev) => {
+    ev.preventDefault();
 
-    scrollToBottom(messagesContainer);
-}
-
-
-function isScrolledToBottom(container) {
-    return container.scrollHeight - container.scrollTop === container.clientHeight;
-}
-
+    sendMessage();
+});
