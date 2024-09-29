@@ -62,11 +62,29 @@
                                          style="width: 50px; height: 50px;" alt="profile picture">
                                     <div class="m-3 text-start">
                                         <h6 th:text="${chat.key.fullName}"></h6>
-                                        <p th:text="${chat.value.lastMessage}" th:title="${chat.value.lastMessage}" class="text-truncate m-0" style="max-width: 200px;"></p>
+                                        <div th:if="${(chat.value.lastMessage)== null || (chat.value.lastMessage) == ''}">
+                                            <p th:id="${'messagePreviewImageMobile-' + chat.key.id}">
+                                                Image 📷
+                                            </p>
+                                        </div>
+
+                                        <p th:id="${'messagePreviewMobile-' + chat.key.id}" th:text="${chat.value.lastMessage}"
+                                           th:title="${chat.value.lastMessage}"
+                                           class="text-truncate m-0"
+                                           style="max-width: 200px;"></p>
                                     </div>
                                 </div>
                             </button>
-                            <span class="badge notification-badge">[[${chat.value.unreadMessages}]]</span>
+                            <div>
+                                <span th:if="${chat.value.unreadMessages != 0 && chat.value.unreadMessages > 99}"
+                                      class="badge notification-badge me-3 bg-danger">
+                                    99+
+                                </span>
+                                    <span th:if="${chat.value.unreadMessages != 0 && chat.value.unreadMessages <= 99}"
+                                          class="badge notification-badge me-3 bg-danger">
+                                    [[${chat.value.unreadMessages}]]
+                                </span>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -95,7 +113,17 @@
                                      style="width: 50px; height: 50px;" alt="profile picture">
                                 <div class="m-3 text-start">
                                     <h6 th:text="${chat.key.fullName}"></h6>
-                                    <p th:text="${chat.value.lastMessage}" th:title="${chat.value.lastMessage}" class="text-truncate m-0" style="max-width: 200px;"></p>
+                                    <div th:if="${(chat.value.lastMessage)== null || (chat.value.lastMessage) == ''}">
+                                        <p th:id="${'messagePreviewImage-' + chat.key.id}">
+                                            Image 📷
+                                        </p>
+                                    </div>
+
+                                    <p th:id="${'messagePreview-' + chat.key.id}" th:text="${chat.value.lastMessage}"
+                                       th:title="${chat.value.lastMessage}"
+                                       class="text-truncate m-0"
+                                       style="max-width: 200px;"></p>
+
                                 </div>
                             </div>
                         </button>
@@ -193,7 +221,7 @@
         textarea.addEventListener("keydown", function (event) {
             if (event.key === "Enter" && !event.shiftKey && !(textarea.value.length < 0 || messageField.value.trim().length === 0) ) {
                 event.preventDefault();
-                sendMessage();
+                sendMessage().then();
             }
         });
 
