@@ -13,12 +13,12 @@
     <div class="card border-top-0">
         <img
                 class="card-img-top img-fluid fixed-height mb-4"
-                th:src="@{'/users/' + ${userId} + '/profile-banner'}"
+                th:src="@{(${user.profileBanner} != null) ? '/users/' + ${userId} + '/profile-banner' : '/img/default-banner.svg'}"
                 alt="profile banner"
         />
         <img
                 class="public-profile-picture position-absolute top-0 end-0 public-profile-picture-padding me-2"
-                th:src="@{'/users/' + ${userId} + '/profile-picture'}"
+                th:src="@{(${user.profilePicture} != null) ? '/users/' + ${userId} + '/profile-picture' : '/img/default-profile.svg'}"
                 width="180"
                 height="180"
                 alt="profile picture"

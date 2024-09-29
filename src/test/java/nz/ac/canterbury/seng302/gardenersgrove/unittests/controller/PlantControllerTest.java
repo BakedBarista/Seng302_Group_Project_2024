@@ -35,8 +35,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant.PlantStatus.HARVESTED;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -356,8 +355,7 @@ class PlantControllerTest {
         Plant plant = new Plant();
         when(plantService.getPlantById(1L)).thenReturn(Optional.of(plant));
         ResponseEntity<byte[]> response = plantController.plantImage(1L, mockRequest);
-        assertEquals(HttpStatus.FOUND, response.getStatusCode());
-        assertEquals("/img/default-plant.svg", response.getHeaders().getFirst(HttpHeaders.LOCATION));
+        assertNull(response);
     }
 
     @Test

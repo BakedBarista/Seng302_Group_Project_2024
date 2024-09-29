@@ -214,17 +214,14 @@ public class GardenController {
         if (garden.isPresent()) {
             existingGarden = garden.get();
         }
-        // Return the default image if nothing specified
-        if (existingGarden.getGardenImage() == null || existingGarden.getGardenImageContentType() == null) {
-            logger.info("Returning default plant image");
-            return ResponseEntity.status(302).header(HttpHeaders.LOCATION, request.getContextPath() + "/img/default-garden.svg").build();
-        }
 
         // Return the saved image from DB
-        logger.info("Returning the plants saved image from DB");
-        return ResponseEntity.ok().contentType(MediaType.parseMediaType(existingGarden.getGardenImageContentType()))
-                .body(existingGarden.getGardenImage());
-
+        if(existingGarden.getGardenImage() != null) {
+            logger.info("Returning the plants saved image from DB");
+            return ResponseEntity.ok().contentType(MediaType.parseMediaType(existingGarden.getGardenImageContentType()))
+                    .body(existingGarden.getGardenImage());
+        }
+        return null;
     }
 
 

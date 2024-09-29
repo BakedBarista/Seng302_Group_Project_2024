@@ -1007,3 +1007,37 @@ h1, h2, h3, h4, h5, h6 {
     }
 
 }
+
+.emoji-badge {
+    background-color: lightgray;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    position: relative;
+    border-radius: 50%;
+    padding: 3px 8px;
+}
+
+.flap-in {
+    perspective: 500px;
+}
+
+.flap-in .emoji-container {
+    animation: emoji-flap-in 500ms;
+    animation-timing-function: cubic-bezier(0.33, 0, 0.5, 3);
+    transform-origin: top;
+}
+
+@keyframes emoji-flap-in {
+    0% {
+        transform: rotateX(90deg);
+    }
+    100% {
+        transform: none;
+    }
+}
+
+.preserve-format {
+    white-space: pre-wrap;
+}

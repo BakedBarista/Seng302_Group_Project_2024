@@ -15,6 +15,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.ThymeLeafDateFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -44,6 +45,9 @@ public class MessageController {
     private static final String SUBMISSION_TOKEN = "submissionToken";
     private static final String MSG_HOME_ENDPOINT = "users/message-home";
     private static final String MANAGE_FRIENDS_REDIRECT = "redirect:/users/manage-friends";
+
+    @Value("${spring.datasource.driverClassName}")
+    private String driverClassName;
 
     @Autowired
     public MessageController(GardenUserService userService,
@@ -328,4 +332,62 @@ public class MessageController {
                 .contentType(MediaType.parseMediaType(message.getImageContentType()))
                 .body(message.getImageContent());
     }
+
+//    @PostConstruct
+//    public void dummyMessages() {
+//        if (driverClassName.equals("org.h2.Driver")) {
+//            String token = "token";
+//            GardenUser u1 = userService.getUserByEmail("jan.doe@gmail.com");
+//            GardenUser u2 = userService.getUserByEmail("stynesluke@gmail.com");
+//            GardenUser u3 = userService.getUserByEmail("immy@gmail.com");
+//            GardenUser u4 = userService.getUserByEmail("liam@gmail.com");
+//
+//            if (u1 != null && u2 != null) {
+//                messageService.sendMessageWithTimestamp(u2.getId(), u1.getId(),
+//                        new MessageDTO("Hello I am Luke Stynes! :)", token), LocalDateTime.now().minusDays(2));
+//                messageService.sendMessageWithTimestamp(u1.getId(), u2.getId(),
+//                        new MessageDTO("Hello Luke Stynes, I am Jan Doe.", token), LocalDateTime.now().minusDays(1));
+//                messageService.sendMessageWithTimestamp(u2.getId(), u1.getId(),
+//                        new MessageDTO("Wow! What great bananas you grow Jan Doe.", token),
+//                        LocalDateTime.now().minusDays(1));
+//                messageService.sendMessageWithTimestamp(u2.getId(), u1.getId(),
+//                        new MessageDTO(
+//                                "I'm sending a really really long message here so that Ryan does not have to manually " +
+//                                        "write in a really long message each time he runs the application locally, it is really "
+//                                        +
+//                                        "annoying so he asked me to write one that goes past the end of the screen",
+//                                token),
+//                        LocalDateTime.now());
+//            }
+//
+//            if (u1 != null && u3 != null) {
+//                messageService.sendMessageWithTimestamp(u3.getId(), u1.getId(),
+//                        new MessageDTO("One", token), LocalDateTime.now().minusDays(2));
+//                messageService.sendMessageWithTimestamp(u3.getId(), u1.getId(),
+//                        new MessageDTO("Two", token), LocalDateTime.now().minusDays(1));
+//                messageService.sendMessageWithTimestamp(u3.getId(), u1.getId(),
+//                        new MessageDTO("Three", token), LocalDateTime.now().minusHours(6));
+//                messageService.sendMessageWithTimestamp(u3.getId(), u1.getId(),
+//                        new MessageDTO("Four", token), LocalDateTime.now().minusDays(5));
+//                messageService.sendMessageWithTimestamp(u3.getId(), u1.getId(),
+//                        new MessageDTO("Five", token), LocalDateTime.now().minusDays(4));
+//                messageService.sendMessageWithTimestamp(u3.getId(), u1.getId(),
+//                        new MessageDTO("Six", token), LocalDateTime.now().minusDays(1));
+//                messageService.sendMessageWithTimestamp(u3.getId(), u1.getId(),
+//                        new MessageDTO("Seven", token), LocalDateTime.now().minusSeconds(1));
+//            }
+//
+//            if (u1 != null && u4 != null) {
+//                messageService.sendMessageWithTimestamp(u4.getId(), u1.getId(),
+//                        new MessageDTO("One", token), LocalDateTime.now().minusMinutes(1));
+//                messageService.sendMessageWithTimestamp(u4.getId(), u1.getId(),
+//                        new MessageDTO("Two", token), LocalDateTime.now().minusSeconds(3));
+//                messageService.sendMessageWithTimestamp(u4.getId(), u1.getId(),
+//                        new MessageDTO("Three", token), LocalDateTime.now().minusSeconds(2));
+//                messageService.sendMessageWithTimestamp(u4.getId(), u1.getId(),
+//                        new MessageDTO("Four", token), LocalDateTime.now().minusSeconds(1));
+//            }
+//        }
+//
+//    }
 }
