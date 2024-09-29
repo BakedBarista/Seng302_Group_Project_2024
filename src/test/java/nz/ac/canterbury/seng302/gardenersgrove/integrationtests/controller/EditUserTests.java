@@ -4,7 +4,6 @@ import nz.ac.canterbury.seng302.gardenersgrove.controller.users.EditUserControll
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditPasswordDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.BirthFlowerService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
@@ -36,23 +35,26 @@ class EditUserControllerTest {
     private Model model;
     private GardenUserService userService;
     private EmailSenderService emailSenderService;
+    private BindingResult bindingResult;
 
-    private GardenUserRepository gardenUserRepository;
     private BirthFlowerService birthFlowerService;
     private MultipartFile file;
+    private MultipartFile multipartFileMock;
     private Long userId = 1L;
 
     private String dateValidStr = "";
 
     @BeforeEach
     void setUp() {
-        gardenUserRepository = mock(GardenUserRepository.class);
         birthFlowerService = mock(BirthFlowerService.class);
         authentication = mock(Authentication.class);
         model = mock(Model.class);
+        bindingResult = mock(BindingResult.class);
         userService = mock(GardenUserService.class);
         emailSenderService = mock(EmailSenderService.class);
         controller = new EditUserController(userService, emailSenderService, birthFlowerService);
+        multipartFileMock = mock(MultipartFile.class);
+
         file = new MockMultipartFile("file", "filename.txt", "text/plain", "Some file content".getBytes());
     }
 
@@ -287,5 +289,82 @@ class EditUserControllerTest {
         assertEquals("2000-10-10", editUserDTO.getDateOfBirth());
 
         assertEquals("users/editTemplate", result);
+    }
+
+    @Test
+    void submitUser_whenDOBIsNull_thenBirthFlowerIsRemoved() throws IOException {
+        GardenUser user = new GardenUser("John", "Doe", "john@email.com", "P#ssw0rd", LocalDate.of(2000, 10, 10));
+
+        EditUserDTO editUserDTO = new EditUserDTO();
+        editUserDTO.setFname("John");
+        editUserDTO.setLname("Doe");
+        editUserDTO.setEmail("john.doe@example.com");
+        editUserDTO.setDateOfBirth(null);
+
+        when(authentication.getPrincipal()).thenReturn(1L);
+        when(userService.getUserById(1L)).thenReturn(user);
+        when(userService.addUser(any(GardenUser.class))).thenReturn(user);
+
+        String viewName = controller.submitUser(
+                editUserDTO,
+                bindingResult,
+                multipartFileMock,
+                authentication,
+                null,
+                model
+        );
+
+        // Capture the GardenUser passed to addUser
+        ArgumentCaptor<GardenUser> userCaptor = ArgumentCaptor.forClass(GardenUser.class);
+        verify(userService, times(1)).addUser(userCaptor.capture());
+        GardenUser updatedUser = userCaptor.getValue();
+
+        // Check that dateOfBirth and birthFlower are null
+        assertNull(updatedUser.getDateOfBirth(), "Date of Birth should be null");
+        assertNull(updatedUser.getBirthFlower(), "Birth Flower should be null");
+
+        // Check that the right html page is returned
+        assertEquals("redirect:/users/settings", viewName);
+    }
+
+    @Test
+    void submitUser_whenDOBIsChanged_thenBirthFlowerIsUpdated() throws IOException {
+        GardenUser user = new GardenUser("John", "Doe", "john@email.com", "P#ssw0rd", LocalDate.of(2000, 10, 10));
+        String dob = "2000-01-01";
+        String birthFlower = "Carnation";
+
+        EditUserDTO editUserDTO = new EditUserDTO();
+        editUserDTO.setFname("John");
+        editUserDTO.setLname("Doe");
+        editUserDTO.setEmail("john.doe@example.com");
+        editUserDTO.setDateOfBirth(dob);
+
+        when(authentication.getPrincipal()).thenReturn(1L);
+        when(userService.getUserById(1L)).thenReturn(user);
+        when(userService.addUser(any(GardenUser.class))).thenReturn(user);
+
+        user.setBirthFlower(birthFlowerService.getDefaultBirthFlower(user.getDateOfBirth()));
+        when(birthFlowerService.getDefaultBirthFlower(any(LocalDate.class))).thenReturn(birthFlower);
+
+        String viewName = controller.submitUser(
+                editUserDTO,
+                bindingResult,
+                multipartFileMock,
+                authentication,
+                null,
+                model
+        );
+
+        // Capture the GardenUser passed to addUser
+        ArgumentCaptor<GardenUser> userCaptor = ArgumentCaptor.forClass(GardenUser.class);
+        verify(userService, times(1)).addUser(userCaptor.capture());
+        GardenUser updatedUser = userCaptor.getValue();
+
+        // Check that dateOfBirth and birthFlower are null
+        assertEquals(LocalDate.parse(dob), updatedUser.getDateOfBirth());
+        assertEquals(birthFlower, updatedUser.getBirthFlower());
+
+        // Check that the right html page is returned
+        assertEquals("redirect:/users/settings", viewName);
     }
 }
