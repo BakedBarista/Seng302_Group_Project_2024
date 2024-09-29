@@ -8,10 +8,8 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
-import nz.ac.canterbury.seng302.gardenersgrove.service.BirthFlowerService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.ProfanityService;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -25,6 +23,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
@@ -45,19 +45,20 @@ import static org.mockito.Mockito.*;
 class PublicProfileControllerTest {
     private static PublicProfileController publicProfileController;
     private static GardenUserService gardenUserService;
+    private static GardenService gardenService;
 
     private static FavouritePlantsController favouritePlantsController;
     private static PlantService plantService;
 
     private static Garden garden;
 
+    private static PlantRepository plantRepository;
 
     private static GardenUser user;
     private static Model model;
     private static Authentication authentication;
     private static Long userId;
     private static ProfanityService profanityService;
-    private static EditUserDTO editUserDTO;
 
     private static BirthFlowerService birthFlowerService;
 
@@ -67,10 +68,13 @@ class PublicProfileControllerTest {
     static Long otherUserId = 1L;
     static GardenUser otherUser;
 
-
     private static final String birthFlower = "birthFlower";
 
     private static BindingResult bindingResult;
+
+    private EditUserDTO editUserDTO;
+
+    private static MockMvc mockMvc;
 
     @Mock
     private HttpServletRequest request;
@@ -82,9 +86,10 @@ class PublicProfileControllerTest {
         gardenUserService = Mockito.mock(GardenUserService.class);
         profanityService = Mockito.mock(ProfanityService.class);
         plantService = Mockito.mock(PlantService.class);
+        gardenService = Mockito.mock(GardenService.class);
         authentication = Mockito.mock(Authentication.class);
+        plantRepository = Mockito.mock(PlantRepository.class);
         birthFlowerService = Mockito.mock(BirthFlowerService.class);
-        model = Mockito.mock(Model.class);
         user = new GardenUser();
         publicProfileController = new PublicProfileController(gardenUserService, profanityService, plantService, birthFlowerService);
         favouritePlantsController = new FavouritePlantsController(gardenUserService, plantService);
@@ -106,12 +111,16 @@ class PublicProfileControllerTest {
         otherUser.setLname("User");
         otherUser.setDescription("This is a description for another user");
         garden = new Garden();
+
+        mockMvc = MockMvcBuilders.standaloneSetup(publicProfileController).build();
+
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"I love plants", "", "    "})
     @NullSource
     void givenThatIHaveANameAndDescription_whenIViewMyPublicProfile_thenMyNameAndDescriptionAreInTheModel(String description) {
+        model = Mockito.mock(Model.class);
         user.setFname("John");
         user.setLname("Doe");
         user.setDescription(description);
@@ -127,6 +136,7 @@ class PublicProfileControllerTest {
 
     @Test
     void whenIViewMyPublicProfile_thenIAmTakenToThePublicProfilePage() {
+        model = Mockito.mock(Model.class);
         Mockito.when(authentication.getPrincipal()).thenReturn(userId);
         Mockito.when(gardenUserService.getUserById(userId)).thenReturn(user);
 
@@ -137,6 +147,7 @@ class PublicProfileControllerTest {
 
     @Test
     void whenIViewOtherUsersPublicProfile_thenIAmTakenToTheirPublicProfile() {
+        model = Mockito.mock(Model.class);
         Mockito.when(gardenUserService.getUserById(otherUserId)).thenReturn(otherUser);
         Mockito.when(authentication.getPrincipal()).thenReturn(loggedInUserId);
 
@@ -151,6 +162,7 @@ class PublicProfileControllerTest {
 
     @Test
     void whenIViewPublicProfileThatDoesNotExist_thenIAmTakenToThe404() {
+        model = Mockito.mock(Model.class);
         Mockito.when(gardenUserService.getUserById(otherUserId)).thenReturn(null);
         Mockito.when(authentication.getPrincipal()).thenReturn(loggedInUserId);
 
@@ -161,8 +173,10 @@ class PublicProfileControllerTest {
 
     @Test
     void whenOtherUserIdIsMyId_thenIAmTakenToMyPublicProfile() {
+        model = Mockito.mock(Model.class);
         Mockito.when(gardenUserService.getUserById(loggedInUserId)).thenReturn(loggedInUser);
         Mockito.when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+
 
         String page = publicProfileController.viewOtherPublicProfile(loggedInUserId, authentication, model);
         Mockito.verify(model).addAttribute("userId", loggedInUserId);
@@ -198,6 +212,7 @@ class PublicProfileControllerTest {
 
     @Test
     void testEditForm() throws JsonProcessingException {
+        Model model = mock(Model.class);
         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
         String result = publicProfileController.editPublicProfile(authentication, model);
 
@@ -209,20 +224,22 @@ class PublicProfileControllerTest {
 
     @Test
     void testSubmitForm_ValidationSuccess() throws IOException {
+        Model model = mock(Model.class);
+
         MultipartFile profilePic = new MockMultipartFile(
-            "image",
-            "profile.png",
-            "image/png",
-            "profile picture content".getBytes()
+                "image",
+                "profile.png",
+                "image/png",
+                "profile picture content".getBytes()
         );
 
         String description = "New Description";
 
         MultipartFile banner = new MockMultipartFile(
-            "bannerImage",
-            "banner.png",
-            "image/png",
-            "banner content".getBytes()
+                "bannerImage",
+                "banner.png",
+                "image/png",
+                "banner content".getBytes()
         );
 
         String viewName = publicProfileController.publicProfileEditSubmit(authentication, profilePic, banner, description, birthFlower, editUserDTO, bindingResult, model);
@@ -286,21 +303,23 @@ class PublicProfileControllerTest {
 
     @Test
     void testSubmitForm_ValidationFails() throws IOException {
+        Model model = mock(Model.class);
+
         MultipartFile profilePic = new MockMultipartFile(
-            "image",
-            "profile.png",
-            "image/png",
-            "profile picture content".getBytes()
+                "image",
+                "profile.png",
+                "image/png",
+                "profile picture content".getBytes()
         );
 
         String description = "This is a description is 257 charcters long dcwqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqThis is a description is 257 charcters long dcwqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq";
-        
+
 
         MultipartFile banner = new MockMultipartFile(
-            "bannerImage",
-            "banner.png",
-            "image/png",
-            "banner content".getBytes()
+                "bannerImage",
+                "banner.png",
+                "image/png",
+                "banner content".getBytes()
         );
 
         String viewName = publicProfileController.publicProfileEditSubmit(authentication, profilePic, banner, description, birthFlower, editUserDTO, bindingResult, model);
@@ -315,6 +334,7 @@ class PublicProfileControllerTest {
     @Test
     void whenRequestingBirthMonthFlower_thenBirthMonthFlowerIsAddedToModel() throws JsonProcessingException {
         List<String> flowers = List.of("Carnation","Snow Pea");
+        Model model = mock(Model.class);
         when(birthFlowerService.getFlowersByMonth(loggedInUser.getDateOfBirth())).thenReturn(flowers);
         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
         publicProfileController.editPublicProfile(authentication,model);
@@ -324,6 +344,7 @@ class PublicProfileControllerTest {
 
     @Test
     void editPublicProfile_whenDOBIsNull_thenNoFlowersAvailable() throws JsonProcessingException {
+        Model model = Mockito.mock(Model.class);
         List<String> flowers = Collections.emptyList();
         when(birthFlowerService.getFlowersByMonth(null)).thenReturn(flowers);
         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
@@ -331,4 +352,7 @@ class PublicProfileControllerTest {
 
         verify(model).addAttribute("flowers", flowers);
     }
+
+
+
 }
