@@ -9,8 +9,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashMap;
@@ -43,11 +43,11 @@ public class BirthFlowerService {
 
         logger.info("loading local plant information for LocalPlantDataService.class...");
         Resource resource = new ClassPathResource("birth_flowers.json");
-        try {
-            File file = resource.getFile();
-            flowerMap = objectMapper.readValue(file, new TypeReference<>(){});
+        try (InputStream inputStream = resource.getInputStream()) {
+            flowerMap = objectMapper.readValue(inputStream, new TypeReference<>(){});
+            logger.info("Successfully loaded birth_flowers.json");
         } catch (IOException e) {
-            logger.error("failed to load default birth flower data");
+            logger.error("Failed to load default birth flower data", e);
         }
         return flowerMap;
     }
