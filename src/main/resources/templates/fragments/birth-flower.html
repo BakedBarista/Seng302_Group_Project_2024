@@ -1,0 +1,6 @@
+<th:block th:fragment="birth-flower">
+    <div class="d-flex align-items-center mb-3 badge bg-danger-subtle col-auto text-center">
+        <th:block th:insert="~{fragments/birth-flower-icon.html :: birth-flower-icon}"></th:block>
+        <h5 class="mx-1 mb-0 text-white" th:text="${birthFlower}"></h5>
+    </div>
+</th:block>

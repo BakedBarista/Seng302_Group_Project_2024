@@ -120,7 +120,6 @@ public class RegisterController {
         }
         GardenUser user = new GardenUser(registerDTO.getFname(), registerDTO.getLname(), registerDTO.getEmail(),
                 registerDTO.getPassword(), dob);
-        user.setBirthFlower(birthFlowerService.getDefaultBirthFlower(dob));
 
         String token = tokenService.createEmailToken();
         tokenService.addEmailTokenAndTimeToUser(user, token);
