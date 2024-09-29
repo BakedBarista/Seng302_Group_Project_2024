@@ -120,14 +120,14 @@ public class RegisterController {
         }
         GardenUser user = new GardenUser(registerDTO.getFname(), registerDTO.getLname(), registerDTO.getEmail(),
                 registerDTO.getPassword(), dob);
+        user.setBirthFlower(birthFlowerService.getDefaultBirthFlower(dob));
 
         String token = tokenService.createEmailToken();
         tokenService.addEmailTokenAndTimeToUser(user, token);
         userService.addUser(user);
 
-        user.setBirthFlower(birthFlowerService.getDefaultBirthFlower(dob));
-        sendRegisterEmail(request, user, token);
 
+        sendRegisterEmail(request, user, token);
         String obfuscatedEmail = userService.obfuscateEmail(user.getEmail());
         return "redirect:/users/user/" + obfuscatedEmail + "/authenticate-email";
     }

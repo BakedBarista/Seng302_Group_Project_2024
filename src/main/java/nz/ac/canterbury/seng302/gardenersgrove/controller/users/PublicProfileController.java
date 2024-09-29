@@ -77,15 +77,11 @@ public class PublicProfileController {
 
         Long userId = (Long) authentication.getPrincipal();
         GardenUser user = userService.getUserById(userId);
-        String birthFlower = user.getBirthFlower();
-        if (birthFlower == null) {
-            birthFlower = birthFlowerService.getDefaultBirthFlower(user.getDateOfBirth());
-        }
         Set<Plant> favouritePlants = user.getFavouritePlants();
         model.addAttribute(USER_ID_ATTRIBUTE, userId);
         model.addAttribute("currentUser", userId);
         model.addAttribute("name", user.getFullName());
-        model.addAttribute(BIRTH_FLOWER, birthFlower);
+        model.addAttribute(BIRTH_FLOWER, user.getBirthFlower());
         model.addAttribute(DESCRIPTION, user.getDescription());
         model.addAttribute(FAVOURITE_GARDEN, user.getFavoriteGarden());
         model.addAttribute(FAVOURITE_PLANTS, favouritePlants);
@@ -134,9 +130,7 @@ public class PublicProfileController {
             return viewPublicProfile(authentication, model);
         }
         String birthFlower = user.getBirthFlower();
-        if (birthFlower == null) {
-            birthFlower = birthFlowerService.getDefaultBirthFlower(user.getDateOfBirth());
-        }
+
         Set<Plant> favouritePlants = user.getFavouritePlants();
         logger.info("current user: {}",userService.getUserById(id).getFname());
         logger.info("logged in user {}",userService.getUserById(loggedInUserId).getFname());
@@ -181,7 +175,6 @@ public class PublicProfileController {
         GardenUser user = userService.getUserById(userId);
         EditUserDTO editUserDTO = new EditUserDTO();
         List<String> flowers = birthFlowerService.getFlowersByMonth(user.getDateOfBirth());
-
 
         model.addAttribute(USER_ID_ATTRIBUTE, userId);
         model.addAttribute("name", user.getFullName());
@@ -237,6 +230,8 @@ public class PublicProfileController {
         GardenUser user = userService.getUserById(userId);
         model.addAttribute(USER_ID_ATTRIBUTE, userId);
 
+        List<String> flowersByMonth = birthFlowerService.getFlowersByMonth(user.getDateOfBirth());
+
         boolean errorFlag = false;
 
         try {
@@ -244,7 +239,12 @@ public class PublicProfileController {
         } catch (ProfanityDetectedException e) {
             model.addAttribute("profanity", "There cannot be any profanity in the 'About me' section");
             errorFlag = true;
-        } 
+        }
+        if (birthFlower.isBlank()) {
+            birthFlower = user.getBirthFlower();
+        } else if (!flowersByMonth.contains(birthFlower)) {
+            birthFlower = birthFlowerService.getDefaultBirthFlower(user.getDateOfBirth());
+        }
 
         if (bindingResult.hasFieldErrors(DESCRIPTION)) {errorFlag = true;}
 
