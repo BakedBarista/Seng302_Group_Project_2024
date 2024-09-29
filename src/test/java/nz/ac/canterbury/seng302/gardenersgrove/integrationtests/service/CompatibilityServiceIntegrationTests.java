@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
 
 import java.time.Clock;
@@ -11,6 +12,8 @@ import java.time.ZoneId;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -49,8 +52,11 @@ class CompatibilityServiceIntegrationTests {
     @BeforeEach
     void setUp() {
         user1 = new GardenUser("User", "1", "user1@compat.friends", "password", null);
+        user1.setBirthFlower("rose");
         userRepo.save(user1);
-        user2 = new GardenUser("User", "2", "user2@compat.friends", "password", null);
+
+        user2 = new GardenUser("User", "2", "user2@compat.friends", "password",null );
+        user2.setBirthFlower("rose");
         userRepo.save(user2);
 
         timeZone = ZoneId.of("Pacific/Auckland");
@@ -113,5 +119,20 @@ class CompatibilityServiceIntegrationTests {
         double result = compatibilityService.friendshipCompatibilityQuotient(user1, user2);
 
         assertEquals(50., result, 10.);
+    }
+
+    @Test
+    void givenUsersHaveDifferentBirthFlowers_whenCalculateMonthQuotient_thenReturnCalculatedValue() {
+        user1.setDateOfBirth(LocalDate.of(2000, 1, 1));
+        userRepo.save(user1);
+        user2.setDateOfBirth(LocalDate.of(1970, 1, 1));
+        userRepo.save(user2);
+        Double result = compatibilityService.calculateFlowerCompatability(user1, user2);
+
+        if(user1.getBirthFlower().equals(user2.getBirthFlower())) {
+            assertEquals(5., result);
+        } else {
+            assertNull(result);
+        }
     }
 }

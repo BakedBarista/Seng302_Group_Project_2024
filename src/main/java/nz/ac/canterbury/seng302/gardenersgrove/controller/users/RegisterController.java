@@ -5,10 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.RegisterDTO;
-import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.URLService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -37,6 +34,8 @@ public class RegisterController {
     private EmailSenderService emailSenderService;
     private URLService urlService;
 
+    private BirthFlowerService birthFlowerService;
+
     /**
      * Constructs a new RegisterController
      *
@@ -45,11 +44,12 @@ public class RegisterController {
      * @param emailSenderService The EmailSenderService to use
      */
     public RegisterController(GardenUserService userService, TokenService tokenService,
-            EmailSenderService emailSenderService, URLService urlService) {
+            EmailSenderService emailSenderService, URLService urlService, BirthFlowerService birthFlowerService) {
         this.userService = userService;
         this.tokenService = tokenService;
         this.emailSenderService = emailSenderService;
         this.urlService = urlService;
+        this.birthFlowerService = birthFlowerService;
     }
 
     /**
@@ -120,13 +120,14 @@ public class RegisterController {
         }
         GardenUser user = new GardenUser(registerDTO.getFname(), registerDTO.getLname(), registerDTO.getEmail(),
                 registerDTO.getPassword(), dob);
+        user.setBirthFlower(birthFlowerService.getDefaultBirthFlower(dob));
 
         String token = tokenService.createEmailToken();
         tokenService.addEmailTokenAndTimeToUser(user, token);
         userService.addUser(user);
 
-        sendRegisterEmail(request, user, token);
 
+        sendRegisterEmail(request, user, token);
         String obfuscatedEmail = userService.obfuscateEmail(user.getEmail());
         return "redirect:/users/user/" + obfuscatedEmail + "/authenticate-email";
     }

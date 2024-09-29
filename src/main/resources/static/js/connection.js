@@ -13,8 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const favouritePlants = document.getElementById('favouritePlants');
     
     const userListJson = getMeta('_userList') || '[]';
-    const userList = JSON.parse(userListJson);
-    
+    let userList = JSON.parse(userListJson);
     let userIndex = 0;
     function currentUser() {
         return userList[userIndex];

@@ -9,13 +9,17 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Arrays;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import nz.ac.canterbury.seng302.gardenersgrove.controller.LocationAPIController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
@@ -24,6 +28,8 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 
 class CompatibilityServiceUnitTests {
+    final Logger logger = LoggerFactory.getLogger(CompatibilityServiceUnitTests.class);
+
     private GardenService gardenService;
     private PlantService plantService;
     private Clock clock;
@@ -218,5 +224,50 @@ class CompatibilityServiceUnitTests {
         double result = compatibilityService.friendshipCompatibilityQuotient(user1, user2);
 
         assertEquals(50., result, 10.);
+    }
+
+    @Test
+    void testNoCommonPlants() {
+        List<Plant> user1Plants = Arrays.asList(new Plant("Rose", "1", "test", LocalDate.of(1970, 12, 1)), new Plant("lilly", "1", "test", LocalDate.of(1970, 12, 1)));
+        List<Plant> user2Plants = Arrays.asList(new Plant("tulip", "1", "test", LocalDate.of(1970, 12, 1)), new Plant("potato", "1", "test", LocalDate.of(1970, 12, 1)));
+
+        when(plantService.getAllPlantsForUser(user1)).thenReturn(user1Plants);
+        when(plantService.getAllPlantsForUser(user2)).thenReturn(user2Plants);
+
+        double similarity = compatibilityService.calculatePlantSimilarity(user1, user2);
+        assertEquals(0.0, similarity);
+    }
+
+    @Test
+    void testIdenticalPlants() {
+        List<Plant> identicalPlants = Arrays.asList(new Plant("Rose", "1", "test", LocalDate.of(1970, 12, 1)), new Plant("lilly", "1", "test", LocalDate.of(1970, 12, 1)));
+
+        when(plantService.getAllPlantsForUser(user1)).thenReturn(identicalPlants);
+        when(plantService.getAllPlantsForUser(user2)).thenReturn(identicalPlants);
+
+        double similarity = compatibilityService.calculatePlantSimilarity(user1, user2);
+        assertEquals(100.0, similarity);
+    }
+
+    @Test
+    void testSomeCommonPlants() {
+        List<Plant> user1Plants = Arrays.asList(new Plant("Rose", "1", "test", LocalDate.of(1970, 12, 1)), new Plant("lilly", "1", "test", LocalDate.of(1970, 12, 1)));
+        List<Plant> user2Plants = Arrays.asList(new Plant("Rose", "1", "test", LocalDate.of(1970, 12, 1)), new Plant("potato", "1", "test", LocalDate.of(1970, 12, 1)));
+
+        when(plantService.getAllPlantsForUser(user1)).thenReturn(user1Plants);
+        when(plantService.getAllPlantsForUser(user2)).thenReturn(user2Plants);
+
+        double similarity = compatibilityService.calculatePlantSimilarity(user1, user2);
+        assertEquals(33.333333333333336, similarity); 
+    }
+
+    @Test
+    void givenOneUserHasNullBirthday_whenCalculateMonthQuotient_thenReturnNull() {
+        user1.setDateOfBirth(LocalDate.of(2000, 1, 1));
+        user2.setDateOfBirth(null);
+
+        Double result = compatibilityService.calculateFlowerCompatability(user1, user2);
+
+        assertNull(result);
     }
 }

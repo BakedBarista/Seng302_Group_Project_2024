@@ -9,8 +9,11 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import nz.ac.canterbury.seng302.gardenersgrove.controller.LocationAPIController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.BaseGarden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.BasePlant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
@@ -22,6 +25,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
  */
 @Service
 public class CompatibilityService {
+    final Logger logger = LoggerFactory.getLogger(CompatibilityService.class);
 
     /**
      * The Earth's radius in km
@@ -126,10 +130,20 @@ public class CompatibilityService {
      * @return number of common plant names
      */
     private int calculateCommonPlantNum(Set<String> user1PlantNameSet, Set<String> user2PlantNameSet) {
-        Set<String> commonNames = new HashSet<>(user1PlantNameSet);
-        commonNames.retainAll(user2PlantNameSet);
+        Set<String> lowerCaseUser1Plants = new HashSet<>();
+        Set<String> lowerCaseUser2Plants = new HashSet<>();
 
-        return commonNames.size();
+        for (String plant : user1PlantNameSet) {
+            lowerCaseUser1Plants.add(plant.toLowerCase());
+        }
+
+        for (String plant : user2PlantNameSet) {
+            lowerCaseUser2Plants.add(plant.toLowerCase());
+        }
+
+        lowerCaseUser1Plants.retainAll(lowerCaseUser2Plants);
+
+        return lowerCaseUser1Plants.size();
     }
 
     /**
@@ -219,6 +233,7 @@ public class CompatibilityService {
         Double proximityQuotient = calculateProximityQuotient(user1, user2);
         double plantSimilarity = calculatePlantSimilarity(user1, user2);
         Double ageQuotient = calculateAgeQuotient(user1, user2);
+        Double flowerCompatability = calculateFlowerCompatability(user1, user2);
 
         if (proximityQuotient == null) {
             proximityQuotient = 0.;
@@ -228,7 +243,34 @@ public class CompatibilityService {
             ageQuotient = 0.;
         }
 
-        return 0.4 * proximityQuotient + 0.4 * plantSimilarity + 0.2 * ageQuotient;
+        if (flowerCompatability == null) {
+            flowerCompatability = 0.;
+        }
+
+        logger.info("compatabiltiy" + flowerCompatability);
+
+        return 0.4 * proximityQuotient + 0.4 * plantSimilarity + 0.15 * ageQuotient + flowerCompatability;
+    }
+
+    /**
+     * Calculates the month quotient based on users' birth months
+     *
+     * @param user1 First garden user
+     * @param user2 Second garden user
+     * @return 5% increase or null
+     */
+    public Double calculateFlowerCompatability(GardenUser user1, GardenUser user2) {
+        if (user1.getDateOfBirth() == null || user2.getDateOfBirth() == null) {
+            return null;
+        }
+
+        String user1Flower = user1.getBirthFlower();
+        String user2Flower = user2.getBirthFlower();
+
+        if ((user1Flower != null && user2Flower != null) && user2Flower.equals(user1Flower)) {
+            return 5.;  
+        }
+        return null;
     }
 
 }

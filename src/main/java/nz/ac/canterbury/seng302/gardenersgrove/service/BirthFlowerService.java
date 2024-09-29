@@ -9,9 +9,10 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,11 +43,11 @@ public class BirthFlowerService {
 
         logger.info("loading local plant information for LocalPlantDataService.class...");
         Resource resource = new ClassPathResource("birth_flowers.json");
-        try {
-            File file = resource.getFile();
-            flowerMap = objectMapper.readValue(file, new TypeReference<>(){});
+        try (InputStream inputStream = resource.getInputStream()) {
+            flowerMap = objectMapper.readValue(inputStream, new TypeReference<>(){});
+            logger.info("Successfully loaded birth_flowers.json");
         } catch (IOException e) {
-            logger.error("failed to load default birth flower data");
+            logger.error("Failed to load default birth flower data", e);
         }
         return flowerMap;
     }
@@ -57,6 +58,10 @@ public class BirthFlowerService {
      * @return list of possible flowers
      */
     public List<String> getFlowersByMonth(LocalDate date) {
+        logger.info("DOB is {}", date);
+        if (date == null) {
+            return Collections.emptyList();
+        }
         Integer month = date.getMonthValue();
         return monthFlowersMap.get(month);
     }
@@ -67,6 +72,13 @@ public class BirthFlowerService {
      * @return single flower that is default
      */
     public String getDefaultBirthFlower(LocalDate date) {
-        return getFlowersByMonth(date).get(0);
+        if (date == null) {
+            return null;
+        }
+        List<String> flowers = getFlowersByMonth(date);
+        if (flowers.isEmpty()) {
+            return null;
+        }
+        return flowers.get(0);
     }
 }

@@ -73,6 +73,8 @@ public class PublicProfileControllerTest {
     static Long otherUserId = 1L;
     static GardenUser otherUser;
 
+    private static final String birthFlower = "birthFlower";
+
     private static BindingResult bindingResult;
 
     private EditUserDTO editUserDTO;
@@ -103,6 +105,7 @@ public class PublicProfileControllerTest {
         loggedInUser.setLname("User");
         loggedInUser.setDescription("This is a description");
         loggedInUser.setDateOfBirth(LocalDate.of(2000,1,1));
+        loggedInUser.setBirthFlower(birthFlower);
         when(gardenUserService.getUserById(loggedInUserId)).thenReturn(loggedInUser);
         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
 
@@ -113,9 +116,6 @@ public class PublicProfileControllerTest {
         otherUser.setLname("User");
         otherUser.setDescription("This is a description for another user");
         garden = new Garden();
-
-
-
 
         mockMvc = MockMvcBuilders.standaloneSetup(publicProfileController).build();
 
@@ -247,7 +247,7 @@ public class PublicProfileControllerTest {
             "banner content".getBytes()
         );
 
-        String viewName = publicProfileController.publicProfileEditSubmit(authentication, profilePic, banner, description, editUserDTO, bindingResult, model);
+        String viewName = publicProfileController.publicProfileEditSubmit(authentication, profilePic, banner, description, birthFlower, editUserDTO, bindingResult, model);
 
         verify(model).addAttribute("userId", loggedInUserId);
 
@@ -327,7 +327,7 @@ public class PublicProfileControllerTest {
             "banner content".getBytes()
         );
 
-        String viewName = publicProfileController.publicProfileEditSubmit(authentication, profilePic, banner, description, editUserDTO, bindingResult, model);
+        String viewName = publicProfileController.publicProfileEditSubmit(authentication, profilePic, banner, description, birthFlower, editUserDTO, bindingResult, model);
 
         verify(gardenUserService).setProfilePicture(loggedInUserId, profilePic.getContentType(), profilePic.getBytes());
         verify(gardenUserService).setProfileBanner(loggedInUserId, banner.getContentType(), banner.getBytes());

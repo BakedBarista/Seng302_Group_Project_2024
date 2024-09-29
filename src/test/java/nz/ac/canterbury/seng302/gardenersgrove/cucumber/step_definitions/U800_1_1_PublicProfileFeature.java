@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.cucumber.step_definitions;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.BeforeAll;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -19,6 +20,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -59,6 +62,8 @@ public class U800_1_1_PublicProfileFeature {
 
     public static Plant plant;
 
+    private static final String birthFlower = "Carnation";
+
     MultipartFile profilePic = new MockMultipartFile(
             "image",
             "profile.png",
@@ -82,6 +87,7 @@ public class U800_1_1_PublicProfileFeature {
 
     MultipartFile invaildBanner;
     MultipartFile invalidProfile;
+    private static ObjectMapper objectMapper;
 
     @BeforeAll
     public static void beforeAll() {
@@ -91,10 +97,13 @@ public class U800_1_1_PublicProfileFeature {
         gardenUserRepository = mock(GardenUserRepository.class);
         model = mock(Model.class);
         authentication = mock(Authentication.class);
+        objectMapper = mock(ObjectMapper.class);
 
         userService = new GardenUserService(userRepository);
         plantService = new PlantService(plantRepository, gardenRepository);
         gardenService = new GardenService(gardenRepository, gardenUserRepository);
+        birthFlowerService = new BirthFlowerService(objectMapper);
+
         profanityService = new ProfanityService();
         publicProfileController = new PublicProfileController(userService, profanityService, plantService,birthFlowerService);
     }
@@ -113,7 +122,7 @@ public class U800_1_1_PublicProfileFeature {
          when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
          if (formBtn.equals("Submit")) {
-             publicProfileController.publicProfileEditSubmit(authentication, banner, profilePic, validDescription, editUserDTO, bindingResult, model);
+             publicProfileController.publicProfileEditSubmit(authentication, banner, profilePic, validDescription, birthFlower, editUserDTO, bindingResult, model);
          }
          else {
              publicProfileController.viewPublicProfile(authentication, model);
@@ -135,7 +144,7 @@ public class U800_1_1_PublicProfileFeature {
          when(authentication.getPrincipal()).thenReturn(1L);
          when(userRepository.findById(1L)).thenReturn(Optional.of(user));
          when(bindingResult.hasFieldErrors("description")).thenReturn(true);
-         publicProfileController.publicProfileEditSubmit(authentication, banner, profilePic, invalidDescription, editUserDTO, bindingResult, model);
+         publicProfileController.publicProfileEditSubmit(authentication, banner, profilePic, invalidDescription, birthFlower, editUserDTO, bindingResult, model);
 
          // Assert
          verify(model).addAttribute("editUserDTO", editUserDTO);
@@ -176,7 +185,7 @@ public class U800_1_1_PublicProfileFeature {
         when(authentication.getPrincipal()).thenReturn(1L);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(bindingResult.hasFieldErrors("description")).thenReturn(false);
-        publicProfileController.publicProfileEditSubmit(authentication, profilePic, invaildBanner, validDescription, editUserDTO, bindingResult, model);
+        publicProfileController.publicProfileEditSubmit(authentication, profilePic, invaildBanner, validDescription, birthFlower,editUserDTO, bindingResult, model);
         assertNull(user.getProfileBanner());
     }
 
@@ -186,7 +195,7 @@ public class U800_1_1_PublicProfileFeature {
         when(authentication.getPrincipal()).thenReturn(1L);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(bindingResult.hasFieldErrors("description")).thenReturn(false);
-        publicProfileController.publicProfileEditSubmit(authentication, invalidProfile, banner, validDescription, editUserDTO, bindingResult, model);
+        publicProfileController.publicProfileEditSubmit(authentication, invalidProfile, banner, validDescription, birthFlower, editUserDTO, bindingResult, model);
         assertNull(user.getProfilePicture());
     }
 
