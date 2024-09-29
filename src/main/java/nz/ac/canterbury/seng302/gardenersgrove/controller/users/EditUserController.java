@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditPasswordDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.service.BirthFlowerService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import org.slf4j.Logger;
@@ -33,11 +34,13 @@ public class EditUserController {
 
     private final GardenUserService userService;
     private final EmailSenderService emailSenderService;
+    private final BirthFlowerService birthFlowerService;
 
     @Autowired
-    public EditUserController(GardenUserService userService, EmailSenderService emailSenderService) {
+    public EditUserController(GardenUserService userService, EmailSenderService emailSenderService, BirthFlowerService birthFlowerService) {
         this.userService = userService;
         this.emailSenderService = emailSenderService;
+        this.birthFlowerService = birthFlowerService;
     }
 
     /**
@@ -126,18 +129,19 @@ public class EditUserController {
         if (editUserDTO.getDateOfBirth() != null && !editUserDTO.getDateOfBirth().isEmpty()) {
             try {
                 user.setDateOfBirth(LocalDate.parse(editUserDTO.getDateOfBirth()));
-                logger.info("" + user.getDateOfBirth());
+                logger.info("Setting DOB to: {}", user.getDateOfBirth());
+                user.setBirthFlower(birthFlowerService.getDefaultBirthFlower(user.getDateOfBirth()));
             } catch (DateTimeParseException e) {
                 // shouldn't happen because of validation
                 logger.info("cannot parse invalid date format");
             }
         } else {
             user.setDateOfBirth(null);
+            user.setBirthFlower(null);
         }
         userService.addUser(user);
 
         return "redirect:/users/settings";
-
     }
 
     /**
