@@ -57,6 +57,9 @@ public class BirthFlowerService {
      * @return list of possible flowers
      */
     public List<String> getFlowersByMonth(LocalDate date) {
+        if (date == null) {
+            return null;
+        }
         Integer month = date.getMonthValue();
         return monthFlowersMap.get(month);
     }
