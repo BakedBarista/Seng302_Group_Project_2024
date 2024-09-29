@@ -67,6 +67,9 @@ public class BirthFlowerService {
      * @return single flower that is default
      */
     public String getDefaultBirthFlower(LocalDate date) {
+        if (date == null) {
+            return null;
+        }
         return getFlowersByMonth(date).get(0);
     }
 }
