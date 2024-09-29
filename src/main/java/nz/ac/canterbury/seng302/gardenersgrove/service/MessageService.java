@@ -279,6 +279,7 @@ public class MessageService {
         model.addAttribute("DATE_FORMAT", WEATHER_CARD_FORMAT_DATE);
         model.addAttribute("submissionToken", submissionToken);
         model.addAttribute("messagesMap", getMessagesBetweenFriends(loggedInUserId, requestedUserId));
+        model.addAttribute("profilePicture",userService.getUserById(loggedInUserId).getProfilePicture());
         model.addAttribute("sentToUser", sentToUser);
         model.addAttribute("recentChats", recentChats);
         model.addAttribute("activeChat", requestedUserId);

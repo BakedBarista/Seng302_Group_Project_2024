@@ -46,6 +46,7 @@ public class UserController {
         GardenUser user = userService.getUserById(userId);
 
         model.addAttribute("userId", userId);
+        model.addAttribute("user",user);
         model.addAttribute("fname", user.getFname());
         model.addAttribute("lname", user.getLname());
         model.addAttribute("email", user.getEmail());
