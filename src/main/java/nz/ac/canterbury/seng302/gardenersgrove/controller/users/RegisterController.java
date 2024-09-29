@@ -8,6 +8,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.RegisterDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -27,14 +28,14 @@ import java.util.Objects;
 @Controller
 public class RegisterController {
 
-    private Logger logger = LoggerFactory.getLogger(RegisterController.class);
+    private final Logger logger = LoggerFactory.getLogger(RegisterController.class);
 
-    private GardenUserService userService;
-    private TokenService tokenService;
-    private EmailSenderService emailSenderService;
-    private URLService urlService;
+    private final GardenUserService userService;
+    private final TokenService tokenService;
+    private final EmailSenderService emailSenderService;
+    private final URLService urlService;
 
-    private BirthFlowerService birthFlowerService;
+    private final BirthFlowerService birthFlowerService;
 
     /**
      * Constructs a new RegisterController
@@ -43,6 +44,7 @@ public class RegisterController {
      * @param tokenService       The TokenService to use
      * @param emailSenderService The EmailSenderService to use
      */
+    @Autowired
     public RegisterController(GardenUserService userService, TokenService tokenService,
             EmailSenderService emailSenderService, URLService urlService, BirthFlowerService birthFlowerService) {
         this.userService = userService;

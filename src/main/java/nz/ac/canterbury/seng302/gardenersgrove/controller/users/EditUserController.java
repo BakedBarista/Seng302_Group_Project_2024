@@ -8,6 +8,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,11 +29,12 @@ import java.util.Objects;
 @Controller
 public class EditUserController {
 
-    private Logger logger = LoggerFactory.getLogger(EditUserController.class);
+    private final Logger logger = LoggerFactory.getLogger(EditUserController.class);
 
-    private GardenUserService userService;
-    private EmailSenderService emailSenderService;
+    private final GardenUserService userService;
+    private final EmailSenderService emailSenderService;
 
+    @Autowired
     public EditUserController(GardenUserService userService, EmailSenderService emailSenderService) {
         this.userService = userService;
         this.emailSenderService = emailSenderService;
