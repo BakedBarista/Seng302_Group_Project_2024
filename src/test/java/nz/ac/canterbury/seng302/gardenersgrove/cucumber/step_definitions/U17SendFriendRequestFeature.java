@@ -18,6 +18,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.FriendsRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.BirthFlowerService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 
 
@@ -33,10 +34,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class U17SendFriendRequestFeature {
     private static ManageFriendsController friendsController;
     private static FriendsRepository friendsRepository;
     private static GardenUserRepository gardenUserRepository;
+    private static BirthFlowerService birthFlowerService;
     private static GardenUserService userService;
 
     private static MessageService messageService;
@@ -57,7 +61,8 @@ public class U17SendFriendRequestFeature {
         System.out.println("Before all");
         gardenUserRepository = mock(GardenUserRepository.class);
         friendsRepository = mock(FriendsRepository.class);
-        userService = new GardenUserService(gardenUserRepository);
+        birthFlowerService = new BirthFlowerService(new ObjectMapper());
+        userService = new GardenUserService(gardenUserRepository, birthFlowerService);
         friendService = new FriendService(friendsRepository);
         friendsController = new ManageFriendsController(friendService, userService,messageService);
         authentication = mock(Authentication.class);
