@@ -48,6 +48,15 @@ public class Message {
         this.messageContent = message;
     }
 
+    public Message(Long sender, Long receiver, LocalDateTime timestamp, String message, String imageContentType, byte[] imageContent) {
+        this.sender = sender;
+        this.receiver = receiver;
+        this.timestamp = timestamp;
+        this.messageContent = message;
+        this.imageContentType = imageContentType;
+        this.imageContent = imageContent;
+    }
+
     public Long getId() {
         return id;
     }
