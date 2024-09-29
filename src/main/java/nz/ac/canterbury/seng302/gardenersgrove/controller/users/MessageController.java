@@ -148,6 +148,10 @@ public class MessageController {
         Map<Long, Message> recentMessagesMap = messageService.getLatestMessages(allMessages, loggedInUserId);
 
         Map<GardenUser, ChatPreview> recentChats = messageService.convertToPreview(loggedInUserId, recentMessagesMap);
+        for(Map.Entry<GardenUser,ChatPreview> entry: recentChats.entrySet()) {
+            logger.info("key {}",entry.getKey());
+            logger.info("value {}", entry.getValue());
+        }
 
         messageService.setupModelAttributes(model, loggedInUserId, requestedUserId, sentToUser, recentChats,
                 submissionToken);

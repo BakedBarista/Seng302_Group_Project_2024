@@ -96,7 +96,6 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('action', 'accept');
         formData.append('id', currentUser()?.id); // this needs to be the id of user.
 
-        navigator.vibrate([100, 100, 100]);
         nextUser('swipe-right');
 
         sendPost(formData);
@@ -107,7 +106,6 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('action', 'decline');
         formData.append('id', currentUser()?.id); // this needs to be the id of user.
 
-        navigator.vibrate([300]);
         nextUser('swipe-left');
 
         sendPost(formData);
