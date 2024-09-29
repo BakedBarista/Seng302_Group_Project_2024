@@ -66,11 +66,10 @@ public class SuggestedUserController {
                 return "suggestedFriends";
             }
 
-            model.addAttribute("profilePicture",suggestedUsers.get(0).getProfilePicture());
-            model.addAttribute("userId", suggestedUsers.get(0).getId());
-            model.addAttribute("name", suggestedUsers.get(0).getFullName());
-            model.addAttribute("description", suggestedUsers.get(0).getDescription());
-            logger.info("Description: {}", suggestedUsers.get(0).getDescription());
+            model.addAttribute("userId", feedContents.get(0).getId());
+            model.addAttribute("name", feedContents.get(0).getFullName());
+            model.addAttribute("description", feedContents.get(0).getDescription());
+            logger.info("Description: {}", feedContents.get(0).getDescription());
 
             String jsonUsers = objectMapper.writeValueAsString(feedContents);
             model.addAttribute("userList", jsonUsers);
