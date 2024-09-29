@@ -9,6 +9,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -218,5 +219,40 @@ class CompatibilityServiceUnitTests {
         double result = compatibilityService.friendshipCompatibilityQuotient(user1, user2);
 
         assertEquals(50., result, 10.);
+    }
+
+    @Test
+    void testNoCommonPlants() {
+        List<Plant> user1Plants = Arrays.asList(new Plant("Rose", "1", "test", LocalDate.of(1970, 12, 1)), new Plant("lilly", "1", "test", LocalDate.of(1970, 12, 1)));
+        List<Plant> user2Plants = Arrays.asList(new Plant("tulip", "1", "test", LocalDate.of(1970, 12, 1)), new Plant("potato", "1", "test", LocalDate.of(1970, 12, 1)));
+
+        when(plantService.getAllPlantsForUser(user1)).thenReturn(user1Plants);
+        when(plantService.getAllPlantsForUser(user2)).thenReturn(user2Plants);
+
+        double similarity = compatibilityService.calculatePlantSimilarity(user1, user2);
+        assertEquals(0.0, similarity);
+    }
+
+    @Test
+    void testIdenticalPlants() {
+        List<Plant> identicalPlants = Arrays.asList(new Plant("Rose", "1", "test", LocalDate.of(1970, 12, 1)), new Plant("lilly", "1", "test", LocalDate.of(1970, 12, 1)));
+
+        when(plantService.getAllPlantsForUser(user1)).thenReturn(identicalPlants);
+        when(plantService.getAllPlantsForUser(user2)).thenReturn(identicalPlants);
+
+        double similarity = compatibilityService.calculatePlantSimilarity(user1, user2);
+        assertEquals(100.0, similarity);
+    }
+
+    @Test
+    void testSomeCommonPlants() {
+        List<Plant> user1Plants = Arrays.asList(new Plant("Rose", "1", "test", LocalDate.of(1970, 12, 1)), new Plant("lilly", "1", "test", LocalDate.of(1970, 12, 1)));
+        List<Plant> user2Plants = Arrays.asList(new Plant("Rose", "1", "test", LocalDate.of(1970, 12, 1)), new Plant("potato", "1", "test", LocalDate.of(1970, 12, 1)));
+
+        when(plantService.getAllPlantsForUser(user1)).thenReturn(user1Plants);
+        when(plantService.getAllPlantsForUser(user2)).thenReturn(user2Plants);
+
+        double similarity = compatibilityService.calculatePlantSimilarity(user1, user2);
+        assertEquals(33.333333333333336, similarity); 
     }
 }
