@@ -97,7 +97,12 @@ function updateMessagePreview(userId, newMessageContent, isSender) {
     const messagePreviewElement = document.getElementById(previewId);
     const messagePreviewImageElement = document.getElementById(previewIdImage);
 
-    // If an image
+    const previewIdMobile = `messagePreviewMobile-${userId}`;
+    const previewIdImageMobile = `messagePreviewImageMobile-${userId}`;
+    const messagePreviewMobileElement = document.getElementById(previewIdMobile);
+    const messagePreviewImageMobileElement = document.getElementById(previewIdImageMobile);
+
+    // If an image was last sent
     if (newMessageContent === null || newMessageContent === '') {
         if (messagePreviewImageElement) {
            messagePreviewImageElement.textContent = `${isSender === true ? "You: ": ""}Image 📷`;
@@ -105,12 +110,32 @@ function updateMessagePreview(userId, newMessageContent, isSender) {
            messagePreviewElement.className = "d-none";
            messagePreviewImageElement.className = "d-block";
         }
+
+        if (messagePreviewImageMobileElement) {
+            messagePreviewImageMobileElement.textContent = `${isSender === true ? "You: ": ""}Image 📷`;
+            messagePreviewImageMobileElement.title = 'Image';
+            messagePreviewMobileElement.className = "d-none";
+            messagePreviewImageMobileElement.className = "d-block";
+        }
     } else {
         if (messagePreviewElement) {
             messagePreviewElement.textContent = `${isSender === true ? "You: ": ""} ${newMessageContent}`;
             messagePreviewElement.title = newMessageContent;
             messagePreviewElement.className = "d-block text-truncate m-0";
-            messagePreviewImageElement.className = "d-none"
+
+            if (messagePreviewImageElement) {
+                messagePreviewImageElement.className = "d-none"
+            }
+        }
+
+        if (messagePreviewMobileElement) {
+            messagePreviewMobileElement.textContent = `${isSender === true ? "You: ": ""} ${newMessageContent}`;
+            messagePreviewMobileElement.title = newMessageContent;
+            messagePreviewMobileElement.className = "d-block text-truncate m-0";
+            
+            if (messagePreviewImageMobileElement) {
+                messagePreviewImageMobileElement.className = "d-none"
+            }
         }
     }
 }

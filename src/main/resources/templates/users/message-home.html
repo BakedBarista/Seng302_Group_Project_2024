@@ -54,12 +54,12 @@
                                 <div class="m-3 text-start">
                                     <h6 th:text="${chat.getKey().fullName}"></h6>
                                     <div th:if="${(chat.getValue().messageContent) == null || (chat.getValue().messageContent) == ''}">
-                                        <p th:id="${'messagePreviewImage-' + chat.getKey().id}">
+                                        <p th:id="${'messagePreviewImageMobile-' + chat.getKey().id}">
                                             Image 📷
                                         </p>
                                     </div>
 
-                                    <p th:id="${'messagePreview-' + chat.getKey().id}" th:text="${chat.getValue().messageContent}"
+                                    <p th:id="${'messagePreviewMobile-' + chat.getKey().id}" th:text="${chat.getValue().messageContent}"
                                        th:title="${chat.getValue().messageContent}"
                                        class="text-truncate m-0"
                                        style="max-width: 200px;"></p>
