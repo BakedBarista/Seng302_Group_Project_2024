@@ -2,8 +2,6 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.SuggestedUserDTO;
-import nz.ac.canterbury.seng302.gardenersgrove.service.CompatibilityService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.SuggestedUserService;
 import org.slf4j.Logger;
@@ -17,16 +15,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.WebContext;
-import org.thymeleaf.web.servlet.JakartaServletWebApplication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,23 +30,17 @@ public class SuggestedUserController {
 
     private static final Logger logger = LoggerFactory.getLogger(SuggestedUserController.class);
 
-    private final FriendService friendService;
     private final GardenUserService gardenUserService;
     private final SuggestedUserService suggestedUserService;
-    private final CompatibilityService compatibilityService;
     private final ObjectMapper objectMapper;
-    private final TemplateEngine templateEngine;
 
     private static final String SUCCESS = "success";
 
     @Autowired
-    public SuggestedUserController(FriendService friendService, GardenUserService gardenUserService, SuggestedUserService suggestedUserService, CompatibilityService compatibilityService, ObjectMapper objectMapper, TemplateEngine templateEngine) {
-        this.friendService = friendService;
+    public SuggestedUserController(GardenUserService gardenUserService, SuggestedUserService suggestedUserService, ObjectMapper objectMapper) {
         this.gardenUserService = gardenUserService;
         this.suggestedUserService = suggestedUserService;
-        this.compatibilityService = compatibilityService;
         this.objectMapper = objectMapper;
-        this.templateEngine = templateEngine;
     }
 
     /**
@@ -72,21 +60,18 @@ public class SuggestedUserController {
         try {
             Long userId = (Long) authentication.getPrincipal();
             GardenUser user = gardenUserService.getUserById(userId);
-            List<GardenUser> suggestedUsers = new ArrayList<>();
-            suggestedUsers.addAll(friendService.receivedConnectionRequests(user));
-            suggestedUsers.addAll(friendService.availableConnections(user));
 
-            if (suggestedUsers.isEmpty()) {
+            List<SuggestedUserDTO> feedContents = suggestedUserService.getSuggestionFeedContents(user, request, response);
+            if (feedContents.isEmpty()) {
                 return "suggestedFriends";
             }
-            model.addAttribute("profilePicture",suggestedUsers.get(0).getProfilePicture());
-            model.addAttribute("userId", suggestedUsers.get(0).getId());
-            model.addAttribute("name", suggestedUsers.get(0).getFullName());
-            model.addAttribute("description", suggestedUsers.get(0).getDescription());
-            logger.info("Description: {}", suggestedUsers.get(0).getDescription());
 
-            List<SuggestedUserDTO> userDtos = suggestedUsers.stream().map((GardenUser u) -> makeSuggestedUserDTO(user, u, request, response)).toList();
-            String jsonUsers = objectMapper.writeValueAsString(userDtos);
+            model.addAttribute("userId", feedContents.get(0).getId());
+            model.addAttribute("name", feedContents.get(0).getFullName());
+            model.addAttribute("description", feedContents.get(0).getDescription());
+            logger.info("Description: {}", feedContents.get(0).getDescription());
+
+            String jsonUsers = objectMapper.writeValueAsString(feedContents);
             model.addAttribute("userList", jsonUsers);
         } catch (Exception e) {
             logger.error("Error getting suggested users", e);
@@ -94,37 +79,15 @@ public class SuggestedUserController {
         return "suggestedFriends";
     }
 
-    private SuggestedUserDTO makeSuggestedUserDTO(GardenUser self, GardenUser user, HttpServletRequest request,
-            HttpServletResponse response) {
-        SuggestedUserDTO dto = new SuggestedUserDTO(user);
-
-        double compatibility = compatibilityService.friendshipCompatibilityQuotient(self, user);
-        dto.setCompatibility((int) Math.round(compatibility));
-
-        Map<String, Object> variables = new HashMap<>();
-        variables.put("userId", user.getId());
-        variables.put("favouriteGarden", user.getFavoriteGarden());
-        variables.put("favouritePlants", user.getFavouritePlants());
-
-        // Manually render thymeleaf fragments for the backside of each card
-        JakartaServletWebApplication application = JakartaServletWebApplication
-                .buildApplication(request.getServletContext());
-        WebContext context = new WebContext(application.buildExchange(request, response), request.getLocale(),
-                variables);
-        if (user.getFavoriteGarden() != null) {
-            dto.setFavouriteGardenHtml(templateEngine.process("fragments/favourite-garden.html", context));
-        } else {
-            dto.setFavouriteGardenHtml("<div class=\"text-center my-3 text-white\">No Favourite Garden Selected</div>");
-        }
-        if (user.getFavouritePlants() != null) {
-            dto.setFavouritePlantsHtml(templateEngine.process("fragments/favourite-plants.html", context));
-        } else {
-            dto.setFavouritePlantsHtml("<div class=\"text-center my-3 text-white\">No Favourite Plants Selected</div>");
-        }
-
-        return dto;
-    }
-
+    /**
+     * Handles Post request for accepting or declining friend requests or connection suggestions
+     *
+     * @param action action to perform (accept or decline)
+     * @param suggestedId ID of suggested garden user
+     * @param authentication authentication
+     * @param model model
+     * @return ResponseEntity containing result
+     */
     @PostMapping("/")
     public ResponseEntity<Map<String, Object>> handleAcceptDecline(
             @RequestParam(name = "action") String action,

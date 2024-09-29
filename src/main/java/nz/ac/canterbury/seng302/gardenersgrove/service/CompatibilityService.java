@@ -130,10 +130,20 @@ public class CompatibilityService {
      * @return number of common plant names
      */
     private int calculateCommonPlantNum(Set<String> user1PlantNameSet, Set<String> user2PlantNameSet) {
-        Set<String> commonNames = new HashSet<>(user1PlantNameSet);
-        commonNames.retainAll(user2PlantNameSet);
+        Set<String> lowerCaseUser1Plants = new HashSet<>();
+        Set<String> lowerCaseUser2Plants = new HashSet<>();
 
-        return commonNames.size();
+        for (String plant : user1PlantNameSet) {
+            lowerCaseUser1Plants.add(plant.toLowerCase());
+        }
+
+        for (String plant : user2PlantNameSet) {
+            lowerCaseUser2Plants.add(plant.toLowerCase());
+        }
+
+        lowerCaseUser1Plants.retainAll(lowerCaseUser2Plants);
+
+        return lowerCaseUser1Plants.size();
     }
 
     /**
