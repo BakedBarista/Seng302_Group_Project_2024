@@ -81,7 +81,7 @@
     #gardenTLDescHeader,
     #plantHistoryEach,
     #messageDate,
-    #chatPreview {
+    .chatPreview {
         color: var(--gg-white);
     }
 
@@ -135,10 +135,13 @@
         border-bottom-width: 1px;
     }
 
+    .modal-footer {
+        background-color: #464444;
+    }
+
 
 
 
 
 }
-[data-bs-theme="dark"]
 
