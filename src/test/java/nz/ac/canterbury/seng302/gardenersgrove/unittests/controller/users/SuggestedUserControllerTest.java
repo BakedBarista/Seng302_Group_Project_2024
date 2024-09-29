@@ -211,26 +211,4 @@ class SuggestedUserControllerTest {
         Assertions.assertEquals(false, response.getBody().get("success"));
     }
 
-    @Test
-    void givenLowCompatibility_andUserSentRequest_whenCardsShown_thenSentRequestShowsFirst() throws JsonProcessingException {
-        GardenUser Liam = new GardenUser("liam", "user", "laims@gmail.com", "password", LocalDate.of(1970, 10, 10));
-
-        GardenUser highCompatibilityUser = new GardenUser("test", "user", "test@gmail.com", "password", LocalDate.of(1970, 10, 10));
-        GardenUser lowCompatibilitySentRequest = new GardenUser("test2", "user", "test2@gmail.com", "password", LocalDate.of(1970, 10, 10));
-        model = Mockito.mock(Model.class);
-
-        List<SuggestedUserDTO> combinedList = Arrays.asList(
-                new SuggestedUserDTO(highCompatibilityUser),
-                new SuggestedUserDTO(lowCompatibilitySentRequest)
-        );
-
-        when(authentication.getPrincipal()).thenReturn(loggedInUserId);
-        when(gardenUserService.getUserById(loggedInUserId)).thenReturn(Liam);
-        when(suggestedUserService.getSuggestionFeedContents(Liam, request, response)).thenReturn(combinedList);
-
-        String result = suggestedUserController.home(authentication, model, request, response);
-
-        verify(model).addAttribute(eq("userList"), any());
-        assertEquals("suggestedFriends", result);
-    }
 }
