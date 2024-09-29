@@ -54,6 +54,9 @@
                         alt="Image sent by you"
                         style="max-width: min(300px, 100%);">
                 </div>
+                <div class="emoji-container position-absolute bottom-0 start-0 translate-middle-y">
+                    <span class="emoji-badge" th:if="${message.reaction != null}" th:text="${message.reaction}"></span>
+                </div>
             </div>
         </div>
 
@@ -67,6 +70,9 @@
                         th:src="@{'/api/messages/id/' + ${message.id} + '/image'}"
                         alt="Image sent by you"
                         style="max-width: min(200px, 100%);">
+                </div>
+                <div class="emoji-container position-absolute bottom-0 start-0 translate-middle-y">
+                    <span class="emoji-badge" th:if="${message.reaction != null}" th:text="${message.reaction}"></span>
                 </div>
             </div>
         </div>
