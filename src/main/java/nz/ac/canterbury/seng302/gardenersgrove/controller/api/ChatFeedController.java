@@ -15,7 +15,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
+/**
+ * Class for dealing with the API calls for refreshing the chat feed
+ */
 @RestController
 public class ChatFeedController {
     private final Logger logger = LoggerFactory.getLogger(ChatFeedController.class);
@@ -28,6 +30,14 @@ public class ChatFeedController {
         this.messageService = messageService;
     }
 
+    /**
+     * Handles the GET request for retrieving recent chats of the logged-in user.
+     *
+     * @param authentication The authentication object containing the logged-in user's credentials.
+     * @param model The model object used for passing attributes to the view (not used in this case).
+     * @param session The HTTP session object that can hold session-specific data (not used in this case).
+     * @return A map where the key is the user ID and the value is the latest message associated with that user.
+     */
     @GetMapping("api/messages/recent-chats")
     public Map<String, Message> messageRecentChat(Authentication authentication, Model model, HttpSession session) {
         logger.info("GET request to /api/messages/recent-chats");
