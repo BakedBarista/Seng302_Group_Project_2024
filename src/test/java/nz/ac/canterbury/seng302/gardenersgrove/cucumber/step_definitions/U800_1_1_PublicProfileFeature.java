@@ -59,6 +59,8 @@ public class U800_1_1_PublicProfileFeature {
 
     public static Plant plant;
 
+    private static final String birthFlower = "Carnation";
+
     MultipartFile profilePic = new MockMultipartFile(
             "image",
             "profile.png",
@@ -113,7 +115,7 @@ public class U800_1_1_PublicProfileFeature {
          when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
          if (formBtn.equals("Submit")) {
-             publicProfileController.publicProfileEditSubmit(authentication, banner, profilePic, validDescription, editUserDTO, bindingResult, model);
+             publicProfileController.publicProfileEditSubmit(authentication, banner, profilePic, validDescription, birthFlower, editUserDTO, bindingResult, model);
          }
          else {
              publicProfileController.viewPublicProfile(authentication, model);
@@ -135,7 +137,7 @@ public class U800_1_1_PublicProfileFeature {
          when(authentication.getPrincipal()).thenReturn(1L);
          when(userRepository.findById(1L)).thenReturn(Optional.of(user));
          when(bindingResult.hasFieldErrors("description")).thenReturn(true);
-         publicProfileController.publicProfileEditSubmit(authentication, banner, profilePic, invalidDescription, editUserDTO, bindingResult, model);
+         publicProfileController.publicProfileEditSubmit(authentication, banner, profilePic, invalidDescription, birthFlower, editUserDTO, bindingResult, model);
 
          // Assert
          verify(model).addAttribute("editUserDTO", editUserDTO);
@@ -176,7 +178,7 @@ public class U800_1_1_PublicProfileFeature {
         when(authentication.getPrincipal()).thenReturn(1L);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(bindingResult.hasFieldErrors("description")).thenReturn(false);
-        publicProfileController.publicProfileEditSubmit(authentication, profilePic, invaildBanner, validDescription, editUserDTO, bindingResult, model);
+        publicProfileController.publicProfileEditSubmit(authentication, profilePic, invaildBanner, validDescription, birthFlower,editUserDTO, bindingResult, model);
         assertNull(user.getProfileBanner());
     }
 
@@ -186,7 +188,7 @@ public class U800_1_1_PublicProfileFeature {
         when(authentication.getPrincipal()).thenReturn(1L);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(bindingResult.hasFieldErrors("description")).thenReturn(false);
-        publicProfileController.publicProfileEditSubmit(authentication, invalidProfile, banner, validDescription, editUserDTO, bindingResult, model);
+        publicProfileController.publicProfileEditSubmit(authentication, invalidProfile, banner, validDescription, birthFlower, editUserDTO, bindingResult, model);
         assertNull(user.getProfilePicture());
     }
 

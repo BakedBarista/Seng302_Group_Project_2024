@@ -34,6 +34,7 @@
     --bs-dark: var(--gg-black);
     --bs-dark-rgb: var(--gg-black-rgb);
     --bs-secondary-bg: var(--gg-white);
+    --bs-danger-bg-subtle: #E27DB6;
 }
 
 /* Global typography */
@@ -960,10 +961,13 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #flowerDropdown option:hover {
-    background-color: #f0ad4e; 
+    background-color: #f0ad4e;
     color: white;
 }
 
+#dropdownMenuButton {
+    background-color: var(--bs-danger-bg-subtle);
+}
 
 @keyframes flip-card-swipe-right {
     0% {

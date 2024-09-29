@@ -51,6 +51,7 @@ public class PublicProfileController {
     private static final String DESCRIPTION = "description";
 
     private static final String FAVOURITE_PLANTS = "favouritePlants";
+    private static final String BIRTH_FLOWER = "birthFlower";
 
     private static final Set<String> ACCEPTED_FILE_TYPES = Set.of("image/jpeg", "image/jpg", "image/png", "image/svg");
 
@@ -76,15 +77,18 @@ public class PublicProfileController {
 
         Long userId = (Long) authentication.getPrincipal();
         GardenUser user = userService.getUserById(userId);
+        String birthFlower = user.getBirthFlower();
+        if (birthFlower == null) {
+            birthFlower = birthFlowerService.getDefaultBirthFlower(user.getDateOfBirth());
+        }
         Set<Plant> favouritePlants = user.getFavouritePlants();
         model.addAttribute(USER_ID_ATTRIBUTE, userId);
         model.addAttribute("user",user);
         model.addAttribute("currentUser", userId);
         model.addAttribute("name", user.getFullName());
+        model.addAttribute(BIRTH_FLOWER, birthFlower);
         model.addAttribute(DESCRIPTION, user.getDescription());
         model.addAttribute(FAVOURITE_GARDEN, user.getFavoriteGarden());
-
-
         model.addAttribute(FAVOURITE_PLANTS, favouritePlants);
 
         return "users/public-profile";
@@ -130,6 +134,10 @@ public class PublicProfileController {
         if (isCurrentUser) {
             return viewPublicProfile(authentication, model);
         }
+        String birthFlower = user.getBirthFlower();
+        if (birthFlower == null) {
+            birthFlower = birthFlowerService.getDefaultBirthFlower(user.getDateOfBirth());
+        }
         Set<Plant> favouritePlants = user.getFavouritePlants();
         logger.info("current user: {}",userService.getUserById(id).getFname());
         logger.info("logged in user {}",userService.getUserById(loggedInUserId).getFname());
@@ -137,6 +145,7 @@ public class PublicProfileController {
         model.addAttribute("user",user);
         model.addAttribute("currentUser", loggedInUserId);
         model.addAttribute("name", user.getFullName());
+        model.addAttribute(BIRTH_FLOWER, birthFlower);
         model.addAttribute(FAVOURITE_GARDEN, user.getFavoriteGarden());
         model.addAttribute(DESCRIPTION, user.getDescription());
         model.addAttribute(FAVOURITE_PLANTS, favouritePlants);
@@ -179,12 +188,11 @@ public class PublicProfileController {
         model.addAttribute(USER_ID_ATTRIBUTE, userId);
         model.addAttribute("user",user);
         model.addAttribute("name", user.getFullName());
+        model.addAttribute(BIRTH_FLOWER, user.getBirthFlower());
         editUserDTO.setDescription(user.getDescription());
         model.addAttribute("editUserDTO", editUserDTO);
         model.addAttribute(FAVOURITE_GARDEN, user.getFavoriteGarden());
         model.addAttribute("flowers", flowers);
-
-
 
         Set<Plant> favouritePlants = user.getFavouritePlants();
         model.addAttribute(FAVOURITE_PLANTS, favouritePlants);
@@ -223,6 +231,7 @@ public class PublicProfileController {
             @RequestParam("image") MultipartFile profilePic,
             @RequestParam("bannerImage") MultipartFile banner,
             @RequestParam(DESCRIPTION) String description,
+            @RequestParam("selectedFlower") String birthFlower,
             @Valid @ModelAttribute("editUserDTO") EditUserDTO editUserDTO,
             BindingResult bindingResult,
             Model model) throws IOException {
@@ -260,6 +269,7 @@ public class PublicProfileController {
         user.setDescription(description);
         editProfilePicture(userId, profilePic);
         editProfileBanner(userId, banner);
+        user.setBirthFlower(birthFlower);
 
         userService.addUser(user);
 
