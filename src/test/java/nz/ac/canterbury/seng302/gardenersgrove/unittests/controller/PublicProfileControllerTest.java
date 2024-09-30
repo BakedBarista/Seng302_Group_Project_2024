@@ -212,6 +212,7 @@ class PublicProfileControllerTest {
     void testEditForm() throws JsonProcessingException {
         Model model = mock(Model.class);
         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+        when(gardenUserService.getCurrentUser()).thenReturn(loggedInUser);
         String result = publicProfileController.editPublicProfile(authentication, model);
 
         verify(model).addAttribute("userId", loggedInUserId);
@@ -333,8 +334,9 @@ class PublicProfileControllerTest {
     void whenRequestingBirthMonthFlower_thenBirthMonthFlowerIsAddedToModel() throws JsonProcessingException {
         List<String> flowers = List.of("Carnation","Snow Pea");
         Model model = mock(Model.class);
-        when(birthFlowerService.getFlowersByMonth(loggedInUser.getDateOfBirth())).thenReturn(flowers);
+        when(birthFlowerService.getFlowersByMonth(any(LocalDate.class))).thenReturn(flowers);
         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+        when(gardenUserService.getCurrentUser()).thenReturn(loggedInUser);
         publicProfileController.editPublicProfile(authentication,model);
 
         verify(model).addAttribute("flowers",flowers);

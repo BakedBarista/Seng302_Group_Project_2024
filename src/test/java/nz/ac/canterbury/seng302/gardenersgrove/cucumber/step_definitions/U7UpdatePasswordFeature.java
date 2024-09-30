@@ -1,21 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.cucumber.step_definitions;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.Optional;
-
-import nz.ac.canterbury.seng302.gardenersgrove.service.BirthFlowerService;
-import org.springframework.security.core.Authentication;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import io.cucumber.java.BeforeAll;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -27,6 +12,16 @@ import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.BirthFlowerService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import org.springframework.security.core.Authentication;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
 public class U7UpdatePasswordFeature {
     private static GardenUserRepository userRepository;
@@ -38,7 +33,6 @@ public class U7UpdatePasswordFeature {
 
     private static GardenUserService userService;
     private static EditUserController editUserController;
-    private static BirthFlowerService birthFlowerService;
 
     private GardenUser user;
     private EditPasswordDTO editPasswordDTO;
