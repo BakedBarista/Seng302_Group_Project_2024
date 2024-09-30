@@ -5,9 +5,9 @@ Feature: U800.2.2 As Favian, I want my feed to suggest more people who are inter
         And My email is "Favian@gmail.com"
         And My password is "P@ssw0rdF4v"
 
-    # Scenario: AC1 - ordering of profiles
-    #     Given I am on the home page
-    #     Then the profiles that are shown below the users who have sent me friend requests are ranked by a combination of geographic proximity, similarity of plants we grow, and similarity of age
+     Scenario: AC1 - ordering of profiles
+         Given I am on the home page
+         Then the profiles that are shown below the users who have sent me friend requests are ranked by a combination of geographic proximity, similarity of plants we grow, and similarity of age
 
     Scenario: AC2 - friendship compatibility shown to user
         Given I am on the home page

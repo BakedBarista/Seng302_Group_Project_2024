@@ -12,10 +12,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantHistoryItemDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantHistoryRepository;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -27,13 +28,10 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.PlantHistoryItem;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.PlantHistoryService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.springframework.context.annotation.Import;
 
 @DataJpaTest
-@Import({ GardenUserService.class, GardenService.class, PlantService.class, PlantHistoryService.class })
+@Import({ GardenUserService.class, GardenService.class, PlantService.class, PlantHistoryService.class, BirthFlowerService.class, ObjectMapper.class })
 class PlantHistoryServiceTest {
 
     @Autowired

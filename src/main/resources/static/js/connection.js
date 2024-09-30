@@ -9,12 +9,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const cardCompatibility = document.getElementById('cardCompatibility');
     const cardDescription = document.getElementById('cardDescription');
     const cardImage = document.getElementById('cardImage');
+    const birthFlower = document.getElementById('birthFlower');
     const favouriteGarden = document.getElementById('favouriteGarden');
     const favouritePlants = document.getElementById('favouritePlants');
     
     const userListJson = getMeta('_userList') || '[]';
-    const userList = JSON.parse(userListJson);
-    
+    let userList = JSON.parse(userListJson);
     let userIndex = 0;
     function currentUser() {
         return userList[userIndex];
@@ -33,6 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
         cardName.textContent = user.fullName;
         cardCompatibility.textContent = user.compatibility;
         cardDescription.textContent = user.description;
+        birthFlower.innerHTML = user.birthFlowerHtml;
         favouriteGarden.innerHTML = user.favouriteGardenHtml;
         favouritePlants.innerHTML = user.favouritePlantsHtml;
 
@@ -97,7 +98,6 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('action', 'accept');
         formData.append('id', currentUser()?.id); // this needs to be the id of user.
 
-        navigator.vibrate([100, 100, 100]);
         nextUser('swipe-right');
 
         sendPost(formData);
@@ -108,7 +108,6 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('action', 'decline');
         formData.append('id', currentUser()?.id); // this needs to be the id of user.
 
-        navigator.vibrate([300]);
         nextUser('swipe-left');
 
         sendPost(formData);

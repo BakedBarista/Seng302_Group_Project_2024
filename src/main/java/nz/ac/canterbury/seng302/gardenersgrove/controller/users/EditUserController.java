@@ -56,6 +56,7 @@ public class EditUserController {
 
         Long userId = (Long) authentication.getPrincipal();
         GardenUser user = userService.getUserById(userId);
+        model.addAttribute("user",user);
         model.addAttribute("userId", userId);
 
         EditUserDTO editUserDTO = new EditUserDTO();

@@ -20,10 +20,12 @@ import java.util.*;
 @Service
 public class GardenUserService {
     private final GardenUserRepository gardenUserRepository;
+    private final BirthFlowerService birthFlowerService;
 
     @Autowired
-    public GardenUserService(GardenUserRepository gardenUserRepository) {
+    public GardenUserService(GardenUserRepository gardenUserRepository, BirthFlowerService birthFlowerService) {
         this.gardenUserRepository = gardenUserRepository;
+        this.birthFlowerService = birthFlowerService;
     }
 
     /**
@@ -44,6 +46,10 @@ public class GardenUserService {
     public GardenUser addUser(GardenUser gardenUser) {
         if (gardenUser.getId() == null && gardenUserRepository.findByEmail(gardenUser.getEmail()).isPresent()) {
             throw new IllegalStateException("User with email " + gardenUser.getEmail() + " already exists");
+        }
+        if (gardenUser.getBirthFlower() == null && gardenUser.getDateOfBirth() != null) {
+            String birthFlower = birthFlowerService.getDefaultBirthFlower(gardenUser.getDateOfBirth());
+            gardenUser.setBirthFlower(birthFlower);
         }
 
         return gardenUserRepository.save(gardenUser);

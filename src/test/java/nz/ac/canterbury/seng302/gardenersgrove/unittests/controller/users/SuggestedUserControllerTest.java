@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.SuggestedUserController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.SuggestedUserDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.service.CompatibilityService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
@@ -20,13 +21,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
-import org.thymeleaf.TemplateEngine;
 
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static nz.ac.canterbury.seng302.gardenersgrove.entity.Friends.Status.PENDING;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class SuggestedUserControllerTest {
@@ -40,7 +45,6 @@ class SuggestedUserControllerTest {
     private SuggestedUserService suggestedUserService;
     private CompatibilityService compatibilityService;
     private ObjectMapper objectMapper;
-    private TemplateEngine templateEngine;
     private HttpServletRequest request;
     private HttpServletResponse response;
     private ServletContext context;
@@ -60,11 +64,12 @@ class SuggestedUserControllerTest {
         suggestedUserService = Mockito.mock(SuggestedUserService.class);
         compatibilityService = Mockito.mock(CompatibilityService.class);
         objectMapper = new ObjectMapper();
-        templateEngine = Mockito.mock(TemplateEngine.class);
         request = Mockito.mock(HttpServletRequest.class);
         response = Mockito.mock(HttpServletResponse.class);
         context = Mockito.mock(ServletContext.class);
-        suggestedUserController = new SuggestedUserController(friendService, gardenUserService, suggestedUserService, compatibilityService, objectMapper, templateEngine);
+        when(request.getServletContext()).thenReturn(context);
+
+        suggestedUserController = new SuggestedUserController(gardenUserService, suggestedUserService, objectMapper);
 
         loggedInUser = new GardenUser();
         loggedInUser.setId(loggedInUserId);
@@ -78,8 +83,8 @@ class SuggestedUserControllerTest {
         suggestedUser = new GardenUser();
         suggestedUser.setId(suggestedUserId);
         //sender-receiver-status
-        friendRequestReceive = new Friends(suggestedUser, loggedInUser, Friends.Status.PENDING);
-        friendRequestSend = new Friends(loggedInUser, suggestedUser, Friends.Status.PENDING);
+        friendRequestReceive = new Friends(suggestedUser, loggedInUser, PENDING);
+        friendRequestSend = new Friends(loggedInUser, suggestedUser, PENDING);
 
         when(authentication.getPrincipal()).thenReturn(loggedInUser.getId());
         when(gardenUserService.getUserById(loggedInUser.getId())).thenReturn(loggedInUser);
@@ -91,28 +96,26 @@ class SuggestedUserControllerTest {
      * Testing the get method of the home page
      */
     @Test
-    void whenIViewMyPublicProfile_thenIAmTakenToThePublicProfilePage() throws JsonProcessingException {
+    void whenIViewMyFeed_thenIAmShownMyFeed() throws JsonProcessingException {
         model = Mockito.mock(Model.class);
 
         GardenUser suggestedUser = new GardenUser();
         suggestedUser.setId(3L);
         suggestedUser.setDescription("Another description");
 
-        List<GardenUser> suggestedUsers = Collections.singletonList(suggestedUser);
-
-
         Mockito.when(request.getServletContext()).thenReturn(context);
         Mockito.when(authentication.getPrincipal()).thenReturn(loggedInUserId);
         Mockito.when(gardenUserService.getUserById(loggedInUserId)).thenReturn(loggedInUser);
-        Mockito.when(friendService.availableConnections(loggedInUser)).thenReturn(suggestedUsers);
+        Mockito.when(suggestedUserService.getSuggestionFeedContents(loggedInUser, request, response))
+                .thenReturn(List.of(new SuggestedUserDTO(suggestedUser)));
 
         String page = suggestedUserController.home(authentication, model, request, response);
 
-        Mockito.verify(compatibilityService).friendshipCompatibilityQuotient(any(), any());
-        Mockito.verify(model).addAttribute(eq("userId"), any());
-        Mockito.verify(model).addAttribute(eq("name"), any());
-        Mockito.verify(model).addAttribute(eq("description"), any());
-        Mockito.verify(model).addAttribute(eq("userList"), assertArg((String s) -> {
+        verify(suggestedUserService).getSuggestionFeedContents(any(), any(), any());
+        verify(model).addAttribute(eq("userId"), any());
+        verify(model).addAttribute(eq("name"), any());
+        verify(model).addAttribute(eq("description"), any());
+        verify(model).addAttribute(eq("userList"), assertArg((String s) -> {
             Assertions.assertTrue(s.contains("favouriteGarden"));
             Assertions.assertTrue(s.contains("favouritePlants"));
         }));

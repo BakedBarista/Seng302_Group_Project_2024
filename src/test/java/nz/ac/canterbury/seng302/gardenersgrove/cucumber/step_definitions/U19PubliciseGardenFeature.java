@@ -35,6 +35,7 @@ public class U19PubliciseGardenFeature {
     private WeatherAPIService weatherAPIService;
     private PlantService plantService;
     private static GardenService gardenService;
+    private static BirthFlowerService birthFlowerService;
     private static GardenUserService gardenUserService;
     private static GardenUserRepository gardenUserRepository;
     private static GardenRepository gardenRepository;
@@ -64,7 +65,8 @@ public class U19PubliciseGardenFeature {
         locationService = new LocationService(restTemplate, objectMapper);
         model = mock(Model.class);
         authentication = mock(Authentication.class);
-        gardenUserService = new GardenUserService(gardenUserRepository);
+        birthFlowerService = new BirthFlowerService(new ObjectMapper());
+        gardenUserService = new GardenUserService(gardenUserRepository, birthFlowerService);
         gardenService = new GardenService(gardenRepository, gardenUserRepository);
         tagService = new TagService(tagRepository, gardenService, profanityService);
     }
