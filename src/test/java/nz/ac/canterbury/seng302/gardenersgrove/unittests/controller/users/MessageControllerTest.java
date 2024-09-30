@@ -2,9 +2,10 @@ package nz.ac.canterbury.seng302.gardenersgrove.unittests.controller.users;
 
 import jakarta.servlet.http.HttpSession;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.MessageController;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.websockets.MessageWebSocketHandler;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Message;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.message.Message;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.MessageDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.MessageRepository;
@@ -17,16 +18,20 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 import java.time.LocalDateTime;
 import static nz.ac.canterbury.seng302.gardenersgrove.entity.Friends.Status.ACCEPTED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.mock;
 
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 @SpringBootTest
@@ -50,6 +55,9 @@ class MessageControllerTest {
     private MessageService messageService;
 
     @Autowired
+    private MessageWebSocketHandler messageWebSocketHandler;
+
+    @Autowired
     private MessageRepository messageRepository;
 
     private static Authentication authentication;
@@ -68,9 +76,9 @@ class MessageControllerTest {
         mockedMessageService = mock(MessageService.class);
         bindingResult = mock(BindingResult.class);
 
-        messageController = new MessageController(gardenUserService, mockedFriendService, mockedMessageService);
+        messageController = new MessageController(gardenUserService, mockedFriendService, mockedMessageService, messageWebSocketHandler);
 
-        messageController2 = new MessageController(gardenUserService, mockedFriendService, messageService);
+        messageController2 = new MessageController(gardenUserService, mockedFriendService, messageService, messageWebSocketHandler);
 
     }
 
@@ -89,14 +97,13 @@ class MessageControllerTest {
         Long sender = 1L;
         Long receiver = 2L;
         MessageDTO messageDTO = new MessageDTO("Hello", "token");
-
         Mockito.when(authentication.getPrincipal()).thenReturn(sender);
-        Mockito.when(mockedFriendService.getFriendship(any(), any())).thenReturn(new Friends());
+        Mockito.when(mockedFriendService.getFriendship(any(), any())).thenReturn(new Friends(new GardenUser(), new GardenUser(),ACCEPTED));
         Mockito.when(gardenUserService.getUserById(sender)).thenReturn(new GardenUser());
         Mockito.when(bindingResult.hasErrors()).thenReturn(false);
 
         String result = messageController.sendMessage(receiver, messageDTO, bindingResult, authentication, model,
-                session);
+                session, null);
         Assertions.assertEquals("users/message-home", result);
     }
 
@@ -107,11 +114,11 @@ class MessageControllerTest {
         MessageDTO messageDTO = new MessageDTO("Hello", "token");
         session.setAttribute("submissionToken", "token");
         Mockito.when(authentication.getPrincipal()).thenReturn(sender);
-        Mockito.when(mockedFriendService.getFriendship(any(), any())).thenReturn(new Friends());
+        Mockito.when(mockedFriendService.getFriendship(any(), any())).thenReturn(new Friends(new GardenUser(), new GardenUser(),ACCEPTED));
         Mockito.when(gardenUserService.getUserById(sender)).thenReturn(new GardenUser());
         Mockito.when(bindingResult.hasErrors()).thenReturn(false);
 
-        messageController.sendMessage(receiver, messageDTO, bindingResult, authentication, model, session);
+        messageController.sendMessage(receiver, messageDTO, bindingResult, authentication, model, session, null);
         Mockito.verify(mockedMessageService).sendMessage(sender, receiver, messageDTO);
     }
 
@@ -168,12 +175,12 @@ class MessageControllerTest {
         session.setAttribute("submissionToken", "token");
 
         Mockito.when(authentication.getPrincipal()).thenReturn(sender);
-        Mockito.when(mockedFriendService.getFriendship(any(), any())).thenReturn(new Friends());
+        Mockito.when(mockedFriendService.getFriendship(any(), any())).thenReturn(new Friends(new GardenUser(), new GardenUser(),ACCEPTED));
         Mockito.when(gardenUserService.getUserById(sender)).thenReturn(new GardenUser());
         Mockito.when(bindingResult.hasErrors()).thenReturn(true);
 
         String result = messageController.sendMessage(receiver, messageDTO, bindingResult, authentication, model,
-                session);
+                session, null);
         assertEquals("users/message-home", result);
     }
 
@@ -188,5 +195,58 @@ class MessageControllerTest {
         String result = messageController.messageFriendList(receiver, authentication, model, session);
 
         assertEquals("users/messagesList", result);
+    }
+
+    @Test
+    void whenSendImage_thenImageIsSaved() throws IOException {
+        Long sender = 1L;
+        Long receiver = 2L;
+        MessageDTO messageDTO = new MessageDTO("","token");
+        MockMultipartFile file = new MockMultipartFile("image", "test.jpg", "image/jpeg", "test".getBytes());
+        session.setAttribute("submissionToken", "token");
+        Mockito.when(authentication.getPrincipal()).thenReturn(sender);
+        Mockito.when(mockedFriendService.getFriendship(any(), any())).thenReturn(new Friends(new GardenUser(), new GardenUser(),ACCEPTED));
+        Mockito.when(gardenUserService.getUserById(sender)).thenReturn(new GardenUser());
+        Mockito.when(bindingResult.hasErrors()).thenReturn(false);
+        messageController.sendMessage(receiver, messageDTO, bindingResult, authentication, model, session, file);
+        Mockito.verify(mockedMessageService).sendImage(sender, receiver, messageDTO,file);
+    }
+
+    @Test
+    void whenWrongImageType_thenThrowException() throws IOException {
+        Long sender = 1L;
+        Long receiver = 2L;
+        MessageDTO messageDTO = new MessageDTO("","token");
+        MockMultipartFile file = new MockMultipartFile("text", "test.txt", "text", "test".getBytes());
+        session.setAttribute("submissionToken", "token");
+        Mockito.when(authentication.getPrincipal()).thenReturn(sender);
+        Mockito.when(mockedFriendService.getFriendship(any(), any())).thenReturn(new Friends(new GardenUser(), new GardenUser(),ACCEPTED));
+        Mockito.when(gardenUserService.getUserById(sender)).thenReturn(new GardenUser());
+        Mockito.when(bindingResult.hasErrors()).thenReturn(false);
+        Mockito.doThrow(new IOException("Invalid file type"))
+                .when(mockedMessageService).sendImage(sender, receiver, messageDTO, file);
+        String result = messageController.sendMessage(receiver, messageDTO, bindingResult, authentication, model, session, file);
+        assertEquals("users/message-home", result);
+        verify(model).addAttribute("fileError","File too large or wrong file type");
+        verify(mockedMessageService).sendImage(sender, receiver, messageDTO,file);
+
+    }
+
+    @Test
+    void whenNoChats_thenReturnMessagePage() {
+        String result = messageController.setupMessagePage(null,authentication, model, session);
+        assertEquals("users/message-home", result);
+    }
+
+    @Test
+    void whenFetchMessageImage_thenImageReturned() {
+        Message message = new Message();
+        message.setImage("image/jpeg", new byte[] { 1, 2, 3 });
+        when(mockedMessageService.getMessageById(42L)).thenReturn(message);
+
+        ResponseEntity<byte[]> response = messageController.messageImage(42L);
+
+        assertEquals("image/jpeg", response.getHeaders().getContentType().toString());
+        assertEquals(message.getImageContent(), response.getBody());
     }
 }

@@ -4,8 +4,8 @@ import jakarta.servlet.http.HttpSession;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.MessageController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Message;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.MessageDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.message.Message;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.MessageRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
@@ -17,10 +17,13 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -98,8 +101,8 @@ class MessageControllerTest {
         Mockito.when(authentication.getPrincipal()).thenReturn(sender.getId());
         when(bindingResult.hasErrors()).thenReturn(false);
 
-        messageController.sendMessage(receiver.getId(), messageDTO,bindingResult, authentication, model, session);
-        String redirect = messageController.sendMessage(receiver.getId(), messageDTO, bindingResult, authentication, model, session);
+        messageController.sendMessage(receiver.getId(), messageDTO,bindingResult, authentication, model, session,null);
+        String redirect = messageController.sendMessage(receiver.getId(), messageDTO, bindingResult, authentication, model, session, null);
         List<Message> savedMessages = messageRepository.findMessagesBetweenUsers(sender.getId(), receiver.getId());
         Assertions.assertEquals("users/message-home", redirect);
 
@@ -116,7 +119,7 @@ class MessageControllerTest {
         Mockito.when(authentication.getPrincipal()).thenReturn(sender.getId());
         Mockito.when(bindingResult.hasErrors()).thenReturn(false);
 
-        messageController.sendMessage(receiver.getId(), messageDTO, bindingResult, authentication, model, session);
+        messageController.sendMessage(receiver.getId(), messageDTO, bindingResult, authentication, model, session, null);
         List<Message> savedMessages = messageRepository.findMessagesBetweenUsers(sender.getId(), receiver.getId());
 
         // verify message is saved to repository
@@ -132,10 +135,27 @@ class MessageControllerTest {
         Mockito.when(authentication.getPrincipal()).thenReturn(sender.getId());
         Mockito.when(bindingResult.hasErrors()).thenReturn(false);
 
-        messageController.sendMessage(receiver.getId(), messageDTO, bindingResult, authentication, model, session);
+        messageController.sendMessage(receiver.getId(), messageDTO, bindingResult, authentication, model, session, null);
         List<Message> savedMessages = messageRepository.findMessagesBetweenUsers(sender.getId(), receiver.getId());
 
         // verify message is saved to repository
         Assertions.assertFalse(savedMessages.stream().map(Message::getMessageContent).toList().contains(message));
+    }
+
+    @Test
+    void givenUserSendsImageToFriend_thenImageIsSavedInDataBase() throws IOException {
+        MultipartFile file = new MockMultipartFile("image","image.jpg","image/jpeg","image".getBytes());
+        MessageDTO messageDTO = new MessageDTO("", "token");
+        session.setAttribute("submissionToken", "token");
+        Mockito.when(authentication.getPrincipal()).thenReturn(sender.getId());
+        Mockito.when(bindingResult.hasErrors()).thenReturn(false);
+
+        messageController.sendMessage(receiver.getId(),messageDTO, bindingResult, authentication, model, session, file);
+        List<Message> savedMessages = messageRepository.findMessagesBetweenUsers(sender.getId(), receiver.getId());
+        for (Message message: savedMessages) {
+            if (message.getImageContent() != null) {
+                Assertions.assertEquals("image/jpeg",message.getImageContentType());
+            }
+        }
     }
 }

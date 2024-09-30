@@ -196,4 +196,24 @@ public class FriendService {
         return friendsRepository.findPendingOrDeclinedFriendship(user1Id, user2Id);
     }
 
+
+    public List<GardenUser> getPendingRequestGardenUser(List<Friends> friendships, Long userId){
+        List<GardenUser> friendList = new ArrayList<>();
+
+        for (Friends friend : friendships) {
+            GardenUser gardenUser = null;
+
+            if (!friend.getSender().getId().equals(userId)) {
+                gardenUser = friend.getSender();
+            } else if (!friend.getReceiver().getId().equals(userId)) {
+                gardenUser  = friend.getReceiver(); 
+            }
+
+            if (gardenUser != null) {
+                friendList.add(gardenUser);
+            }
+        }
+        return friendList;
+    }
+
 }

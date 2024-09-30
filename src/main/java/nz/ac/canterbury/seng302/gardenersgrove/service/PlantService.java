@@ -9,9 +9,13 @@ import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -158,6 +162,16 @@ public class PlantService {
             plant.setFavourite(null);
             save(plant);
         }
+    }
+
+    /**
+     * Gets all plants owned by user
+     *
+     * @param gardenUser Garden user
+     * @return list of plants
+     */
+    public List<Plant> getAllPlantsForUser(GardenUser gardenUser) {
+        return plantRepository.findByGardenUser(gardenUser);
     }
 }
 

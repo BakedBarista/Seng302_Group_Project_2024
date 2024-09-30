@@ -4,11 +4,14 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.service.BirthFlowerService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.HashSet;
 import java.util.List;
@@ -20,6 +23,7 @@ import static org.mockito.Mockito.*;
 
 class GardenUserServiceTest {
     private GardenUserService gardenUserService;
+    private BirthFlowerService birthFlowerService;
     private GardenUserRepository mockRepository;
     private Plant plant1;
     private Plant plant2;
@@ -33,7 +37,8 @@ class GardenUserServiceTest {
     @BeforeEach
     void setUp() {
         mockRepository = mock(GardenUserRepository.class);
-        gardenUserService = new GardenUserService(mockRepository);
+        birthFlowerService = mock(BirthFlowerService.class);
+        gardenUserService = new GardenUserService(mockRepository, birthFlowerService);
         // Initialize test plants
         plant1 = new Plant("Tomato", "1", null, null);
         plant1.setId(1L);

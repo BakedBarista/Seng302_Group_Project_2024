@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.users.PublicProfileController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.FriendsRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
@@ -50,6 +51,8 @@ class FavouritePlantControllerMVCTests {
 
     @Autowired
     private GardenRepository gardenRepository;
+
+
 
     private GardenUser user;
     @Autowired

@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+
 import java.util.List;
 
 /**
@@ -42,24 +45,27 @@ public class WikiDataAPIController {
      * @return parsed json data from response
      */
     @GetMapping("/search-plant-autocomplete")
-    public ResponseEntity<JsonNode> searchPlantAutocomplete(@RequestParam String currentValue) {
-        logger.info("Autocompleting plant search");
-        try {
-            Thread.sleep(300);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-        try {
-            List<PlantInfoDTO> plantInfo = wikidataService.getPlantInfo(currentValue);
-            if (plantInfo.isEmpty()) {
-                plantInfo = localPlantDataService.getSimilarPlantInfo(currentValue);
+    public CompletableFuture<ResponseEntity<JsonNode>> searchPlantAutocomplete(@RequestParam String currentValue) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                TimeUnit.MILLISECONDS.sleep(300);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
-            ObjectNode results = JsonNodeFactory.instance.objectNode();
-            results.set("results", objectMapper.valueToTree(plantInfo));
-            return ResponseEntity.ok(results);
-        } catch (ExternalServiceException e) {
-            JsonNode errorMessage = objectMapper.createObjectNode().put("error", "Plant information service is unavailable at the moment, please try again later");
-            return ResponseEntity.status(503).body(errorMessage);
-        }
+            return currentValue;
+        }).thenApply(value -> {
+            try {
+                List<PlantInfoDTO> plantInfo = wikidataService.getPlantInfo(value);
+                if (plantInfo.isEmpty()) {
+                    plantInfo = localPlantDataService.getSimilarPlantInfo(value);
+                }
+                ObjectNode results = JsonNodeFactory.instance.objectNode();
+                results.set("results", objectMapper.valueToTree(plantInfo));
+                return ResponseEntity.ok(results);
+            } catch (ExternalServiceException e) {
+                JsonNode errorMessage = objectMapper.createObjectNode().put("error", "Plant information service is unavailable at the moment, please try again later");
+                return ResponseEntity.status(503).body(errorMessage);
+            }
+        });
     }
 }

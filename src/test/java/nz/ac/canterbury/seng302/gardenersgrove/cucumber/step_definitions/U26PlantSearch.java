@@ -62,7 +62,7 @@ public class U26PlantSearch {
         });
         when(wikidataService.getPlantInfo(name)).thenReturn(plantInfoList);
 
-        autocompleteData = wikidataAPIController.searchPlantAutocomplete(name).getBody();
+        autocompleteData = wikidataAPIController.searchPlantAutocomplete(name).join().getBody();
         System.out.println(autocompleteData.get("results"));
     }
 
@@ -86,7 +86,7 @@ public class U26PlantSearch {
     public void i_search_a_plant_name_with_no_autocomplete(String plantName) throws Exception {
         when(wikidataService.getPlantInfo(plantName)).thenReturn(List.of());
 
-        autocompleteData = wikidataAPIController.searchPlantAutocomplete(plantName).getBody();
+        autocompleteData = wikidataAPIController.searchPlantAutocomplete(plantName).join().getBody();
     }
 
     @Then("plants with similar name {string} pops up")

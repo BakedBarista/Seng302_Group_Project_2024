@@ -28,6 +28,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +50,7 @@ public class U14WeatherMonitoringFeature {
     private Garden garden;
     public static PlantService plantService;
     private static GardenUserRepository gardenUserRepository;
+    private static BirthFlowerService birthFlowerService;
     private static RestTemplate restTemplate;
     private static ModerationService mockedModerationService;
     private static GardenController gardenController;
@@ -70,7 +73,8 @@ public class U14WeatherMonitoringFeature {
         gardenRepository = mock(GardenRepository.class);
         GardenWeatherRepository gardenWeatherRepository = mock(GardenWeatherRepository.class);
         restTemplate = mock(RestTemplate.class);
-        GardenUserService userService = new GardenUserService(gardenUserRepository);
+        birthFlowerService = new BirthFlowerService(new ObjectMapper());
+        GardenUserService userService = new GardenUserService(gardenUserRepository, birthFlowerService);
         gardenService = new GardenService(gardenRepository, gardenUserRepository);
         gardenWeatherService = new GardenWeatherService(gardenWeatherRepository);
         FriendService friendService = new FriendService(friendsRepository);

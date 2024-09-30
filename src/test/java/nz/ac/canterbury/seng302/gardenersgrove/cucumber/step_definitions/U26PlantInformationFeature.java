@@ -35,7 +35,7 @@ public class U26PlantInformationFeature {
 
     @When("I search for a plant named {string}")
     public void iSearchForAPlantNamed(String plantName) {
-        response = wikiDataAPIController.searchPlantAutocomplete(plantName).getBody();
+        response = wikiDataAPIController.searchPlantAutocomplete(plantName).join().getBody();
     }
 
     @Then("I'm prompted with error message {string}")

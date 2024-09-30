@@ -6,9 +6,11 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.MessageController;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.websockets.MessageWebSocketHandler;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Message;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.message.ChatPreview;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.message.Message;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.MessageDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.MessageRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
@@ -42,6 +44,8 @@ public class U800_3_1_MessageFeature {
     private MessageController messageController;
     @Autowired
     private MessageRepository messageRepository;
+    @Autowired
+    private MessageWebSocketHandler messageWebSocketHandler;
 
     private static Model model;
     private String result;
@@ -49,7 +53,7 @@ public class U800_3_1_MessageFeature {
 
     private static GardenUser user = new GardenUser();
     public static Long myId;
-    private static Long receiverId;
+    public static Long otherUserId;
     private static MessageDTO messageDTO;
     private static MockHttpSession session;
     private static int currentMessages;
@@ -106,7 +110,7 @@ public class U800_3_1_MessageFeature {
 
     @Given("I am viewing my friends list")
     public void i_am_viewing_my_friends_list() {
-        messageController = new MessageController(gardenUserService, friendService, messageService);
+        messageController = new MessageController(gardenUserService, friendService, messageService, messageWebSocketHandler);
     }
 
     @When("I click the message button next to my friend {string}")
@@ -125,8 +129,8 @@ public class U800_3_1_MessageFeature {
     // AC5
     @Given("I am on a direct messaging page for my friend {string}")
     public void i_am_on_a_direct_messaging_page_for_my_friend(String friendName) {
-        receiverId = gardenUserService.getUserByEmail(friendName + "cucumber@email.com").getId();
-        currentMessages = messageRepository.findMessagesBetweenUsers(myId, receiverId).size();
+        otherUserId = gardenUserService.getUserByEmail(friendName + "cucumber@email.com").getId();
+        currentMessages = messageRepository.findMessagesBetweenUsers(myId, otherUserId).size();
     }
 
     @When("I have typed a text-based message {string}")
@@ -145,30 +149,30 @@ public class U800_3_1_MessageFeature {
 
     @When("They press Send")
     public void they_press_send() {
-        Mockito.when(authentication.getPrincipal()).thenReturn(receiverId);
+        Mockito.when(authentication.getPrincipal()).thenReturn(otherUserId);
         Mockito.when(bindingResult.hasErrors()).thenReturn(false);
-        result = messageController.sendMessage(myId, messageDTO, bindingResult, authentication, model, session);
+        result = messageController.sendMessage(myId, messageDTO, bindingResult, authentication, model, session, null);
     }
 
     @When("I press Send")
     public void i_press_send() {
         Mockito.when(authentication.getPrincipal()).thenReturn(myId);
         Mockito.when(bindingResult.hasErrors()).thenReturn(false);
-        result = messageController.sendMessage(receiverId, messageDTO, bindingResult, authentication, model, session);
+        result = messageController.sendMessage(otherUserId, messageDTO, bindingResult, authentication, model, session, null);
     }
 
     @Then("The message is sent to that friend.")
     public void the_message_is_sent_to_that_friend() {
-        Message message = messageRepository.findMessagesBetweenUsers(myId, receiverId).get(0);
+        Message message = messageRepository.findMessagesBetweenUsers(myId, otherUserId).get(0);
         Assertions.assertEquals(messageDTO.getMessage(), message.getMessageContent());
         Assertions.assertEquals(myId, message.getSender());
-        Assertions.assertEquals(receiverId, message.getReceiver());
+        Assertions.assertEquals(otherUserId, message.getReceiver());
         // Don't test timestamp as tested in unit and integration
     }
 
     @And("The messages are displayed in chronological order")
     public void the_messages_are_displayed_in_chronological_order() {
-        List<Message> messages = messageRepository.findMessagesBetweenUsers(myId, receiverId);
+        List<Message> messages = messageRepository.findMessagesBetweenUsers(myId, otherUserId);
 
         Assertions.assertEquals(currentMessages + 4, messages.size());
         for (int i = 1; i < messages.size(); i++) {
@@ -180,10 +184,10 @@ public class U800_3_1_MessageFeature {
     public void the_existing_chats_are_displayed_on_the_side_in_chronological_order(String numOfChats) {
         int expectedChatCount = Integer.parseInt(numOfChats);
 
-        result = messageController.messageHomeSend(receiverId, authentication, model, session);
+        result = messageController.messageHomeSend(otherUserId, authentication, model, session);
         List<Message> allMessages = messageService.findAllRecentChats(myId);
         Map<Long, Message> recentMessagesMap = messageService.getLatestMessages(allMessages, myId);
-        Map<GardenUser, String> recentChats = messageService.convertToPreview(recentMessagesMap);
+        Map<GardenUser, ChatPreview> recentChats = messageService.convertToPreview(otherUserId, recentMessagesMap);
 
         assertEquals(expectedChatCount, recentChats.size());
         assertEquals("users/message-home", result);
@@ -193,12 +197,12 @@ public class U800_3_1_MessageFeature {
     public void i_send_invalid_message() {
         Mockito.when(authentication.getPrincipal()).thenReturn(myId);
         Mockito.when(bindingResult.hasErrors()).thenReturn(true);
-        result = messageController.sendMessage(receiverId, messageDTO, bindingResult, authentication, model, session);
+        result = messageController.sendMessage(otherUserId, messageDTO, bindingResult, authentication, model, session, null);
     }
 
     @Then("The message is not sent.")
     public void the_message_is_not_sent() {
-        List<Message> message = messageRepository.findMessagesBetweenUsers(myId, receiverId);
+        List<Message> message = messageRepository.findMessagesBetweenUsers(myId, otherUserId);
         Assertions.assertEquals(1, message.size());
     }
 

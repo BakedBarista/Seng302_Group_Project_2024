@@ -11,12 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.entity.Friends.Status.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.ignoreStubs;
 
 @DataJpaTest
 @Import(FriendService.class)
@@ -245,6 +245,19 @@ public class FriendsServiceTest {
 
         assertFalse(feed.contains(testUser1));
     }
+
+    @Test
+    void whenReceiverNotEqualUser_thenAddReceiverToPending() {
+        List<Friends> friends = new ArrayList<>();
+        Friends friendship = new Friends(testUser1, testUser2, PENDING);
+        friends.add(friendship);
+
+        var pendingList = friendService.getPendingRequestGardenUser(friends, testUser2.getId());
+        assertEquals(1, pendingList.size());
+        assertFalse(pendingList.contains(testUser2));
+
+    }
+
 
 }
 

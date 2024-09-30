@@ -5,7 +5,10 @@ import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.GardenDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.GardenHistoryItemDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
@@ -22,7 +25,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -33,15 +35,12 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.HISTORY_FORMAT_DATE;
-import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.NZ_FORMAT_DATE;
-import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.WEATHER_CARD_FORMAT_DATE;
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.DateTimeFormats.*;
 
 
 /**
@@ -208,23 +207,21 @@ public class GardenController {
 
         logger.info("GET /gardens/" + id + "/garden-image");
 
+
         Optional<Garden> garden = gardenService.getGardenById(id);
         Garden  existingGarden = new Garden();
 
         if (garden.isPresent()) {
             existingGarden = garden.get();
         }
-        // Return the default image if nothing specified
-        if (existingGarden.getGardenImage() == null || existingGarden.getGardenImageContentType() == null) {
-            logger.info("Returning default plant image");
-            return ResponseEntity.status(302).header(HttpHeaders.LOCATION, request.getContextPath() + "/img/default-garden.svg").build();
-        }
 
         // Return the saved image from DB
-        logger.info("Returning the plants saved image from DB");
-        return ResponseEntity.ok().contentType(MediaType.parseMediaType(existingGarden.getGardenImageContentType()))
-                .body(existingGarden.getGardenImage());
-
+        if(existingGarden.getGardenImage() != null) {
+            logger.info("Returning the plants saved image from DB");
+            return ResponseEntity.ok().contentType(MediaType.parseMediaType(existingGarden.getGardenImageContentType()))
+                    .body(existingGarden.getGardenImage());
+        }
+        return null;
     }
 
 
@@ -621,26 +618,38 @@ public class GardenController {
         }
     }
 
-    /**
-     * Create test data
-     * @throws IOException When problem reading file.
-     * ChatGPT help with processing sql queries to arraylist
-     */
     @PostConstruct
-    public void dummyGardens() throws IOException {
+    public void dummyData() {
         try {
             logger.info("Adding test data");
 
             // Create users
             GardenUser user = new GardenUser("Jan", "Doe", "jan.doe@gmail.com", "password", LocalDate.of(1970, 1, 1));
+            user.setBirthFlower("Carnation");
             gardenUserService.addUser(user);
 
             GardenUser user1 = new GardenUser("Luke", "Stynes", "stynesluke@gmail.com", "password", LocalDate.of(1970, 1, 1));
+            user1.setBirthFlower("Carnation");
             gardenUserService.addUser(user1);
 
-            Friends friendship = new Friends(user,user1, Friends.Status.ACCEPTED);
+            GardenUser user2 = new GardenUser("Immy", "Doe", "immy@gmail.com", "password", LocalDate.of(1970, 1, 1));
+            user2.setBirthFlower("Carnation");
+            gardenUserService.addUser(user2);
+
+            GardenUser user3 = new GardenUser("Liam", "Doe", "liam@gmail.com", "password", LocalDate.of(1970, 1, 1));
+            user3.setBirthFlower("Carnation");
+            gardenUserService.addUser(user3);
+
+            Friends friendship = new Friends(user, user1, Friends.Status.ACCEPTED);
             friendService.save(friendship);
-            logger.info("User {} added",user.getFullName() );
+            logger.info("User {} added", user.getFullName());
+
+            Friends friendship1 = new Friends(user, user2, Friends.Status.ACCEPTED);
+            friendService.save(friendship1);
+
+            Friends friendship2 = new Friends(user, user3, Friends.Status.ACCEPTED);
+            friendService.save(friendship2);
+
 
             // Garden names
             List<String> gardenNames = Arrays.asList(
@@ -719,6 +728,4 @@ public class GardenController {
             logger.info("Failed to add garden", e);
         }
     }
-
-
 }

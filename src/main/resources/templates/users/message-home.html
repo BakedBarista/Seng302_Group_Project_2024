@@ -17,6 +17,11 @@
 
         }
 
+        /* The `pre` element makes this monospace, so change it back */
+        .message .card-text {
+            font: inherit;
+        }
+
         /* Ensure textarea and send button stay at the bottom */
         .send-message-container {
             position: sticky;
@@ -47,20 +52,39 @@
             </div>
             <div th:if="${!#lists.isEmpty(recentChats)}">
                 <div id="chatSectionMobile" th:each="chat : ${recentChats}" class="border-bottom" style="height: 125px;">
-                    <div th:id="${chat.key.id}" class="h-100">
+                    <div th:id="${chat.key.id + 'Mobile'}" class="h-100">
                         <form th:action="@{/message-home}" method="post" class="d-flex align-items-center w-100 h-100">
                             <input type="hidden" name="userId" th:value="${chat.key.id}"/>
                             <button class="btn btn-link text-decoration-none text-dark w-100 open-chat">
                                 <div class="d-flex align-items-center">
                                     <img class="rounded-circle border border-dark"
-                                         th:src="@{'/users/' + ${chat.key.id} + '/profile-picture'}"
+                                         th:src="@{(${chat.key.profilePicture} != null) ? '/users/' + ${chat.key.id} + '/profile-picture' : '/img/default-profile.svg'}"
                                          style="width: 50px; height: 50px;" alt="profile picture">
                                     <div class="m-3 text-start">
                                         <h6 th:text="${chat.key.fullName}"></h6>
-                                        <p th:text="${chat.value}" th:title="${chat.value}" class="text-truncate m-0" style="max-width: 200px;"></p>
+                                        <div th:if="${(chat.value.lastMessage)== null || (chat.value.lastMessage) == ''}">
+                                            <p th:id="${'messagePreviewImageMobile-' + chat.key.id}">
+                                                Image 📷
+                                            </p>
+                                        </div>
+
+                                        <p th:id="${'messagePreviewMobile-' + chat.key.id}" th:text="${chat.value.lastMessage}"
+                                           th:title="${chat.value.lastMessage}"
+                                           class="text-truncate m-0"
+                                           style="max-width: 200px;"></p>
                                     </div>
                                 </div>
                             </button>
+                            <div>
+                                <span th:if="${chat.value.unreadMessages != 0 && chat.value.unreadMessages > 99}"
+                                      class="badge notification-badge me-3 bg-danger">
+                                    99+
+                                </span>
+                                    <span th:if="${chat.value.unreadMessages != 0 && chat.value.unreadMessages <= 99}"
+                                          class="badge notification-badge me-3 bg-danger">
+                                    [[${chat.value.unreadMessages}]]
+                                </span>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -69,30 +93,50 @@
     </div>
 
     <!--Big Screen Sidebar-->
-    <div class="sidebar border-end overflow-y-auto d-none d-lg-block" id="friendChatBar" style="min-width: 300px;">
+    <div class="sidebar border-end overflow-y-auto d-none d-lg-block" id="friendChatBar" style="min-width: 350px;">
         <div class="border-bottom text-center align-items-center py-3">
             <h3 class="m-0">Recent Chats</h3>
         </div>
         <div id="noMessagesHeader" th:if="${#lists.isEmpty(recentChats)}" class="text-center">
             <h5>You have no recent messages!</h5>
-            <button class="btn-primary btn">Make a new connection</button>
+            <a class="btn-primary btn" th:href="@{/users/manage-friends}">Make a new connection</a>
         </div>
         <div th:if="${!#lists.isEmpty(recentChats)}">
             <div id="chatSection" th:each="chat : ${recentChats}" class="border-bottom" style="height: 125px;">
-                <div th:id="${chat.key.id + 'Mobile'}" class="h-100">
+                <div th:id="${chat.key.id}" class="h-100">
                     <form th:action="@{/message-home}" method="post" class="d-flex align-items-center w-100 h-100">
                         <input type="hidden" name="userId" th:value="${chat.key.id}"/>
                         <button class="btn btn-link text-decoration-none text-dark w-100 open-chat">
                             <div class="d-flex align-items-center">
                                 <img class="rounded-circle border border-dark"
-                                     th:src="@{'/users/' + ${chat.key.id} + '/profile-picture'}"
+                                     th:src="@{(${chat.key.profilePicture} != null) ? '/users/' + ${chat.key.id} + '/profile-picture' : '/img/default-profile.svg'}"
                                      style="width: 50px; height: 50px;" alt="profile picture">
                                 <div class="m-3 text-start">
                                     <h6 th:text="${chat.key.fullName}"></h6>
-                                    <p th:text="${chat.value}" th:title="${chat.value}" class="text-truncate m-0" style="max-width: 200px;"></p>
+                                    <div th:if="${(chat.value.lastMessage)== null || (chat.value.lastMessage) == ''}">
+                                        <p th:id="${'messagePreviewImage-' + chat.key.id}">
+                                            Image 📷
+                                        </p>
+                                    </div>
+
+                                    <p th:id="${'messagePreview-' + chat.key.id}" th:text="${chat.value.lastMessage}"
+                                       th:title="${chat.value.lastMessage}"
+                                       class="text-truncate m-0"
+                                       style="max-width: 200px;"></p>
+
                                 </div>
                             </div>
                         </button>
+                        <div>
+                            <span th:if="${chat.value.unreadMessages != 0 && chat.value.unreadMessages > 99}"
+                                  class="badge notification-badge me-3 bg-danger">
+                                99+
+                            </span>
+                            <span th:if="${chat.value.unreadMessages != 0 && chat.value.unreadMessages <= 99}"
+                                  class="badge notification-badge me-3 bg-danger">
+                                [[${chat.value.unreadMessages}]]
+                            </span>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -103,7 +147,7 @@
         <div class="pt-4 h-100" id="messageWindow">
             <div class="text-center align-items-center" th:if="${#lists.isEmpty(recentChats)}">
                 <h5>You have no recent messages!</h5>
-                <button class="btn-primary btn">Make a new connection</button>
+                <a class="btn-primary btn" th:href="@{/users/manage-friends}">Make a new connection</a>
             </div>
             <div th:if="${sentToUser}">
                 <div class="d-flex align-items-center justify-content-around pb-2" id="messageWindowHeader">
@@ -113,7 +157,7 @@
                     </button>
                     <h5 class="mb-0" th:text="${sentToUser.fullName}"></h5>
                     <img class="rounded-circle overflow-hidden border border-dark"
-                         th:src="@{'/users/' + ${sentToUser.id} + '/profile-picture'}"
+                         th:src="@{(${sentToUser.profilePicture} != null) ? '/users/' + ${sentToUser.id} + '/profile-picture' : '/img/default-profile.svg'}"
                          style="width: 50px; height: 50px;"
                          alt="profile picture">
                 </div>
@@ -123,24 +167,38 @@
 
                 <!-- message and send message box-->
                 <div class="send-message-container">
-                    <form th:action="@{/users/message(id=${sentToUser.id})}" method="post" th:object="${messageDTO}" id="sendMessageForm">
+                    <form th:action="@{/users/message(id=${sentToUser.id})}" method="post" th:object="${messageDTO}" id="sendMessageForm" enctype="multipart/form-data">
                         <input type="hidden" name="submissionToken" th:value="${submissionToken}"/>
                         <div class="d-flex gap-2">
                             <div class="d-flex flex-fill flex-wrap">
                                 <label for="message" th:class="'form-label ' + ${#fields.hasErrors('message') ? 'is-invalid' : ''}"></label>
-                                <div class="d-flex flex-fill gap-2">
-                                <textarea id="message"
+                                <div class="d-flex flex-fill gap-2 px-1">
+                                    <label type="input" class="btn btn-primary px-sm-3 py-3" id="imageButton" for="addImage">
+                                        <img th:src="@{/icons/image-icon.svg}" alt="Add Image">
+                                    </label>
+                                    <input id="addImage" name="addImage" class="d-none" type="file" accept=".png,.jpg,.jpeg,.svg" tabindex="0"/>
+                                    <textarea id="message"
                                           th:name="message"
                                           class="form-control flex-grow-1"
                                           style="resize: none;"
                                           placeholder="Enter message here..."
                                           autofocus></textarea><!-- Do not new line this -->
-                                    <button type="submit" class="btn btn-primary px-4 py-0" id="sendButton" disabled>
+                                    <button type="submit" class="btn btn-primary px-sm-3 py-3" id="sendButton" disabled>
                                         <img th:src="@{/icons/sent-stroke-rounded.svg}" alt="Send">
                                     </button>
                                 </div>
                                 <div class="invalid-feedback" th:if="${#fields.hasErrors('message')}" th:errors="*{message}"></div>
                                 <div class="invalid-feedback" id="invalidFeedback"></div>
+                                <div class="toast-container position-fixed bottom-0 end-0 p-3">
+                                    <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" id="fileErrorToast">
+                                        <div class="toast-header">
+                                            <div id="fileErrorToastMessage"></div>
+                                            <div><button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button></div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div id="hiddenFileError" th:if="${fileError}" th:text="${fileError}" style="display:none;"></div>
                             </div>
                         </div>
                     </form>
@@ -163,7 +221,7 @@
         textarea.addEventListener("keydown", function (event) {
             if (event.key === "Enter" && !event.shiftKey && !(textarea.value.length < 0 || messageField.value.trim().length === 0) ) {
                 event.preventDefault();
-                sendMessage();
+                sendMessage().then();
             }
         });
 
@@ -182,6 +240,29 @@
     messageField.addEventListener("input", () => {
         button.disabled = messageField.value.length <= 0 || messageField.value.trim().length === 0;
     })
+</script>
+<script>
+    document.getElementById("addImage").addEventListener("change", function() {
+        if (this.files && this.files.length > 0) {
+            document.getElementById("sendMessageForm").submit();
+        }
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const fileError = document.getElementById("hiddenFileError");
+
+        // Check if the file error exists and is not empty
+        if (fileError && fileError.textContent.trim() !== "") {
+            // Set the toast message
+            document.getElementById("fileErrorToastMessage").textContent = fileError.textContent;
+
+            // Show the toast
+            var toastElement = document.getElementById("fileErrorToast");
+            var toast = new bootstrap.Toast(toastElement);
+            toast.show();
+        }
+    });
 </script>
 <script th:src="@{/js/message.js}"></script>
 </body>

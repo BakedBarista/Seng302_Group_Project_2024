@@ -282,16 +282,15 @@ public class PlantController {
         if (plant.isPresent()) {
             existingPlant = plant.get();
         }
-        // Return the default image if nothing specified
-        if (existingPlant.getPlantImage() == null || existingPlant.getPlantImage().length == 0) {
-            logger.info("Returning default plant image");
-            return ResponseEntity.status(302).header(HttpHeaders.LOCATION, request.getContextPath() + "/img/default-plant.svg").build();
-        }
 
         // Return the saved image from DB
-        logger.info("Returning the plants saved image from DB");
-        return ResponseEntity.ok().contentType(MediaType.parseMediaType(existingPlant.getPlantImageContentType()))
-                .body(existingPlant.getPlantImage());
+        if(existingPlant.getPlantImage() != null) {
+            logger.info("Returning the plants saved image from DB");
+            return ResponseEntity.ok().contentType(MediaType.parseMediaType(existingPlant.getPlantImageContentType()))
+                    .body(existingPlant.getPlantImage());
+        }
+        return null;
+
 
     }
 

@@ -13,6 +13,10 @@ import org.springframework.web.client.RestTemplate;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+
+
 
 
 @RestController
@@ -33,23 +37,26 @@ public class LocationAPIController {
      * @return location information in json format
      */
     @GetMapping("/location-autocomplete")
-    public ResponseEntity<String> getLocationData(@RequestParam String currentValue) {
-        try {
-            Thread.sleep(300);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+    public CompletableFuture<ResponseEntity<String>> getLocationData(@RequestParam String currentValue) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                TimeUnit.MILLISECONDS.sleep(300);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            return currentValue;
+        }).thenApply(value -> {
+            String url = "https://api.geoapify.com/v1/geocode/autocomplete"
+                    + "?text=" + URLEncoder.encode(value, StandardCharsets.UTF_8)
+                    + "&format=json"
+                    + "&limit=5"
+                    + "&apiKey=" + location_apiKey;
 
-        String url = "https://api.geoapify.com/v1/geocode/autocomplete"
-                + "?text=" + URLEncoder.encode(currentValue, StandardCharsets.UTF_8)
-                + "&format=json"
-                + "&limit=5"
-                + "&apiKey=" + location_apiKey;
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<String> result = restTemplate.getForEntity(url, String.class);
+            logger.info("Result: {}", result.getStatusCode());
 
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> result = restTemplate.getForEntity(url, String.class);
-        logger.info("Result: {}", result.getStatusCode());
-
-        return ResponseEntity.ok(result.getBody());
+            return ResponseEntity.ok(result.getBody());
+        });
     }
 }

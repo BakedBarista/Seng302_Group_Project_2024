@@ -1,28 +1,28 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.websockets;
 
+import com.fasterxml.jackson.core.JacksonException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ValidatorFactory;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.MessageDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.message.Message;
+import nz.ac.canterbury.seng302.gardenersgrove.service.MessageService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.socket.CloseStatus;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.handler.TextWebSocketHandler;
+
 import java.io.IOException;
 import java.security.Principal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import com.fasterxml.jackson.databind.node.JsonNodeType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketSession;
-import org.springframework.web.socket.handler.TextWebSocketHandler;
-
-import com.fasterxml.jackson.core.JacksonException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.ValidatorFactory;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.MessageDTO;
-import nz.ac.canterbury.seng302.gardenersgrove.service.MessageService;
 
 /**
  * A WebSocketHandler for real-time messaging.
@@ -35,6 +35,8 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 	private ValidatorFactory validatorFactory;
 	private Set<WebSocketSession> activeSessions = new HashSet<>();
 
+	private static final List<String> allowedEmojis = List.of("😂", "😢", "🔥", "💀", "🐝");
+
 	public MessageWebSocketHandler(MessageService messageService, ObjectMapper objectMapper, ValidatorFactory validatorFactory) {
 		this.messageService = messageService;
 		this.objectMapper = objectMapper;
@@ -43,7 +45,6 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 
 	/**
 	 * Handles an incoming WebSocket message.
-	 * @throws IOException 
 	 */
 	@Override
 	public void handleTextMessage(WebSocketSession session, TextMessage wsMessage) {
@@ -71,6 +72,12 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 				// Refresh messages on page load to avoid a race condition
 				updateMessages(session);
 				break;
+			case "readMessage":
+				Long messageId = message.get("receiver").asLong();
+				Long userId = getCurrentUserId(session);
+				messageService.setReadTime(messageId, userId);
+				logger.info("Messages marked as read by user {}", userId);
+				break;
 			case "sendMessage":
 				Long sender = getCurrentUserId(session);
 				Long receiver = message.get("receiver").asLong();
@@ -88,6 +95,15 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 
 				updateMessagesBroadcast(List.of(sender, receiver));
 				break;
+			case "markRead":
+				Long currentUserId = getCurrentUserId(session);
+				Long unreadMessageCount = messageService.getUnreadMessageCount(currentUserId);
+
+				ObjectNode newMessage = JsonNodeFactory.instance.objectNode();
+				newMessage.put("type", "updateUnread");
+				newMessage.put("unreadMessageCount", unreadMessageCount);
+				sendMessage(session, newMessage);
+				break;
 			case "ping":
 				try {
 					session.sendMessage(new TextMessage("{\"type\":\"pong\"}"));
@@ -96,10 +112,33 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 					return;
 				}
 				break;
+			case "addEmoji":
+				Long emojiMessageId = message.get("messageId").asLong();
+				String emoji = message.get("emoji").asText();
+
+				if (allowedEmojis.contains(emoji)) {
+					Message emojiMessage = messageService.getMessageById(emojiMessageId);
+					emojiMessage.setReaction(emoji);
+					messageService.save(emojiMessage);
+
+					updateMessagesBroadcast(List.of(emojiMessage.getSender(), emojiMessage.getReceiver()));
+				} else {
+					logger.warn("unknown emoji: {}", emoji);
+				}
+
+				break;
 			default:
 				logger.error("Unknown message type: {}", message.get("type").asText());
 				break;
 		}
+	}
+
+	/**
+	 * Invoked after the WebSocket connection has been closed by either side, or after an error has occurred.
+	 */
+	@Override
+	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
+		activeSessions.remove(session);
 	}
 
 	private long getCurrentUserId(WebSocketSession session) {
@@ -115,13 +154,12 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 	 * Sends an `updateMessages` message to each of the given users.
 	 * @param userIds A list of user IDs to broadcast the message to
 	 */
-	private void updateMessagesBroadcast(List<Long> userIds) {
+	public void updateMessagesBroadcast(List<Long> userIds) {
 		for (WebSocketSession session : Set.copyOf(activeSessions)) {
 			long userId = getCurrentUserId(session);
 			if (userIds == null || !userIds.contains(userId)) {
 				continue;
 			}
-
 			if (session.isOpen()) {
 				updateMessages(session);
 			} else {
@@ -135,9 +173,12 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 	 * @param session the session to send the message to
 	 */
 	private void updateMessages(WebSocketSession session) {
+		Long currentUserId = getCurrentUserId(session);
+		Long unreadMessageCount = messageService.getUnreadMessageCount(currentUserId);
+
 		ObjectNode message = JsonNodeFactory.instance.objectNode();
 		message.put("type", "updateMessages");
-
+		message.put("unreadMessageCount", unreadMessageCount);
 		sendMessage(session, message);
 	}
 

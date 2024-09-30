@@ -46,6 +46,7 @@ public class UserController {
         GardenUser user = userService.getUserById(userId);
 
         model.addAttribute("userId", userId);
+        model.addAttribute("user",user);
         model.addAttribute("fname", user.getFname());
         model.addAttribute("lname", user.getLname());
         model.addAttribute("email", user.getEmail());
@@ -71,10 +72,10 @@ public class UserController {
         logger.info("GET /users/" + id + "/profile-picture");
 
         GardenUser user = userService.getUserById(id);
-        if (user.getProfilePicture() == null) {
-            return ResponseEntity.status(302).header(HttpHeaders.LOCATION, request.getContextPath() + DEFAULT_PROFILE_PICTURE_URL).build();
+        if (user.getProfilePicture() != null) {
+            return ResponseEntity.ok().contentType(MediaType.parseMediaType(user.getProfilePictureContentType()))
+                    .body(user.getProfilePicture());
         }
-        return ResponseEntity.ok().contentType(MediaType.parseMediaType(user.getProfilePictureContentType()))
-                .body(user.getProfilePicture());
+        return null;
     }
 }
