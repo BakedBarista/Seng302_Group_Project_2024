@@ -44,35 +44,37 @@
     <h1 class="mb-3 mt-md-3 text-center">Suggested Connections</h1>
     <div id="card" class="col-sm-10 flip-card flex-grow-1 flex-column">
         <div class="flip-card-inner border-0 w-100 card" th:if="${name != null}">
-            <div class="flip-card-front d-flex justify-content-between flex-column px-3 py-2 shadow" style="border-radius: 30px; min-height: 100%;">
-                <div class="d-flex justify-content-between pb-1">
-                    <button class="upper-control" data-bs-toggle="tooltip" title="Flip card" data-gg-flip-card-toggle>
+            <div class="mb-0 flip-card-front d-flex flex-column px-2 py-2 shadow" style="border-radius: 30px; min-height: 100%;">
+                <div class="pt-3" style="position: relative;">
+                    <button class="upper-control mb-2 position-absolute top-0 mt-4 mx-3 rounded-3"
+                            data-bs-toggle="tooltip"
+                            title="Flip card"
+                            style="background-color: rgba(128, 128, 128, 0.8);"
+                            data-gg-flip-card-toggle>
                         <img
                                 th:src="@{/icons/flip-card.svg}"
                                 alt="Flip card"
-                                style="height: 35px; width:35px"
+                                style="height: 30px; width:30px;"
                         />
                     </button>
-                </div>
-                <div style="position: relative;">
                     <img
-                            class="suggest-user-picture card-img"
+                            class="suggest-user-picture card-img px-2"
                             th:src="@{(${profilePicture} != null) ? '/users/' + ${userId} + '/profile-picture' : '/img/default-profile.svg'}"
                             id="cardImage"
                             alt="profile picture"
                             style="object-fit: cover; border-radius: 15px;"
                     />
                 </div>
-                <div class="d-flex flex-column pt-2">
+                <div class="d-flex flex-column px-3 my-4">
                     <span th:if="${name.length() >= 12}"><span class="d-sm-none d-flex mt-5"></span></span>
                     <h2 class="mb-1 text-white" id="cardName">[[${name}]]</h2>
-
                 </div>
-                <div class="overflow-y-auto" style="max-height: 150px;">
+                <div class="overflow-y-auto px-3 h-50" style="min-height: 30px; max-height: 150px;">
                     <p class="text-white" id="cardDescription">[[${description}]]</p>
                 </div>
-                <div class="d-flex justify-content-center">
-                    <div class="me-5">
+
+                <div class="d-flex justify-content-center my-4">
+                    <div class="me-5 pe-3">
                         <button type="submit" class="rounded-circle btn-lg p-3 shadow" id="declineButton"
                                 style="width: 90px; height: 90px; background-color: #FFF; border: 3px #FFF;"
                                 data-bs-toggle="tooltip" title="Decline Connection">
