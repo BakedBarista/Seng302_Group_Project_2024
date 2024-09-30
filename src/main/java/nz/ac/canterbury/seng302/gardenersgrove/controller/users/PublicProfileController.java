@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
@@ -7,16 +8,15 @@ import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.FavouritePlantDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.exceptions.ProfanityDetectedException;
-import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.BirthFlowerService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.ProfanityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -27,7 +27,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
+import java.util.Set;
 
 @Controller
 public class PublicProfileController {
@@ -36,6 +37,7 @@ public class PublicProfileController {
     private final GardenUserService userService;
     private final ProfanityService profanityService;
     private final PlantService plantService;
+    private final BirthFlowerService birthFlowerService;
 
 
     private static final String DEFAULT_PROFILE_BANNER_URL = "/img/default-banner.svg";
@@ -49,16 +51,18 @@ public class PublicProfileController {
     private static final String DESCRIPTION = "description";
 
     private static final String FAVOURITE_PLANTS = "favouritePlants";
+    private static final String BIRTH_FLOWER = "birthFlower";
 
     private static final Set<String> ACCEPTED_FILE_TYPES = Set.of("image/jpeg", "image/jpg", "image/png", "image/svg");
 
     private static final int MAX_FILE_SIZE = 10 * 1024 * 1024;
 
     @Autowired
-    public PublicProfileController(GardenUserService userService, ProfanityService profanityService, PlantService plantService) {
+    public PublicProfileController(GardenUserService userService, ProfanityService profanityService, PlantService plantService, BirthFlowerService birthFlowerService) {
         this.userService = userService;
         this.profanityService = profanityService;
         this.plantService = plantService;
+        this.birthFlowerService = birthFlowerService;
     }
 
     /**
@@ -75,12 +79,12 @@ public class PublicProfileController {
         GardenUser user = userService.getUserById(userId);
         Set<Plant> favouritePlants = user.getFavouritePlants();
         model.addAttribute(USER_ID_ATTRIBUTE, userId);
+        model.addAttribute("user",user);
         model.addAttribute("currentUser", userId);
         model.addAttribute("name", user.getFullName());
+        model.addAttribute(BIRTH_FLOWER, user.getBirthFlower());
         model.addAttribute(DESCRIPTION, user.getDescription());
         model.addAttribute(FAVOURITE_GARDEN, user.getFavoriteGarden());
-
-
         model.addAttribute(FAVOURITE_PLANTS, favouritePlants);
 
         return "users/public-profile";
@@ -99,11 +103,11 @@ public class PublicProfileController {
         }
 
         GardenUser user = userService.getUserById(id);
-        if (user.getFavoriteGarden() == null || user.getFavoriteGarden().getGardenImage() == null) {
-            return ResponseEntity.status(302).header(HttpHeaders.LOCATION, request.getContextPath() + DEFAULT_GARDEN_IMAGE_URL).build();
+        if(user.getFavoriteGarden() != null && user.getFavoriteGarden().getGardenImage() != null) {
+            return ResponseEntity.ok().contentType(MediaType.parseMediaType(user.getFavoriteGarden().getGardenImageContentType()))
+                    .body(user.getFavoriteGarden().getGardenImage());
         }
-        return ResponseEntity.ok().contentType(MediaType.parseMediaType(user.getFavoriteGarden().getGardenImageContentType()))
-                .body(user.getFavoriteGarden().getGardenImage());
+        return null;
     }
 
     /**
@@ -126,12 +130,16 @@ public class PublicProfileController {
         if (isCurrentUser) {
             return viewPublicProfile(authentication, model);
         }
+        String birthFlower = user.getBirthFlower();
+
         Set<Plant> favouritePlants = user.getFavouritePlants();
         logger.info("current user: {}",userService.getUserById(id).getFname());
         logger.info("logged in user {}",userService.getUserById(loggedInUserId).getFname());
         model.addAttribute(USER_ID_ATTRIBUTE, id);
+        model.addAttribute("user",user);
         model.addAttribute("currentUser", loggedInUserId);
         model.addAttribute("name", user.getFullName());
+        model.addAttribute(BIRTH_FLOWER, birthFlower);
         model.addAttribute(FAVOURITE_GARDEN, user.getFavoriteGarden());
         model.addAttribute(DESCRIPTION, user.getDescription());
         model.addAttribute(FAVOURITE_PLANTS, favouritePlants);
@@ -150,11 +158,11 @@ public class PublicProfileController {
         logger.info("GET /users/{}/profile-banner", id);
 
         GardenUser user = userService.getUserById(id);
-        if (user.getProfileBanner() == null) {
-            return ResponseEntity.status(302).header(HttpHeaders.LOCATION, request.getContextPath() + DEFAULT_PROFILE_BANNER_URL).build();
+        if(user.getProfileBanner() != null) {
+            return ResponseEntity.ok().contentType(MediaType.parseMediaType(user.getProfileBannerContentType()))
+                    .body(user.getProfileBanner());
         }
-        return ResponseEntity.ok().contentType(MediaType.parseMediaType(user.getProfileBannerContentType()))
-                .body(user.getProfileBanner());
+        return null;
     }
 
     /**
@@ -162,19 +170,23 @@ public class PublicProfileController {
      *
      * @return A redirection to the "/users/edit-public-profile"
      */
-    @GetMapping("users/edit-public-profile")
+    @GetMapping("/users/edit-public-profile")
     public String editPublicProfile(Authentication authentication, Model model) throws JsonProcessingException {
         logger.info("GET /users/edit-public-profile");
-        Long userId = (Long) authentication.getPrincipal();
-        GardenUser user = userService.getUserById(userId);
-        EditUserDTO editUserDTO = new EditUserDTO();
+        System.out.println(authentication);
 
-        model.addAttribute(USER_ID_ATTRIBUTE, userId);
+        GardenUser user = userService.getCurrentUser();
+        EditUserDTO editUserDTO = new EditUserDTO();
+        List<String> flowers = birthFlowerService.getFlowersByMonth(user.getDateOfBirth());
+
+        model.addAttribute(USER_ID_ATTRIBUTE, user.getId());
+        model.addAttribute("user",user);
         model.addAttribute("name", user.getFullName());
+        model.addAttribute(BIRTH_FLOWER, user.getBirthFlower());
         editUserDTO.setDescription(user.getDescription());
         model.addAttribute("editUserDTO", editUserDTO);
         model.addAttribute(FAVOURITE_GARDEN, user.getFavoriteGarden());
-
+        model.addAttribute("flowers", flowers);
 
         Set<Plant> favouritePlants = user.getFavouritePlants();
         model.addAttribute(FAVOURITE_PLANTS, favouritePlants);
@@ -210,16 +222,19 @@ public class PublicProfileController {
     @PostMapping("users/edit-public-profile")
     public String publicProfileEditSubmit(
             Authentication authentication,
+            @Valid @ModelAttribute("editUserDTO") EditUserDTO editUserDTO,
+            BindingResult bindingResult,
             @RequestParam("image") MultipartFile profilePic,
             @RequestParam("bannerImage") MultipartFile banner,
             @RequestParam(DESCRIPTION) String description,
-            @Valid @ModelAttribute("editUserDTO") EditUserDTO editUserDTO,
-            BindingResult bindingResult,
+            @RequestParam(value = "selectedFlower", required = false) String birthFlower,
             Model model) throws IOException {
         logger.info("POST /users/edit-public-profile");
         Long userId = (Long) authentication.getPrincipal();
         GardenUser user = userService.getUserById(userId);
         model.addAttribute(USER_ID_ATTRIBUTE, userId);
+
+        List<String> flowersByMonth = birthFlowerService.getFlowersByMonth(user.getDateOfBirth());
 
         boolean errorFlag = false;
 
@@ -228,9 +243,17 @@ public class PublicProfileController {
         } catch (ProfanityDetectedException e) {
             model.addAttribute("profanity", "There cannot be any profanity in the 'About me' section");
             errorFlag = true;
-        } 
+        }
+        if (birthFlower == null) {
+            birthFlower = user.getBirthFlower();
+        } else if (flowersByMonth != null && !flowersByMonth.contains(birthFlower)) {
+            birthFlower = birthFlowerService.getDefaultBirthFlower(user.getDateOfBirth());
+        }
 
-        if (bindingResult.hasFieldErrors(DESCRIPTION)) {errorFlag = true;}
+        if (bindingResult.hasFieldErrors(DESCRIPTION)) {
+            System.out.println("HELLLOOOOOO");
+            errorFlag = true;
+        }
 
         if (errorFlag) {
             model.addAttribute(FAVOURITE_GARDEN, user.getFavoriteGarden());
@@ -241,6 +264,7 @@ public class PublicProfileController {
                     .toList();
             ObjectMapper objectMapper = new ObjectMapper();
             String favouritePlantsJson = objectMapper.writeValueAsString(favouritePlantDTOs);
+            model.addAttribute("description", description);
             model.addAttribute("favouritePlantsJson", favouritePlantsJson);
             model.addAttribute("name", user.getFullName());
             model.addAttribute("editUserDTO", editUserDTO);
@@ -250,6 +274,7 @@ public class PublicProfileController {
         user.setDescription(description);
         editProfilePicture(userId, profilePic);
         editProfileBanner(userId, banner);
+        user.setBirthFlower(birthFlower);
 
         userService.addUser(user);
 

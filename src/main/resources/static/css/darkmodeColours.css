@@ -138,7 +138,9 @@
     .modal-footer {
         background-color: #464444;
     }
-
+    .plant-option.highlighted {
+        color: black;
+    }
 
 
 

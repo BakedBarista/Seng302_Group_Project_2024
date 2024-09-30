@@ -5,10 +5,15 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 public class SuggestedUserDTO {
     private Long id;
     private String fullName;
+    private int compatibility;
     private String description;
 
+    private String birthFlowerHtml;
     private String favouriteGardenHtml;
     private String favouritePlantsHtml;
+
+    public SuggestedUserDTO() {
+    }
 
     public SuggestedUserDTO(GardenUser user) {
         this.id = user.getId();
@@ -24,8 +29,24 @@ public class SuggestedUserDTO {
         return fullName;
     }
 
+    public void setCompatibility(int compatibility) {
+        this.compatibility = compatibility;
+    }
+
+    public int getCompatibility() {
+        return compatibility;
+    }
+
     public String getDescription() {
         return description;
+    }
+
+    public String getBirthFlowerHtml() {
+        return birthFlowerHtml;
+    }
+
+    public void setBirthFlowerHtml(String birthFlowerHtml) {
+        this.birthFlowerHtml = birthFlowerHtml;
     }
 
     public String getFavouriteGardenHtml() {

@@ -82,81 +82,101 @@
         </div>
     </div>
 
-  <div class="card border-top-0">
-      <form th:action="@{/users/edit-public-profile}" id="editPublicProfileForm" method="post" enctype="multipart/form-data" th:object="${editUserDTO}" novalidate>
-          <div class="card-img-top img-fluid fixed-height mb-4 position-relative">
-              <div class="position-relative">
-                  <label for="bannerImage" class="position-absolute top-0 end-0 p-2" style="cursor: pointer;">
-                      <img id="banner_image_button_label" th:src="@{/icons/trans-plus.svg}" alt="+" tabindex="1"/>
-                  </label>
-                  <input id="bannerImage"
-                         name="bannerImage"
-                         class="d-none"
-                         type="file"
-                         accept=".png,.jpg,.jpeg,.svg"
-                         tabindex="1"/>
-                  <img id="bannerPreview"
-                       class="card-img-top img-fluid fixed-height mb-4"
-                       th:src="@{'/users/' + ${userId} + '/profile-banner'}"
-                       alt="profile banner"/>
-                  <span id="editProfileBannerError" class="invalid-feedback"></span>
-              </div>
-          </div>
-          <div>
-              <label for="image" class="position-absolute top-0 end-0 public-profile-picture-plus-button-padding me-2" style="cursor: pointer;">
-                  <img id="image_button_label" th:src="@{/icons/trans-plus.svg}" alt="+" tabindex="2"/>
-              </label>
-              <input id="image"
-                     name="image"
-                     class="d-none"
-                     type="file"
-                     accept=".png,.jpg,.jpeg,.svg"
-                     tabindex="2"/>
-              <img id="preview"
-                   class="public-profile-picture position-absolute top-0 end-0 justify-content-md-center public-profile-picture-padding me-2"
-                   th:src="@{'/users/' + ${userId} + '/profile-picture'}"
-                   width="200"
-                   height="200"
-                   alt="Profile Picture"/>
-              <span id="editProfilePictureError" class="invalid-feedback text-center"></span>
-          </div>
+    <div class="card border-top-0">
+        <form th:action="@{/users/edit-public-profile}" id="editPublicProfileForm" method="post" enctype="multipart/form-data" th:object="${editUserDTO}" novalidate>
+            <div class="card-img-top img-fluid fixed-height mb-4 position-relative">
+                <div class="position-relative">
+                    <label for="bannerImage" class="position-absolute top-0 end-0 p-2" style="cursor: pointer;">
+                        <img id="banner_image_button_label" th:src="@{/icons/trans-plus.svg}" alt="+" tabindex="1"/>
+                    </label>
+                    <input id="bannerImage"
+                            name="bannerImage"
+                            class="d-none"
+                            type="file"
+                            accept=".png,.jpg,.jpeg,.svg"
+                            tabindex="1"/>
+                    <img id="bannerPreview"
+                        class="card-img-top img-fluid fixed-height mb-4"
+                        th:src="@{(${user.profileBanner} != null) ? '/users/' + ${userId} + '/profile-banner' : '/img/default-banner.svg'}"
+                        alt="profile banner"/>
+                    <span id="editProfileBannerError" class="invalid-feedback"></span>
+                </div>
+            </div>
+            <div>
+                <label for="image" class="position-absolute top-0 end-0 public-profile-picture-plus-button-padding me-2" style="cursor: pointer;">
+                    <img id="image_button_label" th:src="@{/icons/trans-plus.svg}" alt="+" tabindex="2"/>
+                </label>
+                <input id="image"
+                        name="image"
+                        class="d-none"
+                        type="file"
+                        accept=".png,.jpg,.jpeg,.svg"
+                        tabindex="2"/>
+                <img id="preview"
+                    class="public-profile-picture position-absolute top-0 end-0 justify-content-md-center public-profile-picture-padding me-2"
+                    th:src="@{(${user.profilePicture} != null) ? '/users/' + ${userId} + '/profile-banner' : '/img/default-profile.svg'}"
+                    width="200"
+                    height="200"
+                    alt="Profile Picture"/>
+                <span id="editProfilePictureError" class="invalid-feedback text-center"></span>
+            </div>
 
-          <div class="m-4 mt-0">
-              <div class="d-flex flex-column">
-                  <div class="m-2 mt-3">
-                      <span th:if="${name != null && name.length() >= 12}"><span class="d-sm-none d-flex mt-5"></span></span>
-                      <h2 class="mb-3">[[${name}]]</h2>
-                      <h5 class="mb-1 about-me">
-                          <label for="description"
-                                 class="form-label"
-                                 th:classappend="${#fields.hasErrors('description')} or ${profanity != null} ? ' is-invalid'">
-                              About Me...
-                          </label>
-                      </h5>
-                      <textarea rows="3"
-                                id="description"
-                                type="text"
-                                class="form-control"
-                                tabindex="3"
-                                th:classappend="${#fields.hasErrors('description')} or ${profanity != null} ? ' is-invalid'"
-                                th:text="${editUserDTO.description}" th:name="description">
-                      </textarea>
-                      <div class="invalid-feedback">
-                          <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
-                          <div th:if="${profanity != null}" th:text="${profanity}"></div>
-                      </div>
-                  </div>
-              </div>
-          </div>
-          <div class="card m-4 p-4 mt-1 border-0 rounded-3 shadow-sm favouriteGardenCard">
-              <div class="d-flex justify-content-between align-items-center">
-                  <h4>My Favourite Garden</h4>
-                  <a class="btn btn-primary ms-auto mb-2" onclick=openGardenSelectorModel()>
-                      <span th:text="${favouriteGarden != null ? 'Change' : 'Display'}">Change</span>
-                  </a>
-              </div>
-              <th:block th:insert="~{fragments/favourite-garden.html :: favourite-garden}"></th:block>
-          </div>
+            <div class="m-4 mt-0">
+                <div class="d-flex flex-column">
+                    <div class="m-2 mt-3">
+                        <span th:if="${name != null && name.length() >= 12}"><span class="d-sm-none d-flex mt-5"></span></span>
+                        <h2 class="mb-1">[[${name}]]</h2>
+                        <div class="d-flex align-items-center py-3" th:if="${flowers != null and !#lists.isEmpty(flowers)}">
+                            <th:block th:insert="~{fragments/birth-flower-icon.html :: birth-flower-icon}"></th:block>
+                            <h5 class="mb-0 me-3">Birth Flower:</h5>
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                                th:text="${#lists.isEmpty(flowers) ? 'Select Flower' : flowers[0]}">
+                                    Select a flower
+                                </button>
+                                <input type="hidden" id="selectedFlowerInput" name="selectedFlower" value="">
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <th:block th:each="flower : ${flowers}">
+                                        <a class="dropdown-item" href="#" th:text="${flower}" onclick="updateButtonText(this.textContent)"></a>
+                                    </th:block>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <h5 class="mb-1 about-me">
+                            <label for="description"
+                                    class="form-label"
+                                    th:classappend="${#fields.hasErrors('description')} or ${profanity != null} ? ' is-invalid'">
+                                About Me...
+                            </label>
+                        </h5>
+                        <textarea rows="3"
+                                    id="description"
+                                    type="text"
+                                    class="form-control"
+                                    tabindex="3"
+                                    th:classappend="${#fields.hasErrors('description')} or ${profanity != null} ? ' is-invalid'"
+                                    th:text="${editUserDTO.description}" th:name="description">
+                        </textarea>
+                        <div class="invalid-feedback">
+                            <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+                            <div th:if="${profanity != null}" th:text="${profanity}"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="card m-4 p-4 mt-1 border-0 rounded-3 shadow-sm favouriteGardenCard ">
+                <div class="d-flex justify-content-between align-items-center ">
+                    <h4>My Favourite Garden</h4>
+                    <a class="btn btn-change ms-auto mb-2" onclick=openGardenSelectorModel()>
+                        <span th:text="${favouriteGarden != null ? 'Change' : 'Display'}">Change</span>
+                    </a>
+                </div>
+                <th:block th:insert="~{fragments/favourite-garden.html :: favourite-garden}"></th:block>
+            </div>
 
           <div class="card m-4 p-4 mt-1 border-0 rounded-3 shadow-sm favouritePlantCard" >
               <h4>My Favourite Plants</h4>
@@ -170,8 +190,8 @@
                            th:onclick="${i <= favouritePlants.size()} ? '' : 'openPlantSelectorModal(' + ${i} + ')'">
                           <input type="hidden" th:id="'selectedPlantId' + ${i}" th:value="${i <= favouritePlants.size()} ? ${favouritePlants[i-1].id} : ''"/>
 
-                          <!-- Filled card content -->
-                          <th:block th:if="${i <= favouritePlants.size()}">
+                            <!-- Filled card content -->
+                            <th:block th:if="${i <= favouritePlants.size()}">
                                 <span th:onclick="'deleteFavouritePlantHTML(' + ${i} + '); return false;'">
                                     <a class="btn-change position-absolute bg-danger top-0 end-0 m-1 p-1
                                               d-flex align-content-center justify-content-center rounded-3 hoverable">
@@ -182,7 +202,10 @@
                                              height="17" />
                                     </a>
                                 </span>
-                              <img th:src="@{'/plants/' + ${favouritePlants[i-1].id} + '/plant-image'}" class="mx-auto d-block pt-1" style="width: 100%; height: 80%; object-fit: cover" alt="plant image"/>
+                              <img th:src="@{(${favouritePlants[i-1].plantImage} != null) ? '/plants/' + ${favouritePlants[i-1].id} + '/plant-image' : '/img/default-plant.svg'}"
+                                   class="mx-auto d-block pt-1"
+                                   style="width: 100%; height: 80%; object-fit: cover"
+                                   alt="plant image"/>
                               <h5 class="mt-2 overflow-y-auto text-center" style="max-height:100px" th:text="${favouritePlants[i-1].name}">Plant Name</h5>
                           </th:block>
 
@@ -211,9 +234,17 @@
         updateFavouritePlants();
     });
 
+
+    function updateButtonText(selectedFlower) {
+        document.getElementById('dropdownMenuButton').textContent = selectedFlower;
+        document.getElementById('selectedFlowerInput').value = selectedFlower;
+    }
+
     openGardenSelectorModel = () => {
         const modal = new bootstrap.Modal(document.getElementById("gardenSelectorModal"))
         modal.show()
+        document.getElementById("searchGardenInput").value = "";
+        showGardenSearchResults("");
     }
 
   /** @type {HTMLInputElement} */

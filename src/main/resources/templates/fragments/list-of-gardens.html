@@ -10,7 +10,10 @@
                         <div class="card-img-top card-img-top-fixed d-flex align-items-center">
                             <div class="row g-0 img-row">
                                 <div class="col-12">
-                                    <div class="plant-img" id="gardenImage" title="Default Garden Image" th:style="|background-image: url('@{/gardens/{id}/garden-image(id=${garden.id})}')|"></div>
+                                    <div class="plant-img"
+                                         title="Garden Image"
+                                         th:style="|background-image: url('@{(${garden.gardenImage} != null) ? '/gardens/' + ${garden.id} + '/garden-image' : '/img/default-garden.svg'}')|">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -62,4 +65,3 @@
         </ul>
     </nav>
     </div>
-

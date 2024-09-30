@@ -45,6 +45,7 @@ public class U8CreateNewGardenFeature {
     public static PlantService plantService;
     private static GardenUserService userService;
     private static GardenUserRepository gardenUserRepository;
+    private static BirthFlowerService birthFlowerService;
 
     private static WeatherAPIService weatherAPIService;
     private static RestTemplate restTemplate;
@@ -77,7 +78,8 @@ public class U8CreateNewGardenFeature {
         tagRepository = mock(TagRepository.class);
         restTemplate = mock(RestTemplate.class);
         objectMapper = new ObjectMapper();
-        userService = new GardenUserService(gardenUserRepository);
+        birthFlowerService = new BirthFlowerService(objectMapper);
+        userService = new GardenUserService(gardenUserRepository, birthFlowerService);
         gardenService = new GardenService(gardenRepository, gardenUserRepository);
         friendService = new FriendService(friendsRepository);
         plantService = new PlantService(plantRepository, gardenRepository);

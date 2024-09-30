@@ -4,13 +4,21 @@
             <div class="row w-100 py-3">
                 <input type="hidden" id="userId" th:value="${userId}">
                 <div class="col-12 col-md-6 object-fit-cover ps-4" style="height: 180px;">
-                    <img
-                            class="border-0 rounded-3 shadow-sm"
-                            id="selectedGardenImage"
-                            th:src="@{/users/{id}/favourite-garden-image(id=${userId})}"
-                            style="width: 100%; height: 100%; object-fit: cover;"
-                            alt="profile picture"
-                    />
+                    <img th:if="${favouriteGarden != null} and ${favouriteGarden.gardenImage} != null"
+                         id = "selectedGardenImage"
+                         th:src="@{/users/{userId}/favourite-garden-image(userId=${userId})}"
+                         alt="Favourite Garden Image"
+                         class="mx-auto d-block pt-1 border-0 rounded-3"
+                         style="width: 100%; height: 100%; object-fit: cover"/>
+                    <img th:if="${favouriteGarden == null} or ${favouriteGarden.gardenImage} == null"
+                         th:src="@{/img/default-garden.svg}"
+                         alt="Default Garden Image"
+
+                         class="mx-auto d-block pt-1 border-0 rounded-3"
+                         style="width: 100%; height: 100%; object-fit: cover"/>
+
+
+
                 </div>
                 <!-- Text Column -->
                 <div class="col-12 col-md-6 d-flex flex-column justify-content-center ps-3 text-start">

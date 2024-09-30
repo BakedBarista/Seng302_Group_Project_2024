@@ -71,6 +71,9 @@ function showSearchResults() {
 
                         const imageElement = document.createElement('img');
                         imageElement.src = `${baseUrl}plants/${plant.id}/plant-image`;
+                        imageElement.onerror = function () {
+                            this.src = `${baseUrl}img/default-plant.svg`;
+                        }
                         imageElement.alt = plant.name;
                         imageElement.style.width = '50px';
                         imageElement.style.height = '50px';
@@ -161,8 +164,8 @@ function updateCardAppearance(selectedCard, plantImage, plantName, plantId) {
     }
     imgElement.src = plantImage;
     imgElement.alt = 'plant image';
-    imgElement.className = 'mx-auto d-block pt-1';
-    imgElement.style = 'width: 100%; height: 80%; object-fit: cover';
+    imgElement.className = 'mx-auto d-block pt-1 border-0 rounded-3';
+    imgElement.style = 'width: 100%; height: 100%; object-fit: cover';
 
     // Add the delete button
     addDeleteButton(selectedCard);
@@ -269,14 +272,6 @@ function updateFavouritePlants() {
         document.getElementById('selectedPlantId2')?.value,
         document.getElementById('selectedPlantId3')?.value
     ].filter(id => id).filter(item => !Object.values(deletedPlantIds).includes(item));
-
-    // for debugging if needed in the future :)
-    // console.log(newPlantIds)
-    // console.log(document.getElementById('selectedPlantId1')?.value)
-    // console.log(document.getElementById('selectedPlantId2')?.value)
-    // console.log(document.getElementById('selectedPlantId3')?.value)
-    // console.log(deletedPlantIds)
-    // console.log(favouritePlants)
 
     for (let currentPlant of Object.values(deletedPlantIds)) {
         if (!favouritePlants.some(plant => plant.id === parseInt(currentPlant))) {

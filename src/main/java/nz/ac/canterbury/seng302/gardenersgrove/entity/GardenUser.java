@@ -43,6 +43,9 @@ public class GardenUser {
     private LocalDate dateOfBirth;
 
     @Column(nullable = true)
+    private String birthFlower;
+
+    @Column(nullable = true)
     private String profilePictureContentType;
 
     @Column(nullable = true, columnDefinition = "MEDIUMBLOB")
@@ -125,6 +128,14 @@ public class GardenUser {
      */
     public List<GrantedAuthority> getAuthorities() {
         return List.of();
+    }
+
+    /**
+     * Sets the id of user
+     * @param id the id of user
+     */
+    public void setId(Long id) {
+        this.id = id;
     }
 
     /**
@@ -225,6 +236,22 @@ public class GardenUser {
      */
     public LocalDate getDateOfBirth() {
         return dateOfBirth;
+    }
+
+    /**
+     * Setter for the user's selected birth flower
+     * @param birthFlower the user's selected birth flower
+     */
+    public void setBirthFlower(String birthFlower) {
+        this.birthFlower = birthFlower;
+    }
+
+    /**
+     * Retrieves user's selected birth flower
+     * @return user's selected birth flower
+     */
+    public String getBirthFlower() {
+        return birthFlower;
     }
 
     /**

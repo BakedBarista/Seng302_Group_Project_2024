@@ -1,18 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.cucumber.step_definitions;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.Optional;
-
-import org.springframework.security.core.Authentication;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.BeforeAll;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -21,11 +9,23 @@ import nz.ac.canterbury.seng302.gardenersgrove.controller.users.EditUserControll
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditPasswordDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.service.BirthFlowerService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import org.springframework.security.core.Authentication;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
 public class U7UpdatePasswordFeature {
     private static GardenUserRepository userRepository;
+    private static BirthFlowerService birthFlowerService;
     private static EmailSenderService emailSenderService;
     private static BindingResult bindingResult;
     private static Model model;
@@ -40,13 +40,15 @@ public class U7UpdatePasswordFeature {
     @BeforeAll
     public static void beforeAll() {
         userRepository = mock(GardenUserRepository.class);
+        birthFlowerService = new BirthFlowerService(new ObjectMapper());
         emailSenderService = mock(EmailSenderService.class);
+        birthFlowerService = mock(BirthFlowerService.class);
         bindingResult = mock(BindingResult.class);
         model = mock(Model.class);
         authentication = mock(Authentication.class);
 
-        userService = new GardenUserService(userRepository);
-        editUserController = new EditUserController(userService, emailSenderService);
+        userService = new GardenUserService(userRepository, birthFlowerService);
+        editUserController = new EditUserController(userService, emailSenderService, birthFlowerService);
     }
 
     @Given("I am on the change password form")

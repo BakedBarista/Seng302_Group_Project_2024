@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="">
 <head>
-    <meta http-equiv="Content-Type" context="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Type" context="text/html; charset=UTF-8"/>
     <title th:if="${currentUser == userId}">My Public Profile | Pollinat*r</title>
     <title th:if="${currentUser != userId}">[[${name}]] | Pollinat*r</title>
     <!-- This needs to be here for Bootstrap and general CSS imports -->
@@ -13,38 +13,40 @@
     <div class="card border-top-0">
         <img
                 class="card-img-top img-fluid fixed-height mb-4"
-                th:src="@{'/users/' + ${userId} + '/profile-banner'}"
+                th:src="@{(${user.profileBanner} != null) ? '/users/' + ${userId} + '/profile-banner' : '/img/default-banner.svg'}"
                 alt="profile banner"
         />
         <img
                 class="public-profile-picture position-absolute top-0 end-0 public-profile-picture-padding me-2"
-                th:src="@{'/users/' + ${userId} + '/profile-picture'}"
+                th:src="@{(${user.profilePicture} != null) ? '/users/' + ${userId} + '/profile-picture' : '/img/default-profile.svg'}"
                 width="180"
                 height="180"
                 alt="profile picture"
         />
-        <div class="m-4 mt-0">
-            <div class="d-flex flex-column">
-                <div class="row">
-                    <div class="d-flex align-items-center">
-                        <h2 class="mb-3">[[${name}]]</h2>
-                    </div>
-                </div>
-                <h5 class="mb-1 about-me">About me...</h5>
-                <p>[[${description}]]</p>
+        <div class="m-4 mt-0 d-flex flex-column">
+            <div class="d-flex align-items-center">
+                <h2>[[${name}]]</h2>
             </div>
-        </div>
-        <p class="m-4 p-2 mb-0 pe-1 d-flex justify-content-end">
-            <a th:href="@{edit-public-profile}" th:if="${currentUser == userId}" class="btn btn-primary">Edit Profile</a>
-        </p>
+            <div th:if="${birthFlower}" class="row ms-0">
+                <th:block th:insert="~{fragments/birth-flower.html :: birth-flower}"></th:block>
+            </div>
 
+            <h5 class="mb-1 about-me">About me...</h5>
+            <p>[[${description}]]</p>
+        </div>
+
+        <p class="m-4 p-2 mb-0 pe-1 d-flex justify-content-end">
+            <a th:href="@{edit-public-profile}" th:if="${currentUser == userId}" class="btn btn-primary">Edit
+                Profile</a>
+        </p>
 
         <div class="card m-4 p-4 mt-1 border-0 rounded-3 shadow-sm favouriteGardenCard">
             <h4>My Favourite Garden</h4>
             <div th:if="${favouriteGarden == null}" class="text-center my-5">
                 <p>No Favourite Garden Selected</p>
             </div>
-            <th:block th:if="${favouriteGarden != null}" th:insert="~{fragments/favourite-garden.html :: favourite-garden}"></th:block>
+            <th:block th:if="${favouriteGarden != null}"
+                      th:insert="~{fragments/favourite-garden.html :: favourite-garden}"></th:block>
         </div>
 
         <div class="card m-4 p-4 mt-1 border-0 rounded-3 shadow-sm favouritePlantCard">

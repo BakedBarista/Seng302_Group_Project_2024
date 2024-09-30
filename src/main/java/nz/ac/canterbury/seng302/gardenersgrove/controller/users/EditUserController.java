@@ -4,10 +4,12 @@ import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditPasswordDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.service.BirthFlowerService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailSenderService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,14 +30,17 @@ import java.util.Objects;
 @Controller
 public class EditUserController {
 
-    private Logger logger = LoggerFactory.getLogger(EditUserController.class);
+    private final Logger logger = LoggerFactory.getLogger(EditUserController.class);
 
-    private GardenUserService userService;
-    private EmailSenderService emailSenderService;
+    private final GardenUserService userService;
+    private final EmailSenderService emailSenderService;
+    private final BirthFlowerService birthFlowerService;
 
-    public EditUserController(GardenUserService userService, EmailSenderService emailSenderService) {
+    @Autowired
+    public EditUserController(GardenUserService userService, EmailSenderService emailSenderService, BirthFlowerService birthFlowerService) {
         this.userService = userService;
         this.emailSenderService = emailSenderService;
+        this.birthFlowerService = birthFlowerService;
     }
 
     /**
@@ -51,6 +56,7 @@ public class EditUserController {
 
         Long userId = (Long) authentication.getPrincipal();
         GardenUser user = userService.getUserById(userId);
+        model.addAttribute("user",user);
         model.addAttribute("userId", userId);
 
         EditUserDTO editUserDTO = new EditUserDTO();
@@ -124,18 +130,19 @@ public class EditUserController {
         if (editUserDTO.getDateOfBirth() != null && !editUserDTO.getDateOfBirth().isEmpty()) {
             try {
                 user.setDateOfBirth(LocalDate.parse(editUserDTO.getDateOfBirth()));
-                logger.info("" + user.getDateOfBirth());
+                logger.info("Setting DOB to: {}", user.getDateOfBirth());
+                user.setBirthFlower(birthFlowerService.getDefaultBirthFlower(user.getDateOfBirth()));
             } catch (DateTimeParseException e) {
                 // shouldn't happen because of validation
                 logger.info("cannot parse invalid date format");
             }
         } else {
             user.setDateOfBirth(null);
+            user.setBirthFlower(null);
         }
         userService.addUser(user);
 
         return "redirect:/users/settings";
-
     }
 
     /**

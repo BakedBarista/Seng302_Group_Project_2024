@@ -48,7 +48,7 @@
                 <div>
                     <div class="mb-3 d-flex justify-content-center">
                         <div class="position-relative d-inline">
-                            <img id="preview" th:src="@{/gardens/{id}/garden-image(id=${garden.id})}" alt="Garden Picture" class="rounded mx-auto d-block h-auto" style="width: 300px;" />
+                            <img id="preview" th:src="@{(${garden.gardenImage} != null) ? '/gardens/' + ${garden.id} + '/garden-image' : '/img/default-garden.svg'}" alt="Garden Picture" class="rounded mx-auto d-block h-auto" style="width: 300px;" />
                         </div>
                     </div>
 
@@ -325,7 +325,10 @@
                                     <img th:src="@{/icons/trans-plus.svg}" alt="+" />
                                 </label>
                                 <input th:id="${plant.id}" name="image" class="image d-none" type="file" accept=".png,.jpg,.jpeg,.svg"/>
-                                <img th:src="@{'/plants/' + ${plant.id} + '/plant-image'}" alt="Plant Picture" class="w-100 rounded-top-3 mx-auto d-block" style="width: 300px; height: 300px;" />
+                                <img th:src="@{(${plant.plantImage} != null) ? '/plants/' + ${plant.id} + '/plant-image' : '/img/default-plant.svg'}"
+                                     alt="Plant Picture"
+                                     class="w-100 rounded d-block"
+                                     style="width: 300px; height: 300px;" />
                                 <span id="plantImageError" class="plantImageError invalid-feedback text-center position-absolute top-0 start-0 mb-3"></span>
                             </form>
                         </div>

@@ -1,11 +1,11 @@
-<div th:fragment="favourite-plants" class="ms-5 me-5">
+<div th:fragment="favourite-plants" class="ms-1 me-1">
     <div class="d-flex flex-wrap flex-md-nowrap" th:if="${favouritePlants != null}">
         <!-- Non-empty card -->
-        <div th:each="plant : ${favouritePlants}" class="card p-2 me-3 mb-3 border-0 rounded-3 d-flex shadow-sm public-profile-plant-card bg-primary-temp">
+        <div th:each="plant : ${favouritePlants}" class="card p-2 ms-2 mb-3 border-0 rounded-3 d-flex shadow-sm public-profile-plant-card bg-primary-temp">
             <img
-                    class="mx-auto d-block pt-1"
                     th:src="@{(${plant.plantImage} != null) ? '/plants/' + ${plant.id} + '/plant-image' : '/img/default-plant.svg'}"
-                    style="width: 100%;height: 80%; object-fit: cover"
+                    class="mx-auto d-block pt-1 border-0 rounded-3"
+                    style="width: 100%;height: 100%; object-fit: cover"
                     alt="plant image"
             />
             <h5 class="mt-2 overflow-y-auto text-center" style="max-height:100px" th:text="${plant.name}">Plant Name</h5>
@@ -15,7 +15,7 @@
         <!-- Blank cards to fill up to 3 slots -->
         <div th:if="${favouritePlants.size() < 3}"
              th:each="i : ${#numbers.sequence(1, 3 - favouritePlants.size())}"
-             class="card p-2 me-3 mb-3 border-0 rounded-3 shadow-sm public-profile-plant-card justify-content-center bg-primary-grey">
+             class="card p-2 ms-2 mb-3 border-0 rounded-3 shadow-sm public-profile-plant-card justify-content-center bg-primary-grey">
         </div>
     </div>
 </div>

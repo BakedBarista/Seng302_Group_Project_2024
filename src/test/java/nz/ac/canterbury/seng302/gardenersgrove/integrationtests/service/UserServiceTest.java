@@ -1,6 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integrationtests.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
+import nz.ac.canterbury.seng302.gardenersgrove.service.BirthFlowerService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -11,10 +13,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 import java.time.LocalDate;
 
 @DataJpaTest
-@Import(GardenUserService.class)
+@Import({ GardenUserService.class, BirthFlowerService.class, ObjectMapper.class })
 public class UserServiceTest {
 
     @Autowired
@@ -119,6 +124,26 @@ public class UserServiceTest {
         GardenUser user = userService.getUserByResetPasswordToken(token);
 
         Assertions.assertNull(user);
+    }
+
+    @Test
+    void whenAddUserWithDOB_thenBirthFlowerSet() {
+        GardenUser user = new GardenUser("John", "Doe", "john.doe.128@gmail.com", "", LocalDate.of(2004, 12, 10));
+
+        userService.addUser(user);
+
+        assertEquals(LocalDate.of(2004, 12, 10), user.getDateOfBirth());
+        assertEquals("Holly", user.getBirthFlower());
+    }
+
+    @Test
+    void whenAddUserWithoutDOB_thenBirthFlowerIsNull() {
+        GardenUser user = new GardenUser("John", "Doe", "john.doe.140@gmail.com", "", null);
+
+        userService.addUser(user);
+
+        assertNull(user.getDateOfBirth());
+        assertNull(user.getBirthFlower());
     }
 }
 
