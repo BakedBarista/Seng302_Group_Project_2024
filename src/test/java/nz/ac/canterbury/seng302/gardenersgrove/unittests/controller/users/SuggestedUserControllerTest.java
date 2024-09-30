@@ -102,6 +102,7 @@ class SuggestedUserControllerTest {
         GardenUser suggestedUser = new GardenUser();
         suggestedUser.setId(3L);
         suggestedUser.setDescription("Another description");
+        Mockito.when(gardenUserService.getUserById(3L)).thenReturn(suggestedUser);
 
         Mockito.when(request.getServletContext()).thenReturn(context);
         Mockito.when(authentication.getPrincipal()).thenReturn(loggedInUserId);
