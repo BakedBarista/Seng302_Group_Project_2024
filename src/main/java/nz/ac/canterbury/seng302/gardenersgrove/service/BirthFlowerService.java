@@ -62,7 +62,7 @@ public class BirthFlowerService {
         Map<String, List<String>> colorToFlowerMap = new HashMap<>();
 
         logger.info("loading local plant information for LocalPlantDataService.class...");
-        Resource resource = new ClassPathResource("birth_flowers.json");
+        Resource resource = new ClassPathResource("birth_flower_colors.json");
         try (InputStream inputStream = resource.getInputStream()) {
             colorToFlowerMap = objectMapper.readValue(inputStream, new TypeReference<>(){});
             logger.info("Successfully loaded birth_flowers.json");
@@ -74,6 +74,7 @@ public class BirthFlowerService {
         for (Map.Entry<String, List<String>> entry : colorToFlowerMap.entrySet()) {
             String color = entry.getKey();
             for (String flower : entry.getValue()) {
+                logger.info("flower: {}, color: {}", flower, color);
                 colorMap.put(flower, color);
             }
         }
