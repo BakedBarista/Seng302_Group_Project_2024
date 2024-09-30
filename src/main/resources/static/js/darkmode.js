@@ -10,7 +10,6 @@
 
 
     const navLogo = document.getElementById("navbarLogo");
-    const locationIcon = document.getElementById("locationIcon");
     const setTheme = theme => {
         try {
             document.documentElement.setAttribute('data-bs-theme', theme);

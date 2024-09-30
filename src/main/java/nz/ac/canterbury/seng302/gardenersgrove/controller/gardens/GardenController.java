@@ -207,10 +207,6 @@ public class GardenController {
     public ResponseEntity<byte[]> gardenImage(@PathVariable("id") long id,
         HttpServletRequest request) {
 
-        System.out.println("hererer");
-
-        Cookie[] cookies = request.getCookies();
-
         logger.info("GET /gardens/" + id + "/garden-image");
 
         Optional<Garden> garden = gardenService.getGardenById(id);
@@ -463,11 +459,8 @@ public class GardenController {
                                BindingResult result,
                                @RequestParam("image") MultipartFile file,
                                Model model) {
-        System.out.println(result);
-        System.out.println("wahawas");
         checkGardenDTOError(model, result, gardenDTO);
         if (result.hasErrors() || model.containsAttribute(PROFANITY)) {
-            System.out.println("ERRROR");
             model.addAttribute(GARDEN, gardenDTO);
             model.addAttribute("id", id);
             return EDIT_GARDEN;
