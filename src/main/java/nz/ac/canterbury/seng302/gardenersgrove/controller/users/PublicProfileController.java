@@ -170,15 +170,16 @@ public class PublicProfileController {
      *
      * @return A redirection to the "/users/edit-public-profile"
      */
-    @GetMapping("users/edit-public-profile")
+    @GetMapping("/users/edit-public-profile")
     public String editPublicProfile(Authentication authentication, Model model) throws JsonProcessingException {
         logger.info("GET /users/edit-public-profile");
-        Long userId = (Long) authentication.getPrincipal();
-        GardenUser user = userService.getUserById(userId);
+        System.out.println(authentication);
+
+        GardenUser user = userService.getCurrentUser();
         EditUserDTO editUserDTO = new EditUserDTO();
         List<String> flowers = birthFlowerService.getFlowersByMonth(user.getDateOfBirth());
 
-        model.addAttribute(USER_ID_ATTRIBUTE, userId);
+        model.addAttribute(USER_ID_ATTRIBUTE, user.getId());
         model.addAttribute("user",user);
         model.addAttribute("name", user.getFullName());
         model.addAttribute(BIRTH_FLOWER, user.getBirthFlower());
