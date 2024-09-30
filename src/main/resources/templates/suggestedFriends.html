@@ -45,12 +45,16 @@
     <div id="card" class="col-sm-10 flip-card flex-grow-1 flex-column">
         <div class="flip-card-inner border-0 w-100 card" th:if="${name != null}">
             <div class="mb-0 flip-card-front d-flex justify-content-between flex-column px-2 py-2 shadow" style="border-radius: 30px; min-height: 100%;">
-                <div style="position: relative;">
-                    <button class="upper-control mb-2" data-bs-toggle="tooltip" title="Flip card" data-gg-flip-card-toggle>
+                <div class="pt-3" style="position: relative;">
+                    <button class="upper-control mb-2 position-absolute top-0 mt-4 mx-3 rounded-3"
+                            data-bs-toggle="tooltip"
+                            title="Flip card"
+                            style="background-color: rgba(128, 128, 128, 0.8);"
+                            data-gg-flip-card-toggle>
                         <img
                                 th:src="@{/icons/flip-card.svg}"
                                 alt="Flip card"
-                                style="height: 35px; width:35px"
+                                style="height: 30px; width:30px;"
                         />
                     </button>
                     <img
