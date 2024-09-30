@@ -47,7 +47,7 @@
                 <h5>You have no recent messages!</h5>
                 <button class="btn-primary btn">Make a new connection</button>
             </div>
-            <div th:if="${!#lists.isEmpty(recentChats)}">
+            <div th:if="${!#maps.isEmpty(recentChats)}">
                 <div id="chatSectionMobile" th:each="chat : ${recentChats}" class="border-bottom" style="height: 125px;">
                     <div th:id="${chat.key.id + 'Mobile'}" class="h-100">
                         <form th:action="@{/message-home}" method="post" class="d-flex align-items-center w-100 h-100">
