@@ -264,6 +264,7 @@ public class PublicProfileController {
             model.addAttribute("favouritePlantsJson", favouritePlantsJson);
             model.addAttribute("name", user.getFullName());
             model.addAttribute("editUserDTO", editUserDTO);
+            model.addAttribute("user",user);
             return "users/edit-public-profile";
         }
 
