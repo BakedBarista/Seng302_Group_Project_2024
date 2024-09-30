@@ -341,16 +341,4 @@ class PublicProfileControllerTest {
 
         verify(model).addAttribute("flowers",flowers);
     }
-//
-//    @Test
-//    void editPublicProfile_whenDOBIsNull_thenNoFlowersAvailable() throws JsonProcessingException {
-//        Model specialModel = Mockito.mock(Model.class);
-//        PublicProfileController controller = new PublicProfileController(gardenUserService, profanityService, plantService, birthFlowerService);
-//        List<String> flowers = Collections.emptyList();
-//        when(birthFlowerService.getFlowersByMonth(null)).thenReturn(flowers);
-//        when(authentication.getPrincipal()).thenReturn(loggedInUserId);
-//        controller.editPublicProfile(authentication, specialModel);
-//
-//        verify(specialModel).addAttribute("flowers", flowers);
-//    }
 }
