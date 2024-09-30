@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <title>Edit My Profile | Pollinat*r</title>
 
-  <!-- This needs to be here for Bootstrap and general CSS imports -->
-  <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
+    <!-- This needs to be here for Bootstrap and general CSS imports -->
+    <th:block th:insert="~{fragments/general.html :: headerfiles}"></th:block>
+    <meta name="_birthFlowerColorsJson" th:content="${birthFlowerColors}" />
 </head>
 <body>
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
@@ -131,10 +132,10 @@
                             <h5 class="mb-0 me-3">Birth Flower:</h5>
                             <div class="dropdown">
                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-                                th:text="${#lists.isEmpty(flowers) ? 'Select Flower' : flowers[0]}">
+                                th:text="${birthFlower}" th:style="${'background-color:' + birthFlowerColor}">
                                     Select a flower
                                 </button>
-                                <input type="hidden" id="selectedFlowerInput" name="selectedFlower" value="">
+                                <input type="hidden" id="selectedFlowerInput" name="selectedFlower" th:value="${birthFlower}">
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                     <th:block th:each="flower : ${flowers}">
                                         <a class="dropdown-item" href="#" th:text="${flower}" onclick="updateButtonText(this.textContent)"></a>
@@ -235,8 +236,11 @@
     });
 
 
+    const birthFlowerColorsJson = getMeta('_birthFlowerColorsJson');
+    const birthFlowerColors = JSON.parse(birthFlowerColorsJson);
     function updateButtonText(selectedFlower) {
         document.getElementById('dropdownMenuButton').textContent = selectedFlower;
+        document.getElementById('dropdownMenuButton').style.backgroundColor = birthFlowerColors[selectedFlower];
         document.getElementById('selectedFlowerInput').value = selectedFlower;
     }
 

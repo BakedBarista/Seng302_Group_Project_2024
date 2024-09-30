@@ -52,6 +52,7 @@ public class PublicProfileController {
 
     private static final String FAVOURITE_PLANTS = "favouritePlants";
     private static final String BIRTH_FLOWER = "birthFlower";
+    private static final String BIRTH_FLOWER_COLOR = "birthFlowerColor";
 
     private static final Set<String> ACCEPTED_FILE_TYPES = Set.of("image/jpeg", "image/jpg", "image/png", "image/svg");
 
@@ -83,6 +84,7 @@ public class PublicProfileController {
         model.addAttribute("currentUser", userId);
         model.addAttribute("name", user.getFullName());
         model.addAttribute(BIRTH_FLOWER, user.getBirthFlower());
+        model.addAttribute(BIRTH_FLOWER_COLOR, birthFlowerService.getFlowerColor(user.getBirthFlower()));
         model.addAttribute(DESCRIPTION, user.getDescription());
         model.addAttribute(FAVOURITE_GARDEN, user.getFavoriteGarden());
         model.addAttribute(FAVOURITE_PLANTS, favouritePlants);
@@ -140,6 +142,7 @@ public class PublicProfileController {
         model.addAttribute("currentUser", loggedInUserId);
         model.addAttribute("name", user.getFullName());
         model.addAttribute(BIRTH_FLOWER, birthFlower);
+        model.addAttribute(BIRTH_FLOWER_COLOR, birthFlowerService.getFlowerColor(birthFlower));
         model.addAttribute(FAVOURITE_GARDEN, user.getFavoriteGarden());
         model.addAttribute(DESCRIPTION, user.getDescription());
         model.addAttribute(FAVOURITE_PLANTS, favouritePlants);
@@ -183,6 +186,8 @@ public class PublicProfileController {
         model.addAttribute("user",user);
         model.addAttribute("name", user.getFullName());
         model.addAttribute(BIRTH_FLOWER, user.getBirthFlower());
+        model.addAttribute(BIRTH_FLOWER_COLOR, birthFlowerService.getFlowerColor(user.getBirthFlower()));
+        model.addAttribute("birthFlowerColors", birthFlowerService.getFlowerColorsJson());
         editUserDTO.setDescription(user.getDescription());
         model.addAttribute("editUserDTO", editUserDTO);
         model.addAttribute(FAVOURITE_GARDEN, user.getFavoriteGarden());
