@@ -5,7 +5,7 @@
             <img
                     th:src="@{(${plant.plantImage} != null) ? '/plants/' + ${plant.id} + '/plant-image' : '/img/default-plant.svg'}"
                     class="mx-auto d-block pt-1 border-0 rounded-3"
-                    style="width: 100%;height: 100%; object-fit: cover"
+                    style="width: 100%;height: 80%; object-fit: cover"
                     alt="plant image"
             />
             <h5 class="mt-2 overflow-y-auto text-center" style="max-height:100px" th:text="${plant.name}">Plant Name</h5>

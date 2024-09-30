@@ -222,12 +222,12 @@ public class PublicProfileController {
     @PostMapping("users/edit-public-profile")
     public String publicProfileEditSubmit(
             Authentication authentication,
-            @Valid @ModelAttribute("editUserDTO") EditUserDTO editUserDTO,
-            BindingResult bindingResult,
             @RequestParam("image") MultipartFile profilePic,
             @RequestParam("bannerImage") MultipartFile banner,
             @RequestParam(DESCRIPTION) String description,
             @RequestParam(value = "selectedFlower", required = false) String birthFlower,
+            @Valid @ModelAttribute("editUserDTO") EditUserDTO editUserDTO,
+            BindingResult bindingResult,
             Model model) throws IOException {
         logger.info("POST /users/edit-public-profile");
         Long userId = (Long) authentication.getPrincipal();
@@ -250,10 +250,7 @@ public class PublicProfileController {
             birthFlower = birthFlowerService.getDefaultBirthFlower(user.getDateOfBirth());
         }
 
-        if (bindingResult.hasFieldErrors(DESCRIPTION)) {
-            System.out.println("HELLLOOOOOO");
-            errorFlag = true;
-        }
+        if (bindingResult.hasFieldErrors(DESCRIPTION)) {errorFlag = true;}
 
         if (errorFlag) {
             model.addAttribute(FAVOURITE_GARDEN, user.getFavoriteGarden());
@@ -264,7 +261,6 @@ public class PublicProfileController {
                     .toList();
             ObjectMapper objectMapper = new ObjectMapper();
             String favouritePlantsJson = objectMapper.writeValueAsString(favouritePlantDTOs);
-            model.addAttribute("description", description);
             model.addAttribute("favouritePlantsJson", favouritePlantsJson);
             model.addAttribute("name", user.getFullName());
             model.addAttribute("editUserDTO", editUserDTO);

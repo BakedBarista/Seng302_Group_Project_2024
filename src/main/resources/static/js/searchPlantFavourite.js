@@ -165,7 +165,7 @@ function updateCardAppearance(selectedCard, plantImage, plantName, plantId) {
     imgElement.src = plantImage;
     imgElement.alt = 'plant image';
     imgElement.className = 'mx-auto d-block pt-1 border-0 rounded-3';
-    imgElement.style = 'width: 100%; height: 100%; object-fit: cover';
+    imgElement.style = 'width: 100%; height: 80%; object-fit: cover';
 
     // Add the delete button
     addDeleteButton(selectedCard);
