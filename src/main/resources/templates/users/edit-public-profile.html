@@ -108,7 +108,7 @@
                         tabindex="2"/>
                 <img id="preview"
                     class="public-profile-picture position-absolute top-0 end-0 justify-content-md-center public-profile-picture-padding me-2"
-                    th:src="@{(${user.profilePicture} != null) ? '/users/' + ${userId} + '/profile-banner' : '/img/default-profile.svg'}"
+                    th:src="@{(${user.profilePicture} != null) ? '/users/' + ${userId} + '/profile-picture' : '/img/default-profile.svg'}"
                     width="200"
                     height="200"
                     alt="Profile Picture"/>
