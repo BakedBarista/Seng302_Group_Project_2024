@@ -6,17 +6,16 @@ import jakarta.servlet.http.HttpServletResponse;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.SuggestedUserDTO;
+import nz.ac.canterbury.seng302.gardenersgrove.service.BirthFlowerService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.CompatibilityService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.SuggestedUserService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.thymeleaf.TemplateEngine;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +30,7 @@ class SuggestedUserServiceTest {
     private SuggestedUserService suggestedUserService;
     private FriendService friendService;
     private CompatibilityService compatibilityService;
+    private BirthFlowerService birthFlowerService;
     private TemplateEngine templateEngine;
     private HttpServletRequest request;
     private HttpServletResponse response;
@@ -45,11 +45,12 @@ class SuggestedUserServiceTest {
     public void setUp() {
         friendService = Mockito.mock(FriendService.class);
         compatibilityService = Mockito.mock(CompatibilityService.class);
+        birthFlowerService = Mockito.mock(BirthFlowerService.class);
         templateEngine = Mockito.mock(TemplateEngine.class);
         request = Mockito.mock(HttpServletRequest.class);
         response = Mockito.mock(HttpServletResponse.class);
         servletContext = Mockito.mock(ServletContext.class);
-        suggestedUserService = new SuggestedUserService(friendService, compatibilityService, templateEngine);
+        suggestedUserService = new SuggestedUserService(friendService, compatibilityService, birthFlowerService, templateEngine);
 
         loggedInUser = new GardenUser();
         suggestedUser = new GardenUser();

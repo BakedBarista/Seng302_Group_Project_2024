@@ -24,15 +24,17 @@ public class SuggestedUserService {
     private static final Logger logger = LoggerFactory.getLogger(SuggestedUserService.class);
     private final FriendService friendService;
     private final CompatibilityService compatibilityService;
+    private final BirthFlowerService birthFlowerService;
     private final TemplateEngine templateEngine;
 
 
 
     @Autowired
     public SuggestedUserService(FriendService friendService, CompatibilityService compatibilityService,
-                                TemplateEngine templateEngine) {
+                                BirthFlowerService birthFlowerService, TemplateEngine templateEngine) {
         this.friendService = friendService;
         this.compatibilityService = compatibilityService;
+        this.birthFlowerService = birthFlowerService;
         this.templateEngine = templateEngine;
     }
 
@@ -187,6 +189,7 @@ public class SuggestedUserService {
         Map<String, Object> variables = new HashMap<>();
         variables.put("userId", user.getId());
         variables.put("birthFlower", user.getBirthFlower());
+        variables.put("birthFlowerColor", birthFlowerService.getFlowerColor(user.getBirthFlower()));
         variables.put("favouriteGarden", user.getFavoriteGarden());
         variables.put("favouritePlants", user.getFavouritePlants());
 

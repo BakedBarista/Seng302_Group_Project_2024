@@ -59,4 +59,12 @@ class BirthFlowerServiceTest {
         Assertions.assertTrue(result.size() >= 2);
     }
 
+    @Test
+    void givenBirthMonth_whenGetColor_thenReturnsColor() {
+        for (String flower : flowerService.getAllFlowers()) {
+            String color = flowerService.getFlowerColor(flower);
+            Assertions.assertNotNull(color);
+        }
+    }
+
 }
