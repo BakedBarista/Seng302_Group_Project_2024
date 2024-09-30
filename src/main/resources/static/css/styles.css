@@ -945,6 +945,8 @@ h1, h2, h3, h4, h5, h6 {
     flex-direction: column;
     background-color: #353535;
     border-radius: calc(var(--bs-card-border-radius) - 1px);
+    justify-content: space-between;
+
 }
 
 .flip-card-back {
