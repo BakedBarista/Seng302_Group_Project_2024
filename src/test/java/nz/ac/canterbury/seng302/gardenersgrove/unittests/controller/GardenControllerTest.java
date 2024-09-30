@@ -218,7 +218,7 @@ public class GardenControllerTest {
         when(gardenService.getGardenById(1)).thenReturn(Optional.of(gardenDTO.toGarden()));
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
-        String result = gardenController.updateGarden(1, gardenDTO, file, bindingResult, model);
+        String result = gardenController.updateGarden(1, gardenDTO, bindingResult, file, model);
         Garden garden = gardenService.getGardenById(1).get();
 
         assertEquals("redirect:/gardens/1", result);
@@ -299,7 +299,7 @@ public class GardenControllerTest {
 
         when(bindingResult.hasErrors()).thenReturn(true);
         when(moderationService.checkIfDescriptionIsFlagged(description)).thenReturn(true);
-        gardenController.updateGarden(id, invalidGarden, file, bindingResult, model);
+        gardenController.updateGarden(id, invalidGarden, bindingResult, file, model);
 
         verify(model).addAttribute("profanity", EXPECTED_MODERATION_ERROR_MESSAGE);
         verify(model).addAttribute("garden", invalidGarden);

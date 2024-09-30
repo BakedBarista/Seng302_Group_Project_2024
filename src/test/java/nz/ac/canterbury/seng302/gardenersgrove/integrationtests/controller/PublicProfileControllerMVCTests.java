@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
+
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
@@ -25,88 +25,62 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.hamcrest.Matchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 @SpringBootTest
 @ActiveProfiles("integration-tests")
 @AutoConfigureMockMvc
-class FavouritePlantControllerMVCTests {
+public class PublicProfileControllerMVCTests {
     @Autowired
     private ObjectMapper objectMapper;
-
-
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     private GardenUserRepository userRepository;
-
     @Autowired
     private FavouritePlantsController favouritePlantController;
-
     @Autowired
     private GardenRepository gardenRepository;
-
-
-
     private GardenUser user;
+
     @Autowired
     private FriendsRepository friendRepository;
 
+    @Autowired
+    private PublicProfileController publicProfileController;
+
     @BeforeEach
     void setup() throws JsonProcessingException {
-        String dateString = " 2001-01-01";
-        LocalDate localDate = LocalDate.parse(dateString.trim(), DateTimeFormatter.ISO_LOCAL_DATE);
 
-        user = userRepository.save(new GardenUser("John", "Doe", "postTester@gmail.com",  "Password1!", localDate));
+        user = userRepository.save(new GardenUser("John", "Doe", "postTester@gmail.com",  "Password1!", null));
 
-        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(user.getEmail(), null, Collections.emptyList()));
-
-
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(user.getId(), null, Collections.emptyList())
+        );
 
         // Create MVC
         this.mockMvc = MockMvcBuilders
-                .standaloneSetup(favouritePlantController)
+                .standaloneSetup(publicProfileController)
                 .build();
     }
-
     @Transactional
     @AfterEach
     void cleanup() {
-        userRepository.findAll().forEach(user -> {
-            gardenRepository.deleteByOwnerId(user.getId());
-            friendRepository.deleteBySenderId(user.getId());
-        });
-        userRepository.deleteAll();
+        userRepository.findAll().forEach(user -> {gardenRepository.deleteByOwnerId(user.getId());
+            friendRepository.deleteBySenderId(user.getId());});userRepository.deleteAll();
     }
-
     @Test
-    void testSearchPlants_whenNoMatchingPlant_thenEmptyResponse() throws Exception {
-        mockMvc.perform(post("/users/edit-public-profile/search")
-                        .param("search", "tomato")
-                        .contentType(MediaType.APPLICATION_JSON))
+    void givenUserHasNoDOB_whenGetPublicProfile_thenFlowerSelectionDropdownisDisabled() throws Exception {
+        mockMvc.perform(get("/users/edit-public-profile"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$").isEmpty());
+                .andExpect(model().attribute("user", hasProperty("id", is(user.getId()))))
+                .andExpect(model().attribute("user", hasProperty("fname", is(user.getFname()))))
+                .andExpect(model().attribute("flowers", hasSize(0)));
+        }
     }
-
-    @Test
-    void whenPlantFavourited_thenUpdateFavouritePlants() throws Exception {
-        String json = objectMapper.writeValueAsString(Map.of("ids", List.of(1L, 2L, 3L)));
-
-        mockMvc.perform(put("/users/edit-public-profile/favourite-plant")
-                        .content(json)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-    }
-
-
-
-}
-
 

@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.users;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
@@ -7,12 +8,11 @@ import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.FavouritePlantDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.exceptions.ProfanityDetectedException;
-import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.BirthFlowerService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.ProfanityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +27,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
+import java.util.Set;
 
 @Controller
 public class PublicProfileController {
@@ -51,6 +52,7 @@ public class PublicProfileController {
 
     private static final String FAVOURITE_PLANTS = "favouritePlants";
     private static final String BIRTH_FLOWER = "birthFlower";
+    private static final String BIRTH_FLOWER_COLOR = "birthFlowerColor";
 
     private static final Set<String> ACCEPTED_FILE_TYPES = Set.of("image/jpeg", "image/jpg", "image/png", "image/svg");
 
@@ -82,6 +84,7 @@ public class PublicProfileController {
         model.addAttribute("currentUser", userId);
         model.addAttribute("name", user.getFullName());
         model.addAttribute(BIRTH_FLOWER, user.getBirthFlower());
+        model.addAttribute(BIRTH_FLOWER_COLOR, birthFlowerService.getFlowerColor(user.getBirthFlower()));
         model.addAttribute(DESCRIPTION, user.getDescription());
         model.addAttribute(FAVOURITE_GARDEN, user.getFavoriteGarden());
         model.addAttribute(FAVOURITE_PLANTS, favouritePlants);
@@ -139,6 +142,7 @@ public class PublicProfileController {
         model.addAttribute("currentUser", loggedInUserId);
         model.addAttribute("name", user.getFullName());
         model.addAttribute(BIRTH_FLOWER, birthFlower);
+        model.addAttribute(BIRTH_FLOWER_COLOR, birthFlowerService.getFlowerColor(birthFlower));
         model.addAttribute(FAVOURITE_GARDEN, user.getFavoriteGarden());
         model.addAttribute(DESCRIPTION, user.getDescription());
         model.addAttribute(FAVOURITE_PLANTS, favouritePlants);
@@ -169,18 +173,21 @@ public class PublicProfileController {
      *
      * @return A redirection to the "/users/edit-public-profile"
      */
-    @GetMapping("users/edit-public-profile")
+    @GetMapping("/users/edit-public-profile")
     public String editPublicProfile(Authentication authentication, Model model) throws JsonProcessingException {
         logger.info("GET /users/edit-public-profile");
-        Long userId = (Long) authentication.getPrincipal();
-        GardenUser user = userService.getUserById(userId);
+        System.out.println(authentication);
+
+        GardenUser user = userService.getCurrentUser();
         EditUserDTO editUserDTO = new EditUserDTO();
         List<String> flowers = birthFlowerService.getFlowersByMonth(user.getDateOfBirth());
 
-        model.addAttribute(USER_ID_ATTRIBUTE, userId);
+        model.addAttribute(USER_ID_ATTRIBUTE, user.getId());
         model.addAttribute("user",user);
         model.addAttribute("name", user.getFullName());
         model.addAttribute(BIRTH_FLOWER, user.getBirthFlower());
+        model.addAttribute(BIRTH_FLOWER_COLOR, birthFlowerService.getFlowerColor(user.getBirthFlower()));
+        model.addAttribute("birthFlowerColors", birthFlowerService.getFlowerColorsJson());
         editUserDTO.setDescription(user.getDescription());
         model.addAttribute("editUserDTO", editUserDTO);
         model.addAttribute(FAVOURITE_GARDEN, user.getFavoriteGarden());
@@ -223,7 +230,7 @@ public class PublicProfileController {
             @RequestParam("image") MultipartFile profilePic,
             @RequestParam("bannerImage") MultipartFile banner,
             @RequestParam(DESCRIPTION) String description,
-            @RequestParam("selectedFlower") String birthFlower,
+            @RequestParam(value = "selectedFlower", required = false) String birthFlower,
             @Valid @ModelAttribute("editUserDTO") EditUserDTO editUserDTO,
             BindingResult bindingResult,
             Model model) throws IOException {
@@ -242,7 +249,7 @@ public class PublicProfileController {
             model.addAttribute("profanity", "There cannot be any profanity in the 'About me' section");
             errorFlag = true;
         }
-        if (birthFlower.isBlank()) {
+        if (birthFlower == null) {
             birthFlower = user.getBirthFlower();
         } else if (flowersByMonth != null && !flowersByMonth.contains(birthFlower)) {
             birthFlower = birthFlowerService.getDefaultBirthFlower(user.getDateOfBirth());
@@ -262,6 +269,7 @@ public class PublicProfileController {
             model.addAttribute("favouritePlantsJson", favouritePlantsJson);
             model.addAttribute("name", user.getFullName());
             model.addAttribute("editUserDTO", editUserDTO);
+            model.addAttribute("user",user);
             return "users/edit-public-profile";
         }
 

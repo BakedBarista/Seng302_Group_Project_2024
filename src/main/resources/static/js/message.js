@@ -141,7 +141,7 @@ function updateMessagePreview(userId, newMessageContent, isSender) {
         if (messagePreviewElement) {
             messagePreviewElement.textContent = `${isSender === true ? "You: ": ""} ${newMessageContent}`;
             messagePreviewElement.title = newMessageContent;
-            messagePreviewElement.className = "d-block text-truncate m-0";
+            messagePreviewElement.className = "d-block text-truncate m-0 darkText";
 
             if (messagePreviewImageElement) {
                 messagePreviewImageElement.className = "d-none"
@@ -151,7 +151,7 @@ function updateMessagePreview(userId, newMessageContent, isSender) {
         if (messagePreviewMobileElement) {
             messagePreviewMobileElement.textContent = `${isSender === true ? "You: ": ""} ${newMessageContent}`;
             messagePreviewMobileElement.title = newMessageContent;
-            messagePreviewMobileElement.className = "d-block text-truncate m-0";
+            messagePreviewMobileElement.className = "d-block text-truncate m-0 darkText";
 
             if (messagePreviewImageMobileElement) {
                 messagePreviewImageMobileElement.className = "d-none"

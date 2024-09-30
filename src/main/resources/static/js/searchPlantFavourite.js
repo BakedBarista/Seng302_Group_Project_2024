@@ -65,6 +65,7 @@ function showSearchResults() {
                         const plantOption = document.createElement('div');
                         plantOption.style.marginBottom = '5px';
                         plantOption.classList.add('plant-option');
+                        plantOption.classList.add("darkText")
                         plantOption.setAttribute('data-id', plant.id);
                         plantOption.setAttribute('data-name', plant.name);
 
@@ -163,7 +164,7 @@ function updateCardAppearance(selectedCard, plantImage, plantName, plantId) {
     }
     imgElement.src = plantImage;
     imgElement.alt = 'plant image';
-    imgElement.className = 'mx-auto d-block pt-1';
+    imgElement.className = 'mx-auto d-block pt-1 border-0 rounded-3';
     imgElement.style = 'width: 100%; height: 80%; object-fit: cover';
 
     // Add the delete button
@@ -271,14 +272,6 @@ function updateFavouritePlants() {
         document.getElementById('selectedPlantId2')?.value,
         document.getElementById('selectedPlantId3')?.value
     ].filter(id => id).filter(item => !Object.values(deletedPlantIds).includes(item));
-
-    // for debugging if needed in the future :)
-    // console.log(newPlantIds)
-    // console.log(document.getElementById('selectedPlantId1')?.value)
-    // console.log(document.getElementById('selectedPlantId2')?.value)
-    // console.log(document.getElementById('selectedPlantId3')?.value)
-    // console.log(deletedPlantIds)
-    // console.log(favouritePlants)
 
     for (let currentPlant of Object.values(deletedPlantIds)) {
         if (!favouritePlants.some(plant => plant.id === parseInt(currentPlant))) {

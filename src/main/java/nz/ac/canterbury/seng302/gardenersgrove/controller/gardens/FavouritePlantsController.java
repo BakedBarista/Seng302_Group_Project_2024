@@ -89,6 +89,8 @@ public class FavouritePlantsController {
 
             if (!plantsSet.isEmpty()) {
                 Long userId = (Long) authentication.getPrincipal();
+                System.out.println("HERRREE");
+
                 userService.updateFavouritePlant(userId, plantsSet);
             }
             return ResponseEntity.ok().build();

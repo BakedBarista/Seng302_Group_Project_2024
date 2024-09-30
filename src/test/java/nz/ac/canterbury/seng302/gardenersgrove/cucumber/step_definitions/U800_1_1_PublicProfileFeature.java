@@ -97,7 +97,7 @@ public class U800_1_1_PublicProfileFeature {
         gardenUserRepository = mock(GardenUserRepository.class);
         model = mock(Model.class);
         authentication = mock(Authentication.class);
-        objectMapper = mock(ObjectMapper.class);
+        objectMapper = new ObjectMapper();
 
         birthFlowerService = new BirthFlowerService(objectMapper);
         userService = new GardenUserService(userRepository, birthFlowerService);

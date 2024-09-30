@@ -14,7 +14,7 @@
             <h2 class="mb-3">Select a Garden</h2>
             <ul class="">
                 <li class="" th:each="garden : ${gardens}">
-                    <a class="text-black link-hover" style="font-size: 15pt;" th:href="@{/gardens/{gardenId}/add-plant?importPlant=true(gardenId=${garden.id})}" th:text="${garden.name}"></a>
+                    <a class="addGarden link-hover" style="font-size: 15pt;" th:href="@{/gardens/{gardenId}/add-plant?importPlant=true(gardenId=${garden.id})}" th:text="${garden.name}"></a>
                 </li>
             </ul>
         </div>
