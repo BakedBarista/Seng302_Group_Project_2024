@@ -1,7 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unittests.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.gardens.FavouritePlantsController;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.users.PublicProfileController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
@@ -10,13 +10,17 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.EditUserDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
-import com.fasterxml.jackson.core.type.TypeReference;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.web.servlet.MockMvc;
@@ -25,29 +29,19 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-import java.io.IOException;
-import java.util.List;
-import java.time.LocalDate;
-
-import java.util.Map;
-
-import jakarta.servlet.http.HttpServletRequest;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullSource;
-import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.Mockito;
-import org.springframework.http.ResponseEntity;
-
 @ExtendWith(MockitoExtension.class)
-public class PublicProfileControllerTest {
+class PublicProfileControllerTest {
     private static PublicProfileController publicProfileController;
     private static GardenUserService gardenUserService;
     private static GardenService gardenService;
@@ -118,7 +112,6 @@ public class PublicProfileControllerTest {
         garden = new Garden();
 
         mockMvc = MockMvcBuilders.standaloneSetup(publicProfileController).build();
-
     }
 
     @ParameterizedTest
@@ -219,6 +212,7 @@ public class PublicProfileControllerTest {
     void testEditForm() throws JsonProcessingException {
         Model model = mock(Model.class);
         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+        when(gardenUserService.getCurrentUser()).thenReturn(loggedInUser);
         String result = publicProfileController.editPublicProfile(authentication, model);
 
         verify(model).addAttribute("userId", loggedInUserId);
@@ -232,19 +226,19 @@ public class PublicProfileControllerTest {
         Model model = mock(Model.class);
 
         MultipartFile profilePic = new MockMultipartFile(
-            "image",
-            "profile.png",
-            "image/png",
-            "profile picture content".getBytes()
+                "image",
+                "profile.png",
+                "image/png",
+                "profile picture content".getBytes()
         );
 
         String description = "New Description";
 
         MultipartFile banner = new MockMultipartFile(
-            "bannerImage",
-            "banner.png",
-            "image/png",
-            "banner content".getBytes()
+                "bannerImage",
+                "banner.png",
+                "image/png",
+                "banner content".getBytes()
         );
 
         String viewName = publicProfileController.publicProfileEditSubmit(authentication, profilePic, banner, description, birthFlower, editUserDTO, bindingResult, model);
@@ -311,20 +305,20 @@ public class PublicProfileControllerTest {
         Model model = mock(Model.class);
 
         MultipartFile profilePic = new MockMultipartFile(
-            "image",
-            "profile.png",
-            "image/png",
-            "profile picture content".getBytes()
+                "image",
+                "profile.png",
+                "image/png",
+                "profile picture content".getBytes()
         );
 
         String description = "This is a description is 257 charcters long dcwqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqThis is a description is 257 charcters long dcwqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq";
-        
+
 
         MultipartFile banner = new MockMultipartFile(
-            "bannerImage",
-            "banner.png",
-            "image/png",
-            "banner content".getBytes()
+                "bannerImage",
+                "banner.png",
+                "image/png",
+                "banner content".getBytes()
         );
 
         String viewName = publicProfileController.publicProfileEditSubmit(authentication, profilePic, banner, description, birthFlower, editUserDTO, bindingResult, model);
@@ -340,8 +334,9 @@ public class PublicProfileControllerTest {
     void whenRequestingBirthMonthFlower_thenBirthMonthFlowerIsAddedToModel() throws JsonProcessingException {
         List<String> flowers = List.of("Carnation","Snow Pea");
         Model model = mock(Model.class);
-        when(birthFlowerService.getFlowersByMonth(loggedInUser.getDateOfBirth())).thenReturn(flowers);
+        when(birthFlowerService.getFlowersByMonth(any(LocalDate.class))).thenReturn(flowers);
         when(authentication.getPrincipal()).thenReturn(loggedInUserId);
+        when(gardenUserService.getCurrentUser()).thenReturn(loggedInUser);
         publicProfileController.editPublicProfile(authentication,model);
 
         verify(model).addAttribute("flowers",flowers);

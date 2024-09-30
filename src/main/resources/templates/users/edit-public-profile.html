@@ -120,8 +120,7 @@
                     <div class="m-2 mt-3">
                         <span th:if="${name != null && name.length() >= 12}"><span class="d-sm-none d-flex mt-5"></span></span>
                         <h2 class="mb-1">[[${name}]]</h2>
-
-                        <div class="d-flex align-items-center py-3" th:if="${flowers != null}">
+                        <div class="d-flex align-items-center py-3" th:if="${flowers != null and !#lists.isEmpty(flowers)}">
                             <th:block th:insert="~{fragments/birth-flower-icon.html :: birth-flower-icon}"></th:block>
                             <h5 class="mb-0 me-3">Birth Flower:</h5>
                             <div class="dropdown">
@@ -129,12 +128,13 @@
                                 th:text="${#lists.isEmpty(flowers) ? 'Select Flower' : flowers[0]}">
                                     Select a flower
                                 </button>
-                                <input type="hidden" id="selectedFlowerInput" name="selectedFlower">
+                                <input type="hidden" id="selectedFlowerInput" name="selectedFlower" value="">
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                     <th:block th:each="flower : ${flowers}">
                                         <a class="dropdown-item" href="#" th:text="${flower}" onclick="updateButtonText(this.textContent)"></a>
                                     </th:block>
                                 </div>
+                            
                             </div>
                         </div>
                         
