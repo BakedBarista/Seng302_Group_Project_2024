@@ -66,6 +66,8 @@ public class SuggestedUserController {
                 return "suggestedFriends";
             }
 
+            GardenUser suggestedUser = gardenUserService.getUserById(feedContents.get(0).getId());
+            model.addAttribute("profilePicture", suggestedUser.getProfilePicture());
             model.addAttribute("userId", feedContents.get(0).getId());
             model.addAttribute("name", feedContents.get(0).getFullName());
             model.addAttribute("description", feedContents.get(0).getDescription());
