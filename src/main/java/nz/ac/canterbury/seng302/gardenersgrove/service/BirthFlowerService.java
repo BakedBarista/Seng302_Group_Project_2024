@@ -27,11 +27,13 @@ public class BirthFlowerService {
 
     private final ObjectMapper objectMapper;
     private final Map<Integer, List<String>> monthFlowersMap;
+    private final Map<String, String> flowerColorMap;
 
     @Autowired
     public BirthFlowerService(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
         this.monthFlowersMap = loadConfig();
+        this.flowerColorMap = loadColors();
     }
 
     /**
@@ -50,6 +52,33 @@ public class BirthFlowerService {
             logger.error("Failed to load default birth flower data", e);
         }
         return flowerMap;
+    }
+
+    /**
+     * Loads colour data from saved JSON
+     * @return map of flower name to hex colour
+     */
+    public Map<String, String> loadColors() {
+        Map<String, List<String>> colorToFlowerMap = new HashMap<>();
+
+        logger.info("loading local plant information for LocalPlantDataService.class...");
+        Resource resource = new ClassPathResource("birth_flowers.json");
+        try (InputStream inputStream = resource.getInputStream()) {
+            colorToFlowerMap = objectMapper.readValue(inputStream, new TypeReference<>(){});
+            logger.info("Successfully loaded birth_flowers.json");
+        } catch (IOException e) {
+            logger.error("Failed to load default birth flower data", e);
+        }
+
+        Map<String, String> colorMap = new HashMap<>();
+        for (Map.Entry<String, List<String>> entry : colorToFlowerMap.entrySet()) {
+            String color = entry.getKey();
+            for (String flower : entry.getValue()) {
+                colorMap.put(flower, color);
+            }
+        }
+
+        return colorMap;
     }
 
     /**
@@ -80,5 +109,25 @@ public class BirthFlowerService {
             return null;
         }
         return flowers.get(0);
+    }
+
+    /**
+     * Get the colour of a flower
+     * @param flower name of flower
+     * @return hex colour of flower
+     */
+    public String getFlowerColor(String flower) {
+        if (flower == null) {
+            return null;
+        }
+        return flowerColorMap.get(flower);
+    }
+
+    /**
+     * Gets all the birth flowers as a list
+     * @return all the birth flowers as a list
+     */
+    public List<String> getAllFlowers() {
+        return monthFlowersMap.values().stream().flatMap(List::stream).toList();
     }
 }
