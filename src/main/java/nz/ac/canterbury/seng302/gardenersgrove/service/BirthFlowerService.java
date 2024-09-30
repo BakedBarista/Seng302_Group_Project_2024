@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -130,5 +131,18 @@ public class BirthFlowerService {
      */
     public List<String> getAllFlowers() {
         return monthFlowersMap.values().stream().flatMap(List::stream).toList();
+    }
+
+    /**
+     * Gets a json map that maps flower names to their hex colour
+     * @return a json map that maps flower names to their hex colour
+     */
+    public String getFlowerColorsJson() {
+        try {
+            return objectMapper.writeValueAsString(flowerColorMap);
+        } catch (JsonProcessingException e) {
+            logger.error("Failed to convert flower color map to json", e);
+            return "{}";
+        }
     }
 }

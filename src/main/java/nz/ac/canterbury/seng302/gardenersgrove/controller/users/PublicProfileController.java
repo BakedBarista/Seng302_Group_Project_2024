@@ -186,6 +186,8 @@ public class PublicProfileController {
         model.addAttribute("user",user);
         model.addAttribute("name", user.getFullName());
         model.addAttribute(BIRTH_FLOWER, user.getBirthFlower());
+        model.addAttribute(BIRTH_FLOWER_COLOR, birthFlowerService.getFlowerColor(user.getBirthFlower()));
+        model.addAttribute("birthFlowerColors", birthFlowerService.getFlowerColorsJson());
         editUserDTO.setDescription(user.getDescription());
         model.addAttribute("editUserDTO", editUserDTO);
         model.addAttribute(FAVOURITE_GARDEN, user.getFavoriteGarden());
