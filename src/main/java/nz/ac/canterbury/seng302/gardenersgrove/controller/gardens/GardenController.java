@@ -4,6 +4,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.gardens;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.Cookie;
 import jakarta.validation.Valid;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Friends;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
@@ -206,7 +207,6 @@ public class GardenController {
         HttpServletRequest request) {
 
         logger.info("GET /gardens/" + id + "/garden-image");
-
 
         Optional<Garden> garden = gardenService.getGardenById(id);
         Garden  existingGarden = new Garden();
@@ -449,8 +449,8 @@ public class GardenController {
     @PostMapping("/gardens/{id}/edit")
     public String updateGarden(@PathVariable(name = "id") long id,
                                @Valid @ModelAttribute(GARDEN) GardenDTO gardenDTO,
-                               @RequestParam("image") MultipartFile file,
                                BindingResult result,
+                               @RequestParam("image") MultipartFile file,
                                Model model) {
 
         checkGardenDTOError(model, result, gardenDTO);
@@ -728,4 +728,6 @@ public class GardenController {
             logger.info("Failed to add garden", e);
         }
     }
+
+
 }

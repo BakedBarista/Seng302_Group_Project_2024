@@ -1,13 +1,29 @@
 (() => {
+
+
     // Saves the theme to local storage
     const getStoredTheme = () => localStorage.getItem('theme')
-    const setStoredTheme = theme => localStorage.setItem('theme', theme)
+    const setStoredTheme = theme => {
+        localStorage.setItem('theme', theme)
+    }
     const checkboxes = document.getElementsByName("checkbox")
 
+
+    const navLogo = document.getElementById("navbarLogo");
     const setTheme = theme => {
-        document.documentElement.setAttribute('data-bs-theme', theme)
-        setStoredTheme(theme);
-    }
+        try {
+            document.documentElement.setAttribute('data-bs-theme', theme);
+            setStoredTheme(theme);
+            if (navLogo != null) {
+                navLogo.src = theme === 'dark' ? `${baseUrl}img/yellow-logo.svg` : `${baseUrl}img/logo.svg`;
+            }
+
+        } catch (error) {
+            console.error('Error setting theme:', error);
+        }
+    };
+
+
 
     const loadTheme = () => {
         const storedTheme = getStoredTheme()
@@ -30,23 +46,21 @@
         }
     }
 
-    window.addEventListener('DOMContentLoaded', () => {
-        // Loads the theme on DOM load
-        loadTheme();
-        for (let checkbox of checkboxes) {
-            checkbox.addEventListener('change', () => {
-                if (checkbox.checked) {
-                    for (let checkbox_ of checkboxes) {
-                        checkbox_.checked = true;
-                    }
-                    setTheme('dark');
-                } else {
-                    for (let checkbox_ of checkboxes) {
-                        checkbox_.checked = false;
-                    }
-                    setTheme('light');
+    loadTheme();
+    for (let checkbox of checkboxes) {
+        checkbox.addEventListener('change', () => {
+            if (checkbox.checked) {
+                for (let checkbox_ of checkboxes) {
+                    checkbox_.checked = true;
                 }
-            });
-        }
-    })
+                setTheme('dark');
+            } else {
+                for (let checkbox_ of checkboxes) {
+                    checkbox_.checked = false;
+                }
+                setTheme('light');
+            }
+        });
+    }
+
 })()

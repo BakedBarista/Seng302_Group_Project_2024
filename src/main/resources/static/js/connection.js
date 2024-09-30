@@ -23,7 +23,8 @@ document.addEventListener('DOMContentLoaded', function() {
     function showCurrentUserCard() {
         if (userIndex >= userList.length) {
             const card = document.getElementById('card');
-            card.outerHTML = '<p>No users left to connect with</p>';
+
+            card.outerHTML = '<p class="darkText">No users left to connect with</p>';
             return;
         }
         

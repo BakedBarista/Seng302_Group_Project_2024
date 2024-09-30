@@ -1,0 +1,149 @@
+:root {
+    --gg-white: #F5F5F5;
+    --gg-heading-colour: #F8F3C4;
+
+}
+
+
+
+[data-bs-theme="dark"] {
+    --bs-primary: #CB9F03;
+    --bs-secondary: #FFFFFF;
+
+
+    .nav-drawer {
+        background-color: #302E2E;
+        color: var(--gg-white);
+    }
+    .nav-drawer li a:hover {
+        background-color: #464444;
+    }
+    body {
+        background-color: #1E1E1E;
+
+    }
+    .card {
+        background-color: #464444;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        color: var(--gg-heading-colour);
+    }
+
+    .btn-outline-secondary {
+        --bs-btn-color: var(--gg-white);
+        --bs-btn-border-color: var(--gg-white);
+
+    }
+
+    .btn-outline-primary {
+        background-color: var(--gg-heading-colour);
+    }
+
+    .btn-outline-primary:hover {
+        background-color: #CB9F03;
+    }
+
+    .required-field::after {
+        color: var(--gg-white);
+    }
+
+    .form-control:disabled{
+        background-color: #575454;
+    }
+    .card-footer{
+        background-color: #464444;
+    }
+
+    .send-message-div,
+    .autocomplete-items {
+        background-color: #302E2E;
+    }
+
+    #gardenTimelineTitle,
+    #gardenTimelineDiv,
+    #yourPlantsTitleDiv,
+    #plantTimelineDiv,
+    #plantTimelineTitle,
+    #recordUpdateButtonTooltip{
+        background-color: #464444;
+    }
+    .friend-header,
+    .plantNameEach {
+        color: var(--gg-heading-colour);
+    }
+
+    .active-chat {
+        background-color: #464444;
+    }
+
+    #gardenTLDesc,
+    #gardenTLDescHeader,
+    #plantHistoryEach,
+    #messageDate,
+    .chatPreview {
+        color: var(--gg-white);
+    }
+
+    #gardenTLInfoBorder,
+    #gardenTLInfoDiv, .plant-side-panel {
+        background-color: #1E1E1E;
+    }
+    .weatherText {
+        color: #F5F5F5;
+
+    }
+
+    .background-card{
+        background-color: #302E2E;
+    }
+    svg {
+        color: #ffffff;
+    }
+
+    .pagination .page-item.disabled .page-link {
+        background-color: #515151;
+    }
+
+    .pagination .page-link {
+        background-color: #F8F3C4 ;
+
+    }
+
+    .page-link:hover {
+        background-color:#EDBA05;
+
+    }
+    .favouriteGardenCard, .favouritePlantCard {
+        background-color: #5a5757;
+    }
+
+    .btn-change {
+        --bs-btn-hover-color: black;
+    }
+
+    .addGarden {
+        color: #F5F5F5;
+    }
+
+    .darkText {
+        color: #F5F5F5;
+    }
+
+    .table {
+        background-color: #212529;
+        border-bottom-width: 1px;
+    }
+
+    .modal-footer {
+        background-color: #464444;
+    }
+    .plant-option.highlighted {
+        color: black;
+    }
+
+
+
+
+}
+

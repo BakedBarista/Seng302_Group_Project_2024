@@ -55,6 +55,9 @@ h1, h2, h3, h4, h5, h6 {
     font-style: normal;
     color: #1E1E1E;
 }
+.weatherText {
+    color: #1E1E1E70
+}
 
 .montserrat-heading {
      font-family: "Montserrat", sans-serif;
@@ -385,6 +388,9 @@ h1, h2, h3, h4, h5, h6 {
     border: none;
     box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
 }
+.card-footer {
+    background-color: white;
+}
 
 .card-img-top-fixed {
     height: 200px;
@@ -439,7 +445,7 @@ h1, h2, h3, h4, h5, h6 {
     border: 1px solid rgba(0, 0, 0, 0.1);
     box-shadow: 0px 2px 10px 2px rgba(0, 0, 0, 0.1);
     border-top: none;
-    background-color: #fff;
+    background-color: #ffffff;
 
     z-index: 2000;
     top: calc(100% + 2px);
@@ -568,7 +574,7 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--gg-white);
 }
 
-.notification-badge {
+.request-notification-badge {
     background-color: var(--gg-primary);
 }
 
@@ -742,7 +748,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .public-profile-plant-card {
-    width: 200px;
+    width: 300px;
     height: 250px;
 }
 .public-profile-garden-card {
@@ -1058,3 +1064,33 @@ h1, h2, h3, h4, h5, h6 {
 .preserve-format {
     white-space: pre-wrap;
 }
+#gardenTimelineTitle,
+#gardenTimelineDiv,
+#yourPlantsTitleDiv {
+    background-color: white;
+}
+
+.active-chat {
+    background-color: #D3D3D3;
+}
+
+#gardenTLInfoBorder, .plant-side-panel {
+    background-color: var(--gg-side-panel)
+}
+
+.favouriteGardenCard, .favouritePlantCard {
+    background-color: #F9EFCC;
+}
+
+.addGarden {
+    color: black;
+}
+
+#plantTimelineDiv,
+#plantTimelineTitle{
+    background-color: white;
+}
+.modal-footer {
+    background-color: white;
+}
+
