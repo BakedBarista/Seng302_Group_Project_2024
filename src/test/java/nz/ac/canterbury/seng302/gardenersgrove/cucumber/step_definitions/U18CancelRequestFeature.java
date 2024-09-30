@@ -15,6 +15,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenUser;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.FriendsRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.BirthFlowerService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.FriendService;
 
 
@@ -32,6 +33,7 @@ public class U18CancelRequestFeature {
     private static FriendsRepository friendsRepository;
 
     private static GardenUserRepository gardenUserRepository;
+    private static BirthFlowerService birthFlowerService;
     private static GardenUserService userService;
     private static  FriendService friendService;
     private GardenUser user;
@@ -45,7 +47,7 @@ public class U18CancelRequestFeature {
         System.out.println("Before all");
         gardenUserRepository = mock(GardenUserRepository.class);
         friendsRepository = mock(FriendsRepository.class);
-        userService = new GardenUserService(gardenUserRepository);
+        userService = new GardenUserService(gardenUserRepository, birthFlowerService);
         friendService = new FriendService(friendsRepository);
 
          loggedInUserId = 1L;

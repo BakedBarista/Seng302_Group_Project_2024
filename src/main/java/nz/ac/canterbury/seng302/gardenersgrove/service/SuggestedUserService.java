@@ -186,6 +186,7 @@ public class SuggestedUserService {
 
         Map<String, Object> variables = new HashMap<>();
         variables.put("userId", user.getId());
+        variables.put("birthFlower", user.getBirthFlower());
         variables.put("favouriteGarden", user.getFavoriteGarden());
         variables.put("favouritePlants", user.getFavouritePlants());
 
@@ -194,6 +195,11 @@ public class SuggestedUserService {
                 .buildApplication(request.getServletContext());
         WebContext context = new WebContext(application.buildExchange(request, response), request.getLocale(),
                 variables);
+        if (user.getBirthFlower() != null) {
+            dto.setBirthFlowerHtml(templateEngine.process("fragments/birth-flower.html", context));
+        } else {
+            dto.setBirthFlowerHtml("<div class=\"text-center my-3 text-white\">No Birth Flower Selected</div>");
+        }
         if (user.getFavoriteGarden() != null) {
             dto.setFavouriteGardenHtml(templateEngine.process("fragments/favourite-garden.html", context));
         } else {

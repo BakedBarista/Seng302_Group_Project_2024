@@ -7,6 +7,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.dto.PlantDTO;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenUserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.service.BirthFlowerService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
@@ -17,11 +18,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.time.LocalDate;
 import java.util.List;
 
 @DataJpaTest
-@Import(GardenUserService.class)
+@Import({ GardenUserService.class, BirthFlowerService.class, ObjectMapper.class })
 public class GardenServiceIntegrationTests {
 
     @Autowired
@@ -32,6 +35,8 @@ public class GardenServiceIntegrationTests {
 
     @Autowired
     private PlantRepository plantRepository;
+
+    private BirthFlowerService birthFlowerService;
 
     private GardenUserService gardenUserService;
 
@@ -45,7 +50,8 @@ public class GardenServiceIntegrationTests {
 
     @BeforeEach
     public void setUp() {
-        gardenUserService = new GardenUserService(gardenUserRepository);
+        birthFlowerService = new BirthFlowerService(new ObjectMapper());
+        gardenUserService = new GardenUserService(gardenUserRepository, birthFlowerService);
         gardenService = new GardenService(gardenRepository, gardenUserRepository);
         plantService = new PlantService(plantRepository, gardenRepository);
 

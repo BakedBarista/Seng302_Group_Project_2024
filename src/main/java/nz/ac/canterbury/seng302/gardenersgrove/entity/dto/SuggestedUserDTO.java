@@ -8,10 +8,13 @@ public class SuggestedUserDTO {
     private int compatibility;
     private String description;
 
+    private String birthFlowerHtml;
     private String favouriteGardenHtml;
     private String favouritePlantsHtml;
+
     public SuggestedUserDTO() {
     }
+
     public SuggestedUserDTO(GardenUser user) {
         this.id = user.getId();
         this.fullName = user.getFullName();
@@ -36,6 +39,14 @@ public class SuggestedUserDTO {
 
     public String getDescription() {
         return description;
+    }
+
+    public String getBirthFlowerHtml() {
+        return birthFlowerHtml;
+    }
+
+    public void setBirthFlowerHtml(String birthFlowerHtml) {
+        this.birthFlowerHtml = birthFlowerHtml;
     }
 
     public String getFavouriteGardenHtml() {

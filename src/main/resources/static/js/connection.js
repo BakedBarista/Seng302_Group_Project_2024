@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const cardCompatibility = document.getElementById('cardCompatibility');
     const cardDescription = document.getElementById('cardDescription');
     const cardImage = document.getElementById('cardImage');
+    const birthFlower = document.getElementById('birthFlower');
     const favouriteGarden = document.getElementById('favouriteGarden');
     const favouritePlants = document.getElementById('favouritePlants');
     
@@ -32,6 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
         cardName.textContent = user.fullName;
         cardCompatibility.textContent = user.compatibility;
         cardDescription.textContent = user.description;
+        birthFlower.innerHTML = user.birthFlowerHtml;
         favouriteGarden.innerHTML = user.favouriteGardenHtml;
         favouritePlants.innerHTML = user.favouritePlantsHtml;
 

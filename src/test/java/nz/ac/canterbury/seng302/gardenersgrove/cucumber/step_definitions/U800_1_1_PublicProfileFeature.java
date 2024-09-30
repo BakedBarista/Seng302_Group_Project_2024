@@ -99,13 +99,13 @@ public class U800_1_1_PublicProfileFeature {
         authentication = mock(Authentication.class);
         objectMapper = mock(ObjectMapper.class);
 
-        userService = new GardenUserService(userRepository);
+        birthFlowerService = new BirthFlowerService(objectMapper);
+        userService = new GardenUserService(userRepository, birthFlowerService);
         plantService = new PlantService(plantRepository, gardenRepository);
         gardenService = new GardenService(gardenRepository, gardenUserRepository);
-        birthFlowerService = new BirthFlowerService(objectMapper);
 
         profanityService = new ProfanityService();
-        publicProfileController = new PublicProfileController(userService, profanityService, plantService,birthFlowerService);
+        publicProfileController = new PublicProfileController(userService, profanityService, plantService, birthFlowerService);
     }
 
      @Given("I am on my edit profile page")
