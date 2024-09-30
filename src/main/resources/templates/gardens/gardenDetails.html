@@ -231,7 +231,7 @@
                                            type="file"
                                            accept=".png,.jpg,.jpeg,.svg"/>
                                     <a class="link-hover" th:href="@{/gardens/{gardenId}/plants/{plantId}(gardenId=${garden.id}, plantId=${plant.id})}">
-                                        <img th:src="@{'/plants/' + ${plant.id} + '/plant-image'}"
+                                        <img th:src="@{(${plant.plantImage} != null) ? '/plants/' + ${plant.id} + '/plant-image' : '/img/default-plant.svg'}"
                                              alt="Plant Picture"
                                              class="w-100 rounded-top-3 mx-auto d-block h-auto"
                                              style="max-width: 300px; max-height: 300px;" />
