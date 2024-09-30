@@ -132,7 +132,7 @@
                             th:text="${#lists.isEmpty(flowers) ? 'Select Flower' : flowers[0]}">
                                 Select a flower
                             </button>
-                            <input type="hidden" id="selectedFlowerInput" name="selectedFlower">
+                            <input type="hidden" id="selectedFlowerInput" name="selectedFlower" value="">
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                 <th:block th:each="flower : ${flowers}">
                                     <a class="dropdown-item" href="#" th:text="${flower}" onclick="updateButtonText(this.textContent)"></a>
