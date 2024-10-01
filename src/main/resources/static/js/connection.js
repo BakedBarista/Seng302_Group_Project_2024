@@ -38,6 +38,12 @@ document.addEventListener('DOMContentLoaded', function() {
         favouriteGarden.innerHTML = user.favouriteGardenHtml;
         favouritePlants.innerHTML = user.favouritePlantsHtml;
 
+        if (user.hasProfilePicture) {
+            cardImage.src = `${baseUrl}users/${user.id}/profile-picture`;
+        } else {
+            cardImage.src = `${baseUrl}img/default-profile.svg`;
+        }
+
         // Update the progress bar used as the compatibility measure
         const progressBar = document.querySelector('.progress-bar');
         progressBar.style.width = `${user.compatibility}%`;

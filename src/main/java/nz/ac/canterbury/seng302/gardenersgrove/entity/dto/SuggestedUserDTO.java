@@ -7,6 +7,7 @@ public class SuggestedUserDTO {
     private String fullName;
     private int compatibility;
     private String description;
+    private boolean hasProfilePicture;
 
     private String birthFlowerHtml;
     private String favouriteGardenHtml;
@@ -19,6 +20,7 @@ public class SuggestedUserDTO {
         this.id = user.getId();
         this.fullName = user.getFullName();
         this.description = user.getDescription();
+        this.hasProfilePicture = user.getProfilePicture() != null;
     }
 
     public Long getId() {
@@ -39,6 +41,10 @@ public class SuggestedUserDTO {
 
     public String getDescription() {
         return description;
+    }
+
+    public boolean getHasProfilePicture() {
+        return hasProfilePicture;
     }
 
     public String getBirthFlowerHtml() {
