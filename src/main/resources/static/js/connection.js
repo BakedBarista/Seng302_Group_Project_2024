@@ -20,6 +20,25 @@ document.addEventListener('DOMContentLoaded', function() {
         return userList[userIndex];
     }
 
+    function getProfilePictureUrl(user) {
+        if (user.hasProfilePicture) {
+            return `${baseUrl}users/${user.id}/profile-picture`;
+        } else {
+            return `${baseUrl}img/default-profile.svg`;
+        }
+    }
+
+    setTimeout(() => {
+        // Preload all of the images after 0.5s
+        for (const user of userList) {
+            const link = document.createElement('link');
+            link.rel = 'preload';
+            link.as = 'image';
+            link.href = getProfilePictureUrl(user);
+            document.head.appendChild(link);
+        }
+    }, 500);
+
     function showCurrentUserCard() {
         if (userIndex >= userList.length) {
             const card = document.getElementById('card');
@@ -37,12 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
         birthFlower.innerHTML = user.birthFlowerHtml;
         favouriteGarden.innerHTML = user.favouriteGardenHtml;
         favouritePlants.innerHTML = user.favouritePlantsHtml;
-
-        if (user.hasProfilePicture) {
-            cardImage.src = `${baseUrl}users/${user.id}/profile-picture`;
-        } else {
-            cardImage.src = `${baseUrl}img/default-profile.svg`;
-        }
+        cardImage.src = getProfilePictureUrl(user);
 
         // Update the progress bar used as the compatibility measure
         const progressBar = document.querySelector('.progress-bar');
