@@ -37,6 +37,20 @@
         }
 
     }
+
+    /* When the page height is greater than 844px */
+    @media (min-height: 845px) {
+        #cardImage {
+            max-height: 500px;
+        }
+    }
+
+    /* When the page height is less than or equal to 844px */
+    @media (max-height: 844px) {
+        #cardImage {
+            max-height: 300px;
+        }
+    }
 </style>
 <body>
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
