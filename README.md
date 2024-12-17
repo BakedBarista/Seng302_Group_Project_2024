@@ -64,11 +64,11 @@ Gradle, Spring Boot, Thymeleaf, Jackson are licensed under the Apache License, V
 ## Code Contributors
 
 - SENG302 teaching team
-- Imogen Keeling (ike24)
-- [Luke Stynes (lst89)](https://www.github.com/lukestynes)
-- [Benjamin Davies (bda71)](https://www.github.com/Benjamin-Davies)
-- Maxzi Francisco (mfr91)
-- Liam Ceelen-Thomas (lce26)
-- Ryan Scofield (rsc104)
-- Todd Vermeir (tve21)
-- Carl Chen (zch66)
+- Imogen Keeling
+- [Luke Stynes](https://www.github.com/lukestynes)
+- [Benjamin Davies](https://www.github.com/Benjamin-Davies)
+- Maxzi Francisco
+- Liam Ceelen-Thomas
+- Ryan Scofield
+- Todd Vermeir
+- Carl Chen
