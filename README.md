@@ -22,22 +22,6 @@ gradlew bootRun
 
 By default, the application will run on local port 8080 [http://localhost:8080/test](http://localhost:8080/test)
 
-### 2 - Using the application
-
-- Default user credentials:
-  - {First Name: "John", Last Name: "Doe", Email: "john.doe@gmail.com", Password: "password"}
-  - {First Name: "Liam", Last Name: "Doe", Email: "liam@gmail.com", Password: "password"}
-  - {First Name: "Liam", Last Name: "Doe", Email: "liam2@gmail.com", Password: "password"}
-  - {First Name: "Immy", Last Name: null, Email: "immy@gmail.com", Password: "password"}
-  - {First Name: "Jan", Last Name: "Doe, Email: "jan.doe@gmail.com", Password: "password"}
-
-We have created multiple default users for the sake of manually testing **U17 - Send Friend Request** and **U18 - Cancel Friend Request**.
-
-Please note that the user "Immy" does not have a last name in order to double check that it does not break anything when a user does not have a last name.
-
-- Link to home and login page: {Home: http://localhost:8080/test, Login: http://localhost:8080/test/users/login}
-- Known Issues: None
-
 ## How to run tests
 
 To run the tests:
