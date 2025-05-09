@@ -1,58 +1,13 @@
-# SENG302 Team 800 Gardener's Grove Project
-
-Team 800's Gardener's Grove Project uses `gradle`, `Spring Boot`, `Thymeleaf`, `GitLab CI`, `H2`, `MariaDB`, `Bootstrap`, `JQuery`, `Jackson`, `Cucumber`, `JUnit`, `jacoco`, and `SonarQube`.
-
-## How to run
-
-### 1 - Running the project
-
-From the root directory ...
-
-On Linux:
-
-```
-./gradlew bootRun
-```
-
-On Windows:
-
-```
-gradlew bootRun
-```
-
-By default, the application will run on local port 8080 [http://localhost:8080/test](http://localhost:8080/test)
-
-## How to run tests
-
-To run the tests:
-From the root directory ...
-
-On Linux:
-
-```
-./gradlew test
-```
-
-On Windows:
-
-```
-gradlew test
-```
-
-## Licenses
-
-Team 800's Gardener's Grove App is licensed under the **GNU Affero General Public License v3.0**.
-
-Gradle, Spring Boot, Thymeleaf, Jackson are licensed under the Apache License, Version 2.0 (the "License"); you may not use their files except in compliance with the License. You may obtain a copy of the License at https://www.apache.org/licenses/LICENSE-2.0.
+Pollenator is a platform for garden enthusiasts to create and manage their own gardens. To connect with fellow gardeners and make friends.
 
 ## Code Contributors
 
 - SENG302 teaching team
-- Imogen Keeling
-- [Luke Stynes](https://www.github.com/lukestynes)
 - [Benjamin Davies](https://www.github.com/Benjamin-Davies)
-- Maxzi Francisco
+- Carl Chen
+- Imogen Keeling
 - Liam Ceelen-Thomas
+- [Luke Stynes](https://www.github.com/lukestynes)
+- Maxzi Francisco
 - Ryan Scofield
 - Todd Vermeir
-- Carl Chen
